@@ -65,7 +65,6 @@ export default class AppContainer {
             if (subApp) {
                 await compose(subApp.middleware)(ctx)
             } else {
-                // ctx.redirect(ctx.protocol + '://' + defaultSubAppKey + '.' + ctx.host + ctx.path + ctx.search)
                 ctx.redirect(`${ctx.protocol}://${defaultSubAppKey}.${ctx.host}${ctx.path}${ctx.search}`)
             }
 
