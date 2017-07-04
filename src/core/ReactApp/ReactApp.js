@@ -11,7 +11,7 @@ import ReduxMiddleware from './ReduxMiddleware'
 import ReduxReducer from './ReduxReducer'
 import ReactRouter from './ReactRouter'
 
-//
+// 默认根 DOM 结点 ID
 
 const DEFAULT_ROOT_DOM_ID = 'root'
 
@@ -27,13 +27,19 @@ export default class ReactApp {
 
         // redux
 
-        let reduxMiddleware = new ReduxMiddleware()
-        let reduxReducer = new ReduxReducer()
+        const reduxMiddleware = new ReduxMiddleware()
+        const reduxReducer = new ReduxReducer()
 
         this.redux = {
             middleware: reduxMiddleware,
             reducer: reduxReducer
         }
+
+        const reducers = this.redux.reducer.get()
+        const middlewares = this.redux.middleware.get()
+
+        this.configureStore = this.factoryConfigureStore(reducers, middlewares)
+
 
         // react
 
@@ -82,13 +88,8 @@ export default class ReactApp {
 
         let options = Object.assign({}, settings)
 
-        // redux
-        const reducers = this.redux.reducer.get()
-        const middlewares = this.redux.middleware.get()
-        const configureStore = this.factoryConfigureStore(reducers, middlewares)
-
         // __REDUX_STATE__ 是与服务端约定好的存储redux数据对象 (在浏览器端的 html 里存在)
-        const store = configureStore(window.__REDUX_STATE__)
+        const store = this.configureStore(window.__REDUX_STATE__)
 
         // react-router
         browserHistory.listen(location => {

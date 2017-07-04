@@ -77,5 +77,7 @@ export default class AppContainer {
 
         this.httpServer = http.createServer(this.app.callback())
         this.httpServer.listen(port)
+
+        console.log('start......')
     }
 }
