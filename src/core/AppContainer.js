@@ -75,9 +75,46 @@ export default class AppContainer {
     run(port = DEFAULT_PORT) {
         const http = require('http')
 
-        this.httpServer = http.createServer(this.app.callback())
-        this.httpServer.listen(port)
+        // 
 
-        console.log('start......')
+        const server = http.createServer(this.app.callback())
+
+        // http 服务监听
+
+        server.on('error', onError)
+        server.on('listening', onListening)
+
+        function onError(error) {
+
+            if (error.syscall !== 'listen') {
+                throw error
+            }
+
+            // handle specific listen errors with friendly messages
+            switch (error.code) {
+                case 'EACCES':
+                    console.error(port + ' requires elevated privileges !!!')
+                    process.exit(1)
+                    break
+                case 'EADDRINUSE':
+                    console.error(port + ' is already in use !!!')
+                    process.exit(1)
+                    break
+                default:
+                    throw error
+            }
+        }
+
+        function onListening() {
+            console.info(`Listening on ${port} √ `)
+        }
+
+        //
+
+        server.listen(port)
+
+        //
+
+        this.httpServer = server
     }
 }

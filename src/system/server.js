@@ -1,7 +1,4 @@
-
-
 import AppContainer from '../core/AppContainer'
 
-
 const server = new AppContainer()
-server.run()
+server.run(process.env.SERVER_PORT)

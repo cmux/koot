@@ -1,1 +1,2 @@
 DEFAULT_SUB_APP_KEY 默认域名前缀：www
+SERVER_PORT 服务端启动端口
