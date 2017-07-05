@@ -22,7 +22,7 @@ export default class AppContainer {
      * 二级域名前缀作为key
      * 
      * @param {string} key 
-     * @param {Koa Object} app 
+     * @param {object} app 
      * @memberof AppContainer
      */
     addSubApp(key, app) {
@@ -46,6 +46,7 @@ export default class AppContainer {
     mountSwitchSubAppMiddleware() {
 
         const compose = require('koa-compose')
+        const me = this
 
         this.app.use(async function(ctx) {
 
@@ -55,13 +56,13 @@ export default class AppContainer {
 
             // 开发模式可以把以IP访问，默认指向www
 
-            if (__DEV__ && ((subAppKey * 0 === 0) || ctx.hostname === 'localhost')) {
+            if ((subAppKey * 0 === 0) || ctx.hostname === 'localhost') {
                 subAppKey = defaultSubAppKey
             }
 
             // 把子应用的逻辑部分合并过来
 
-            let subApp = this.subApps[subAppKey]
+            let subApp = me.subApps[subAppKey]
             if (subApp) {
                 await compose(subApp.middleware)(ctx)
             } else {

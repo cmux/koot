@@ -35,10 +35,11 @@ export default class ReactApp {
             reducer: reduxReducer
         }
 
-        const reducers = this.redux.reducer.get()
-        const middlewares = this.redux.middleware.get()
 
-        this.configureStore = this.factoryConfigureStore(reducers, middlewares)
+        // const reducers = this.redux.reducer.get()
+        // const middlewares = this.redux.middleware.get()
+
+        // this.configureStore = this.factoryConfigureStore(reducers, middlewares)
 
 
         // react
@@ -53,6 +54,14 @@ export default class ReactApp {
                 ext: (ext) => Object.assign(this.__reactRouterExt, ext) // 扩展客户端路由
             }
         }
+    }
+
+    createConfigureStoreFactory() {
+        const reducers = this.redux.reducer.get()
+        const middlewares = this.redux.middleware.get()
+
+        this.configureStore = this.factoryConfigureStore(reducers, middlewares)
+        return this.configureStore
     }
 
     factoryConfigureStore(reducers, middlewares) {
@@ -89,6 +98,7 @@ export default class ReactApp {
         let options = Object.assign({}, settings)
 
         // __REDUX_STATE__ 是与服务端约定好的存储redux数据对象 (在浏览器端的 html 里存在)
+        this.createConfigureStoreFactory()
         const store = this.configureStore(window.__REDUX_STATE__)
 
         // react-router
@@ -115,12 +125,12 @@ export default class ReactApp {
             if (err) {
                 console.log(err.stack)
             }
-            render(
-                <Provider store={store}>
-                    <Router history={history} {...ext}>
-                        {routes}
-                    </Router>
-                </Provider>,
+            render( <
+                Provider store = { store } >
+                <
+                Router history = { history } {...ext } > { routes } <
+                /Router> <
+                /Provider>,
                 document.getElementById(root)
             )
         })

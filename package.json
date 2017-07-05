@@ -14,9 +14,9 @@
         "copy-public": "copyfiles ./public/assets/**/* ./dist",
 
 
-        "client-dev": "node ./webpack/enter --stage client --env dev --cport 3002",
-        "server-dev": "node ./webpack/enter --stage server --env dev --cport 3002",
-        "server-run": "node ./dist/server --cport 3002 --sport 3000",
+        "client-dev": "WEBPACK_BUILD_ENV=dev WEBPACK_STAGE_MODE=client WEBPACK_DEV_SERVER_PORT=3001 node ./webpack/enter",
+        "server-dev": "WEBPACK_BUILD_ENV=dev WEBPACK_STAGE_MODE=server WEBPACK_DEV_SERVER_PORT=3001 node ./webpack/enter",
+        "server-run": "node ./dist/server",
 
 
         "server-dist": "node ./webpack/enter --stage server --env dist",
