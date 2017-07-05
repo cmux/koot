@@ -16,7 +16,7 @@
 
         "client-dev": "WEBPACK_BUILD_ENV=dev WEBPACK_STAGE_MODE=client WEBPACK_DEV_SERVER_PORT=3001 node ./webpack/enter",
         "server-dev": "WEBPACK_BUILD_ENV=dev WEBPACK_STAGE_MODE=server WEBPACK_DEV_SERVER_PORT=3001 node ./webpack/enter",
-        "server-run": "node ./dist/server",
+        "server-run": "DEFAULT_SUB_APP_KEY=react node ./dist/server",
 
 
         "server-dist": "node ./webpack/enter --stage server --env dist",
