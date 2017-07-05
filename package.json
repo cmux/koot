@@ -5,6 +5,19 @@
     "author": "dongwenxiao,diablohu",
     "email": "cs_victor@126.com",
     "scripts": {
+
+        "client-dev": "WEBPACK_BUILD_ENV=dev WEBPACK_STAGE_MODE=client WEBPACK_DEV_SERVER_PORT=3001 node ./webpack/enter",
+        "server-dev": "WEBPACK_BUILD_ENV=dev WEBPACK_STAGE_MODE=server WEBPACK_DEV_SERVER_PORT=3001 node ./webpack/enter",
+        "server-run": "DEFAULT_SUB_APP_KEY=react node ./dist/server",
+
+
+
+
+
+
+
+
+
         "start": "npm run build && npm run server-run",
         "start:pm2": "npm run build && pm2 restart pm2.json --only sp-start",
         "start:dev": "npm run pm2-dev",
@@ -12,12 +25,6 @@
 
         "clean-dist": "rimraf ./dist",
         "copy-public": "copyfiles ./public/assets/**/* ./dist",
-
-
-        "client-dev": "WEBPACK_BUILD_ENV=dev WEBPACK_STAGE_MODE=client WEBPACK_DEV_SERVER_PORT=3001 node ./webpack/enter",
-        "server-dev": "WEBPACK_BUILD_ENV=dev WEBPACK_STAGE_MODE=server WEBPACK_DEV_SERVER_PORT=3001 node ./webpack/enter",
-        "server-run": "DEFAULT_SUB_APP_KEY=react node ./dist/server",
-
 
         "server-dist": "node ./webpack/enter --stage server --env dist",
         "client-dist": "node ./webpack/enter --stage client --env dist",
