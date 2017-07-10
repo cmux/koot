@@ -10,7 +10,7 @@ module.exports = (appPath) => ({
     },
     watch: false,
     entry: [
-        path.resolve(appPath, './src/server')
+        path.resolve(appPath, './src/start')
     ],
     output: {
         filename: 'index.js',

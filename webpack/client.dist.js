@@ -8,18 +8,19 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const pwaCreatePlugin = require('sp-pwa')
 
 const getConfig = (appPath, type) => {
+    
     const entries = require('./client-entries.js')(appPath, type)
     const outputPath = path.resolve(appPath, `dist/public/client${type ? ('/' + type) : ''}`)
     const publicPath = `/client${type ? ('/' + type) : ''}/`
 
-    if (type === 'portals') {
+    /*if (type === 'portals') {
         fs.writeFileSync(
             path.resolve(appPath, './src/server/app-plus/views/plus-index.ejs'),
             fs.readFileSync(path.resolve(appPath, './src/server/app-plus/views/src/template.ejs'), 'utf-8')
                 .replace(/\<\%\= publicPath \%\>/g, publicPath),
             'utf-8'
         )
-    }
+    }*/
 
     let config = {
         target: 'web',

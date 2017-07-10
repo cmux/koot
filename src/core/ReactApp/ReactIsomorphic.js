@@ -62,10 +62,10 @@ export default class ReactIsomorphic {
         return async (ctx, next) => {
 
             try {
+
                 const memoryHistory = createMemoryHistory(ctx.url)
                 const store = configStore()
                 const history = syncHistoryWithStore(memoryHistory, store)
-
 
                 // 根据router计算出渲染页面需要的数据，并把渲染需要的数据补充到store中
 

@@ -20,6 +20,7 @@ reactApp.redux.reducer.use('server', (state = { xx: '123' }) => {
 // 同构配置
 
 const isomorphic = reactApp.isomorphic.createKoaMiddleware({
+    
     // react-router 配置对象
     routes: reactApp.react.router.get(),
 
@@ -33,7 +34,9 @@ const isomorphic = reactApp.isomorphic.createKoaMiddleware({
     // 例如：<script>//inject_critical</script>  替换为 critical
     inject: {
         // js: (args) => `<script src="${args.path}/client.js"></script>`,
-        js: [],
+        js: [
+            '/dist/client.js' // TODO:
+        ],
         css: []
     },
 
