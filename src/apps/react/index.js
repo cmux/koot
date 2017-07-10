@@ -1,4 +1,4 @@
-// import isomorphic from '../../modules/sp-react-isomorphic'
+// import { routerReducer } from 'react-router-redux'
 import { reactApp } from './client'
 import { template } from './html'
 
@@ -7,7 +7,14 @@ import { template } from './html'
 const Koa = require('koa')
 const app = new Koa()
 
-//
+// test TODO:
+
+reactApp.redux.reducer.use('server', (state = { xx: '123' }) => {
+    return state
+})
+
+// reactApp.redux.reducer.use('routing', routerReducer)
+// reactApp.redux.reducer.use('routing', routerReducer)    // 路由状态扩展
 
 
 // 同构配置
@@ -28,6 +35,12 @@ const isomorphic = reactApp.isomorphic.createKoaMiddleware({
         // js: (args) => `<script src="${args.path}/client.js"></script>`,
         js: [],
         css: []
+    },
+
+    onServerRender: (obj) => {
+        let { koaCtx, reduxStore } = obj
+
+        // reduxStore.dispatch()
     }
 })
 
