@@ -17,7 +17,9 @@ reactApp.redux.middleware.use(routerMiddleware(browserHistory))
 
 // 
 
-reactApp.redux.reducer.use('routing', routerReducer)
+reactApp.redux.reducer.use('routing', routerReducer)    // 路由状态扩展
+// reactApp.redux.reducer.use('server', reactApp.serverReducer)    // 服务端数据扩展
+// reactApp.redux.reducer.use('client', routerReducer)   // 客户端非业务功能扩展
 
 // 
 

@@ -11,6 +11,11 @@ import ReduxMiddleware from './ReduxMiddleware'
 import ReduxReducer from './ReduxReducer'
 import ReactRouter from './ReactRouter'
 
+//
+
+import ReactIsomorphic from './ReactIsomorphic'
+import ACTION_TYPE from './ActionType'
+
 // 默认根 DOM 结点 ID
 
 const DEFAULT_ROOT_DOM_ID = 'root'
@@ -54,6 +59,8 @@ export default class ReactApp {
                 ext: (ext) => Object.assign(this.__reactRouterExt, ext) // 扩展客户端路由
             }
         }
+
+        this.isomorphic = new ReactIsomorphic()
     }
 
     createConfigureStoreFactory() {
@@ -92,6 +99,21 @@ export default class ReactApp {
             return store
         }
     }
+
+    // serverReducer(state = { lang: 'en', origin: '' }, action) {
+    //     switch (action.type) {
+    //         case ACTION_TYPE.CHANGE_LANGUAGE:
+    //             return Object.assign({}, state, {
+    //                 lang: action.data
+    //             })
+    //         case ACTION_TYPE.GET_ORIGIN_URL:
+    //             return Object.assign({}, state, {
+    //                 origin: action.data
+    //             })
+    //         default:
+    //             return state
+    //     }
+    // }
 
     run(settings = {}) {
 
