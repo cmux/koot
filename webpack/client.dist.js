@@ -89,6 +89,6 @@ const getConfig = (appPath, type) => {
 }
 
 module.exports = (appPath) => [
-    getConfig(appPath),
-    getConfig(appPath, 'portals')
+    getConfig(appPath)
+    // getConfig(appPath, 'portals')
 ]

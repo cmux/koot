@@ -7,6 +7,8 @@ import { template } from './html'
 import { CHANGE_LANGUAGE, TELL_CLIENT_URL, SERVER_REDUCER_NAME, serverReducer } from './server-redux'
 import isomorphicTool from '../../functions/isomorphic-tool'
 
+const webpackConfig = require('../../config/webpack')
+
 // 
 
 const Koa = require('koa')
@@ -47,16 +49,26 @@ const isomorphic = reactApp.isomorphic.createKoaMiddleware({
     configStore: reactApp.createConfigureStoreFactory(),
 
     // HTML基础模板
-    template: template,
+    template,
 
     // 对HTML基础模板的自定义注入
     // 例如：<script>//inject_critical</script>  替换为 critical
     inject: {
         // js: (args) => `<script src="${args.path}/client.js"></script>`,
         js: (() => {
-            let distClientfiles = isomorphicTool.readFilesInPath('./dist/public/client') // TODO: 这里的文件名和路径是从webpack的配置里读出来的
-            let reactClientJs = isomorphicTool.filterTargetFile(distClientfiles, 'react-client', 'js')
-            return [`/client/${reactClientJs}`]
+
+            let app1Js = (() => {
+                if (__DEV__) {
+                    return `http://localhost:${webpackConfig.WEBPACK_DEV_SERVER_PORT}/dist/${webpackConfig.APP_1_ENTER_JS_NAME}.js`
+                } else {
+                    let distClientfiles = isomorphicTool.readFilesInPath('./dist/public/client')
+                    let reactClientJs = isomorphicTool.filterTargetFile(distClientfiles, webpackConfig.APP_1_ENTER_JS_NAME, 'js')
+                    return `/client/${reactClientJs}`
+                }
+            })()
+
+            return [app1Js]
+
         })(),
         css: []
     },
