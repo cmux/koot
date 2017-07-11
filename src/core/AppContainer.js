@@ -43,7 +43,7 @@ export default class AppContainer {
      * 
      * @memberof AppContainer
      */
-    mountSwitchSubAppMiddleware() {
+    mountSwitchSubAppMiddleware(defaultSubAppKey = DEFAULT_SUB_APP_KEY) {
 
         const compose = require('koa-compose')
         const me = this
@@ -52,7 +52,7 @@ export default class AppContainer {
 
             let subAppKey = ctx.hostname.split('.')[0]
 
-            const defaultSubAppKey = process.env.DEFAULT_SUB_APP_KEY || DEFAULT_SUB_APP_KEY
+            // const defaultSubAppKey = process.env.DEFAULT_SUB_APP_KEY || DEFAULT_SUB_APP_KEY
 
             // 开发模式可以把以IP访问，默认指向www
 
@@ -66,28 +66,7 @@ export default class AppContainer {
 
             let subApp = me.subApps[subAppKey]
             if (subApp) {
-                // await compose(me.app.middleware)(ctx)
-                
-
-
-
-                const koaStatic = require('koa-static')
-                const convert = require('koa-convert')
-                const rootPath = process.cwd() + '/dist/public'
-                const option = {
-                    maxage: 0,
-                    hidden: true,
-                    index: 'index.html',
-                    defer: false,
-                    gzip: true,
-                    extensions: false
-                }
-
-                await compose([convert(koaStatic(rootPath, option))])(ctx)
-
                 await compose(subApp.middleware)(ctx)
-                // server.app.use(convert(koaStatic(rootPath, option)))
-
             } else {
                 ctx.redirect(`${ctx.protocol}://${defaultSubAppKey}.${ctx.host}${ctx.path}${ctx.search}`)
             }
