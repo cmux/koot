@@ -147,12 +147,12 @@ export default class ReactApp {
             if (err) {
                 console.log(err.stack)
             }
-            render( <
-                Provider store = { store } >
-                <
-                Router history = { history } {...ext } > { routes } <
-                /Router> <
-                /Provider>,
+            render(
+                <Provider store={store} >
+                    <Router history={history} {...ext } >
+                        {routes}
+                    </Router>
+                </Provider>,
                 document.getElementById(root)
             )
         })
