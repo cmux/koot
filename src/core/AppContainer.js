@@ -13,7 +13,7 @@ export default class AppContainer {
 
         this.app = ((Koa) => new Koa())(require('koa'))
 
-        this.mountSwitchSubAppMiddleware()
+        // this.mountSwitchSubAppMiddleware()
 
     }
 
@@ -48,7 +48,7 @@ export default class AppContainer {
         const compose = require('koa-compose')
         const me = this
 
-        this.app.use(async function(ctx) {
+        this.app.use(async function(ctx, next) {
 
             let subAppKey = ctx.hostname.split('.')[0]
 
@@ -62,9 +62,32 @@ export default class AppContainer {
 
             // 把子应用的逻辑部分合并过来
 
+            if (JSON.stringify(me.subApps) === JSON.stringify({})) return next()
+
             let subApp = me.subApps[subAppKey]
             if (subApp) {
+                // await compose(me.app.middleware)(ctx)
+                
+
+
+
+                const koaStatic = require('koa-static')
+                const convert = require('koa-convert')
+                const rootPath = process.cwd() + '/dist/public'
+                const option = {
+                    maxage: 0,
+                    hidden: true,
+                    index: 'index.html',
+                    defer: false,
+                    gzip: true,
+                    extensions: false
+                }
+
+                await compose([convert(koaStatic(rootPath, option))])(ctx)
+
                 await compose(subApp.middleware)(ctx)
+                // server.app.use(convert(koaStatic(rootPath, option)))
+
             } else {
                 ctx.redirect(`${ctx.protocol}://${defaultSubAppKey}.${ctx.host}${ctx.path}${ctx.search}`)
             }
@@ -79,6 +102,9 @@ export default class AppContainer {
         // 
 
         const server = http.createServer(this.app.callback())
+        this.app.use(async(ctx) => {
+            ctx.body = 'aaa'
+        })
 
         // http 服务监听
 
