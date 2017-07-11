@@ -1,5 +1,5 @@
 const path = require('path')
-const config = require('../src/config/webpack')
+const config = require('../config/webpack')
 
 module.exports = (appPath, type) => {
     switch (type) {

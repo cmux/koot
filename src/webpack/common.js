@@ -181,7 +181,7 @@ const needBabelHandleList = [
 // 所以把 package.json 里描述的依赖过滤掉，只打包自己写的代码
 // 注：在上线的时候需要需要自行安装 package.json 的依赖包
 const filterExternalsModules = () => fs
-    .readdirSync(path.resolve(__dirname, '..', 'node_modules'))
+    .readdirSync(path.resolve(__dirname, '../../', 'node_modules'))
     .concat(['react-dom/server'])
     .filter((x) => ['.bin'].concat(needBabelHandleList).indexOf(x) === -1)
     .filter((x) => !/^sp\-/.test(x))
