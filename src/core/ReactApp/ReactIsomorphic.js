@@ -15,18 +15,31 @@ export default class ReactIsomorphic {
      * 
      * @memberof ReactIsomorphic
      */
-    readFilesInPath(path) {
-        return []
+    readFilesInPath(dir) {
+
+        const fs = require('fs')
+        const path = require('path')
+
+        return fs.readdirSync(path.resolve(process.cwd(), dir))
     }
 
     /**
      * 筛选出指定文件
-     * 例如：找到客户端入库文件  eg：[name].[hash].js  => client.dndavxcxq323ndfs.js  
+     * 每次打包后的入库文件都把文件名hash一下，避免缓存问题，支持PWA的时候也需要这样
+     * 例如：找到客户端入库文件  eg：[name].[hash].js  => client.dndavxcxq323ndfs.js
      * 
      * @memberof ReactIsomorphic
      */
-    filterTargetFile(name) {
-        return ''
+    filterTargetFile(files, name, ext) {
+
+        let regexp = new RegExp(`^${name}\.([^.]+).${ext}$`)
+
+        for (let i = 0; i < files.length; i++) {
+            let file = files[i]
+            if (regexp.test(file)) return file
+        }
+
+        return false
     }
 
     createKoaMiddleware(options = {
@@ -55,7 +68,7 @@ export default class ReactIsomorphic {
         // html 只更新1次的部分
         let _inject = Object.assign({}, inject, {
             js: inject.js ? inject.js.map((js) => `<script src="${js}"></script>`).join('') : [], // 引用js文件列表
-            css: inject.css ? inject.css.map((css) => `<link rel="stylesheet" href="${css}">`).join('') : []  // 引用css文件列表
+            css: inject.css ? inject.css.map((css) => `<link rel="stylesheet" href="${css}">`).join('') : [] // 引用css文件列表
         })
 
         // koa 中间件结构
@@ -91,7 +104,7 @@ export default class ReactIsomorphic {
                 // 把react部分渲染出html片段，并插入到html中
 
                 const reactHtml = renderToString(
-                    <Provider store={store}>
+                    <Provider store={store} >
                         <RouterContext {...renderProps } />
                     </Provider>
                 )
