@@ -36,6 +36,7 @@ jspm_packages
 .node_repl_history
 
 # super project
+
 node_modules/
 *.log
 dist
@@ -48,4 +49,4 @@ dist
 .vscode
 /.cmder
 /_.bat
-src/modules
+# src/modules
