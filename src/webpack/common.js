@@ -146,12 +146,12 @@ const resolve = {
         path.resolve(appPath, './src/modules')
     ],
     alias: {
-        Config: path.resolve(appPath, './src/client/config'),
-        Locales: path.resolve(appPath, './src/locales'),
-        Utils: path.resolve(appPath, './src/utils'),
-        Assets: path.resolve(appPath, './src/client/assets'),
-        UI: path.resolve(appPath, './src/client/ui'),
-        Docs: path.resolve(appPath, './docs')
+        // Config: path.resolve(appPath, './src/client/config'),
+        // Locales: path.resolve(appPath, './src/locales'),
+        // Utils: path.resolve(appPath, './src/utils'),
+        // Assets: path.resolve(appPath, './src/client/assets'),
+        // UI: path.resolve(appPath, './src/client/ui'),
+        // Docs: path.resolve(appPath, './docs')
     },
     extensions: ['.js', '.jsx', '.json', '.css', '.less']
 }

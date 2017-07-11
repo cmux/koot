@@ -65,16 +65,8 @@
         "node": ">=6.7.0"
     },
     "dependencies": {
-        "sp-base": "^2.1.0",
-        "sp-react-isomorphic": "^1.12.6",
-        "sp-css-import": "^1.2.0",
+        
         "sp-css-loader": "^1.1.3",
-        "sp-model": "^1.0.0",
-        "sp-mongo": "^1.1.0",
-        "sp-api": "^1.1.1",
-        "sp-upload": "^1.1.3",
-        "sp-cms": "^1.0.0",
-        "sp-auth": "^1.2.1",
         "sp-koa-views": "^1.0.0",
         "sp-i18n": "^1.1.2",
         "sp-ui-pagecontainer": "^1.2.0",
@@ -133,6 +125,7 @@
         "is_js": "^0.9.0"
     },
     "devDependencies": {
+        
         "babel-core": "^6.24.0",
         "babel-polyfill": "^6.23.0",
         "babel-preset-env": "1.2.1",
