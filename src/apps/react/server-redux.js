@@ -1,5 +1,5 @@
 export const CHANGE_LANGUAGE = 'CHANGE_LANGUAGE'
-export const TELL_ME_URL = 'TELL_CLIENT_URL'
+export const TELL_CLIENT_URL = 'TELL_CLIENT_URL'
 
 export const SERVER_REDUCER_NAME = 'server'
 
@@ -9,7 +9,7 @@ export const serverReducer = (state = { lang: 'en', origin: '' }, action) => {
             return Object.assign({}, state, {
                 lang: action.data
             })
-        case TELL_ME_URL:
+        case TELL_CLIENT_URL:
             return Object.assign({}, state, {
                 origin: action.data
             })

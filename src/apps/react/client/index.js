@@ -7,6 +7,9 @@ import { routerReducer } from 'react-router-redux'
 
 import clientRouter from './router'
 import ReactApp from '../../../core/ReactApp/ReactApp'
+import { reducer as realtimeLocationReducer, REALTIME_LOCATION_REDUCER_NAME } from './redux/realtime-location'
+
+const ROUTER_REDUCDER_NAME = 'routing'
 
 const reactApp = new ReactApp({ rootDom: 'root' })
 
@@ -17,9 +20,8 @@ reactApp.redux.middleware.use(routerMiddleware(browserHistory))
 
 // 
 
-reactApp.redux.reducer.use('routing', routerReducer)    // 路由状态扩展
-// reactApp.redux.reducer.use('server', reactApp.serverReducer)    // 服务端数据扩展
-// reactApp.redux.reducer.use('client', routerReducer)   // 客户端非业务功能扩展
+reactApp.redux.reducer.use(ROUTER_REDUCDER_NAME, routerReducer) // 路由状态扩展
+reactApp.redux.reducer.use(REALTIME_LOCATION_REDUCER_NAME, realtimeLocationReducer) // 目的：新页面请求处理完成后再改变URL
 
 // 
 
@@ -75,7 +77,7 @@ export {
 // redux.reducer.use('routing', routerReducer)
 // redux.reducer.use('localeId', i18nReducerLocaleId)
 // redux.reducer.use('locales', i18nReducerLocales)
-    /***/
+/***/
 // redux.reducer.use('docs', docsReducer)
 
 // 设定项目所用的 react-router
@@ -86,7 +88,7 @@ export {
 // })
 
 // let __baidu_tongji_count = 0
-    // 定制 react-router
+// 定制 react-router
 // router.ext({
 //     onUpdate: () => {
 
