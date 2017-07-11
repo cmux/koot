@@ -40,7 +40,7 @@ export default class ReactIsomorphic {
 
         // koa 中间件结构
         return async (ctx, next) => {
-            console.log('isomporphic --------------------------')
+
             try {
 
                 const memoryHistory = createMemoryHistory(ctx.url)
