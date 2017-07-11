@@ -5,6 +5,7 @@ import cookie from 'cookie'
 import { reactApp } from './client'
 import { template } from './html'
 import { CHANGE_LANGUAGE, TELL_CLIENT_URL, SERVER_REDUCER_NAME, serverReducer } from './server-redux'
+import isomorphicTool from '../../functions/isomorphic-tool'
 
 // 
 
@@ -14,7 +15,6 @@ const app = new Koa()
 /* 扩展服务端特色处理的redux */
 
 reactApp.redux.reducer.use(SERVER_REDUCER_NAME, serverReducer)
-
 
 /* 同构配置 */
 
@@ -34,8 +34,8 @@ const isomorphic = reactApp.isomorphic.createKoaMiddleware({
     inject: {
         // js: (args) => `<script src="${args.path}/client.js"></script>`,
         js: (() => {
-            let distClientfiles = reactApp.isomorphic.readFilesInPath('./dist/public/client') // TODO: 这里的文件名和路径是从webpack的配置里读出来的
-            let reactClientJs = reactApp.isomorphic.filterTargetFile(distClientfiles, 'react-client', 'js')
+            let distClientfiles = isomorphicTool.readFilesInPath('./dist/public/client') // TODO: 这里的文件名和路径是从webpack的配置里读出来的
+            let reactClientJs = isomorphicTool.filterTargetFile(distClientfiles, 'react-client', 'js')
             return [`/client/${reactClientJs}`]
         })(),
         css: []

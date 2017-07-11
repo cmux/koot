@@ -12,6 +12,7 @@
         "server-dist": "WEBPACK_BUILD_ENV=dist WEBPACK_STAGE_MODE=server node ./webpack/enter",
         "server-run": "DEFAULT_SUB_APP_KEY=react node ./dist/server",
 
+        "clean-dist": "rimraf ./dist",
 
 
 
@@ -23,7 +24,7 @@
         "start:dev": "npm run pm2-dev",
 
 
-        "clean-dist": "rimraf ./dist",
+        
         "copy-public": "copyfiles ./public/assets/**/* ./dist",
 
         "dist": "npm run clean-dist && npm run client-dist && npm run server-dist && npm run copy-public",
