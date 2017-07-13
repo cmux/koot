@@ -18,7 +18,7 @@ const env = process.env.WEBPACK_BUILD_ENV || 'dev'
 const stage = process.env.WEBPACK_STAGE_MODE || 'client'
 
 // 程序启动路径，作为查找文件的基础
-const appPath = process.cwd()  // TODO: rename appRunPath
+const appRunPath = process.cwd()
 
 
 // 生产标准配置文件格式
@@ -54,7 +54,7 @@ const run = (config) => {
     // 客户端开发模式
     if (stage === 'client' && env === 'dev') {
 
-        let wcd = require('./client.dev')(appPath, CLIENT_DEV_PORT)
+        let wcd = require('./client.dev')(appRunPath, CLIENT_DEV_PORT)
         // Object.assign(wcd, config.client.dev)
 
         const compiler = webpack(wcd)
@@ -83,7 +83,7 @@ const run = (config) => {
 
         process.env.NODE_ENV = 'production'
 
-        let wcd = require('./client.dist')(appPath)
+        let wcd = require('./client.dist')(appRunPath)
         Object.assign(wcd, config.client.dist)
 
         const compiler = webpack(wcd)
@@ -100,7 +100,7 @@ const run = (config) => {
     // 服务端开发环境
     if (stage === 'server' && env === 'dev') {
 
-        let wsd = require('./server.dev')(appPath, CLIENT_DEV_PORT)
+        let wsd = require('./server.dev')(appRunPath, CLIENT_DEV_PORT)
         Object.assign(wsd, config.server.dev)
 
         webpack(wsd, (err, stats) => {
@@ -118,7 +118,7 @@ const run = (config) => {
 
         process.env.NODE_ENV = 'production'
 
-        let wsd = require('./server.dist')(appPath)
+        let wsd = require('./server.dist')(appRunPath)
         Object.assign(wsd, config.server.dist)
 
         webpack(wsd, (err, stats) => {
