@@ -1,4 +1,4 @@
-DEFAULT_SUB_APP_KEY 默认域名前缀：www
+DEFAULT_DOMAIN 默认域名前缀：localhost
 SERVER_PORT 服务端启动端口 : 3000
 SERVER_DEBUG 是否是开发环境  ：  1||0
 

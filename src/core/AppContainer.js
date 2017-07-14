@@ -1,5 +1,5 @@
 const DEFAULT_PORT = 3000
-const DEFAULT_SUB_APP_KEY = 'www'
+const DEFAULT_DOMAIN = 'www.abc.com'
 
 export default class AppContainer {
 
@@ -25,17 +25,17 @@ export default class AppContainer {
      * @param {object} app 
      * @memberof AppContainer
      */
-    addSubApp(key, app) {
+    addSubApp(domain, app) {
 
-        if (this.subApps[key]) {
-            console.warn(`This app key is exist : ${key} , it will be overwrite.`)
+        if (this.subApps[domain]) {
+            console.warn(`This app domain is exist : ${domain} , it will be overwrite.`)
         }
 
-        this.subApps[key] = app
+        this.subApps[domain] = app
     }
 
-    removeSubApp(key) {
-        this.subApps[key] = undefined
+    removeSubApp(domain) {
+        this.subApps[domain] = undefined
     }
 
     /**
@@ -43,32 +43,30 @@ export default class AppContainer {
      * 
      * @memberof AppContainer
      */
-    mountSwitchSubAppMiddleware(defaultSubAppKey = DEFAULT_SUB_APP_KEY) {
+    mountSwitchSubAppMiddleware(defaultDomain = DEFAULT_DOMAIN) {
 
         const compose = require('koa-compose')
         const me = this
 
         this.app.use(async function(ctx, next) {
 
-            let subAppKey = ctx.hostname.split('.')[0]
+            let domain = ctx.hostname
 
-            // const defaultSubAppKey = process.env.DEFAULT_SUB_APP_KEY || DEFAULT_SUB_APP_KEY
+            // 开发模式可以把以IP访问，默认指向 默认配置app
 
-            // 开发模式可以把以IP访问，默认指向www
-
-            if ((subAppKey * 0 === 0) || ctx.hostname === 'localhost') {
-                subAppKey = defaultSubAppKey
+            if (['localhost', '127.0.0.1'].indexOf(ctx.hostname) > -1) {
+                domain = defaultDomain
             }
 
             // 把子应用的逻辑部分合并过来
 
             if (JSON.stringify(me.subApps) === JSON.stringify({})) return next()
 
-            let subApp = me.subApps[subAppKey]
+            let subApp = me.subApps[domain]
             if (subApp) {
                 await compose(subApp.middleware)(ctx)
             } else {
-                ctx.redirect(`${ctx.protocol}://${defaultSubAppKey}.${ctx.host}${ctx.path}${ctx.search}`)
+                ctx.redirect(`${ctx.protocol}://${defaultDomain}.${ctx.host}${ctx.path}${ctx.search}`)
             }
 
         })
@@ -81,9 +79,6 @@ export default class AppContainer {
         // 
 
         const server = http.createServer(this.app.callback())
-        this.app.use(async(ctx) => {
-            ctx.body = 'aaa'
-        })
 
         // http 服务监听
 

@@ -13,9 +13,9 @@ server.app.use(responseTime())
 /* 挂载子应用 */
 
 server.addSubApp('www', require('../apps/www'))
-server.addSubApp('react', require('../apps/react'))
+server.addSubApp('localhost', require('../apps/react'))
 // server.addSubApp('react1', require('../apps/react1'))
-server.mountSwitchSubAppMiddleware(serverConfig.DEFAULT_SUB_APP_KEY)
+server.mountSwitchSubAppMiddleware(serverConfig.DEFAULT_DOMAIN)
 
 /* 系统运行 */
 
