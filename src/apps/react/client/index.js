@@ -6,7 +6,7 @@ import { routerReducer } from 'react-router-redux'
 //
 
 import clientRouter from './router'
-import ReactApp from '../../../core/ReactApp/ReactApp'
+import ReactApp from 'super-project/core/ReactApp/ReactApp'
 import { reducer as realtimeLocationReducer, REALTIME_LOCATION_REDUCER_NAME } from './redux/realtime-location'
 
 const ROUTER_REDUCDER_NAME = 'routing'

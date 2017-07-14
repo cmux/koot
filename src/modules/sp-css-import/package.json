@@ -1,0 +1,29 @@
+{
+    "name": "sp-css-import",
+    "version": "1.6.0",
+    "description": "Decorator of react component for load css.",
+    "main": "ImportStyle.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/dongwenxiao/sp-css-import.git"
+    },
+    "keywords": [
+        "react",
+        "style",
+        "import-style",
+        "import-css"
+    ],
+    "author": "cs_victor@126.com",
+    "license": "Apache 2.0",
+    "bugs": {
+        "url": "https://github.com/dongwenxiao/sp-css-import/issues"
+    },
+    "homepage": "https://github.com/dongwenxiao/sp-css-import",
+    "dependencies": {
+        "hoist-non-react-statics": "~1.2.0",
+        "prop-types": "^15.5.10"
+    }
+}
