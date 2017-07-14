@@ -41,12 +41,6 @@ export default class ReactApp {
         }
 
 
-        // const reducers = this.redux.reducer.get()
-        // const middlewares = this.redux.middleware.get()
-
-        // this.configureStore = this.factoryConfigureStore(reducers, middlewares)
-
-
         // react
 
         let reactRouter = new ReactRouter()
@@ -100,20 +94,6 @@ export default class ReactApp {
         }
     }
 
-    // serverReducer(state = { lang: 'en', origin: '' }, action) {
-    //     switch (action.type) {
-    //         case ACTION_TYPE.CHANGE_LANGUAGE:
-    //             return Object.assign({}, state, {
-    //                 lang: action.data
-    //             })
-    //         case ACTION_TYPE.GET_ORIGIN_URL:
-    //             return Object.assign({}, state, {
-    //                 origin: action.data
-    //             })
-    //         default:
-    //             return state
-    //     }
-    // }
 
     run(settings = {}) {
 
@@ -157,9 +137,5 @@ export default class ReactApp {
             )
         })
     }
-
-    // app() {
-    //     return this.app
-    // }
 
 }
