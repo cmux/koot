@@ -2,12 +2,12 @@ import cookie from 'cookie'
 
 //
 
-import { reactApp } from './client'
-import { template } from './html'
+import { reactApp } from '../client'
+import { template } from '../html'
 import { CHANGE_LANGUAGE, TELL_CLIENT_URL, SERVER_REDUCER_NAME, serverReducer } from './server-redux'
-import isomorphicTool from '../../functions/isomorphic-tool'
+import isomorphicTool from '../../../functions/isomorphic-tool'
 
-const webpackConfig = require('../../config/webpack')
+const webpackConfig = require('../../../config/webpack')
 
 // 
 
