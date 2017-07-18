@@ -32,10 +32,6 @@
         "react": "^15.4.2",
         "react-dom": "^15.4.2",
         "react-router": "^3.0.0",
-        "react-motion": "^0.4.7",
-        "react-addons-css-transition-group": "^15.4.2",
-        "react-portal": "^3.1.0",
-        "react-markdown": "^2.4.6",
 
 
         "redux": "^3.6.0",
@@ -117,15 +113,13 @@
         "rimraf": "^2.5.4",
         "copyfiles": "^1.0.0",
 
+
         "autoprefixer": "^6.7.7",
-        "postcss-pxtorem": "^4.0.0",
         "less": "^2.7.2",
-        "normalize.css": "^5.0.0",
 
 
         "classlist-polyfill": "^1.0.3",
         "es5-shim": "^4.5.9",
         "fs-extra": "^3.0.1"
-
     }
 }
