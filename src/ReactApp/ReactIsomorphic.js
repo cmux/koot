@@ -1,4 +1,5 @@
 import React from 'react'
+import HTMLExtendTool from './HTMLExtendTool'
 import { renderToString } from 'react-dom/server'
 import { createMemoryHistory, RouterContext, match } from 'react-router'
 import { Provider } from 'react-redux'
@@ -211,22 +212,6 @@ function filterStyle(htmlString) {
     return {
         html,
         style
-    }
-}
-
-class HTMLExtendTool {
-
-    constructor() {
-        this.title = ''
-        this.metas = []
-    }
-
-    setTitle(title) {
-        this.title = title
-    }
-
-    addMeta(meta) {
-        this.metas.push(meta)
     }
 }
 
