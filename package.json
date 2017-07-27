@@ -27,8 +27,8 @@
         "sp-css-loader": "^1.1.3",
         "sp-css-import": "^1.6.0",
         "sp-koa-views": "^1.0.1",
-        "sp-i18n": "1.x",
-        "sp-ui-pagecontainer": "1.x",
+        "sp-i18n": "2.x",
+        "sp-ui-pagecontainer": "2.x",
 
 
         "koa": "^2.1.0",
