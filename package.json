@@ -30,7 +30,7 @@
         "sp-i18n": "^2.1.0",
         "sp-ui-pagecontainer": "^2.0.0",
         "sp-pwa": "^2.0.0",
-        "sp-isomorphic-utils": "^1.0.0",
+        "sp-isomorphic-utils": "^1.0.1",
 
 
         "koa": "^2.1.0",
