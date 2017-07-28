@@ -109,6 +109,8 @@ export default class ReactApp {
             /*store.dispatch(realtimeLocationUpdate(location))
             if (typeof options.browserHistoryOnUpdate === 'function') 
                 options.browserHistoryOnUpdate(location)*/
+            if (typeof options.browserHistoryOnUpdate === 'function') 
+                options.browserHistoryOnUpdate(location, store)
         })
 
         // 
