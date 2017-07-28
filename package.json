@@ -1,6 +1,6 @@
 {
     "name": "super-project",
-    "version": "1.2.6",
+    "version": "1.2.7",
     "description": "Base framework for Super Project.",
     "main": "",
     "scripts": {
@@ -29,7 +29,7 @@
         "sp-koa-views": "^1.0.1",
         "sp-i18n": "^2.1.0",
         "sp-ui-pagecontainer": "^2.0.0",
-        "sp-pwa": "^2.0.0",
+        "sp-pwa": "^2.0.1",
         "sp-isomorphic-utils": "^1.0.1",
 
 
