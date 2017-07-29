@@ -264,4 +264,4 @@ super-project已经应用到两个项目上了，点击下面链接，亲手体�
 
 欢迎感兴趣的前端朋友随时探讨。
 
-董文枭，微信（18611081011）,Email（dongwenxiao@cmcm.com）
+董文枭，微信（18611081011），Email（dongwenxiao@cmcm.com）
