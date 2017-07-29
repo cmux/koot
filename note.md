@@ -245,12 +245,12 @@ WEB前端技术早已今非昔比，可谓是`大前端`。从网页上的炫酷
 
 super-project已经应用到两个项目上了，点击下面链接，亲手体验一下“多页面”和“单页面”结合的feel~
 
-`PhotoGrid`
+`PhotoGrid Share H5`
 
 [例子 - 详情页面](http://photogrid.cmcm.com/posts/rnR8C9Xg78MNHDU5TrXOOQ%3D%3D?f=profile-GW3Y75kQ%2BkFshbCpnXV7WEj5b02%2BSC8n%2FgFxM6Sx72E%3D)
 [例子 - 列表页面](http://photogrid.cmcm.com/profile/OOUqewXJPwKn2qg%2BRFGgo1qoC2UfoTvLlifSZd6%2BOfM%3D)
 
-`NR`
+`News Republic Site`
 
 [例子 - 首页](https://news.cmcm.com/)
 [例子 - 详情页面](https://news.cmcm.com/detail/03EAFABEFA10100001_us)
@@ -263,3 +263,5 @@ super-project已经应用到两个项目上了，点击下面链接，亲手体�
 后续我和团队还好继续优化super-project框架，下一个解决的问题就是升级框架的成本变低，使用框架的成本变低，是针对业务开发者使用上的体验优化。
 
 欢迎感兴趣的前端朋友随时探讨。
+
+董文枭，微信（18611081011）,Email（dongwenxiao@cmcm.com）
