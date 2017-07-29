@@ -185,7 +185,9 @@ WEB前端技术早已今非昔比，可谓是`大前端`。从网页上的炫酷
 2.利用React+React-Router服务端渲染的能力（自研发Koa服务端渲染React功能中间件[super-project/ReactApp](https://github.com/websage-team/super-project/tree/master/src/ReactApp)），在服务端执行React代码，渲染出当URL请求对应的HTML片段。
         
 3.用样式收集器（自研发[sp-css-import](https://github.com/websage-team/sp-css-import)），收集到当前HTML片段里（React组件）需要的CSS。<br>
-样式收集器原理，利用组件化开发的方式，把每个组件对应的CSS独立出来，用于引用收集，利用React渲染机制，在用户访问页面时，把用到的组件的CSS注入到收集器中，收集器在分类、压缩CSS。在网页内运行期间，页面内部组件会根据用户的操作发生改变，组件使用次数会有全局的监听，根据页面内使用到的组件动态调整页内<Style>标签的内容，标签内容实时对应了当前组件的CSS需求。
+样式收集器原理，利用组件化开发的方式，把每个组件对应的CSS独立出来，用于引用收集，利用React渲染机制，在用户访问页面时，把用到的组件的CSS注入到收集器中，收集器在分类、压缩CSS。在网页内运行期间，页面内部组件会根据用户的操作发生改变，组件使用次数会有全局的监听，根据页面内使用到的组件动态调整页内<Style>标签的内容，标签内容实时对应了当前组件的CSS需求。参考下面图示：
+![](https://raw.githubusercontent.com/websage-team/super-project/master/css-counter-note.png)
+
         
 4.利用Webpack的打包（AMD、require.ensure）能力，把JS根据页面拆分，产出1个入口文件和N个页面相关的JS文件，这样入口文件会根据当前的URL判断加载哪些页面逻辑相关的JS文件。
         
