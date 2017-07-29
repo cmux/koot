@@ -2,15 +2,15 @@
 
 ## 引言
 
-WEB前端技术早已今非昔比，可谓是`大前端`。从网页上的炫酷效果，到页面的布局，再到服务端模板渲染和数据接口功能，WEB前端技术都可以轻松搞定。甚至利用JavaScript可以编写很多跨界的项目，如游戏开发（[Cocos2d](http://www.cocos.com/)\\[Unity3D](https://unity3d.com/cn/)）、机器学习（[ConvNetJS](http://cs.stanford.edu/people/karpathy/convnetjs/)）、跨平台应用（[ReactNative](https://facebook.github.io/react-native/)）等等。
+WEB前端技术早已今非昔比，可谓是`大前端`。从网页上的炫酷效果，到页面的布局，再到服务端模板渲染和数据接口功能，WEB前端技术都可以轻松搞定。甚至利用JavaScript可以编写很多跨界的项目，如游戏开发（[Cocos2d](http://www.cocos.com/)\\[Unity3D](https://unity3d.com/cn/)）、机器学习（[ConvNetJS](http://cs.stanford.edu/people/karpathy/convnetjs/)）、跨平台应用（[ReactNative](https://facebook.github.io/react-native/)）等等。
 
 如今[jQuery](http://jquery.com/)已成是一个优秀的古老的存在，前端技术日新月异，如果你是前端开发者，不知道：[React](https://facebook.github.io/react/)、[Vue](http://vuejs.org/)、[Angular](https://angularjs.org/)、[Webpack](https://webpack.js.org/)、[Gulp](https://gulpjs.com/)、[Sass](http://sass-lang.com/)、[LESS](http://lesscss.org/)、[PostCSS](http://postcss.org/)、[NodeJS](http://nodejs.cn/)、[Koa](http://koajs.com/)、[Express](http://expressjs.com/)、[Mocha](http://mochajs.org/)、[Yarn](https://yarnpkg.com/)、[Redux](http://redux.js.org/)、[Middleware]()、ES6/7、[TS](http://www.typescriptlang.org/)、[Coffee](http://coffee-script.org/)、[Babel](http://babeljs.cn/)等等这些词，那你真该好好学习一番了(说的不全，就这个意思吧)。
 
-就本文而言，单说说网站开发这块的事儿，看看2017年的WEB技术能做到什么程度。
+就本文而言，单说说网站开发这块的事儿，看看2017年的WEB技术能做到什么程度。
 
 ## 技术的初衷就是解决问题
 
-问题的存在与技术的存在不像“先有鸡还是先有蛋”的问题那么纠结，这里必然是先有问题，再有对应的技术解决此问题的。而问题的产生往往是因为我们追逐着完美，想要更优秀。在网站开发这个领域同样如此，网页是人机交互的入口，我们追求的正是响应的速度、展现的效果和使用的体验。
+问题的存在与技术的存在不像“先有鸡还是先有蛋”的问题那么纠结，这里必然是先有问题，再有对应的技术解决此问题的。而问题的产生往往是因为我们追逐着完美，想要更优秀。在网站开发这个领域同样如此，网页是人机交互的入口，我们追求的正是响应的速度、展现的效果和使用的体验。
 
 ## 那么问题就来了（只抛砖，具体实现在后面）
 
@@ -18,18 +18,18 @@ WEB前端技术早已今非昔比，可谓是`大前端`。从网页上的炫�
 
 `现有情况`
 
-    1.传统的多页面（服务端渲染HTML）方式
-    把公共部分的JS/CSS引用到页面里，首次加载会下载额外的资源文件。
-    切换页面重定向的时候，整体页面刷新，很多资源被2次下载，并且有一段时间页面空白。
+    1.传统的多页面（服务端渲染HTML）方式
+    把公共部分的JS/CSS引用到页面里，首次加载会下载额外的资源文件。
+    切换页面重定向的时候，整体页面刷新，很多资源被2次下载，并且有一段时间页面空白。
 
-    问题：下载了额外的资源文件，刷新页面有空白间断。
+    问题：下载了额外的资源文件，刷新页面有空白间断。
 <br>
 
     2.单页面WEB应用（SPA）方式
-    把页面的基础HTML壳子和页面所需要的JS/CSS是先下载到浏览器端，再进行HTML渲染，整个网页必须在引用的JS文件下载后，n 毫秒后显示。
-    （即使做了AMD方式的分包，可以优化节省时间，但无法解决根本的下载依赖问题）
+    把页面的基础HTML壳子和页面所需要的JS/CSS是先下载到浏览器端，再进行HTML渲染，整个网页必须在引用的JS文件下载后，n 毫秒后显示。
+    （即使做了AMD方式的分包，可以优化节省时间，但无法解决根本的下载依赖问题）
 
-    问题：网页的整体显示依赖于JS是文件下载时间。
+    问题：网页的整体显示依赖于JS是文件下载时间。
 <br>
 `理想情况`
 
@@ -45,7 +45,7 @@ WEB前端技术早已今非昔比，可谓是`大前端`。从网页上的炫�
 
 `现有情况`
 
-    1.传统的多页面（服务端渲染HTML）方式
+    1.传统的多页面（服务端渲染HTML）方式
     有较好的SEO能力，可以在HTML渲染时候指定多处SEO优化内容。
 <br>
 
@@ -138,8 +138,8 @@ WEB前端技术早已今非昔比，可谓是`大前端`。从网页上的炫�
 
 `团队开发有规范`
 
-    1.统一用ES、TS、Coffee等这些比较先进的语法
-    2.CSS使用LESS\Sass等
+    1.统一用ES、TS、Coffee等这些比较先进的语法
+    2.CSS使用LESS\Sass等
     3.统一编码风格，一个.eslintrc配置文件（ESLint）就可以搞定
     4.组件化开发：React\Vue\...
 
@@ -147,12 +147,12 @@ WEB前端技术早已今非昔比，可谓是`大前端`。从网页上的炫�
 
 `善用工具`
 
-    1.WEB前端的工具应该是最丰富的了，代码检查、合并、压缩、混淆、SourceMap、CSS优化、各种预处理：前天的Grunt\昨天的Gulp\今天的Webpack
-    2.开发的时候还有实时更新的工具，边写边更新页面：LiveReload、Webpack-hot
+    1.WEB前端的工具应该是最丰富的了，代码检查、合并、压缩、混淆、SourceMap、CSS优化、各种预处理：前天的Grunt\昨天的Gulp\今天的Webpack
+    2.开发的时候还有实时更新的工具，边写边更新页面：LiveReload、Webpack-hot
     3.图片资源的（视觉）无损压缩处理：Tinypng
-    4.各种测试工具：Mocha\Karma\Jasmine
+    4.各种测试工具：Mocha\Karma\Jasmine
     5.NodeJS进程管理工具：PM2
-    6.不得不提的包管理工具：NPM(CNPM)\Yarn
+    6.不得不提的包管理工具：NPM(CNPM)\Yarn
 
 
 > 总结：
@@ -201,7 +201,7 @@ WEB前端技术早已今非昔比，可谓是`大前端`。从网页上的炫�
         
 2.自定义的meta其实是与react逻辑脱离的，写前端业务的同学不容易接触到NodeJS相关代码。我的解决方案是在React组件上扩展了onServerRender的事件，当服务端运行React逻辑的时候，会自动检测该事件并执行，在onServerRender事件里暴露自定义meta的相关方法，从而为前端开发者开放了编写meta的能力。onServerRender事件里还暴露了一些自定义HTML的方法，以便扩展HTML内容。
 
-注：网上流行的说法是把 React Server Render 叫成“同构”，为了让大家更容易理解这种方式，我画了一个访问流程图示例：
+注：网上流行的说法是把 React Server Render 叫成“同构”，为了让大家更容易理解这种方式，我画了一个访问流程图示例：
 
 ![](https://raw.githubusercontent.com/websage-team/super-project/master/isomorphic-flow.png)
 
@@ -244,7 +244,7 @@ super-project已经应用到两个项目上了，点击下面链接，亲手体�
 [例子 - 详情页面](https://news.cmcm.com/detail/03EAFABEFA10100001_us)
 
 
-## 结语
+## 结语
 
 综上所述，是我个人经验的整理和融合，我认为现在的网站都应该这样去做，即有SPA的体验又不失SEO的能力。发掘所有能提高用户体验的方式，将优化进行到底。
 
