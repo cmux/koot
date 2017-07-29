@@ -167,13 +167,13 @@ WEB前端技术早已今非昔比，可谓是`大前端`。从网页上的炫酷
 
 > 总结：<br>
     1.减少沟通成本，其实大多程序猿的coding速度还很快的。<br>
-    2.规范和工具都是围绕着：“Don't repeat yourself!”这个思路来执行的。
+    2.规范和工具都是围绕着 “Don't repeat yourself!” 这个思路来执行的。
 
 
 ## 把理想变成现实
 
-实现并整理成框架“super-project”，模板项目：[sp-boilerplate](https://github.com/websage-team/sp-boilerplate)
-框架核心：[super-project](https://github.com/websage-team/super-project)
+实现并整理成框架“super-project”，模板项目：[sp-boilerplate](https://github.com/websage-team/sp-boilerplate)<br>
+框架核心：[super-project](https://github.com/websage-team/super-project)<br>
 引用技术：Koa+React+Redux+Webpack（可以使用类似的技术替换，如：Express+Vue+Vuex+Browserify）
     
 下面简要简介了一些技术点实现原理，想深入了解的同学请点击链接查看源码，一探究竟。
