@@ -35,7 +35,7 @@ export default class ReactIsomorphic {
 
         // html 只更新1次的部分
         let _inject = Object.assign({}, inject, {
-            js: inject.js ? inject.js.map((js) => `<script src="${js}"></script>`).join('') : [], // 引用js文件列表
+            js: inject.js ? inject.js.map((js) => `<script src="${js}" defer></script>`).join('') : [], // 引用js文件列表
             css: inject.css ? inject.css.map((css) => `<link rel="stylesheet" href="${css}">`).join('') : [] // 引用css文件列表
         })
 
