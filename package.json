@@ -1,6 +1,6 @@
 {
     "name": "super-project",
-    "version": "1.4.0",
+    "version": "1.4.1",
     "description": "Base framework for Super Project.",
     "main": "",
     "scripts": {
@@ -40,7 +40,7 @@
         "koa-html-minifier": "^1.0.1",
         "koa-json": "^1.1.1",
         "koa-log4": "^2.2.1",
-        "koa-multer": "^1.0.1",
+        "koa-multer": "^1.0.2",
         "koa-onerror": "^3.1.0",
         "koa-response-time": "^2.0.0",
         "koa-router": "^7.2.1",
@@ -87,12 +87,12 @@
         "babel-plugin-transform-class-properties": "^6.24.1",
 
 
-        "eslint": "^4.3.0",
+        "eslint": "^4.4.1",
         "eslint-plugin-react": "^7.1.0",
         "babel-eslint": "^7.2.3",
 
 
-        "webpack": "^3.4.1",
+        "webpack": "^3.5.0",
         "webpack-dev-server": "^2.6.1",
         "webpack-dashboard": "^0.4.0",
         "webpack-dev-middleware": "^1.12.0",
@@ -110,7 +110,7 @@
         "sass-loader": "^6.0.6",
         "style-loader": "^0.18.2",
         "markdown-loader": "^2.0.1",
-        "html-loader": "^0.5.0",
+        "html-loader": "^0.5.1",
         "raw-loader": "^0.5.1",
 
 
@@ -125,7 +125,7 @@
         "classlist-polyfill": "^1.2.0",
         "es5-shim": "^4.5.9",
         "fs-extra": "^4.0.1",
-        "cross-env": "^5.0.1"
+        "cross-env": "^5.0.4"
     },
     "peerDependencies": {
         "react": "15.x",
