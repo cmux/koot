@@ -66,7 +66,8 @@ export default class AppContainer {
             if (subApp) {
                 await compose(subApp.middleware)(ctx)
             } else {
-                ctx.redirect(`${ctx.protocol}://${defaultDomain}.${ctx.host}${ctx.path}${ctx.search}`)
+                // ctx.redirect(`${ctx.protocol}://${defaultDomain}.${ctx.host}${ctx.path}${ctx.search}`)
+                ctx.status = 404
             }
 
         })
