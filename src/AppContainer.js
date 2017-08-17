@@ -31,6 +31,8 @@ export default class AppContainer {
             console.warn(`This app domain is exist : ${domain} , it will be overwrite.`)
         }
 
+        console.info(`APP [${this.domain}] is mounted √`)
+
         this.subApps[domain] = app
     }
 
@@ -108,7 +110,7 @@ export default class AppContainer {
         }
 
         function onListening() {
-            console.info(`Listening on ${port} √ `)
+            console.info(`SYSTEM listening on ${port} √ `)
         }
 
         //
