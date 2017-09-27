@@ -1,5 +1,5 @@
 import React from 'react'
-import { render } from 'react-dom'
+import { hydrate } from 'react-dom'
 import { browserHistory, match, Router } from 'react-router'
 import { syncHistoryWithStore } from 'react-router-redux'
 import { Provider } from 'react-redux'
@@ -129,7 +129,7 @@ export default class ReactApp {
             if (err) {
                 console.log(err.stack)
             }
-            render(
+            hydrate(
                 <Provider store={store} >
                     <Router history={history} {...ext } >
                         {routes}
