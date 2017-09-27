@@ -1,6 +1,6 @@
 {
     "name": "super-project",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "description": "Base framework for Super Project.",
     "main": "",
     "scripts": {
@@ -78,7 +78,6 @@
         "babel-preset-env": "1.6.0",
         "babel-preset-react": "^6.24.1",
         "babel-preset-stage-0": "^6.24.1",
-        "babel-preset-es2015": "^6.24.1",
         "babel-preset-es2015-loose": "^8.0.0",
         "babel-plugin-add-module-exports": "^0.2.1",
         "babel-plugin-transform-decorators-legacy": "^1.3.4",
