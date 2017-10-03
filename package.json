@@ -1,6 +1,6 @@
 {
     "name": "super-project",
-    "version": "2.0.4",
+    "version": "2.0.5",
     "description": "Base framework for Super Project.",
     "main": "",
     "scripts": {
@@ -49,15 +49,15 @@
         "koa-helmet": "^3.2.0",
 
 
-        "react": ">=16",
-        "react-dom": ">=16",
-        "react-router": ">=3 <4",
+        "react": "^16.0.0",
+        "react-dom": "^16.0.0",
+        "react-router": "^3.2.0",
 
 
-        "redux": ">=3",
-        "redux-thunk": ">=2",
-        "react-redux": ">=5",
-        "react-router-redux": ">=4",
+        "redux": "^3.7.2",
+        "redux-thunk": "^2.2.0",
+        "react-redux": "^5.0.6",
+        "react-router-redux": "^4.0.8",
 
 
         "isomorphic-fetch": "^2.2.1",
@@ -96,7 +96,7 @@
         "webpack-hot-middleware": "^2.19.1",
 
 
-        "babel-loader": ">=7",
+        "babel-loader": "^7.1.2",
         "json-loader": "^0.5.7",
         "file-loader": "^1.1.4",
         "url-loader": "^0.5.9",
