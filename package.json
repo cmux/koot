@@ -1,6 +1,6 @@
 {
     "name": "super-project",
-    "version": "2.0.1",
+    "version": "2.0.2",
     "description": "Base framework for Super Project.",
     "main": "",
     "scripts": {
@@ -34,7 +34,7 @@
 
 
         "koa": "^2.3.0",
-        "koa-body": "^2.4.0",
+        "koa-body": "^2.5.0",
         "koa-compress": "^2.0.0",
         "koa-convert": "^1.2.0",
         "koa-html-minifier": "^1.0.1",
@@ -86,20 +86,20 @@
         "babel-plugin-transform-class-properties": "^6.24.1",
 
 
-        "eslint": "^4.7.2",
+        "eslint": "^4.8.0",
         "eslint-plugin-react": "^7.4.0",
-        "babel-eslint": "^8.0.0",
+        "babel-eslint": "^8.0.1",
 
 
         "webpack": "^3.6.0",
-        "webpack-dev-server": "^2.8.2",
+        "webpack-dev-server": "^2.9.1",
         "webpack-dev-middleware": "^1.12.0",
         "webpack-hot-middleware": "^2.19.1",
 
 
         "babel-loader": "^7.1.2",
         "json-loader": "^0.5.7",
-        "file-loader": "^0.11.2",
+        "file-loader": "^1.1.4",
         "url-loader": "^0.5.9",
         "react-hot-loader": "^3.0.0-beta.6",
         "postcss-loader": "^2.0.6",
