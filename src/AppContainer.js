@@ -1,5 +1,5 @@
 const DEFAULT_PORT = 3000
-const DEFAULT_DOMAIN = 'www.abc.com'
+const DEFAULT_DOMAIN = 'localhost'
 
 export default class AppContainer {
 
