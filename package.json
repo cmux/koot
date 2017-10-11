@@ -1,6 +1,6 @@
 {
     "name": "super-project",
-    "version": "2.0.5",
+    "version": "2.0.6",
     "description": "Base framework for Super Project.",
     "main": "",
     "scripts": {
@@ -98,10 +98,10 @@
 
         "babel-loader": "^7.1.2",
         "json-loader": "^0.5.7",
-        "file-loader": "^1.1.4",
+        "file-loader": "^1.1.5",
         "url-loader": "^0.5.9",
-        "react-hot-loader": "^3.0.0-beta.6",
-        "postcss-loader": "^2.0.6",
+        "react-hot-loader": "^3.0.0",
+        "postcss-loader": "^2.0.7",
         "css-loader": "^0.28.7",
         "less-loader": "^4.0.5",
         "node-sass": "^4.5.3",
@@ -116,7 +116,7 @@
         "copyfiles": "^1.2.0",
 
 
-        "autoprefixer": "^7.1.4",
+        "autoprefixer": "^7.1.5",
         "less": "^2.7.2",
 
 
