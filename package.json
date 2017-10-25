@@ -1,6 +1,6 @@
 {
     "name": "super-project",
-    "version": "2.1.0",
+    "version": "2.1.1",
     "description": "Base framework for Super Project.",
     "main": "",
     "scripts": {
@@ -64,7 +64,7 @@
         "isomorphic-fetch": "^2.2.1",
         "ejs": "^2.5.7",
         "xmlify": "^1.1.0",
-        "yargs": "^9.0.1",
+        "yargs": "^10.0.3",
 
 
         "md5": "^2.2.1",
@@ -76,7 +76,7 @@
 
         "babel-core": "^6.26.0",
         "babel-polyfill": "^6.26.0",
-        "babel-preset-env": "1.6.0",
+        "babel-preset-env": "^1.6.1",
         "babel-preset-react": "^6.24.1",
         "babel-preset-stage-0": "^6.24.1",
         "babel-plugin-add-module-exports": "^0.2.1",
@@ -91,17 +91,17 @@
         "babel-eslint": "^8.0.1",
 
 
-        "webpack": "^3.7.1",
-        "webpack-dev-server": "^2.9.1",
+        "webpack": "^3.8.1",
+        "webpack-dev-server": "^2.9.3",
         "webpack-dev-middleware": "^1.12.0",
-        "webpack-hot-middleware": "^2.19.1",
+        "webpack-hot-middleware": "^2.20.0",
 
 
         "babel-loader": "^7.1.2",
         "json-loader": "^0.5.7",
         "file-loader": "^1.1.5",
         "url-loader": "^0.6.2",
-        "react-hot-loader": "^3.0.0",
+        "react-hot-loader": "^3.1.1",
         "postcss-loader": "^2.0.8",
         "css-loader": "^0.28.7",
         "less-loader": "^4.0.5",
@@ -117,14 +117,14 @@
         "copyfiles": "^1.2.0",
 
 
-        "autoprefixer": "^7.1.5",
-        "less": "^2.7.2",
+        "autoprefixer": "^7.1.6",
+        "less": "^2.7.3",
 
 
         "classlist-polyfill": "^1.2.0",
         "es5-shim": "^4.5.9",
         "fs-extra": "^4.0.2",
-        "cross-env": "^5.0.5",
+        "cross-env": "^5.1.0",
 
 
         "html-webpack-plugin": "^2.30.1"
