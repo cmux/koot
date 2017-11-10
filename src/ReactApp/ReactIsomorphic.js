@@ -5,6 +5,7 @@ import { createMemoryHistory, RouterContext, match } from 'react-router'
 import { Provider } from 'react-redux'
 import { syncHistoryWithStore } from 'react-router-redux'
 
+const error = require('debug')('SYSTEM:isomorphic:error')
 
 export default class ReactIsomorphic {
 
@@ -103,7 +104,8 @@ export default class ReactIsomorphic {
 
 
             } catch (e) {
-                console.error('Server-Render Error Occures: %s', e.stack)
+                // console.error('Server-Render Error Occures: %s', e.stack)
+                error('Server-Render Error Occures: %O', e.stack)
                 ctx.status = 500
                 ctx.body = e.message
             }

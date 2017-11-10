@@ -1,20 +1,21 @@
 const DEFAULT_PORT = 3000
 const DEFAULT_DOMAIN = 'localhost'
 
+const debug = require('debug')
+const warn = debug('SYSTEM:warn')
+const info = debug('SYSTEM:info')
+const error = debug('SYSTEM:error')
+
 export default class AppContainer {
 
     constructor() {
 
         // 存放子应用的键值对
-
         this.subApps = {}
 
         // 实例化1个 Koa 对象
-
         this.app = ((Koa) => new Koa())(require('koa'))
-
         // this.mountSwitchSubAppMiddleware()
-
     }
 
     /**
@@ -28,10 +29,10 @@ export default class AppContainer {
     addSubApp(domain, app) {
 
         if (this.subApps[domain]) {
-            console.warn(`This app domain is exist : ${domain} , it will be overwrite.`)
+            warn(`This app domain is exist : %o , it will be overwrite.`, domain)
         }
 
-        console.info(`APP [${domain}] is mounted √`)
+        info(`APP [%o] is mounted √`, domain)
 
         this.subApps[domain] = app
     }
@@ -77,6 +78,7 @@ export default class AppContainer {
 
 
     run(port = DEFAULT_PORT) {
+        
         const http = require('http')
 
         // 
@@ -88,29 +90,29 @@ export default class AppContainer {
         server.on('error', onError)
         server.on('listening', onListening)
 
-        function onError(error) {
+        function onError(err) {
 
-            if (error.syscall !== 'listen') {
-                throw error
+            if (err.syscall !== 'listen') {
+                throw err
             }
 
             // handle specific listen errors with friendly messages
-            switch (error.code) {
+            switch (err.code) {
                 case 'EACCES':
-                    console.error(port + ' requires elevated privileges !!!')
+                    error(port + ' requires elevated privileges !!!')
                     process.exit(1)
                     break
                 case 'EADDRINUSE':
-                    console.error(port + ' is already in use !!!')
+                    error(port + ' is already in use !!!')
                     process.exit(1)
                     break
                 default:
-                    throw error
+                    throw err
             }
         }
 
         function onListening() {
-            console.info(`SYSTEM listening on ${port} √ `)
+            info(`SYSTEM listening on ${port} √ `)
         }
 
         //

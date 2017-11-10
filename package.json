@@ -1,6 +1,6 @@
 {
     "name": "super-project",
-    "version": "2.1.4",
+    "version": "2.2.0",
     "description": "Base framework for Super Project.",
     "main": "",
     "scripts": {
@@ -31,7 +31,6 @@
         "sp-ui-pagecontainer": "^2.0.1",
         "sp-pwa": "^2.1.1",
         "sp-isomorphic-utils": "^1.2.3",
-        "sp-functions": "^1.1.2",
 
 
         "koa": "^2.3.0",
@@ -67,13 +66,6 @@
         "yargs": "^10.0.3",
 
 
-        "md5": "^2.2.1",
-        "sha1": "^1.1.1",
-        "underscore": "1.8.3",
-        "is_js": "^0.9.0",
-
-
-
         "babel-core": "^6.26.0",
         "babel-polyfill": "^6.26.0",
         "babel-preset-env": "^1.6.1",
@@ -95,6 +87,7 @@
         "webpack-dev-server": "^2.9.3",
         "webpack-dev-middleware": "^1.12.0",
         "webpack-hot-middleware": "^2.20.0",
+        "html-webpack-plugin": "^2.30.1",
 
 
         "babel-loader": "^7.1.2",
@@ -113,21 +106,18 @@
         "raw-loader": "^0.5.1",
 
 
-        "rimraf": "^2.6.2",
-        "copyfiles": "^1.2.0",
-
-
         "autoprefixer": "^7.1.6",
         "less": "^2.7.3",
 
 
+        "rimraf": "^2.6.2",
+        "copyfiles": "^1.2.0",
         "classlist-polyfill": "^1.2.0",
         "es5-shim": "^4.5.9",
         "fs-extra": "^4.0.2",
         "cross-env": "^5.1.1",
-
-
-        "html-webpack-plugin": "^2.30.1"
+        "debug": "^3.1.0"
+        
     },
     "peerDependencies": {
         "react": ">=16",
