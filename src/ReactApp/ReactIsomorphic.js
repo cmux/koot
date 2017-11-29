@@ -43,15 +43,16 @@ export default class ReactIsomorphic {
         // koa 中间件结构
         return async (ctx, next) => {
 
+            const url = ctx.path + ctx.search
             try {
 
-                const memoryHistory = createMemoryHistory(ctx.url)
+                const memoryHistory = createMemoryHistory(url)
                 const store = configStore()
                 const history = syncHistoryWithStore(memoryHistory, store)
 
                 // 根据router计算出渲染页面需要的数据，并把渲染需要的数据补充到store中
 
-                const { redirectLocation, renderProps } = await asyncReactRouterMatch({ history, routes, location: ctx.url })
+                const { redirectLocation, renderProps } = await asyncReactRouterMatch({ history, routes, location: url })
 
                 // 判断是否重定向页面
 

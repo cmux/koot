@@ -1,6 +1,6 @@
 {
     "name": "super-project",
-    "version": "2.2.0",
+    "version": "2.2.1",
     "description": "Base framework for Super Project.",
     "main": "",
     "scripts": {
@@ -39,7 +39,6 @@
         "koa-convert": "^1.2.0",
         "koa-html-minifier": "^1.0.1",
         "koa-json": "^1.1.1",
-        "koa-log4": "^2.2.1",
         "koa-multer": "^1.0.2",
         "koa-onerror": "^3.1.0",
         "koa-response-time": "^2.0.0",
