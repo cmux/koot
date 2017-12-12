@@ -1,6 +1,6 @@
 {
     "name": "super-project",
-    "version": "2.2.6-beta",
+    "version": "2.2.6",
     "description": "Base framework for Super Project.",
     "main": "",
     "scripts": {
