@@ -1,6 +1,6 @@
 {
     "name": "super-project",
-    "version": "2.2.5",
+    "version": "2.2.6-beta",
     "description": "Base framework for Super Project.",
     "main": "",
     "scripts": {
@@ -97,7 +97,6 @@
         "postcss-loader": "^2.0.9",
         "css-loader": "^0.28.7",
         "less-loader": "^4.0.5",
-        "node-sass": "^4.7.2",
         "sass-loader": "^6.0.6",
         "style-loader": "^0.19.0",
         "markdown-loader": "^2.0.1",
