@@ -138,6 +138,8 @@ export default class ReactApp {
                 document.getElementById(root)
             )
         })
+
+        return store
     }
 
 }
