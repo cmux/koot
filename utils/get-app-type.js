@@ -3,7 +3,7 @@ const path = require('path')
 
 const pathname = path.resolve(__dirname, '../../../super.js')
 
-module.exports = () => {
+const extractType = () => {
     try {
         const { type } = require(pathname)
         return type
@@ -15,4 +15,14 @@ module.exports = () => {
         return matches[1]
 
     return undefined
+}
+
+module.exports = () => {
+    const type = extractType() || ''
+    switch (type.toLowerCase()) {
+        case 'react':
+            return 'ReactApp'
+        default:
+            return type
+    }
 }
