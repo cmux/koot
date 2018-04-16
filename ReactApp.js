@@ -1,1 +1,0 @@
-export ReactApp from './src/ReactApp/ReactApp'
