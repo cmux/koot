@@ -9,7 +9,7 @@ const webpack = require('webpack')
 const WebpackDevServer = require('webpack-dev-server')
 const WebpackConfig = require('webpack-config').default
 const common = require('./common')
-const getAppType = require('../../get-app-type')
+const getAppType = require('../../utils/get-app-type')
 
 // 调试webpack模式
 const DEBUG = 1

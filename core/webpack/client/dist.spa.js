@@ -29,6 +29,9 @@ const factoryConfig = async (opt) => {
         //     path: outputPath,
         //     publicPath: publicPath
         // },
+        optimization: {
+            minimize: true,
+        },
         plugins: [
             // 在node执行环境中设置，不起作用，此处不能省略
             new webpack.DefinePlugin({
@@ -37,14 +40,14 @@ const factoryConfig = async (opt) => {
                 }
             }),
             new webpack.NoEmitOnErrorsPlugin(),
-            new webpack.optimize.UglifyJsPlugin({
-                compress: {
-                    warnings: false
-                },
-                beautify: false,
-                comments: false,
-                sourceMap: false
-            }),
+            // new webpack.optimize.UglifyJsPlugin({
+            //     compress: {
+            //         warnings: false
+            //     },
+            //     beautify: false,
+            //     comments: false,
+            //     sourceMap: false
+            // }),
             new HtmlWebpackPlugin({
                 filename: '../index.html',
                 template: path.resolve(RUN_PATH, `./apps/${APP_KEY}/html.ejs`),

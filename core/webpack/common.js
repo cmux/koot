@@ -4,7 +4,7 @@ const webpack = require('webpack')
 const ExtractTextPlugin = require("extract-text-webpack-plugin")
 
 const pwaCreatePlugin = require('sp-pwa')
-const getAppType = require('../../get-app-type')
+const getAppType = require('../../utils/get-app-type')
 
 // 描述环境
 // dev 开发 | dist 部署
