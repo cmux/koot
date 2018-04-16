@@ -1,6 +1,6 @@
 {
     "name": "super-project",
-    "version": "3.0.1-alpha.1",
+    "version": "3.0.2-alpha.1",
     "description": "Base framework for Super Project.",
     "main": "",
     "scripts": {
@@ -88,6 +88,7 @@
         "webpack-dev-middleware": "^3.1.2",
         "webpack-hot-middleware": "^2.21.2",
         "html-webpack-plugin": "^3.2.0",
+        "mini-css-extract-plugin": "^0.4.0",
 
 
         "babel-loader": "^7.1.4",

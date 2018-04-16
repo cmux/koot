@@ -3,7 +3,8 @@ const path = require('path')
 const webpack = require('webpack')
 const common = require('../common')
 
-const ExtractTextPlugin = require("extract-text-webpack-plugin")
+// const ExtractTextPlugin = require("extract-text-webpack-plugin")
+const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 const WebpackOnBuildPlugin = require('on-build-webpack')
 
 const dist = global.__SUPER_DIST__
@@ -37,7 +38,13 @@ const factoryConfig = async ({
             //     comments: false,
             //     sourceMap: false
             // }),
-            new ExtractTextPlugin('[name].[chunkhash].css'),
+            // new ExtractTextPlugin('[name].[chunkhash].css'),
+            new MiniCssExtractPlugin({
+                // Options similar to the same options in webpackOptions.output
+                // both options are optional
+                filename: "[name].[chunkhash].css",
+                // chunkFilename: "[id].css"
+            }),
             await new WebpackOnBuildPlugin(async function (stats) {
                 // After webpack build...
                 // create(parseOptions(...args))

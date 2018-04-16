@@ -1,7 +1,8 @@
 const fs = require('fs')
 const path = require('path')
 const webpack = require('webpack')
-const ExtractTextPlugin = require("extract-text-webpack-plugin")
+// const ExtractTextPlugin = require("extract-text-webpack-plugin")
+const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 
 const pwaCreatePlugin = require('sp-pwa')
 const getAppType = require('../../utils/get-app-type')
@@ -43,7 +44,7 @@ const factory = async ({
         }
     }
 
-    const isExtractTextPlugin = ENV === 'dist' ? true : false
+    const extractCSS = ENV === 'dist' ? true : false
 
     return {
         module: {
@@ -110,37 +111,54 @@ const factory = async ({
 
                 // CSS - critical
                 {
-                    test: isExtractTextPlugin ? /critical\.g\.css$/ : /^IMPOSSIBLE$/,
-                    use: ExtractTextPlugin.extract({
-                        fallback: "style-loader",
-                        use: ["css-loader", "postcss-loader"]
-                    })
+                    test: extractCSS ? /critical\.g\.css$/ : /^IMPOSSIBLE$/,
+                    use: [
+                        MiniCssExtractPlugin.loader,
+                        "css-loader",
+                        "postcss-loader"
+                    ]
+                    // use: ExtractTextPlugin.extract({
+                    //     fallback: "style-loader",
+                    //     use: ["css-loader", "postcss-loader"]
+                    // })
                 }, {
-                    test: isExtractTextPlugin ? /critical\.g\.less$/ : /^IMPOSSIBLE$/,
-                    use: ExtractTextPlugin.extract({
-                        fallback: "style-loader",
-                        use: ["css-loader", "postcss-loader", "less-loader"]
-                    })
+                    test: extractCSS ? /critical\.g\.less$/ : /^IMPOSSIBLE$/,
+                    use: [
+                        MiniCssExtractPlugin.loader,
+                        "css-loader",
+                        "postcss-loader",
+                        "less-loader"
+                    ]
+                    // use: ExtractTextPlugin.extract({
+                    //     fallback: "style-loader",
+                    //     use: ["css-loader", "postcss-loader", "less-loader"]
+                    // })
                 }, {
-                    test: isExtractTextPlugin ? /critical\.g\.scss$/ : /^IMPOSSIBLE$/,
-                    use: ExtractTextPlugin.extract({
-                        fallback: "style-loader",
-                        use: ["css-loader", "postcss-loader", "sass-loader"]
-                    })
+                    test: extractCSS ? /critical\.g\.scss$/ : /^IMPOSSIBLE$/,
+                    use: [
+                        MiniCssExtractPlugin.loader,
+                        "css-loader",
+                        "postcss-loader",
+                        "sass-loader"
+                    ]
+                    // use: ExtractTextPlugin.extract({
+                    //     fallback: "style-loader",
+                    //     use: ["css-loader", "postcss-loader", "sass-loader"]
+                    // })
                 },
 
                 // CSS - other global
                 {
                     test: /\.g\.css$/,
-                    exclude: isExtractTextPlugin ? /critical\.g\.css$/ : undefined,
+                    exclude: extractCSS ? /critical\.g\.css$/ : undefined,
                     loader: 'style-loader!postcss-loader'
                 }, {
                     test: /\.g\.less$/,
-                    exclude: isExtractTextPlugin ? /critical\.g\.less$/ : undefined,
+                    exclude: extractCSS ? /critical\.g\.less$/ : undefined,
                     loader: 'style-loader!postcss-loader!less-loader'
                 }, {
                     test: /\.g\.scss$/,
-                    exclude: isExtractTextPlugin ? /critical\.g\.scss$/ : undefined,
+                    exclude: extractCSS ? /critical\.g\.scss$/ : undefined,
                     loader: 'style-loader!postcss-loader!sass-loader'
                 },
 
