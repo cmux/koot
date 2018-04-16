@@ -30,6 +30,7 @@ const factoryConfig = async(opt) => {
     console.log(opt)
 
     let config = {
+        mode: "development",
         target: 'web',
         devtool: 'source-map',
         // entry: entries,

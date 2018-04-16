@@ -20,6 +20,7 @@ const factoryConfig = async (opt) => {
     let { RUN_PATH, CLIENT_DEV_PORT, APP_KEY } = opt
 
     let config = {
+        mode: "production",
         target: 'web',
         // devtool: 'source-map',
         // entry: entries,

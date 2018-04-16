@@ -49,10 +49,10 @@ const factory = async ({
     return {
         module: {
             rules: [
-                {
-                    test: /\.json$/,
-                    loader: 'json-loader'
-                },
+                // {
+                //     test: /\.json$/,
+                //     loader: 'json-loader'
+                // },
 
                 // CSS - general
                 {

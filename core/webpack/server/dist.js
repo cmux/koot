@@ -8,6 +8,7 @@ const factoryConfig = async ({
     // let { RUN_PATH, CLIENT_DEV_PORT, APP_KEY } = opt
 
     return {
+        mode: "production",
         target: 'async-node',
         node: {
             __dirname: true

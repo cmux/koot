@@ -12,6 +12,7 @@ const factoryConfig = async ({
     const publicPath = `http://localhost:${CLIENT_DEV_PORT}/dist`
 
     return {
+        mode: "development",
         target: 'async-node',
         node: {
             __dirname: true
