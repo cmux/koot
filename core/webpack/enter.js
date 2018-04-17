@@ -166,7 +166,7 @@ const _beforeBuild = async () => {
 }
 const _afterBuild = async () => {
     // console.log(app)
-    console.log('AFTER')
+    // console.log('AFTER')
 }
 
 /**
@@ -420,8 +420,6 @@ module.exports = async (args = {}) => {
 
         const compiler = webpack(makeItButter(webpackConfigs))
 
-        // await after()
-
         // more config
         // http://webpack.github.io/docs/webpack-dev-server.html
         const server = new WebpackDevServer(compiler, {
@@ -434,9 +432,8 @@ module.exports = async (args = {}) => {
             headers: {
                 'Access-Control-Allow-Origin': '*'
             },
+            after,
         })
-
-        await after(server)
         server.listen(CLIENT_DEV_PORT)
     }
 
