@@ -76,3 +76,9 @@ app.mountSwitchSubAppMiddleware()
 /* 系统运行 */
 
 app.run(port)
+
+const opn = require('opn')
+if (!global.__SUPER_DEV_SERVER_OPN__) {
+    opn(`http://${domain}:${port}/`)
+    global.__SUPER_DEV_SERVER_OPN__ = true
+}

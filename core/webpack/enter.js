@@ -164,8 +164,8 @@ const _beforeBuild = async () => {
             `./server/index.js`
         ))
 }
-const _afterBuild = async ({ app }) => {
-    console.log(app)
+const _afterBuild = async () => {
+    // console.log(app)
     console.log('AFTER')
 }
 
@@ -436,7 +436,7 @@ module.exports = async (args = {}) => {
             },
 
             after,
-            open: true,
+            // open: true,
         })
 
         server.listen(CLIENT_DEV_PORT)
@@ -470,16 +470,19 @@ module.exports = async (args = {}) => {
 
         await handlerServerConfig()
 
-        await after()
+        await webpack(
+            makeItButter(webpackConfigs),
+            async (err, stats) => {
+                if (err) console.log(`webpack dev error: ${err}`)
 
-        await webpack(makeItButter(webpackConfigs), (err, stats) => {
-            if (err) console.log(`webpack dev error: ${err}`)
+                console.log(stats.toString({
+                    chunks: false,
+                    colors: true
+                }))
 
-            console.log(stats.toString({
-                chunks: false,
-                colors: true
-            }))
-        })
+                await after()
+            }
+        )
     }
 
     // 服务端打包
