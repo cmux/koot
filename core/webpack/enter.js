@@ -19,7 +19,7 @@ const DEBUG = 1
 const RUN_PATH = process.cwd();
 
 // 初始化环境变量
-(() => {
+{
     const defaults = {
         // 描述环境
         // dev 开发 | dist 部署
@@ -44,7 +44,7 @@ const RUN_PATH = process.cwd();
             process.env[key] = defaults[key]
         }
     }
-})()
+}
 
 const {
     WEBPACK_DEV_SERVER_PORT: CLIENT_DEV_PORT,
@@ -120,7 +120,8 @@ function makeItButter(config) {
     }
 
     // analyze
-    if (WEBPACK_ANALYZE || config.analyzer)
+    const isAnalyze = (WEBPACK_ANALYZE == 'true' || config.analyze) ? true : false
+    if (isAnalyze)
         config.plugins.push(
             new (require('webpack-bundle-analyzer').BundleAnalyzerPlugin)()
         )
