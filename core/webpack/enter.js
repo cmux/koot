@@ -424,7 +424,7 @@ module.exports = async (args = {}) => {
 
         // more config
         // http://webpack.github.io/docs/webpack-dev-server.html
-        const server = new WebpackDevServer(compiler, {
+        const server = await new WebpackDevServer(compiler, {
             quiet: false,
             stats: { colors: true },
             hot: true,
@@ -435,7 +435,9 @@ module.exports = async (args = {}) => {
                 'Access-Control-Allow-Origin': '*'
             },
 
-            after,
+            after: async (app) => {
+                await after(app)
+            },
             // open: true,
         })
 
