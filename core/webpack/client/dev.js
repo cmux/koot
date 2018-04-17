@@ -1,7 +1,8 @@
 const webpack = require('webpack')
 const common = require('../common')
 
-const ExtractTextPlugin = require("extract-text-webpack-plugin")
+// const ExtractTextPlugin = require("extract-text-webpack-plugin")
+const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 
 const factoryConfig = async ({
     // RUN_PATH,
@@ -33,7 +34,13 @@ const factoryConfig = async ({
                 }
             }),
             new webpack.NoEmitOnErrorsPlugin(),
-            new ExtractTextPlugin('[name].[chunkhash].css'),
+            // new ExtractTextPlugin('[name].[chunkhash].css'),
+            new MiniCssExtractPlugin({
+                // Options similar to the same options in webpackOptions.output
+                // both options are optional
+                filename: "[name].[chunkhash].css",
+                // chunkFilename: "[id].css"
+            }),
         ],
     }
 }
