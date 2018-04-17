@@ -164,20 +164,22 @@ const _beforeBuild = async () => {
             `./server/index.js`
         ))
 }
-const _afterBuild = async () => {
-
+const _afterBuild = async ({ app }) => {
+    console.log(app)
+    console.log('AFTER')
 }
 
 /**
  * Webpack 运行入口方法
  */
-module.exports = async ({
-    config,
-    dist,
-    aliases,
-    beforeBuild,
-    afterBuild,
-}) => {
+module.exports = async (args = {}) => {
+    let {
+        config,
+        dist,
+        aliases,
+        beforeBuild,
+        afterBuild,
+    } = args
     DEBUG && console.log('============== Webpack Debug =============')
     DEBUG && console.log('Webpack 打包环境：', STAGE, ENV)
 
@@ -185,9 +187,9 @@ module.exports = async ({
     // 在打包时，会使用 DefinePlugin 插件将该值赋值到 __DIST__ 全部变量中，以供项目内代码使用
     global.__SUPER_DIST__ = dist
 
-    await _beforeBuild()
+    await _beforeBuild(args)
     if (typeof beforeBuild === 'function') {
-        await beforeBuild()
+        await beforeBuild(args)
     }
 
     if (typeof config === 'function') config = await config()
@@ -401,9 +403,14 @@ module.exports = async ({
         webpackConfigs.push(thisConfig)
     }
 
-    const after = async () => {
-        await _afterBuild()
-        if (typeof afterBuild === 'function') await afterBuild()
+    const after = async (app) => {
+        const theArgs = {
+            app,
+            ...args
+        }
+        await _afterBuild(theArgs)
+        if (typeof afterBuild === 'function')
+            await afterBuild(theArgs)
     }
 
     // 客户端开发模式
@@ -413,7 +420,7 @@ module.exports = async ({
 
         const compiler = webpack(makeItButter(webpackConfigs))
 
-        await after()
+        // await after()
 
         // more config
         // http://webpack.github.io/docs/webpack-dev-server.html
@@ -426,7 +433,10 @@ module.exports = async ({
             publicPath: '/dist/',
             headers: {
                 'Access-Control-Allow-Origin': '*'
-            }
+            },
+
+            after,
+            open: true,
         })
 
         server.listen(CLIENT_DEV_PORT)

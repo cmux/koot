@@ -9,8 +9,8 @@ const fs = require('fs-extra')
 const webpack = require('webpack')
 const common = require('../common')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const WebpackOnBuildPlugin = require('on-build-webpack')
-const opn = require('opn')
+// const WebpackOnBuildPlugin = require('on-build-webpack')
+// const opn = require('opn')
 
 const times = n => f => {
     let iter = i => {
@@ -75,12 +75,12 @@ const factoryConfig = async(opt) => {
                 ],
                 __DEV__: true
             }),
-            new WebpackOnBuildPlugin(function () {
-                if (!isOpened) {
-                    opn(`http://localhost:${CLIENT_DEV_PORT}/${APP_KEY}/index.html`)
-                    isOpened = true
-                }
-            })
+            // new WebpackOnBuildPlugin(function () {
+            //     if (!isOpened) {
+            //         opn(`http://localhost:${CLIENT_DEV_PORT}/${APP_KEY}/index.html`)
+            //         isOpened = true
+            //     }
+            // })
         ],
     }
 
