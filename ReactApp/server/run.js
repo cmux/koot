@@ -23,7 +23,6 @@ import superClient from '../client/run'
 
 export default async ({
     name,
-    // dir,
     template,
     i18n,
     locales,
@@ -105,10 +104,6 @@ export default async ({
     // 创建KOA实例
     // ============================================================================
     const app = new Koa()
-
-    /* 扩展服务端特色处理的redux */
-    // console.log(reactApp.redux.reducer)
-    // reactApp.redux.reducer.use(SERVER_REDUCER_NAME, serverReducer)
 
     /* 静态目录,用于外界访问打包好的静态文件js、css等 */
     app.use(convert(koaStatic(

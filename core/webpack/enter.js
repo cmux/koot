@@ -3,6 +3,7 @@ process.env.DO_WEBPACK = true
 //
 const fs = require('fs-extra')
 const path = require('path')
+const opn = require('opn')
 
 //
 const webpack = require('webpack')
@@ -15,18 +16,44 @@ const getAppType = require('../../utils/get-app-type')
 const DEBUG = 1
 
 // 程序启动路径，作为查找文件的基础
-const RUN_PATH = process.cwd()
+const RUN_PATH = process.cwd();
 
-// 客户端开发环境webpack-dev-server端口号
-const CLIENT_DEV_PORT = process.env.WEBPACK_DEV_SERVER_PORT || 3001
+// 初始化环境变量
+(() => {
+    const defaults = {
+        // 描述环境
+        // dev 开发 | dist 部署
+        WEBPACK_BUILD_ENV: 'dev',
 
-// 描述环境
-// dev 开发 | dist 部署
-const ENV = process.env.WEBPACK_BUILD_ENV || 'dev'
+        // 描述场景
+        // client 客户端 | server 服务端
+        WEBPACK_STAGE_MODE: 'client',
 
-// 描述场景
-// client 客户端 | server 服务端
-const STAGE = process.env.WEBPACK_STAGE_MODE || 'client'
+        // 客户端开发环境webpack-dev-server端口号
+        WEBPACK_DEV_SERVER_PORT: 3001,
+
+        // Webpack 打包结果分析
+        WEBPACK_ANALYZE: false,
+
+        // 运行服务器
+        SERVER_DOMAIN: 'localhost',
+        SERVER_PORT: (() => process.env.WEBPACK_BUILD_ENV === 'dev' ? '3000' : '8080')()
+    }
+    for (let key in defaults) {
+        if (typeof process.env[key] === 'undefined') {
+            process.env[key] = defaults[key]
+        }
+    }
+})()
+
+const {
+    WEBPACK_DEV_SERVER_PORT: CLIENT_DEV_PORT,
+    WEBPACK_BUILD_ENV: ENV,
+    WEBPACK_STAGE_MODE: STAGE,
+    WEBPACK_ANALYZE,
+    SERVER_DOMAIN,
+    SERVER_PORT,
+} = process.env
 
 // 用户自定义系统配置
 // const SYSTEM_CONFIG = require('../../config/system')
@@ -93,7 +120,7 @@ function makeItButter(config) {
     }
 
     // analyze
-    if (process.env.WEBPACK_ANALYZE || config.analyzer)
+    if (WEBPACK_ANALYZE || config.analyzer)
         config.plugins.push(
             new (require('webpack-bundle-analyzer').BundleAnalyzerPlugin)()
         )
@@ -408,6 +435,14 @@ module.exports = async (args = {}) => {
             app,
             ...args
         }
+
+        if (STAGE === 'server' && ENV === 'dev') {
+            if (!global.__SUPER_DEV_SERVER_OPN__) {
+                opn(`http://${SERVER_DOMAIN}:${SERVER_PORT}/`)
+                global.__SUPER_DEV_SERVER_OPN__ = true
+            }
+        }
+
         await _afterBuild(theArgs)
         if (typeof afterBuild === 'function')
             await afterBuild(theArgs)

@@ -7,13 +7,10 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 const pwaCreatePlugin = require('sp-pwa')
 const getAppType = require('../../utils/get-app-type')
 
-// 描述环境
-// dev 开发 | dist 部署
-const ENV = process.env.WEBPACK_BUILD_ENV || 'dev'
-
-// 描述场景
-// client 客户端 | server 服务端
-const STAGE = process.env.WEBPACK_STAGE_MODE || 'client'
+const {
+    WEBPACK_BUILD_ENV: ENV,
+    WEBPACK_STAGE_MODE: STAGE,
+} = process.env
 
 // 打包结果目录
 const outputPath = 'dist'

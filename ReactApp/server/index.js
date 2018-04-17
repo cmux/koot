@@ -27,10 +27,13 @@ import {
 } from '../../../../super'
 
 const {
-    domain,
-    port,
     cookieKeys,
 } = server
+
+const {
+    SERVER_DOMAIN: domain,
+    SERVER_PORT: port,
+} = process.env
 
 // const serverConfig = require('../config/system')
 const app = new AppContainer()
@@ -77,8 +80,3 @@ app.mountSwitchSubAppMiddleware()
 
 app.run(port)
 
-const opn = require('opn')
-if (!global.__SUPER_DEV_SERVER_OPN__) {
-    opn(`http://${domain}:${port}/`)
-    global.__SUPER_DEV_SERVER_OPN__ = true
-}
