@@ -1,3 +1,6 @@
+// 初始化环境变量
+require('../../utils/init-node-env')()
+
 // 处理 es6\es7
 // require('babel-core/register')
 // require('babel-polyfill')
@@ -34,6 +37,11 @@ const {
     SERVER_DOMAIN: domain,
     SERVER_PORT: port,
 } = process.env
+
+if (__DEV__) {
+    console.log(' ')
+    console.log(`Server starting: ${domain}:${port}`)
+}
 
 // const serverConfig = require('../config/system')
 const app = new AppContainer()
