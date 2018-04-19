@@ -9,7 +9,7 @@ const getAppType = require('../../utils/get-app-type')
 
 const {
     WEBPACK_BUILD_ENV: ENV,
-    WEBPACK_STAGE_MODE: STAGE,
+    // WEBPACK_BUILD_STAGE: STAGE,
 } = process.env
 
 // 打包结果目录

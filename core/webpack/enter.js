@@ -21,15 +21,6 @@ const RUN_PATH = process.cwd();
 // 初始化环境变量
 require('../../utils/init-node-env')()
 
-const {
-    WEBPACK_DEV_SERVER_PORT: CLIENT_DEV_PORT,
-    WEBPACK_BUILD_ENV: ENV,
-    WEBPACK_STAGE_MODE: STAGE,
-    WEBPACK_ANALYZE,
-    SERVER_DOMAIN,
-    SERVER_PORT,
-} = process.env
-
 // 用户自定义系统配置
 // const SYSTEM_CONFIG = require('../../config/system')
 // const DIST_PATH = require('')
@@ -44,6 +35,9 @@ process.env.DO_WEBPACK = false
  * @returns 修复后的配置对象
  */
 function makeItButter(config) {
+    const {
+        WEBPACK_ANALYZE,
+    } = process.env
 
     // 数组情况，拆分每项分别处理
     if (Array.isArray(config))
@@ -119,6 +113,10 @@ function makeItButter(config) {
  * @returns 
  */
 async function createDefaultConfig(opt, _path) {
+    const {
+        WEBPACK_BUILD_ENV: ENV,
+        WEBPACK_BUILD_STAGE: STAGE,
+    } = process.env
 
     // 根据当前环境变量，定位对应的默认配置文件
     _path = _path || path.resolve(__dirname, `./${STAGE}/${ENV}.js`)
@@ -136,6 +134,11 @@ async function createDefaultConfig(opt, _path) {
  * @returns 
  */
 async function createSPADefaultConfig(opt, aliases) {
+    const {
+        WEBPACK_BUILD_ENV: ENV,
+        WEBPACK_BUILD_STAGE: STAGE,
+    } = process.env
+
     return createDefaultConfig(opt, path.resolve(__dirname, `./${STAGE}/${ENV}.spa.js`), aliases)
 }
 
@@ -160,6 +163,10 @@ async function getConfigFactory(path) {
 
 
 const _beforeBuild = async () => {
+    const {
+        WEBPACK_BUILD_ENV: ENV,
+    } = process.env
+
     if (ENV === 'dev')
         fs.ensureFileSync(path.resolve(
             process.cwd(),
@@ -176,6 +183,15 @@ const _afterBuild = async () => {
  * Webpack 运行入口方法
  */
 module.exports = async (args = {}) => {
+    const {
+        WEBPACK_BUILD_ENV: ENV,
+        WEBPACK_BUILD_STAGE: STAGE,
+        // WEBPACK_ANALYZE,
+        WEBPACK_DEV_SERVER_PORT: CLIENT_DEV_PORT,
+        SERVER_DOMAIN,
+        SERVER_PORT,
+    } = process.env
+
     let {
         config,
         dist,
