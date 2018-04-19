@@ -182,6 +182,7 @@ module.exports = async (args = {}) => {
         config,
         dist,
         aliases,
+        devServer = {},
         beforeBuild,
         afterBuild,
     } = args
@@ -432,10 +433,7 @@ module.exports = async (args = {}) => {
         await handlerClientConfig()
 
         const compiler = webpack(makeItButter(webpackConfigs))
-
-        // more config
-        // http://webpack.github.io/docs/webpack-dev-server.html
-        const server = new WebpackDevServer(compiler, {
+        const devServerConfig = Object.assign({
             quiet: false,
             stats: { colors: true },
             hot: true,
@@ -446,7 +444,11 @@ module.exports = async (args = {}) => {
                 'Access-Control-Allow-Origin': '*'
             },
             after,
-        })
+        }, devServer)
+
+        // more config
+        // http://webpack.github.io/docs/webpack-dev-server.html
+        const server = new WebpackDevServer(compiler, devServerConfig)
         server.listen(CLIENT_DEV_PORT)
     }
 
