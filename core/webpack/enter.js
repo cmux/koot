@@ -116,30 +116,16 @@ async function createDefaultConfig(opt, _path) {
     const {
         WEBPACK_BUILD_ENV: ENV,
         WEBPACK_BUILD_STAGE: STAGE,
+        WEBPACK_BUILD_TYPE: TYPE,
     } = process.env
 
     // 根据当前环境变量，定位对应的默认配置文件
-    _path = _path || path.resolve(__dirname, `./${STAGE}/${ENV}.js`)
+    _path = _path || path.resolve(__dirname, `./defaults/${TYPE}.${STAGE}.${ENV}.js`)
 
     const factory = await getConfigFactory(_path)
     const config = await factory(opt)
 
     return config
-}
-
-/**
- * 根据应用配置生产出一个默认webpack配置[客户端情况的SPA模式使用]
- * 
- * @param {any} opt 
- * @returns 
- */
-async function createSPADefaultConfig(opt, aliases) {
-    const {
-        WEBPACK_BUILD_ENV: ENV,
-        WEBPACK_BUILD_STAGE: STAGE,
-    } = process.env
-
-    return createDefaultConfig(opt, path.resolve(__dirname, `./${STAGE}/${ENV}.spa.js`), aliases)
 }
 
 /**
@@ -298,7 +284,7 @@ module.exports = async (args = {}) => {
             /*APP_KEY: appName */
         }
         let defaultConfig = await createDefaultConfig(opt)
-        let defaultSPAConfig = await createSPADefaultConfig(opt)
+        // let defaultSPAConfig = await createSPADefaultConfig(opt)
 
         // let appConfig = appsConfig[appName]
 
@@ -329,9 +315,9 @@ module.exports = async (args = {}) => {
                 let config = Object.assign({}, defaultConfig)
 
                 // 如果是SPA应用
-                if (clientConfig.spa) {
-                    config = Object.assign({}, defaultSPAConfig)
-                }
+                // if (clientConfig.spa) {
+                //     config = Object.assign({}, defaultSPAConfig)
+                // }
                 return config
             })()
 
