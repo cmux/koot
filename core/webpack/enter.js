@@ -170,6 +170,7 @@ const _afterBuild = async () => {
  */
 module.exports = async (args = {}) => {
     const {
+        WEBPACK_BUILD_TYPE: TYPE,
         WEBPACK_BUILD_ENV: ENV,
         WEBPACK_BUILD_STAGE: STAGE,
         // WEBPACK_ANALYZE,
@@ -187,7 +188,7 @@ module.exports = async (args = {}) => {
         afterBuild,
     } = args
     DEBUG && console.log('============== Webpack Debug =============')
-    DEBUG && console.log('Webpack 打包环境：', STAGE, ENV)
+    DEBUG && console.log('Webpack 打包环境：', TYPE, STAGE, ENV)
 
     // 将打包目录存入全局变量
     // 在打包时，会使用 DefinePlugin 插件将该值赋值到 __DIST__ 全部变量中，以供项目内代码使用
@@ -453,7 +454,7 @@ module.exports = async (args = {}) => {
     }
 
     // 客户端打包
-    if (STAGE === 'client' && ENV === 'dist') {
+    if (STAGE === 'client' && ENV === 'prod') {
 
         // process.env.NODE_ENV = 'production'
 
@@ -463,7 +464,7 @@ module.exports = async (args = {}) => {
         const compiler = webpack(makeItButter(webpackConfigs))
 
         await compiler.run(async (err, stats) => {
-            if (err) console.log(`webpack dist error: ${err}`)
+            if (err) console.log(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`)
 
             console.log(stats.toString({
                 chunks: false, // 输出精简内容
@@ -483,7 +484,7 @@ module.exports = async (args = {}) => {
         await webpack(
             makeItButter(webpackConfigs),
             async (err, stats) => {
-                if (err) console.log(`webpack dev error: ${err}`)
+                if (err) console.log(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`)
 
                 console.log(stats.toString({
                     chunks: false,
@@ -496,14 +497,14 @@ module.exports = async (args = {}) => {
     }
 
     // 服务端打包
-    if (STAGE === 'server' && ENV === 'dist') {
+    if (STAGE === 'server' && ENV === 'prod') {
 
         // process.env.NODE_ENV = 'production'
 
         await handlerServerConfig()
 
         await webpack(makeItButter(webpackConfigs), async (err, stats) => {
-            if (err) console.log(`webpack dist error: ${err}`)
+            if (err) console.log(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`)
 
             console.log(stats.toString({
                 chunks: false, // Makes the build much quieter

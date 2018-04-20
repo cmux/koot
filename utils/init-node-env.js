@@ -1,16 +1,16 @@
 module.exports = () => {
     const defaults = {
+        // Webpack 打包项目模式
+        // isomorphic 同构 | spa 单页面应用 | static 静态站点
+        WEBPACK_BUILD_TYPE: 'isomorphic',
+
         // Webpack 打包场景
         // client 客户端 | server 服务端
         WEBPACK_BUILD_STAGE: 'client',
 
         // Webpack 打包环境
-        // dev 开发 | dist 部署
+        // dev 开发 | prod 生产
         WEBPACK_BUILD_ENV: 'dev',
-
-        // Webpack 打包项目模式
-        // isomorphic 同构 | spa 单页面应用 | static 静态站点
-        WEBPACK_BUILD_TYPE: 'isomorphic',
 
         // Webpack 打包结果分析
         WEBPACK_ANALYZE: false,

@@ -41,7 +41,7 @@ const factory = async ({
         }
     }
 
-    const extractCSS = ENV === 'dist' ? true : false
+    const extractCSS = ENV === 'prod' ? true : false
 
     return {
         module: {
@@ -187,11 +187,12 @@ const plugins = (env, stage, spa = false) => {
         '__CLIENT__': stage == 'client',
         '__SERVER__': stage == 'server',
         '__DEV__': env == 'dev',
+        '__PROD__': env == 'prod',
         '__SPA__': !!spa,
         '__DIST__': JSON.stringify(global.__SUPER_DIST__),
     }
 
-    if (env == 'dist') {
+    if (env == 'prod') {
         process.env.NODE_ENV = 'production'
         // g['process.env'] = {
         //     'NODE_ENV': JSON.stringify('production')
