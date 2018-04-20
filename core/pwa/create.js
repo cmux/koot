@@ -56,7 +56,12 @@ const create = async (settings = {}) => {
     const pathnamePolyfill = []
     const pathnameChunkmap = path.resolve(dist, './.public-chunckmap.json')
     const outputPath = path.resolve(dist, './public/')
-    const outputFile = path.resolve(outputPath, pathname)
+    const outputFile = (() => {
+        let _pathname = pathname
+        if (pathname.substr(0, 1) === '/')
+            _pathname = `.${pathname}`
+        path.resolve(outputPath, _pathname)
+    })()
 
     const chunkmap = await fs.readJSON(pathnameChunkmap, 'utf-8')
 
@@ -147,7 +152,7 @@ const create = async (settings = {}) => {
         //     )
         // })
         .then(() => {
-            console.log(`[super.js] PWA: ${pathname} created`)
+            console.log(`\n\x1b[33m[super.js]\x1b[0m PWA: \x1b[32m${pathname}\x1b[0m created\n`)
         })
 }
 
