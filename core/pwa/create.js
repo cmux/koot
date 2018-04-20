@@ -60,7 +60,7 @@ const create = async (settings = {}) => {
         let _pathname = pathname
         if (pathname.substr(0, 1) === '/')
             _pathname = `.${pathname}`
-        path.resolve(outputPath, _pathname)
+        return path.resolve(outputPath, _pathname)
     })()
 
     const chunkmap = await fs.readJSON(pathnameChunkmap, 'utf-8')
