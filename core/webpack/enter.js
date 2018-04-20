@@ -11,6 +11,7 @@ const WebpackDevServer = require('webpack-dev-server')
 const WebpackConfig = require('webpack-config').default
 const common = require('./common')
 const getAppType = require('../../utils/get-app-type')
+const createPWAsw = require('../pwa/create')
 
 // 调试webpack模式
 const DEBUG = 1
@@ -183,6 +184,7 @@ module.exports = async (args = {}) => {
         config,
         dist,
         aliases,
+        pwa,
         devServer = {},
         beforeBuild,
         afterBuild,
@@ -421,6 +423,11 @@ module.exports = async (args = {}) => {
                 opn(`http://${SERVER_DOMAIN}:${SERVER_PORT}/`)
                 global.__SUPER_DEV_SERVER_OPN__ = true
             }
+        }
+
+        if (pwa && STAGE === 'client' && ENV === 'prod') {
+            // 生成PWA使用的 service-worker.js
+            await createPWAsw(pwa)
         }
 
         await _afterBuild(theArgs)

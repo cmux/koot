@@ -1,6 +1,6 @@
 {
     "name": "super-project",
-    "version": "3.0.6-alpha.14",
+    "version": "3.0.6-alpha.15",
     "description": "Base framework for Super Project.",
     "main": "",
     "scripts": {
@@ -118,7 +118,9 @@
         "es5-shim": "^4.5.10",
         "fs-extra": "^5.0.0",
         "cross-env": "^5.1.4",
-        "debug": "^3.1.0"
+        "debug": "^3.1.0",
+        "glob-promise": "^3.4.0",
+        "md5-file": "^4.0.0"
         
     },
     "peerDependencies": {
