@@ -172,7 +172,7 @@ export default async ({
     })
 
     // await app.use(async (ctx, next) => {
-    //     if (!__DEV__) __webpack_public_path__ = `/${name}/` // TODO: 移动到配置里
+    //     if (!__DEV__) __webpack_server_public_path__ = `/${name}/` // TODO: 移动到配置里
     //     await next()
     // })
 
