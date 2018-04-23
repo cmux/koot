@@ -335,19 +335,26 @@ module.exports = async (args = {}) => {
                 .merge(_defaultConfig)
                 .merge(clientConfig)
 
-            if ((
+            const defaultClientEntry = path.resolve(
+                // RUN_PATH,
+                // `./system/super3/client`
+                __dirname,
+                '../../',
+                getAppType(),
+                './client'
+            )
+
+            if (
                 typeof config.entry === 'object' &&
                 !config.entry.client
-            ) || typeof config.entry !== 'string'
             ) {
-                config.entry.client = path.resolve(
-                    // RUN_PATH,
-                    // `./system/super3/client`
-                    __dirname,
-                    '../../',
-                    getAppType(),
-                    './client'
-                )
+                config.entry.client = defaultClientEntry
+            } else if (config.entry === 'object') {
+
+            } else if (typeof config.entry !== 'string') {
+                config.entry = {
+                    client: defaultClientEntry
+                }
             }
 
             webpackConfigs.push(config)
