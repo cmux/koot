@@ -42,6 +42,8 @@ export default async ({
     // ============================================================================
     const {
         inject,
+        beforeRun,
+        afterRun,
         onRender,
     } = server
 
@@ -90,20 +92,13 @@ export default async ({
 
 
     // ============================================================================
-    // callback: before run
-    // ============================================================================
-    const { beforeRun } = server
-    if (typeof beforeRun === 'function') {
-        await beforeRun()
-    }
-
-
-
-
-    // ============================================================================
     // 创建KOA实例
     // ============================================================================
     const app = new Koa()
+
+    if (typeof beforeRun === 'function') {
+        await beforeRun(app)
+    }
 
     /* 静态目录,用于外界访问打包好的静态文件js、css等 */
     app.use(convert(koaStatic(
@@ -176,12 +171,16 @@ export default async ({
         }
     })
 
-    await app.use(async (ctx, next) => {
-        if (!__DEV__) __webpack_public_path__ = `/${name}/` // TODO: 移动到配置里
-        await next()
-    })
+    // await app.use(async (ctx, next) => {
+    //     if (!__DEV__) __webpack_public_path__ = `/${name}/` // TODO: 移动到配置里
+    //     await next()
+    // })
 
     app.use(isomorphic)
+
+    if (typeof afterRun === 'function') {
+        await afterRun(app)
+    }
 
     if (__DEV__) console.log('└─ ✔ Server inited.\r\n')
 
