@@ -1,6 +1,6 @@
 {
     "name": "super-project",
-    "version": "3.0.6-alpha.20",
+    "version": "3.0.6-alpha.21",
     "description": "Base framework for Super Project.",
     "main": "",
     "scripts": {
@@ -107,6 +107,7 @@
         "markdown-loader": "^2.0.2",
         "html-loader": "^0.5.5",
         "raw-loader": "^0.5.1",
+        "universal-alias-loader": "^1.2.2",
 
 
         "autoprefixer": "^8.3.0",
