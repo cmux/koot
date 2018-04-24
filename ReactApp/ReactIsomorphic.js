@@ -1,5 +1,5 @@
 import React from 'react'
-import HTMLExtendTool from './HTMLExtendTool'
+import HTMLTool from './HTMLExtendTool'
 import { renderToString } from 'react-dom/server'
 import { createMemoryHistory, RouterContext, match } from 'react-router'
 import { Provider } from 'react-redux'
@@ -8,8 +8,6 @@ import { syncHistoryWithStore } from 'react-router-redux'
 const error = require('debug')('SYSTEM:isomorphic:error')
 
 export default class ReactIsomorphic {
-
-    constructor() { }
 
     createKoaMiddleware(options = {
         routes: [],
@@ -22,7 +20,7 @@ export default class ReactIsomorphic {
         同构中间件流程：
     
         根据router计算出渲染页面需要的数据，并把渲染需要的数据补充到store中
-        补充服务端提供的信息数据到store中
+        补充服务端提供的信息扩展数据到store中
         把同构时候服务端预处理数据补充到store中
     
         把react部分渲染出html片段，并插入到html中
@@ -32,27 +30,27 @@ export default class ReactIsomorphic {
             调整样式位置，从下到上
         */
 
-        let { template, onServerRender, inject, configStore, routes } = options
+        const { template, onServerRender, inject, configStore, routes } = options
 
-        // html 只更新1次的部分
-        let _inject = Object.assign({}, inject, {
+        // 配置 html 注入内容
+        // html [只更新1次]的部分
+        const injectOnce = Object.assign({}, inject, {
             js: inject.js ? inject.js.map((js) => `<script src="${js}" defer></script>`).join('') : [], // 引用js文件列表
             css: inject.css ? inject.css.map((css) => `<link rel="stylesheet" href="${css}">`).join('') : [] // 引用css文件列表
         })
 
         // koa 中间件结构
         return async (ctx, next) => {
-
             const url = ctx.path + ctx.search
-            try {
 
+            try {
                 const memoryHistory = createMemoryHistory(url)
                 const store = configStore()
                 const history = syncHistoryWithStore(memoryHistory, store)
 
                 // 根据router计算出渲染页面需要的数据，并把渲染需要的数据补充到store中
 
-                const { redirectLocation, renderProps } = await asyncReactRouterMatch({ history, routes, location: url })
+                const { redirectLocation, renderProps } = await asyncMatchReactRouter({ history, routes, location: url })
 
                 // 判断是否重定向页面
 
@@ -69,40 +67,36 @@ export default class ReactIsomorphic {
 
                 // 把同构时候服务端预处理数据补充到html中(根据页面逻辑动态修改html内容)
 
-                const htmlExtendTool = await ServerRenderHtmlExtend(store, renderProps)
+                const htmlTool = await ServerRenderHtmlExtend(store, renderProps)
 
                 // 把react部分渲染出html片段，并插入到html中
 
                 const reactHtml = renderToString(
                     <Provider store={store} >
-                        <RouterContext {...renderProps } />
+                        <RouterContext {...renderProps} />
                     </Provider>
                 )
                 const filterResult = filterStyle(reactHtml)
 
                 // 配置 html 注入内容
-                // html 实时更新的部分
-                _inject = Object.assign(_inject, {
-                    title: htmlExtendTool.title || '',
-                    metas: ((metas) => metas.map((meta) => {
-                        let metaStr = '<meta'
-                        for (var key in meta) { metaStr += ` ${key}="${meta[key]}"` }
-                        metaStr += '>'
+                // html [实时更新]的部分
+                const injectRealtime = {
+                    // react 和 style 内容较多，放在最后可提高效率
+                    title: htmlTool.getTitle(),
+                    metas: htmlTool.getMetaHtml(),
+                    redux: htmlTool.getReduxScript(store),
+                    react: filterResult.html,
+                    style: filterResult.style
+                }
 
-                        return metaStr
-                    }))(htmlExtendTool.metas).join(''), // meta 
-                    redux: ((state) => `<script>;window.__REDUX_STATE__ = ${JSON.stringify(state)};</script>`)(store.getState()),
+                // 合并需要注入的内容
 
-                    // react 和 style 内容较多，放在最后可以提高性能
-                    react: filterResult.html, // react renderToString
-                    style: filterResult.style // 页内样式
-                })
+                const injectResult = Object.assign({}, injectOnce, injectRealtime)
 
                 // 响应给客户端
 
-                const html = renderHtml(template, _inject)
+                const html = htmlTool.convertToFullHtml(template, injectResult)
                 ctx.body = html
-
 
             } catch (e) {
                 // console.error('Server-Render Error Occures: %s', e.stack)
@@ -112,10 +106,12 @@ export default class ReactIsomorphic {
             }
         }
     }
-
 }
 
-function asyncReactRouterMatch(location) {
+
+// location 解构：
+// { history, routes, location }
+function asyncMatchReactRouter(location) {
     return new Promise((resolve, reject) => {
         match(location, (error, redirectLocation, renderProps) => {
             if (error) {
@@ -146,7 +142,7 @@ function ServerRenderDataToStore(store, renderProps) {
         if (component && component.WrappedComponent && component.WrappedComponent[SERVER_RENDER_EVENT_NAME]) {
 
             // 预处理异步数据的
-            const tasks = component.WrappedComponent[SERVER_RENDER_EVENT_NAME](store)
+            const tasks = component.WrappedComponent[SERVER_RENDER_EVENT_NAME]({ store })
             if (Array.isArray(tasks)) {
                 serverRenderTasks = serverRenderTasks.concat(tasks)
             } else if (tasks.then) {
@@ -169,30 +165,20 @@ function ServerRenderDataToStore(store, renderProps) {
 function ServerRenderHtmlExtend(store, renderProps) {
 
     const SERVER_RENDER_EVENT_NAME = 'onServerRenderHtmlExtend'
-
-    const htmlExtendTool = new HTMLExtendTool()
+    const htmlTool = new HTMLTool()
 
     // component.WrappedComponent 是redux装饰的外壳
     for (let component of renderProps.components) {
         if (component && component.WrappedComponent && component.WrappedComponent[SERVER_RENDER_EVENT_NAME]) {
-            component.WrappedComponent[SERVER_RENDER_EVENT_NAME](htmlExtendTool, store)
+            component.WrappedComponent[SERVER_RENDER_EVENT_NAME]({ htmlTool, store })
         }
     }
 
-    return htmlExtendTool
+    return htmlTool
 }
 
-function renderHtml(template = DEFAULT_TEMPLATE, inject = {}) {
 
-    let html = template
-
-    for (let key in inject) {
-        html = html.replace(`<script>//inject_${key}</script>`, inject[key])
-    }
-
-    return html
-}
-
+// TODO: move to ImportStyle npm
 // 样式处理
 // serverRender 的时候，react逻辑渲染的css代码会在html比较靠后的地方渲染出来，
 // 为了更快的展现出正常的网页样式，在服务端处理的时候用正则表达式把匹配到的css
@@ -217,22 +203,3 @@ function filterStyle(htmlString) {
         style
     }
 }
-
-const DEFAULT_TEMPLATE = `
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <script>//inject_meta</script>
-            <title><script>//inject_title</script></title>
-            <script>//inject_component_styles</script>
-        </head>
-        <body>
-            <div id="root">
-                <div><script>//inject_html</script></div>
-            </div>
-            <script>//inject_redux_state</script>
-            <script>//inject_js</script>
-        </body>
-        </html>
-    `
