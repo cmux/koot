@@ -20,7 +20,7 @@ module.exports = () => {
         WEBPACK_DEV_SERVER_PORT: 3001,
 
         // 运行服务器
-        SERVER_DOMAIN: 'localhost',
+        // SERVER_DOMAIN: 'localhost', // TODO: remove
         SERVER_PORT: (() => process.env.WEBPACK_BUILD_ENV === 'dev' ? '3000' : '8080')()
     }
     for (let key in defaults) {
