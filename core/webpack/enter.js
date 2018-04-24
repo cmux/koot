@@ -543,7 +543,7 @@ module.exports = async (args = {}) => {
         await fs.writeFile(
             path.resolve(
                 RUN_PATH,
-                `./logs/webpack-config/${STAGE}.${ENV}.${Date.now()}.json`
+                `./logs/webpack-config/${TYPE}.${STAGE}.${ENV}.${(new Date()).toISOString().replace(/:/g, '-')}.json`
             ),
             JSON.stringify(webpackConfigs, null, '\t'),
             'utf-8'
