@@ -17,7 +17,7 @@ const DEFAULT_TEMPLATE = `
     </html>
 `
 
-export default class HTMLExtendTool {
+export default class HTMLTool {
 
     constructor() {
         this.title = ''

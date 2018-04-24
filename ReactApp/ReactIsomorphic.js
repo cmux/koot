@@ -20,7 +20,7 @@ export default class ReactIsomorphic {
         同构中间件流程：
     
         根据router计算出渲染页面需要的数据，并把渲染需要的数据补充到store中
-        补充服务端提供的信息扩展数据到store中
+        补充服务端提供的信息数据到store中
         把同构时候服务端预处理数据补充到store中
     
         把react部分渲染出html片段，并插入到html中
@@ -34,23 +34,24 @@ export default class ReactIsomorphic {
 
         // 配置 html 注入内容
         // html [只更新1次]的部分
-        const injectOnce = Object.assign({}, inject, {
-            js: inject.js ? inject.js.map((js) => `<script src="${js}" defer></script>`).join('') : '', // 引用js文件列表
-            css: inject.css ? inject.css.map((css) => `<link rel="stylesheet" href="${css}">`).join('') : '' // 引用css文件列表
-        })
+        const injectOnce = {
+            js: inject.js ? inject.js.map((js) => `<script src="${js}" defer></script>`).join('') : '', // 引用js文件标签
+            css: inject.css ? inject.css.map((css) => `<link rel="stylesheet" href="${css}">`).join('') : '' // 引用css文件标签
+        }
 
         // koa 中间件结构
         return async (ctx, next) => {
-            const url = ctx.path + ctx.search
 
+            const url = ctx.path + ctx.search
             try {
+
                 const memoryHistory = createMemoryHistory(url)
                 const store = configStore()
                 const history = syncHistoryWithStore(memoryHistory, store)
 
                 // 根据router计算出渲染页面需要的数据，并把渲染需要的数据补充到store中
 
-                const { redirectLocation, renderProps } = await asyncMatchReactRouter({ history, routes, location: url })
+                const { redirectLocation, renderProps } = await asyncReactRouterMatch({ history, routes, location: url })
 
                 // 判断是否重定向页面
 
@@ -81,7 +82,6 @@ export default class ReactIsomorphic {
                 // 配置 html 注入内容
                 // html [实时更新]的部分
                 const injectRealtime = {
-                    // react 和 style 内容较多，放在最后可提高效率
                     title: htmlTool.getTitle(),
                     metas: htmlTool.getMetaHtml(),
                     redux: htmlTool.getReduxScript(store),
@@ -89,14 +89,13 @@ export default class ReactIsomorphic {
                     style: filterResult.style
                 }
 
-                // 合并需要注入的内容
-
-                const injectResult = Object.assign({}, injectOnce, injectRealtime)
+                const injectResult = Object.assign({}, inject, injectRealtime, injectOnce)
 
                 // 响应给客户端
 
                 const html = htmlTool.convertToFullHtml(template, injectResult)
                 ctx.body = html
+
 
             } catch (e) {
                 // console.error('Server-Render Error Occures: %s', e.stack)
@@ -106,12 +105,12 @@ export default class ReactIsomorphic {
             }
         }
     }
-}
 
+}
 
 // location 解构：
 // { history, routes, location }
-function asyncMatchReactRouter(location) {
+function asyncReactRouterMatch(location) {
     return new Promise((resolve, reject) => {
         match(location, (error, redirectLocation, renderProps) => {
             if (error) {
@@ -165,6 +164,7 @@ function ServerRenderDataToStore(store, renderProps) {
 function ServerRenderHtmlExtend(store, renderProps) {
 
     const SERVER_RENDER_EVENT_NAME = 'onServerRenderHtmlExtend'
+
     const htmlTool = new HTMLTool()
 
     // component.WrappedComponent 是redux装饰的外壳
@@ -176,7 +176,6 @@ function ServerRenderHtmlExtend(store, renderProps) {
 
     return htmlTool
 }
-
 
 // TODO: move to ImportStyle npm
 // 样式处理
