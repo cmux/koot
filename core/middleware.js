@@ -4,8 +4,7 @@
 const path = require('path')
 
 module.exports = (server) => {
-
-
+    
     /* 静态目录,用于外界访问打包好的静态文件js、css等 */
 
     const koaStatic = require('koa-static')

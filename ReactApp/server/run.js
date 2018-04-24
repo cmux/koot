@@ -3,7 +3,7 @@ import cookie from 'cookie'
 
 //
 
-import Koa from 'koa'
+// import Koa from 'koa'
 import koaStatic from 'koa-static'
 import convert from 'koa-convert'
 
@@ -18,10 +18,7 @@ import { CHANGE_LANGUAGE, TELL_CLIENT_URL/*, SERVER_REDUCER_NAME, serverReducer*
 import superClient from '../client/run'
 
 
-
-
-
-export default async ({
+export default async (app, {
     name,
     template,
     i18n,
@@ -31,6 +28,7 @@ export default async ({
     client,
     server,
 }) => {
+
     if (__DEV__) console.log('\r\nServer initializing...')
 
 
@@ -94,7 +92,7 @@ export default async ({
     // ============================================================================
     // 创建KOA实例
     // ============================================================================
-    const app = new Koa()
+    // const app = new Koa()
 
     if (typeof beforeRun === 'function') {
         await beforeRun(app)
