@@ -5,7 +5,7 @@ const warn = debug('SYSTEM:warn')
 const info = debug('SYSTEM:info')
 const error = debug('SYSTEM:error')
 
-export default class AppContainer {
+export default class App {
 
     app = null
     httpServer = null
@@ -13,6 +13,10 @@ export default class AppContainer {
     constructor() {
         // 实例化1个 Koa 对象
         this.app = ((Koa) => new Koa())(require('koa'))
+    }
+
+    instance() {
+        return this.app
     }
 
     run(port = DEFAULT_PORT) {

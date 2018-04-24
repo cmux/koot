@@ -34,36 +34,36 @@ const {
 } = server
 
 const {
-    SERVER_DOMAIN: domain,
+    // SERVER_DOMAIN: domain,
     SERVER_PORT: port,
 } = process.env
 
 if (__DEV__) {
     console.log(' ')
-    console.log(`Server starting: ${domain}:${port}`)
+    console.log(`Server starting: http://localhost:${port}`)
 }
 
 // const serverConfig = require('../config/system')
-const app = new App()
+const appObj = new App()
+const app = appObj.instance()
 
 /* 公用的koa配置 */
-app.keys = cookieKeys
+app.keys = cookieKeys || 'super-project'
 
-/* 公用koa中间件 */
-// require('super-project/core/middleware')(app);
-
-await superServer(app, {
-    name,
-    dir,
-    template,
-    i18n,
-    locales,
-    router,
-    redux,
-    client,
-    server,
-})
+;(async() => {
+    await superServer(app, {
+        name,
+        dir,
+        template,
+        i18n,
+        locales,
+        router,
+        redux,
+        client,
+        server,
+    })
+})();
 
 /* 系统运行 */
 
-app.run(port)
+appObj.run(port)

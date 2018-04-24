@@ -29,6 +29,7 @@ export default async (app, {
     server,
 }) => {
 
+
     if (__DEV__) console.log('\r\nServer initializing...')
 
 
