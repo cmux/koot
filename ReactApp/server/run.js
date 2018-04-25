@@ -3,7 +3,6 @@ import cookie from 'cookie'
 
 //
 
-// import Koa from 'koa'
 import koaStatic from 'koa-static'
 import convert from 'koa-convert'
 
@@ -31,7 +30,6 @@ export default async (app, {
 
 
     if (__DEV__) console.log('\r\nServer initializing...')
-
 
 
 
