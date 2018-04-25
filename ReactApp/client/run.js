@@ -132,9 +132,9 @@ export default ({
                 }
             })
         )
-            .then(() => {
-                if (typeof afterRun === 'function') afterRun()
-            })
+        .then(() => {
+            if (typeof afterRun === 'function') afterRun()
+        })
     }
 
 
