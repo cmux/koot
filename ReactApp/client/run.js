@@ -80,7 +80,8 @@ export default ({
     if (typeof router !== 'object') {
         if(client.router) // 兼容配置嵌套
             router = client.router
-        router = {}
+        else
+            router = {}
     }
     reactApp.react.router.use({
         path: '',
