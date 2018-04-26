@@ -1,13 +1,19 @@
-# 开始 superJS
+# 开始使用
 
-superJS porject core. inclued: System & koa react isomorphic middleware.
+### 安装命令行工具
 
-# Related
+```bash
+npm i super-project-cli
+```
 
- - [super-project-cli](https://github.com/websage-team/super-project-cli) cli tool for create project
- - [sp-boilerplate](https://github.com/websage-team/sp-boilerplate) boilerplate project
- - [sp-env](https://github.com/websage-team/sp-env) Linux env software
+### 初始化项目
 
-# sss
- 
-### kkk
+```bash
+super init
+```
+
+### 运行项目
+
+```bash
+cd [项目目录] && npm start
+```
