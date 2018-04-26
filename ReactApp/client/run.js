@@ -56,6 +56,11 @@ export default ({
         reducers.localeId = i18nReducerLocaleId
         reducers.locales = i18nReducerLocales
     }
+
+    // 兼容配置嵌套
+    if(!redux) 
+        redux = client.redux
+
     const { combineReducers } = redux
     if (typeof combineReducers === 'object') {
         for (let key in combineReducers) {
@@ -73,6 +78,8 @@ export default ({
     // 路由初始化
     // ============================================================================
     if (typeof router !== 'object') {
+        if(client.router) // 兼容配置嵌套
+            router = client.router
         router = {}
     }
     reactApp.react.router.use({
@@ -90,16 +97,16 @@ export default ({
 
     if (__CLIENT__) {
         const {
-            afterRun,
-            onRouterUpdate,
-            onHistoryUpdate,
+            after,
+            routerUpdate,
+            historyUpdate,
         } = client
 
         reactApp.react.router.ext({
             onUpdate: () => {
                 // if (__DEV__) console.log('router onUpdate', self.__LATHPATHNAME__, location.pathname)
-                if (typeof onRouterUpdate === 'function')
-                    onRouterUpdate()
+                if (typeof routerUpdate === 'function')
+                    routerUpdate()
             }
         })
 
@@ -127,13 +134,13 @@ export default ({
                     store.dispatch(actionUpdate(location))
                     // console.log(store.getState())
 
-                    if (typeof onHistoryUpdate === 'function')
-                        onHistoryUpdate(location, store)
+                    if (typeof historyUpdate === 'function')
+                        historyUpdate(location, store)
                 }
             })
         )
         .then(() => {
-            if (typeof afterRun === 'function') afterRun()
+            if (typeof after === 'function') after()
         })
     }
 

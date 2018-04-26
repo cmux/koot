@@ -39,9 +39,9 @@ export default async (app, {
     // ============================================================================
     const {
         inject,
-        beforeRun,
-        afterRun,
-        onRender,
+        before,
+        after,
+        render,
     } = server
 
     if (typeof template !== 'string')
@@ -92,8 +92,8 @@ export default async (app, {
     // 创建KOA实例
     // ============================================================================
 
-    if (typeof beforeRun === 'function') {
-        await beforeRun(app)
+    if (typeof before === 'function') {
+        await before(app)
     }
 
     /* 静态目录,用于外界访问打包好的静态文件js、css等 */
@@ -162,8 +162,8 @@ export default async (app, {
                 i18nOnServerRender(obj)
             }
 
-            if (typeof onRender === 'function')
-                onRender(obj)
+            if (typeof render === 'function')
+                render(obj)
         }
     })
 
@@ -174,8 +174,8 @@ export default async (app, {
 
     app.use(isomorphic)
 
-    if (typeof afterRun === 'function') {
-        await afterRun(app)
+    if (typeof after === 'function') {
+        await after(app)
     }
 
     if (__DEV__) console.log('└─ ✔ Server inited.\r\n')
