@@ -98,6 +98,7 @@ export default ({
 
     if (__CLIENT__) {
         const {
+            before,
             after,
             routerUpdate,
             historyUpdate,
@@ -113,17 +114,17 @@ export default ({
 
         if (i18n) i18nRegister(__REDUX_STATE__)
 
-        let { beforeRun } = client
-        if (typeof beforeRun === 'function') {
-            beforeRun = new Promise(resolve => {
-                beforeRun()
+        let beforePromise = before
+        if (typeof before === 'function') {
+            beforePromise = new Promise(resolve => {
+                before()
                     .then(() => resolve())
             })
-        } else if (typeof beforeRun !== 'object' || typeof beforeRun.then !== 'function') {
-            beforeRun = new Promise(resolve => resolve())
+        } else if (typeof before !== 'object' || typeof before.then !== 'function') {
+            beforePromise = new Promise(resolve => resolve())
         }
 
-        beforeRun.then(() =>
+        beforePromise.then(() =>
             reactApp.run({
                 browserHistoryOnUpdate: (location, store) => {
                     // 回调: browserHistoryOnUpdate
@@ -140,8 +141,8 @@ export default ({
                 }
             })
         )
-        .then(() => {
-            if (typeof after === 'function') after()
+        .then((appData) => {
+            if (typeof after === 'function') after(appData)
         })
     }
 
