@@ -19,7 +19,7 @@ import App from './app'
 import superServer from './run'
 import {
     name,
-    dir,
+    // dir,
     template,
     // i18n,
     locales,
@@ -53,7 +53,7 @@ app.keys = cookieKeys || 'super-project'
 ;(async() => {
     await superServer(app, {
         name,
-        dir,
+        // dir,
         template,
         i18n: !!locales,
         locales,
