@@ -4,6 +4,7 @@
     "description": "Base framework for Super Project.",
     "main": "",
     "scripts": {
+        "doc-server": "docsify serve docs",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "repository": {
