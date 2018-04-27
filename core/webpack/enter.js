@@ -428,7 +428,7 @@ module.exports = async (args = {}) => {
 
         if (STAGE === 'server' && ENV === 'dev') {
             if (!global.__SUPER_DEV_SERVER_OPN__) {
-                opn(`http://${SERVER_DOMAIN}:${SERVER_PORT}/`)
+                opn(`http://${SERVER_DOMAIN || 'localhost'}:${SERVER_PORT}/`)
                 global.__SUPER_DEV_SERVER_OPN__ = true
             }
         }

@@ -258,7 +258,9 @@ const needBabelHandleList = [
     'sp-koa-views',
     'sp-response',
     'sp-upload',
-    'super-i18n'
+    'sp-i18n',
+    'super-i18n',
+    'super-ui-pagecontainer',
 ]
 
 // https://github.com/webpack/webpack/issues/2852
@@ -271,6 +273,7 @@ const filterExternalsModules = () => fs
     .concat(['react-dom/server'])
     .filter((x) => ['.bin'].concat(needBabelHandleList).indexOf(x) === -1)
     .filter((x) => !/^sp-/.test(x))
+    .filter((x) => !/^super-/.test(x))
     .reduce((ext, mod) => {
         ext[mod] = ['commonjs', mod].join(' ') // eslint-disable-line no-param-reassign
         return ext
