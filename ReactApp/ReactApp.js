@@ -139,7 +139,9 @@ export default class ReactApp {
             )
         })
 
-        return store
+        return {
+            store
+        }
     }
 
 }
