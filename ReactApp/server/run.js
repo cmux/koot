@@ -41,8 +41,9 @@ export default async (app, {
         inject,
         before,
         after,
-        render,
+        render, onRender
     } = server
+    const _onRender = render || onRender
 
     if (typeof template !== 'string')
         throw new Error('Error: "template" type check fail!')
@@ -82,7 +83,10 @@ export default async (app, {
             localesObj[localeId] = localeFilePath
         })
         // 服务器端注册多语言
-        i18nRegister(availableLocales, localesObj)
+        i18nRegister({
+            localeIds: availableLocales,
+            locales: localesObj,
+        })
     }
 
 
@@ -162,8 +166,8 @@ export default async (app, {
                 i18nOnServerRender(obj)
             }
 
-            if (typeof render === 'function')
-                render(obj)
+            if (typeof _onRender === 'function')
+                _onRender(obj)
         }
     })
 
