@@ -1,7 +1,8 @@
 const fs = require('fs-promise')
 const path = require('path')
 const glob = require('glob-promise')
-const md5File = require('md5-file')
+// const md5File = require('md5-file')
+const chalk = require('chalk')
 
 const parseChunkmapPathname = pathname => pathname.replace(/^public\//g, '')
 
@@ -152,7 +153,7 @@ const create = async (settings = {}) => {
         //     )
         // })
         .then(() => {
-            console.log(`\n\x1b[33m[super.js]\x1b[0m PWA: \x1b[32m${pathname}\x1b[0m created\n`)
+            console.log(`${chalk.yellowBright('[super/build]')} PWA: ${chalk.green(pathname)} created`)
         })
 }
 
