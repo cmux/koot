@@ -1,6 +1,5 @@
 import path from 'path'
 import cookie from 'cookie'
-import chalk from 'chalk'
 
 //
 
@@ -137,7 +136,7 @@ export default async (app, {
 
         onServerRender: (obj) => {
             if (__DEV__)
-                console.log(`${chalk.yellowBright('[super/server]')} callback: ${chalk.green('onRender')}`)
+                console.log(`\n\x1b[93m[super/server]\x1b[0m callback: \x1b[32m${'onRender'}\x1b[0m\n`)
 
             let { koaCtx, reduxStore } = obj
 
