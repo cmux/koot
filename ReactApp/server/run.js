@@ -135,6 +135,9 @@ export default async (app, {
         inject,
 
         onServerRender: (obj) => {
+            if (__DEV__)
+                console.log(`\n\x1b[33m[super/server]\x1b[0m \x1b[32m${`onRender`}\x1b[0m\n`)
+
             let { koaCtx, reduxStore } = obj
 
             reduxStore.dispatch({ type: TELL_CLIENT_URL, data: koaCtx.origin })
