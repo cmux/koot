@@ -1,6 +1,6 @@
 {
     "name": "super-project",
-    "version": "3.0.6-alpha.29",
+    "version": "3.0.6-alpha.30",
     "description": "Base framework for Super Project.",
     "main": "",
     "scripts": {
@@ -27,7 +27,7 @@
         "sp-css-loader": "^1.3.0",
         "sp-css-import": "^2.0.0",
         "sp-koa-views": "^1.0.1",
-        "super-i18n": "3.0.0-alpha.1",
+        "super-i18n": "3.0.0-alpha.2",
         "super-ui-pagecontainer": "3.0.0-alpha.2",
         "sp-pwa": "^2.2.1",
         "sp-isomorphic-utils": "^1.3.1",
