@@ -109,7 +109,7 @@ export default class ReactApp {
             /*store.dispatch(realtimeLocationUpdate(location))
             if (typeof options.browserHistoryOnUpdate === 'function') 
                 options.browserHistoryOnUpdate(location)*/
-            if (typeof options.browserHistoryOnUpdate === 'function') 
+            if (typeof options.browserHistoryOnUpdate === 'function')
                 options.browserHistoryOnUpdate(location, store)
         })
 
@@ -131,7 +131,7 @@ export default class ReactApp {
             }
             hydrate(
                 <Provider store={store} >
-                    <Router history={history} {...ext } >
+                    <Router history={history} {...ext} >
                         {routes}
                     </Router>
                 </Provider>,

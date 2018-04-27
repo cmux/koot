@@ -43,7 +43,7 @@ const create = async (settings = {}) => {
     //     globOptions: {},
     //     appendUrls: []
     // }, parseOptions(settings, ...args))
-    const dist = global.__SUPER_DIST__ || __DIST__
+    const dist = process.env.SUPER_DIST_DIR
     const {
         pathname = '/service-worker.js',
         template = path.resolve(__dirname, './sw-template.js'),

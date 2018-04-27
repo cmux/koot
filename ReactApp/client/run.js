@@ -9,8 +9,8 @@ import { reducer as realtimeLocationReducer, REALTIME_LOCATION_REDUCER_NAME, act
 import {
     reducerLocaleId as i18nReducerLocaleId,
     reducerLocales as i18nReducerLocales,
-    register as i18nRegister
-} from 'sp-i18n'
+} from 'super-i18n/redux'
+import i18nRegister from 'super-i18n/register/isomorphic.client'
 
 //
 
@@ -58,7 +58,7 @@ export default ({
     }
 
     // 兼容配置嵌套
-    if(!redux) 
+    if (!redux)
         redux = client.redux
 
     const { combineReducers } = redux
@@ -78,7 +78,7 @@ export default ({
     // 路由初始化
     // ============================================================================
     if (typeof router !== 'object') {
-        if(client.router) // 兼容配置嵌套
+        if (client.router) // 兼容配置嵌套
             router = client.router
         else
             router = {}
@@ -141,9 +141,9 @@ export default ({
                 }
             })
         )
-        .then((appData) => {
-            if (typeof after === 'function') after(appData)
-        })
+            .then((appData) => {
+                if (typeof after === 'function') after(appData)
+            })
     }
 
 

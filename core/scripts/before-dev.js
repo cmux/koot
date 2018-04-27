@@ -3,6 +3,6 @@ const path = require('path')
 
 fs.ensureFileSync(path.resolve(
     process.cwd(),
-    global.__SUPER_DIST__,
+    process.env.SUPER_DIST_DIR,
     `./server/index.js`
 ))

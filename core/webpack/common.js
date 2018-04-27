@@ -16,7 +16,7 @@ const {
 const outputPath = 'dist'
 
 // 服务端入库文件
-const serverEntries = /* config.serverEntries ||  */ ((appPath) => [
+const serverEntries = ((/*appPath*/) => [
     'babel-core/register',
     'babel-polyfill',
     path.resolve(
@@ -189,7 +189,7 @@ const plugins = (env, stage, spa = false) => {
         '__DEV__': env == 'dev',
         '__PROD__': env == 'prod',
         '__SPA__': !!spa,
-        '__DIST__': JSON.stringify(global.__SUPER_DIST__),
+        '__DIST__': JSON.stringify(process.env.SUPER_DIST_DIR),
     }
 
     if (env == 'prod') {
@@ -255,7 +255,7 @@ const needBabelHandleList = [
     'sp-koa-views',
     'sp-response',
     'sp-upload',
-    'sp-i18n'
+    'super-i18n'
 ]
 
 // https://github.com/webpack/webpack/issues/2852

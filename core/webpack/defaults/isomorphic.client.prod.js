@@ -1,16 +1,14 @@
 const fs = require('fs-extra')
 const path = require('path')
 const webpack = require('webpack')
-const common = require('../common')
+// const common = require('../common')
 
 // const ExtractTextPlugin = require("extract-text-webpack-plugin")
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 const WebpackOnBuildPlugin = require('on-build-webpack')
 
-const dist = global.__SUPER_DIST__
-
 const factoryConfig = async ({
-    RUN_PATH,
+    // RUN_PATH,
     // CLIENT_DEV_PORT,
 }) => {
 
@@ -47,6 +45,10 @@ const factoryConfig = async ({
                 // chunkFilename: "[id].css"
             }),
             await new WebpackOnBuildPlugin(async function (stats) {
+                const {
+                    SUPER_DIST_DIR: dist
+                } = process.env
+
                 // After webpack build...
                 // create(parseOptions(...args))
                 // console.log('')

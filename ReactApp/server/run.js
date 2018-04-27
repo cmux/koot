@@ -8,8 +8,8 @@ import convert from 'koa-convert'
 
 //
 
-import { register as i18nRegister } from 'sp-i18n'
-import i18nOnServerRender from 'sp-i18n/onServerRender'
+import i18nRegister from 'super-i18n/register/isomorphic.server'
+import i18nOnServerRender from 'super-i18n/onServerRender'
 
 //
 
@@ -18,7 +18,7 @@ import superClient from '../client/run'
 
 
 export default async (app, {
-    name,
+    // name,
     template,
     i18n,
     locales,
@@ -98,7 +98,7 @@ export default async (app, {
 
     /* 静态目录,用于外界访问打包好的静态文件js、css等 */
     app.use(convert(koaStatic(
-        path.resolve(__DIST__, './public'),
+        path.resolve(process.env.SUPER_DIST_DIR, './public'),
         {
             maxage: 0,
             hidden: true,
