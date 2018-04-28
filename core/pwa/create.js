@@ -65,13 +65,14 @@ const create = async (settings = {}) => {
 
     const chunkmap = await fs.readJSON(pathnameChunkmap, 'utf-8')
 
-    if (Array.isArray(chunkmap.polyfill)) {
-        chunkmap.polyfill.forEach(pathname => {
-            pathnamePolyfill.push(parseChunkmapPathname(pathname))
-        })
-    } else {
-        pathnamePolyfill.push(parseChunkmapPathname(chunkmap.polyfill))
-    }
+    if (chunkmap.polyfill)
+        if (Array.isArray(chunkmap.polyfill)) {
+            chunkmap.polyfill.forEach(pathname => {
+                pathnamePolyfill.push(parseChunkmapPathname(pathname))
+            })
+        } else {
+            pathnamePolyfill.push(parseChunkmapPathname(chunkmap.polyfill))
+        }
 
     const globOptions = {
         cwd: outputPath,
