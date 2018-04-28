@@ -2,4 +2,5 @@
 * [指南](/guide)
 * [命令](/task)
 * [生命周期](/life-circle)
+* [HTML注入](/inject)
 * [相关](/other)
