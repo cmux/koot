@@ -335,12 +335,12 @@ module.exports = async (args = {}) => {
                 .merge(_defaultConfig)
                 .merge(clientConfig)
 
-            if (typeof clientConfig.output !== 'object') {
-                clientConfig.output = {}
+            if (typeof config.output !== 'object') {
+                config.output = {}
             }
-            if (!clientConfig.output.path) {
-                clientConfig.output.path = path.resolve(dist, `./public`)
-                clientConfig.output.publicPath = ''
+            if (!config.output.path) {
+                config.output.path = path.resolve(dist, `./public`)
+                config.output.publicPath = ''
             }
 
             const defaultClientEntry = path.resolve(
