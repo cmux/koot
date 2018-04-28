@@ -335,6 +335,14 @@ module.exports = async (args = {}) => {
                 .merge(_defaultConfig)
                 .merge(clientConfig)
 
+            if (typeof config.output !== 'object') {
+                config.output = {}
+            }
+            if (!config.output.path) {
+                config.output.path = path.resolve(dist, `./public`)
+                config.output.publicPath = ''
+            }
+
             const defaultClientEntry = path.resolve(
                 // RUN_PATH,
                 // `./system/super3/client`

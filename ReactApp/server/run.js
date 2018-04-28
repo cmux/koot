@@ -30,6 +30,8 @@ export default async (app, {
 
 
     if (__DEV__) console.log('\r\nServer initializing...')
+    else
+        console.log(`\r\n\x1b[93m[super/server]\x1b[0m initializing...`)
 
 
 
@@ -186,6 +188,8 @@ export default async (app, {
     }
 
     if (__DEV__) console.log('└─ ✔ Server inited.\r\n')
+    else
+        console.log(`\x1b[93m[super/server]\x1b[0m init \x1b[32m${'OK'}\x1b[0m!`)
 
     return app
 }

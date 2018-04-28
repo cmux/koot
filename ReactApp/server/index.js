@@ -38,11 +38,6 @@ const {
     SERVER_PORT: port,
 } = process.env
 
-if (__DEV__) {
-    console.log(' ')
-    console.log(`Server starting: http://localhost:${port}`)
-}
-
 // const serverConfig = require('../config/system')
 const appObj = new App()
 const app = appObj.instance()
@@ -63,6 +58,15 @@ app.keys = cookieKeys || 'super-project'
         server,
     })
 })();
+
+setTimeout(() => {
+    if (__DEV__) {
+        console.log(`\r\n\x1b[93m[super/server]\x1b[0m started on \x1b[32m${'http://localhost:' + port}\x1b[0m`)
+    } else {
+        console.log(`\x1b[93m[super/server]\x1b[0m listening port \x1b[32m${port}\x1b[0m`)
+    }
+    console.log(' ')
+})
 
 /* 系统运行 */
 
