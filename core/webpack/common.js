@@ -16,7 +16,7 @@ const {
 const outputPath = 'dist'
 
 // 服务端入库文件
-const serverEntries = /* config.serverEntries ||  */ ((appPath) => [
+const serverEntries = ((/*appPath*/) => [
     'babel-core/register',
     'babel-polyfill',
     path.resolve(
@@ -189,7 +189,7 @@ const plugins = (env, stage, spa = false) => {
         '__DEV__': env == 'dev',
         '__PROD__': env == 'prod',
         '__SPA__': !!spa,
-        '__DIST__': JSON.stringify(global.__SUPER_DIST__),
+        '__DIST__': JSON.stringify(process.env.SUPER_DIST_DIR),
     }
 
     if (env == 'prod') {
@@ -201,6 +201,9 @@ const plugins = (env, stage, spa = false) => {
 
     return [
         new webpack.DefinePlugin(g),
+        new webpack.EnvironmentPlugin([
+            'SUPER_DIST_DIR'
+        ]),
     ]
 }
 
@@ -255,7 +258,9 @@ const needBabelHandleList = [
     'sp-koa-views',
     'sp-response',
     'sp-upload',
-    'sp-i18n'
+    'sp-i18n',
+    'super-i18n',
+    'super-ui-pagecontainer',
 ]
 
 // https://github.com/webpack/webpack/issues/2852
@@ -268,6 +273,7 @@ const filterExternalsModules = () => fs
     .concat(['react-dom/server'])
     .filter((x) => ['.bin'].concat(needBabelHandleList).indexOf(x) === -1)
     .filter((x) => !/^sp-/.test(x))
+    .filter((x) => !/^super-/.test(x))
     .reduce((ext, mod) => {
         ext[mod] = ['commonjs', mod].join(' ') // eslint-disable-line no-param-reassign
         return ext

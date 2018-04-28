@@ -157,7 +157,7 @@ const _beforeBuild = async () => {
     if (ENV === 'dev')
         fs.ensureFileSync(path.resolve(
             process.cwd(),
-            global.__SUPER_DIST__,
+            process.env.SUPER_DIST_DIR,
             `./server/index.js`
         ))
 }
@@ -192,9 +192,9 @@ module.exports = async (args = {}) => {
     DEBUG && console.log('============== Webpack Debug =============')
     DEBUG && console.log('Webpack 打包环境：', TYPE, STAGE, ENV)
 
-    // 将打包目录存入全局变量
+    // 将打包目录存入环境变量
     // 在打包时，会使用 DefinePlugin 插件将该值赋值到 __DIST__ 全部变量中，以供项目内代码使用
-    global.__SUPER_DIST__ = dist
+    process.env.SUPER_DIST_DIR = dist
 
     await _beforeBuild(args)
     if (typeof beforeBuild === 'function') {
@@ -428,7 +428,7 @@ module.exports = async (args = {}) => {
 
         if (STAGE === 'server' && ENV === 'dev') {
             if (!global.__SUPER_DEV_SERVER_OPN__) {
-                opn(`http://${SERVER_DOMAIN}:${SERVER_PORT}/`)
+                opn(`http://${SERVER_DOMAIN || 'localhost'}:${SERVER_PORT}/`)
                 global.__SUPER_DEV_SERVER_OPN__ = true
             }
         }

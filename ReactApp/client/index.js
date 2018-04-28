@@ -1,13 +1,13 @@
 import superClient from './run'
 import {
-    locales,
+    i18n,
     router,
     redux,
     client,
 } from '../../../../super'
 
 export default superClient({
-    i18n: !!locales,
+    i18n,
     router,
     redux,
     client,

@@ -8,8 +8,8 @@ import convert from 'koa-convert'
 
 //
 
-import { register as i18nRegister } from 'sp-i18n'
-import i18nOnServerRender from 'sp-i18n/onServerRender'
+import i18nRegister from 'super-i18n/register/isomorphic.server'
+import i18nOnServerRender from 'super-i18n/onServerRender'
 
 //
 
@@ -18,7 +18,7 @@ import superClient from '../client/run'
 
 
 export default async (app, {
-    name,
+    // name,
     template,
     i18n,
     locales,
@@ -41,8 +41,9 @@ export default async (app, {
         inject,
         before,
         after,
-        render,
+        render, onRender
     } = server
+    const _onRender = render || onRender
 
     if (typeof template !== 'string')
         throw new Error('Error: "template" type check fail!')
@@ -82,7 +83,10 @@ export default async (app, {
             localesObj[localeId] = localeFilePath
         })
         // 服务器端注册多语言
-        i18nRegister(availableLocales, localesObj)
+        i18nRegister({
+            localeIds: availableLocales,
+            locales: localesObj,
+        })
     }
 
 
@@ -98,7 +102,7 @@ export default async (app, {
 
     /* 静态目录,用于外界访问打包好的静态文件js、css等 */
     app.use(convert(koaStatic(
-        path.resolve(__DIST__, './public'),
+        path.resolve(process.env.SUPER_DIST_DIR, './public'),
         {
             maxage: 0,
             hidden: true,
@@ -131,6 +135,9 @@ export default async (app, {
         inject,
 
         onServerRender: (obj) => {
+            if (__DEV__)
+                console.log(`\n\x1b[93m[super/server]\x1b[0m callback: \x1b[32m${'onRender'}\x1b[0m\n`)
+
             let { koaCtx, reduxStore } = obj
 
             reduxStore.dispatch({ type: TELL_CLIENT_URL, data: koaCtx.origin })
@@ -162,8 +169,8 @@ export default async (app, {
                 i18nOnServerRender(obj)
             }
 
-            if (typeof render === 'function')
-                render(obj)
+            if (typeof _onRender === 'function')
+                _onRender(obj)
         }
     })
 

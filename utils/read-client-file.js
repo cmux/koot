@@ -9,16 +9,16 @@ module.exports = filename => {
     //     getFilePath(filename)
     // )
     // console.log(' ')
-    // console.log(global.__SUPER_DIST__ || __DIST__)
+    // console.log(process.env.SUPER_DIST_DIR)
     // console.log(getFilePath(filename))
     // console.log(path.resolve(
-    //     global.__SUPER_DIST__ || __DIST__,
+    //     process.env.SUPER_DIST_DIR,
     //     getFilePath(filename)
     // ))
     // console.log(' ')
     return fs.readFileSync(
         path.resolve(
-            global.__SUPER_DIST__ || __DIST__,
+            process.env.SUPER_DIST_DIR,
             'public/',
             getFilePath(filename).replace(/^\//, '')
         ),
