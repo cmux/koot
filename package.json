@@ -1,6 +1,6 @@
 {
     "name": "super-project",
-    "version": "3.0.6-alpha.44",
+    "version": "3.0.6-alpha.45",
     "description": "Base framework for Super Project.",
     "main": "",
     "scripts": {
@@ -110,8 +110,9 @@
         "universal-alias-loader": "^1.2.2",
 
 
-        "autoprefixer": "8.3.0",
+        "autoprefixer": "8.4.0",
         "less": "^3.0.1",
+        "postcss": "^6.0.22",
 
         
         "rimraf": "^2.6.2",
