@@ -22,7 +22,7 @@ const ROUTER_REDUCDER_NAME = 'routing'
 
 
 export default ({
-    i18n,
+    i18n = JSON.parse(process.env.SUPER_I18N),
     router,
     redux,
     client

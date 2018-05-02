@@ -20,8 +20,8 @@ import superClient from '../client/run'
 export default async (app, {
     // name,
     template,
-    i18n,
-    locales,
+    i18n = JSON.parse(process.env.SUPER_I18N),
+    locales = JSON.parse(process.env.SUPER_LOCALES),
     router,
     redux,
     client,

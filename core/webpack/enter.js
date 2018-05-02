@@ -184,6 +184,7 @@ module.exports = async (args = {}) => {
         config,
         dist,
         aliases,
+        i18n = false,
         pwa,
         devServer = {},
         beforeBuild,
@@ -195,6 +196,27 @@ module.exports = async (args = {}) => {
     // 将打包目录存入环境变量
     // 在打包时，会使用 DefinePlugin 插件将该值赋值到 __DIST__ 全部变量中，以供项目内代码使用
     process.env.SUPER_DIST_DIR = dist
+    process.env.SUPER_I18N = JSON.stringify(typeof i18n === 'object' ? true : false)
+
+    // 处理i18n
+    if (typeof i18n === 'object') {
+        process.env.SUPER_I18N = 'true'
+        let type = 'default'
+        let locales
+        if (Array.isArray(i18n)) {
+            locales = [...i18n]
+        } else {
+            type = i18n.type || type
+            locales = [...i18n.locales || []]
+        }
+        locales.forEach(o => {
+            o[1] = fs.readJsonSync(path.resolve(process.cwd(), o[1]))
+            // process.env[`SUPER_LOCALES___${o[0]}`] = o[1]
+        })
+        process.env.SUPER_LOCALES = JSON.stringify(locales)
+    } else {
+        process.env.SUPER_I18N = 'false'
+    }
 
     await _beforeBuild(args)
     if (typeof beforeBuild === 'function') {
