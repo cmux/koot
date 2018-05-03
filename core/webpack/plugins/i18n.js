@@ -80,7 +80,7 @@ class I18nPlugin {
                                 if (stage === 'client') {
                                     result += (i ? ',' : '') + `${arg.name}`
                                 } else {
-                                    result += `[$\{${arg.name}}]`
+                                    result += `\` + ${arg.name} + \``
                                 }
                                 break
                             }
