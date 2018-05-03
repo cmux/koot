@@ -200,7 +200,7 @@ module.exports = async (args = {}) => {
 
     // 处理i18n
     if (typeof i18n === 'object') {
-        process.env.SUPER_I18N = 'true'
+        process.env.SUPER_I18N = JSON.stringify(true)
         let type = 'default'
         let locales
         if (Array.isArray(i18n)) {
@@ -215,7 +215,7 @@ module.exports = async (args = {}) => {
         })
         process.env.SUPER_LOCALES = JSON.stringify(locales)
     } else {
-        process.env.SUPER_I18N = 'false'
+        process.env.SUPER_I18N = JSON.stringify(false)
     }
 
     await _beforeBuild(args)
