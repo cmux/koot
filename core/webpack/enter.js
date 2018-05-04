@@ -12,6 +12,24 @@ const WebpackConfig = require('webpack-config').default
 const common = require('./common')
 const getAppType = require('../../utils/get-app-type')
 const createPWAsw = require('../pwa/create')
+const SuperI18nPlugin = require("./i18n-plugin")
+
+/*
+
+config.plugins.push(
+    new SuperI18nPlugin({
+        stage: STAGE,
+        localeId: 'zh',
+        locales: fs.readJsonSync(path.resolve(process.cwd(), './locales/zh.json')),
+    })
+)
+
+thisConfig.plugins.push(
+    new SuperI18nPlugin({
+        stage: STAGE,
+    })
+)
+ */
 
 // 调试webpack模式
 const DEBUG = 1
