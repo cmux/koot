@@ -229,7 +229,7 @@ module.exports = async ({
         if (type === 'store') type = 'redux'
         type = type.toLowerCase()
 
-        if (ENV === 'client') {
+        if (STAGE === 'client') {
             console.log(chalk.green('√') + ` i18n enabled`)
             console.log(`  > type: ${chalk.yellowBright(type)}`)
             console.log(`  > locales: ${locales.map(arr => arr[0]).join(', ')}`)
@@ -687,12 +687,10 @@ module.exports = async ({
         })
     }
 
-    if (DEBUG) {
-        // DEBUG && console.log('执行配置：')
-        // DEBUG && console.log('-----------------------------------------')
-        // DEBUG && console.log(JSON.stringify(webpackConfigs))
-        console.log('============== Webpack Debug End =============')
-    }
+    // DEBUG && console.log('执行配置：')
+    // DEBUG && console.log('-----------------------------------------')
+    // DEBUG && console.log(JSON.stringify(webpackConfigs))
+    DEBUG && console.log('============== Webpack Debug End =============')
 }
 
 // justDoooooooooooooIt()
