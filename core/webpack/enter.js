@@ -214,7 +214,7 @@ module.exports = async ({
 
     // 处理i18n
     if (typeof i18n === 'object') {
-        let type = 'default'
+        let type = ENV === 'dev' ? 'redux' : 'default'
         let expr = '__'
         let locales
 
@@ -226,12 +226,15 @@ module.exports = async ({
             locales = [...i18n.locales || []]
         }
 
+        if (type === 'store') type = 'redux'
+        type = type.toLowerCase()
+
+        console.log(chalk.green('√') + ` i18n enabled | type ${chalk.yellowBright(type.toUpperCase())}`)
+        console.log(`  > locales: ${locales.map(arr => arr[0]).join(', ')}`)
+
         locales.forEach(arr => {
             arr[1] = fs.readJsonSync(path.resolve(process.cwd(), arr[1]))
         })
-
-        if (type === 'store') type = 'redux'
-        type = type.toLowerCase()
 
         process.env.SUPER_I18N = JSON.stringify(true)
         process.env.SUPER_I18N_TYPE = JSON.stringify(type)
@@ -241,6 +244,9 @@ module.exports = async ({
             type,
             expr,
             locales,
+        }
+        if (ENV === 'dev' && type === 'default') {
+            console.log(`  > We recommend using ${chalk.yellowGreen('redux')} mode in DEV enviroment.`)
         }
     } else {
         i18n = false
@@ -442,14 +448,12 @@ module.exports = async ({
             const {
                 type = 'default'
             } = i18n
-            console.log(chalk.green('√') + ` i18n enabled | type ${chalk.yellowBright(type.toUpperCase())}`)
             switch (type) {
                 case 'redux': {
                     await handleSingleConfig()
                 }
                 default: {
                     for (let arr of i18n.locales) {
-                        console.log(`  > ${arr[0]}`)
                         await handleSingleConfig(arr[0], arr[1])
                     }
                 }
@@ -558,21 +562,21 @@ module.exports = async ({
         // DEBUG && console.log('执行配置：')
         // DEBUG && console.log('-----------------------------------------')
         // DEBUG && console.log(JSON.stringify(webpackConfigs))
+        await fs.ensureDir(
+            path.resolve(
+                RUN_PATH,
+                `./logs/webpack-config`
+            )
+        )
+        await fs.writeFile(
+            path.resolve(
+                RUN_PATH,
+                `./logs/webpack-config/${TYPE}.${STAGE}.${ENV}.${(new Date()).toISOString().replace(/:/g, '_')}.json`
+            ),
+            JSON.stringify(webpackConfigs, null, '\t'),
+            'utf-8'
+        )
         if (DEBUG) {
-            await fs.ensureDir(
-                path.resolve(
-                    RUN_PATH,
-                    `./logs/webpack-config`
-                )
-            )
-            await fs.writeFile(
-                path.resolve(
-                    RUN_PATH,
-                    `./logs/webpack-config/${TYPE}.${STAGE}.${ENV}.${(new Date()).toISOString().replace(/:/g, '_')}.json`
-                ),
-                JSON.stringify(webpackConfigs, null, '\t'),
-                'utf-8'
-            )
             console.log('============== Webpack Debug End =============')
         }
     }
