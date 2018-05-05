@@ -3,6 +3,7 @@ const path = require('path')
 
 const getPublicPath = require('./get-public-dir')
 
+
 /**
  * 找到指定文件，返回路径
  * 
@@ -10,9 +11,16 @@ const getPublicPath = require('./get-public-dir')
  * @param {string} localeId 当前语言
  * @memberof ReactIsomorphic
  */
-const getFilePath = (filename, localeId) => {
+const getFilePath = (filename) => {
+    const { localeId } = require('super-i18n')
+
     const pathDist = process.env.SUPER_DIST_DIR
     const pathPublic = getPublicPath()
+
+    const i18nType = JSON.parse(process.env.SUPER_I18N)
+        ? JSON.parse(process.env.SUPER_I18N_TYPE)
+        : undefined
+    // const localeId = 'zh'
 
     // console.log(pathDist, pathPublic)
 
@@ -22,13 +30,13 @@ const getFilePath = (filename, localeId) => {
     //     return getFile(filename, '', appName)
 
     if (__DEV__)
-        return pathPublic + (localeId ? localeId : '') + `.${filename}`
+        return pathPublic + (i18nType === 'default' ? localeId : '') + `.${filename}`
 
     const pathChunckmap = path.resolve(pathDist, '.public-chunckmap.json')
 
     if (fs.existsSync(pathChunckmap)) {
         let chunckmap = fs.readJsonSync(pathChunckmap)
-        if (localeId) chunckmap = chunckmap[`.${localeId}`] || {}
+        if (i18nType === 'default') chunckmap = chunckmap[`.${localeId}`] || {}
 
         const extname = path.extname(filename)
         const key = path.basename(filename, extname)

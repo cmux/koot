@@ -503,7 +503,7 @@ module.exports = async ({
         // if (SYSTEM_CONFIG.WEBPACK_SERVER_OUTPATH)
         //     config.output.path = path.resolve(RUN_PATH, SYSTEM_CONFIG.WEBPACK_SERVER_OUTPATH)
 
-        if (i18n)
+        if (typeof i18n === 'object')
             thisConfig.plugins.push(
                 new SuperI18nPlugin({
                     stage: STAGE,
