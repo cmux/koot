@@ -414,11 +414,12 @@ module.exports = async ({
                 }
 
                 if (localeId && typeof localesObj === 'object') {
-                    config.plugins.push(
+                    config.plugins.unshift(
                         new SuperI18nPlugin({
                             stage: STAGE,
                             localeId,
                             locales: localesObj,
+                            functionName: i18n.expr,
                         })
                     )
                 }
@@ -504,7 +505,7 @@ module.exports = async ({
         //     config.output.path = path.resolve(RUN_PATH, SYSTEM_CONFIG.WEBPACK_SERVER_OUTPATH)
 
         if (typeof i18n === 'object')
-            thisConfig.plugins.push(
+            thisConfig.plugins.unshift(
                 new SuperI18nPlugin({
                     stage: STAGE,
                 })
