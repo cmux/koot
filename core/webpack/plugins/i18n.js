@@ -115,7 +115,7 @@ const parse = ({
 
     result += `)`
 
-    console.log(stage, result)
+    // console.log(stage, result)
 
     const dep = new ConstDependency(result, expr.range)
     dep.loc = expr.loc

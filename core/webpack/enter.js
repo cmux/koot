@@ -243,13 +243,14 @@ module.exports = async (args = {}) => {
     // webpack 执行用的配置对象
     let webpackConfigs = []
 
-    // 默认rules
-    const baseConfig = await common.factory({
-        aliases,
-        env: ENV,
-        stage: STAGE,
-        spa: false,
-    })
+    // 创建默认rules
+    const createBaseConfig = async () =>
+        await common.factory({
+            aliases,
+            env: ENV,
+            stage: STAGE,
+            spa: false,
+        })
 
     /**
      * 处理 Webpack 配置对象
@@ -257,7 +258,8 @@ module.exports = async (args = {}) => {
      * @param {object} custom 合并 Webpack 配置对象
      * @returns 合并后的值
      */
-    const parseConfig = (config = {}) => {
+    const parseConfig = async (config = {}) => {
+        const baseConfig = await createBaseConfig()
         // 合并 module.rules / loaders
         if (typeof config.module === 'object') {
             if (!Array.isArray(config.module.rules)) {
@@ -289,15 +291,15 @@ module.exports = async (args = {}) => {
                 ...baseConfig.plugins,
             ]
         } else if (!Array.isArray(config.plugins)) {
-            config.plugins = [
-                ...baseConfig.plugins,
-            ]
+            // config.plugins = [
+            //     ...baseConfig.plugins,
+            // ]
         } else {
             if (config.plugins[0] === true) {
                 config.plugins.shift()
             } else {
                 config.plugins = [
-                    ...baseConfig.plugins,
+                    // ...baseConfig.plugins,
                     ...config.plugins
                 ]
             }
@@ -317,14 +319,15 @@ module.exports = async (args = {}) => {
         // const appsConfig = await require('../../config/apps')
 
         // for (let appName in appsConfig) {
-        const handleSingleConfig = async (localeId, localeObj) => {
+        const handleSingleConfig = async (localeId, localesObj) => {
             let opt = {
                 RUN_PATH,
                 CLIENT_DEV_PORT,
                 localeId,
                 /*APP_KEY: appName */
             }
-            let defaultConfig = await createDefaultConfig(opt)
+            const baseConfig = await createBaseConfig()
+            const defaultConfig = await createDefaultConfig(opt)
             // let defaultSPAConfig = await createSPADefaultConfig(opt)
 
             // let appConfig = appsConfig[appName]
@@ -339,9 +342,8 @@ module.exports = async (args = {}) => {
                 clientConfigs = [clientConfigs]
             }
 
-            clientConfigs.forEach((clientConfig) => {
-
-                let config = new WebpackConfig()
+            for (let clientConfig of clientConfigs) {
+                const config = new WebpackConfig()
                 clientConfig = new WebpackConfig()
                     .merge(baseConfig)
                     .merge(clientConfig)
@@ -366,7 +368,7 @@ module.exports = async (args = {}) => {
                 if (clientConfig.entry) _defaultConfig.entry = undefined
                 if (clientConfig.output) _defaultConfig.output = undefined
 
-                parseConfig(clientConfig)
+                await parseConfig(clientConfig)
 
                 config
                     .merge(_defaultConfig)
@@ -402,17 +404,18 @@ module.exports = async (args = {}) => {
                     }
                 }
 
-                if (localeId && typeof locales === 'object') {
+                if (localeId && typeof localesObj === 'object') {
                     config.plugins.push(
                         new SuperI18nPlugin({
                             stage: STAGE,
                             localeId,
-                            locales,
+                            locales: localesObj,
                         })
                     )
                 }
+
                 webpackConfigs.push(config)
-            })
+            }
         }
 
         if (i18n) {
@@ -457,7 +460,8 @@ module.exports = async (args = {}) => {
         // }
 
         let opt = { RUN_PATH, CLIENT_DEV_PORT }
-        let defaultConfig = await createDefaultConfig(opt)
+        const baseConfig = await createBaseConfig()
+        const defaultConfig = await createDefaultConfig(opt)
         let thisConfig = new WebpackConfig()
 
         // 注:在某些项目里，可能会出现下面的加载顺序有特定的区别，需要自行加判断
@@ -625,7 +629,7 @@ module.exports = async (args = {}) => {
         await fs.writeFile(
             path.resolve(
                 RUN_PATH,
-                `./logs/webpack-config/${TYPE}.${STAGE}.${ENV}.${(new Date()).toISOString().replace(/:/g, '-')}.json`
+                `./logs/webpack-config/${TYPE}.${STAGE}.${ENV}.${(new Date()).toISOString().replace(/:/g, '_')}.json`
             ),
             JSON.stringify(webpackConfigs, null, '\t'),
             'utf-8'
