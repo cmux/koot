@@ -3,7 +3,8 @@ const path = require('path')
 const ParserHelpers = require("webpack/lib/ParserHelpers")
 const ConstDependency = require('webpack/lib/dependencies/ConstDependency')
 const NullFactory = require("webpack/lib/NullFactory")
-const DefinePlugin = require("webpack/lib/DefinePlugin")
+const BasicEvaluatedExpression = require("webpack/lib/BasicEvaluatedExpression");
+// const DefinePlugin = require("webpack/lib/DefinePlugin")
 
 const isNumeric = (n) => {
     return !isNaN(parseFloat(n)) && isFinite(n);
@@ -14,9 +15,10 @@ const clientParse = (exp) =>
 const parse = ({
     stage,
     tempFunctionName,
+    functionName,
     expr,
     parser,
-    scope,
+    scope = this,
     definitions = {},
 }) => {
     // stage = 'client'
@@ -27,105 +29,116 @@ const parse = ({
     // console.log(expr.arguments)
 
     // 将 functionName 替换为 tempFunctionName
-    let result = `${tempFunctionName}(`
-    // let exp = ''
-    // if (stage === 'client')
-    //     exp += `${tempObjectName}.`
-    // else
-    //     exp += '`'
+    // let result = `${tempFunctionName}(`
+    // if (stage === 'server') result += '`'
+
     // for (let i = 0; i < expr.arguments.length; i++) {
-    //     console.log(i, expr.arguments[i])
+    //     // console.log(i, expr.arguments[i])
     //     const arg = expr.arguments[i]
     //     switch (arg.type) {
     //         case 'Identifier': {
+    //             // if (typeof arg.name === 'undefined')
+    //             //     console.log(arg)
     //             if (stage === 'client') {
-    //                 exp = clientParse(exp)
-    //                 exp += `[${arg.name}]`
-    //             } else
-    //                 exp += `.$\{${arg.name}}`
+    //                 result += (i ? ',' : '') + `${arg.name}`
+    //             } else {
+    //                 result += `.\` + ${arg.name} + \``
+    //             }
+    //             break
+    //         }
+    //         case 'MemberExpression': {
+    //             const code = scope.state.current._source._value.substr(arg.start, arg.end - arg.start)
+    //             console.log(parser.walkMemberExpression(arg))
+    //             console.log(new BasicEvaluatedExpression())
+    //             console.log(code)
+    //             // console.log(scope.getNameForExpression(arg).name)
+    //             // console.log(new ConstDependency(code, arg.range))
+    //             // // console.log(ParserHelpers.toConstantDependency(parser, code))
+    //             // const dep = new ConstDependency(code, arg.range)
+    //             // dep.loc = arg.loc
+    //             // this.state.current.addDependency(dep)
+    //             // console.log(dep)
+    //             if (stage === 'server') result += '`'
+    //             result += `,${code}`
     //             break
     //         }
     //         case 'ObjectExpression': {
+    //             // console.log(arg)
+    //             // console.log(scope.evaluateExpression(arg))
+    //             // console.log('scope')
+    //             // for (let key in scope.scope) {
+    //             //     // if (ignore.includes(key)) continue
+    //             //     console.log(`  ${key}`)
+    //             //     const next = scope.scope[key]
+    //             //     for (let key in next) {
+    //             //         console.log(`    ${key}`)
+    //             //     }
+    //             // }
+    //             // console.log('state')
+    //             // for (let key in scope.state) {
+    //             //     // if (ignore.includes(key)) continue
+    //             //     console.log(`  ${key}`)
+    //             //     const next = scope.state[key]
+    //             //     for (let key in next) {
+    //             //         console.log(`    ${key}`)
+    //             //     }
+    //             // }
+    //             // console.log(scope.state.current._source._value.substr(arg.start, arg.end - arg.start))
+    //             // console.log(''.padEnd(50, '='))
+    //             if (i >= expr.arguments.length - 1) {
+    //                 if (stage === 'server') result += '`'
+    //                 result += `,${scope.state.current._source._value.substr(arg.start, arg.end - arg.start)}`
+    //             }
     //             break
     //         }
     //         default: {
-    //             if (isNumeric(arg.value)) {
-    //                 if (stage === 'client') {
-    //                     exp = clientParse(exp)
+    //             if (stage === 'client') {
+    //                 result += (i ? ',' : '')
+    //                 if (isNumeric(arg.value)) {
+    //                     result += arg.value
+    //                 } else if (i) {
+    //                     result += JSON.stringify(arg.value)
+    //                 } else {
+    //                     const value = (arg.value in definitions)
+    //                         ? definitions[arg.value]
+    //                         : arg.value
+    //                     result += JSON.stringify(value)
     //                 }
-    //                 exp += `[${arg.value}]`
     //             } else {
-    //                 exp += (i ? '.' : '') + arg.value
+    //                 // if (typeof arg.value === 'undefined')
+    //                 //     console.log(arg)
+    //                 if (isNumeric(arg.value)) {
+    //                     result += `[${arg.value}]`
+    //                 } else {
+    //                     result += (i ? '.' : '') + arg.value
+    //                 }
     //             }
     //         }
     //     }
     // }
-    // if (stage === 'client') {
-    // } else
-    //     exp += '`'
-    if (stage === 'server') result += '`'
 
-    for (let i = 0; i < expr.arguments.length; i++) {
-        // console.log(i, expr.arguments[i])
-        const arg = expr.arguments[i]
-        switch (arg.type) {
-            case 'Identifier': {
-                if (stage === 'client') {
-                    result += (i ? ',' : '') + `${arg.name}`
-                } else {
-                    result += `.\` + ${arg.name} + \``
-                }
-                break
-            }
-            case 'ObjectExpression': {
-                if (i >= expr.arguments.length - 1) {
-                    if (stage === 'server') result += '`'
-                    result += `,${scope.state.current._source._value.substr(arg.start, arg.end - arg.start)}`
-                }
-                break
-            }
-            default: {
-                if (stage === 'client') {
-                    result += (i ? ',' : '')
-                    if (isNumeric(arg.value)) {
-                        result += arg.value
-                    } else if (i) {
-                        result += JSON.stringify(arg.value)
-                    } else {
-                        const value = (arg.value in definitions)
-                            ? definitions[arg.value]
-                            : arg.value
-                        result += JSON.stringify(value)
-                    }
-                } else {
-                    if (isNumeric(arg.value)) {
-                        result += `[${arg.value}]`
-                    } else {
-                        result += (i ? '.' : '') + arg.value
-                    }
-                }
-            }
-        }
-    }
+    // if (stage === 'server') {
+    //     if (
+    //         expr.arguments[expr.arguments.length - 1].type !== 'MemberExpression' &&
+    //         expr.arguments[expr.arguments.length - 1].type !== 'ObjectExpression'
+    //     )
+    //         result += '`'
+    // }
 
-    if (stage === 'server') {
-        if (expr.arguments[expr.arguments.length - 1].type !== 'ObjectExpression')
-            result += '`'
-    }
+    // result += `)`
 
-    result += `)`
+    // // console.log(stage, result)
 
-    // console.log(stage, result)
-
-    const dep = new ConstDependency(result, expr.range)
-    dep.loc = expr.loc
-    scope.state.current.addDependency(dep)
-    // console.log(dep)
-    // console.log(expr)
+    // const dep = new ConstDependency(result, expr.range)
+    // dep.loc = expr.loc
+    // scope.state.current.addDependency(dep)
+    // // console.log(dep)
+    // // console.log(expr)
 
     // require('super-i18n')
     const request = [].concat(['super-i18n', 'default'])
-    const nameIdentifier = tempFunctionName
+    // const nameIdentifier = tempFunctionName
+    const nameIdentifier = functionName
     let expression = `require(${JSON.stringify(request[0])})`
     if (request.length > 1) {
         expression += request
@@ -182,21 +195,90 @@ class I18nPlugin {
         }
         // console.log(definitions)
 
-        compiler.plugin('compilation', (compilation, data) => {
-            data.normalModuleFactory.plugin('parser', (parser, options) => {
-                parser.plugin(`call ${functionName}`, function (expr) {
-                    return parse({
-                        stage,
-                        tempFunctionName,
-                        // tempObjectName,
-                        expr,
-                        parser,
-                        scope: this,
-                        definitions,
-                    })
-                })
-            })
-        })
+        compiler.hooks.compilation.tap(
+            "I18nPlugin",
+            (compilation, { normalModuleFactory }) => {
+                compilation.dependencyFactories.set(ConstDependency, new NullFactory())
+                compilation.dependencyTemplates.set(
+                    ConstDependency,
+                    new ConstDependency.Template()
+                )
+
+                const handler = parser => {
+                    // for (let key in parser.hooks) console.log(key)
+
+                    parser.hooks.call
+                        .for(functionName)
+                        .tap("I18nPlugin", function (expr) {
+                            const request = [].concat(['super-i18n', 'default'])
+                            // const nameIdentifier = tempFunctionName
+                            let expression = `require(${JSON.stringify(request[0])})`
+                            if (request.length > 1) {
+                                expression += request
+                                    .slice(1)
+                                    .map(r => `[${JSON.stringify(r)}]`)
+                                    .join("");
+                            }
+                            ParserHelpers.addParsedVariableToModule(
+                                parser,
+                                functionName,
+                                expression
+                            )
+
+                            if (Array.isArray(expr.arguments) && expr.arguments[0].type === 'Literal') {
+                                const key = expr.arguments[0].value
+                                const code = stage === 'client'
+                                    ? JSON.stringify(definitions[key])
+                                    : JSON.stringify(key).replace(/\./g, '","')
+                                const dep = new ConstDependency(code, expr.range)
+                                dep.loc = expr.loc;
+                                return parser.state.current.addDependency(dep)
+                            }
+                        })
+                }
+
+                normalModuleFactory.hooks.parser
+                    .for("javascript/auto")
+                    .tap("I18nPlugin", handler)
+                normalModuleFactory.hooks.parser
+                    .for("javascript/dynamic")
+                    .tap("I18nPlugin", handler)
+                normalModuleFactory.hooks.parser
+                    .for("javascript/esm")
+                    .tap("I18nPlugin", handler)
+            }
+        )
+
+
+        // compiler.plugin('compilation', (compilation, { normalModuleFactory }) => {
+        //     compilation.dependencyFactories.set(ConstDependency, new NullFactory())
+        //     compilation.dependencyTemplates.set(
+        //         ConstDependency,
+        //         new ConstDependency.Template()
+        //     )
+        //     // console.log(data.normalModuleFactory.hooks)
+        //     // for (let key in normalModuleFactory.hooks) {
+        //     //     console.log(key)
+        //     // }
+        //     // normalModuleFactory.plugin('parser', (...args) => {
+        //     //     console.log(args)
+        //     // })
+        //     // return true
+        //     normalModuleFactory.plugin('parser', (parser, options) => {
+        //         parser.plugin(`call ${functionName}`, function (expr) {
+        //             return parse({
+        //                 stage,
+        //                 tempFunctionName,
+        //                 functionName,
+        //                 // tempObjectName,
+        //                 expr,
+        //                 parser,
+        //                 scope: this,
+        //                 definitions,
+        //             })
+        //         })
+        //     })
+        // })
 
         // if (stage === 'client') {
         //     const definePlugin = new DefinePlugin({

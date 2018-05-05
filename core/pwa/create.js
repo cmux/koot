@@ -178,6 +178,8 @@ const create = async (settings = {}, i18n) => {
                 JSON.stringify(chunkmapFull, undefined, 4),
                 'utf8'
             )
+
+            console.log(`\n\x1b[93m[super/build]\x1b[0m PWA: \x1b[32m${pathnameSW}\x1b[0m created\n`)
         }
     } else {
         await createSW({
@@ -194,6 +196,8 @@ const create = async (settings = {}, i18n) => {
             JSON.stringify(chunkmapFull, undefined, 4),
             'utf8'
         )
+
+        console.log(`\n\x1b[93m[super/build]\x1b[0m PWA: \x1b[32m${pathname}\x1b[0m created\n`)
     }
 
 }
