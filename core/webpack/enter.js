@@ -39,10 +39,6 @@ process.env.DO_WEBPACK = false
  * @returns 修复后的配置对象
  */
 function makeItButter(config) {
-    const {
-        WEBPACK_ANALYZE,
-    } = process.env
-
     // 数组情况，拆分每项分别处理
     if (Array.isArray(config))
         return config.map(thisConfig => makeItButter(thisConfig))
@@ -93,11 +89,14 @@ function makeItButter(config) {
     }
 
     // analyze
-    const isAnalyze = (WEBPACK_ANALYZE == 'true' || config.analyze) ? true : false
-    if (isAnalyze)
+    const isAnalyze = (JSON.parse(process.env.WEBPACK_ANALYZE) || config.analyze) ? true : false
+    if (isAnalyze) {
+        config.output.filename = 'entry.[id].[name].js'
+        config.output.chunkFilename = 'chunk.[id].[name].js'
         config.plugins.push(
             new (require('webpack-bundle-analyzer').BundleAnalyzerPlugin)()
         )
+    }
 
     // custom logic use
     delete config.__ext
