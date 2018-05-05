@@ -229,8 +229,11 @@ module.exports = async ({
         if (type === 'store') type = 'redux'
         type = type.toLowerCase()
 
-        console.log(chalk.green('√') + ` i18n enabled | type ${chalk.yellowBright(type.toUpperCase())}`)
-        console.log(`  > locales: ${locales.map(arr => arr[0]).join(', ')}`)
+        if (__CLIENT__) {
+            console.log(chalk.green('√') + ` i18n enabled`)
+            console.log(`  > type: ${chalk.yellowBright(type)}`)
+            console.log(`  > locales: ${locales.map(arr => arr[0]).join(', ')}`)
+        }
 
         locales.forEach(arr => {
             arr[1] = fs.readJsonSync(path.resolve(process.cwd(), arr[1]))
@@ -245,6 +248,7 @@ module.exports = async ({
             expr,
             locales,
         }
+
         if (ENV === 'dev' && type === 'default') {
             console.log(`  > We recommend using ${chalk.yellowGreen('redux')} mode in DEV enviroment.`)
         }
@@ -451,6 +455,7 @@ module.exports = async ({
             switch (type) {
                 case 'redux': {
                     await handleSingleConfig()
+                    break
                 }
                 default: {
                     for (let arr of i18n.locales) {
