@@ -1,6 +1,6 @@
 {
     "name": "super-project",
-    "version": "3.0.6-alpha.50",
+    "version": "3.0.6-alpha.51",
     "description": "Base framework for Super Project.",
     "main": "",
     "scripts": {
@@ -123,7 +123,8 @@
         "cross-env": "^5.1.4",
         "debug": "^3.1.0",
         "glob-promise": "^3.4.0",
-        "md5-file": "^4.0.0"
+        "md5-file": "^4.0.0",
+        "chalk": "^2.4.1"
     },
     "peerDependencies": {
         "react": ">=16",

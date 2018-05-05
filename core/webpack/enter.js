@@ -4,6 +4,7 @@ process.env.DO_WEBPACK = true
 const fs = require('fs-extra')
 const path = require('path')
 const opn = require('opn')
+const chalk = require('chalk')
 
 //
 const webpack = require('webpack')
@@ -171,7 +172,16 @@ const _afterBuild = async () => {
 /**
  * Webpack 运行入口方法
  */
-module.exports = async (args = {}) => {
+module.exports = async ({
+    config,
+    dist,
+    aliases,
+    i18n = false,
+    pwa,
+    devServer = {},
+    beforeBuild = () => { },
+    afterBuild = () => { },
+}) => {
     const {
         WEBPACK_BUILD_TYPE: TYPE,
         WEBPACK_BUILD_ENV: ENV,
@@ -182,18 +192,20 @@ module.exports = async (args = {}) => {
         SERVER_PORT,
     } = process.env
 
-    let {
-        config,
-        dist,
-        aliases,
-        i18n = false,
-        pwa,
-        devServer = {},
-        beforeBuild,
-        afterBuild,
-    } = args
     DEBUG && console.log('============== Webpack Debug =============')
     DEBUG && console.log('Webpack 打包环境：', TYPE, STAGE, ENV)
+
+    // webpack 执行用的配置对象
+    let webpackConfigs = []
+
+    // 创建默认rules
+    const createBaseConfig = async () =>
+        await common.factory({
+            aliases,
+            env: ENV,
+            stage: STAGE,
+            spa: false,
+        })
 
     // 将打包目录存入环境变量
     // 在打包时，会使用 DefinePlugin 插件将该值赋值到 __DIST__ 全部变量中，以供项目内代码使用
@@ -232,6 +244,15 @@ module.exports = async (args = {}) => {
         process.env.SUPER_I18N = JSON.stringify(false)
     }
 
+    const args = {
+        config,
+        dist,
+        aliases,
+        i18n,
+        pwa,
+        devServer,
+    }
+
     await _beforeBuild(args)
     if (typeof beforeBuild === 'function') {
         await beforeBuild(args)
@@ -239,18 +260,6 @@ module.exports = async (args = {}) => {
 
     if (typeof config === 'function') config = await config()
     if (typeof config !== 'object') config = {}
-
-    // webpack 执行用的配置对象
-    let webpackConfigs = []
-
-    // 创建默认rules
-    const createBaseConfig = async () =>
-        await common.factory({
-            aliases,
-            env: ENV,
-            stage: STAGE,
-            spa: false,
-        })
 
     /**
      * 处理 Webpack 配置对象
@@ -418,9 +427,18 @@ module.exports = async (args = {}) => {
             }
         }
 
-        if (i18n) {
-            for (let arr of i18n.locales) {
-                await handleSingleConfig(arr[0], arr[1])
+        if (typeof i18n === 'object') {
+            const {
+                type = 'default'
+            } = i18n
+            console.log(chalk.green('√') + ` i18n enabled | type ${chalk.yellowBright(type.toUpperCase())}`)
+            switch (type) {
+                default: {
+                    for (let arr of i18n.locales) {
+                        console.log(`  > ${arr[0]}`)
+                        await handleSingleConfig(arr[0], arr[1])
+                    }
+                }
             }
         } else {
             await handleSingleConfig()
@@ -510,18 +528,44 @@ module.exports = async (args = {}) => {
 
         if (pwa && STAGE === 'client' && ENV === 'prod') {
             // 生成PWA使用的 service-worker.js
-            await createPWAsw(pwa)
+            await createPWAsw(pwa, i18n)
         }
 
         await _afterBuild(theArgs)
         if (typeof afterBuild === 'function')
             await afterBuild(theArgs)
+
+        return
+    }
+
+    const debugEnd = async () => {
+        // DEBUG && console.log('执行配置：')
+        // DEBUG && console.log('-----------------------------------------')
+        // DEBUG && console.log(JSON.stringify(webpackConfigs))
+        if (DEBUG) {
+            await fs.ensureDir(
+                path.resolve(
+                    RUN_PATH,
+                    `./logs/webpack-config`
+                )
+            )
+            await fs.writeFile(
+                path.resolve(
+                    RUN_PATH,
+                    `./logs/webpack-config/${TYPE}.${STAGE}.${ENV}.${(new Date()).toISOString().replace(/:/g, '_')}.json`
+                ),
+                JSON.stringify(webpackConfigs, null, '\t'),
+                'utf-8'
+            )
+            console.log('============== Webpack Debug End =============')
+        }
     }
 
     // 客户端开发模式
     if (STAGE === 'client' && ENV === 'dev') {
 
         await handlerClientConfig()
+        await debugEnd()
 
         const compiler = webpack(makeItButter(webpackConfigs))
         const devServerConfig = Object.assign({
@@ -546,7 +590,7 @@ module.exports = async (args = {}) => {
     // 客户端打包
     if (STAGE === 'client' && ENV === 'prod') {
 
-        fs.writeJsonSync(
+        await fs.writeJson(
             path.resolve(
                 // stats.compilation.outputOptions.path,
                 dist,
@@ -560,27 +604,33 @@ module.exports = async (args = {}) => {
         // process.env.NODE_ENV = 'production'
 
         await handlerClientConfig()
+        await debugEnd()
 
         // 执行打包
         const compiler = webpack(makeItButter(webpackConfigs))
 
-        await compiler.run(async (err, stats) => {
-            if (err) console.log(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`)
+        await new Promise((resolve, reject) => {
+            compiler.run(async (err, stats) => {
+                if (err) reject(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`)
 
-            console.log(stats.toString({
-                chunks: false, // 输出精简内容
-                colors: true
-            }))
+                console.log(stats.toString({
+                    chunks: false, // 输出精简内容
+                    colors: true
+                }))
 
-            await after()
+                resolve()
+            })
         })
 
+        await after()
+        return
     }
 
     // 服务端开发环境
     if (STAGE === 'server' && ENV === 'dev') {
 
         await handlerServerConfig()
+        await debugEnd()
 
         await webpack(
             makeItButter(webpackConfigs),
@@ -603,6 +653,7 @@ module.exports = async (args = {}) => {
         // process.env.NODE_ENV = 'production'
 
         await handlerServerConfig()
+        await debugEnd()
 
         await webpack(makeItButter(webpackConfigs), async (err, stats) => {
             if (err) console.log(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`)
@@ -615,27 +666,6 @@ module.exports = async (args = {}) => {
             await after()
         })
     }
-
-    // DEBUG && console.log('执行配置：')
-    // DEBUG && console.log('-----------------------------------------')
-    // DEBUG && console.log(JSON.stringify(webpackConfigs))
-    if (DEBUG) {
-        await fs.ensureDir(
-            path.resolve(
-                RUN_PATH,
-                `./logs/webpack-config`
-            )
-        )
-        await fs.writeFile(
-            path.resolve(
-                RUN_PATH,
-                `./logs/webpack-config/${TYPE}.${STAGE}.${ENV}.${(new Date()).toISOString().replace(/:/g, '_')}.json`
-            ),
-            JSON.stringify(webpackConfigs, null, '\t'),
-            'utf-8'
-        )
-    }
-    DEBUG && console.log('============== Webpack Debug End =============')
 
 }
 

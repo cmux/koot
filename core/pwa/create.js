@@ -33,7 +33,7 @@ const parsePattern = pattern => {
 * @param {Array} [settings.appendUrls=[]] - 手动追加缓存文件列表（追加到 service-worker 模板中的 urlsToCache 变量）
 * @returns {Promise}
 */
-const create = async (settings = {}) => {
+const create = async (settings = {}, i18n) => {
     // let options = Object.assign({
     //     outputPath: process.cwd() + '/dist/public/',
     //     outputFilename: 'service-worker.js',
@@ -52,109 +52,150 @@ const create = async (settings = {}) => {
         initialCacheIgonre = [],
     } = settings
 
-    const files = ['/']
     const pathnamePolyfill = []
     const pathnameChunkmap = path.resolve(dist, './.public-chunckmap.json')
     const outputPath = path.resolve(dist, './public/')
-    const outputFile = (() => {
-        let _pathname = pathname
-        if (pathname.substr(0, 1) === '/')
-            _pathname = `.${pathname}`
-        return path.resolve(outputPath, _pathname)
-    })()
 
-    const chunkmap = await fs.readJSON(pathnameChunkmap, 'utf-8')
+    const createSW = async ({
+        chunkmap = {},
+        ignores = [],
+        pathnameSW = pathname,
+    }) => {
+        const files = ['/']
+        const outputFile = (() => {
+            let _pathname = pathnameSW
+            if (_pathname.substr(0, 1) === '/')
+                _pathname = `.${_pathname}`
+            return path.resolve(outputPath, _pathname)
+        })()
 
-    if (chunkmap.polyfill)
-        if (Array.isArray(chunkmap.polyfill)) {
-            chunkmap.polyfill.forEach(pathname => {
-                pathnamePolyfill.push(parseChunkmapPathname(pathname))
-            })
-        } else {
-            pathnamePolyfill.push(parseChunkmapPathname(chunkmap.polyfill))
+        if (chunkmap.polyfill)
+            if (Array.isArray(chunkmap.polyfill)) {
+                chunkmap.polyfill.forEach(pathname => {
+                    pathnamePolyfill.push(parseChunkmapPathname(pathname))
+                })
+            } else {
+                pathnamePolyfill.push(parseChunkmapPathname(chunkmap.polyfill))
+            }
+
+        const globOptions = {
+            cwd: outputPath,
+            root: outputPath,
+            mark: true,
+            nosort: true,
+            ignore: [
+                '/*'
+            ]
+                .concat(ignores)
+                .concat(pathnamePolyfill)
+                .concat(initialCacheIgonre)
+                .map(pattern => parsePattern(pattern)),
         }
 
-    const globOptions = {
-        cwd: outputPath,
-        root: outputPath,
-        mark: true,
-        nosort: true,
-        ignore: [
-            '/*'
-        ]
-            .concat(pathnamePolyfill)
-            .concat(initialCacheIgonre)
-            .map(pattern => parsePattern(pattern)),
-    }
+        // if (Array.isArray(initialCacheIgonre))
+        //     initialCacheIgonre.forEach((pattern, index) => {
+        //         initialCacheIgonre[index] = parsePattern(pattern)
+        //     })
+    
+        // console.log(globOptions)
 
-    // if (Array.isArray(initialCacheIgonre))
-    //     initialCacheIgonre.forEach((pattern, index) => {
-    //         initialCacheIgonre[index] = parsePattern(pattern)
-    //     })
-
-    return glob(parsePattern(initialCache), globOptions)
-        .then(matches => matches
-            .filter(_pathname => _pathname.slice(-1) !== '/')
-            .filter(_pathname => {
-                // ignore .map files
-                if (path.extname(_pathname) === '.map') return false
-                return true
-            })
-            .map(_pathname => `/${_pathname}`)
-            .concat(initialCacheAppend)
-            .forEach(_pathname => files.push(_pathname))
-        )
+        await glob(parsePattern(initialCache), globOptions)
+            .then(matches => matches
+                .filter(_pathname => _pathname.slice(-1) !== '/')
+                .filter(_pathname => {
+                    // ignore .map files
+                    if (path.extname(_pathname) === '.map') return false
+                    return true
+                })
+                .map(_pathname => `/${_pathname}`)
+                .concat(initialCacheAppend)
+                .forEach(_pathname => files.push(_pathname))
+            )
 
         // 读取 service-worker 模板文件内容
-        .then(() =>
-            fs.readFile(template, { encoding: 'utf8' })
+        let content = await fs.readFile(template, { encoding: 'utf8' })
+
+        // 写入
+        await fs.writeFile(
+            outputFile,
+            content.replace(
+                '[/* APPEND URLS HERE */]',
+                JSON.stringify(files, undefined, 4)
+            ),
+            'utf8'
         )
 
-        // 按 pathname 创建 service-worker 文件
-        .then(content =>
-            fs.writeFile(
-                outputFile,
-                content.replace(
-                    '[/* APPEND URLS HERE */]',
-                    JSON.stringify(files, undefined, 4)
-                ),
+        return
+    }
+
+    const chunkmapFull = await fs.readJSON(pathnameChunkmap, 'utf-8')
+
+    if (typeof i18n === 'object' && Array.isArray(i18n.locales)) {
+        for (let arr of i18n.locales) {
+            const [localeId] = arr
+            const chunksCurrent = []
+            const chunksIgnore = []
+            const chunkmapCurrent = chunkmapFull[`.${localeId}`] || {}
+            const extname = path.extname(pathname)
+            const pathnameSW = pathname.replace(
+                new RegExp(extname + '$', ''),
+                ''
+            ) + '.' + localeId + extname
+
+            // 暂存当前语言下的所有 chunk
+            for (let chunkname in chunkmapCurrent) {
+                chunkmapCurrent[chunkname].forEach(pathname =>
+                    chunksCurrent.push(pathname)
+                )
+            }
+
+            // 遍历其他所有语言的 chunk，当前语言中不存在的加入 ignore 列表
+            for (let dotLocale in chunkmapFull) {
+                if (dotLocale === `.${localeId}`) continue
+                for (let chunkname in chunkmapFull[dotLocale]) {
+                    const arr = chunkmapFull[dotLocale][chunkname]
+                    if (!Array.isArray(arr)) continue
+                    arr.forEach(pathname => {
+                        if (!chunksCurrent.includes(pathname))
+                            chunksIgnore.push(parseChunkmapPathname(pathname))
+                    })
+                }
+            }
+
+            await createSW({
+                chunkmap: chunkmapCurrent,
+                ignores: chunksIgnore,
+                pathnameSW,
+            })
+
+            // 修改 .public-chunkmap.json，添加 service-worker 文件信息
+            chunkmapCurrent['service-worker'] = [
+                `public${pathnameSW}`
+            ]
+
+            await fs.writeFile(
+                pathnameChunkmap,
+                JSON.stringify(chunkmapFull, undefined, 4),
                 'utf8'
             )
-        )
+        }
+    } else {
+        await createSW({
+            chunkmap: chunkmapFull,
+        })
 
         // 修改 .public-chunkmap.json，添加 service-worker 文件信息
-        .then(() => {
-            chunkmap['service-worker'] = [
-                `public${pathname}`
-            ]
-            return chunkmap
-        })
-        .then(() =>
-            fs.writeFile(
-                pathnameChunkmap,
-                JSON.stringify(chunkmap, undefined, 4),
-                'utf8'
-            )
+        chunkmapFull['service-worker'] = [
+            `public${pathname}`
+        ]
+
+        await fs.writeFile(
+            pathnameChunkmap,
+            JSON.stringify(chunkmapFull, undefined, 4),
+            'utf8'
         )
+    }
 
-        // .then(() => {
-        //     if (!options.outputFilenameHash) return true
-
-        //     const segs = options.outputFilename.split('.')
-        //     const ext = segs[segs.length - 1]
-        //     segs.pop()
-
-        //     return fs.rename(
-        //         outputFile,
-        //         path.resolve(
-        //             options.outputPath,
-        //             `${segs.join('.')}.${md5File.sync(outputFile)}.${ext}`
-        //         )
-        //     )
-        // })
-        .then(() => {
-            console.log(`\n\x1b[93m[super/build]\x1b[0m PWA: \x1b[32m${pathname}\x1b[0m created\n`)
-        })
 }
 
 module.exports = create
