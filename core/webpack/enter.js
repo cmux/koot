@@ -229,7 +229,7 @@ module.exports = async ({
         if (type === 'store') type = 'redux'
         type = type.toLowerCase()
 
-        if (__CLIENT__) {
+        if (ENV === 'client') {
             console.log(chalk.green('√') + ` i18n enabled`)
             console.log(`  > type: ${chalk.yellowBright(type)}`)
             console.log(`  > locales: ${locales.map(arr => arr[0]).join(', ')}`)
@@ -563,10 +563,7 @@ module.exports = async ({
         return
     }
 
-    const debugEnd = async () => {
-        // DEBUG && console.log('执行配置：')
-        // DEBUG && console.log('-----------------------------------------')
-        // DEBUG && console.log(JSON.stringify(webpackConfigs))
+    const logConfigToFile = async () => {
         await fs.ensureDir(
             path.resolve(
                 RUN_PATH,
@@ -581,16 +578,14 @@ module.exports = async ({
             JSON.stringify(webpackConfigs, null, '\t'),
             'utf-8'
         )
-        if (DEBUG) {
-            console.log('============== Webpack Debug End =============')
-        }
+        return
     }
 
     // 客户端开发模式
     if (STAGE === 'client' && ENV === 'dev') {
 
         await handlerClientConfig()
-        await debugEnd()
+        await logConfigToFile()
 
         const compiler = webpack(makeItButter(webpackConfigs))
         const devServerConfig = Object.assign({
@@ -629,7 +624,7 @@ module.exports = async ({
         // process.env.NODE_ENV = 'production'
 
         await handlerClientConfig()
-        await debugEnd()
+        await logConfigToFile()
 
         // 执行打包
         const compiler = webpack(makeItButter(webpackConfigs))
@@ -655,7 +650,7 @@ module.exports = async ({
     if (STAGE === 'server' && ENV === 'dev') {
 
         await handlerServerConfig()
-        await debugEnd()
+        await logConfigToFile()
 
         await webpack(
             makeItButter(webpackConfigs),
@@ -678,7 +673,7 @@ module.exports = async ({
         // process.env.NODE_ENV = 'production'
 
         await handlerServerConfig()
-        await debugEnd()
+        await logConfigToFile()
 
         await webpack(makeItButter(webpackConfigs), async (err, stats) => {
             if (err) console.log(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`)
@@ -692,6 +687,12 @@ module.exports = async ({
         })
     }
 
+    if (DEBUG) {
+        // DEBUG && console.log('执行配置：')
+        // DEBUG && console.log('-----------------------------------------')
+        // DEBUG && console.log(JSON.stringify(webpackConfigs))
+        console.log('============== Webpack Debug End =============')
+    }
 }
 
 // justDoooooooooooooIt()
