@@ -10,6 +10,7 @@ const WebpackOnBuildPlugin = require('on-build-webpack')
 const factoryConfig = async ({
     // RUN_PATH,
     // CLIENT_DEV_PORT,
+    localeId,
 }) => {
 
     // let { RUN_PATH, CLIENT_DEV_PORT, APP_KEY } = opt
@@ -122,13 +123,23 @@ const factoryConfig = async ({
                 // console.log(outputPath, htmlFileName)
                 // console.log(outputPath)
 
+                const file = path.resolve(
+                    // stats.compilation.outputOptions.path,
+                    dist,
+                    `.public-chunckmap.json`
+                )
+                let json = {}
+
+                if (localeId) {
+                    json = fs.readJsonSync(file)
+                    json[`.${localeId}`] = chunks
+                } else {
+                    json = chunks
+                }
+
                 await fs.writeJsonSync(
-                    path.resolve(
-                        // stats.compilation.outputOptions.path,
-                        dist,
-                        `.public-chunckmap.json`
-                    ),
-                    chunks,
+                    file,
+                    json,
                     {
                         spaces: 4
                     }

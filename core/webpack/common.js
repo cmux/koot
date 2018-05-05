@@ -204,7 +204,8 @@ const plugins = (env, stage, spa = false) => {
         new webpack.EnvironmentPlugin([
             'SUPER_DIST_DIR',
             'SUPER_I18N',
-            'SUPER_LOCALES'
+            'SUPER_I18N_TYPE',
+            "SUPER_I18N_LOCALES",
         ]),
     ]
 }

@@ -7,6 +7,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 const factoryConfig = async ({
     // RUN_PATH,
     CLIENT_DEV_PORT,
+    localeId,
 }) => {
 
     // let { RUN_PATH, CLIENT_DEV_PORT, APP_KEY } = opt
@@ -20,8 +21,8 @@ const factoryConfig = async ({
             // check enter.js for the fix
             // filename: `${APP_KEY}.-_-_-_-_-_-[name]-_-_-_-_-_-.js`,
             // chunkFilename: `${APP_KEY}.chunk.-_-_-_-_-_-[name]-_-_-_-_-_-.js`,
-            filename: `.-_-_-_-_-_-[name]-_-_-_-_-_-.js`,
-            chunkFilename: `.chunk.-_-_-_-_-_-[name]-_-_-_-_-_-.js`,
+            filename: (localeId ? localeId : '') + `.-_-_-_-_-_-[name]-_-_-_-_-_-.js`,
+            chunkFilename: (localeId ? localeId : '') + `.chunk.-_-_-_-_-_-[name]-_-_-_-_-_-.js`,
             path: '/',
             publicPath: `http://localhost:${CLIENT_DEV_PORT}/dist/`,
             crossOriginLoading: 'anonymous',

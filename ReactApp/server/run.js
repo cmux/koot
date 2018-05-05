@@ -21,7 +21,7 @@ export default async (app, {
     // name,
     template,
     i18n = JSON.parse(process.env.SUPER_I18N) || false,
-    locales = JSON.parse(process.env.SUPER_LOCALES),
+    locales = JSON.parse(process.env.SUPER_I18N_LOCALES),
     router,
     redux,
     client,
@@ -79,10 +79,10 @@ export default async (app, {
     if (i18n) {
         const availableLocales = []
         const localesObj = {}
-        locales.forEach(o => {
-            const [localeId, localeFilePath] = o
+        locales.forEach(arr => {
+            const [localeId, localeObj] = arr
             availableLocales.push(localeId)
-            localesObj[localeId] = localeFilePath
+            localesObj[localeId] = localeObj
         })
         // 服务器端注册多语言
         i18nRegister({

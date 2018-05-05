@@ -12,24 +12,8 @@ const WebpackConfig = require('webpack-config').default
 const common = require('./common')
 const getAppType = require('../../utils/get-app-type')
 const createPWAsw = require('../pwa/create')
-const SuperI18nPlugin = require("./i18n-plugin")
+const SuperI18nPlugin = require("./plugins/i18n")
 
-/*
-
-config.plugins.push(
-    new SuperI18nPlugin({
-        stage: STAGE,
-        localeId: 'zh',
-        locales: fs.readJsonSync(path.resolve(process.cwd(), './locales/zh.json')),
-    })
-)
-
-thisConfig.plugins.push(
-    new SuperI18nPlugin({
-        stage: STAGE,
-    })
-)
- */
 
 // 调试webpack模式
 const DEBUG = 1
@@ -218,21 +202,33 @@ module.exports = async (args = {}) => {
 
     // 处理i18n
     if (typeof i18n === 'object') {
-        process.env.SUPER_I18N = JSON.stringify(true)
         let type = 'default'
+        let expr = '__'
         let locales
+
         if (Array.isArray(i18n)) {
             locales = [...i18n]
         } else {
             type = i18n.type || type
+            expr = i18n.expr || expr
             locales = [...i18n.locales || []]
         }
-        locales.forEach(o => {
-            o[1] = fs.readJsonSync(path.resolve(process.cwd(), o[1]))
-            // process.env[`SUPER_LOCALES___${o[0]}`] = o[1]
+
+        locales.forEach(arr => {
+            arr[1] = fs.readJsonSync(path.resolve(process.cwd(), arr[1]))
         })
-        process.env.SUPER_LOCALES = JSON.stringify(locales)
+
+        process.env.SUPER_I18N = JSON.stringify(true)
+        process.env.SUPER_I18N_TYPE = JSON.stringify(type)
+        process.env.SUPER_I18N_LOCALES = JSON.stringify(locales)
+
+        i18n = {
+            type,
+            expr,
+            locales,
+        }
     } else {
+        i18n = false
         process.env.SUPER_I18N = JSON.stringify(false)
     }
 
@@ -321,92 +317,112 @@ module.exports = async (args = {}) => {
         // const appsConfig = await require('../../config/apps')
 
         // for (let appName in appsConfig) {
+        const handleSingleConfig = async (localeId, localeObj) => {
+            let opt = {
+                RUN_PATH,
+                CLIENT_DEV_PORT,
+                localeId,
+                /*APP_KEY: appName */
+            }
+            let defaultConfig = await createDefaultConfig(opt)
+            // let defaultSPAConfig = await createSPADefaultConfig(opt)
 
-        let opt = {
-            RUN_PATH,
-            CLIENT_DEV_PORT,
-            /*APP_KEY: appName */
-        }
-        let defaultConfig = await createDefaultConfig(opt)
-        // let defaultSPAConfig = await createSPADefaultConfig(opt)
+            // let appConfig = appsConfig[appName]
 
-        // let appConfig = appsConfig[appName]
+            // 如果没有webpack配置，则表示没有react，不需要打包
+            // if (!appConfig.webpack) continue
 
-        // 如果没有webpack配置，则表示没有react，不需要打包
-        // if (!appConfig.webpack) continue
+            let clientConfigs = config
 
-        let clientConfigs = config
-
-        // 统一转成数组，支持多个client配置
-        if (!Array.isArray(clientConfigs)) {
-            clientConfigs = [clientConfigs]
-        }
-
-        clientConfigs.forEach((clientConfig) => {
-
-            let config = new WebpackConfig()
-            clientConfig = new WebpackConfig()
-                .merge(baseConfig)
-                .merge(clientConfig)
-
-            // 跟进打包环境和用户自定义配置，扩展webpack配置
-            if (clientConfig.__ext) {
-                clientConfig.merge(clientConfig.__ext[ENV])
+            // 统一转成数组，支持多个client配置
+            if (!Array.isArray(clientConfigs)) {
+                clientConfigs = [clientConfigs]
             }
 
-            let _defaultConfig = (() => {
+            clientConfigs.forEach((clientConfig) => {
 
-                let config = Object.assign({}, defaultConfig)
+                let config = new WebpackConfig()
+                clientConfig = new WebpackConfig()
+                    .merge(baseConfig)
+                    .merge(clientConfig)
 
-                // 如果是SPA应用
-                // if (clientConfig.spa) {
-                //     config = Object.assign({}, defaultSPAConfig)
-                // }
-                return config
-            })()
-
-            // 如果自定义了，则清除默认
-            if (clientConfig.entry) _defaultConfig.entry = undefined
-            if (clientConfig.output) _defaultConfig.output = undefined
-
-            parseConfig(clientConfig)
-
-            config
-                .merge(_defaultConfig)
-                .merge(clientConfig)
-
-            if (typeof config.output !== 'object') {
-                config.output = {}
-            }
-            if (!config.output.path) {
-                config.output.path = path.resolve(dist, `./public`)
-                config.output.publicPath = ''
-            }
-
-            const defaultClientEntry = path.resolve(
-                // RUN_PATH,
-                // `./system/super3/client`
-                __dirname,
-                '../../',
-                getAppType(),
-                './client'
-            )
-
-            if (
-                typeof config.entry === 'object' &&
-                !config.entry.client
-            ) {
-                config.entry.client = defaultClientEntry
-            } else if (config.entry === 'object') {
-
-            } else if (typeof config.entry !== 'string') {
-                config.entry = {
-                    client: defaultClientEntry
+                // 跟进打包环境和用户自定义配置，扩展webpack配置
+                if (clientConfig.__ext) {
+                    clientConfig.merge(clientConfig.__ext[ENV])
                 }
-            }
 
-            webpackConfigs.push(config)
-        })
+                let _defaultConfig = (() => {
+
+                    let config = Object.assign({}, defaultConfig)
+
+                    // 如果是SPA应用
+                    // if (clientConfig.spa) {
+                    //     config = Object.assign({}, defaultSPAConfig)
+                    // }
+                    return config
+                })()
+
+                // 如果自定义了，则清除默认
+                if (clientConfig.entry) _defaultConfig.entry = undefined
+                if (clientConfig.output) _defaultConfig.output = undefined
+
+                parseConfig(clientConfig)
+
+                config
+                    .merge(_defaultConfig)
+                    .merge(clientConfig)
+
+                if (typeof config.output !== 'object') {
+                    config.output = {}
+                }
+                if (!config.output.path) {
+                    config.output.path = path.resolve(dist, `./public`)
+                    config.output.publicPath = ''
+                }
+
+                const defaultClientEntry = path.resolve(
+                    // RUN_PATH,
+                    // `./system/super3/client`
+                    __dirname,
+                    '../../',
+                    getAppType(),
+                    './client'
+                )
+
+                if (
+                    typeof config.entry === 'object' &&
+                    !config.entry.client
+                ) {
+                    config.entry.client = defaultClientEntry
+                } else if (config.entry === 'object') {
+
+                } else if (typeof config.entry !== 'string') {
+                    config.entry = {
+                        client: defaultClientEntry
+                    }
+                }
+
+                if (localeId && typeof locales === 'object') {
+                    config.plugins.push(
+                        new SuperI18nPlugin({
+                            stage: STAGE,
+                            localeId,
+                            locales,
+                        })
+                    )
+                }
+                webpackConfigs.push(config)
+            })
+        }
+
+        if (i18n) {
+            for (let arr of i18n.locales) {
+                await handleSingleConfig(arr[0], arr[1])
+            }
+        } else {
+            await handleSingleConfig()
+        }
+
         // }
     }
 
@@ -465,6 +481,13 @@ module.exports = async (args = {}) => {
         // if (SYSTEM_CONFIG.WEBPACK_SERVER_OUTPATH)
         //     config.output.path = path.resolve(RUN_PATH, SYSTEM_CONFIG.WEBPACK_SERVER_OUTPATH)
 
+        if (i18n)
+            thisConfig.plugins.push(
+                new SuperI18nPlugin({
+                    stage: STAGE,
+                })
+            )
+
         webpackConfigs.push(thisConfig)
     }
 
@@ -519,6 +542,17 @@ module.exports = async (args = {}) => {
     // 客户端打包
     if (STAGE === 'client' && ENV === 'prod') {
 
+        fs.writeJsonSync(
+            path.resolve(
+                // stats.compilation.outputOptions.path,
+                dist,
+                `.public-chunckmap.json`
+            ),
+            {},
+            {
+                spaces: 4
+            }
+        )
         // process.env.NODE_ENV = 'production'
 
         await handlerClientConfig()

@@ -7,9 +7,10 @@ const getPublicPath = require('./get-public-dir')
  * 找到指定文件，返回路径
  * 
  * @param {string} filename 要查找的文件的文件名
+ * @param {string} localeId 当前语言
  * @memberof ReactIsomorphic
  */
-const getFilePath = (filename) => {
+const getFilePath = (filename, localeId) => {
     const pathDist = process.env.SUPER_DIST_DIR
     const pathPublic = getPublicPath()
 
@@ -21,12 +22,14 @@ const getFilePath = (filename) => {
     //     return getFile(filename, '', appName)
 
     if (__DEV__)
-        return `${pathPublic}.${filename}`
+        return pathPublic + (localeId ? localeId : '') + `.${filename}`
 
     const pathChunckmap = path.resolve(pathDist, '.public-chunckmap.json')
 
     if (fs.existsSync(pathChunckmap)) {
-        const chunckmap = fs.readJsonSync(pathChunckmap)
+        let chunckmap = fs.readJsonSync(pathChunckmap)
+        if (localeId) chunckmap = chunckmap[`.${localeId}`] || {}
+
         const extname = path.extname(filename)
         const key = path.basename(filename, extname)
         let result
@@ -51,7 +54,7 @@ const getFilePath = (filename) => {
         return '/' + filename
     }
 
-    console.warn(`File not found: ${filename}`)
+    console.warn(`File not found: [${localeId}] ${filename}`)
 
     return ''
 
