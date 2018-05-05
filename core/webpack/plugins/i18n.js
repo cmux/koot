@@ -77,7 +77,7 @@ class I18nPlugin {
                                 const key = arg.value
                                 const code = stage === 'client'
                                     ? JSON.stringify(typeof definitions[key] === 'undefined' ? key : definitions[key])
-                                    : JSON.stringify(key).replace(/\./g, '","')
+                                    : JSON.stringify(key)//.replace(/\./g, '","')
                                 // console.log(key, code)
                                 const dep = new ConstDependency(code, arg.range)
                                 dep.loc = arg.loc

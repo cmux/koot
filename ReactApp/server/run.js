@@ -21,6 +21,7 @@ export default async (app, {
     // name,
     template,
     i18n = JSON.parse(process.env.SUPER_I18N) || false,
+    i18nType = JSON.parse(process.env.SUPER_I18N_TYPE) || false,
     locales = JSON.parse(process.env.SUPER_I18N_LOCALES),
     router,
     redux,
@@ -88,6 +89,7 @@ export default async (app, {
         i18nRegister({
             localeIds: availableLocales,
             locales: localesObj,
+            type: i18nType,
         })
     }
 

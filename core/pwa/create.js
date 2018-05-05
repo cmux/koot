@@ -197,7 +197,7 @@ const create = async (settings = {}, i18n) => {
             'utf8'
         )
 
-        console.log(`\n\x1b[93m[super/build]\x1b[0m PWA: \x1b[32m${pathname}\x1b[0m created\n`)
+        console.log(`\x1b[93m[super/build]\x1b[0m PWA: \x1b[32m${pathname}\x1b[0m created`)
     }
 
 }

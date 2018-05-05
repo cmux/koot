@@ -230,6 +230,9 @@ module.exports = async ({
             arr[1] = fs.readJsonSync(path.resolve(process.cwd(), arr[1]))
         })
 
+        if (type === 'store') type = 'redux'
+        type = type.toLowerCase()
+
         process.env.SUPER_I18N = JSON.stringify(true)
         process.env.SUPER_I18N_TYPE = JSON.stringify(type)
         process.env.SUPER_I18N_LOCALES = JSON.stringify(locales)
@@ -422,6 +425,13 @@ module.exports = async ({
                             functionName: i18n.expr,
                         })
                     )
+                } else if (typeof i18n === 'object') {
+                    config.plugins.unshift(
+                        new SuperI18nPlugin({
+                            stage: STAGE,
+                            functionName: i18n.expr,
+                        })
+                    )
                 }
 
                 webpackConfigs.push(config)
@@ -434,6 +444,9 @@ module.exports = async ({
             } = i18n
             console.log(chalk.green('√') + ` i18n enabled | type ${chalk.yellowBright(type.toUpperCase())}`)
             switch (type) {
+                case 'redux': {
+                    await handleSingleConfig()
+                }
                 default: {
                     for (let arr of i18n.locales) {
                         console.log(`  > ${arr[0]}`)
@@ -508,6 +521,7 @@ module.exports = async ({
             thisConfig.plugins.unshift(
                 new SuperI18nPlugin({
                     stage: STAGE,
+                    functionName: i18n.expr,
                 })
             )
 
@@ -529,6 +543,7 @@ module.exports = async ({
 
         if (pwa && STAGE === 'client' && ENV === 'prod') {
             // 生成PWA使用的 service-worker.js
+            console.log(' ')
             await createPWAsw(pwa, i18n)
         }
 
