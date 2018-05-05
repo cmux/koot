@@ -250,7 +250,7 @@ module.exports = async ({
         }
 
         if (ENV === 'dev' && type === 'default') {
-            console.log(`  > We recommend using ${chalk.yellowGreen('redux')} mode in DEV enviroment.`)
+            console.log(`  > We recommend using ${chalk.greenBright('redux')} mode in DEV enviroment.`)
         }
     } else {
         i18n = false
@@ -554,6 +554,7 @@ module.exports = async ({
             // 生成PWA使用的 service-worker.js
             console.log(' ')
             await createPWAsw(pwa, i18n)
+            console.log(' ')
         }
 
         await _afterBuild(theArgs)
@@ -578,6 +579,10 @@ module.exports = async ({
             JSON.stringify(webpackConfigs, null, '\t'),
             'utf-8'
         )
+        // DEBUG && console.log('执行配置：')
+        // DEBUG && console.log('-----------------------------------------')
+        // DEBUG && console.log(JSON.stringify(webpackConfigs))
+        DEBUG && console.log('============== Webpack Debug End =============')
         return
     }
 
@@ -665,6 +670,8 @@ module.exports = async ({
                 await after()
             }
         )
+
+        return
     }
 
     // 服务端打包
@@ -685,12 +692,10 @@ module.exports = async ({
 
             await after()
         })
+
+        return
     }
 
-    // DEBUG && console.log('执行配置：')
-    // DEBUG && console.log('-----------------------------------------')
-    // DEBUG && console.log(JSON.stringify(webpackConfigs))
-    DEBUG && console.log('============== Webpack Debug End =============')
 }
 
 // justDoooooooooooooIt()
