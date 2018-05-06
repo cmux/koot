@@ -55,6 +55,8 @@ const create = async (settings = {}, i18n) => {
     const pathnamePolyfill = []
     const pathnameChunkmap = path.resolve(dist, './.public-chunkmap.json')
     const outputPath = path.resolve(dist, './public/')
+    const i18nType = typeof i18n === 'object' ? i18n.type : undefined
+    const isI18nDefault = (i18nType === 'default')
 
     const createSW = async ({
         chunkmap = {},
@@ -96,7 +98,7 @@ const create = async (settings = {}, i18n) => {
         //     initialCacheIgonre.forEach((pattern, index) => {
         //         initialCacheIgonre[index] = parsePattern(pattern)
         //     })
-    
+
         // console.log(globOptions)
 
         await glob(parsePattern(initialCache), globOptions)
@@ -130,7 +132,7 @@ const create = async (settings = {}, i18n) => {
 
     const chunkmapFull = await fs.readJSON(pathnameChunkmap, 'utf-8')
 
-    if (typeof i18n === 'object' && Array.isArray(i18n.locales)) {
+    if (isI18nDefault && Array.isArray(i18n.locales)) {
         for (let arr of i18n.locales) {
             const [localeId] = arr
             const chunksCurrent = []
