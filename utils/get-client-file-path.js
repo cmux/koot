@@ -14,7 +14,7 @@ const getPublicPath = require('./get-public-dir')
 const getFilePath = (filename) => {
     const { localeId } = require('super-i18n')
 
-    const pathDist = process.env.SUPER_DIST_DIR
+    // const pathDist = process.env.SUPER_DIST_DIR
     const pathPublic = getPublicPath()
 
     const i18nType = JSON.parse(process.env.SUPER_I18N)
@@ -32,17 +32,23 @@ const getFilePath = (filename) => {
     if (__DEV__)
         return pathPublic + (i18nType === 'default' ? localeId : '') + `.${filename}`
 
-    const pathChunckmap = path.resolve(pathDist, '.public-chunckmap.json')
+    // const pathChunckmap = path.resolve(pathDist, '.public-chunkmap.json')
+    let chunkmap
+    try {
+        chunkmap = JSON.parse(process.env.WEBPACK_CHUNKMAP)
+    } catch (e) {
+        chunkmap = false
+    }
 
-    if (fs.existsSync(pathChunckmap)) {
-        let chunckmap = fs.readJsonSync(pathChunckmap)
-        if (i18nType === 'default') chunckmap = chunckmap[`.${localeId}`] || {}
+    if (chunkmap) {
+        // let chunkmap = fs.readJsonSync(pathChunckmap)
+        if (i18nType === 'default') chunkmap = chunkmap[`.${localeId}`] || {}
 
         const extname = path.extname(filename)
         const key = path.basename(filename, extname)
         let result
-        if (Array.isArray(chunckmap[key])) {
-            chunckmap[key].some(value => {
+        if (Array.isArray(chunkmap[key])) {
+            chunkmap[key].some(value => {
                 if (path.extname(value) === extname) {
                     result = value
                     return true
@@ -54,7 +60,7 @@ const getFilePath = (filename) => {
             return `${pathPublic}${result.replace(/(^\.\/|^)public\//, '')}`
     }
 
-    // 如果没有找到chunckmap或是chunckmap中未找到目标项目，转为过滤文件形式
+    // 如果没有找到 chunkmap 或是 chunkmap 中未找到目标项目，转为过滤文件形式
     if (fs.existsSync(path.resolve(
         pathPublic,
         filename

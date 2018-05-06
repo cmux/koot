@@ -206,6 +206,7 @@ const plugins = (env, stage, spa = false) => {
             'SUPER_I18N',
             'SUPER_I18N_TYPE',
             "SUPER_I18N_LOCALES",
+            "WEBPACK_CHUNKMAP",
         ]),
     ]
 }

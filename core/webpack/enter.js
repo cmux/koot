@@ -209,7 +209,9 @@ module.exports = async ({
     // 将打包目录存入环境变量
     // 在打包时，会使用 DefinePlugin 插件将该值赋值到 __DIST__ 全部变量中，以供项目内代码使用
     process.env.SUPER_DIST_DIR = dist
-    process.env.SUPER_I18N = JSON.stringify(typeof i18n === 'object' ? true : false)
+
+    // chunkmap 文件地址
+    const pathnameChunkmap = path.resolve(dist, `.public-chunkmap.json`)
 
     // 处理i18n
     if (typeof i18n === 'object') {
@@ -615,11 +617,7 @@ module.exports = async ({
     if (STAGE === 'client' && ENV === 'prod') {
 
         await fs.writeJson(
-            path.resolve(
-                // stats.compilation.outputOptions.path,
-                dist,
-                `.public-chunckmap.json`
-            ),
+            pathnameChunkmap,
             {},
             {
                 spaces: 4
@@ -677,6 +675,19 @@ module.exports = async ({
     if (STAGE === 'server' && ENV === 'prod') {
 
         // process.env.NODE_ENV = 'production'
+
+        if (!fs.pathExistsSync(pathnameChunkmap)) {
+            await fs.ensureFile(pathnameChunkmap)
+            process.env.WEBPACK_CHUNKMAP = ''
+            console.log(chalk.green('√ ') + chalk.greenBright('Chunkmap') + ` file does not exist. Crated an empty one.`)
+        } else {
+            const content = await fs.readFile(pathnameChunkmap)
+            try {
+                process.env.WEBPACK_CHUNKMAP = JSON.parse(content)
+            } catch (e) {
+                process.env.WEBPACK_CHUNKMAP = ''
+            }
+        }
 
         await handlerServerConfig()
         await logConfigToFile()

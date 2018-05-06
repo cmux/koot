@@ -126,7 +126,7 @@ const factoryConfig = async ({
                 const file = path.resolve(
                     // stats.compilation.outputOptions.path,
                     dist,
-                    `.public-chunckmap.json`
+                    `.public-chunkmap.json`
                 )
                 let json = {}
 

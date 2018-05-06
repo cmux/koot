@@ -13,15 +13,25 @@ module.exports = () => {
         WEBPACK_BUILD_ENV: 'dev',
 
         // Webpack 打包结果分析
-        WEBPACK_ANALYZE: false,
+        WEBPACK_ANALYZE: JSON.stringify(false),
 
         // 仅限 STAGE: client && ENV: dev
         // 客户端开发环境 webpack-dev-server 端口号
         WEBPACK_DEV_SERVER_PORT: 3001,
 
+        // chunkmap
+        WEBPACK_CHUNKMAP: '',
+
         // 运行服务器
         // SERVER_DOMAIN: 'localhost', // TODO: remove
-        SERVER_PORT: (() => process.env.WEBPACK_BUILD_ENV === 'dev' ? '3000' : '8080')()
+        SERVER_PORT: (() => process.env.WEBPACK_BUILD_ENV === 'dev' ? '3000' : '8080')(),
+
+        // 总开关：i18n/多语言相关处理
+        SUPER_I18N: JSON.stringify(false),
+        // i18n处理方式
+        SUPER_I18N_TYPE: '',
+        // 语言包
+        SUPER_I18N_LOCALES: JSON.stringify([]),
     }
     for (let key in defaults) {
         if (typeof process.env[key] === 'undefined') {

@@ -53,7 +53,7 @@ const create = async (settings = {}, i18n) => {
     } = settings
 
     const pathnamePolyfill = []
-    const pathnameChunkmap = path.resolve(dist, './.public-chunckmap.json')
+    const pathnameChunkmap = path.resolve(dist, './.public-chunkmap.json')
     const outputPath = path.resolve(dist, './public/')
 
     const createSW = async ({
