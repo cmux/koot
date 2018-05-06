@@ -20,6 +20,7 @@ const getFilePath = (filename) => {
     const i18nType = JSON.parse(process.env.SUPER_I18N)
         ? JSON.parse(process.env.SUPER_I18N_TYPE)
         : undefined
+    const isI18nDefault = (i18nType === 'default')
     // const localeId = 'zh'
 
     // console.log(pathDist, pathPublic)
@@ -30,7 +31,7 @@ const getFilePath = (filename) => {
     //     return getFile(filename, '', appName)
 
     if (__DEV__)
-        return pathPublic + (i18nType === 'default' ? localeId : '') + `.${filename}`
+        return pathPublic + (isI18nDefault ? localeId : '') + `.${filename}`
 
     // const pathChunckmap = path.resolve(pathDist, '.public-chunkmap.json')
     let chunkmap
@@ -40,9 +41,9 @@ const getFilePath = (filename) => {
         chunkmap = false
     }
 
-    if (chunkmap) {
+    if (typeof chunkmap === 'object') {
         // let chunkmap = fs.readJsonSync(pathChunckmap)
-        if (i18nType === 'default') chunkmap = chunkmap[`.${localeId}`] || {}
+        if (isI18nDefault) chunkmap = chunkmap[`.${localeId}`] || {}
 
         const extname = path.extname(filename)
         const key = path.basename(filename, extname)
@@ -68,7 +69,7 @@ const getFilePath = (filename) => {
         return '/' + filename
     }
 
-    console.warn(`File not found: [${localeId}] ${filename}`)
+    console.warn(`File not found:` + (isI18nDefault ? `[${localeId}] ` : '') + ` ${filename}`)
 
     return ''
 

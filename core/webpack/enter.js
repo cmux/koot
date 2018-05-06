@@ -681,9 +681,8 @@ module.exports = async ({
             process.env.WEBPACK_CHUNKMAP = ''
             console.log(chalk.green('√ ') + chalk.greenBright('Chunkmap') + ` file does not exist. Crated an empty one.`)
         } else {
-            const content = await fs.readFile(pathnameChunkmap)
             try {
-                process.env.WEBPACK_CHUNKMAP = JSON.parse(content)
+                process.env.WEBPACK_CHUNKMAP = JSON.stringify(await fs.readJson(pathnameChunkmap))
             } catch (e) {
                 process.env.WEBPACK_CHUNKMAP = ''
             }
