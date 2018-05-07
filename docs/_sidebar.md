@@ -1,6 +1,7 @@
 * [开始使用](/?id=开始使用)
 * [指南](/guide)
 * [命令](/task)
-* [生命周期](/life-circle)
+* [生命周期](/life-cycle)
+* [i18n/多语言](/i18n)
 * [HTML注入](/inject)
 * [相关](/other)
