@@ -19,7 +19,8 @@ const factoryConfig = async ({
             filename: 'index.js',
             chunkFilename: 'chunk.[name].[chunkhash].js',
             path: `${RUN_PATH}/${common.outputPath}/server`,
-            publicPath: `/[need_set_in_app:__webpack_server_public_path__]/`
+            // publicPath: `/[need_set_in_app:__webpack_public_path__]/`,
+            publicPath: `/`,
         },
         plugins: [],
         externals: common.filterExternalsModules(),

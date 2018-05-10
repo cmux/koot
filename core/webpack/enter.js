@@ -211,7 +211,7 @@ module.exports = async ({
     process.env.SUPER_DIST_DIR = dist
 
     // 确保打包目录存在
-    await fs.ensureFile(dist)
+    await fs.ensureDir(dist)
 
     // chunkmap 文件地址
     const pathnameChunkmap = path.resolve(dist, `.public-chunkmap.json`)
@@ -538,7 +538,8 @@ module.exports = async ({
                 })
             )
 
-        webpackConfigs.push(thisConfig)
+        // webpackConfigs.push(thisConfig)
+        webpackConfigs = thisConfig
     }
 
     const after = async (app) => {
@@ -678,6 +679,10 @@ module.exports = async ({
     if (STAGE === 'server' && ENV === 'prod') {
 
         // process.env.NODE_ENV = 'production'
+        // process.env.WEBPACK_SERVER_PUBLIC_PATH =
+        //     (typeof webpackConfigs.output === 'object' && webpackConfigs.output.publicPath)
+        //         ? webpackConfigs.output.publicPath
+        //         : ''
 
         if (!fs.pathExistsSync(pathnameChunkmap)) {
             await fs.ensureFile(pathnameChunkmap)
