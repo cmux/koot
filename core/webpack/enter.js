@@ -400,13 +400,13 @@ module.exports = async ({
                     .merge(_defaultConfig)
                     .merge(clientConfig)
 
-                if (typeof config.output !== 'object') {
+                if (typeof config.output !== 'object')
                     config.output = {}
-                }
-                if (!config.output.path) {
+                if (!config.output.path)
                     config.output.path = path.resolve(dist, `./public`)
-                    config.output.publicPath = ''
-                }
+                if (!config.output.publicPath)
+                    config.output.publicPath = '/'
+
 
                 const defaultClientEntry = path.resolve(
                     // RUN_PATH,
