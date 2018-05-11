@@ -44,9 +44,8 @@ export default async (app, {
         inject,
         before,
         after,
-        render, onRender
     } = server
-    const _onRender = render || onRender
+    const onRender = server.render || server.onRender
 
     if (typeof template !== 'string')
         throw new Error('Error: "template" type check fail!')
@@ -150,9 +149,6 @@ export default async (app, {
         inject,
 
         onServerRender: (obj) => {
-            if (__DEV__)
-                console.log(`\n\x1b[93m[super/server]\x1b[0m callback: \x1b[32m${'onRender'}\x1b[0m\n`)
-
             let { koaCtx, reduxStore } = obj
 
             reduxStore.dispatch({ type: TELL_CLIENT_URL, data: koaCtx.origin })
@@ -184,8 +180,15 @@ export default async (app, {
                 i18nOnServerRender(obj)
             }
 
-            if (typeof _onRender === 'function')
-                _onRender(obj)
+            if (__DEV__)
+                console.log(
+                    `\n\x1b[93m[super/server]\x1b[0m` +
+                    ` callback: \x1b[32m${'onRender'}\x1b[0m\n`,
+                    [obj]
+                )
+
+            if (typeof onRender === 'function')
+                onRender(obj)
         }
     })
 

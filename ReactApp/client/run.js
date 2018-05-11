@@ -100,15 +100,21 @@ export default ({
         const {
             before,
             after,
-            routerUpdate,
-            historyUpdate,
         } = client
+        const onRouterUpdate = client.routerUpdate || client.onRouterUpdate
+        const onHistoryUpdate = client.historyUpdate || client.onHistoryUpdate
 
         reactApp.react.router.ext({
-            onUpdate: () => {
+            onUpdate: (...args) => {
+                if (__DEV__)
+                    console.log(
+                        `[super/client] ` +
+                        `callback: onRouterUpdate`,
+                        args
+                    )
                 // if (__DEV__) console.log('router onUpdate', self.__LATHPATHNAME__, location.pathname)
-                if (typeof routerUpdate === 'function')
-                    routerUpdate()
+                if (typeof onRouterUpdate === 'function')
+                    onRouterUpdate(...args)
             }
         })
 
@@ -136,8 +142,14 @@ export default ({
                     store.dispatch(actionUpdate(location))
                     // console.log(store.getState())
 
-                    if (typeof historyUpdate === 'function')
-                        historyUpdate(location, store)
+                    if (__DEV__)
+                        console.log(
+                            `[super/client] ` +
+                            `callback: onHistoryUpdate`,
+                            [location, store]
+                        )
+                    if (typeof onHistoryUpdate === 'function')
+                        onHistoryUpdate(location, store)
                 }
             })
         )
