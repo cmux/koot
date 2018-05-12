@@ -4,6 +4,7 @@
     "build": {
         "config_type_error": "Error: build config file (${file}) must export ${type}",
         "build_start": "Start building: STAGE ${stage} | ENV ${env}",
-        "build_complete": "Build complete: STAGE ${stage} | ENV ${env}"
+        "build_complete": "Build complete: STAGE ${stage} | ENV ${env}",
+        "building": "Building..."
     }
 }

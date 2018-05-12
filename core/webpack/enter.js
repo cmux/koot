@@ -16,6 +16,7 @@ const createPWAsw = require('../pwa/create')
 const SuperI18nPlugin = require("./plugins/i18n")
 const __ = require('../../utils/translate')
 const getPort = require('../../utils/get-port')
+const spinner = require('../../utils/spinner')
 
 
 // 调试webpack模式
@@ -301,6 +302,13 @@ module.exports = async ({
 
     if (typeof config === 'function') config = await config()
     if (typeof config !== 'object') config = {}
+
+    // 显示loading
+    const building = spinner(chalk.yellowBright('[super/build] ') + __('build.building'))
+    const buildingComplete = () => {
+        building.stop()
+        console.log(' ')
+    }
 
     /**
      * 处理 Webpack 配置对象
@@ -630,8 +638,6 @@ module.exports = async ({
         return
     }
 
-    console.log(' ')
-
     // 客户端开发模式
     if (STAGE === 'client' && ENV === 'dev') {
 
@@ -639,6 +645,7 @@ module.exports = async ({
         await logConfigToFile()
 
         const compiler = webpack(makeItButter(webpackConfigs))
+        buildingComplete()
         const devServerConfig = Object.assign({
             quiet: false,
             stats: { colors: true },
@@ -680,6 +687,7 @@ module.exports = async ({
             compiler.run(async (err, stats) => {
                 if (err) reject(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`)
 
+                buildingComplete()
                 console.log(stats.toString({
                     chunks: false, // 输出精简内容
                     colors: true
@@ -704,6 +712,7 @@ module.exports = async ({
             async (err, stats) => {
                 if (err) console.log(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`)
 
+                buildingComplete()
                 console.log(stats.toString({
                     chunks: false,
                     colors: true
@@ -744,6 +753,7 @@ module.exports = async ({
             webpack(makeItButter(webpackConfigs), async (err, stats) => {
                 if (err) reject(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`)
 
+                buildingComplete()
                 console.log(stats.toString({
                     chunks: false, // Makes the build much quieter
                     colors: true

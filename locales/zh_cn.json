@@ -4,6 +4,7 @@
     "build": {
         "config_type_error": "错误：构建配置文件（${file}）需输出 ${type}",
         "build_start": "开始构建/打包：STAGE ${stage} | ENV ${env}",
-        "build_complete": "完成：STAGE ${stage} | ENV ${env}"
+        "build_complete": "完成：STAGE ${stage} | ENV ${env}",
+        "building": "构建中……"
     }
 }
