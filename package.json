@@ -1,6 +1,6 @@
 {
     "name": "super-project",
-    "version": "3.0.6-alpha.69",
+    "version": "3.0.6-alpha.70",
     "description": "Base framework for Super Project.",
     "main": "",
     "bin": {
@@ -130,7 +130,8 @@
         "md5-file": "^4.0.0",
         "chalk": "^2.4.1",
         "commander": "^2.15.1",
-        "os-locale": "^2.1.0"
+        "os-locale": "^2.1.0",
+        "npm-run-script": "^0.0.4"
     },
     "peerDependencies": {
         "react": ">=16",

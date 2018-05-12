@@ -1,11 +1,7 @@
 #!/usr/bin/env node
 
-const fs = require('fs-extra')
-const path = require('path')
 const program = require('commander')
-const chalk = require('chalk')
 const readBuildConfigFile = require('../utils/read-build-config-file')
-const __ = require('../utils/translate')
 const sleep = require('../utils/sleep')
 const superBuild = require('../core/webpack/enter')
 

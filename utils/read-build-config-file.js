@@ -3,7 +3,7 @@ const path = require('path')
 const chalk = require('chalk')
 const __ = require('./translate')
 
-module.exports = new Promise((resolve, reject) => {
+module.exports = () => new Promise((resolve, reject) => {
     // 读取构建配置
     const pathnameBuildConfig = path.resolve(process.cwd(), './super.build.js')
     if (!fs.existsSync(pathnameBuildConfig)) {
@@ -28,5 +28,5 @@ module.exports = new Promise((resolve, reject) => {
         return reject(new Error('TYPE NOT OBJECT'))
     }
 
-    return buildConfig
+    resolve(buildConfig)
 })
