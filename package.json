@@ -1,8 +1,11 @@
 {
     "name": "super-project",
-    "version": "3.0.6-alpha.65",
+    "version": "3.0.6-alpha.66",
     "description": "Base framework for Super Project.",
     "main": "",
+    "bin": {
+        "super-build": "./bin/build.js"
+    },
     "scripts": {
         "doc-server": "docsify serve docs",
         "test": "echo \"Error: no test specified\" && exit 1"
@@ -124,7 +127,8 @@
         "debug": "^3.1.0",
         "glob-promise": "^3.4.0",
         "md5-file": "^4.0.0",
-        "chalk": "^2.4.1"
+        "chalk": "^2.4.1",
+        "commander": "^2.15.1"
     },
     "peerDependencies": {
         "react": ">=16",
