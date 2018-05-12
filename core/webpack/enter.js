@@ -15,6 +15,7 @@ const getAppType = require('../../utils/get-app-type')
 const createPWAsw = require('../pwa/create')
 const SuperI18nPlugin = require("./plugins/i18n")
 const __ = require('../../utils/translate')
+const getPort = require('../../utils/get-port')
 
 
 // 调试webpack模式
@@ -181,7 +182,10 @@ module.exports = async ({
     devServer = {},
     beforeBuild = () => { },
     afterBuild = () => { },
+    port,
 }) => {
+    process.env.SERVER_PORT = getPort(port)
+
     const {
         WEBPACK_BUILD_TYPE: TYPE,
         WEBPACK_BUILD_ENV: ENV,

@@ -203,6 +203,7 @@ const plugins = (env, stage, spa = false) => {
             "SUPER_I18N_LOCALES",
             "WEBPACK_CHUNKMAP",
             // "WEBPACK_SERVER_PUBLIC_PATH",
+            "SERVER_PORT",
         ]),
     ]
 }
