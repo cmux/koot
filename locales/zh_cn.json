@@ -1,0 +1,5 @@
+{
+    "build": {
+        "missing_option": "请提供 ${option} 选项。\n${indent}> ${example}"
+    }
+}

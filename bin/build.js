@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 
 const program = require('commander')
+const chalk = require('chalk')
+const __ = require('../utils/translate')
 
 program
     .version(require('../package').version, '-v, --version')
@@ -16,12 +18,26 @@ const run = async () => {
     } = program
 
     if (!stage) {
-        console.log('no --stage')
+        console.log(
+            chalk.red('× ')
+            + __('build.missing_option', {
+                option: chalk.yellowBright('stage'),
+                example: 'super-build ' + chalk.green('--stage client'),
+                indent: '  '
+            })
+        )
         return
     }
 
     if (!env) {
-        console.log('no --env')
+        console.log(
+            chalk.red('× ')
+            + __('build.missing_option', {
+                option: chalk.yellowBright('env'),
+                example: 'super-build ' + chalk.green('--env prod'),
+                indent: '  '
+            })
+        )
         return
     }
 

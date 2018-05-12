@@ -1,0 +1,5 @@
+{
+    "build": {
+        "missing_option": "Please provide option ${option}.\n${indent}> ${example}"
+    }
+}
