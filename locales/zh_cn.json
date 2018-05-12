@@ -1,7 +1,9 @@
 {
     "file_not_found": "文件未找到：${file}",
+    "missing_option": "请提供 ${option} 选项。\n${indent}> ${example}",
     "build": {
-        "missing_option": "请提供 ${option} 选项。\n${indent}> ${example}",
-        "config_type_error": "错误：构建配置文件（${file}）需输出 ${type}"
+        "config_type_error": "错误：构建配置文件（${file}）需输出 ${type}",
+        "build_start": "开始构建/打包 ${stage}……",
+        "build_complete": "构建/打包 ${stage} 完成。"
     }
 }

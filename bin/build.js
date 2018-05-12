@@ -11,17 +11,40 @@ program
     .version(require('../package').version, '-v, --version')
     .usage('<command> [options]')
     .option('--stage [stage]', 'STAGE')
-    .option('--env [env]', 'ENV')
+    // .option('--env [env]', 'ENV')
     .parse(process.argv)
 
-/** TODO:
- * build: 仅为 prod，可选 stage
- */
+const sleep = (ms = 1) => new Promise(resolve =>
+    setTimeout(resolve, ms)
+)
+
+const logBuildStart = (stage = process.env.WEBPACK_BUILD_STAGE) => {
+    console.log(
+        '\n'
+        + chalk.yellowBright('[super/build] ')
+        + __('build.build_start', {
+            stage: chalk.green(stage)
+        })
+        + '\n'
+    )
+}
+
+const logBuildComplete = (stage = process.env.WEBPACK_BUILD_STAGE) => {
+    console.log(
+        '\n'
+        + chalk.green('√ ')
+        + chalk.yellowBright('[super/build] ')
+        + __('build.build_complete', {
+            stage: chalk.green(stage)
+        })
+        + '\n'
+    )
+}
 
 const run = async () => {
     const {
         stage,
-        env
+        // env
     } = program
 
     // if (!stage) {
@@ -36,22 +59,21 @@ const run = async () => {
     //     return
     // }
 
-    // 必须提供 env
-    if (!env) {
-        console.log(
-            chalk.red('× ')
-            + __('build.missing_option', {
-                option: chalk.yellowBright('env'),
-                example: 'super-build ' + chalk.green('--env prod'),
-                indent: '  '
-            })
-        )
-        return
-    }
+    // if (!env) {
+    //     console.log(
+    //         chalk.red('× ')
+    //         + __('build.missing_option', {
+    //             option: chalk.yellowBright('env'),
+    //             example: 'super-build ' + chalk.green('--env prod'),
+    //             indent: '  '
+    //         })
+    //     )
+    //     return
+    // }
 
     // 在所有操作执行之前定义环境变量
     process.env.WEBPACK_BUILD_STAGE = stage || 'client'
-    process.env.WEBPACK_BUILD_ENV = env
+    process.env.WEBPACK_BUILD_ENV = 'prod'
 
     // 读取构建配置
     const pathnameBuildConfig = path.resolve(process.cwd(), './super.build.js')
@@ -79,15 +101,26 @@ const run = async () => {
     // 如果提供了 stage，仅针对 stage 执行打包
     if (stage) {
         process.env.WEBPACK_BUILD_STAGE = stage
+        logBuildStart()
         await superBuild(buildConfig)
+        await sleep(100)
+        logBuildComplete()
         return
     }
 
     // 如过没有提供 stage，自动相继打包 client 和 server
+    logBuildStart()
     await superBuild({ ...buildConfig })
+    await sleep(100)
+    logBuildComplete()
+
+    console.log(''.padEnd(40, '='))
 
     process.env.WEBPACK_BUILD_STAGE = 'server'
+    logBuildStart()
     await superBuild({ ...buildConfig })
+    await sleep(100)
+    logBuildComplete()
 }
 
 run()
