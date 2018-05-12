@@ -22,7 +22,7 @@ const run = async () => {
             chalk.red('× ')
             + __('build.missing_option', {
                 option: chalk.yellowBright('stage'),
-                example: 'super-build ' + chalk.green('--stage client'),
+                example: 'super-build ' + chalk.green('--stage client') + ' --env prod',
                 indent: '  '
             })
         )
@@ -34,7 +34,7 @@ const run = async () => {
             chalk.red('× ')
             + __('build.missing_option', {
                 option: chalk.yellowBright('env'),
-                example: 'super-build ' + chalk.green('--env prod'),
+                example: 'super-build --stage client ' + chalk.green('--env prod'),
                 indent: '  '
             })
         )
