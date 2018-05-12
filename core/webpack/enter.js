@@ -234,7 +234,7 @@ module.exports = async ({
         type = type.toLowerCase()
 
         if (STAGE === 'client') {
-            console.log(chalk.green('√') + ` i18n enabled`)
+            console.log(`\n` + chalk.green('√') + ` i18n ` + chalk.yellowBright(`enabled`))
             console.log(`  > type: ${chalk.yellowBright(type)}`)
             console.log(`  > locales: ${locales.map(arr => arr[0]).join(', ')}`)
         }
@@ -271,6 +271,7 @@ module.exports = async ({
     }
 
     await _beforeBuild(args)
+    console.log(chalk.yellowBright('\n[super/build] ') + `callback: ` + chalk.green('before'))
     if (typeof beforeBuild === 'function') {
         await beforeBuild(args)
     }
@@ -559,10 +560,10 @@ module.exports = async ({
             // 生成PWA使用的 service-worker.js
             console.log(' ')
             await createPWAsw(pwa, i18n)
-            console.log(' ')
         }
 
         await _afterBuild(theArgs)
+        console.log(`\n` + chalk.yellowBright('[super/build] ') + `callback: ` + chalk.green('after'))
         if (typeof afterBuild === 'function')
             await afterBuild(theArgs)
 
