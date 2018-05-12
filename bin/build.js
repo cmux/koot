@@ -4,7 +4,9 @@ const fs = require('fs-extra')
 const path = require('path')
 const program = require('commander')
 const chalk = require('chalk')
+const readBuildConfigFile = require('../utils/read-build-config-file')
 const __ = require('../utils/translate')
+const sleep = require('../utils/sleep')
 const superBuild = require('../core/webpack/enter')
 
 program
@@ -13,10 +15,6 @@ program
     .option('--stage [stage]', 'STAGE')
     // .option('--env [env]', 'ENV')
     .parse(process.argv)
-
-const sleep = (ms = 1) => new Promise(resolve =>
-    setTimeout(resolve, ms)
-)
 
 const run = async () => {
     const {
@@ -53,27 +51,7 @@ const run = async () => {
     process.env.WEBPACK_BUILD_ENV = 'prod'
 
     // 读取构建配置
-    const pathnameBuildConfig = path.resolve(process.cwd(), './super.build.js')
-    if (!fs.existsSync(pathnameBuildConfig)) {
-        console.log(
-            chalk.red('× ')
-            + __('file_not_found', {
-                file: chalk.yellowBright('./super.build.js'),
-            })
-        )
-        return
-    }
-    const buildConfig = require(pathnameBuildConfig)
-    if (typeof buildConfig !== 'object') {
-        console.log(
-            chalk.red('× ')
-            + __('build.config_type_error', {
-                file: chalk.yellowBright('./super.build.js'),
-                type: chalk.green('Object')
-            })
-        )
-        return
-    }
+    const buildConfig = await readBuildConfigFile()
 
     // 如果提供了 stage，仅针对 stage 执行打包
     if (stage) {
