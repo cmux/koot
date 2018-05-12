@@ -30,9 +30,9 @@ export default async (app, {
 }) => {
 
 
-    if (__DEV__) console.log('\r\nServer initializing...')
-    else
-        console.log(`\r\n\x1b[93m[super/server]\x1b[0m initializing...`)
+    // if (__DEV__) console.log('\r\nServer initializing...')
+    // else
+    console.log(`\r\n\x1b[93m[super/server]\x1b[0m initializing...`)
 
 
 
@@ -60,14 +60,16 @@ export default async (app, {
     // ============================================================================
     // 载入目录、相关配置、自定模块等
     // ============================================================================
-    if (__DEV__) console.log('├─ client code initializing...')
+    // if (__DEV__) console.log('├─ client code initializing...')
+    if (__DEV__) console.log(`\x1b[93m[super/server]\x1b[0m client code initializing...`)
     const reactApp = await superClient({
         i18n,
         router,
         redux,
         client
     })
-    if (__DEV__) console.log('├─ client code inited')
+    // if (__DEV__) console.log('├─ client code inited')
+    if (__DEV__) console.log(`\x1b[93m[super/server]\x1b[0m client code inited`)
 
 
 
@@ -99,6 +101,14 @@ export default async (app, {
     // 创建KOA实例
     // ============================================================================
 
+    if (__DEV__)
+        console.log(
+            `\n`
+            + `\n\x1b[93m[super/server]\x1b[0m`
+            + ` callback: \x1b[32m${'before'}\x1b[0m`
+            + `(app)`
+            + `\n`
+        )
     if (typeof before === 'function') {
         await before(app)
     }
@@ -182,9 +192,11 @@ export default async (app, {
 
             if (__DEV__)
                 console.log(
-                    `\n\x1b[93m[super/server]\x1b[0m` +
-                    ` callback: \x1b[32m${'onRender'}\x1b[0m\n`,
-                    [obj]
+                    `\n`
+                    + `\n\x1b[93m[super/server]\x1b[0m`
+                    + ` callback: \x1b[32m${'onRender'}\x1b[0m`
+                    + `(koaCtx, reduxStore)`
+                    + `\n`
                 )
 
             if (typeof onRender === 'function')
@@ -192,20 +204,23 @@ export default async (app, {
         }
     })
 
-    // await app.use(async (ctx, next) => {
-    //     if (!__DEV__) __webpack_server_public_path__ = `/${name}/` // TODO: 移动到配置里
-    //     await next()
-    // })
-
     app.use(isomorphic)
 
+    if (__DEV__)
+        console.log(
+            `\n`
+            + `\n\x1b[93m[super/server]\x1b[0m`
+            + ` callback: \x1b[32m${'after'}\x1b[0m`
+            + `(app)`
+            + `\n`
+        )
     if (typeof after === 'function') {
         await after(app)
     }
 
-    if (__DEV__) console.log('└─ ✔ Server inited.\r\n')
-    else
-        console.log(`\x1b[93m[super/server]\x1b[0m init \x1b[32m${'OK'}\x1b[0m!`)
+    // if (__DEV__) console.log('└─ ✔ Server inited.\r\n')
+    // else
+    console.log(`\x1b[93m[super/server]\x1b[0m init \x1b[32m${'OK'}\x1b[0m!`)
 
     return app
 }

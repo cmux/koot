@@ -121,6 +121,12 @@ export default ({
         if (i18n) i18nRegister(__REDUX_STATE__)
 
         let beforePromise = before
+        if (__DEV__)
+            console.log(
+                `[super/client] ` +
+                `callback: before`,
+                // args
+            )
         if (typeof before === 'function') {
             beforePromise = new Promise(resolve => {
                 before()
@@ -154,6 +160,12 @@ export default ({
             })
         )
             .then((appData) => {
+                if (__DEV__)
+                    console.log(
+                        `[super/client] ` +
+                        `callback: after`,
+                        [appData]
+                    )
                 if (typeof after === 'function') after(appData)
             })
     }
