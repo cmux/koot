@@ -14,6 +14,10 @@ program
     .option('--env [env]', 'ENV')
     .parse(process.argv)
 
+/** TODO:
+ * build: 仅为 prod，可选 stage
+ */
+
 const run = async () => {
     const {
         stage,
