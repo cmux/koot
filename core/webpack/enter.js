@@ -14,10 +14,11 @@ const common = require('./common')
 const getAppType = require('../../utils/get-app-type')
 const createPWAsw = require('../pwa/create')
 const SuperI18nPlugin = require("./plugins/i18n")
+const __ = require('../../utils/translate')
 
 
 // 调试webpack模式
-const DEBUG = 1
+// const DEBUG = 1
 
 // 程序启动路径，作为查找文件的基础
 const RUN_PATH = process.cwd();
@@ -191,8 +192,16 @@ module.exports = async ({
         SERVER_PORT,
     } = process.env
 
-    DEBUG && console.log('============== Webpack Debug =============')
-    DEBUG && console.log('Webpack 打包环境：', TYPE, STAGE, ENV)
+    // DEBUG && console.log('============== Webpack Debug =============')
+    // DEBUG && console.log('Webpack 打包环境：', TYPE, STAGE, ENV)
+    console.log(
+        chalk.cyan('  ')
+        + chalk.yellowBright('[super/build] ')
+        + __('build.build_start', {
+            stage: chalk.green(STAGE),
+            env: chalk.green(ENV),
+        })
+    )
 
     // webpack 执行用的配置对象
     let webpackConfigs = []
@@ -234,7 +243,11 @@ module.exports = async ({
         type = type.toLowerCase()
 
         if (STAGE === 'client') {
-            console.log(`\n` + chalk.green('√') + ` i18n ` + chalk.yellowBright(`enabled`))
+            console.log(
+                chalk.green('√ ')
+                + chalk.yellowBright('[super/build] ')
+                + `i18n ` + chalk.yellowBright(`enabled`)
+            )
             console.log(`  > type: ${chalk.yellowBright(type)}`)
             console.log(`  > locales: ${locales.map(arr => arr[0]).join(', ')}`)
         }
@@ -273,7 +286,11 @@ module.exports = async ({
     }
 
     await _beforeBuild(args)
-    console.log(chalk.yellowBright('\n[super/build] ') + `callback: ` + chalk.green('before'))
+    console.log(
+        chalk.cyan('⚑ ')
+        + chalk.yellowBright('[super/build] ')
+        + `callback: ` + chalk.green('before')
+    )
     if (typeof beforeBuild === 'function') {
         await beforeBuild(args)
     }
@@ -552,6 +569,8 @@ module.exports = async ({
             ...args
         }
 
+        console.log(' ')
+
         if (STAGE === 'server' && ENV === 'dev') {
             if (!global.__SUPER_DEV_SERVER_OPN__) {
                 opn(`http://${SERVER_DOMAIN || 'localhost'}:${SERVER_PORT}/`)
@@ -561,14 +580,26 @@ module.exports = async ({
 
         if (pwa && STAGE === 'client' && ENV === 'prod') {
             // 生成PWA使用的 service-worker.js
-            console.log(' ')
             await createPWAsw(pwa, i18n)
         }
 
         await _afterBuild(theArgs)
-        console.log(`\n` + chalk.yellowBright('[super/build] ') + `callback: ` + chalk.green('after'))
+        console.log(
+            chalk.cyan('⚑ ')
+            + chalk.yellowBright('[super/build] ')
+            + `callback: ` + chalk.green('after')
+        )
         if (typeof afterBuild === 'function')
             await afterBuild(theArgs)
+
+        console.log(
+            chalk.green('√ ')
+            + chalk.yellowBright('[super/build] ')
+            + __('build.build_complete', {
+                stage: chalk.green(STAGE),
+                env: chalk.green(ENV),
+            })
+        )
 
         return
     }
@@ -591,9 +622,11 @@ module.exports = async ({
         // DEBUG && console.log('执行配置：')
         // DEBUG && console.log('-----------------------------------------')
         // DEBUG && console.log(JSON.stringify(webpackConfigs))
-        DEBUG && console.log('============== Webpack Debug End =============')
+        // DEBUG && console.log('============== Webpack Debug End =============')
         return
     }
+
+    console.log(' ')
 
     // 客户端开发模式
     if (STAGE === 'client' && ENV === 'dev') {
@@ -703,16 +736,20 @@ module.exports = async ({
         await handlerServerConfig()
         await logConfigToFile()
 
-        await webpack(makeItButter(webpackConfigs), async (err, stats) => {
-            if (err) console.log(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`)
+        await new Promise((resolve, reject) => {
+            webpack(makeItButter(webpackConfigs), async (err, stats) => {
+                if (err) reject(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`)
 
-            console.log(stats.toString({
-                chunks: false, // Makes the build much quieter
-                colors: true
-            }))
+                console.log(stats.toString({
+                    chunks: false, // Makes the build much quieter
+                    colors: true
+                }))
 
-            await after()
+                resolve()
+            })
         })
+
+        await after()
 
         return
     }

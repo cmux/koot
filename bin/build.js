@@ -18,29 +18,6 @@ const sleep = (ms = 1) => new Promise(resolve =>
     setTimeout(resolve, ms)
 )
 
-const logBuildStart = (stage = process.env.WEBPACK_BUILD_STAGE) => {
-    console.log(
-        '\n'
-        + chalk.yellowBright('[super/build] ')
-        + __('build.build_start', {
-            stage: chalk.green(stage)
-        })
-        + '\n'
-    )
-}
-
-const logBuildComplete = (stage = process.env.WEBPACK_BUILD_STAGE) => {
-    console.log(
-        '\n'
-        + chalk.green('√ ')
-        + chalk.yellowBright('[super/build] ')
-        + __('build.build_complete', {
-            stage: chalk.green(stage)
-        })
-        + '\n'
-    )
-}
-
 const run = async () => {
     const {
         stage,
@@ -101,26 +78,20 @@ const run = async () => {
     // 如果提供了 stage，仅针对 stage 执行打包
     if (stage) {
         process.env.WEBPACK_BUILD_STAGE = stage
-        logBuildStart()
         await superBuild(buildConfig)
         await sleep(100)
-        logBuildComplete()
         return
     }
 
     // 如过没有提供 stage，自动相继打包 client 和 server
-    logBuildStart()
     await superBuild({ ...buildConfig })
     await sleep(100)
-    logBuildComplete()
 
-    console.log(''.padEnd(40, '='))
+    console.log('\n' + ''.padEnd(60, '=') + '\n')
 
     process.env.WEBPACK_BUILD_STAGE = 'server'
-    logBuildStart()
     await superBuild({ ...buildConfig })
     await sleep(100)
-    logBuildComplete()
 }
 
 run()

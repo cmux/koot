@@ -3,7 +3,7 @@
     "missing_option": "Please provide option ${option}.\n${indent}> ${example}",
     "build": {
         "config_type_error": "Error: build config file (${file}) must export ${type}",
-        "build_start": "Start building ${stage}...",
-        "build_complete": "Building ${stage} complete."
+        "build_start": "Start building: STAGE ${stage} | ENV ${env}",
+        "build_complete": "Build complete: STAGE ${stage} | ENV ${env}"
     }
 }
