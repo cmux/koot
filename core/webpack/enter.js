@@ -240,7 +240,9 @@ module.exports = async ({
         }
 
         locales.forEach(arr => {
+            if (arr[2]) return
             arr[1] = fs.readJsonSync(path.resolve(process.cwd(), arr[1]))
+            arr[2] = true
         })
 
         process.env.SUPER_I18N = JSON.stringify(true)
@@ -354,6 +356,7 @@ module.exports = async ({
                 /*APP_KEY: appName */
             }
             const baseConfig = await createBaseConfig()
+            delete baseConfig.module.rules
             const defaultConfig = await createDefaultConfig(opt)
             // let defaultSPAConfig = await createSPADefaultConfig(opt)
 

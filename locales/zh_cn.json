@@ -1,5 +1,7 @@
 {
+    "file_not_found": "文件未找到：${file}",
     "build": {
-        "missing_option": "请提供 ${option} 选项。\n${indent}> ${example}"
+        "missing_option": "请提供 ${option} 选项。\n${indent}> ${example}",
+        "config_type_error": "错误：构建配置文件（${file}）需输出 ${type}"
     }
 }

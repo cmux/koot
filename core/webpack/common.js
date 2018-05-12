@@ -7,11 +7,6 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 const pwaCreatePlugin = require('sp-pwa')
 const getAppType = require('../../utils/get-app-type')
 
-const {
-    WEBPACK_BUILD_ENV: ENV,
-    // WEBPACK_BUILD_STAGE: STAGE,
-} = process.env
-
 // 打包结果目录
 const outputPath = 'dist'
 
@@ -41,7 +36,7 @@ const factory = async ({
         }
     }
 
-    const extractCSS = ENV === 'prod' ? true : false
+    const extractCSS = process.env.WEBPACK_BUILD_ENV === 'prod' ? true : false
 
     return {
         module: {

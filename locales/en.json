@@ -1,5 +1,7 @@
 {
+    "file_not_found": "File not found: ${file}",
     "build": {
-        "missing_option": "Please provide option ${option}.\n${indent}> ${example}"
+        "missing_option": "Please provide option ${option}.\n${indent}> ${example}",
+        "config_type_error": "Error: build config file (${file}) must export ${type}"
     }
 }
