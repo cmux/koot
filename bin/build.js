@@ -7,16 +7,20 @@ const superBuild = require('../core/webpack/enter')
 
 program
     .version(require('../package').version, '-v, --version')
-    .usage('<command> [options]')
-    .option('--stage [stage]', 'STAGE')
+    .usage('[options]')
+    .option('-c, --client', 'Set stage to CLIENT')
+    .option('-s, --server', 'Set stage to SERVER')
     // .option('--env [env]', 'ENV')
     .parse(process.argv)
 
 const run = async () => {
     const {
-        stage,
-        // env
+        client, server,
+        // stage,
+        // env,
     } = program
+
+    const stage = client ? 'client' : (server ? 'server' : false)
 
     // if (!stage) {
     //     console.log(
@@ -51,7 +55,6 @@ const run = async () => {
 
     // 如果提供了 stage，仅针对 stage 执行打包
     if (stage) {
-        process.env.WEBPACK_BUILD_STAGE = stage
         await superBuild(buildConfig)
         await sleep(100)
         return
