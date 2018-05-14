@@ -1,5 +1,5 @@
 // 初始化环境变量
-require('../../utils/init-node-env')()
+// require('../../utils/init-node-env')()
 
 // 处理 es6\es7
 // require('babel-core/register')
@@ -31,19 +31,22 @@ const {
     cookieKeys,
 } = server
 
-const {
-    // SERVER_DOMAIN: domain,
-    SERVER_PORT: port,
-} = process.env
+// 设置服务器端口
+if (typeof process.env.SERVER_PORT === 'undefined' && typeof __SERVER_PORT__ !== 'undefined')
+    process.env.SERVER_PORT = __SERVER_PORT__
+const port = process.env.SERVER_PORT
+// console.log('process.env.SERVER_PORT', process.env.SERVER_PORT)
+// console.log('__SERVER_PORT__', __SERVER_PORT__)
+// console.log('port', port)
 
 // const serverConfig = require('../config/system')
 const appObj = new App()
 const app = appObj.instance()
 
 /* 公用的koa配置 */
-app.keys = cookieKeys || 'super-project'
+app.keys = cookieKeys || 'super-project';
 
-;(async() => {
+(async () => {
     await superServer(app, {
         name,
         // dir,

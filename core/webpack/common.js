@@ -185,6 +185,7 @@ const plugins = (env, stage, spa = false) => {
         '__PROD__': env == 'prod',
         '__SPA__': !!spa,
         '__DIST__': JSON.stringify(process.env.SUPER_DIST_DIR),
+        __SERVER_PORT__: JSON.stringify(process.env.SERVER_PORT),
     }
 
     if (env == 'prod') {
@@ -203,7 +204,6 @@ const plugins = (env, stage, spa = false) => {
             "SUPER_I18N_LOCALES",
             "WEBPACK_CHUNKMAP",
             // "WEBPACK_SERVER_PUBLIC_PATH",
-            "SERVER_PORT",
         ]),
     ]
 }
