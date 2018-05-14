@@ -1,12 +1,11 @@
-module.exports = (port) => {
+module.exports = (port, env = process.env.WEBPACK_BUILD_ENV) => {
     const {
-        WEBPACK_BUILD_ENV: ENV,
         SERVER_PORT,
     } = process.env
 
     if (typeof port === 'object') {
-        if (typeof port[ENV] !== 'undefined')
-            return port[ENV]
+        if (typeof port[env] !== 'undefined')
+            return port[env]
         return SERVER_PORT
     }
 

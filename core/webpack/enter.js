@@ -3,7 +3,6 @@ process.env.DO_WEBPACK = true
 //
 const fs = require('fs-extra')
 const path = require('path')
-const opn = require('opn')
 const chalk = require('chalk')
 
 //
@@ -193,8 +192,8 @@ module.exports = async ({
         WEBPACK_BUILD_STAGE: STAGE,
         // WEBPACK_ANALYZE,
         WEBPACK_DEV_SERVER_PORT: CLIENT_DEV_PORT,
-        SERVER_DOMAIN,
-        SERVER_PORT,
+        // SERVER_DOMAIN,
+        // SERVER_PORT,
     } = process.env
 
     // DEBUG && console.log('============== Webpack Debug =============')
@@ -583,12 +582,12 @@ module.exports = async ({
 
         console.log(' ')
 
-        if (STAGE === 'server' && ENV === 'dev') {
-            if (!global.__SUPER_DEV_SERVER_OPN__) {
-                opn(`http://${SERVER_DOMAIN || 'localhost'}:${SERVER_PORT}/`)
-                global.__SUPER_DEV_SERVER_OPN__ = true
-            }
-        }
+        // if (STAGE === 'server' && ENV === 'dev') {
+        //     if (!global.__SUPER_DEV_SERVER_OPN__) {
+        //         opn(`http://${SERVER_DOMAIN || 'localhost'}:${SERVER_PORT}/`)
+        //         global.__SUPER_DEV_SERVER_OPN__ = true
+        //     }
+        // }
 
         if (pwa && STAGE === 'client' && ENV === 'prod') {
             // 生成PWA使用的 service-worker.js
@@ -612,6 +611,9 @@ module.exports = async ({
                 env: chalk.green(ENV),
             })
         )
+
+        if (ENV === 'dev')
+            console.log(`  > ${(new Date()).toLocaleString()}`)
 
         return
     }
