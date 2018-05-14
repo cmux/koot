@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const fs = require('fs-extra')
 const path = require('path')
 const program = require('commander')
@@ -52,24 +54,36 @@ const run = async () => {
         })
     } else {
         // 开始PM2进程
+        const factoryConfig = (stage) => ({
+            name: `dev-${stage}-${name}`,
+            script: path.resolve(__dirname, '../bin/build'),
+            args: `--stage ${stage} --env dev`,
+            cwd: process.cwd(),
+            output: path.resolve(process.cwd(), `logs/dev/${name}-${stage}.log`),
+            error: path.resolve(process.cwd(), `logs/dev/${name}-${stage}-error.log`),
+            autorestart: false,
+        })
         pm2.connect(true, (err) => {
             if (err) {
                 console.error(err)
                 process.exit(2)
             }
 
-            pm2.start({
-                name: `dev-${stage}-${name}`,
-                script: path.resolve(__dirname, '../bin/build'),
-                args: `--stage ${stage} --env dev`,
-                cwd: process.cwd(),
-                output: path.resolve(process.cwd(), `logs/dev/${name}-${stage}.log`),
-                error: path.resolve(process.cwd(), `logs/dev/${name}-${stage}-error.log`),
-                autorestart: false,
-            }, (err, apps) => {
-                console.log(err)
-                if (err) throw err
-            })
+            pm2.start(
+                factoryConfig('client'),
+                (err, apps) => {
+                    console.log(err)
+                    if (err) throw err
+                }
+            )
+
+            pm2.start(
+                factoryConfig('server'),
+                (err, apps) => {
+                    console.log(err)
+                    if (err) throw err
+                }
+            )
         })
     }
 }
