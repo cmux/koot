@@ -69,7 +69,7 @@ const run = async () => {
             process.stdin.resume()
             const exitHandler = async (options, err) => {
                 // console.log(processes)
-                Promise.all(processes.map(proc =>
+                await Promise.all(processes.map(proc =>
                     new Promise((resolve, reject) => {
                         pm2.delete(proc, err => {
                             // if (err) return reject(err)
