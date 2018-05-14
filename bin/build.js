@@ -8,19 +8,22 @@ const superBuild = require('../core/webpack/enter')
 program
     .version(require('../package').version, '-v, --version')
     .usage('[options]')
-    .option('-c, --client', 'Set stage to CLIENT')
-    .option('-s, --server', 'Set stage to SERVER')
-    // .option('--env [env]', 'ENV')
+    .option('-c, --client', 'Set STAGE to CLIENT')
+    .option('-s, --server', 'Set STAGE to SERVER')
+    .option('--stage [stage]', 'Set STAGE')
+    .option('--env [env]', 'Set ENV')
     .parse(process.argv)
 
 const run = async () => {
     const {
         client, server,
-        // stage,
-        // env,
+        stage: _stage,
+        env = 'prod',
     } = program
 
-    const stage = client ? 'client' : (server ? 'server' : false)
+    const stage = _stage ? _stage : (client ? 'client' : (server ? 'server' : false))
+
+    // console.log(stage, env)
 
     // if (!stage) {
     //     console.log(
@@ -48,17 +51,13 @@ const run = async () => {
 
     // 在所有操作执行之前定义环境变量
     process.env.WEBPACK_BUILD_STAGE = stage || 'client'
-    process.env.WEBPACK_BUILD_ENV = 'prod'
+    process.env.WEBPACK_BUILD_ENV = env
 
     // 读取构建配置
     const buildConfig = await readBuildConfigFile()
 
     // 如果提供了 stage，仅针对 stage 执行打包
-    if (stage) {
-        await superBuild(buildConfig)
-        await sleep(100)
-        return
-    }
+    if (stage) return await superBuild(buildConfig)
 
     // 如过没有提供 stage，自动相继打包 client 和 server
     await superBuild({ ...buildConfig })
