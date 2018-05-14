@@ -6,5 +6,8 @@
         "build_start": "开始构建/打包：STAGE ${stage} | ENV ${env}",
         "build_complete": "完成：STAGE ${stage} | ENV ${env}",
         "building": "Webpack 打包中……"
+    },
+    "dev": {
+        "missing_stage": "请设置场景。\n${indent}> ${example}"
     }
 }

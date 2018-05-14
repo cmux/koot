@@ -12,7 +12,7 @@ const __ = require('../utils/translate')
 
 program
     .version(require('../package').version, '-v, --version')
-    .usage('<command> [options]')
+    .usage('[options]')
     .option('--no-build', 'Don\'t build')
     // .option('--pm2', 'Start with pm2')
     .parse(process.argv)

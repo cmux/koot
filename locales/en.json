@@ -6,5 +6,8 @@
         "build_start": "Start building: STAGE ${stage} | ENV ${env}",
         "build_complete": "Build complete: STAGE ${stage} | ENV ${env}",
         "building": "Webpack building..."
+    },
+    "dev": {
+        "missing_stage": "Please set STAGE.\n${indent}> ${example}"
     }
 }

@@ -1,11 +1,13 @@
 {
     "name": "super-project",
-    "version": "3.0.6-alpha.73",
+    "version": "3.0.6-alpha.74",
     "description": "Base framework for Super Project.",
     "main": "",
     "bin": {
         "super-build": "./bin/build.js",
-        "super-start": "./bin/start.js"
+        "super-start": "./bin/start.js",
+        "super-dev": "./bin/dev.js",
+        "super-analyze": "./bin/analyze.js"
     },
     "scripts": {
         "doc-server": "docsify serve docs",
@@ -134,7 +136,8 @@
         "npm-run-script": "^0.0.4",
         "ora": "^2.1.0",
         "progress": "^2.0.0",
-        "cli-spinners": "^1.3.1"
+        "cli-spinners": "^1.3.1",
+        "pm2": "^2.10.3"
     },
     "peerDependencies": {
         "react": ">=16",
