@@ -58,6 +58,9 @@ const run = async () => {
         })
     } else {
         // 开始PM2进程
+        // 重制 cmd log
+        process.stdout.write('\x1B[2J\x1B[0f')
+
         const processes = []
         const { dist, port } = await readBuildConfigFile()
         const pathServerJS = path.resolve(dist, 'server/index.js')
@@ -69,29 +72,58 @@ const run = async () => {
             process.stdin.resume()
             const exitHandler = async (options, err) => {
                 // console.log(processes)
-                await Promise.all(processes.map(proc =>
-                    new Promise((resolve, reject) => {
-                        pm2.delete(proc, err => {
-                            // if (err) return reject(err)
-                            resolve()
+                if (Array.isArray(processes) && processes.length) {
+                    waiting.stop()
+                    await sleep(300)
+                    process.stdout.write('\x1B[2J\x1B[0f')
+                    const w = spinner('WAITING FOR ENDING')
+                    await Promise.all(processes.map(proc =>
+                        new Promise((resolve, reject) => {
+                            setTimeout(() => {
+                                processes.splice(processes.indexOf(proc), 1)
+                                resolve()
+                            }, 500)
+                            // console.log(proc)
+                            pm2.delete(proc)
                         })
-                    })
-                ))
-                pm2.disconnect()
-                process.exit()
-                // if (options.cleanup) console.log('clean')
-                // if (err) console.log(err.stack)
-                // if (options.exit) process.exit()
+                    ))
+                    await Promise.all(processes.map(proc =>
+                        new Promise((resolve, reject) => {
+                            setTimeout(() => resolve(), 500)
+                            // console.log(proc)
+                            pm2.delete(proc)
+                        })
+                    ))
+                    // console.log(JSON.stringify(processes))
+                    pm2.disconnect()
+                    await sleep(300)
+                    w.stop()
+                    try {
+                        // console.log(process.pid)
+                        process.exit(1)
+                        // process.kill(process.pid)
+                    } catch (e) {
+                        console.log(e)
+                    }
+                } else {
+                    process.removeListener('exit', exitHandler)
+                    process.removeListener('SIGINT', exitHandler)
+                    process.removeListener('SIGUSR1', exitHandler)
+                    process.removeListener('SIGUSR2', exitHandler)
+                    process.removeListener('uncaughtException', exitHandler)
+                    console.log('Press CTRL+C again to terminate.')
+                    process.exit(1)
+                }
             }
             // do something when app is closing
-            process.on('exit', exitHandler.bind(null, { cleanup: true }));
+            process.on('exit', exitHandler);
             // catches ctrl+c event
-            process.on('SIGINT', exitHandler.bind(null, { exit: true }));
+            process.on('SIGINT', exitHandler);
             // catches "kill pid" (for example: nodemon restart)
-            process.on('SIGUSR1', exitHandler.bind(null, { exit: true }));
-            process.on('SIGUSR2', exitHandler.bind(null, { exit: true }));
+            process.on('SIGUSR1', exitHandler);
+            process.on('SIGUSR2', exitHandler);
             // catches uncaught exceptions
-            process.on('uncaughtException', exitHandler.bind(null, { exit: true }));
+            process.on('uncaughtException', exitHandler);
         }
 
         // 根据 stage 开启 PM2 进程
@@ -141,17 +173,20 @@ const run = async () => {
             await start('server')
             await sleep(100)
 
-            const interval = setInterval(async () => {
+            const t = () => setTimeout(async () => {
                 const content = await fs.readFile(pathServerJS, 'utf-8')
                 if (content !== contentWaiting) {
-                    waiting.stop()
-                    clearInterval(interval)
+                    // clearInterval(interval)
                     await start('run')
-                    await sleep(100)
+                    await sleep(2000)
+                    waiting.stop()
                     npmRunScript(`pm2 logs`)
                     opn(`http://localhost:${getPort(port, 'dev')}/`)
+                } else {
+                    t()
                 }
             }, 500)
+            t()
         })
     }
 }
