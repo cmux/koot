@@ -236,6 +236,7 @@ module.exports = async ({
         let type = ENV === 'dev' ? 'redux' : 'default'
         let expr = '__'
         let locales
+        let cookieKey
 
         if (Array.isArray(i18n)) {
             locales = [...i18n]
@@ -243,6 +244,7 @@ module.exports = async ({
             type = i18n.type || type
             expr = i18n.expr || expr
             locales = [...i18n.locales || []]
+            cookieKey = i18n.cookieKey || cookieKey
         }
 
         if (type === 'store') type = 'redux'
@@ -267,6 +269,7 @@ module.exports = async ({
         process.env.SUPER_I18N = JSON.stringify(true)
         process.env.SUPER_I18N_TYPE = JSON.stringify(type)
         process.env.SUPER_I18N_LOCALES = JSON.stringify(locales)
+        if (cookieKey) process.env.SUPER_I18N_COOKIE_KEY = JSON.stringify(cookieKey)
 
         i18n = {
             type,

@@ -172,8 +172,8 @@ export default async (app, {
 
                     // 如果没有，检查cookie
                     const cookies = cookie.parse(koaCtx.request.header.cookie || '')
-                    if (!lang && cookies.spLocaleId && cookies.spLocaleId !== 'null')
-                        lang = cookies.spLocaleId
+                    if (!lang && cookies[process.env.SUPER_I18N_COOKIE_KEY] && cookies[process.env.SUPER_I18N_COOKIE_KEY] !== 'null')
+                        lang = cookies[process.env.SUPER_I18N_COOKIE_KEY]
 
                     // 如果没有，再看header里是否有语言设置
                     if (!lang)
