@@ -33,7 +33,7 @@ module.exports = () => {
         // 语言包
         SUPER_I18N_LOCALES: JSON.stringify([]),
         // 使用的COOKIE KEY
-        SUPER_I18N_COOKIE_KEY: JSON.stringify('spLocaleId'),
+        SUPER_I18N_COOKIE_KEY: 'spLocaleId',
     }
     for (let key in defaults) {
         if (typeof process.env[key] === 'undefined') {

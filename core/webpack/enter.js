@@ -269,7 +269,7 @@ module.exports = async ({
         process.env.SUPER_I18N = JSON.stringify(true)
         process.env.SUPER_I18N_TYPE = JSON.stringify(type)
         process.env.SUPER_I18N_LOCALES = JSON.stringify(locales)
-        if (cookieKey) process.env.SUPER_I18N_COOKIE_KEY = JSON.stringify(cookieKey)
+        if (cookieKey) process.env.SUPER_I18N_COOKIE_KEY = cookieKey
 
         i18n = {
             type,
