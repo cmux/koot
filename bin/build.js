@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+const path = require('path')
 const program = require('commander')
 const readBuildConfigFile = require('../utils/read-build-config-file')
 const sleep = require('../utils/sleep')
@@ -10,8 +11,9 @@ program
     .usage('[options]')
     .option('-c, --client', 'Set STAGE to CLIENT')
     .option('-s, --server', 'Set STAGE to SERVER')
-    .option('--stage [stage]', 'Set STAGE')
-    .option('--env [env]', 'Set ENV')
+    .option('--stage <stage>', 'Set STAGE')
+    .option('--env <env>', 'Set ENV')
+    .option('--config <config-file-path>', 'Set config file')
     .parse(process.argv)
 
 const run = async () => {
@@ -19,8 +21,10 @@ const run = async () => {
         client, server,
         stage: _stage,
         env = 'prod',
+        config: _config,
     } = program
 
+    const config = _config ? path.resolve(_config) : undefined
     const stage = _stage ? _stage : (client ? 'client' : (server ? 'server' : false))
 
     // console.log(stage, env)
@@ -54,7 +58,7 @@ const run = async () => {
     process.env.WEBPACK_BUILD_ENV = env
 
     // 读取构建配置
-    const buildConfig = await readBuildConfigFile()
+    const buildConfig = await readBuildConfigFile(config)
 
     // 如果提供了 stage，仅针对 stage 执行打包
     if (stage) return await superBuild(buildConfig)

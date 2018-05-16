@@ -183,6 +183,7 @@ module.exports = async ({
     beforeBuild = () => { },
     afterBuild = () => { },
     port,
+    defines = {},
 }) => {
     process.env.SERVER_PORT = getPort(port)
 
@@ -217,6 +218,7 @@ module.exports = async ({
             env: ENV,
             stage: STAGE,
             spa: false,
+            defines,
         })
 
     // 将打包目录存入环境变量

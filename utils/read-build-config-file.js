@@ -3,10 +3,11 @@ const path = require('path')
 const chalk = require('chalk')
 const __ = require('./translate')
 
-module.exports = () => new Promise((resolve, reject) => {
+module.exports = (
+    pathname = path.resolve(process.cwd(), './super.build.js')
+) => new Promise((resolve, reject) => {
     // 读取构建配置
-    const pathnameBuildConfig = path.resolve(process.cwd(), './super.build.js')
-    if (!fs.existsSync(pathnameBuildConfig)) {
+    if (!fs.existsSync(pathname)) {
         console.log(
             chalk.red('× ')
             + __('file_not_found', {
@@ -16,7 +17,7 @@ module.exports = () => new Promise((resolve, reject) => {
         return reject(new Error('FILE NOT FOUND'))
     }
 
-    const buildConfig = require(pathnameBuildConfig)
+    const buildConfig = require(pathname)
     if (typeof buildConfig !== 'object') {
         console.log(
             chalk.red('× ')

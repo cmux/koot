@@ -27,6 +27,7 @@ const serverEntries = ((/*appPath*/) => [
 const factory = async ({
     aliases,
     env, stage, spa = false,
+    defines = {},
 }) => {
     const useSpCssLoader = 'sp-css-loader?length=8&mode=replace'
     const useUniversalAliasLoader = {
@@ -170,15 +171,15 @@ const factory = async ({
             ],
             extensions: ['.js', '.jsx', '.json', '.css', '.less', '.sass', '.scss']
         },
-        plugins: plugins(env, stage, spa)
+        plugins: plugins(env, stage, spa, defines)
     }
 }
 
 
 // 执行顺序, 先 -> 后
-const plugins = (env, stage, spa = false) => {
+const plugins = (env, stage, spa = false, defines = {}) => {
 
-    let g = {
+    let g = Object.assign({
         '__CLIENT__': stage == 'client',
         '__SERVER__': stage == 'server',
         '__DEV__': env == 'dev',
@@ -186,7 +187,7 @@ const plugins = (env, stage, spa = false) => {
         '__SPA__': !!spa,
         '__DIST__': JSON.stringify(process.env.SUPER_DIST_DIR),
         __SERVER_PORT__: JSON.stringify(process.env.SERVER_PORT),
-    }
+    }, defines)
 
     if (env == 'prod') {
         process.env.NODE_ENV = 'production'
