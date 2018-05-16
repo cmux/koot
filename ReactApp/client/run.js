@@ -9,8 +9,8 @@ import { reducer as realtimeLocationReducer, REALTIME_LOCATION_REDUCER_NAME, act
 import {
     reducerLocaleId as i18nReducerLocaleId,
     reducerLocales as i18nReducerLocales,
-} from 'super-i18n/redux'
-import i18nRegister from 'super-i18n/register/isomorphic.client'
+} from 'super-project/i18n/redux'
+import i18nRegister from 'super-project/i18n/register/isomorphic.client'
 
 //
 

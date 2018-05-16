@@ -12,7 +12,7 @@ const getPublicPath = require('./get-public-dir')
  * @memberof ReactIsomorphic
  */
 const getFilePath = (filename) => {
-    const { localeId } = require('super-i18n')
+    const { localeId } = require('super-project/i18n')
 
     // const pathDist = process.env.SUPER_DIST_DIR
     const pathPublic = getPublicPath()

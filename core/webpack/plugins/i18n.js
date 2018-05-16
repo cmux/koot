@@ -57,7 +57,7 @@ class I18nPlugin {
                     parser.hooks.call
                         .for(functionName)
                         .tap("I18nPlugin", function (expr) {
-                            const request = [].concat(['super-i18n', 'default'])
+                            const request = [].concat(['super-project/i18n', 'default'])
                             // const nameIdentifier = tempFunctionName
                             let expression = `require(${JSON.stringify(request[0])})`
                             if (request.length > 1) {
