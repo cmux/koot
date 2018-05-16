@@ -25,6 +25,8 @@
 }
 ```
 
+---
+
 ### super-start
 
 默认行为：进行生产模式 (ENV: prod) 的打包，并开启服务器。
@@ -34,6 +36,8 @@
 | 选项 | 说明 | 示例 |
 |-|-|-|
 | --no-build | 不进行打包，直接开启服务器 | `super-start --no-build` |
+
+---
 
 ### super-build
 
@@ -50,6 +54,8 @@
 | --config \<config-file-path> | 指定打包配置文件地址 | `super-build --config ./super.build.qa.js` |
 
 以上命令可混合使用，如：`super-build -c --env dev --config ./super.build.qa.js`
+
+---
 
 ### super-dev
 
