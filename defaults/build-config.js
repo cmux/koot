@@ -11,5 +11,4 @@ module.exports = {
     afterBuild: () => { },
     port: undefined,
     defines: {},
-    server: true,
 }

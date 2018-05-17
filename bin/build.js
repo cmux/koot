@@ -61,15 +61,15 @@ const run = async () => {
 
     // 读取构建配置
     const buildConfig = await readBuildConfigFile(config)
-    const {
-        server: hasServer
-    } = buildConfig
+    // const {
+    //     server: hasServer
+    // } = buildConfig
 
     // 如果提供了 stage，仅针对 stage 执行打包
     if (stage) {
-        if (stage === 'server' && !hasServer) {
-            console.log(chalk.red('× '))
-        }
+        // if (stage === 'server' && !hasServer) {
+        //     console.log(chalk.red('× '))
+        // }
         return await superBuild(buildConfig)
     }
 
@@ -77,7 +77,7 @@ const run = async () => {
     await superBuild({ ...buildConfig })
     await sleep(100)
 
-    if (!hasServer) return
+    // if (!hasServer) return
 
     console.log('\n' + ''.padEnd(60, '=') + '\n')
     process.env.WEBPACK_BUILD_STAGE = 'server'

@@ -26,7 +26,7 @@ const run = async () => {
     // 读取构建配置
     const {
         dist,
-        server,
+        // server,
     } = await readBuildConfigFile()
 
     // 打包
@@ -53,11 +53,11 @@ const run = async () => {
         await sleep(100)
     }
 
-    if (!server) {
-        // console.log(chalk.red('× '))
-        opn(path.resolve(dist, 'public/index.html'))
-        return
-    }
+    // if (!server) {
+    //     // console.log(chalk.red('× '))
+    //     opn(path.resolve(dist, 'public/index.html'))
+    //     return
+    // }
 
     // 运行服务器
     const pathServerJS = path.resolve(dist, 'server/index.js')

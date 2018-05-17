@@ -1,6 +1,6 @@
 const fs = require('fs')
 const path = require('path')
-const readBuildConfigFile = require('../utils/read-build-config-file')
+// const readBuildConfigFile = require('../utils/read-build-config-file')
 
 const extractType = () => {
     const pathnameSuperJS = path.resolve(__dirname, '../../../super.js')
@@ -22,8 +22,8 @@ module.exports = async () => {
     const type = extractType() || ''
     switch (type.toLowerCase()) {
         case 'react': {
-            if ((await readBuildConfigFile()).server)
-                return 'ReactApp'
+            // if ((await readBuildConfigFile()).server)
+            //     return 'ReactApp'
             return 'ReactSPA'
         }
         default:
