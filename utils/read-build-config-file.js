@@ -4,7 +4,9 @@ const chalk = require('chalk')
 const __ = require('./translate')
 
 module.exports = (
-    pathname = path.resolve(process.cwd(), './super.build.js')
+    pathname = typeof process.env.WEBPACK_BUILD_CONFIG_PATHNAME === 'undefined'
+        ? path.resolve(process.cwd(), './super.build.js')
+        : process.env.WEBPACK_BUILD_CONFIG_PATHNAME
 ) => new Promise((resolve, reject) => {
     // 读取构建配置
     if (!fs.existsSync(pathname)) {

@@ -16,6 +16,7 @@ const SuperI18nPlugin = require("./plugins/i18n")
 const __ = require('../../utils/translate')
 const getPort = require('../../utils/get-port')
 const spinner = require('../../utils/spinner')
+const defaultBuildConfig = require('../../defaults/build-config')
 
 
 // 调试webpack模式
@@ -173,18 +174,19 @@ const _afterBuild = async () => {
 /**
  * Webpack 运行入口方法
  */
-module.exports = async ({
-    config,
-    dist,
-    aliases,
-    i18n = false,
-    pwa,
-    devServer = {},
-    beforeBuild = () => { },
-    afterBuild = () => { },
-    port,
-    defines = {},
-}) => {
+module.exports = async (obj) => {
+    let {
+        config,
+        dist,
+        aliases,
+        i18n,
+        pwa,
+        devServer,
+        beforeBuild,
+        afterBuild,
+        port,
+        defines,
+    } = Object.assign({}, defaultBuildConfig, obj)
     process.env.SERVER_PORT = getPort(port)
 
     const {

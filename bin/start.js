@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 
-const fs = require('fs-extra')
+// const fs = require('fs-extra')
 const path = require('path')
 const program = require('commander')
 const npmRunScript = require('npm-run-script')
 const chalk = require('chalk')
+const opn = require('opn')
 const sleep = require('../utils/sleep')
 const readBuildConfigFile = require('../utils/read-build-config-file')
 const spinner = require('../utils/spinner')
@@ -20,11 +21,13 @@ program
 const run = async () => {
     const {
         build,
-        pm2,
     } = program
 
     // 读取构建配置
-    const { dist } = await readBuildConfigFile()
+    const {
+        dist,
+        server = true,
+    } = await readBuildConfigFile()
 
     // 打包
     if (build) {
@@ -48,6 +51,12 @@ const run = async () => {
         })
         building.succeed()
         await sleep(100)
+    }
+
+    if (!server) {
+        // console.log(chalk.red('× '))
+        opn(path.resolve(dist, 'public/index.html'))
+        return
     }
 
     // 运行服务器

@@ -9,7 +9,7 @@ module.exports = (port, env = process.env.WEBPACK_BUILD_ENV) => {
         return SERVER_PORT
     }
 
-    if (typeof port !== 'undefined')
+    if (typeof port !== 'undefined' && typeof port !== 'boolean')
         return port
 
     return SERVER_PORT

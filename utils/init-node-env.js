@@ -22,6 +22,9 @@ module.exports = () => {
         // chunkmap
         WEBPACK_CHUNKMAP: '',
 
+        // 打包配置文件路径，默认不存在。如果存在则默认使用
+        // WEBPACK_BUILD_CONFIG_PATHNAME: ...,
+
         // 运行服务器
         // SERVER_DOMAIN: 'localhost', // TODO: remove
         SERVER_PORT: (() => process.env.WEBPACK_BUILD_ENV === 'dev' ? '3000' : '8080')(),

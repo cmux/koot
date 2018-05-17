@@ -1,15 +1,16 @@
 const fs = require('fs')
 const path = require('path')
-
-const pathname = path.resolve(__dirname, '../../../super.js')
+const readBuildConfigFile = require('../utils/read-build-config-file')
 
 const extractType = () => {
+    const pathnameSuperJS = path.resolve(__dirname, '../../../super.js')
+
     try {
-        const { type } = require(pathname)
+        const { type } = require(pathnameSuperJS)
         return type
     } catch (e) { }
 
-    const content = fs.readFileSync(pathname, 'utf-8')
+    const content = fs.readFileSync(pathnameSuperJS, 'utf-8')
     const matches = /type[ ]*=[ ]*['"](.+?)['"]/gm.exec(content)
     if (Array.isArray(matches) && matches.length > 1)
         return matches[1]
@@ -20,8 +21,11 @@ const extractType = () => {
 module.exports = () => {
     const type = extractType() || ''
     switch (type.toLowerCase()) {
-        case 'react':
-            return 'ReactApp'
+        case 'react': {
+            if (readBuildConfigFile().server)
+                return 'ReactApp'
+            return 'ReactSPA'
+        }
         default:
             return type
     }
