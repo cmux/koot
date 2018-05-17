@@ -3,8 +3,8 @@
     "missing_option": "Please provide option ${option}.\n${indent}> ${example}",
     "build": {
         "config_type_error": "Error: build config file (${file}) must export ${type}",
-        "build_start": "${type} Start building: STAGE ${stage} | ENV ${env}",
-        "build_complete": "${type} Building complete: STAGE ${stage} | ENV ${env}",
+        "build_start": "${type} Start building (STAGE ${stage} / ENV ${env})",
+        "build_complete": "${type} Building complete (STAGE ${stage} / ENV ${env})",
         "building": "Webpack building..."
     },
     "dev": {
