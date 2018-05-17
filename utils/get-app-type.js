@@ -23,8 +23,8 @@ module.exports = async () => {
     switch (type.toLowerCase()) {
         case 'react': {
             // if ((await readBuildConfigFile()).server)
-            //     return 'ReactApp'
-            return 'ReactSPA'
+            return 'ReactApp'
+            // return 'ReactSPA'
         }
         default:
             return type
