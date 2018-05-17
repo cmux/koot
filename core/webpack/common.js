@@ -5,23 +5,9 @@ const webpack = require('webpack')
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 
 const pwaCreatePlugin = require('sp-pwa')
-const getAppType = require('../../utils/get-app-type')
 
 // 打包结果目录
 const outputPath = 'dist'
-
-// 服务端入库文件
-const serverEntries = ((/*appPath*/) => [
-    'babel-core/register',
-    'babel-polyfill',
-    path.resolve(
-        // __dirname, '../start'
-        __dirname,
-        '../../',
-        getAppType(),
-        './server'
-    )
-])
 
 // 执行顺序，从右到左
 const factory = async ({
@@ -287,7 +273,6 @@ module.exports = {
     factory,
 
     outputPath,
-    serverEntries,
     // rules,
     plugins,
     factoryPWAPlugin,

@@ -26,7 +26,7 @@ const run = async () => {
     // 读取构建配置
     const {
         dist,
-        server = true,
+        server,
     } = await readBuildConfigFile()
 
     // 打包

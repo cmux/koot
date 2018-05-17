@@ -18,9 +18,6 @@ const factoryConfig = async ({
             __dirname: true
         },
         watch: true,
-        entry: common.serverEntries(RUN_PATH).concat([
-            'webpack/hot/poll?1000'
-        ]),
         output: {
             filename: 'index.js',
             chunkFilename: 'chunk.-_-_-_-_-_-[name]-_-_-_-_-_-.js',

@@ -187,8 +187,10 @@ module.exports = async (obj) => {
         port,
         defines,
     } = Object.assign({}, defaultBuildConfig, obj)
-    process.env.SERVER_PORT = getPort(port)
 
+    const appType = await getAppType()
+
+    process.env.SERVER_PORT = getPort(port)
     const {
         WEBPACK_BUILD_TYPE: TYPE,
         WEBPACK_BUILD_ENV: ENV,
@@ -205,6 +207,7 @@ module.exports = async (obj) => {
         chalk.cyan('  ')
         + chalk.yellowBright('[super/build] ')
         + __('build.build_start', {
+            type: chalk.green(appType),
             stage: chalk.green(STAGE),
             env: chalk.green(ENV),
         })
@@ -394,6 +397,14 @@ module.exports = async (obj) => {
             delete baseConfig.module.rules
             const defaultConfig = await createDefaultConfig(opt)
             // let defaultSPAConfig = await createSPADefaultConfig(opt)
+            const defaultClientEntry = path.resolve(
+                // RUN_PATH,
+                // `./system/super3/client`
+                __dirname,
+                '../../',
+                appType,
+                './client'
+            )
 
             // let appConfig = appsConfig[appName]
 
@@ -445,16 +456,6 @@ module.exports = async (obj) => {
                     config.output.path = path.resolve(dist, `./public`)
                 if (!config.output.publicPath)
                     config.output.publicPath = '/'
-
-
-                const defaultClientEntry = path.resolve(
-                    // RUN_PATH,
-                    // `./system/super3/client`
-                    __dirname,
-                    '../../',
-                    getAppType(),
-                    './client'
-                )
 
                 if (
                     typeof config.entry === 'object' &&
@@ -526,6 +527,18 @@ module.exports = async (obj) => {
 
         // const appsConfig = await require('../../config/apps')
         let tempClientConfig = new WebpackConfig()
+        const defaultServerEntry = [
+            'babel-core/register',
+            'babel-polyfill',
+            path.resolve(
+                // __dirname, '../start'
+                __dirname,
+                '../../',
+                appType,
+                './server'
+            )
+        ]
+        if (ENV === 'dev') defaultServerEntry.push('webpack/hot/poll?1000')
 
         // for (let appName in appsConfig) {
 
@@ -577,6 +590,8 @@ module.exports = async (obj) => {
                 })
             )
 
+        thisConfig.entry = defaultServerEntry
+
         // webpackConfigs.push(thisConfig)
         webpackConfigs = thisConfig
     }
@@ -614,6 +629,7 @@ module.exports = async (obj) => {
             chalk.green('√ ')
             + chalk.yellowBright('[super/build] ')
             + __('build.build_complete', {
+                type: chalk.green(appType),
                 stage: chalk.green(STAGE),
                 env: chalk.green(ENV),
             })

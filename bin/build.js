@@ -62,7 +62,7 @@ const run = async () => {
     // 读取构建配置
     const buildConfig = await readBuildConfigFile(config)
     const {
-        server: hasServer = true
+        server: hasServer
     } = buildConfig
 
     // 如果提供了 stage，仅针对 stage 执行打包

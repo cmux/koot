@@ -14,7 +14,6 @@ const factoryConfig = async ({
             __dirname: true
         },
         watch: false,
-        entry: common.serverEntries(RUN_PATH),
         output: {
             filename: 'index.js',
             chunkFilename: 'chunk.[name].[chunkhash].js',

@@ -18,11 +18,11 @@ const extractType = () => {
     return undefined
 }
 
-module.exports = () => {
+module.exports = async () => {
     const type = extractType() || ''
     switch (type.toLowerCase()) {
         case 'react': {
-            if (readBuildConfigFile().server)
+            if ((await readBuildConfigFile()).server)
                 return 'ReactApp'
             return 'ReactSPA'
         }

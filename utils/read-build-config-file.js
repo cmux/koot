@@ -2,6 +2,7 @@ const fs = require('fs-extra')
 const path = require('path')
 const chalk = require('chalk')
 const __ = require('./translate')
+const defaults = require('../defaults/build-config')
 
 module.exports = (
     pathname = typeof process.env.WEBPACK_BUILD_CONFIG_PATHNAME === 'undefined'
@@ -19,7 +20,7 @@ module.exports = (
         return reject(new Error('FILE NOT FOUND'))
     }
 
-    const buildConfig = require(pathname)
+    const buildConfig = Object.assign({}, defaults, require(pathname))
     if (typeof buildConfig !== 'object') {
         console.log(
             chalk.red('× ')
