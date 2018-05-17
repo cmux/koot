@@ -12,7 +12,7 @@ import {
 const checkItem = (input) => {
     let id
 
-    input = input.toLowerCase().replace(/_/g, '-')
+    // input = input.toLowerCase().replace(/_/g, '-')
 
     availableLocales.some(_localeId => {
         if (_localeId == input)
