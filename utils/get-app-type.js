@@ -19,13 +19,21 @@ const extractType = () => {
 }
 
 module.exports = async () => {
-    const type = extractType() || ''
+    const type = typeof process.env.SUPER_PROJECT_TYPE !== 'undefined'
+        ? process.env.SUPER_PROJECT_TYPE
+        : extractType() || ''
+
     switch (type.toLowerCase()) {
         case 'react': {
             // if ((await readBuildConfigFile()).server)
             return 'ReactApp'
             // return 'ReactSPA'
         }
+
+        case 'react-spa':
+        case 'reactspa':
+            return 'ReactSPA'
+
         default:
             return type
     }

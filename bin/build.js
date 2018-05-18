@@ -5,6 +5,7 @@ const program = require('commander')
 const chalk = require('chalk')
 const readBuildConfigFile = require('../utils/read-build-config-file')
 const sleep = require('../utils/sleep')
+const setEnvFromCommand = require('../utils/set-env-from-command')
 const superBuild = require('../core/webpack/enter')
 
 program
@@ -15,6 +16,7 @@ program
     .option('--stage <stage>', 'Set STAGE')
     .option('--env <env>', 'Set ENV')
     .option('--config <config-file-path>', 'Set config file')
+    .option('--type <project-type>', 'Set project type')
     .parse(process.argv)
 
 const run = async () => {
@@ -22,10 +24,15 @@ const run = async () => {
         client, server,
         stage: _stage,
         env = 'prod',
-        config: _config,
+        config,
+        type,
     } = program
 
-    const config = _config ? path.resolve(_config) : undefined
+    setEnvFromCommand({
+        config,
+        type,
+    })
+
     const stage = _stage ? _stage : (client ? 'client' : (server ? 'server' : false))
 
     // console.log(stage, env)
@@ -57,10 +64,9 @@ const run = async () => {
     // 在所有操作执行之前定义环境变量
     process.env.WEBPACK_BUILD_STAGE = stage || 'client'
     process.env.WEBPACK_BUILD_ENV = env
-    if (config) process.env.WEBPACK_BUILD_CONFIG_PATHNAME = config
 
     // 读取构建配置
-    const buildConfig = await readBuildConfigFile(config)
+    const buildConfig = await readBuildConfigFile()
     // const {
     //     server: hasServer
     // } = buildConfig

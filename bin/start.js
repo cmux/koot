@@ -9,6 +9,7 @@ const opn = require('opn')
 const sleep = require('../utils/sleep')
 const readBuildConfigFile = require('../utils/read-build-config-file')
 const spinner = require('../utils/spinner')
+const setEnvFromCommand = require('../utils/set-env-from-command')
 const __ = require('../utils/translate')
 
 program
@@ -16,12 +17,20 @@ program
     .usage('[options]')
     .option('--no-build', 'Don\'t build')
     // .option('--pm2', 'Start with pm2')
+    .option('--config <config-file-path>', 'Set config file')
+    .option('--type <project-type>', 'Set project type')
     .parse(process.argv)
 
 const run = async () => {
     const {
         build,
+        config,
+        type,
     } = program
+
+    setEnvFromCommand({
+        config, type
+    })
 
     // 读取构建配置
     const {

@@ -22,8 +22,11 @@ module.exports = () => {
         // chunkmap
         WEBPACK_CHUNKMAP: '',
 
-        // 打包配置文件路径，默认不存在。如果存在则默认使用
+        // 打包配置文件路径。默认不存在。如果存在则默认使用
         // WEBPACK_BUILD_CONFIG_PATHNAME: ...,
+
+        // 项目类型。默认不存在。如果存在则默认使用
+        // SUPER_PROJECT_TYPE: ...,
 
         // 运行服务器
         // SERVER_DOMAIN: 'localhost', // TODO: remove
