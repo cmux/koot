@@ -36,6 +36,8 @@
 | 选项 | 说明 | 示例 |
 |-|-|-|
 | --no-build | 不进行打包，直接开启服务器 | `super-start --no-build` |
+| --type \<project-type> | 指定项目类型，忽略 super.js 中的配置 | `super-start --type react-spa` |
+| --config \<config-file-path> | 指定打包配置文件地址 | `super-start --config ./super.build.qa.js` |
 
 ---
 
@@ -51,6 +53,7 @@
 | -s 或 --server | 只对服务器端环境打包 | `super-build -s` |
 | --stage \<client\|server\> | 指定打包环境 | `super-build --stage client` |
 | --env \<prod\|dev\> | 指定打包模式 | `super-build --env dev` |
+| --type \<project-type> | 指定项目类型，忽略 super.js 中的配置 | `super-build --type react-spa` |
 | --config \<config-file-path> | 指定打包配置文件地址 | `super-build --config ./super.build.qa.js` |
 
 以上命令可混合使用，如：`super-build -c --env dev --config ./super.build.qa.js`
