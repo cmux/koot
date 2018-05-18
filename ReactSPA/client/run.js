@@ -1,22 +1,27 @@
+import React from 'react'
+import ReactDOM from 'react-dom'
+import {
+    Router,
+    hashHistory,
+    // browserHistory,
+    // createMemoryHistory,
+} from 'react-router'
+import { syncHistoryWithStore, routerReducer } from 'react-router-redux'
+import { Provider } from 'react-redux'
+import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
 import thunk from 'redux-thunk'
-import { browserHistory } from 'react-router'
-import { routerMiddleware, routerReducer } from 'react-router-redux'
-
-//
-
-import { ReactApp } from 'super-project/ReactApp'
-import { reducer as realtimeLocationReducer, REALTIME_LOCATION_REDUCER_NAME, actionUpdate } from 'sp-isomorphic-utils/realtime-location'
+import {
+    reducer as realtimeLocationReducer,
+    REALTIME_LOCATION_REDUCER_NAME,
+    actionUpdate
+} from 'sp-isomorphic-utils/realtime-location'
 import {
     reducerLocaleId as i18nReducerLocaleId,
     reducerLocales as i18nReducerLocales,
 } from 'super-project/i18n/redux'
-import i18nRegister from 'super-project/i18n/register/isomorphic.client'
-
-//
-
-import { SERVER_REDUCER_NAME, serverReducer } from '../server/redux'
-
-const ROUTER_REDUCDER_NAME = 'routing'
+import i18nRegister from 'super-project/i18n/register/spa.client'
+import { ImportStyleRoot } from 'sp-css-import'
+import { onRouterChange } from '@webUI/layout/header'
 
 
 
