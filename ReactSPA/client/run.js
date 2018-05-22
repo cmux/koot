@@ -1,3 +1,5 @@
+// TODO: i18n
+
 import React from 'react'
 import ReactDOM from 'react-dom'
 import {
@@ -15,11 +17,11 @@ import {
     REALTIME_LOCATION_REDUCER_NAME,
     actionUpdate,
 } from 'sp-isomorphic-utils/realtime-location'
-import {
-    reducerLocaleId as i18nReducerLocaleId,
-    reducerLocales as i18nReducerLocales,
-} from 'super-project/i18n/redux'
-import i18nRegister from 'super-project/i18n/register/spa.client'
+// import {
+//     reducerLocaleId as i18nReducerLocaleId,
+//     reducerLocales as i18nReducerLocales,
+// } from 'super-project/i18n/redux'
+// import i18nRegister from 'super-project/i18n/register/spa.client'
 import { ImportStyleRoot } from 'sp-css-import'
 
 const ROUTER_REDUCDER_NAME = 'routing'
@@ -51,10 +53,10 @@ export default ({
         // 对应服务器生成的store
         // [SERVER_REDUCER_NAME]: serverReducer,
     }
-    if (i18n) {
-        reducersObject.localeId = i18nReducerLocaleId
-        reducersObject.locales = i18nReducerLocales
-    }
+    // if (i18n) {
+    //     reducersObject.localeId = i18nReducerLocaleId
+    //     reducersObject.locales = i18nReducerLocales
+    // }
 
     // 兼容配置嵌套
     if (!redux) redux = client.redux
@@ -77,7 +79,7 @@ export default ({
     // ============================================================================
     // i18n 初始化
     // ============================================================================
-    if (i18n) i18nRegister(i18n, store)
+    // if (i18n) i18nRegister(i18n, store)
 
 
 
