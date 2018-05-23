@@ -24,7 +24,7 @@ import {
     REALTIME_LOCATION_REDUCER_NAME,
     actionUpdate,
     update as realtimeLocationUpdate
-} from 'sp-isomorphic-utils/realtime-location'
+} from 'super-project/React/realtime-location'
 import arrReducers from './redux/reducers.js'
 
 import routes from './router';

@@ -23,7 +23,8 @@ const factoryConfig = async ({
             new webpack.DefinePlugin({
                 'process.env': {
                     'NODE_ENV': JSON.stringify('production')
-                }
+                },
+                __SPA__: false,
             }),
             new webpack.NoEmitOnErrorsPlugin(),
             new MiniCssExtractPlugin({

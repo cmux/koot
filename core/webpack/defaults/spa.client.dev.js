@@ -6,7 +6,7 @@
 const path = require('path')
 // const fs = require('fs-extra')
 
-// const webpack = require('webpack')
+const webpack = require('webpack')
 // const common = require('../common')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 // const WebpackOnBuildPlugin = require('on-build-webpack')
@@ -49,11 +49,12 @@ const factoryConfig = async ({
     },
     plugins: [
         // 在node执行环境中设置，不起作用，此处不能省略
-        // new webpack.DefinePlugin({
-        //     'process.env': {
-        //         'NODE_ENV': JSON.stringify('production')
-        //     }
-        // }),
+        new webpack.DefinePlugin({
+            'process.env': {
+                'NODE_ENV': JSON.stringify('production')
+            },
+            __SPA__: true,
+        }),
         // new webpack.NoEmitOnErrorsPlugin(),
         // new webpack.optimize.UglifyJsPlugin({
         //     compress: {

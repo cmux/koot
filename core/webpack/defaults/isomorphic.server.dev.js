@@ -25,6 +25,9 @@ const factoryConfig = async ({
             publicPath: `${publicPath}/`
         },
         plugins: [
+            new webpack.DefinePlugin({
+                __SPA__: false,
+            }),
             new webpack.HotModuleReplacementPlugin({ quiet: true })
         ],
         externals: common.filterExternalsModules(),

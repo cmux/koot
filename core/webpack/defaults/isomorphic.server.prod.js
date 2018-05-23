@@ -1,3 +1,4 @@
+const webpack = require('webpack')
 const common = require('../common')
 
 const factoryConfig = async ({
@@ -21,7 +22,11 @@ const factoryConfig = async ({
             // publicPath: `/[need_set_in_app:__webpack_public_path__]/`,
             publicPath: `/`,
         },
-        plugins: [],
+        plugins: [
+            new webpack.DefinePlugin({
+                __SPA__: false,
+            }),
+        ],
         externals: common.filterExternalsModules(),
     }
 }

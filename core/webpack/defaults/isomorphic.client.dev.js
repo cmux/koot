@@ -32,7 +32,8 @@ const factoryConfig = async ({
             new webpack.DefinePlugin({
                 'process.env': {
                     'NODE_ENV': JSON.stringify('development')
-                }
+                },
+                __SPA__: false,
             }),
             new webpack.NoEmitOnErrorsPlugin(),
             // new ExtractTextPlugin('[name].[chunkhash].css'),

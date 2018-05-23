@@ -16,7 +16,7 @@ import {
     reducer as realtimeLocationReducer,
     REALTIME_LOCATION_REDUCER_NAME,
     actionUpdate,
-} from 'sp-isomorphic-utils/realtime-location'
+} from 'super-project/React/realtime-location'
 // import {
 //     reducerLocaleId as i18nReducerLocaleId,
 //     reducerLocales as i18nReducerLocales,

@@ -5,7 +5,11 @@ import { routerMiddleware, routerReducer } from 'react-router-redux'
 //
 
 import { ReactApp } from 'super-project/ReactApp'
-import { reducer as realtimeLocationReducer, REALTIME_LOCATION_REDUCER_NAME, actionUpdate } from 'sp-isomorphic-utils/realtime-location'
+import {
+    reducer as realtimeLocationReducer,
+    REALTIME_LOCATION_REDUCER_NAME,
+    actionUpdate
+} from 'super-project/React/realtime-location'
 import {
     reducerLocaleId as i18nReducerLocaleId,
     reducerLocales as i18nReducerLocales,
