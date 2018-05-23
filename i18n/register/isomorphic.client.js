@@ -34,6 +34,16 @@ export default ({
 
     if (localeId && typeof document !== 'undefined' && typeof document.cookie !== 'undefined') {
         const Cookies = require('js-cookie')
-        Cookies.set(process.env.SUPER_I18N_COOKIE_KEY, localeId, { expires: 365 })
+        const cookieOptions = {
+            expires: 365
+        }
+        if (typeof process.env.SUPER_I18N_COOKIE_DOMAIN === 'string') {
+            cookieOptions.domain = process.env.SUPER_I18N_COOKIE_DOMAIN
+        }
+        Cookies.set(
+            process.env.SUPER_I18N_COOKIE_KEY,
+            localeId,
+            cookieOptions
+        )
     }
 }

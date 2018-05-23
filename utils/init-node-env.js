@@ -40,6 +40,8 @@ module.exports = () => {
         SUPER_I18N_LOCALES: JSON.stringify([]),
         // 使用的COOKIE KEY
         SUPER_I18N_COOKIE_KEY: 'spLocaleId',
+        // i18n cookie 影响的域名
+        // SUPER_I18N_COOKIE_DOMAIN: '...',
     }
     for (let key in defaults) {
         if (typeof process.env[key] === 'undefined') {
