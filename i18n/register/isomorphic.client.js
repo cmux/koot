@@ -37,7 +37,8 @@ export default ({
         const cookieOptions = {
             expires: 365
         }
-        if (typeof process.env.SUPER_I18N_COOKIE_DOMAIN === 'string') {
+        if (typeof process.env.SUPER_I18N_COOKIE_DOMAIN === 'string' &&
+            process.env.SUPER_I18N_COOKIE_DOMAIN) {
             cookieOptions.domain = process.env.SUPER_I18N_COOKIE_DOMAIN
         }
         Cookies.set(
