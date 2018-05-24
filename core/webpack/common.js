@@ -182,18 +182,23 @@ const plugins = (env, stage, spa = false, defines = {}) => {
         // }
     }
 
+    const envs = [
+        'SUPER_DIST_DIR',
+        'SUPER_I18N',
+        'SUPER_I18N_TYPE',
+        "SUPER_I18N_LOCALES",
+        "SUPER_I18N_COOKIE_KEY",
+        "SUPER_I18N_COOKIE_DOMAIN",
+        "WEBPACK_CHUNKMAP",
+        // "WEBPACK_SERVER_PUBLIC_PATH",
+    ]
+    const envsToDefine = envs.filter(key => (
+        typeof process.env[key] !== 'undefined'
+    ))
+
     return [
         new webpack.DefinePlugin(g),
-        new webpack.EnvironmentPlugin([
-            'SUPER_DIST_DIR',
-            'SUPER_I18N',
-            'SUPER_I18N_TYPE',
-            "SUPER_I18N_LOCALES",
-            "SUPER_I18N_COOKIE_KEY",
-            "SUPER_I18N_COOKIE_DOMAIN",
-            "WEBPACK_CHUNKMAP",
-            // "WEBPACK_SERVER_PUBLIC_PATH",
-        ]),
+        new webpack.EnvironmentPlugin(envsToDefine),
     ]
 }
 
