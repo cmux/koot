@@ -12,7 +12,8 @@ const outputPath = 'dist'
 // 执行顺序，从右到左
 const factory = async ({
     aliases,
-    env, stage, spa = false,
+    env, stage,
+    // spa = false,
     defines = {},
 }) => {
     const useSpCssLoader = 'sp-css-loader?length=8&mode=replace'
@@ -180,20 +181,20 @@ const factory = async ({
             ],
             extensions: ['.js', '.jsx', '.json', '.css', '.less', '.sass', '.scss']
         },
-        plugins: plugins(env, stage, spa, defines)
+        plugins: plugins(env, stage, defines)
     }
 }
 
 
 // 执行顺序, 先 -> 后
-const plugins = (env, stage, spa = false, defines = {}) => {
+const plugins = (env, stage, defines = {}) => {
 
     let g = Object.assign({
         '__CLIENT__': stage == 'client',
         '__SERVER__': stage == 'server',
         '__DEV__': env == 'dev',
         '__PROD__': env == 'prod',
-        '__SPA__': !!spa,
+        // '__SPA__': !!spa,
         '__DIST__': JSON.stringify(process.env.SUPER_DIST_DIR),
         __SERVER_PORT__: JSON.stringify(process.env.SERVER_PORT),
     }, defines)

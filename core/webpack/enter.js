@@ -223,7 +223,7 @@ module.exports = async (obj) => {
             aliases,
             env: ENV,
             stage: STAGE,
-            spa: false,
+            // spa: false,
             defines,
         })
 
