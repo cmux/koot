@@ -94,7 +94,8 @@ const factory = async ({
                     use: [
                         MiniCssExtractPlugin.loader,
                         "css-loader",
-                        "postcss-loader"
+                        "postcss-loader",
+                        useUniversalAliasLoader
                     ]
                     // use: ExtractTextPlugin.extract({
                     //     fallback: "style-loader",
@@ -106,7 +107,8 @@ const factory = async ({
                         MiniCssExtractPlugin.loader,
                         "css-loader",
                         "postcss-loader",
-                        "less-loader"
+                        "less-loader",
+                        useUniversalAliasLoader
                     ]
                     // use: ExtractTextPlugin.extract({
                     //     fallback: "style-loader",
@@ -118,7 +120,8 @@ const factory = async ({
                         MiniCssExtractPlugin.loader,
                         "css-loader",
                         "postcss-loader",
-                        "sass-loader"
+                        "sass-loader",
+                        useUniversalAliasLoader
                     ]
                     // use: ExtractTextPlugin.extract({
                     //     fallback: "style-loader",
@@ -130,15 +133,35 @@ const factory = async ({
                 {
                     test: /\.g\.css$/,
                     exclude: extractCSS ? /critical\.g\.css$/ : undefined,
-                    loader: 'style-loader!postcss-loader'
+                    // loader: 'style-loader!postcss-loader'
+                    use: [
+                        "style-loader",
+                        "css-loader",
+                        "postcss-loader",
+                        useUniversalAliasLoader
+                    ]
                 }, {
                     test: /\.g\.less$/,
                     exclude: extractCSS ? /critical\.g\.less$/ : undefined,
-                    loader: 'style-loader!postcss-loader!less-loader'
+                    // loader: 'style-loader!postcss-loader!less-loader'
+                    use: [
+                        "style-loader",
+                        "css-loader",
+                        "postcss-loader",
+                        "less-loader",
+                        useUniversalAliasLoader
+                    ]
                 }, {
                     test: /\.g\.scss$/,
                     exclude: extractCSS ? /critical\.g\.scss$/ : undefined,
-                    loader: 'style-loader!postcss-loader!sass-loader'
+                    // loader: 'style-loader!postcss-loader!sass-loader'
+                    use: [
+                        "style-loader",
+                        "css-loader",
+                        "postcss-loader",
+                        "sass-loader",
+                        useUniversalAliasLoader
+                    ]
                 },
 
                 //

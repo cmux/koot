@@ -26,13 +26,16 @@ module.exports = async () => {
     switch (type.toLowerCase()) {
         case 'react': {
             // if ((await readBuildConfigFile()).server)
+            process.env.WEBPACK_BUILD_TYPE = 'isomorphic'
             return 'ReactApp'
             // return 'ReactSPA'
         }
 
         case 'react-spa':
-        case 'reactspa':
+        case 'reactspa': {
+            process.env.WEBPACK_BUILD_TYPE = 'spa'
             return 'ReactSPA'
+        }
 
         default:
             return type

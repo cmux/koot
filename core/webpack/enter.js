@@ -712,6 +712,7 @@ module.exports = async (obj) => {
     // 客户端打包
     if (STAGE === 'client' && ENV === 'prod') {
 
+        await fs.ensureFile(pathnameChunkmap)
         await fs.writeJson(
             pathnameChunkmap,
             {},

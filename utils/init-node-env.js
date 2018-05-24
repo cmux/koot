@@ -2,6 +2,7 @@ module.exports = () => {
     const defaults = {
         // Webpack 打包项目模式
         // isomorphic 同构 | spa 单页面应用 | static 静态站点
+        // 默认情况下，会在 Webpack 打包执行前根据项目配置自动决定，无需修改
         WEBPACK_BUILD_TYPE: 'isomorphic',
 
         // Webpack 打包场景
