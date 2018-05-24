@@ -68,4 +68,6 @@ module.exports = async (stats, localeId) => {
             spaces: 4
         }
     )
+
+    return json
 }

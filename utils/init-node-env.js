@@ -42,6 +42,9 @@ module.exports = () => {
         SUPER_I18N_COOKIE_KEY: 'spLocaleId',
         // i18n cookie 影响的域名
         // SUPER_I18N_COOKIE_DOMAIN: '',
+
+        // HTML模板内容
+        // SUPER_HTML_TEMPLATE: '',
     }
     for (let key in defaults) {
         if (typeof process.env[key] === 'undefined') {

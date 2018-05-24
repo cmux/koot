@@ -189,6 +189,7 @@ const plugins = (env, stage, spa = false, defines = {}) => {
         "SUPER_I18N_LOCALES",
         "SUPER_I18N_COOKIE_KEY",
         "SUPER_I18N_COOKIE_DOMAIN",
+        "SUPER_HTML_TEMPLATE",
         "WEBPACK_CHUNKMAP",
         // "WEBPACK_SERVER_PUBLIC_PATH",
     ]

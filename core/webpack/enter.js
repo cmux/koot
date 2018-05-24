@@ -186,6 +186,7 @@ module.exports = async (obj) => {
         afterBuild,
         port,
         defines,
+        template,
     } = Object.assign({}, defaultBuildConfig, obj)
 
     const appType = await getAppType()
@@ -294,6 +295,18 @@ module.exports = async (obj) => {
     } else {
         i18n = false
         process.env.SUPER_I18N = JSON.stringify(false)
+    }
+
+    // 处理HTML模板（如果有）
+    if (typeof process.env.SUPER_HTML_TEMPLATE !== 'string' &&
+        typeof template === 'string'
+    ) {
+        if (template.substr(0, 2) === './') {
+            template = await fs.readFile(path.resolve(
+                process.cwd(), template
+            ))
+        }
+        process.env.SUPER_HTML_TEMPLATE = template
     }
 
     const args = {
