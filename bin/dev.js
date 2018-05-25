@@ -13,6 +13,7 @@ const sleep = require('../utils/sleep')
 const getPort = require('../utils/get-port')
 const spinner = require('../utils/spinner')
 const readBuildConfigFile = require('../utils/read-build-config-file')
+const getAppType = require('../utils/get-app-type')
 
 program
     .version(require('../package').version, '-v, --version')
@@ -26,7 +27,7 @@ const run = async () => {
         client, server,
     } = program
 
-    const stage = client ? 'client' : (server ? 'server' : false)
+    let stage = client ? 'client' : (server ? 'server' : false)
 
     // if (!stage) {
     //     console.log(
@@ -40,10 +41,17 @@ const run = async () => {
     // }
 
     // 读取项目信息
+    await getAppType()
     const packageInfo = await fs.readJson(path.resolve(process.cwd(), 'package.json'))
+    const { dist, port } = await readBuildConfigFile()
     const {
         name
     } = packageInfo
+
+    if (process.env.WEBPACK_BUILD_TYPE === 'spa') {
+        process.env.WEBPACK_BUILD_STAGE = 'client'
+        stage = 'client'
+    }
 
     if (stage) {
         const cmd = `super-build --stage ${stage} --env dev`
@@ -62,7 +70,6 @@ const run = async () => {
         process.stdout.write('\x1B[2J\x1B[0f')
 
         const processes = []
-        const { dist, port } = await readBuildConfigFile()
         const pathServerJS = path.resolve(dist, 'server/index.js')
         const contentWaiting = '// WAITING FOR SERVER BUNDLING'
 

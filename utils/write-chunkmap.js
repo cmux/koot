@@ -3,7 +3,8 @@ const path = require('path')
 
 module.exports = async (stats, localeId) => {
     const {
-        SUPER_DIST_DIR: dist
+        WEBPACK_BUILD_ENV: ENV,
+        SUPER_DIST_DIR: dist,
     } = process.env
 
     const chunks = {}
@@ -15,6 +16,11 @@ module.exports = async (stats, localeId) => {
             iter(i + 1)
         }
         return iter(0)
+    }
+
+    const getFilePathname = (file) => {
+        if (ENV === 'dev') return file
+        return `${dirRelative}/${file}`
     }
 
     const log = (obj, spaceCount = 1, deep = 2) => {
@@ -30,6 +36,10 @@ module.exports = async (stats, localeId) => {
             }
         }
     }
+
+    const isSourcemap = (filename) => (
+        !/\.(js|css)\.map$/i.test(filename)
+    )
 
     const dirRelative = path.relative(
         dist,
@@ -47,7 +57,9 @@ module.exports = async (stats, localeId) => {
             entryChunks[key] = []
             value.chunks.forEach(chunk => {
                 if (Array.isArray(chunk.files))
-                    chunk.files.forEach(file => entryChunks[key].push(`${dirRelative}/${file}`))
+                    chunk.files
+                        .filter(file => isSourcemap(file))
+                        .forEach(file => entryChunks[key].push(getFilePathname(file)))
             })
         })
         chunks['.entrypoints'] = entryChunks
@@ -58,9 +70,11 @@ module.exports = async (stats, localeId) => {
         chunks[o.name] = o.files
 
         if (Array.isArray(chunks[o.name]))
-            chunks[o.name] = chunks[o.name].map(file => (
-                `${dirRelative}/${file}`
-            ))
+            chunks[o.name] = chunks[o.name]
+                .filter(file => isSourcemap(file))
+                .map(file => (
+                    getFilePathname(file)
+                ))
     }
 
     const file = path.resolve(
@@ -69,6 +83,8 @@ module.exports = async (stats, localeId) => {
         `.public-chunkmap.json`
     )
     let json = {}
+
+    fs.ensureFileSync(file)
 
     if (localeId) {
         json = fs.readJsonSync(file)

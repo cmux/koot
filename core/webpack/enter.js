@@ -707,6 +707,7 @@ module.exports = async (obj) => {
                 'Access-Control-Allow-Origin': '*'
             },
             after,
+            open: TYPE === 'spa',
         }, devServer)
 
         // more config

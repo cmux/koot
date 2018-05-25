@@ -1,6 +1,6 @@
 // TODO: i18n
 
-import React from 'react'
+const React = require('react')
 import ReactDOM from 'react-dom'
 import {
     Router,
@@ -110,6 +110,8 @@ export default ({
                 onRouterUpdate(...args)
         }
     }
+    if (typeof routerConfig.routes.path === 'undefined')
+        routerConfig.routes.path = '/'
     // if (__CLIENT__) self.routerHistory = memoryHistory
     // if (__CLIENT__) self.routerHistory = hashHistory
 
@@ -159,8 +161,10 @@ export default ({
     beforePromise
         .then(() => {
             const AppWrapper = ImportStyleRoot()(
-                (children) => <div children={children} />
+                (props) => <div {...props} />
             )
+            // console.log('store', store)
+            // console.log('routerConfig', routerConfig)
 
             ReactDOM.render(
                 <Provider store={store} >
