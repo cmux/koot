@@ -8,7 +8,7 @@ const chalk = require('chalk')
 const writeChunkmap = require('../../../utils/write-chunkmap')
 const inject = require('../../../ReactSPA/inject')
 
-class SpaIndexPlugin {
+class SpaTemplatePlugin {
     constructor({
         localeId,
     }) {
@@ -18,9 +18,9 @@ class SpaIndexPlugin {
     apply(compiler) {
 
         const localeId = this.localeId
+        const hookStep = process.env.WEBPACK_BUILD_ENV === 'prod' ? 'afterEmit' : 'emit'
 
-        // Backwards compatible version of: compiler.plugin.emit.tapAsync()
-        compiler.hooks.afterEmit.tapAsync.bind(compiler.hooks.afterEmit, 'SpaIndexPlugin')(async (compilation, callback) => {
+        compiler.hooks[hookStep].tapAsync.bind(compiler.hooks[hookStep], 'SpaTemplatePlugin')(async (compilation, callback) => {
             if (typeof process.env.SUPER_HTML_TEMPLATE !== 'string') {
                 console.log(
                     chalk.red('× ')
@@ -76,4 +76,4 @@ class SpaIndexPlugin {
     }
 }
 
-module.exports = SpaIndexPlugin
+module.exports = SpaTemplatePlugin

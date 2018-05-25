@@ -1,7 +1,5 @@
 const webpack = require('webpack')
 
-const SpaIndexPlugin = require('../plugins/spa-index')
-
 const factoryConfig = async ({
     // RUN_PATH,
     // CLIENT_DEV_PORT,
