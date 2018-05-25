@@ -150,7 +150,7 @@ export default ({
     if (typeof before === 'function') {
         beforePromise = new Promise(resolve => {
             before()
-                .then(() => resolve())
+            resolve()
         })
     } else if (typeof before !== 'object' || typeof before.then !== 'function') {
         beforePromise = new Promise(resolve => resolve())
