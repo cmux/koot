@@ -13,6 +13,7 @@ const common = require('./common')
 const getAppType = require('../../utils/get-app-type')
 const createPWAsw = require('../pwa/create')
 const SuperI18nPlugin = require("./plugins/i18n")
+const SpaTemplatePlugin = require("./plugins/spa-template")
 const __ = require('../../utils/translate')
 const getPort = require('../../utils/get-port')
 const spinner = require('../../utils/spinner')
@@ -504,12 +505,22 @@ module.exports = async (obj) => {
                             functionName: i18n.expr,
                         })
                     )
-                } else if (typeof i18n === 'object') {
-                    config.plugins.unshift(
-                        new SuperI18nPlugin({
-                            stage: STAGE,
-                            functionName: i18n.expr,
+                    config.plugins.push(
+                        new SpaTemplatePlugin({
+                            localeId,
                         })
+                    )
+                } else {
+                    if (typeof i18n === 'object') {
+                        config.plugins.unshift(
+                            new SuperI18nPlugin({
+                                stage: STAGE,
+                                functionName: i18n.expr,
+                            })
+                        )
+                    }
+                    config.plugins.push(
+                        new SpaTemplatePlugin({})
                     )
                 }
 

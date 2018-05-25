@@ -51,43 +51,6 @@ const factoryConfig = async ({
         // }),
         await new WebpackOnBuildPlugin(async (stats) => {
             await writeChunkmap(stats, localeId)
-
-            if (typeof process.env.SUPER_HTML_TEMPLATE !== 'string') {
-                console.log(
-                    chalk.red('× ')
-                    + chalk.yellowBright('[super/build] ')
-                    + 'template not exist'
-                )
-                return
-            }
-
-            const {
-                // WEBPACK_BUILD_ENV: ENV,
-                SUPER_DIST_DIR: dist,
-            } = process.env
-            // const outputPath = stats.compilation.outputOptions.path
-            // const publicPath = stats.compilation.outputOptions.publicPath
-            const file = `index${localeId ? `.${localeId}` : ''}.html`
-
-            // console.log(path.resolve(outputPath, './index.html'))
-
-            await fs.writeFile(
-                path.resolve(dist, 'public/', file),
-                ejs.render(
-                    process.env.SUPER_HTML_TEMPLATE, {
-                        inject: inject({ localeId })
-                    }, {
-
-                    }
-                ),
-                'utf-8'
-            )
-            console.log(
-                chalk.green('√ ')
-                + chalk.yellowBright('[super/build] ')
-                + 'template output to '
-                + chalk.green(`/${file}`)
-            )
         })
     ],
 })

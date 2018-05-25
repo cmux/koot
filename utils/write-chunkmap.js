@@ -37,7 +37,7 @@ module.exports = async (stats, localeId) => {
         }
     }
 
-    const isSourcemap = (filename) => (
+    const isNotSourcemap = (filename) => (
         !/\.(js|css)\.map$/i.test(filename)
     )
 
@@ -58,7 +58,7 @@ module.exports = async (stats, localeId) => {
             value.chunks.forEach(chunk => {
                 if (Array.isArray(chunk.files))
                     chunk.files
-                        .filter(file => isSourcemap(file))
+                        .filter(file => isNotSourcemap(file))
                         .forEach(file => entryChunks[key].push(getFilePathname(file)))
             })
         })
@@ -71,7 +71,7 @@ module.exports = async (stats, localeId) => {
 
         if (Array.isArray(chunks[o.name]))
             chunks[o.name] = chunks[o.name]
-                .filter(file => isSourcemap(file))
+                .filter(file => isNotSourcemap(file))
                 .map(file => (
                     getFilePathname(file)
                 ))

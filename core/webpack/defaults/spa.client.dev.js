@@ -27,7 +27,6 @@ const factoryConfig = async ({
             },
             __SPA__: true,
         }),
-        new SpaIndexPlugin({ localeId }),
     ],
 })
 

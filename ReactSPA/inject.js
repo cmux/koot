@@ -12,10 +12,29 @@ module.exports = (settings = {}) => {
         compilation,
     } = settings
 
+    let entrypoints
+    if (typeof chunkmap === 'object') {
+        if (typeof chunkmap[localeId] === 'object' && typeof chunkmap[localeId]['.entrypoints'] === 'object') {
+            entrypoints = chunkmap[localeId]['.entrypoints']
+        } else if (typeof chunkmap['.entrypoints'] === 'object') {
+            entrypoints = chunkmap['.entrypoints']
+        }
+    }
+
+    const getContent = (filename) => {
+        if (typeof compilation === 'object' && typeof compilation.assets === 'object') {
+            console.log(chunkmap)
+            for (let key in compilation.assets) {
+                console.log(key)
+            }
+        }
+        return readClientFile(filename, localeId)
+    }
+
     return {
         stylesInHead: (() => {
             if (ENV === 'prod') {
-                return (Array.isArray(chunkmap.critical) ? `<style type="text/css">${readClientFile('critical.css')}</style>` : '')
+                return (Array.isArray(chunkmap.critical) ? `<style type="text/css">${readClientFile('critical.css', localeId, compilation)}</style>` : '')
             }
             if (ENV === 'dev') {
                 if (typeof compilation === 'object') {
@@ -28,15 +47,14 @@ module.exports = (settings = {}) => {
             let r = `<script type="text/javascript">var __REDUX_STATE__ = {};</script>`
             if (ENV === 'prod') {
                 let r = `<script type="text/javascript">`
-                    + (Array.isArray(chunkmap.critical) ? readClientFile('critical.js') : '')
+                    + (Array.isArray(chunkmap.critical) ? readClientFile('critical.js', localeId, compilation) : '')
                     + `</script>`
-                if (typeof chunkmap['.entrypoints'] === 'object') {
-                    const entries = chunkmap['.entrypoints']
-                    Object.keys(entries).filter(key => (
+                if (typeof entrypoints === 'object') {
+                    Object.keys(entrypoints).filter(key => (
                         key !== 'critical'
                     )).forEach(key => {
-                        if (Array.isArray(entries[key])) {
-                            entries[key].forEach(file => {
+                        if (Array.isArray(entrypoints[key])) {
+                            entrypoints[key].forEach(file => {
                                 r += `<script type="text/javascript" src="${
                                     file.replace(/(^\.\/|^)public\//, '')}" defer></script>`
                             })
@@ -46,18 +64,17 @@ module.exports = (settings = {}) => {
                 return r
             }
             if (ENV === 'dev') {
-                if (typeof chunkmap === 'object' && typeof chunkmap['.entrypoints'] === 'object') {
-                    const entries = chunkmap['.entrypoints']
-                    if (Array.isArray(entries.critical)) {
-                        entries.critical.forEach(file => {
+                if (typeof entrypoints === 'object') {
+                    if (Array.isArray(entrypoints.critical)) {
+                        entrypoints.critical.forEach(file => {
                             r += `<script type="text/javascript" src="/${file}"></script>`
                         })
                     }
-                    Object.keys(entries).filter(key => (
+                    Object.keys(entrypoints).filter(key => (
                         key !== 'critical'
                     )).forEach(key => {
-                        if (Array.isArray(entries[key])) {
-                            entries[key].forEach(file => {
+                        if (Array.isArray(entrypoints[key])) {
+                            entrypoints[key].forEach(file => {
                                 r += `<script type="text/javascript" src="/${file}" defer></script>`
                             })
                         }
