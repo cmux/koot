@@ -2,7 +2,7 @@ const fs = require('fs-extra')
 const path = require('path')
 const getFilePath = require('./get-client-file-path')
 
-module.exports = filename => {
+module.exports = (filename, localeId) => {
     // console.log(
     //     process.cwd(),
     //     ' | ',
@@ -20,7 +20,7 @@ module.exports = filename => {
         path.resolve(
             process.env.SUPER_DIST_DIR,
             'public/',
-            getFilePath(filename).replace(/^\//, '')
+            getFilePath(filename, localeId).replace(/^\//, '')
         ),
         'utf-8'
     )

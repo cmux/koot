@@ -36,6 +36,22 @@ module.exports = async (stats, localeId) => {
         stats.compilation.outputOptions.path
     ).replace(`\\`, '/')
 
+    // for (let key in stats.compilation) {
+    //     console.log(key)
+    // }
+
+    if (stats.compilation.entrypoints) {
+        const entryChunks = {}
+        stats.compilation.entrypoints.forEach((value, key) => {
+            // console.log(value, key, map)
+            entryChunks[key] = []
+            value.chunks.forEach(chunk => {
+                if (Array.isArray(chunk.files))
+                    chunk.files.forEach(file => entryChunks[key].push(`${dirRelative}/${file}`))
+            })
+        })
+        chunks['.entrypoints'] = entryChunks
+    }
     for (let id in stats.compilation.chunks) {
         const o = stats.compilation.chunks[id]
         if (typeof o.name === 'undefined' || o.name === null) continue

@@ -81,6 +81,11 @@ const create = async (settings = {}, i18n) => {
             } else {
                 pathnamePolyfill.push(parseChunkmapPathname(chunkmap.polyfill))
             }
+        if (Array.isArray(chunkmap.critical)) {
+            chunkmap.critical.forEach(file => 
+                ignores.push(parseChunkmapPathname(file))
+            )
+        }
 
         const globOptions = {
             cwd: outputPath,

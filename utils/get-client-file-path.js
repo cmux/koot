@@ -2,6 +2,7 @@ const fs = require('fs-extra')
 const path = require('path')
 
 const getPublicPath = require('./get-public-dir')
+const getChunkmap = require('./get-chunkmap')
 
 
 /**
@@ -10,11 +11,15 @@ const getPublicPath = require('./get-public-dir')
  * @param {string} filename 要查找的文件的文件名
  * @param {string} localeId 当前语言
  * @memberof ReactIsomorphic
+ * @returns {string} 文件路径或空
  */
-const getFilePath = (filename) => {
-    const { localeId } = require('super-project/i18n')
+const getFilePath = (filename, localeId) => {
+    if (typeof localeId === 'undefined') {
+        try {
+            localeId = require('super-project/i18n').localeId
+        } catch (e) { }
+    }
 
-    // const pathDist = process.env.SUPER_DIST_DIR
     const pathPublic = getPublicPath()
 
     const i18nType = JSON.parse(process.env.SUPER_I18N)
@@ -23,28 +28,12 @@ const getFilePath = (filename) => {
     const isI18nDefault = (i18nType === 'default')
     // const localeId = 'zh'
 
-    // console.log(pathDist, pathPublic)
-
-    // if (pathDist && (
-    //     fs.existsSync(path.resolve(pathDist, 'public')) || fs.existsSync(path.resolve(pathDist, 'server'))
-    // ))
-    //     return getFile(filename, '', appName)
-
-    if (__DEV__)
+    if (process.env.WEBPACK_BUILD_ENV === 'dev' || (typeof __DEV__ !== 'undefined' && __DEV__))
         return pathPublic + (isI18nDefault ? localeId : '') + `.${filename}`
 
-    // const pathChunckmap = path.resolve(pathDist, '.public-chunkmap.json')
-    let chunkmap
-    try {
-        chunkmap = JSON.parse(process.env.WEBPACK_CHUNKMAP)
-    } catch (e) {
-        chunkmap = false
-    }
+    const chunkmap = getChunkmap(localeId)
 
     if (typeof chunkmap === 'object') {
-        // let chunkmap = fs.readJsonSync(pathChunckmap)
-        if (isI18nDefault) chunkmap = chunkmap[`.${localeId}`] || {}
-
         const extname = path.extname(filename)
         const key = path.basename(filename, extname)
         let result

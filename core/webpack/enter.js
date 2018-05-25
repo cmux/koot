@@ -223,7 +223,7 @@ module.exports = async (obj) => {
             aliases,
             env: ENV,
             stage: STAGE,
-            // spa: false,
+            spa: false,
             defines,
         })
 
@@ -470,9 +470,15 @@ module.exports = async (obj) => {
                     .merge(clientConfig)
 
                 if (typeof config.output !== 'object')
-                    config.output = {}
-                if (!config.output.path)
-                    config.output.path = path.resolve(dist, `./public`)
+                    config.output = {
+                        // path: path.resolve(dist, `./public/includes`),
+                        // publicPath: 'includes/',
+                    }
+                if (!config.output.path) {
+                    // config.output.path = path.resolve(dist, `./public`)
+                    config.output.path = path.resolve(dist, `./public/includes`)
+                    config.output.publicPath = 'includes/'
+                }
                 if (!config.output.publicPath)
                     config.output.publicPath = '/'
 
