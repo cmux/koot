@@ -1,57 +1,57 @@
 const fs = require('fs-extra')
 const path = require('path')
 
+const generateFilemap = require('./generate-filemap-from-compilation')
+
+const times = n => f => {
+    let iter = i => {
+        if (i === n) return
+        f(i)
+        iter(i + 1)
+    }
+    return iter(0)
+}
+
+const isNotSourcemap = (filename) => (
+    !/\.(js|css)\.map$/i.test(filename)
+)
+
+const getFilePathname = (dirname, file) => {
+    if (process.env.WEBPACK_BUILD_ENV === 'dev') return file
+    return `${dirname}/${file}`
+}
+
+const log = (obj, spaceCount = 1, deep = 2) => {
+    if (typeof obj === 'object') {
+        let spaces = ''
+        times(spaceCount)(() => {
+            spaces += '    '
+        })
+        for (let key in obj) {
+            console.log(spaces + key)
+            if (spaceCount < deep)
+                log(obj[key], spaceCount + 1, deep)
+        }
+    }
+}
+
 module.exports = async (stats, localeId) => {
-    const {
-        WEBPACK_BUILD_ENV: ENV,
-        SUPER_DIST_DIR: dist,
-    } = process.env
+    const chunkmap = {}
+    const entryChunks = {}
 
-    const chunks = {}
+    const dist = process.env.SUPER_DIST_DIR
+    const dirRelative = path.relative(dist, stats.compilation.outputOptions.path).replace(`\\`, '/')
+    const filepathname = path.resolve(dist, `.public-chunkmap.json`)
+    // stats.compilation.outputOptions.path,
 
-    const times = n => f => {
-        let iter = i => {
-            if (i === n) return
-            f(i)
-            iter(i + 1)
-        }
-        return iter(0)
-    }
-
-    const getFilePathname = (file) => {
-        if (ENV === 'dev') return file
-        return `${dirRelative}/${file}`
-    }
-
-    const log = (obj, spaceCount = 1, deep = 2) => {
-        if (typeof obj === 'object') {
-            let spaces = ''
-            times(spaceCount)(() => {
-                spaces += '    '
-            })
-            for (let key in obj) {
-                console.log(spaces + key)
-                if (spaceCount < deep)
-                    log(obj[key], spaceCount + 1, deep)
-            }
-        }
-    }
-
-    const isNotSourcemap = (filename) => (
-        !/\.(js|css)\.map$/i.test(filename)
-    )
-
-    const dirRelative = path.relative(
-        dist,
-        stats.compilation.outputOptions.path
-    ).replace(`\\`, '/')
+    fs.ensureFileSync(filepathname)
 
     // for (let key in stats.compilation) {
     //     console.log(key)
     // }
 
+    // 生成入口对照表
     if (stats.compilation.entrypoints) {
-        const entryChunks = {}
         stats.compilation.entrypoints.forEach((value, key) => {
             // console.log(value, key, map)
             entryChunks[key] = []
@@ -59,42 +59,40 @@ module.exports = async (stats, localeId) => {
                 if (Array.isArray(chunk.files))
                     chunk.files
                         .filter(file => isNotSourcemap(file))
-                        .forEach(file => entryChunks[key].push(getFilePathname(file)))
+                        .forEach(file =>
+                            entryChunks[key].push(getFilePathname(dirRelative, file))
+                        )
             })
         })
-        chunks['.entrypoints'] = entryChunks
+        chunkmap['.entrypoints'] = entryChunks
     }
+
+    // 生成文件对照表
+    chunkmap['.files'] = generateFilemap(stats)
+
+    // 生成所有入口和代码片段所输出的文件的对照表
     for (let id in stats.compilation.chunks) {
         const o = stats.compilation.chunks[id]
         if (typeof o.name === 'undefined' || o.name === null) continue
-        chunks[o.name] = o.files
+        chunkmap[o.name] = o.files
 
-        if (Array.isArray(chunks[o.name]))
-            chunks[o.name] = chunks[o.name]
-                .filter(file => isNotSourcemap(file))
-                .map(file => (
-                    getFilePathname(file)
-                ))
+        if (Array.isArray(o.files))
+            chunkmap[o.name] = o.files
+                .filter(filename => isNotSourcemap(filename))
+                .map(filename => getFilePathname(dirRelative, filename))
     }
 
-    const file = path.resolve(
-        // stats.compilation.outputOptions.path,
-        dist,
-        `.public-chunkmap.json`
-    )
     let json = {}
 
-    fs.ensureFileSync(file)
-
     if (localeId) {
-        json = fs.readJsonSync(file)
-        json[`.${localeId}`] = chunks
+        json = fs.readJsonSync(filepathname)
+        json[`.${localeId}`] = chunkmap
     } else {
-        json = chunks
+        json = chunkmap
     }
 
     await fs.writeJsonSync(
-        file,
+        filepathname,
         json,
         {
             spaces: 4

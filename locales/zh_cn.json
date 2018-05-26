@@ -5,7 +5,9 @@
         "config_type_error": "错误：构建配置文件（${file}）需输出 ${type}",
         "build_start": "${type} 开始构建 (STAGE ${stage} / ENV ${env})",
         "build_complete": "${type} 构建完成 (STAGE ${stage} / ENV ${env})",
-        "building": "Webpack 打包中……"
+        "building": "Webpack 打包中……",
+        "spa_template_emitted": "SPA HTML 页面文件已输出至 ${file}",
+        "spa_template_not_found": "SPA 模板文件未找到"
     },
     "dev": {
         "missing_stage": "请设置场景。\n${indent}> ${example}"

@@ -1,7 +1,5 @@
 const webpack = require('webpack')
-const common = require('../common')
 
-// const ExtractTextPlugin = require("extract-text-webpack-plugin")
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 
 const factoryConfig = async ({
@@ -19,8 +17,6 @@ const factoryConfig = async ({
         output: {
             // -_-_-_-_-_- is trying to fix a pm2 bug that will currupt [name] value
             // check enter.js for the fix
-            // filename: `${APP_KEY}.-_-_-_-_-_-[name]-_-_-_-_-_-.js`,
-            // chunkFilename: `${APP_KEY}.chunk.-_-_-_-_-_-[name]-_-_-_-_-_-.js`,
             filename: (localeId ? localeId : '') + `.-_-_-_-_-_-[name]-_-_-_-_-_-.js`,
             chunkFilename: (localeId ? localeId : '') + `.chunk.-_-_-_-_-_-[name]-_-_-_-_-_-.js`,
             path: '/',
@@ -35,12 +31,8 @@ const factoryConfig = async ({
                 },
                 __SPA__: false,
             }),
-            new webpack.NoEmitOnErrorsPlugin(),
-            // new ExtractTextPlugin('[name].[chunkhash].css'),
             new MiniCssExtractPlugin({
-                // Options similar to the same options in webpackOptions.output
-                // both options are optional
-                filename: "[name].[chunkhash].css",
+                filename: (localeId ? localeId : '') + ".[name].css",
                 // chunkFilename: "[id].css"
             }),
         ],

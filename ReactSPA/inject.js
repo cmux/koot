@@ -2,9 +2,7 @@ const path = require('path')
 const fs = require('fs-extra')
 
 const getChunkmap = require('../utils/get-chunkmap')
-// const getClientFilePath = require('../utils/get-client-file-path')
 const readClientFile = require('../utils/read-client-file')
-const generateFilemap = require('../utils/generate-filemap-from-compilation')
 
 module.exports = (settings = {}) => {
     const {
@@ -12,20 +10,14 @@ module.exports = (settings = {}) => {
     } = process.env
     const {
         localeId,
-        chunkmap = ENV === 'prod' ? getChunkmap(localeId) : undefined,
+        chunkmap = getChunkmap(localeId) || {},
         compilation,
     } = settings
 
-    let entrypoints
-    if (typeof chunkmap === 'object') {
-        if (typeof chunkmap[localeId] === 'object' && typeof chunkmap[localeId]['.entrypoints'] === 'object') {
-            entrypoints = chunkmap[localeId]['.entrypoints']
-        } else if (typeof chunkmap['.entrypoints'] === 'object') {
-            entrypoints = chunkmap['.entrypoints']
-        }
-    }
-
-    const filemap = generateFilemap(compilation)
+    const {
+        '.entrypoints': entrypoints,
+        '.files': filemap,
+    } = chunkmap
 
     return {
 

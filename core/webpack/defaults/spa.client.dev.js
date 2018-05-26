@@ -1,4 +1,5 @@
 const webpack = require('webpack')
+const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 
 const factoryConfig = async ({
     // RUN_PATH,
@@ -24,6 +25,10 @@ const factoryConfig = async ({
                 'NODE_ENV': JSON.stringify('development')
             },
             __SPA__: true,
+        }),
+        new MiniCssExtractPlugin({
+            filename: (localeId ? localeId : '') + ".[name].css",
+            // chunkFilename: "[id].css"
         }),
     ],
 })

@@ -24,7 +24,10 @@ const factory = async ({
         }
     }
 
-    const extractCSS = process.env.WEBPACK_BUILD_ENV === 'prod' ? true : false
+    const extractCSS = (
+        process.env.WEBPACK_BUILD_ENV === 'prod' ||
+        (process.env.WEBPACK_BUILD_ENV === 'dev' && process.env.WEBPACK_BUILD_STAGE === 'client')
+    ) ? true : false
 
     return {
         module: {
