@@ -29,7 +29,7 @@ export default class HTMLTool {
     }
 
     getReduxScript(store) {
-        return `<script>;window.__REDUX_STATE__ = ${JSON.stringify(store.getState())};</script>`
+        return `window.__REDUX_STATE__ = ${JSON.stringify(store.getState())};`
     }
 
     // convertToFullHtml(template = DEFAULT_TEMPLATE, inject = {}) {

@@ -7,7 +7,14 @@ import { syncHistoryWithStore } from 'react-router-redux'
 
 import htmlInject from './inject'
 
+const fs = require('fs-extra')
+const path = require('path')
+const getChunkmap = require('../utils/get-chunkmap')
+const readClientFile = require('../utils/read-client-file')
+
 const error = require('debug')('SYSTEM:isomorphic:error')
+
+const injectOnceCache = {}
 
 export default class ReactIsomorphic {
 
@@ -33,12 +40,18 @@ export default class ReactIsomorphic {
         */
 
         const { template, onServerRender, inject, configStore, routes } = options
+        const ENV = process.env.WEBPACK_BUILD_ENV
+        const chunkmap = getChunkmap()
+        const {
+            '.entrypoints': entrypoints = {},
+            '.files': filemap = {},
+        } = chunkmap
 
         // 配置 html 注入内容
         // html [只更新1次]的部分
         const injectOnce = {
-            js: inject.js ? inject.js.map((js) => `<script src="${js}" defer></script>`).join('') : '', // 引用js文件标签
-            css: inject.css ? inject.css.map((css) => `<link rel="stylesheet" href="${css}">`).join('') : '' // 引用css文件标签
+            // js: inject.js ? inject.js.map((js) => `<script src="${js}" defer></script>`).join('') : '', // 引用js文件标签
+            // css: inject.css ? inject.css.map((css) => `<link rel="stylesheet" href="${css}">`).join('') : '', // 引用css文件标签
         }
 
         // koa 中间件结构
@@ -86,12 +99,65 @@ export default class ReactIsomorphic {
                 const injectRealtime = {
                     title: htmlTool.getTitle(),
                     metas: htmlTool.getMetaHtml(),
-                    redux: htmlTool.getReduxScript(store),
+                    styles: (() => {
+                        if (typeof injectOnceCache.stylesInHead === 'undefined') {
+                            let r = ''
+                            if (typeof filemap['critical.css'] === 'string') {
+                                if (ENV === 'prod')
+                                    r += `<style type="text/css">${readClientFile('critical.css')}</style>`
+                                if (ENV === 'dev')
+                                    r += `<link media="all" rel="stylesheet" href="/${filemap['critical.css']}" />`
+                            }
+                            injectOnceCache.stylesInHead = r
+                        }
+                        return injectOnceCache.stylesInHead + filterResult.style
+                    })(),
+
                     react: filterResult.html,
-                    style: filterResult.style
+                    scripts: (() => {
+                        if (typeof injectOnceCache.scriptsInBody === 'undefined') {
+                            let r = ''
+
+                            // 优先引入 critical
+                            if (Array.isArray(entrypoints.critical)) {
+                                entrypoints.critical
+                                    .filter(filename => path.extname(filename) === '.js')
+                                    .forEach(filename => {
+                                        if (ENV === 'prod')
+                                            r += `<script type="text/javascript">${fs.readFileSync(
+                                                path.resolve(
+                                                    process.env.SUPER_DIST_DIR,
+                                                    filename.replace(/^\//, '')
+                                                ),
+                                                'utf-8'
+                                            )}</script>`
+                                        if (ENV === 'dev')
+                                            r += `<script type="text/javascript" src="/${filename}"></script>`
+                                    })
+                            }
+
+                            // // 引入其他入口
+                            Object.keys(entrypoints).filter(key => (
+                                key !== 'critical' && key !== 'polyfill'
+                            )).forEach(key => {
+                                if (Array.isArray(entrypoints[key])) {
+                                    entrypoints[key].forEach(file => {
+                                        if (ENV === 'prod')
+                                            r += `<script type="text/javascript" src="${file.replace(/(^\.\/|^)public\//, '')}" defer></script>`
+                                        if (ENV === 'dev')
+                                            r += `<script type="text/javascript" src="/${file}" defer></script>`
+                                    })
+                                }
+                            })
+
+                            injectOnceCache.scriptsInBody = r
+                        }
+                        return `<script type="text/javascript">${htmlTool.getReduxScript(store)}</script>`
+                            + injectOnceCache.scriptsInBody
+                    })(),
                 }
 
-                const injectResult = Object.assign({}, inject, injectRealtime, injectOnce)
+                const injectResult = Object.assign({}, injectRealtime, injectOnce, inject)
 
                 // 响应给客户端
 

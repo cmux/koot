@@ -24,6 +24,15 @@ export default (template = DEFAULT_TEMPLATE, inject = {}) => {
     // for (let key in inject) {
     //     html = html.replace(`<script>//inject_${key}</script>`, inject[key])
     // }
+    try {
+        for (let key in inject) {
+            if (typeof inject[key] === 'function')
+                inject[key] = inject[key](template)
+        }
+    } catch (e) {
+        console.log(e)
+    }
+    // console.log(inject)
     return ejs.render(
         template, {
             inject,

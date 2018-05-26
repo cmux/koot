@@ -15,22 +15,23 @@ module.exports = (settings = {}) => {
     } = settings
 
     const {
-        '.entrypoints': entrypoints,
-        '.files': filemap,
+        '.entrypoints': entrypoints = {},
+        '.files': filemap = {},
     } = chunkmap
 
     return {
 
-        stylesInHead: (() => {
-            if (ENV === 'prod' && Array.isArray(chunkmap.critical)) {
-                return `<style type="text/css">${readClientFile('critical.css', localeId, compilation)}</style>`
-            }
-            if (ENV === 'dev' && typeof filemap === 'object' && typeof filemap['critical.css'] === 'string') {
-                return `<link media="all" rel="stylesheet" href="/${filemap['critical.css']}" />`
+        styles: (() => {
+            let r = ''
+            if (typeof filemap['critical.css'] === 'string') {
+                if (ENV === 'prod')
+                    r += `<style type="text/css">${readClientFile('critical.css', localeId, compilation)}</style>`
+                if (ENV === 'dev')
+                    r += `<link media="all" rel="stylesheet" href="/${filemap['critical.css']}" />`
             }
         })(),
 
-        scriptsInBody: (() => {
+        scripts: (() => {
             let r = `<script type="text/javascript">var __REDUX_STATE__ = {};</script>`
 
             if (typeof entrypoints === 'object') {
@@ -54,7 +55,7 @@ module.exports = (settings = {}) => {
                 // 引入其他入口
                 if (typeof entrypoints === 'object') {
                     Object.keys(entrypoints).filter(key => (
-                        key !== 'critical'
+                        key !== 'critical' && key !== 'polyfill'
                     )).forEach(key => {
                         if (Array.isArray(entrypoints[key])) {
                             entrypoints[key].forEach(file => {

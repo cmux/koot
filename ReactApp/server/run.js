@@ -33,7 +33,7 @@ export default async (app, {
 
     // if (__DEV__) console.log('\r\nServer initializing...')
     // else
-    console.log(`\r\n\x1b[93m[super/server]\x1b[0m initializing...`)
+    console.log(`\r\n  \x1b[93m[super/server]\x1b[0m initializing...`)
 
 
 
@@ -71,7 +71,7 @@ export default async (app, {
     // 载入目录、相关配置、自定模块等
     // ============================================================================
     // if (__DEV__) console.log('├─ client code initializing...')
-    if (__DEV__) console.log(`\x1b[93m[super/server]\x1b[0m client code initializing...`)
+    if (__DEV__) console.log(`  \x1b[93m[super/server]\x1b[0m client code initializing...`)
     const reactApp = await superClient({
         i18n,
         router,
@@ -79,7 +79,7 @@ export default async (app, {
         client
     })
     // if (__DEV__) console.log('├─ client code inited')
-    if (__DEV__) console.log(`\x1b[93m[super/server]\x1b[0m client code inited`)
+    if (__DEV__) console.log(`  \x1b[93m[super/server]\x1b[0m client code inited`)
 
 
 
@@ -113,9 +113,10 @@ export default async (app, {
 
     if (__DEV__)
         console.log(
-            `\n`
-            + `\n\x1b[93m[super/server]\x1b[0m`
-            + ` callback: \x1b[32m${'before'}\x1b[0m`
+            `\n\n`
+            + `\x1b[36m⚑\x1b[0m `
+            + `\x1b[93m[super/server]\x1b[0m `
+            + `callback: \x1b[32m${'before'}\x1b[0m`
             + `(app)`
             + `\n`
         )
@@ -204,9 +205,10 @@ export default async (app, {
 
             if (__DEV__)
                 console.log(
-                    `\n`
-                    + `\n\x1b[93m[super/server]\x1b[0m`
-                    + ` callback: \x1b[32m${'onRender'}\x1b[0m`
+                    `\n\n`
+                    + `\x1b[36m⚑\x1b[0m `
+                    + `\x1b[93m[super/server]\x1b[0m `
+                    + `callback: \x1b[32m${'onRender'}\x1b[0m`
                     + `(koaCtx, reduxStore)`
                     + `\n`
                 )
@@ -220,9 +222,10 @@ export default async (app, {
 
     if (__DEV__)
         console.log(
-            `\n`
-            + `\n\x1b[93m[super/server]\x1b[0m`
-            + ` callback: \x1b[32m${'after'}\x1b[0m`
+            `\n\n`
+            + `\x1b[36m⚑\x1b[0m `
+            + `\x1b[93m[super/server]\x1b[0m `
+            + `callback: \x1b[32m${'after'}\x1b[0m`
             + `(app)`
             + `\n`
         )
@@ -232,7 +235,7 @@ export default async (app, {
 
     // if (__DEV__) console.log('└─ ✔ Server inited.\r\n')
     // else
-    console.log(`\x1b[93m[super/server]\x1b[0m init \x1b[32m${'OK'}\x1b[0m!`)
+    console.log(`  \x1b[93m[super/server]\x1b[0m init \x1b[32m${'OK'}\x1b[0m!`)
 
     return app
 }

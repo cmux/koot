@@ -20,6 +20,7 @@ module.exports = (localeId) => {
     const isI18nDefault = (i18nType === 'default')
 
     let chunkmap
+    if (typeof global.chunkmap === 'object') chunkmap = global.chunkmap
     try {
         chunkmap = JSON.parse(process.env.WEBPACK_CHUNKMAP)
     } catch (e) {
@@ -30,6 +31,8 @@ module.exports = (localeId) => {
         chunkmap = fs.readJsonSync(
             path.resolve(process.env.SUPER_DIST_DIR, '.public-chunkmap.json')
         )
+        if (process.env.WEBPACK_BUILD_STAGE === 'server')
+            global.chunkmap = chunkmap
     }
 
     if (typeof chunkmap === 'object') {

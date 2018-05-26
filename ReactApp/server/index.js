@@ -60,9 +60,9 @@ app.keys = cookieKeys || 'super-project';
 
 setTimeout(() => {
     if (__DEV__) {
-        console.log(`\x1b[93m[super/server]\x1b[0m started on \x1b[32m${'http://localhost:' + port}\x1b[0m`)
+        console.log(`\x1b[32m√\x1b[0m ` + `\x1b[93m[super/server]\x1b[0m started on \x1b[32m${'http://localhost:' + port}\x1b[0m`)
     } else {
-        console.log(`\x1b[93m[super/server]\x1b[0m listening port \x1b[32m${port}\x1b[0m`)
+        console.log(`\x1b[32m√\x1b[0m ` + `\x1b[93m[super/server]\x1b[0m listening port \x1b[32m${port}\x1b[0m`)
     }
     console.log(' ')
 })
