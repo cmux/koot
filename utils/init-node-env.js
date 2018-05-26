@@ -36,7 +36,7 @@ module.exports = () => {
         // 总开关：i18n/多语言相关处理
         SUPER_I18N: JSON.stringify(false),
         // i18n处理方式
-        SUPER_I18N_TYPE: '',
+        SUPER_I18N_TYPE: JSON.stringify(''),
         // 语言包
         SUPER_I18N_LOCALES: JSON.stringify([]),
         // 使用的COOKIE KEY

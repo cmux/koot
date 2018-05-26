@@ -29,12 +29,14 @@ module.exports = async () => {
             process.env.WEBPACK_BUILD_TYPE = 'isomorphic'
             process.env.SUPER_PROJECT_TYPE = 'ReactApp'
             // return 'ReactSPA'
+            break
         }
 
         case 'react-spa':
         case 'reactspa': {
             process.env.WEBPACK_BUILD_TYPE = 'spa'
             process.env.SUPER_PROJECT_TYPE = 'ReactSPA'
+            break
         }
 
         // default:

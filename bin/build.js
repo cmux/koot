@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-const path = require('path')
+// const path = require('path')
 const program = require('commander')
-const chalk = require('chalk')
+// const chalk = require('chalk')
 const readBuildConfigFile = require('../utils/read-build-config-file')
 const sleep = require('../utils/sleep')
 const setEnvFromCommand = require('../utils/set-env-from-command')

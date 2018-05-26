@@ -513,64 +513,61 @@ module.exports = async (obj) => {
                     .merge(_defaultConfig)
                     .merge(clientConfig)
 
-                if (typeof config.output !== 'object')
-                    config.output = {
-                        // path: path.resolve(dist, `./public/includes`),
-                        // publicPath: 'includes/',
+                { // 处理 output
+                    if (typeof config.output !== 'object')
+                        config.output = {
+                            // path: path.resolve(dist, `./public/includes`),
+                            // publicPath: 'includes/',
+                        }
+                    if (!config.output.path) {
+                        // config.output.path = path.resolve(dist, `./public`)
+                        config.output.path = path.resolve(dist, `./public/includes`)
+                        config.output.publicPath = 'includes/'
                     }
-                if (!config.output.path) {
-                    // config.output.path = path.resolve(dist, `./public`)
-                    config.output.path = path.resolve(dist, `./public/includes`)
-                    config.output.publicPath = 'includes/'
-                }
-                if (!config.output.publicPath)
-                    config.output.publicPath = '/'
-
-                if (
-                    typeof config.entry === 'object' &&
-                    !config.entry.client
-                ) {
-                    config.entry.client = defaultClientEntry
-                } else if (config.entry === 'object') {
-
-                } else if (typeof config.entry !== 'string') {
-                    config.entry = {
-                        client: defaultClientEntry
-                    }
+                    if (!config.output.publicPath)
+                        config.output.publicPath = '/'
                 }
 
-                if (localeId && typeof localesObj === 'object') {
-                    config.plugins.unshift(
-                        new SuperI18nPlugin({
-                            stage: STAGE,
-                            localeId,
-                            locales: localesObj,
-                            functionName: i18n.expr,
-                        })
-                    )
-                    config.plugins.push(
-                        new SpaTemplatePlugin({
-                            localeId,
-                        })
-                    )
-                } else {
-                    if (typeof i18n === 'object') {
+                { // 处理 entry
+                    if (
+                        typeof config.entry === 'object' &&
+                        !config.entry.client
+                    ) {
+                        config.entry.client = defaultClientEntry
+                    } else if (config.entry === 'object') {
+
+                    } else if (typeof config.entry !== 'string') {
+                        config.entry = {
+                            client: defaultClientEntry
+                        }
+                    }
+                }
+
+                { // 添加默认插件
+                    const isSeperateLocale = localeId && typeof localesObj === 'object'
+
+                    if (i18n)
                         config.plugins.unshift(
                             new SuperI18nPlugin({
                                 stage: STAGE,
                                 functionName: i18n.expr,
+                                localeId: isSeperateLocale ? localeId : undefined,
+                                locales: isSeperateLocale ? localeId : localesObj,
                             })
                         )
-                    }
-                    config.plugins.push(
-                        new SpaTemplatePlugin({})
-                    )
-                }
 
-                if (STAGE === 'client' && ENV === 'dev')
-                    config.plugins.push(
-                        new DevServerAfterPlugin(after)
-                    )
+                    if (TYPE === 'spa')
+                        config.plugins.push(
+                            new SpaTemplatePlugin({
+                                localeId: isSeperateLocale ? localeId : undefined,
+                            })
+                        )
+
+                    if (STAGE === 'client' && ENV === 'dev')
+                        config.plugins.push(
+                            new DevServerAfterPlugin(after)
+                        )
+                }
 
                 webpackConfigs.push(config)
             }
@@ -804,7 +801,7 @@ module.exports = async (obj) => {
         if (!fs.pathExistsSync(pathnameChunkmap)) {
             await fs.ensureFile(pathnameChunkmap)
             process.env.WEBPACK_CHUNKMAP = ''
-            console.log(chalk.green('√ ') + chalk.greenBright('Chunkmap') + ` file does not exist. Crated an empty one.`)
+            // console.log(chalk.green('√ ') + chalk.greenBright('Chunkmap') + ` file does not exist. Crated an empty one.`)
         } else {
             try {
                 process.env.WEBPACK_CHUNKMAP = JSON.stringify(await fs.readJson(pathnameChunkmap))

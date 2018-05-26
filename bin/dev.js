@@ -4,30 +4,42 @@ const fs = require('fs-extra')
 const path = require('path')
 const program = require('commander')
 const pm2 = require('pm2')
-const chalk = require('chalk')
+// const chalk = require('chalk')
 const npmRunScript = require('npm-run-script')
 const opn = require('opn')
 
-const __ = require('../utils/translate')
+// const __ = require('../utils/translate')
 const sleep = require('../utils/sleep')
 const getPort = require('../utils/get-port')
 const spinner = require('../utils/spinner')
 const readBuildConfigFile = require('../utils/read-build-config-file')
 const getAppType = require('../utils/get-app-type')
+const setEnvFromCommand = require('../utils/set-env-from-command')
 
 program
     .version(require('../package').version, '-v, --version')
     .usage('[options]')
     .option('-c, --client', 'Set STAGE to CLIENT')
     .option('-s, --server', 'Set STAGE to SERVER')
+    .option('--stage <stage>', 'Set STAGE')
+    .option('--config <config-file-path>', 'Set config file')
+    .option('--type <project-type>', 'Set project type')
     .parse(process.argv)
 
 const run = async () => {
     const {
         client, server,
+        stage: _stage,
+        config,
+        type,
     } = program
 
-    let stage = client ? 'client' : (server ? 'server' : false)
+    setEnvFromCommand({
+        config,
+        type,
+    })
+
+    let stage = _stage ? _stage : (client ? 'client' : (server ? 'server' : false))
 
     // if (!stage) {
     //     console.log(
