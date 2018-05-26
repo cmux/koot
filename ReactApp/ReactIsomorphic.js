@@ -7,9 +7,9 @@ import { syncHistoryWithStore } from 'react-router-redux'
 
 import htmlInject from './inject'
 
-const fs = require('fs-extra')
 const path = require('path')
 const getChunkmap = require('../utils/get-chunkmap')
+const getClientFilePath = require('../utils/get-client-file-path')
 const readClientFile = require('../utils/read-client-file')
 
 const error = require('debug')('SYSTEM:isomorphic:error')
@@ -46,6 +46,13 @@ export default class ReactIsomorphic {
             '.entrypoints': entrypoints = {},
             '.files': filemap = {},
         } = chunkmap
+        const i18nType = JSON.parse(process.env.SUPER_I18N)
+            ? JSON.parse(process.env.SUPER_I18N_TYPE)
+            : undefined
+        const isI18nDefault = (i18nType === 'default')
+
+        // 针对 i18n 分包形式的项目，js/css 等资源需每次访问时实时注入
+        const assetsInjectOnce = isI18nDefault ? true : false
 
         // 配置 html 注入内容
         // html [只更新1次]的部分
@@ -55,6 +62,7 @@ export default class ReactIsomorphic {
         }
 
         // koa 中间件结构
+        // 每次请求时均会执行
         return async (ctx, next) => {
 
             const url = ctx.path + ctx.search
@@ -100,39 +108,32 @@ export default class ReactIsomorphic {
                     title: htmlTool.getTitle(),
                     metas: htmlTool.getMetaHtml(),
                     styles: (() => {
-                        if (typeof injectOnceCache.stylesInHead === 'undefined') {
+                        if (assetsInjectOnce && typeof injectOnceCache.stylesInHead === 'undefined') {
                             let r = ''
                             if (typeof filemap['critical.css'] === 'string') {
                                 if (ENV === 'prod')
                                     r += `<style type="text/css">${readClientFile('critical.css')}</style>`
                                 if (ENV === 'dev')
-                                    r += `<link media="all" rel="stylesheet" href="/${filemap['critical.css']}" />`
+                                    r += `<link media="all" rel="stylesheet" href="${getClientFilePath('critical.css')}" />`
                             }
                             injectOnceCache.stylesInHead = r
                         }
                         return injectOnceCache.stylesInHead + filterResult.style
                     })(),
-
                     react: filterResult.html,
                     scripts: (() => {
-                        if (typeof injectOnceCache.scriptsInBody === 'undefined') {
+                        if (assetsInjectOnce && typeof injectOnceCache.scriptsInBody === 'undefined') {
                             let r = ''
 
                             // 优先引入 critical
                             if (Array.isArray(entrypoints.critical)) {
                                 entrypoints.critical
-                                    .filter(filename => path.extname(filename) === '.js')
-                                    .forEach(filename => {
+                                    .filter(file => path.extname(file) === '.js')
+                                    .forEach(file => {
                                         if (ENV === 'prod')
-                                            r += `<script type="text/javascript">${fs.readFileSync(
-                                                path.resolve(
-                                                    process.env.SUPER_DIST_DIR,
-                                                    filename.replace(/^\//, '')
-                                                ),
-                                                'utf-8'
-                                            )}</script>`
+                                            r += `<script type="text/javascript">${readClientFile(true, file)}</script>`
                                         if (ENV === 'dev')
-                                            r += `<script type="text/javascript" src="/${filename}"></script>`
+                                            r += `<script type="text/javascript" src="${getClientFilePath(true, file)}"></script>`
                                     })
                             }
 
@@ -143,9 +144,9 @@ export default class ReactIsomorphic {
                                 if (Array.isArray(entrypoints[key])) {
                                     entrypoints[key].forEach(file => {
                                         if (ENV === 'prod')
-                                            r += `<script type="text/javascript" src="${file.replace(/(^\.\/|^)public\//, '')}" defer></script>`
+                                            r += `<script type="text/javascript" src="${getClientFilePath(true, file)}" defer></script>`
                                         if (ENV === 'dev')
-                                            r += `<script type="text/javascript" src="/${file}" defer></script>`
+                                            r += `<script type="text/javascript" src="${getClientFilePath(true, file)}" defer></script>`
                                     })
                                 }
                             })

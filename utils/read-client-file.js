@@ -3,7 +3,9 @@ const path = require('path')
 const getFilePath = require('./get-client-file-path')
 const generateFilemap = require('./generate-filemap-from-compilation')
 
-module.exports = (filename, localeId, compilation) => {
+const readClientFile = (filename, localeId, compilation, isPathname = false) => {
+    // 如果第一个参数为 true，表示标记为 pathname
+    if (filename === true) return readClientFile(localeId, compilation || undefined, isPathname || undefined, true)
 
     // 如果提供了 webpack compilation 数据，直接从其中查询对应文件的最终内容并返回
     if (typeof compilation === 'object') {
@@ -32,8 +34,10 @@ module.exports = (filename, localeId, compilation) => {
         path.resolve(
             process.env.SUPER_DIST_DIR,
             'public/',
-            getFilePath(filename, localeId).replace(/^\//, '')
+            getFilePath(filename, localeId, isPathname).replace(/^\//, '')
         ),
         'utf-8'
     )
 }
+
+module.exports = readClientFile

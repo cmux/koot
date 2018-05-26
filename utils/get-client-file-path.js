@@ -13,7 +13,10 @@ const getChunkmap = require('./get-chunkmap')
  * @memberof ReactIsomorphic
  * @returns {string} 文件路径或空
  */
-const getFilePath = (filename, localeId) => {
+const getFilePath = (filename, localeId, isPathname = false) => {
+    // 如果第一个参数为 true，表示标记为 pathname
+    if (filename === true) return getFilePath(localeId, isPathname || undefined, true)
+
     if (typeof localeId === 'undefined') {
         try {
             localeId = require('super-project/i18n').localeId
@@ -26,14 +29,25 @@ const getFilePath = (filename, localeId) => {
         ? JSON.parse(process.env.SUPER_I18N_TYPE)
         : undefined
     const isI18nDefault = (i18nType === 'default')
+    const isDev = (process.env.WEBPACK_BUILD_ENV === 'dev' || (typeof __DEV__ !== 'undefined' && __DEV__))
     // const localeId = 'zh'
 
-    if (process.env.WEBPACK_BUILD_ENV === 'dev' || (typeof __DEV__ !== 'undefined' && __DEV__))
-        return pathPublic + (isI18nDefault ? localeId : '') + `.${filename}`
+    // 如果标记为 pathname，直接返回结果
+    if (isPathname) return pathPublic + filename.replace(/(^\.\/|^)public\//, '')
 
     const chunkmap = getChunkmap(localeId)
 
+    if (typeof chunkmap === 'object' &&
+        typeof chunkmap['.files'] === 'object' &&
+        typeof chunkmap['.files'][filename] === 'string'
+    ) {
+        return pathPublic + chunkmap['.files'][filename].replace(/(^\.\/|^)public\//, '')
+    }
+
+    if (isDev) return pathPublic + (isI18nDefault ? localeId : '') + `.${filename}`
+
     if (typeof chunkmap === 'object') {
+
         const extname = path.extname(filename)
         const key = path.basename(filename, extname)
         let result

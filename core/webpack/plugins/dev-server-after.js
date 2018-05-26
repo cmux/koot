@@ -16,8 +16,11 @@ class DevServerAfter {
         // hook: done
         // 执行 after 回调，并打开浏览器窗口
         compiler.hooks.done.tapAsync.bind(compiler.hooks.done, 'DevServerAfter')((compilation, callback) => {
-            if (typeof after === 'function') after()
-            console.log('\n')
+            if (typeof after === 'function')
+                setTimeout(() => {
+                    after()
+                    console.log('\n')
+                })
 
             if (TYPE === 'spa') {
                 if (!opened) opn(`http://localhost:${getPort()}/`)

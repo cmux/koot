@@ -3,6 +3,8 @@ const path = require('path')
 const glob = require('glob-promise')
 // const md5File = require('md5-file')
 
+const getChunkmapPath = require('../../utils/get-chunkmap-path')
+
 const parseChunkmapPathname = pathname => pathname.replace(/^public\//g, '')
 
 const parsePattern = pattern => {
@@ -55,7 +57,7 @@ const create = async (settings = {}, i18n) => {
     } = settings
 
     const pathnamePolyfill = []
-    const pathnameChunkmap = path.resolve(dist, './.public-chunkmap.json')
+    const pathnameChunkmap = getChunkmapPath()
     const outputPath = path.resolve(dist, './public/')
     const i18nType = typeof i18n === 'object' ? i18n.type : undefined
     const isI18nDefault = (i18nType === 'default')

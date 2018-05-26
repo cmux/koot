@@ -1,6 +1,6 @@
 const path = require('path')
 
-module.exports = (compilation) => {
+module.exports = (compilation, dirRelative) => {
     if (typeof compilation !== 'object') return undefined
 
     const filemap = {}
@@ -18,7 +18,9 @@ module.exports = (compilation) => {
                     const extname = path.extname(filename)
                     const file = o.name + extname
                     if (typeof filemap[file] !== 'string')
-                        filemap[file] = filename
+                        filemap[file] = process.env.WEBPACK_BUILD_ENV === 'dev'
+                            ? filename
+                            : (dirRelative ? dirRelative + '/' : '') + filename
                 })
         }
     }

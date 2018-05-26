@@ -2,6 +2,7 @@ const fs = require('fs-extra')
 const path = require('path')
 
 const generateFilemap = require('./generate-filemap-from-compilation')
+const getChunkmapPath = require('./get-chunkmap-path')
 
 const times = n => f => {
     let iter = i => {
@@ -41,7 +42,7 @@ module.exports = async (stats, localeId) => {
 
     const dist = process.env.SUPER_DIST_DIR
     const dirRelative = path.relative(dist, stats.compilation.outputOptions.path).replace(`\\`, '/')
-    const filepathname = path.resolve(dist, `.public-chunkmap.json`)
+    const filepathname = getChunkmapPath()
     // stats.compilation.outputOptions.path,
 
     fs.ensureFileSync(filepathname)
@@ -68,7 +69,7 @@ module.exports = async (stats, localeId) => {
     }
 
     // 生成文件对照表
-    chunkmap['.files'] = generateFilemap(stats)
+    chunkmap['.files'] = generateFilemap(stats, dirRelative)
 
     // 生成所有入口和代码片段所输出的文件的对照表
     for (let id in stats.compilation.chunks) {

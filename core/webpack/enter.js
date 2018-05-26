@@ -9,6 +9,7 @@ const getAppType = require('../../utils/get-app-type')
 const __ = require('../../utils/translate')
 const getPort = require('../../utils/get-port')
 const spinner = require('../../utils/spinner')
+const getChunkmapPath = require('../../utils/get-chunkmap-path')
 const defaultBuildConfig = require('../../defaults/build-config')
 
 //
@@ -242,7 +243,7 @@ module.exports = async (obj) => {
     }
 
     // chunkmap 文件地址
-    const pathnameChunkmap = path.resolve(dist, `.public-chunkmap.json`)
+    const pathnameChunkmap = getChunkmapPath()
 
     // 处理i18n
     if (typeof i18n === 'object') {
@@ -547,15 +548,14 @@ module.exports = async (obj) => {
                 { // 添加默认插件
                     const isSeperateLocale = localeId && typeof localesObj === 'object'
 
-                    if (i18n)
-                        config.plugins.unshift(
-                            new SuperI18nPlugin({
-                                stage: STAGE,
-                                functionName: i18n.expr,
-                                localeId: isSeperateLocale ? localeId : undefined,
-                                locales: isSeperateLocale ? localeId : localesObj,
-                            })
-                        )
+                    config.plugins.unshift(
+                        new SuperI18nPlugin({
+                            stage: STAGE,
+                            functionName: i18n ? i18n.expr : undefined,
+                            localeId: i18n ? (isSeperateLocale ? localeId : undefined) : undefined,
+                            locales: i18n ? (isSeperateLocale ? localeId : localesObj) : undefined,
+                        })
+                    )
 
                     if (STAGE === 'client' && ENV === 'dev')
                         config.plugins.push(
@@ -670,13 +670,12 @@ module.exports = async (obj) => {
         // if (SYSTEM_CONFIG.WEBPACK_SERVER_OUTPATH)
         //     config.output.path = path.resolve(RUN_PATH, SYSTEM_CONFIG.WEBPACK_SERVER_OUTPATH)
 
-        if (typeof i18n === 'object')
-            thisConfig.plugins.unshift(
-                new SuperI18nPlugin({
-                    stage: STAGE,
-                    functionName: i18n.expr,
-                })
-            )
+        thisConfig.plugins.unshift(
+            new SuperI18nPlugin({
+                stage: STAGE,
+                functionName: i18n ? i18n.expr : undefined,
+            })
+        )
 
         thisConfig.entry = defaultServerEntry
 

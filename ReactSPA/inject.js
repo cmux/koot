@@ -33,7 +33,7 @@ module.exports = (settings = {}) => {
         })(),
 
         scripts: (() => {
-            let r = `<script type="text/javascript">var __REDUX_STATE__ = {};</script>`
+            let r = `<script type="text/javascript">window.__REDUX_STATE__ = {};</script>`
 
             if (typeof entrypoints === 'object') {
                 // 优先引入 critical

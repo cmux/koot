@@ -1,5 +1,5 @@
-const path = require('path')
 const fs = require('fs-extra')
+const getChunkmapPath = require('./get-chunkmap-path')
 
 /**
  * 获取 chunkmap
@@ -28,9 +28,7 @@ module.exports = (localeId) => {
     }
 
     if (typeof chunkmap !== 'object' && typeof process.env.SUPER_DIST_DIR === 'string') {
-        chunkmap = fs.readJsonSync(
-            path.resolve(process.env.SUPER_DIST_DIR, '.public-chunkmap.json')
-        )
+        chunkmap = fs.readJsonSync(getChunkmapPath())
         if (process.env.WEBPACK_BUILD_STAGE === 'server')
             global.chunkmap = chunkmap
     }
