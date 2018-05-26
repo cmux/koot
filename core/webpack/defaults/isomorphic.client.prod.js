@@ -1,9 +1,6 @@
 const webpack = require('webpack')
 
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
-const WebpackOnBuildPlugin = require('on-build-webpack')
-
-const writeChunkmap = require('../../../utils/write-chunkmap')
 
 const factoryConfig = async ({
     // RUN_PATH,
@@ -32,9 +29,6 @@ const factoryConfig = async ({
                 // both options are optional
                 filename: "[name].[chunkhash].css",
                 // chunkFilename: "[id].css"
-            }),
-            await new WebpackOnBuildPlugin(async function (stats) {
-                await writeChunkmap(stats, localeId)
             }),
         ],
     }

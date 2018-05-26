@@ -45,6 +45,9 @@ module.exports = () => {
 
         // HTML模板内容
         // SUPER_HTML_TEMPLATE: '',
+
+        // 打包目标路径
+        // SUPER_DIST_DIR: '',
     }
     for (let key in defaults) {
         if (typeof process.env[key] === 'undefined') {

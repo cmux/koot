@@ -29,6 +29,7 @@ module.exports = (settings = {}) => {
                 if (ENV === 'dev')
                     r += `<link media="all" rel="stylesheet" href="/${filemap['critical.css']}" />`
             }
+            return r
         })(),
 
         scripts: (() => {

@@ -1,4 +1,5 @@
 const opn = require('opn')
+
 const getPort = require('../../../utils/get-port')
 
 let opened = false
@@ -10,6 +11,7 @@ class DevServerAfter {
 
     apply(compiler) {
         const after = this.after
+        const TYPE = process.env.WEBPACK_BUILD_TYPE
 
         // hook: done
         // 执行 after 回调，并打开浏览器窗口
@@ -17,8 +19,10 @@ class DevServerAfter {
             if (typeof after === 'function') after()
             console.log('\n')
 
-            if (!opened) opn(`http://localhost:${getPort()}/`)
-            opened = true
+            if (TYPE === 'spa') {
+                if (!opened) opn(`http://localhost:${getPort()}/`)
+                opened = true
+            }
 
             callback()
         })

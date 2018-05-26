@@ -72,7 +72,7 @@ const run = async () => {
             console.trace(error)
             process.exit(1)
         })
-        child.once('exit', (exitCode) => {
+        child.once('exit', (/*exitCode*/) => {
             // console.trace('exit in', exitCode)
             // process.exit(exitCode)
         })
@@ -89,7 +89,7 @@ const run = async () => {
 
         { // 在脚本进程关闭/结束时，同时关闭打开的 PM2 进程
             process.stdin.resume()
-            const exitHandler = async (options, err) => {
+            const exitHandler = async (/*options, err*/) => {
                 // console.log(processes)
                 if (Array.isArray(processes) && processes.length) {
                     waiting.stop()
@@ -97,7 +97,7 @@ const run = async () => {
                     process.stdout.write('\x1B[2J\x1B[0f')
                     const w = spinner('WAITING FOR ENDING')
                     await Promise.all(processes.map(proc =>
-                        new Promise((resolve, reject) => {
+                        new Promise((resolve/*, reject*/) => {
                             setTimeout(() => {
                                 processes.splice(processes.indexOf(proc), 1)
                                 resolve()
@@ -107,7 +107,7 @@ const run = async () => {
                         })
                     ))
                     await Promise.all(processes.map(proc =>
-                        new Promise((resolve, reject) => {
+                        new Promise((resolve/*, reject*/) => {
                             setTimeout(() => resolve(), 500)
                             // console.log(proc)
                             pm2.delete(proc)

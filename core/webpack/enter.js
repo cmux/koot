@@ -20,6 +20,7 @@ const createPWAsw = require('../pwa/create')
 const SuperI18nPlugin = require("./plugins/i18n")
 const SpaTemplatePlugin = require("./plugins/spa-template")
 const DevServerAfterPlugin = require("./plugins/dev-server-after")
+const GenerateChunkmapPlugin = require("./plugins/generate-chunkmap")
 
 
 // 调试webpack模式
@@ -556,16 +557,22 @@ module.exports = async (obj) => {
                             })
                         )
 
+                    if (STAGE === 'client' && ENV === 'dev')
+                        config.plugins.push(
+                            new DevServerAfterPlugin(after)
+                        )
+
                     if (TYPE === 'spa')
                         config.plugins.push(
                             new SpaTemplatePlugin({
                                 localeId: isSeperateLocale ? localeId : undefined,
                             })
                         )
-
-                    if (STAGE === 'client' && ENV === 'dev')
+                    else
                         config.plugins.push(
-                            new DevServerAfterPlugin(after)
+                            await new GenerateChunkmapPlugin({
+                                localeId: isSeperateLocale ? localeId : undefined,
+                            })
                         )
                 }
 
