@@ -6,7 +6,7 @@ const ejs = require('ejs')
 const chalk = require('chalk')
 
 const writeChunkmap = require('../../../utils/write-chunkmap')
-const inject = require('../../../ReactSPA/inject')
+const getAppType = require('../../../utils/get-app-type')
 
 class SpaTemplatePlugin {
     constructor({
@@ -30,11 +30,14 @@ class SpaTemplatePlugin {
                 return
             }
 
+            const appType = await getAppType()
             const chunkmap = await writeChunkmap(compilation.getStats())
             const filename = `index${localeId ? `.${localeId}` : ''}.html`
             const html = ejs.render(
                 process.env.SUPER_HTML_TEMPLATE, {
-                    inject: inject({ localeId, chunkmap, compilation })
+                    inject: require(`../../../${appType}/inject`)({
+                        localeId, chunkmap, compilation
+                    })
                 }, {
 
                 }
@@ -63,12 +66,12 @@ class SpaTemplatePlugin {
                     html,
                     'utf-8'
                 )
-                // console.log(
-                //     chalk.green('√ ')
-                //     + chalk.yellowBright('[super/build] ')
-                //     + 'template output to '
-                //     + chalk.green(`/${filename}`)
-                // )
+                console.log(
+                    chalk.green('√ ')
+                    + chalk.yellowBright('[super/build] ')
+                    + 'template output to '
+                    + chalk.green(`/${filename}`)
+                )
             }
 
             callback()

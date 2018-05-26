@@ -19,25 +19,27 @@ const extractType = () => {
 }
 
 module.exports = async () => {
-    const type = typeof process.env.SUPER_PROJECT_TYPE !== 'undefined'
-        ? process.env.SUPER_PROJECT_TYPE
-        : extractType() || ''
+    if (typeof process.env.SUPER_PROJECT_TYPE === 'undefined') {
+        process.env.SUPER_PROJECT_TYPE = extractType() || ''
+    }
 
-    switch (type.toLowerCase()) {
+    switch (process.env.SUPER_PROJECT_TYPE.toLowerCase()) {
         case 'react': {
             // if ((await readBuildConfigFile()).server)
             process.env.WEBPACK_BUILD_TYPE = 'isomorphic'
-            return 'ReactApp'
+            process.env.SUPER_PROJECT_TYPE = 'ReactApp'
             // return 'ReactSPA'
         }
 
         case 'react-spa':
         case 'reactspa': {
             process.env.WEBPACK_BUILD_TYPE = 'spa'
-            return 'ReactSPA'
+            process.env.SUPER_PROJECT_TYPE = 'ReactSPA'
         }
 
-        default:
-            return type
+        // default:
+        //     return process.env.SUPER_PROJECT_TYPE
     }
+
+    return process.env.SUPER_PROJECT_TYPE
 }

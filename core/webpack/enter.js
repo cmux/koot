@@ -5,19 +5,21 @@ const fs = require('fs-extra')
 const path = require('path')
 const chalk = require('chalk')
 
+const getAppType = require('../../utils/get-app-type')
+const __ = require('../../utils/translate')
+const getPort = require('../../utils/get-port')
+const spinner = require('../../utils/spinner')
+const defaultBuildConfig = require('../../defaults/build-config')
+
 //
 const webpack = require('webpack')
 const WebpackDevServer = require('webpack-dev-server')
 const WebpackConfig = require('webpack-config').default
 const common = require('./common')
-const getAppType = require('../../utils/get-app-type')
 const createPWAsw = require('../pwa/create')
 const SuperI18nPlugin = require("./plugins/i18n")
 const SpaTemplatePlugin = require("./plugins/spa-template")
-const __ = require('../../utils/translate')
-const getPort = require('../../utils/get-port')
-const spinner = require('../../utils/spinner')
-const defaultBuildConfig = require('../../defaults/build-config')
+const DevServerAfterPlugin = require("./plugins/dev-server-after")
 
 
 // 调试webpack模式
@@ -310,6 +312,7 @@ module.exports = async (obj) => {
         process.env.SUPER_HTML_TEMPLATE = template
     }
 
+    // 开始前和开始后回调函数的参数
     const args = {
         config,
         dist,
@@ -325,9 +328,8 @@ module.exports = async (obj) => {
         + chalk.yellowBright('[super/build] ')
         + `callback: ` + chalk.green('before')
     )
-    if (typeof beforeBuild === 'function') {
+    if (typeof beforeBuild === 'function')
         await beforeBuild(args)
-    }
 
     if (typeof config === 'function') config = await config()
     if (typeof config !== 'object') config = {}
@@ -337,6 +339,47 @@ module.exports = async (obj) => {
     const buildingComplete = () => {
         building.stop()
         console.log(' ')
+    }
+
+    /**
+     * Webpack 打包成功后的回调
+     */
+    const after = async () => {
+        const theArgs = { ...args }
+        console.log(' ')
+
+        if (pwa && STAGE === 'client' && ENV === 'prod') {
+            // 生成PWA使用的 service-worker.js
+            await createPWAsw(pwa, i18n)
+        }
+
+        // 默认方法
+        await _afterBuild(theArgs)
+
+        // 自定方法回调
+        console.log(
+            chalk.cyan('⚑ ')
+            + chalk.yellowBright('[super/build] ')
+            + `callback: ` + chalk.green('after')
+        )
+        if (typeof afterBuild === 'function')
+            await afterBuild(theArgs)
+
+        // 标记完成
+        console.log(
+            chalk.green('√ ')
+            + chalk.yellowBright('[super/build] ')
+            + __('build.build_complete', {
+                type: chalk.green(appType),
+                stage: chalk.green(STAGE),
+                env: chalk.green(ENV),
+            })
+        )
+
+        if (ENV === 'dev')
+            console.log(`  > ${(new Date()).toLocaleString()}`)
+
+        return
     }
 
     /**
@@ -524,6 +567,11 @@ module.exports = async (obj) => {
                     )
                 }
 
+                if (STAGE === 'client' && ENV === 'dev')
+                    config.plugins.push(
+                        new DevServerAfterPlugin(after)
+                    )
+
                 webpackConfigs.push(config)
             }
         }
@@ -632,51 +680,6 @@ module.exports = async (obj) => {
         webpackConfigs = thisConfig
     }
 
-    const after = async (app) => {
-        const theArgs = {
-            app,
-            ...args
-        }
-
-        console.log(' ')
-
-        // if (STAGE === 'server' && ENV === 'dev') {
-        //     if (!global.__SUPER_DEV_SERVER_OPN__) {
-        //         opn(`http://${SERVER_DOMAIN || 'localhost'}:${SERVER_PORT}/`)
-        //         global.__SUPER_DEV_SERVER_OPN__ = true
-        //     }
-        // }
-
-        if (pwa && STAGE === 'client' && ENV === 'prod') {
-            // 生成PWA使用的 service-worker.js
-            await createPWAsw(pwa, i18n)
-        }
-
-        await _afterBuild(theArgs)
-        console.log(
-            chalk.cyan('⚑ ')
-            + chalk.yellowBright('[super/build] ')
-            + `callback: ` + chalk.green('after')
-        )
-        if (typeof afterBuild === 'function')
-            await afterBuild(theArgs)
-
-        console.log(
-            chalk.green('√ ')
-            + chalk.yellowBright('[super/build] ')
-            + __('build.build_complete', {
-                type: chalk.green(appType),
-                stage: chalk.green(STAGE),
-                env: chalk.green(ENV),
-            })
-        )
-
-        if (ENV === 'dev')
-            console.log(`  > ${(new Date()).toLocaleString()}`)
-
-        return
-    }
-
     const logConfigToFile = async () => {
         await fs.ensureDir(
             path.resolve(
@@ -717,14 +720,15 @@ module.exports = async (obj) => {
             headers: {
                 'Access-Control-Allow-Origin': '*'
             },
-            after,
             open: TYPE === 'spa',
         }, devServer)
 
         // more config
         // http://webpack.github.io/docs/webpack-dev-server.html
         const server = new WebpackDevServer(compiler, devServerConfig)
-        server.listen(CLIENT_DEV_PORT)
+        server.listen(
+            TYPE === 'spa' ? process.env.SERVER_PORT : CLIENT_DEV_PORT
+        )
     }
 
     // 客户端打包
