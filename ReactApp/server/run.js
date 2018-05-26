@@ -15,6 +15,7 @@ import i18nOnServerRender from 'super-project/i18n/onServerRender'
 
 import { CHANGE_LANGUAGE, TELL_CLIENT_URL/*, SERVER_REDUCER_NAME, serverReducer*/ } from './redux'
 import superClient from '../client/run'
+import ReactIsomorphic from '../ReactIsomorphic'
 
 
 export default async (app, {
@@ -152,6 +153,8 @@ export default async (app, {
     // ============================================================================
     // 同构配置
     // ============================================================================
+    reactApp.isomorphic = new ReactIsomorphic()
+
     const isomorphic = reactApp.isomorphic.createKoaMiddleware({
 
         // react-router 配置对象

@@ -5,6 +5,8 @@ import { createMemoryHistory, RouterContext, match } from 'react-router'
 import { Provider } from 'react-redux'
 import { syncHistoryWithStore } from 'react-router-redux'
 
+import htmlInject from './inject'
+
 const error = require('debug')('SYSTEM:isomorphic:error')
 
 export default class ReactIsomorphic {
@@ -93,7 +95,7 @@ export default class ReactIsomorphic {
 
                 // 响应给客户端
 
-                const html = htmlTool.convertToFullHtml(template, injectResult)
+                const html = htmlInject(template, injectResult)
                 ctx.body = html
 
 

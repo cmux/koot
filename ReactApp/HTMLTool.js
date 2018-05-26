@@ -1,22 +1,3 @@
-const DEFAULT_TEMPLATE = `
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <script>//inject_meta</script>
-        <title><script>//inject_title</script></title>
-        <script>//inject_component_styles</script>
-    </head>
-    <body>
-        <div id="root">
-            <div><script>//inject_html</script></div>
-        </div>
-        <script>//inject_redux_state</script>
-        <script>//inject_js</script>
-    </body>
-    </html>
-`
-
 export default class HTMLTool {
 
     constructor() {
@@ -51,11 +32,11 @@ export default class HTMLTool {
         return `<script>;window.__REDUX_STATE__ = ${JSON.stringify(store.getState())};</script>`
     }
 
-    convertToFullHtml(template = DEFAULT_TEMPLATE, inject = {}) {
-        let html = template
-        for (let key in inject) {
-            html = html.replace(`<script>//inject_${key}</script>`, inject[key])
-        }
-        return html
-    }
+    // convertToFullHtml(template = DEFAULT_TEMPLATE, inject = {}) {
+    //     let html = template
+    //     for (let key in inject) {
+    //         html = html.replace(`<script>//inject_${key}</script>`, inject[key])
+    //     }
+    //     return html
+    // }
 }

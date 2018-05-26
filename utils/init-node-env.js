@@ -30,7 +30,6 @@ module.exports = () => {
         // SUPER_PROJECT_TYPE: ...,
 
         // 运行服务器
-        // SERVER_DOMAIN: 'localhost', // TODO: remove
         SERVER_PORT: (() => process.env.WEBPACK_BUILD_ENV === 'dev' ? '3000' : '8080')(),
 
         // 总开关：i18n/多语言相关处理

@@ -13,8 +13,7 @@ import ReactRouter from './ReactRouter'
 
 //
 
-import ReactIsomorphic from './ReactIsomorphic'
-import ACTION_TYPE from './ActionType'
+// import ACTION_TYPE from './ActionType'
 
 // 默认根 DOM 结点 ID
 
@@ -54,7 +53,6 @@ export default class ReactApp {
             }
         }
 
-        this.isomorphic = new ReactIsomorphic()
     }
 
     createConfigureStoreFactory() {
