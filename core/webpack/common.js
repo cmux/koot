@@ -4,8 +4,6 @@ const webpack = require('webpack')
 // const ExtractTextPlugin = require("extract-text-webpack-plugin")
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 
-const pwaCreatePlugin = require('sp-pwa')
-
 // 打包结果目录
 const outputPath = 'dist'
 
@@ -234,26 +232,6 @@ const plugins = (env, stage, defines = {}) => {
     ]
 }
 
-const factoryPWAPlugin = (opt) => {
-
-    let config = {
-        outputPath: '',//path.resolve(opt.outputPath, '../'),  // 子应用打包后文件夹的上一级
-        outputFilename: `service-worker.${opt.appName}.js`,
-        // customServiceWorkerPath: path.normalize(appPath + '/src/client/custom-service-worker.js'),
-        globPattern: `/${opt.appName}/**/*`,
-        // globOptions: {
-        //     ignore: [
-        //         '/**/portals/',
-        //         '/**/portals/**/*'
-        //     ]
-        // }
-    }
-
-    Object.assign(config, opt)
-
-    return pwaCreatePlugin(config)
-}
-
 const resolve = Object.assign({
     modules: [
         '__modules',
@@ -313,7 +291,6 @@ module.exports = {
     outputPath,
     // rules,
     plugins,
-    factoryPWAPlugin,
     resolve,
     needBabelHandleList,
     filterExternalsModules

@@ -1,4 +1,5 @@
-import path from 'path'
+const path = require('path')
+const fs = require('fs-extra')
 import cookie from 'cookie'
 
 //
@@ -17,6 +18,7 @@ import { CHANGE_LANGUAGE, TELL_CLIENT_URL/*, SERVER_REDUCER_NAME, serverReducer*
 import superClient from '../client/run'
 import ReactIsomorphic from '../ReactIsomorphic'
 
+const cache = {}
 
 export default async (app, {
     // name,
@@ -48,16 +50,26 @@ export default async (app, {
     } = server
     const onRender = server.render || server.onRender
 
-    if (typeof process.env.SUPER_HTML_TEMPLATE === 'string')
-        template = process.env.SUPER_HTML_TEMPLATE
+    // 处理 template
+    if (typeof cache.template === 'string') {
+        template = cache.template
+    } else {
+        if (typeof process.env.SUPER_HTML_TEMPLATE === 'string')
+            template = process.env.SUPER_HTML_TEMPLATE
 
-    if (typeof template !== 'string')
-        throw new Error('Error: "template" type check fail!')
+        if (typeof template !== 'string')
+            throw new Error('Error: "template" type check fail!')
 
-    if (template.substr(0, 2) === './') {
-        template = require(`raw-loader?` + path.resolve(
-            process.cwd(), template
-        ))
+        if (template.substr(0, 2) === './') {
+            // template = require(`raw-loader?` + path.resolve(
+            //     process.cwd(), template
+            // ))
+            template = fs.readFileSync(path.resolve(
+                process.cwd(), template
+            ), 'utf-8')
+        }
+
+        cache.template = template
     }
 
     if (typeof inject !== 'object')

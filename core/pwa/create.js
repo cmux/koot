@@ -1,4 +1,4 @@
-const fs = require('fs-promise')
+const fs = require('fs-extra')
 const path = require('path')
 const glob = require('glob-promise')
 // const md5File = require('md5-file')
@@ -139,7 +139,7 @@ const create = async (settings = {}, i18n) => {
         return
     }
 
-    const chunkmapFull = await fs.readJSON(pathnameChunkmap, 'utf-8')
+    const chunkmapFull = await fs.readJson(pathnameChunkmap, 'utf-8')
 
     if (isI18nDefault && Array.isArray(i18n.locales)) {
         for (let arr of i18n.locales) {
