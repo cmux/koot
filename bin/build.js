@@ -2,10 +2,13 @@
 
 // const path = require('path')
 const program = require('commander')
-// const chalk = require('chalk')
+const chalk = require('chalk')
+
+const __ = require('../utils/translate')
 const readBuildConfigFile = require('../utils/read-build-config-file')
 const sleep = require('../utils/sleep')
 const setEnvFromCommand = require('../utils/set-env-from-command')
+
 const superBuild = require('../core/webpack/enter')
 
 program
@@ -19,7 +22,13 @@ program
     .option('--type <project-type>', 'Set project type')
     .parse(process.argv)
 
+/**
+ * 执行打包
+ */
 const run = async () => {
+    // 清空 log
+    process.stdout.write('\x1B[2J\x1B[0f')
+
     const {
         client, server,
         stage: _stage,
@@ -89,6 +98,15 @@ const run = async () => {
     process.env.WEBPACK_BUILD_STAGE = 'server'
     await superBuild({ ...buildConfig })
     await sleep(100)
+
+    console.log('\n' + ''.padEnd(60, '=') + '\n')
+    console.log(
+        chalk.green('√ ')
+        + chalk.yellowBright('[super/build] ')
+        + __('build.complete', {
+            time: (new Date()).toLocaleString()
+        })
+    )
 }
 
 run()

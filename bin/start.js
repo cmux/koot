@@ -21,7 +21,13 @@ program
     .option('--type <project-type>', 'Set project type')
     .parse(process.argv)
 
+/**
+ * 打包生产环境，并启动服务器（如果可用）
+ */
 const run = async () => {
+    // 清空 log
+    process.stdout.write('\x1B[2J\x1B[0f')
+
     const {
         build,
         config,

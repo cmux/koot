@@ -216,7 +216,7 @@ module.exports = async (obj) => {
         chalk.cyan('  ')
         + chalk.yellowBright('[super/build] ')
         + __('build.build_start', {
-            type: chalk.green(appType),
+            type: chalk.cyanBright(appType),
             stage: chalk.green(STAGE),
             env: chalk.green(ENV),
         })
@@ -379,7 +379,7 @@ module.exports = async (obj) => {
             chalk.green('√ ')
             + chalk.yellowBright('[super/build] ')
             + __('build.build_complete', {
-                type: chalk.green(appType),
+                type: chalk.cyanBright(appType),
                 stage: chalk.green(STAGE),
                 env: chalk.green(ENV),
             })

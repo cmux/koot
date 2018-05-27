@@ -11,6 +11,9 @@ program
     .parse(process.argv)
 
 const run = async () => {
+    // 清空 log
+    process.stdout.write('\x1B[2J\x1B[0f')
+
     console.log('TODO: ANALYZE')
 }
 

@@ -29,7 +29,7 @@ program
     .parse(process.argv)
 
 /**
- * 进入开发模式
+ * 进入开发环境
  * ****************************************************************************
  * 同构 (isomorphic)
  * 以 PM2 进程方式顺序执行以下流程
@@ -42,6 +42,9 @@ program
  * ****************************************************************************
  */
 const run = async () => {
+    // 清空 log
+    process.stdout.write('\x1B[2J\x1B[0f')
+
     const {
         client, server,
         stage: _stage,
@@ -100,19 +103,17 @@ const run = async () => {
         })
         return
     } else {
-        // 没有设置 STAGE
-        // 开始 PM2 进程
-        // 重制 cmd log
-        process.stdout.write('\x1B[2J\x1B[0f')
+        // 没有设置 STAGE，开始 PM2 进程
 
-        let waitingSpinner = spinner(
-            chalk.yellowBright('[super/build] ')
-            + __('build.build_start', {
-                type: chalk.green(appType),
-                stage: chalk.green('client'),
-                env: chalk.green('dev'),
-            })
-        )
+        let waitingSpinner = false
+        // spinner(
+        //     chalk.yellowBright('[super/build] ')
+        //     + __('build.build_start', {
+        //         type: chalk.cyanBright(appType),
+        //         stage: chalk.green('client'),
+        //         env: chalk.green('dev'),
+        //     })
+        // )
 
         const processes = []
         const pathChunkmap = getChunkmapPath(dist)
@@ -162,6 +163,8 @@ const run = async () => {
                     process.removeListener('SIGUSR1', exitHandler)
                     process.removeListener('SIGUSR2', exitHandler)
                     process.removeListener('uncaughtException', exitHandler)
+                    // 清空 log
+                    process.stdout.write('\x1B[2J\x1B[0f')
                     console.log('Press CTRL+C again to terminate.')
                     process.exit(1)
                 }
@@ -215,6 +218,16 @@ const run = async () => {
                 process.exit(2)
             }
 
+            console.log(
+                `  `
+                + chalk.yellowBright('[super/build] ')
+                + __('build.build_start', {
+                    type: chalk.cyanBright(appType),
+                    stage: chalk.green('client'),
+                    env: chalk.green('dev'),
+                })
+            )
+
             // 清空 chunkmap 文件
             await fs.ensureFile(pathChunkmap)
             await fs.writeFile(pathChunkmap, contentWaiting)
@@ -237,13 +250,31 @@ const run = async () => {
                 }, 500)
                 waiting()
             })
-            waitingSpinner.succeed()
+            // waitingSpinner.succeed()
+            console.log(
+                chalk.green('√ ')
+                + chalk.yellowBright('[super/build] ')
+                + __('build.build_complete', {
+                    type: chalk.cyanBright(appType),
+                    stage: chalk.green('client'),
+                    env: chalk.green('dev'),
+                })
+            )
 
             // 启动 server webpack
-            waitingSpinner = spinner(
-                chalk.yellowBright('[super/build] ')
+            // waitingSpinner = spinner(
+            //     chalk.yellowBright('[super/build] ')
+            //     + __('build.build_start', {
+            //         type: chalk.cyanBright(appType),
+            //         stage: chalk.green('server'),
+            //         env: chalk.green('dev'),
+            //     })
+            // )
+            console.log(
+                `  `
+                + chalk.yellowBright('[super/build] ')
                 + __('build.build_start', {
-                    type: chalk.green(appType),
+                    type: chalk.cyanBright(appType),
                     stage: chalk.green('server'),
                     env: chalk.green('dev'),
                 })
@@ -261,18 +292,28 @@ const run = async () => {
                 }, 500)
                 waiting()
             })
-            waitingSpinner.succeed()
+            // waitingSpinner.succeed()
 
             // 执行
-            waitingSpinner = spinner(
-                chalk.yellowBright('[super/build] ')
-                + 'waiting...'
-            )
+            // waitingSpinner = spinner(
+            //     chalk.yellowBright('[super/build] ')
+            //     + 'waiting...'
+            // )
             await start('run')
-            await sleep(2000)
+            await sleep(500)
 
-            waitingSpinner.stop()
-            waitingSpinner = undefined
+            console.log(
+                chalk.green('√ ')
+                + chalk.yellowBright('[super/build] ')
+                + __('build.build_complete', {
+                    type: chalk.cyanBright(appType),
+                    stage: chalk.green('server'),
+                    env: chalk.green('dev'),
+                })
+            )
+
+            // waitingSpinner.stop()
+            // waitingSpinner = undefined
             npmRunScript(`pm2 logs`)
             opn(`http://localhost:${process.env.SERVER_PORT}/`)
         })
