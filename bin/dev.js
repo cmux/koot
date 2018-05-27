@@ -34,7 +34,7 @@ program
  * 同构 (isomorphic)
  * 以 PM2 进程方式顺序执行以下流程
  *      1. 启动 webpack-dev-server (STAGE: client)
- *      2. 启动 webpack (watch mode) (STAGE: client)
+ *      2. 启动 webpack (watch mode) (STAGE: server)
  *      3. 运行 /server/index.js
  * ****************************************************************************
  * 单页面应用 (SPA)
