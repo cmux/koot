@@ -194,9 +194,12 @@ module.exports = async (obj) => {
         template,
     } = Object.assign({}, defaultBuildConfig, obj)
 
+    // 获取 App 类型
     const appType = await getAppType()
 
+    // 获取当前环境的服务器端口
     process.env.SERVER_PORT = getPort(port)
+
     const {
         WEBPACK_BUILD_TYPE: TYPE,
         WEBPACK_BUILD_ENV: ENV,

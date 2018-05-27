@@ -16,21 +16,20 @@ module.exports = () => {
         // Webpack 打包结果分析
         WEBPACK_ANALYZE: JSON.stringify(false),
 
-        // 仅限 STAGE: client && ENV: dev
-        // 客户端开发环境 webpack-dev-server 端口号
-        WEBPACK_DEV_SERVER_PORT: 3001,
-
         // chunkmap
         WEBPACK_CHUNKMAP: '',
 
         // 打包配置文件路径。默认不存在。如果存在则默认使用
         // WEBPACK_BUILD_CONFIG_PATHNAME: ...,
 
+        // 客户端开发环境 webpack-dev-server 端口号 (仅限 STAGE: client && ENV: dev)
+        WEBPACK_DEV_SERVER_PORT: 3001,
+
+        // 服务器端口
+        SERVER_PORT: process.env.WEBPACK_BUILD_ENV === 'dev' ? '3000' : '8080',
+
         // 项目类型。默认不存在。如果存在则默认使用
         // SUPER_PROJECT_TYPE: ...,
-
-        // 运行服务器
-        SERVER_PORT: (() => process.env.WEBPACK_BUILD_ENV === 'dev' ? '3000' : '8080')(),
 
         // 总开关：i18n/多语言相关处理
         SUPER_I18N: JSON.stringify(false),

@@ -82,6 +82,10 @@ const run = async () => {
         stage = 'client'
     }
 
+    // 如果配置中存在 port，修改环境变量
+    if (typeof port !== 'undefined')
+        process.env.SERVER_PORT = getPort(port, 'dev')
+
     // 如果设置了 stage，仅运行该 stage
     if (stage) {
         const cmd = `super-build --stage ${stage} --env dev`
@@ -227,7 +231,7 @@ const run = async () => {
                 const waiting = () => setTimeout(async () => {
                     if (!fs.existsSync(pathChunkmap)) return waiting()
                     const content = await fs.readFile(pathChunkmap, 'utf-8')
-                    if (content === contentWaiting) return waiting()
+                    if (!content || content === contentWaiting) return waiting()
                     await sleep(100)
                     resolve()
                 }, 500)
@@ -251,7 +255,7 @@ const run = async () => {
                 const waiting = () => setTimeout(async () => {
                     if (!fs.existsSync(pathServerJS)) return waiting()
                     const content = await fs.readFile(pathServerJS, 'utf-8')
-                    if (content === contentWaiting) return waiting()
+                    if (!content || content === contentWaiting) return waiting()
                     await sleep(100)
                     resolve()
                 }, 500)
@@ -270,7 +274,7 @@ const run = async () => {
             waitingSpinner.stop()
             waitingSpinner = undefined
             npmRunScript(`pm2 logs`)
-            opn(`http://localhost:${getPort(port, 'dev')}/`)
+            opn(`http://localhost:${process.env.SERVER_PORT}/`)
         })
     }
 }

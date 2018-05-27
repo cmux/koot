@@ -52,7 +52,7 @@ export default class ReactIsomorphic {
         const isI18nDefault = (i18nType === 'default')
 
         // 针对 i18n 分包形式的项目，js/css 等资源需每次访问时实时注入
-        const assetsInjectOnce = isI18nDefault ? true : false
+        const assetsInjectOnce = !isI18nDefault
 
         // 配置 html 注入内容
         // html [只更新1次]的部分
@@ -108,7 +108,7 @@ export default class ReactIsomorphic {
                     title: htmlTool.getTitle(),
                     metas: htmlTool.getMetaHtml(),
                     styles: (() => {
-                        if (assetsInjectOnce && typeof injectOnceCache.stylesInHead === 'undefined') {
+                        if (!assetsInjectOnce || typeof injectOnceCache.styles === 'undefined') {
                             let r = ''
                             if (typeof filemap['critical.css'] === 'string') {
                                 if (ENV === 'prod')
@@ -116,13 +116,13 @@ export default class ReactIsomorphic {
                                 if (ENV === 'dev')
                                     r += `<link media="all" rel="stylesheet" href="${getClientFilePath('critical.css')}" />`
                             }
-                            injectOnceCache.stylesInHead = r
+                            injectOnceCache.styles = r
                         }
-                        return injectOnceCache.stylesInHead + filterResult.style
+                        return injectOnceCache.styles + filterResult.style
                     })(),
                     react: filterResult.html,
                     scripts: (() => {
-                        if (assetsInjectOnce && typeof injectOnceCache.scriptsInBody === 'undefined') {
+                        if (!assetsInjectOnce || typeof injectOnceCache.scriptsInBody === 'undefined') {
                             let r = ''
 
                             // 优先引入 critical
