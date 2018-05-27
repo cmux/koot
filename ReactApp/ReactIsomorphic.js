@@ -6,6 +6,7 @@ import { Provider } from 'react-redux'
 import { syncHistoryWithStore } from 'react-router-redux'
 
 import htmlInject from './inject'
+import { localeId } from 'super-project/i18n'
 
 const path = require('path')
 const getChunkmap = require('../utils/get-chunkmap')
@@ -41,11 +42,11 @@ export default class ReactIsomorphic {
 
         const { template, onServerRender, inject, configStore, routes } = options
         const ENV = process.env.WEBPACK_BUILD_ENV
-        const chunkmap = getChunkmap()
-        const {
-            '.entrypoints': entrypoints = {},
-            '.files': filemap = {},
-        } = chunkmap
+
+        const chunkmap = getChunkmap(true)
+        let entrypoints = {}
+        let filemap = {}
+
         const i18nType = JSON.parse(process.env.SUPER_I18N)
             ? JSON.parse(process.env.SUPER_I18N_TYPE)
             : undefined
@@ -53,6 +54,18 @@ export default class ReactIsomorphic {
 
         // 针对 i18n 分包形式的项目，js/css 等资源需每次访问时实时注入
         const assetsInjectOnce = !isI18nDefault
+
+        if (isI18nDefault) {
+            for (let l in chunkmap) {
+                const thisLocaleId = l.substr(0, 1) === '.' ? l.substr(1) : l
+                entrypoints[thisLocaleId] = chunkmap[l]['.entrypoints']
+                filemap[thisLocaleId] = chunkmap[l]['.files']
+                injectOnceCache[thisLocaleId] = {}
+            }
+        } else {
+            entrypoints = chunkmap['.entrypoints']
+            filemap = chunkmap['.files']
+        }
 
         // 配置 html 注入内容
         // html [只更新1次]的部分
@@ -102,32 +115,44 @@ export default class ReactIsomorphic {
                 )
                 const filterResult = filterStyle(reactHtml)
 
+                const thisInjectOnceCache = assetsInjectOnce ? injectOnceCache : injectOnceCache[localeId]
+                const thisFilemap = assetsInjectOnce ? filemap : filemap[localeId]
+                const thisEntrypoints = assetsInjectOnce ? entrypoints : entrypoints[localeId]
+
+                // console.log(chunkmap)
+                // console.log(filemap)
+                // console.log(entrypoints)
+                // console.log(localeId)
+                // console.log(thisInjectOnceCache)
+                // console.log(thisFilemap)
+                // console.log(thisEntrypoints)
+
                 // 配置 html 注入内容
                 // html [实时更新]的部分
                 const injectRealtime = {
                     title: htmlTool.getTitle(),
                     metas: htmlTool.getMetaHtml(),
                     styles: (() => {
-                        if (!assetsInjectOnce || typeof injectOnceCache.styles === 'undefined') {
+                        if (!assetsInjectOnce || typeof thisInjectOnceCache.styles === 'undefined') {
                             let r = ''
-                            if (typeof filemap['critical.css'] === 'string') {
+                            if (typeof thisFilemap['critical.css'] === 'string') {
                                 if (ENV === 'prod')
                                     r += `<style type="text/css">${readClientFile('critical.css')}</style>`
                                 if (ENV === 'dev')
                                     r += `<link media="all" rel="stylesheet" href="${getClientFilePath('critical.css')}" />`
                             }
-                            injectOnceCache.styles = r
+                            thisInjectOnceCache.styles = r
                         }
-                        return injectOnceCache.styles + filterResult.style
+                        return thisInjectOnceCache.styles + filterResult.style
                     })(),
                     react: filterResult.html,
                     scripts: (() => {
-                        if (!assetsInjectOnce || typeof injectOnceCache.scriptsInBody === 'undefined') {
+                        if (!assetsInjectOnce || typeof thisInjectOnceCache.scriptsInBody === 'undefined') {
                             let r = ''
 
                             // 优先引入 critical
-                            if (Array.isArray(entrypoints.critical)) {
-                                entrypoints.critical
+                            if (Array.isArray(thisEntrypoints.critical)) {
+                                thisEntrypoints.critical
                                     .filter(file => path.extname(file) === '.js')
                                     .forEach(file => {
                                         if (ENV === 'prod')
@@ -137,12 +162,12 @@ export default class ReactIsomorphic {
                                     })
                             }
 
-                            // // 引入其他入口
-                            Object.keys(entrypoints).filter(key => (
+                            // 引入其他入口
+                            Object.keys(thisEntrypoints).filter(key => (
                                 key !== 'critical' && key !== 'polyfill'
                             )).forEach(key => {
-                                if (Array.isArray(entrypoints[key])) {
-                                    entrypoints[key].forEach(file => {
+                                if (Array.isArray(thisEntrypoints[key])) {
+                                    thisEntrypoints[key].forEach(file => {
                                         if (ENV === 'prod')
                                             r += `<script type="text/javascript" src="${getClientFilePath(true, file)}" defer></script>`
                                         if (ENV === 'dev')
@@ -151,10 +176,10 @@ export default class ReactIsomorphic {
                                 }
                             })
 
-                            injectOnceCache.scriptsInBody = r
+                            thisInjectOnceCache.scriptsInBody = r
                         }
                         return `<script type="text/javascript">${htmlTool.getReduxScript(store)}</script>`
-                            + injectOnceCache.scriptsInBody
+                            + thisInjectOnceCache.scriptsInBody
                     })(),
                 }
 

@@ -40,7 +40,6 @@ class I18nPlugin {
             }
             loop(this.locales)
         }
-        // console.log(definitions)
 
         compiler.hooks.compilation.tap(
             "I18nPlugin",

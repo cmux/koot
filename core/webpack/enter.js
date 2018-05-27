@@ -250,7 +250,11 @@ module.exports = async (obj) => {
 
     // 处理i18n
     if (typeof i18n === 'object') {
-        let type = ENV === 'dev' ? 'redux' : 'default'
+        let type = (() => {
+            if (TYPE === 'spa') return 'redux'
+            if (ENV === 'dev') return 'redux'
+            return 'default'
+        })()
         let expr = '__'
         let locales
         let cookieKey
@@ -556,7 +560,7 @@ module.exports = async (obj) => {
                             stage: STAGE,
                             functionName: i18n ? i18n.expr : undefined,
                             localeId: i18n ? (isSeperateLocale ? localeId : undefined) : undefined,
-                            locales: i18n ? (isSeperateLocale ? localeId : localesObj) : undefined,
+                            locales: i18n ? (isSeperateLocale ? localesObj : undefined) : undefined,
                         })
                     )
 

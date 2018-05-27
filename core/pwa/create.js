@@ -84,7 +84,7 @@ const create = async (settings = {}, i18n) => {
                 pathnamePolyfill.push(parseChunkmapPathname(chunkmap.polyfill))
             }
         if (Array.isArray(chunkmap.critical)) {
-            chunkmap.critical.forEach(file => 
+            chunkmap.critical.forEach(file =>
                 ignores.push(parseChunkmapPathname(file))
             )
         }
@@ -155,9 +155,10 @@ const create = async (settings = {}, i18n) => {
 
             // 暂存当前语言下的所有 chunk
             for (let chunkname in chunkmapCurrent) {
-                chunkmapCurrent[chunkname].forEach(pathname =>
-                    chunksCurrent.push(pathname)
-                )
+                if (Array.isArray(chunkmapCurrent[chunkname]))
+                    chunkmapCurrent[chunkname].forEach(pathname =>
+                        chunksCurrent.push(pathname)
+                    )
             }
 
             // 遍历其他所有语言的 chunk，当前语言中不存在的加入 ignore 列表
@@ -190,7 +191,7 @@ const create = async (settings = {}, i18n) => {
                 'utf8'
             )
 
-            console.log(`\x1b[93m[super/build]\x1b[0m PWA: \x1b[32m${pathnameSW}\x1b[0m created`)
+            console.log(`  \x1b[93m[super/build]\x1b[0m PWA: \x1b[32m${pathnameSW}\x1b[0m created`)
         }
     } else {
         await createSW({
@@ -208,7 +209,7 @@ const create = async (settings = {}, i18n) => {
             'utf8'
         )
 
-        console.log(`\x1b[32m√\x1b[0m \x1b[93m[super/build]\x1b[0m PWA: \x1b[32m${pathname}\x1b[0m created`)
+        console.log(`  \x1b[32m√\x1b[0m \x1b[93m[super/build]\x1b[0m PWA: \x1b[32m${pathname}\x1b[0m created`)
     }
 
 }

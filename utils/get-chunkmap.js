@@ -5,9 +5,12 @@ const getChunkmapPath = require('./get-chunkmap-path')
  * 获取 chunkmap
  * 
  * @param {string} [localeId] 当前语言
+ * @param {boolean} [getFullResult = false] 针对多语言环境：获取 chunkmap 全文
  * @returns {Object} chunkmap
  */
-module.exports = (localeId) => {
+const getChunkmap = (localeId, getFullResult = false) => {
+    if (localeId === true) return getChunkmap(getFullResult || undefined, true)
+
     if (typeof localeId === 'undefined') {
         try {
             localeId = require('super-project/i18n').localeId
@@ -35,8 +38,11 @@ module.exports = (localeId) => {
 
     if (typeof chunkmap === 'object') {
         // let chunkmap = fs.readJsonSync(pathChunckmap)
+        if (getFullResult) return chunkmap || {}
         if (isI18nDefault) chunkmap = chunkmap[`.${localeId}`] || {}
     }
 
     return chunkmap || {}
 }
+
+module.exports = getChunkmap
