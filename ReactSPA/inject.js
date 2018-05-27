@@ -21,6 +21,8 @@ module.exports = (settings = {}) => {
 
     return {
 
+        htmlLang: localeId ? ` lang="${localeId}"` : '',
+        metas: `<!--SUPER_METAS_START--><!--SUPER_METAS_END-->`,
         styles: (() => {
             let r = ''
             if (typeof filemap['critical.css'] === 'string') {

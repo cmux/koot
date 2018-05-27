@@ -130,8 +130,9 @@ export default class ReactIsomorphic {
                 // 配置 html 注入内容
                 // html [实时更新]的部分
                 const injectRealtime = {
+                    htmlLang: localeId ? ` lang="${localeId}"` : '',
                     title: htmlTool.getTitle(),
-                    metas: htmlTool.getMetaHtml(),
+                    metas: `<!--SUPER_METAS_START-->${htmlTool.getMetaHtml()}<!--SUPER_METAS_END-->`,
                     styles: (() => {
                         if (!assetsInjectOnce || typeof thisInjectOnceCache.styles === 'undefined') {
                             let r = ''

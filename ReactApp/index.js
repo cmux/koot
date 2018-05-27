@@ -1,1 +1,6 @@
-export ReactApp from './ReactApp'
+import ReactApp, { store } from './ReactApp'
+
+export {
+    ReactApp,
+    store,
+}

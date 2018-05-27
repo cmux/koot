@@ -16,8 +16,10 @@ import ReactRouter from './ReactRouter'
 // import ACTION_TYPE from './ActionType'
 
 // 默认根 DOM 结点 ID
-
 const DEFAULT_ROOT_DOM_ID = 'root'
+
+// redux store
+export let store
 
 export default class ReactApp {
 
@@ -99,7 +101,7 @@ export default class ReactApp {
 
         // __REDUX_STATE__ 是与服务端约定好的存储redux数据对象 (在浏览器端的 html 里存在)
         this.createConfigureStoreFactory()
-        const store = this.configureStore(window.__REDUX_STATE__)
+        store = this.configureStore(window.__REDUX_STATE__)
 
         // react-router
         browserHistory.listen(location => {
