@@ -48,7 +48,7 @@ const run = async () => {
 
     // if (!stage) {
     //     console.log(
-    //         chalk.red('× ')
+    //         chalk.redBright('× ')
     //         + __('build.missing_option', {
     //             option: chalk.yellowBright('stage'),
     //             example: 'super-build ' + chalk.green('--stage client') + ' --env prod',
@@ -60,7 +60,7 @@ const run = async () => {
 
     // if (!env) {
     //     console.log(
-    //         chalk.red('× ')
+    //         chalk.redBright('× ')
     //         + __('build.missing_option', {
     //             option: chalk.yellowBright('env'),
     //             example: 'super-build ' + chalk.green('--env prod'),
@@ -83,7 +83,7 @@ const run = async () => {
     // 如果提供了 stage，仅针对 stage 执行打包
     if (stage) {
         // if (stage === 'server' && !hasServer) {
-        //     console.log(chalk.red('× '))
+        //     console.log(chalk.redBright('× '))
         // }
         return await superBuild(buildConfig)
     }

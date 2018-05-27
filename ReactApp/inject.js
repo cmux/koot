@@ -36,8 +36,6 @@ export default (template = DEFAULT_TEMPLATE, inject = {}) => {
     return ejs.render(
         template, {
             inject,
-        }, {
-
-        }
+        }, {}
     )
 }

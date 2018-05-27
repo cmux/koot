@@ -12,7 +12,7 @@ module.exports = (
     // 读取构建配置
     if (!fs.existsSync(pathname)) {
         console.log(
-            chalk.red('× ')
+            chalk.redBright('× ')
             + __('file_not_found', {
                 file: chalk.yellowBright('./super.build.js'),
             })
@@ -23,7 +23,7 @@ module.exports = (
     const buildConfig = Object.assign({}, defaults, require(pathname))
     if (typeof buildConfig !== 'object') {
         console.log(
-            chalk.red('× ')
+            chalk.redBright('× ')
             + __('build.config_type_error', {
                 file: chalk.yellowBright('./super.build.js'),
                 type: chalk.green('Object')

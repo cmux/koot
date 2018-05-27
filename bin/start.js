@@ -69,7 +69,7 @@ const run = async () => {
     }
 
     // if (!server) {
-    //     // console.log(chalk.red('× '))
+    //     // console.log(chalk.redBright('× '))
     //     opn(path.resolve(dist, 'public/index.html'))
     //     return
     // }

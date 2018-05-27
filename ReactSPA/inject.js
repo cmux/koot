@@ -12,6 +12,7 @@ module.exports = (settings = {}) => {
         localeId,
         chunkmap = getChunkmap(localeId) || {},
         compilation,
+        inject = {},
     } = settings
 
     const {
@@ -19,7 +20,7 @@ module.exports = (settings = {}) => {
         '.files': filemap = {},
     } = chunkmap
 
-    return {
+    return Object.assign({}, {
 
         htmlLang: localeId ? ` lang="${localeId}"` : '',
         metas: `<!--SUPER_METAS_START--><!--SUPER_METAS_END-->`,
@@ -73,5 +74,5 @@ module.exports = (settings = {}) => {
 
             return r
         })()
-    }
+    }, inject)
 }

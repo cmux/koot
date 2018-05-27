@@ -62,7 +62,7 @@ const run = async () => {
 
     // if (!stage) {
     //     console.log(
-    //         chalk.red('× ')
+    //         chalk.redBright('× ')
     //         + __('dev.missing_stage', {
     //             example: 'super-dev ' + chalk.green('--client'),
     //             indent: '  '

@@ -192,6 +192,7 @@ module.exports = async (obj) => {
         port,
         defines,
         template,
+        inject,
     } = Object.assign({}, defaultBuildConfig, obj)
 
     // 获取 App 类型
@@ -573,6 +574,7 @@ module.exports = async (obj) => {
                         config.plugins.push(
                             new SpaTemplatePlugin({
                                 localeId: isSeperateLocale ? localeId : undefined,
+                                inject,
                             })
                         )
                     else
