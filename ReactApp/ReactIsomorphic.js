@@ -138,9 +138,9 @@ export default class ReactIsomorphic {
                             let r = ''
                             if (typeof thisFilemap['critical.css'] === 'string') {
                                 if (ENV === 'prod')
-                                    r += `<style type="text/css">${readClientFile('critical.css')}</style>`
+                                    r += `<style id="__super-critical-styles" type="text/css">${readClientFile('critical.css')}</style>`
                                 if (ENV === 'dev')
-                                    r += `<link media="all" rel="stylesheet" href="${getClientFilePath('critical.css')}" />`
+                                    r += `<link id="__super-critical-styles" media="all" rel="stylesheet" href="${getClientFilePath('critical.css')}" />`
                             }
                             thisInjectOnceCache.styles = r
                         }

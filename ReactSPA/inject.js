@@ -28,9 +28,9 @@ module.exports = (settings = {}) => {
             let r = ''
             if (typeof filemap['critical.css'] === 'string') {
                 if (ENV === 'prod')
-                    r += `<style type="text/css">${readClientFile('critical.css', localeId, compilation)}</style>`
+                    r += `<style id="__super-critical-styles" type="text/css">${readClientFile('critical.css', localeId, compilation)}</style>`
                 if (ENV === 'dev')
-                    r += `<link media="all" rel="stylesheet" href="/${filemap['critical.css']}" />`
+                    r += `<link id="__super-critical-styles" media="all" rel="stylesheet" href="/${filemap['critical.css']}" />`
             }
             return r
         })(),
