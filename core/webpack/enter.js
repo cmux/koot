@@ -250,7 +250,19 @@ module.exports = async (obj) => {
     const pathnameChunkmap = getChunkmapPath()
 
     // 处理i18n
-    if (typeof i18n === 'object') {
+    if (TYPE === 'spa') {
+        // SPA：临时禁用
+        i18n = false
+        process.env.SUPER_I18N = JSON.stringify(false)
+        if (STAGE === 'client') {
+            console.log(
+                chalk.redBright('× ')
+                + chalk.yellowBright('[super/build] ')
+                + `i18n temporarily ` + chalk.redBright(`disabled`) + ` for `
+                + chalk.cyanBright('SPA')
+            )
+        }
+    } else if (typeof i18n === 'object') {
         let type = (() => {
             if (TYPE === 'spa') return 'redux'
             if (ENV === 'dev') return 'redux'

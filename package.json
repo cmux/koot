@@ -1,6 +1,6 @@
 {
     "name": "super-project",
-    "version": "3.0.7-alpha.8",
+    "version": "3.0.7-alpha.9",
     "description": "Base framework for Super Project.",
     "main": "",
     "bin": {

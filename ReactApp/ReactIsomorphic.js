@@ -9,6 +9,8 @@ import htmlInject from './inject'
 import { localeId } from 'super-project/i18n'
 
 const path = require('path')
+
+const defaultEntrypoints = require('../defaults/entrypoints')
 const getChunkmap = require('../utils/get-chunkmap')
 const getClientFilePath = require('../utils/get-client-file-path')
 const readClientFile = require('../utils/read-client-file')
@@ -164,9 +166,10 @@ export default class ReactIsomorphic {
                             }
 
                             // 引入其他入口
-                            Object.keys(thisEntrypoints).filter(key => (
-                                key !== 'critical' && key !== 'polyfill'
-                            )).forEach(key => {
+                            // Object.keys(thisEntrypoints).filter(key => (
+                            //     key !== 'critical' && key !== 'polyfill'
+                            // ))
+                            defaultEntrypoints.forEach(key => {
                                 if (Array.isArray(thisEntrypoints[key])) {
                                     thisEntrypoints[key].forEach(file => {
                                         if (ENV === 'prod')

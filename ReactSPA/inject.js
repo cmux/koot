@@ -1,6 +1,8 @@
 const path = require('path')
 const fs = require('fs-extra')
 
+const defaultEntrypoints = require('../defaults/entrypoints')
+
 const getChunkmap = require('../utils/get-chunkmap')
 const readClientFile = require('../utils/read-client-file')
 
@@ -58,9 +60,10 @@ module.exports = (settings = {}) => {
 
                 // 引入其他入口
                 if (typeof entrypoints === 'object') {
-                    Object.keys(entrypoints).filter(key => (
-                        key !== 'critical' && key !== 'polyfill'
-                    )).forEach(key => {
+                    // Object.keys(entrypoints).filter(key => (
+                    //     key !== 'critical' && key !== 'polyfill'
+                    // ))
+                    defaultEntrypoints.forEach(key => {
                         if (Array.isArray(entrypoints[key])) {
                             entrypoints[key].forEach(file => {
                                 r += ENV === 'prod'
