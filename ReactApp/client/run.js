@@ -39,7 +39,8 @@ export default ({
 
     reactApp.redux.middleware.use(thunk)
     reactApp.redux.middleware.use(routerMiddleware(browserHistory))
-    if (__CLIENT__) self.routerHistory = browserHistory
+    // const routerHistory = browserHistory
+    // if (__CLIENT__) self.routerHistory = browserHistory
 
 
 
@@ -112,9 +113,9 @@ export default ({
             onUpdate: (...args) => {
                 if (__DEV__)
                     console.log(
-                        `🚩 [super/client] ` +
+                        `[super/client] ` +
                         `callback: onRouterUpdate`,
-                        ...args
+                        args
                     )
                 // if (__DEV__) console.log('router onUpdate', self.__LATHPATHNAME__, location.pathname)
                 if (typeof onRouterUpdate === 'function')
@@ -127,7 +128,7 @@ export default ({
         let beforePromise = before
         if (__DEV__)
             console.log(
-                `🚩 [super/client] ` +
+                `[super/client] ` +
                 `callback: before`,
                 // args
             )
@@ -145,18 +146,18 @@ export default ({
                 browserHistoryOnUpdate: (location, store) => {
                     // 回调: browserHistoryOnUpdate
                     // 正常路由跳转时，URL发生变化后瞬间会触发，顺序在react组件读取、渲染之前
-                    // if (__DEV__) {
-                    //     console.log('🌏 browserHistory update', location)
-                    // }
+                    if (__DEV__) {
+                        console.log('🌏 browserHistory update', location)
+                    }
                     // console.log(actionUpdate(location))
                     store.dispatch(actionUpdate(location))
                     // console.log(store.getState())
 
                     if (__DEV__)
                         console.log(
-                            `🚩 [super/client] ` +
+                            `[super/client] ` +
                             `callback: onHistoryUpdate`,
-                            location, store
+                            [location, store]
                         )
                     if (typeof onHistoryUpdate === 'function')
                         onHistoryUpdate(location, store)
@@ -166,7 +167,7 @@ export default ({
             .then((appData) => {
                 if (__DEV__)
                     console.log(
-                        `🚩 [super/client] ` +
+                        `[super/client] ` +
                         `callback: after`,
                         appData
                     )

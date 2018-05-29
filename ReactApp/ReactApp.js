@@ -140,7 +140,8 @@ export default class ReactApp {
         })
 
         return {
-            store
+            store,
+            history,
         }
     }
 

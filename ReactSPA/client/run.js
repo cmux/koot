@@ -112,6 +112,7 @@ export default ({
     }
     if (typeof routerConfig.routes.path === 'undefined')
         routerConfig.routes.path = '/'
+    const history = hashHistory
     // if (__CLIENT__) self.routerHistory = memoryHistory
     // if (__CLIENT__) self.routerHistory = hashHistory
 
@@ -182,11 +183,11 @@ export default ({
                 console.log(
                     `🚩 [super/client] ` +
                     `callback: after`,
-                    { store }
+                    { store, history }
                 )
             if (typeof after === 'function')
                 after({
-                    store
+                    store, history
                 })
         })
 }
