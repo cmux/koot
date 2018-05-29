@@ -300,7 +300,7 @@ const run = async () => {
             //     + 'waiting...'
             // )
             await start('run')
-            await sleep(500)
+            await sleep(1000)
 
             console.log(
                 chalk.green('√ ')
