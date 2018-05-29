@@ -113,9 +113,9 @@ export default ({
             onUpdate: (...args) => {
                 if (__DEV__)
                     console.log(
-                        `[super/client] ` +
+                        `🚩 [super/client] ` +
                         `callback: onRouterUpdate`,
-                        args
+                        ...args
                     )
                 // if (__DEV__) console.log('router onUpdate', self.__LATHPATHNAME__, location.pathname)
                 if (typeof onRouterUpdate === 'function')
@@ -128,7 +128,7 @@ export default ({
         let beforePromise = before
         if (__DEV__)
             console.log(
-                `[super/client] ` +
+                `🚩 [super/client] ` +
                 `callback: before`,
                 // args
             )
@@ -155,7 +155,7 @@ export default ({
 
                     if (__DEV__)
                         console.log(
-                            `[super/client] ` +
+                            `🚩 [super/client] ` +
                             `callback: onHistoryUpdate`,
                             [location, store]
                         )
@@ -167,7 +167,7 @@ export default ({
             .then((appData) => {
                 if (__DEV__)
                     console.log(
-                        `[super/client] ` +
+                        `🚩 [super/client] ` +
                         `callback: after`,
                         appData
                     )
