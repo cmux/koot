@@ -23,6 +23,8 @@ const SpaTemplatePlugin = require("./plugins/spa-template")
 const DevServerAfterPlugin = require("./plugins/dev-server-after")
 const GenerateChunkmapPlugin = require("./plugins/generate-chunkmap")
 
+const defaultsPWA = require('../../defaults/pwa')
+
 
 // 调试webpack模式
 // const DEBUG = 1
@@ -249,7 +251,7 @@ module.exports = async (obj) => {
     // chunkmap 文件地址
     const pathnameChunkmap = getChunkmapPath()
 
-    // 处理i18n
+    // 处理配置：i18n
     if (TYPE === 'spa') {
         // SPA：临时禁用
         i18n = false
@@ -322,7 +324,13 @@ module.exports = async (obj) => {
         process.env.SUPER_I18N = JSON.stringify(false)
     }
 
-    // 处理HTML模板（如果有）
+    // 处理配置：PWA
+    if (pwa === true) pwa = {}
+    if (typeof pwa === 'object') pwa = Object.assign({}, defaultsPWA, pwa)
+    process.env.SUPER_PWA_AUTO_REGISTER = JSON.stringify(pwa.auto)
+    process.env.SUPER_PWA_PATHNAME = JSON.stringify(pwa.pathname)
+
+    // 处理：HTML模板（如果有）
     if (typeof process.env.SUPER_HTML_TEMPLATE !== 'string' &&
         typeof template === 'string'
     ) {

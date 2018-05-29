@@ -73,6 +73,27 @@ module.exports = (settings = {}) => {
                         }
                     })
                 }
+
+                // 如果设置了 PWA 自动注册 Service-Worker，在此注册
+                const pwaAuto = typeof process.env.SUPER_PWA_AUTO_REGISTER === 'string'
+                    ? JSON.parse(process.env.SUPER_PWA_AUTO_REGISTER)
+                    : false
+                const pwaPathname = typeof process.env.SUPER_PWA_PATHNAME === 'string'
+                    ? JSON.parse(process.env.SUPER_PWA_PATHNAME)
+                    : false
+                if (pwaAuto && typeof pwaPathname === 'string') {
+                    r += `<script id="__super-pwa-register-sw" type="text/javascript">`
+                    if (ENV === 'prod')
+                        r += `if ('serviceWorker' in navigator) {`
+                            + `navigator.serviceWorker.register("${pwaPathname.substr(0, 1) ? pwaPathname.substr(1) : pwaPathname}",`
+                            + `{scope: '/'}`
+                            + `)`
+                            + `.catch(err => {console.log('👩‍💻 Service Worker SUPPORTED. ERROR', err)})`
+                            + `}else{console.log('👩‍💻 Service Worker not supported!')}`
+                    if (ENV === 'dev')
+                        r += `console.log('👩‍💻 No Service Worker for DEV mode.')`
+                    r += `</script>`
+                }
             }
 
             return r

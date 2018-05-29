@@ -3,6 +3,7 @@ const path = require('path')
 const glob = require('glob-promise')
 // const md5File = require('md5-file')
 
+const defaults = require('../../defaults/pwa')
 const getChunkmapPath = require('../../utils/get-chunkmap-path')
 
 const parseChunkmapPathname = pathname => pathname.replace(/^public\//g, '')
@@ -31,10 +32,10 @@ const parsePattern = pattern => {
  * @param {boolean} [settings.outputFilenameHash=false] - 输出文件名中是否会加入 MD5 hash。若设为 true，输出文件名会变为 `${basename}.${md5hash}.js`
  * @param {string} [settings.customServiceWorkerPath=path.resolve(__dirname, '../service-worker/index.js')] - service-worker 文件模板
  * @param {string} [settings.globPattern=`/client/**//**`] - 利用 glob 初始化缓存文件列表（替换 service-worker 模板中的 urlsToCache 变量）
-* @param {Object} [settings.globOptions={}] - glob 设置
-* @param {Array} [settings.appendUrls=[]] - 手动追加缓存文件列表（追加到 service-worker 模板中的 urlsToCache 变量）
-* @returns {Promise}
-*/
+ * @param {Object} [settings.globOptions={}] - glob 设置
+ * @param {Array} [settings.appendUrls=[]] - 手动追加缓存文件列表（追加到 service-worker 模板中的 urlsToCache 变量）
+ * @returns {Promise}
+ */
 const create = async (settings = {}, i18n) => {
     // let options = Object.assign({
     //     outputPath: process.cwd() + '/dist/public/',
@@ -49,12 +50,13 @@ const create = async (settings = {}, i18n) => {
     if (settings === true) settings = {}
     if (settings === false) return
     const {
-        pathname = '/service-worker.js',
-        template = path.resolve(__dirname, './sw-template.js'),
-        initialCache = '/**/*',
-        initialCacheAppend = [],
-        initialCacheIgonre = [],
-    } = settings
+        auto,
+        pathname,
+        template,
+        initialCache,
+        initialCacheAppend,
+        initialCacheIgonre,
+    } = Object.assign({}, defaults, settings)
 
     const pathnamePolyfill = []
     const pathnameChunkmap = getChunkmapPath()
@@ -191,7 +193,7 @@ const create = async (settings = {}, i18n) => {
                 'utf8'
             )
 
-            console.log(`  \x1b[93m[super/build]\x1b[0m PWA: \x1b[32m${pathnameSW}\x1b[0m created`)
+            console.log(`\x1b[32m√\x1b[0m \x1b[93m[super/build]\x1b[0m PWA: \x1b[32m${pathnameSW}\x1b[0m created`)
         }
     } else {
         await createSW({

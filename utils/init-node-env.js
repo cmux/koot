@@ -1,3 +1,5 @@
+const defaultsPWA = require('../defaults/pwa')
+
 module.exports = () => {
     const defaults = {
         // Webpack 打包项目模式
@@ -47,6 +49,11 @@ module.exports = () => {
 
         // 打包目标路径
         // SUPER_DIST_DIR: '',
+
+        // PWA Service-Worker 脚本是否自动注册
+        SUPER_PWA_AUTO_REGISTER: JSON.stringify(defaultsPWA.auto),
+        // PWA Service-Worker 访问路径
+        SUPER_PWA_PATHNAME: JSON.stringify(defaultsPWA.pathname),
     }
     for (let key in defaults) {
         if (typeof process.env[key] === 'undefined') {
