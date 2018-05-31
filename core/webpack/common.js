@@ -228,6 +228,11 @@ const plugins = (env, stage, defines = {}) => {
         typeof process.env[key] !== 'undefined'
     ))
 
+    for (let key in g) {
+        if (typeof g[key] === 'function')
+            g[key] = g[key]()
+    }
+
     return [
         new webpack.DefinePlugin(g),
         new webpack.EnvironmentPlugin(envsToDefine),
