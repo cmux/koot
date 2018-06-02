@@ -552,7 +552,7 @@ module.exports = async (obj) => {
                     if (!config.output.path) {
                         // config.output.path = path.resolve(dist, `./public`)
                         config.output.path = path.resolve(dist, `./public/includes`)
-                        config.output.publicPath = 'includes/'
+                        config.output.publicPath = '/includes/'
                     }
                     if (!config.output.publicPath)
                         config.output.publicPath = '/'
