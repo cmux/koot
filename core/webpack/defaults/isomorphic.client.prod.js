@@ -2,11 +2,11 @@ const webpack = require('webpack')
 
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 
-const factoryConfig = async ({
+const factoryConfig = async (/*{
     // RUN_PATH,
     // CLIENT_DEV_PORT,
     localeId,
-}) => {
+}*/) => {
 
     return {
         mode: "production",

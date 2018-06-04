@@ -34,12 +34,12 @@ class SpaTemplatePlugin {
 
                         parser.hooks.varDeclaration
                             .for("template")
-                            .tap("SpaTemplatePlugin", function (node) {
+                            .tap("SpaTemplatePlugin", function (/*node*/) {
                                 // console.log(node)
                                 compilation.modules.forEach(m => {
                                     if (typeof m.resource === 'string' &&
                                         typeof m._source === 'object' &&
-                                        /[\/\\]super\.js$/.test(m.resource)
+                                        /[/\\]super\.js$/.test(m.resource)
                                     ) {
                                         const exec = /template[ *]=[ *]['"](.+?)['"]/.exec(m._source._value)
                                         if (Array.isArray(exec) && exec.length > 1) {

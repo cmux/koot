@@ -125,7 +125,7 @@ export default class ReactApp {
 
         let root = this.rootDom
 
-        match({ history, routes }, (err, redirectLocation, renderProps) => {
+        match({ history, routes }, (err/*, redirectLocation, renderProps*/) => {
             if (err) {
                 console.log(err.stack)
             }

@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 const program = require('commander')
-const chalk = require('chalk')
+// const chalk = require('chalk')
 
-const __ = require('../utils/translate')
+// const __ = require('../utils/translate')
 
 program
     .version(require('../package').version, '-v, --version')

@@ -1,7 +1,7 @@
 const DEFAULT_PORT = 3000
 
 const debug = require('debug')
-const warn = debug('SYSTEM:warn')
+// const warn = debug('SYSTEM:warn')
 const info = debug('SYSTEM:info')
 const error = debug('SYSTEM:error')
 

@@ -50,7 +50,7 @@ const create = async (settings = {}, i18n) => {
     if (settings === true) settings = {}
     if (settings === false) return
     const {
-        auto,
+        // auto,
         pathname,
         template,
         initialCache,
