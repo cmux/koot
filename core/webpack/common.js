@@ -220,6 +220,7 @@ const plugins = (env, stage, defines = {}) => {
         "SUPER_HTML_TEMPLATE",
         "SUPER_PWA_AUTO_REGISTER",
         "SUPER_PWA_PATHNAME",
+        "WEBPACK_BUILD_TYPE",
         "WEBPACK_BUILD_ENV",
         "WEBPACK_CHUNKMAP",
         // "WEBPACK_SERVER_PUBLIC_PATH",
