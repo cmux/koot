@@ -325,10 +325,15 @@ module.exports = async (obj) => {
     }
 
     // 处理配置：PWA
-    if (pwa === true) pwa = {}
-    if (typeof pwa === 'object') pwa = Object.assign({}, defaultsPWA, pwa)
-    process.env.SUPER_PWA_AUTO_REGISTER = JSON.stringify(pwa.auto)
-    process.env.SUPER_PWA_PATHNAME = JSON.stringify(pwa.pathname)
+    if (pwa === true || typeof pwa === 'undefined') pwa = {}
+    if (typeof pwa === 'object') {
+        pwa = Object.assign({}, defaultsPWA, pwa)
+        process.env.SUPER_PWA_AUTO_REGISTER = JSON.stringify(pwa.auto)
+        process.env.SUPER_PWA_PATHNAME = JSON.stringify(pwa.pathname)
+    } else {
+        pwa = false
+        process.env.SUPER_PWA_AUTO_REGISTER = JSON.stringify(false)
+    }
 
     // 处理：HTML模板（如果有）
     if (typeof process.env.SUPER_HTML_TEMPLATE !== 'string' &&
