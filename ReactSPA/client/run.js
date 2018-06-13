@@ -161,6 +161,18 @@ export default ({
 
     beforePromise
         .then(() => {
+            if (__DEV__)
+                console.log(
+                    `🚩 [super/client] ` +
+                    `callback: after`,
+                    { store, history }
+                )
+            if (typeof after === 'function')
+                after({
+                    store, history
+                })
+        })
+        .then(() => {
             const AppWrapper = ImportStyleRoot()(
                 (props) => <div {...props} />
             )
@@ -177,17 +189,5 @@ export default ({
             )
 
             return true
-        })
-        .then(() => {
-            if (__DEV__)
-                console.log(
-                    `🚩 [super/client] ` +
-                    `callback: after`,
-                    { store, history }
-                )
-            if (typeof after === 'function')
-                after({
-                    store, history
-                })
         })
 }
