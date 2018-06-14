@@ -19,8 +19,10 @@ import i18nRegister from 'super-project/i18n/register/isomorphic.client'
 //
 
 import { SERVER_REDUCER_NAME, serverReducer } from '../server/redux'
-
 const ROUTER_REDUCDER_NAME = 'routing'
+
+let logCountRouterUpdate = 0
+let logCountHistoryUpdate = 0
 
 
 
@@ -111,12 +113,14 @@ export default ({
 
         reactApp.react.router.ext({
             onUpdate: (...args) => {
-                if (__DEV__)
+                if (__DEV__ && logCountRouterUpdate < 2) {
                     console.log(
                         `🚩 [super/client] ` +
                         `callback: onRouterUpdate`,
                         ...args
                     )
+                    logCountRouterUpdate++
+                }
                 // if (__DEV__) console.log('router onUpdate', self.__LATHPATHNAME__, location.pathname)
                 if (typeof onRouterUpdate === 'function')
                     onRouterUpdate(...args)
@@ -153,12 +157,14 @@ export default ({
                     store.dispatch(actionUpdate(location))
                     // console.log(store.getState())
 
-                    if (__DEV__)
+                    if (__DEV__ && logCountHistoryUpdate < 2) {
                         console.log(
                             `🚩 [super/client] ` +
                             `callback: onHistoryUpdate`,
                             [location, store]
                         )
+                        logCountHistoryUpdate++
+                    }
                     if (typeof onHistoryUpdate === 'function')
                         onHistoryUpdate(location, store)
                 }
