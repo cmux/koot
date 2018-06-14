@@ -1,6 +1,6 @@
 // TODO: i18n
 
-const React = require('react')
+import React from 'react'
 import ReactDOM from 'react-dom'
 import {
     Router,
@@ -12,6 +12,10 @@ import { syncHistoryWithStore, routerReducer } from 'react-router-redux'
 import { Provider } from 'react-redux'
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
 import thunk from 'redux-thunk'
+
+//
+
+import { setStore, setHistory } from 'super-project'
 import {
     reducer as realtimeLocationReducer,
     REALTIME_LOCATION_REDUCER_NAME,
@@ -135,6 +139,16 @@ export default ({
             onHistoryUpdate(location, store)
     })
 
+
+
+
+
+    // ============================================================================
+    // 设置常量
+    // ============================================================================
+
+    setStore(store)
+    setHistory(history)
 
 
 

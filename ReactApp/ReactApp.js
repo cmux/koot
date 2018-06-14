@@ -13,6 +13,8 @@ import ReactRouter from './ReactRouter'
 
 //
 
+import { setStore, setHistory } from 'super-project'
+
 // import ACTION_TYPE from './ActionType'
 
 // 默认根 DOM 结点 ID
@@ -122,8 +124,11 @@ export default class ReactApp {
 
         // 扩展 router 属性
         let ext = this.__reactRouterExt
-
         let root = this.rootDom
+
+        // 设置常量
+        setStore(store)
+        setHistory(history)
 
         match({ history, routes }, (err/*, redirectLocation, renderProps*/) => {
             if (err) {
