@@ -7,6 +7,10 @@ import { syncHistoryWithStore } from 'react-router-redux'
 
 import htmlInject from './inject'
 import { localeId } from 'super-project/i18n'
+import {
+    setPageinfo,
+} from 'super-project'
+import pageinfo from '../React/pageinfo'
 
 const path = require('path')
 
@@ -41,6 +45,8 @@ export default class ReactIsomorphic {
             把同构时候服务端预处理数据补充到html中
             调整样式位置，从下到上
         */
+
+        setPageinfo(pageinfo)
 
         const { template, onServerRender, inject, configStore, routes } = options
         const ENV = process.env.WEBPACK_BUILD_ENV

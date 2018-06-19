@@ -1,5 +1,5 @@
 // import React from 'react'
-import { superSetLocaleId } from 'super-project'
+import { setLocaleId as superSetLocaleId } from 'super-project'
 
 export const I18N_INIT = 'I18N_INIT'
 export const I18N_LOCALES = 'I18N_LOCALES'
