@@ -15,7 +15,12 @@ import thunk from 'redux-thunk'
 
 //
 
-import { setStore, setHistory } from 'super-project'
+import {
+    setStore,
+    setHistory,
+    setPageinfo,
+} from 'super-project'
+import pageinfo from '../../React/pageinfo'
 import {
     reducer as realtimeLocationReducer,
     REALTIME_LOCATION_REDUCER_NAME,
@@ -155,6 +160,7 @@ export default ({
 
     setStore(store)
     setHistory(history)
+    setPageinfo(pageinfo)
 
 
 

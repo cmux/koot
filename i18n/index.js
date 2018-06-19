@@ -1,4 +1,5 @@
 // import React from 'react'
+import { superSetLocaleId } from 'super-project'
 
 export const I18N_INIT = 'I18N_INIT'
 export const I18N_LOCALES = 'I18N_LOCALES'
@@ -16,6 +17,7 @@ export const setLocaleId = newLlocalId => {
     if (__DEV__ && __SERVER__)
         console.log(`\n  \x1b[93m[super/i18n]\x1b[0m setLocaleId -> \x1b[32m${newLlocalId}\x1b[0m\n`)
     localeId = newLlocalId
+    superSetLocaleId(localeId)
     return localeId
 }
 

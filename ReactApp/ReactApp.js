@@ -13,7 +13,12 @@ import ReactRouter from './ReactRouter'
 
 //
 
-import { setStore, setHistory } from 'super-project'
+import {
+    setStore,
+    setHistory,
+    setPageinfo,
+} from 'super-project'
+import pageinfo from '../React/pageinfo'
 
 // import ACTION_TYPE from './ActionType'
 
@@ -129,6 +134,7 @@ export default class ReactApp {
         // 设置常量
         setStore(store)
         setHistory(history)
+        setPageinfo(pageinfo)
 
         match({ history, routes }, (err/*, redirectLocation, renderProps*/) => {
             if (err) {

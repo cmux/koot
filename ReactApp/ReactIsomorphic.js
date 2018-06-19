@@ -260,7 +260,10 @@ function ServerRenderDataToStore(store, renderProps) {
         if (component && component.WrappedComponent && component.WrappedComponent[SERVER_RENDER_EVENT_NAME]) {
 
             // 预处理异步数据的
-            const tasks = component.WrappedComponent[SERVER_RENDER_EVENT_NAME]({ store })
+            const tasks = component.WrappedComponent[SERVER_RENDER_EVENT_NAME]({
+                store,
+                ownProps: renderProps
+            })
             if (Array.isArray(tasks)) {
                 serverRenderTasks = serverRenderTasks.concat(tasks)
             } else if (tasks.then) {
@@ -289,7 +292,11 @@ function ServerRenderHtmlExtend(store, renderProps) {
     // component.WrappedComponent 是redux装饰的外壳
     for (let component of renderProps.components) {
         if (component && component.WrappedComponent && component.WrappedComponent[SERVER_RENDER_EVENT_NAME]) {
-            component.WrappedComponent[SERVER_RENDER_EVENT_NAME]({ htmlTool, store })
+            component.WrappedComponent[SERVER_RENDER_EVENT_NAME]({
+                htmlTool,
+                store,
+                ownProps: renderProps
+            })
         }
     }
 
