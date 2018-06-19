@@ -4,6 +4,17 @@ import PropTypes from 'prop-types'
 
 let currentMetaTags
 
+/**
+ * @callback funcGetPageInfo
+ * @param {Object} state 当前 state
+ * @param {Object} ownProps 组件自身的 props
+ * @returns {Object}
+ */
+
+/**
+ * 修改页面 title 和 meta，可用于同构
+ * @param {funcGetPageInfo} callback
+ */
 export default (funcGetPageInfo) => (WrappedComponent) => {
     const getInfo = (store, ownProps) => {
         if (typeof funcGetPageInfo !== 'function') return
