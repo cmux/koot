@@ -8,6 +8,8 @@ import { syncHistoryWithStore } from 'react-router-redux'
 import htmlInject from './inject'
 import { localeId } from 'super-project/i18n'
 import {
+    setStore,
+    setHistory,
     setPageinfo,
 } from 'super-project'
 import pageinfo from '../React/pageinfo'
@@ -46,6 +48,7 @@ export default class ReactIsomorphic {
             调整样式位置，从下到上
         */
 
+        // 设置常量
         setPageinfo(pageinfo)
 
         const { template, onServerRender, inject, configStore, routes } = options
@@ -98,20 +101,20 @@ export default class ReactIsomorphic {
                 const { redirectLocation, renderProps } = await asyncReactRouterMatch({ history, routes, location: url })
 
                 // 判断是否重定向页面
-
                 if (redirectLocation) return ctx.redirect(redirectLocation.pathname + redirectLocation.search)
                 if (!renderProps) return await next()
 
-                // 补充服务端提供的信息数据到store中
+                // 设置常量
+                setStore(store)
+                setHistory(history)
 
+                // 补充服务端提供的信息数据到store中
                 onServerRender && onServerRender({ koaCtx: ctx, reduxStore: store })
 
                 // 把同构时候服务端预处理数据补充到store中
-
                 await ServerRenderDataToStore(store, renderProps)
 
                 // 把同构时候服务端预处理数据补充到html中(根据页面逻辑动态修改html内容)
-
                 const htmlTool = await ServerRenderHtmlExtend(store, renderProps)
 
                 // 把react部分渲染出html片段，并插入到html中
@@ -268,7 +271,7 @@ function ServerRenderDataToStore(store, renderProps) {
             // 预处理异步数据的
             const tasks = component.WrappedComponent[SERVER_RENDER_EVENT_NAME]({
                 store,
-                ownProps: renderProps
+                renderProps
             })
             if (Array.isArray(tasks)) {
                 serverRenderTasks = serverRenderTasks.concat(tasks)
@@ -301,7 +304,7 @@ function ServerRenderHtmlExtend(store, renderProps) {
             component.WrappedComponent[SERVER_RENDER_EVENT_NAME]({
                 htmlTool,
                 store,
-                ownProps: renderProps
+                renderProps
             })
         }
     }

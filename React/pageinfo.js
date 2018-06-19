@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 // import { store } from 'super-project/ReactApp'
+import hoistStatics from 'hoist-non-react-statics'
 
 let currentMetaTags
 
@@ -93,5 +94,5 @@ export default (funcGetPageInfo) => (WrappedComponent) => {
         render = () => <WrappedComponent {...this.props} />
     }
 
-    return SuperPage
+    return hoistStatics(SuperPage, WrappedComponent)
 }
