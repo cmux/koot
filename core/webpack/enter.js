@@ -24,6 +24,7 @@ const DevServerAfterPlugin = require("./plugins/dev-server-after")
 const GenerateChunkmapPlugin = require("./plugins/generate-chunkmap")
 
 const defaultsPWA = require('../../defaults/pwa')
+const defaultPublicPath = '/includes/'
 
 
 // 调试webpack模式
@@ -557,10 +558,10 @@ module.exports = async (obj) => {
                     if (!config.output.path) {
                         // config.output.path = path.resolve(dist, `./public`)
                         config.output.path = path.resolve(dist, `./public/includes`)
-                        config.output.publicPath = '/includes/'
+                        config.output.publicPath = defaultPublicPath
                     }
                     if (!config.output.publicPath)
-                        config.output.publicPath = '/'
+                        config.output.publicPath = defaultPublicPath
                 }
 
                 { // 处理 entry
@@ -697,8 +698,10 @@ module.exports = async (obj) => {
             })
 
         // 如果用户自己配置了服务端打包路径，则覆盖默认的
-        if (dist)
+        if (dist) {
             thisConfig.output.path = path.resolve(dist, './server')
+            thisConfig.output.publicPath = defaultPublicPath
+        }
         if (tempClientConfig.output && tempClientConfig.output.publicPath)
             thisConfig.output.publicPath = tempClientConfig.output.publicPath
         // if (SYSTEM_CONFIG.WEBPACK_SERVER_OUTPATH)

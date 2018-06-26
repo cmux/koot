@@ -20,7 +20,7 @@ const factoryConfig = async ({
             chunkFilename: 'chunk.[name].[chunkhash].js',
             path: `${RUN_PATH}/${common.outputPath}/server`,
             // publicPath: `/[need_set_in_app:__webpack_public_path__]/`,
-            publicPath: `/`,
+            // publicPath: `/`,
         },
         plugins: [
             new webpack.DefinePlugin({
