@@ -5,6 +5,7 @@ const defaultEntrypoints = require('../defaults/entrypoints')
 
 const getChunkmap = require('../utils/get-chunkmap')
 const readClientFile = require('../utils/read-client-file')
+const getSWPathname = require('../utils/get-sw-pathname')
 
 module.exports = (settings = {}) => {
     const {
@@ -78,9 +79,7 @@ module.exports = (settings = {}) => {
                 const pwaAuto = typeof process.env.SUPER_PWA_AUTO_REGISTER === 'string'
                     ? JSON.parse(process.env.SUPER_PWA_AUTO_REGISTER)
                     : false
-                const pwaPathname = typeof process.env.SUPER_PWA_PATHNAME === 'string'
-                    ? JSON.parse(process.env.SUPER_PWA_PATHNAME)
-                    : false
+                const pwaPathname = getSWPathname()
                 if (pwaAuto && typeof pwaPathname === 'string') {
                     r += `<script id="__super-pwa-register-sw" type="text/javascript">`
                     if (ENV === 'prod')

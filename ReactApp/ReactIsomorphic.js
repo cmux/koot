@@ -20,6 +20,7 @@ const defaultEntrypoints = require('../defaults/entrypoints')
 const getChunkmap = require('../utils/get-chunkmap')
 const getClientFilePath = require('../utils/get-client-file-path')
 const readClientFile = require('../utils/read-client-file')
+const getSWPathname = require('../utils/get-sw-pathname')
 
 const error = require('debug')('SYSTEM:isomorphic:error')
 
@@ -71,11 +72,14 @@ export default class ReactIsomorphic {
                 const thisLocaleId = l.substr(0, 1) === '.' ? l.substr(1) : l
                 entrypoints[thisLocaleId] = chunkmap[l]['.entrypoints']
                 filemap[thisLocaleId] = chunkmap[l]['.files']
-                injectOnceCache[thisLocaleId] = {}
+                injectOnceCache[thisLocaleId] = {
+                    pathnameSW: getSWPathname(thisLocaleId)
+                }
             }
         } else {
             entrypoints = chunkmap['.entrypoints']
             filemap = chunkmap['.files']
+            injectOnceCache.pathnameSW = getSWPathname()
         }
 
         // 配置 html 注入内容
@@ -193,14 +197,11 @@ export default class ReactIsomorphic {
                             const pwaAuto = typeof process.env.SUPER_PWA_AUTO_REGISTER === 'string'
                                 ? JSON.parse(process.env.SUPER_PWA_AUTO_REGISTER)
                                 : false
-                            const pwaPathname = typeof process.env.SUPER_PWA_PATHNAME === 'string'
-                                ? JSON.parse(process.env.SUPER_PWA_PATHNAME)
-                                : false
-                            if (pwaAuto && typeof pwaPathname === 'string') {
+                            if (pwaAuto && typeof thisInjectOnceCache.pathnameSW === 'string') {
                                 r += `<script id="__super-pwa-register-sw" type="text/javascript">`
                                 if (ENV === 'prod')
                                     r += `if ('serviceWorker' in navigator) {`
-                                        + `navigator.serviceWorker.register("${pwaPathname}",`
+                                        + `navigator.serviceWorker.register("${thisInjectOnceCache.pathnameSW}",`
                                         + `{scope: '/'}`
                                         + `)`
                                         + `.catch(err => {console.log('👩‍💻 Service Worker SUPPORTED. ERROR', err)})`
