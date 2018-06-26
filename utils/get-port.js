@@ -1,3 +1,5 @@
+require('./init-node-env')()
+
 module.exports = (port, env = process.env.WEBPACK_BUILD_ENV) => {
     if (typeof port === 'object') {
         if (typeof port[env] !== 'undefined')
