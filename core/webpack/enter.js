@@ -698,10 +698,10 @@ module.exports = async (obj) => {
             })
 
         // 如果用户自己配置了服务端打包路径，则覆盖默认的
-        if (dist) {
+        if (dist)
             thisConfig.output.path = path.resolve(dist, './server')
+        if (!thisConfig.output.publicPath)
             thisConfig.output.publicPath = defaultPublicPath
-        }
         if (tempClientConfig.output && tempClientConfig.output.publicPath)
             thisConfig.output.publicPath = tempClientConfig.output.publicPath
         // if (SYSTEM_CONFIG.WEBPACK_SERVER_OUTPATH)
