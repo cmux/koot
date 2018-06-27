@@ -24,7 +24,7 @@ const DevServerAfterPlugin = require("./plugins/dev-server-after")
 const GenerateChunkmapPlugin = require("./plugins/generate-chunkmap")
 
 const defaultsPWA = require('../../defaults/pwa')
-const defaultPublicPath = '/includes/'
+const defaultPublicPathName = 'includes'
 
 
 // 调试webpack模式
@@ -347,6 +347,9 @@ module.exports = async (obj) => {
         }
         process.env.SUPER_HTML_TEMPLATE = template
     }
+
+    // 确认默认的 publicPath
+    const defaultPublicPath = (TYPE === 'spa' ? '' : '/') + `${defaultPublicPathName}/`
 
     // 开始前和开始后回调函数的参数
     const args = {
