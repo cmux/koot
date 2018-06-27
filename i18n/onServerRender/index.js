@@ -4,9 +4,9 @@ import {
 } from '../redux'
 
 export default ({
-    reduxStore
+    store
 }) => {
-    reduxStore.dispatch(actionInit(reduxStore.getState()))
+    store.dispatch(actionInit(store.getState()))
     if (JSON.parse(process.env.SUPER_I18N_TYPE) === 'redux')
-        reduxStore.dispatch(actionLocales())
+        store.dispatch(actionLocales())
 }

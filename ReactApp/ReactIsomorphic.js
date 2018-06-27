@@ -49,24 +49,33 @@ export default class ReactIsomorphic {
             调整样式位置，从下到上
         */
 
-        // 设置常量
+        // 设置全局常量
         setPageinfo(pageinfo)
 
+        // 设置常量
         const { template, onServerRender, inject, configStore, routes } = options
         const ENV = process.env.WEBPACK_BUILD_ENV
 
+        // 配置 html 注入内容
+        // html [只更新1次]的部分
+        const injectOnce = {
+            // js: inject.js ? inject.js.map((js) => `<script src="${js}" defer></script>`).join('') : '', // 引用js文件标签
+            // css: inject.css ? inject.css.map((css) => `<link rel="stylesheet" href="${css}">`).join('') : '', // 引用css文件标签
+        }
+
+        // 处理 chunkmap
         const chunkmap = getChunkmap(true)
         let entrypoints = {}
         let filemap = {}
 
+        // 分析当前 i18n 模式
         const i18nType = JSON.parse(process.env.SUPER_I18N)
             ? JSON.parse(process.env.SUPER_I18N_TYPE)
             : undefined
         const isI18nDefault = (i18nType === 'default')
 
-        // 针对 i18n 分包形式的项目，js/css 等资源需每次访问时实时注入
+        // 针对 i18n 分包形式的项目，单次注入按语言缓存
         const assetsInjectOnce = !isI18nDefault
-
         if (isI18nDefault) {
             for (let l in chunkmap) {
                 const thisLocaleId = l.substr(0, 1) === '.' ? l.substr(1) : l
@@ -80,13 +89,6 @@ export default class ReactIsomorphic {
             entrypoints = chunkmap['.entrypoints']
             filemap = chunkmap['.files']
             injectOnceCache.pathnameSW = getSWPathname()
-        }
-
-        // 配置 html 注入内容
-        // html [只更新1次]的部分
-        const injectOnce = {
-            // js: inject.js ? inject.js.map((js) => `<script src="${js}" defer></script>`).join('') : '', // 引用js文件标签
-            // css: inject.css ? inject.css.map((css) => `<link rel="stylesheet" href="${css}">`).join('') : '', // 引用css文件标签
         }
 
         // koa 中间件结构
@@ -113,13 +115,13 @@ export default class ReactIsomorphic {
                 setHistory(history)
 
                 // 补充服务端提供的信息数据到store中
-                onServerRender && onServerRender({ koaCtx: ctx, reduxStore: store })
+                onServerRender && onServerRender({ ctx, store })
 
                 // 把同构时候服务端预处理数据补充到store中
-                await ServerRenderDataToStore(store, renderProps)
+                await ServerRenderDataToStore({ store, renderProps, ctx })
 
                 // 把同构时候服务端预处理数据补充到html中(根据页面逻辑动态修改html内容)
-                const htmlTool = await ServerRenderHtmlExtend(store, renderProps)
+                const htmlTool = await ServerRenderHtmlExtend({ store, renderProps, ctx })
 
                 // 把react部分渲染出html片段，并插入到html中
 
@@ -259,7 +261,7 @@ function asyncReactRouterMatch(location) {
  * @param {any} renderProps 
  * @returns 
  */
-function ServerRenderDataToStore(store, renderProps) {
+function ServerRenderDataToStore({ store, renderProps, ctx }) {
 
     const SERVER_RENDER_EVENT_NAME = 'onServerRenderStoreExtend'
 
@@ -272,7 +274,8 @@ function ServerRenderDataToStore(store, renderProps) {
             // 预处理异步数据的
             const tasks = component.WrappedComponent[SERVER_RENDER_EVENT_NAME]({
                 store,
-                renderProps
+                renderProps,
+                ctx,
             })
             if (Array.isArray(tasks)) {
                 serverRenderTasks = serverRenderTasks.concat(tasks)
@@ -293,7 +296,7 @@ function ServerRenderDataToStore(store, renderProps) {
  * @param {any} renderProps 
  * @returns 
  */
-function ServerRenderHtmlExtend(store, renderProps) {
+function ServerRenderHtmlExtend({ store, renderProps, ctx }) {
 
     const SERVER_RENDER_EVENT_NAME = 'onServerRenderHtmlExtend'
 
@@ -305,7 +308,8 @@ function ServerRenderHtmlExtend(store, renderProps) {
             component.WrappedComponent[SERVER_RENDER_EVENT_NAME]({
                 htmlTool,
                 store,
-                renderProps
+                renderProps,
+                ctx,
             })
         }
     }

@@ -184,25 +184,25 @@ export default async (app, {
         inject,
 
         onServerRender: (obj) => {
-            let { koaCtx, reduxStore } = obj
+            let { ctx, store } = obj
 
-            reduxStore.dispatch({ type: TELL_CLIENT_URL, data: koaCtx.origin })
+            store.dispatch({ type: TELL_CLIENT_URL, data: ctx.origin })
 
             if (i18n) {
                 let lang = (() => {
 
                     // 先查看URL参数是否有语音设置
                     // hl 这个参数名是参考了Instargram
-                    let lang = koaCtx.query.hl
+                    let lang = ctx.query.hl
 
                     // 如果没有，检查cookie
-                    const cookies = cookie.parse(koaCtx.request.header.cookie || '')
+                    const cookies = cookie.parse(ctx.request.header.cookie || '')
                     if (!lang && cookies[process.env.SUPER_I18N_COOKIE_KEY] && cookies[process.env.SUPER_I18N_COOKIE_KEY] !== 'null')
                         lang = cookies[process.env.SUPER_I18N_COOKIE_KEY]
 
                     // 如果没有，再看header里是否有语言设置
                     if (!lang)
-                        lang = koaCtx.header['accept-language']
+                        lang = ctx.header['accept-language']
 
                     // 如没有，再用默认
                     if (!lang)
@@ -211,7 +211,7 @@ export default async (app, {
                     return lang
                 })()
 
-                reduxStore.dispatch({ type: CHANGE_LANGUAGE, data: lang })
+                store.dispatch({ type: CHANGE_LANGUAGE, data: lang })
                 i18nOnServerRender(obj)
             }
 
@@ -221,7 +221,7 @@ export default async (app, {
                     + `\x1b[36m⚑\x1b[0m `
                     + `\x1b[93m[super/server]\x1b[0m `
                     + `callback: \x1b[32m${'onRender'}\x1b[0m`
-                    + `(koaCtx, reduxStore)`
+                    + `({ ctx, store })`
                     + `\n`
                 )
 

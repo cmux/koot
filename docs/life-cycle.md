@@ -9,8 +9,8 @@
 - | -
 ```before()``` | 在React渲染之前运行。
 ```after()```  | 在React渲染之后运行。
-```routerUpdate()``` | 在路由改变的时候运行。
-```historyUpdate()``` | 在浏览器的地址栏URL改变的时候运行。
+```onRouterUpdate()``` | 在路由改变的时候运行。
+```onHistoryUpdate()``` | 在浏览器的地址栏URL改变的时候运行。
 
 
 
@@ -22,7 +22,7 @@
 - | -
 ```before({ koaApp })``` | 在React的ServerRender中间件使用之前挂载。
 ```after({ koaApp })```  | 在React的ServerRender中间件使用之后挂载。
-```render({ koaCtx, reduxStore })``` | 在React的ServerRender中间件运行时候调用。
+```onRender({ ctx, store })``` | 在React的ServerRender中间件运行时候调用。
 
 
 ### React组件
