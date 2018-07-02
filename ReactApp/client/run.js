@@ -129,22 +129,25 @@ export default ({
 
         if (i18n) i18nRegister(__REDUX_STATE__)
 
-        let beforePromise = before
         if (__DEV__)
             console.log(
                 `🚩 [super/client] ` +
                 `callback: before`,
                 // args
             )
-        if (typeof before === 'function') {
-            beforePromise = new Promise(resolve => {
-                before()
+        const beforePromise = (() => {
+            const _before = typeof before === 'function' ? before() : before
+
+            if (typeof _before === 'object' && typeof _before.then === 'function') {
+                return _before
+            }
+
+            return new Promise(resolve => {
+                if (typeof _before === 'function')
+                    _before()
                 resolve()
             })
-        } else if (typeof before !== 'object' || typeof before.then !== 'function') {
-            beforePromise = new Promise(resolve => resolve())
-        }
-
+        })()
         beforePromise.then(() =>
             reactApp.run({
                 browserHistoryOnUpdate: (location, store) => {
