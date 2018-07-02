@@ -4,6 +4,7 @@ import PropTypes from 'prop-types'
 import hoistStatics from 'hoist-non-react-statics'
 
 let currentMetaTags
+// let everMounted = false
 
 /**
  * @callback funcGetPageInfo
@@ -39,7 +40,7 @@ export default (funcGetPageInfo) => (WrappedComponent) => {
             htmlTool.metas = infos.metas
         }
 
-        componentDidMount() {
+        updateInfo() {
             if (__SERVER__) return
 
             const infos = getInfo(this.context.store, this.props)
@@ -89,6 +90,22 @@ export default (funcGetPageInfo) => (WrappedComponent) => {
                     head.appendChild(el)
                     currentMetaTags.push(el)
                 })
+        }
+
+        componentDidUpdate(prevProps) {
+            if (typeof prevProps.location === 'object' &&
+                typeof this.props.location === 'object' &&
+                prevProps.location.pathname !== this.props.location.pathname
+            )
+                this.updateInfo()
+        }
+
+        componentDidMount() {
+            // if (!everMounted) {
+            //     everMounted = true
+            //     return
+            // }
+            this.updateInfo()
         }
 
         render = () => <WrappedComponent {...this.props} />
