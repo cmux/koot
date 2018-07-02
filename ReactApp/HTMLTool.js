@@ -23,7 +23,7 @@ export default class HTMLTool {
             for (var key in meta) {
                 str += ` ${key}="${meta[key]}"`
             }
-            str += '>'
+            str += ` ${__SUPER_INJECT_ATTRIBUTE_NAME__}>`
             return str
         }).join('')
     }

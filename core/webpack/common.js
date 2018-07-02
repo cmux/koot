@@ -4,6 +4,8 @@ const webpack = require('webpack')
 // const ExtractTextPlugin = require("extract-text-webpack-plugin")
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 
+const defaultDefines = require('../../defaults/defines.js')
+
 // 打包结果目录
 const outputPath = 'dist'
 
@@ -190,18 +192,22 @@ const factory = async ({
 // 执行顺序, 先 -> 后
 const plugins = (env, stage, defines = {}) => {
 
-    let g = Object.assign({
-        '__CLIENT__': stage == 'client',
-        '__SERVER__': stage == 'server',
-        '__DEV__': env == 'dev',
-        '__PROD__': env == 'prod',
-        // '__SPA__': !!spa,
-        '__DIST__': JSON.stringify(process.env.SUPER_DIST_DIR),
+    let g = Object.assign(
+        defaultDefines,
+        {
+            __CLIENT__: stage == 'client',
+            __SERVER__: stage == 'server',
+            __DEV__: env == 'dev',
+            __PROD__: env == 'prod',
+            // '__SPA__': !!spa,
+            __DIST__: JSON.stringify(process.env.SUPER_DIST_DIR),
 
-        // 将 SERVER_PORT 赋值
-        // 服务器启动时，会优先选取当前环境变量中的 SERVER_PORT，如果没有，会选择 __SERVER_PORT__
-        __SERVER_PORT__: JSON.stringify(process.env.SERVER_PORT),
-    }, defines)
+            // 将 SERVER_PORT 赋值
+            // 服务器启动时，会优先选取当前环境变量中的 SERVER_PORT，如果没有，会选择 __SERVER_PORT__
+            __SERVER_PORT__: JSON.stringify(process.env.SERVER_PORT),
+        },
+        defines
+    )
 
     if (env == 'prod') {
         process.env.NODE_ENV = 'production'

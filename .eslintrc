@@ -29,7 +29,8 @@
         "__SERVER__": false,
         "__SPA__": false,
         "__REDUX_STATE__": true,
-        "__SERVER_PORT__": false
+        "__SERVER_PORT__": false,
+        "__SUPER_INJECT_ATTRIBUTE_NAME__": false
     },
     "settings": {
         "import/ignore": [

@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import hoistStatics from 'hoist-non-react-statics'
 
 let currentMetaTags
-// let everMounted = false
+let everMounted = false
 
 /**
  * @callback funcGetPageInfo
@@ -51,6 +51,30 @@ export default (funcGetPageInfo) => (WrappedComponent) => {
             // 替换 metas
             const head = document.getElementsByTagName('head')[0]
             if (!Array.isArray(currentMetaTags)) {
+                // 移除所有在 SUPER_METAS 里的 meta 标签
+                // 采用 DOM 操作的初衷：如果使用 innerHTML 的字符串替换方法，浏览器可能会全局重新渲染一次，造成“闪屏”
+                const match = head.innerHTML.match(/<!--SUPER_METAS_START-->(.*?)<!--SUPER_METAS_END-->/g)
+                if (Array.isArray(match) && match.length > 0) {
+                    const e = document.createElement('html')
+                    e.innerHTML = `<html><head>${match[0]}</head></html>`
+                    const metas = e.getElementsByTagName('meta')
+                    const result = []
+                    for (let i = 0; i < metas.length; i++) {
+                        const meta = metas[i]
+                        let selector = 'meta'
+                        for (let j = 0; j < meta.attributes.length; j++) {
+                            const attribute = meta.attributes[j]
+                            // console.log(attribute.name, attribute.value)
+                            selector += `[${attribute.name}="${attribute.value}"]`
+                        }
+                        // console.log(selector)
+                        const els = head.querySelectorAll(selector)
+                        for (let j = 0; j < els.length; j++) {
+                            result.push(els[j])
+                        }
+                    }
+                    result.forEach(el => el.parentNode.removeChild(el))
+                }
                 // const exec = /<!--SUPER_METAS_START-->(.*?)<!--SUPER_METAS_END-->/g.exec(head.innerHTML)
                 // if (Array.isArray(exec) && exec.index) {
                 //     console.log(exec)
@@ -68,27 +92,26 @@ export default (funcGetPageInfo) => (WrappedComponent) => {
                 //             return str
                 //         }).join('')}<!--SUPER_METAS_END-->`
                 // )
-                head.innerHTML = head.innerHTML.replace(
-                    /<!--SUPER_METAS_START-->(.*?)<!--SUPER_METAS_END-->/g,
-                    ''
-                )
+                // head.innerHTML = head.innerHTML.replace(
+                //     /<!--SUPER_METAS_START-->(.*?)<!--SUPER_METAS_END-->/g,
+                //     ''
+                // )
                 currentMetaTags = []
             }
 
             currentMetaTags.forEach(el => {
                 el.parentNode.removeChild(el)
             })
-            currentMetaTags = []
-
-            infos.metas
+            currentMetaTags = infos.metas
                 .filter(meta => typeof meta === 'object')
-                .forEach(meta => {
+                .map(meta => {
                     const el = document.createElement('meta')
                     for (var key in meta) {
                         el.setAttribute(key, meta[key])
                     }
+                    el.setAttribute(__SUPER_INJECT_ATTRIBUTE_NAME__, '')
                     head.appendChild(el)
-                    currentMetaTags.push(el)
+                    return el
                 })
         }
 
@@ -101,10 +124,10 @@ export default (funcGetPageInfo) => (WrappedComponent) => {
         }
 
         componentDidMount() {
-            // if (!everMounted) {
-            //     everMounted = true
-            //     return
-            // }
+            if (!everMounted) {
+                everMounted = true
+                return
+            }
             this.updateInfo()
         }
 
