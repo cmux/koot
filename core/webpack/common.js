@@ -191,9 +191,13 @@ const factory = async ({
 
 // 执行顺序, 先 -> 后
 const plugins = (env, stage, defines = {}) => {
+    const defaults = {}
+    Object.keys(defaultDefines).forEach(key => {
+        defaults[key] = JSON.stringify(defaultDefines[key])
+    })
 
     let g = Object.assign(
-        defaultDefines,
+        defaults,
         {
             __CLIENT__: stage == 'client',
             __SERVER__: stage == 'server',
