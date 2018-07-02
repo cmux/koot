@@ -17,10 +17,10 @@ let currentMetaTags
  * @param {funcGetPageInfo} callback
  */
 export default (funcGetPageInfo) => (WrappedComponent) => {
-    const getInfo = (store, ownProps) => {
+    const getInfo = (store, renderProps) => {
         if (typeof funcGetPageInfo !== 'function') return
 
-        let infos = funcGetPageInfo(store.getState(), ownProps)
+        let infos = funcGetPageInfo(store.getState(), renderProps)
         if (typeof infos !== 'object') infos = {}
 
         return {
@@ -33,8 +33,8 @@ export default (funcGetPageInfo) => (WrappedComponent) => {
         static contextTypes = {
             store: PropTypes.object
         }
-        static onServerRenderHtmlExtend = ({ htmlTool, store, ownProps = {} }) => {
-            const infos = getInfo(store, ownProps)
+        static onServerRenderHtmlExtend = ({ htmlTool, store, renderProps = {} }) => {
+            const infos = getInfo(store, renderProps)
             htmlTool.title = infos.title
             htmlTool.metas = infos.metas
         }
