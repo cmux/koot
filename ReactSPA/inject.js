@@ -26,7 +26,7 @@ module.exports = (settings = {}) => {
     return Object.assign({}, {
 
         htmlLang: localeId ? ` lang="${localeId}"` : '',
-        metas: `<!--SUPER_METAS_START--><!--SUPER_METAS_END-->`,
+        metas: `<!--${__SUPER_INJECT_METAS_START__}--><!--${__SUPER_INJECT_METAS_END__}-->`,
         styles: (() => {
             let r = ''
             if (typeof filemap['critical.css'] === 'string') {

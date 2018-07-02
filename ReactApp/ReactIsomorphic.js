@@ -149,7 +149,7 @@ export default class ReactIsomorphic {
                 const injectRealtime = {
                     htmlLang: localeId ? ` lang="${localeId}"` : '',
                     title: htmlTool.getTitle(),
-                    metas: `<!--SUPER_METAS_START-->${htmlTool.getMetaHtml()}<!--SUPER_METAS_END-->`,
+                    metas: `<!--${__SUPER_INJECT_METAS_START__}-->${htmlTool.getMetaHtml()}<!--${__SUPER_INJECT_METAS_END__}-->`,
                     styles: (() => {
                         if (!assetsInjectOnce || typeof thisInjectOnceCache.styles === 'undefined') {
                             let r = ''

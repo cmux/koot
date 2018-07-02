@@ -5,6 +5,7 @@ import hoistStatics from 'hoist-non-react-statics'
 
 let currentMetaTags
 let everMounted = false
+let nodeCommentEnd
 
 /**
  * @callback funcGetPageInfo
@@ -51,8 +52,30 @@ export default (funcGetPageInfo) => (WrappedComponent) => {
             // 替换 metas
             const head = document.getElementsByTagName('head')[0]
             if (!Array.isArray(currentMetaTags)) {
+                currentMetaTags = []
                 // 移除所有在 SUPER_METAS 里的 meta 标签
                 // 采用 DOM 操作的初衷：如果使用 innerHTML 的字符串替换方法，浏览器可能会全局重新渲染一次，造成“闪屏”
+                const childNodes = head.childNodes
+                const nodesToRemove = []
+                let meetStart = false
+                let meetEnd = false
+                let i = 0
+                while (!meetEnd && childNodes[i] instanceof Node) {
+                    const node = childNodes[i]
+                    if (node.nodeType === Node.COMMENT_NODE) {
+                        if (node.nodeValue === __SUPER_INJECT_METAS_START__)
+                            meetStart = true
+                        if (node.nodeValue === __SUPER_INJECT_METAS_END__) {
+                            meetEnd = true
+                            nodeCommentEnd = node
+                        }
+                    } else if (meetStart && node.nodeType === Node.ELEMENT_NODE && node.tagName === 'META') {
+                        nodesToRemove.push(node)
+                    }
+                    i++
+                }
+                nodesToRemove.forEach(el => head.removeChild(el))
+                /*
                 const match = head.innerHTML.match(/<!--SUPER_METAS_START-->(.*?)<!--SUPER_METAS_END-->/g)
                 if (Array.isArray(match) && match.length > 0) {
                     const e = document.createElement('html')
@@ -75,28 +98,32 @@ export default (funcGetPageInfo) => (WrappedComponent) => {
                     }
                     result.forEach(el => el.parentNode.removeChild(el))
                 }
-                // const exec = /<!--SUPER_METAS_START-->(.*?)<!--SUPER_METAS_END-->/g.exec(head.innerHTML)
-                // if (Array.isArray(exec) && exec.index) {
-                //     console.log(exec)
-                // }
-                // head.innerHTML = head.innerHTML.replace(
-                //     /<!--SUPER_METAS_START-->(.*?)<!--SUPER_METAS_END-->/g,
-                //     `<!--SUPER_METAS_START-->${infos.metas
-                //         .filter(meta => typeof meta === 'object')
-                //         .map(meta => {
-                //             let str = '<meta'
-                //             for (var key in meta) {
-                //                 str += ` ${key}="${meta[key]}"`
-                //             }
-                //             str += '>'
-                //             return str
-                //         }).join('')}<!--SUPER_METAS_END-->`
-                // )
-                // head.innerHTML = head.innerHTML.replace(
-                //     /<!--SUPER_METAS_START-->(.*?)<!--SUPER_METAS_END-->/g,
-                //     ''
-                // )
-                currentMetaTags = []
+                */
+                /*
+                const exec = /<!--SUPER_METAS_START-->(.*?)<!--SUPER_METAS_END-->/g.exec(head.innerHTML)
+                if (Array.isArray(exec) && exec.index) {
+                    console.log(exec)
+                }
+                head.innerHTML = head.innerHTML.replace(
+                    /<!--SUPER_METAS_START-->(.*?)<!--SUPER_METAS_END-->/g,
+                    `<!--SUPER_METAS_START-->${infos.metas
+                        .filter(meta => typeof meta === 'object')
+                        .map(meta => {
+                            let str = '<meta'
+                            for (var key in meta) {
+                                str += ` ${key}="${meta[key]}"`
+                            }
+                            str += '>'
+                            return str
+                        }).join('')}<!--SUPER_METAS_END-->`
+                )
+                */
+                /*
+                head.innerHTML = head.innerHTML.replace(
+                    /<!--SUPER_METAS_START-->(.*?)<!--SUPER_METAS_END-->/g,
+                    ''
+                )
+                */
             }
 
             currentMetaTags.forEach(el => {
@@ -109,8 +136,12 @@ export default (funcGetPageInfo) => (WrappedComponent) => {
                     for (var key in meta) {
                         el.setAttribute(key, meta[key])
                     }
-                    el.setAttribute(__SUPER_INJECT_ATTRIBUTE_NAME__, '')
-                    head.appendChild(el)
+                    // el.setAttribute(__SUPER_INJECT_ATTRIBUTE_NAME__, '')
+                    if (nodeCommentEnd) {
+                        head.insertBefore(el, nodeCommentEnd)
+                    } else {
+                        head.appendChild(el)
+                    }
                     return el
                 })
         }
