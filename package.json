@@ -1,6 +1,6 @@
 {
     "name": "super-project",
-    "version": "3.0.7-alpha.46",
+    "version": "3.0.7-alpha.47",
     "description": "Base framework for Super Project.",
     "main": "index.js",
     "sideEffects": false,
@@ -54,7 +54,7 @@
         "react-router": "^3.2.0",
         "redux": "^4.0.0",
         "redux-thunk": "^2.3.0",
-        "react-redux": "5.1.0-test.1",
+        "react-redux": "^5.0.7",
         "react-router-redux": "^4.0.8",
         "babel-core": "^6.26.3",
         "babel-polyfill": "^6.26.0",
