@@ -233,6 +233,7 @@ export default class ReactIsomorphic {
                 error('Server-Render Error Occures: %O', e.stack)
                 ctx.status = 500
                 ctx.body = e.message
+                ctx.app.emit('error', e, ctx)
             }
         }
     }

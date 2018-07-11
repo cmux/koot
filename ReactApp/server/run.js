@@ -70,6 +70,7 @@ export default async (app, {
         }
 
         cache.template = template
+        process.env.SUPER_HTML_TEMPLATE = template
     }
 
     if (typeof inject !== 'object')
