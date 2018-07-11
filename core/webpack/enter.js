@@ -11,6 +11,7 @@ const getPort = require('../../utils/get-port')
 const spinner = require('../../utils/spinner')
 const getChunkmapPath = require('../../utils/get-chunkmap-path')
 const defaultBuildConfig = require('../../defaults/build-config')
+const getDistPath = require('../../utils/get-dist-path')
 
 //
 const webpack = require('webpack')
@@ -168,11 +169,7 @@ const _beforeBuild = async () => {
     } = process.env
 
     if (ENV === 'dev')
-        fs.ensureFileSync(path.resolve(
-            process.cwd(),
-            process.env.SUPER_DIST_DIR,
-            `./server/index.js`
-        ))
+        fs.ensureFileSync(path.resolve(getDistPath(), `./server/index.js`))
 }
 const _afterBuild = async () => {
     // console.log(app)
@@ -243,11 +240,14 @@ module.exports = async (obj) => {
         if (dist.substr(0, 1) === '.') dist = path.resolve(process.cwd(), dist)
         // 将打包目录存入环境变量
         // 在打包时，会使用 DefinePlugin 插件将该值赋值到 __DIST__ 全部变量中，以供项目内代码使用
-        process.env.SUPER_DIST_DIR = dist
+        // process.env.SUPER_DIST_DIR = dist
+        process.env.SUPER_DIST_DIR = path.relative(process.cwd(), dist)
 
         // 确保打包目录存在
         await fs.ensureDir(dist)
     }
+    console.log(dist)
+    console.log(process.env.SUPER_DIST_DIR)
 
     // chunkmap 文件地址
     const pathnameChunkmap = getChunkmapPath()

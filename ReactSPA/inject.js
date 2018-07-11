@@ -6,6 +6,12 @@ const defaultEntrypoints = require('../defaults/entrypoints')
 const getChunkmap = require('../utils/get-chunkmap')
 const readClientFile = require('../utils/read-client-file')
 const getSWPathname = require('../utils/get-sw-pathname')
+const getDistPath = require('../utils/get-dist-path')
+
+const {
+    __SUPER_INJECT_METAS_START__,
+    __SUPER_INJECT_METAS_END__,
+} = require('../defaults/defines')
 
 module.exports = (settings = {}) => {
     const {
@@ -49,10 +55,7 @@ module.exports = (settings = {}) => {
                         .forEach(filename => {
                             r += ENV === 'prod'
                                 ? `<script type="text/javascript">${fs.readFileSync(
-                                    path.resolve(
-                                        process.env.SUPER_DIST_DIR,
-                                        filename.replace(/^\//, '')
-                                    ),
+                                    path.resolve(getDistPath(), filename.replace(/^\//, '')),
                                     'utf-8'
                                 )}</script>`
                                 : `<script type="text/javascript" src="/${filename}"></script>`

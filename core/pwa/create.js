@@ -5,6 +5,7 @@ const glob = require('glob-promise')
 
 const defaults = require('../../defaults/pwa')
 const getChunkmapPath = require('../../utils/get-chunkmap-path')
+const getDistPath = require('../../utils/get-dist-path')
 
 const parseChunkmapPathname = pathname => pathname.replace(/^public\//g, '')
 
@@ -46,7 +47,6 @@ const create = async (settings = {}, i18n) => {
     //     globOptions: {},
     //     appendUrls: []
     // }, parseOptions(settings, ...args))
-    const dist = process.env.SUPER_DIST_DIR
     if (settings === true) settings = {}
     if (settings === false) return
     const {
@@ -60,7 +60,7 @@ const create = async (settings = {}, i18n) => {
 
     const pathnamePolyfill = []
     const pathnameChunkmap = getChunkmapPath()
-    const outputPath = path.resolve(dist, './public/')
+    const outputPath = path.resolve(getDistPath(), './public/')
     const i18nType = typeof i18n === 'object' ? i18n.type : undefined
     const isI18nDefault = (i18nType === 'default')
 

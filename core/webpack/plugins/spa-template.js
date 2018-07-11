@@ -8,6 +8,7 @@ const chalk = require('chalk')
 const writeChunkmap = require('../../../utils/write-chunkmap')
 const getAppType = require('../../../utils/get-app-type')
 const __ = require('../../../utils/translate')
+const getDistPath = require('../../../utils/get-dist-path')
 
 class SpaTemplatePlugin {
     constructor(settings = {}) {
@@ -119,7 +120,7 @@ class SpaTemplatePlugin {
 
             // 生产环境：写入文件
             if (process.env.WEBPACK_BUILD_ENV === 'prod') {
-                const pathname = path.resolve(process.env.SUPER_DIST_DIR, 'public/', filename)
+                const pathname = path.resolve(getDistPath(), 'public/', filename)
                 await fs.ensureFile(pathname)
                 await fs.writeFile(
                     pathname,

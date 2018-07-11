@@ -2,6 +2,7 @@
 // 扩展时候需考虑普适性
 
 const path = require('path')
+const getDistPath = require('../utils/get-dist-path')
 
 module.exports = (server) => {
     
@@ -10,7 +11,7 @@ module.exports = (server) => {
     const koaStatic = require('koa-static')
     const convert = require('koa-convert')
     // const rootPath = process.cwd() + '/dist/public'
-    const rootPath = path.resolve(process.env.SUPER_DIST_DIR, './public')
+    const rootPath = path.resolve(getDistPath(), './public')
     const option = {
         maxage: 0,
         hidden: true,

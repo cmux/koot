@@ -1,5 +1,6 @@
 const fs = require('fs-extra')
 const getChunkmapPath = require('./get-chunkmap-path')
+const getDistPath = require('./get-dist-path')
 
 /**
  * 获取 chunkmap
@@ -30,7 +31,7 @@ const getChunkmap = (localeId, getFullResult = false) => {
         chunkmap = false
     }
 
-    if (typeof chunkmap !== 'object' && typeof process.env.SUPER_DIST_DIR === 'string') {
+    if (typeof chunkmap !== 'object' && typeof getDistPath() === 'string') {
         chunkmap = fs.readJsonSync(getChunkmapPath())
         if (process.env.WEBPACK_BUILD_STAGE === 'server')
             global.chunkmap = chunkmap

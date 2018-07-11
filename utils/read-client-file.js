@@ -2,6 +2,7 @@ const fs = require('fs-extra')
 const path = require('path')
 const getFilePath = require('./get-client-file-path')
 const generateFilemap = require('./generate-filemap-from-compilation')
+const getDistPath = require('./get-dist-path')
 
 const readClientFile = (filename, localeId, compilation, isPathname = false) => {
     // 如果第一个参数为 true，表示标记为 pathname
@@ -32,7 +33,7 @@ const readClientFile = (filename, localeId, compilation, isPathname = false) => 
 
     return fs.readFileSync(
         path.resolve(
-            process.env.SUPER_DIST_DIR,
+            getDistPath(),
             'public/',
             getFilePath(filename, localeId, isPathname).replace(/^\//, '')
         ),

@@ -3,6 +3,7 @@ const path = require('path')
 
 const generateFilemap = require('./generate-filemap-from-compilation')
 const getChunkmapPath = require('./get-chunkmap-path')
+const getDistPath = require('./get-dist-path')
 
 const times = n => f => {
     let iter = i => {
@@ -40,8 +41,7 @@ module.exports = async (stats, localeId) => {
     const chunkmap = {}
     const entryChunks = {}
 
-    const dist = process.env.SUPER_DIST_DIR
-    const dirRelative = path.relative(dist, stats.compilation.outputOptions.path).replace(`\\`, '/')
+    const dirRelative = path.relative(getDistPath(), stats.compilation.outputOptions.path).replace(`\\`, '/')
     const filepathname = getChunkmapPath()
     // stats.compilation.outputOptions.path,
 

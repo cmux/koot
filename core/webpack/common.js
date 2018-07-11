@@ -204,7 +204,7 @@ const plugins = (env, stage, defines = {}) => {
             __DEV__: env == 'dev',
             __PROD__: env == 'prod',
             // '__SPA__': !!spa,
-            __DIST__: JSON.stringify(process.env.SUPER_DIST_DIR),
+            // __DIST__: JSON.stringify(process.env.SUPER_DIST_DIR),
 
             // 将 SERVER_PORT 赋值
             // 服务器启动时，会优先选取当前环境变量中的 SERVER_PORT，如果没有，会选择 __SERVER_PORT__

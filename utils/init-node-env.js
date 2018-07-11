@@ -47,7 +47,7 @@ module.exports = () => {
         // HTML模板内容
         // SUPER_HTML_TEMPLATE: '',
 
-        // 打包目标路径
+        // 打包目标路径（相对运行目录）
         // SUPER_DIST_DIR: '',
 
         // PWA Service-Worker 脚本是否自动注册

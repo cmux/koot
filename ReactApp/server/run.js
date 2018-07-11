@@ -17,6 +17,7 @@ import i18nOnServerRender from 'super-project/i18n/onServerRender'
 import { CHANGE_LANGUAGE, TELL_CLIENT_URL/*, SERVER_REDUCER_NAME, serverReducer*/ } from './redux'
 import superClient from '../client/run'
 import ReactIsomorphic from '../ReactIsomorphic'
+const getDistPath = require('../../utils/get-dist-path')
 
 const cache = {}
 
@@ -139,7 +140,7 @@ export default async (app, {
 
     /* 静态目录,用于外界访问打包好的静态文件js、css等 */
     app.use(convert(koaStatic(
-        path.resolve(process.env.SUPER_DIST_DIR, './public'),
+        path.resolve(getDistPath(), './public'),
         {
             maxage: 0,
             hidden: true,

@@ -1,8 +1,5 @@
 const fs = require('fs-extra')
 const path = require('path')
+const getDistPath = require('../../utils/get-dist-path')
 
-fs.ensureFileSync(path.resolve(
-    process.cwd(),
-    process.env.SUPER_DIST_DIR,
-    `./server/index.js`
-))
+fs.ensureFileSync(path.resolve(getDistPath(), `./server/index.js`))
