@@ -12,6 +12,7 @@ const spinner = require('../../utils/spinner')
 const getChunkmapPath = require('../../utils/get-chunkmap-path')
 const defaultBuildConfig = require('../../defaults/build-config')
 const getDistPath = require('../../utils/get-dist-path')
+const readBaseConfig = require('../../utils/read-base-config')
 
 //
 const webpack = require('webpack')
@@ -23,6 +24,8 @@ const SuperI18nPlugin = require("./plugins/i18n")
 const SpaTemplatePlugin = require("./plugins/spa-template")
 const DevServerAfterPlugin = require("./plugins/dev-server-after")
 const GenerateChunkmapPlugin = require("./plugins/generate-chunkmap")
+
+const afterServerProd = require('./after-server-prod')
 
 const defaultsPWA = require('../../defaults/pwa')
 const defaultPublicPathName = 'includes'
@@ -246,8 +249,6 @@ module.exports = async (obj) => {
         // 确保打包目录存在
         await fs.ensureDir(dist)
     }
-    console.log(dist)
-    console.log(process.env.SUPER_DIST_DIR)
 
     // chunkmap 文件地址
     const pathnameChunkmap = getChunkmapPath()
@@ -337,15 +338,16 @@ module.exports = async (obj) => {
     }
 
     // 处理：HTML模板（如果有）
-    if (typeof process.env.SUPER_HTML_TEMPLATE !== 'string' &&
-        typeof template === 'string'
-    ) {
-        if (template.substr(0, 2) === './') {
+    if (typeof process.env.SUPER_HTML_TEMPLATE !== 'string') {
+        if (typeof template === 'undefined')
+            template = await readBaseConfig('template')
+
+        if (typeof template === 'string' && template.substr(0, 2) === './') {
             template = await fs.readFile(path.resolve(
                 process.cwd(), template
             ))
+            process.env.SUPER_HTML_TEMPLATE = template
         }
-        process.env.SUPER_HTML_TEMPLATE = template
     }
 
     // 确认默认的 publicPath
@@ -390,6 +392,11 @@ module.exports = async (obj) => {
         if (pwa && STAGE === 'client' && ENV === 'prod') {
             // 生成PWA使用的 service-worker.js
             await createPWAsw(pwa, i18n)
+        }
+
+        if (STAGE === 'server' && ENV === 'prod') {
+            // 生成PWA使用的 service-worker.js
+            await afterServerProd(theArgs)
         }
 
         // 默认方法
@@ -560,7 +567,7 @@ module.exports = async (obj) => {
                         }
                     if (!config.output.path) {
                         // config.output.path = path.resolve(dist, `./public`)
-                        config.output.path = path.resolve(dist, `./public/includes`)
+                        config.output.path = path.resolve(dist, `./public/${defaultPublicPathName}`)
                         config.output.publicPath = defaultPublicPath
                     }
                     if (!config.output.publicPath)

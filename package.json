@@ -1,6 +1,6 @@
 {
     "name": "super-project",
-    "version": "3.0.7-alpha.50",
+    "version": "3.0.7-alpha.51",
     "description": "Base framework for Super Project.",
     "main": "index.js",
     "sideEffects": false,
@@ -87,6 +87,7 @@
         "less": "^3.7.1",
         "postcss": "^6.0.23",
         "autoprefixer": "8.6.5",
+        "cookie": "^0.3.1",
         "js-cookie": "^2.2.0",
         "fs-extra": "^6.0.1",
         "ejs": "^2.6.1",

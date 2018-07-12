@@ -1,5 +1,5 @@
 const path = require('path')
-const fs = require('fs-extra')
+// const fs = require('fs-extra')
 import cookie from 'cookie'
 
 //
@@ -61,17 +61,17 @@ export default async (app, {
         if (typeof template !== 'string')
             throw new Error('Error: "template" type check fail!')
 
-        if (template.substr(0, 2) === './') {
-            // template = require(`raw-loader?` + path.resolve(
-            //     process.cwd(), template
-            // ))
-            template = fs.readFileSync(path.resolve(
-                process.cwd(), template
-            ), 'utf-8')
-        }
+        // if (template.substr(0, 2) === './') {
+        //     // template = require(`raw-loader?` + path.resolve(
+        //     //     process.cwd(), template
+        //     // ))
+        //     template = fs.readFileSync(path.resolve(
+        //         process.cwd(), template
+        //     ), 'utf-8')
+        // }
 
         cache.template = template
-        process.env.SUPER_HTML_TEMPLATE = template
+        // process.env.SUPER_HTML_TEMPLATE = template
     }
 
     if (typeof inject !== 'object')
