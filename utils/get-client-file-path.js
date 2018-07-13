@@ -6,12 +6,11 @@ const getChunkmap = require('./get-chunkmap')
 
 
 /**
- * 找到指定文件，返回路径
- * 
- * @param {string} filename 要查找的文件的文件名
- * @param {string} localeId 当前语言
- * @memberof ReactIsomorphic
- * @returns {string} 文件路径或空
+ * 获取浏览器环境中指定文件的访问路径
+ * @param {String} filename 要查找的文件的文件名。根据打包文件对应表 (chunkmap) 查询文件名和实际打包结果文件的对应关系
+ * @param {String} [localeId] 当前语言
+ * @param {Boolean} [isPathname = false] 如果标记为 true，表示提供的 filename 为确切的访问地址，无需查询对照表，直接返回结果
+ * @returns {String} 浏览器环境中的访问路径或空字符串
  */
 const getFilePath = (filename, localeId, isPathname = false) => {
     // 如果第一个参数为 true，表示标记为 pathname

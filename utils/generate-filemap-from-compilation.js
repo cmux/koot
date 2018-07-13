@@ -1,5 +1,11 @@
 const path = require('path')
 
+/**
+ * 从 Webpack compilation 数据中生成文件对应表 (Filemap)
+ * @param {Object} compilation 
+ * @param {String} [dirRelative] 
+ * @returns {Object} 文件对应表 (Filemap)
+ */
 module.exports = (compilation, dirRelative) => {
     if (typeof compilation !== 'object') return undefined
 

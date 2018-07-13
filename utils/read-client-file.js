@@ -4,6 +4,14 @@ const getFilePath = require('./get-client-file-path')
 const generateFilemap = require('./generate-filemap-from-compilation')
 const getDistPath = require('./get-dist-path')
 
+/**
+ * 读取目标客户端打包结果文件的内容
+ * @param {String} filename 要查找的文件的文件名。根据打包文件对应表 (chunkmap) 查询文件名和实际打包结果文件的对应关系
+ * @param {String} [localeId] 当前语言
+ * @param {Object} [compilation] Webpack compilation 对象
+ * @param {Boolean} [isPathname=false] 如果标记为 true，表示提供的 filename 为确切的访问地址，无需查询对照表，直接返回结果
+ * @returns {String} 文件内容
+ */
 const readClientFile = (filename, localeId, compilation, isPathname = false) => {
     // 如果第一个参数为 true，表示标记为 pathname
     if (filename === true) return readClientFile(localeId, compilation || undefined, isPathname || undefined, true)

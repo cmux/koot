@@ -3,11 +3,11 @@ const getChunkmapPath = require('./get-chunkmap-path')
 const getDistPath = require('./get-dist-path')
 
 /**
- * 获取 chunkmap
+ * 获取打包文件对应表 (chunkmap)
  * 
- * @param {string} [localeId] 当前语言
- * @param {boolean} [getFullResult = false] 针对多语言环境：获取 chunkmap 全文
- * @returns {Object} chunkmap
+ * @param {String} [localeId] 当前语言，默认为当前语言 (i18n开启时) 或未指定 (i18n未开启时)
+ * @param {Boolean} [getFullResult = false] 仅 i18n 开启时：获取 chunkmap 全文，而非当前语言的片段
+ * @returns {Object}
  */
 const getChunkmap = (localeId, getFullResult = false) => {
     if (localeId === true) return getChunkmap(getFullResult || undefined, true)

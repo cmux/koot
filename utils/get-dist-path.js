@@ -4,6 +4,7 @@ let p
 
 /**
  * 获取打包结果路径
+ * @returns {String} 打包结果路径 (硬盘绝对路径)
  */
 module.exports = () => {
     // console.log('global.SUPER_DIST_DIR', global.SUPER_DIST_DIR)

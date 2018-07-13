@@ -1,5 +1,8 @@
 const defaultsPWA = require('../defaults/pwa')
 
+/**
+ * 初始化 node.js 环境变量
+ */
 module.exports = () => {
     const defaults = {
         // Webpack 打包项目模式

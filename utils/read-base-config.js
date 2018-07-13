@@ -4,6 +4,7 @@ const path = require('path')
 /**
  * 从 super.js 中读取对应配置
  * @param {String} key 
+ * @returns {*}
  */
 module.exports = async (key) => {
     const pathnameSuperJS = path.resolve(__dirname, '../../../super.js')

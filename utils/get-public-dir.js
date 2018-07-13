@@ -1,3 +1,7 @@
+/**
+ * 获取浏览器环境中的访问根路径
+ * @returns {String} 浏览器环境中的访问根路径
+ */
 module.exports = () => {
     const isDev = process.env.WEBPACK_BUILD_ENV === 'dev' || (typeof __DEV__ !== 'undefined' && __DEV__)
 

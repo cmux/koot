@@ -4,6 +4,11 @@ const chalk = require('chalk')
 const __ = require('./translate')
 const defaults = require('../defaults/build-config')
 
+/**
+ * 读取打包配置文件的内容
+ * @param {String} [pathname] 打包配置文件路径
+ * @returns {Object} 配置对象
+ */
 module.exports = (
     pathname = typeof process.env.WEBPACK_BUILD_CONFIG_PATHNAME === 'undefined'
         ? path.resolve(process.cwd(), './super.build.js')

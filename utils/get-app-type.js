@@ -18,6 +18,13 @@ const extractType = () => {
     return undefined
 }
 
+/**
+ * 从核心配置文件 (./super.js) 中读取 App 类型 (type)，并修改部分环境变量
+ * * WEBPACK_BUILD_TYPE: 'isomorphic' || 'spa' || etc...
+ * * SUPER_PROJECT_TYPE: 'ReactApp' || 'ReactSPA' || etc...
+ * @async
+ * @returns {String} process.env.SUPER_PROJECT_TYPE
+ */
 module.exports = async () => {
     if (typeof process.env.SUPER_PROJECT_TYPE === 'undefined') {
         process.env.SUPER_PROJECT_TYPE = extractType() || ''
