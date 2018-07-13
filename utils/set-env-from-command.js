@@ -1,6 +1,10 @@
 const path = require('path')
 const chalk = require('chalk')
 
+/**
+ * 从命令确定环境变量
+ * @param {Object} Settings 
+ */
 module.exports = ({
     config,
     type,

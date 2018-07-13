@@ -2,6 +2,10 @@ const getLocales = require('./get-locales')
 
 let l
 
+/**
+ * CMD环境：翻译指定字段
+ * @param {*} args 
+ */
 module.exports = (...args) => {
     if (typeof l === 'undefined') l = getLocales()
 

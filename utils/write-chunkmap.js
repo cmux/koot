@@ -37,6 +37,12 @@ const log = (obj, spaceCount = 1, deep = 2) => {
     }
 }
 
+/**
+ * 写入打包文件对应表 (chunkmap)
+ * @param {*} stats 
+ * @param {*} localeId 
+ * @returns {Object} 打包文件对应表 (chunkmap)
+ */
 module.exports = async (stats, localeId) => {
     const chunkmap = {}
     const entryChunks = {}
