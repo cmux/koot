@@ -25,7 +25,7 @@ const SpaTemplatePlugin = require("./plugins/spa-template")
 const DevServerAfterPlugin = require("./plugins/dev-server-after")
 const GenerateChunkmapPlugin = require("./plugins/generate-chunkmap")
 
-const afterServerProd = require('./after-server-prod')
+const afterServerProd = require('./lifecyle/after-server-prod')
 
 const defaultsPWA = require('../../defaults/pwa')
 const defaultPublicPathName = 'includes'

@@ -1,10 +1,5 @@
 const fs = require('fs-extra')
 const path = require('path')
-
-const startJs = `
-global.SUPER_DIST_DIR = __dirname;
-require('./server');
-`
 const packageJson = {
     "name": "super-project-server-run",
     "main": "index.js",
@@ -22,10 +17,11 @@ module.exports = async (o = {}) => {
 
     const packageProject = await fs.readJson(path.resolve(process.cwd(), 'package.json'))
 
-    await fs.writeFile(
-        path.resolve(dist, 'index.js'),
-        startJs,
-        'utf-8'
+    await fs.copy(
+        path.resolve(__dirname, 'files'),
+        dist, {
+            overwrite: true,
+        }
     )
 
     await fs.writeJson(

@@ -14,7 +14,7 @@ const getChunkmap = (localeId, getFullResult = false) => {
 
     if (typeof localeId === 'undefined') {
         try {
-            localeId = require('super-project/i18n').localeId
+            localeId = require('../i18n').localeId
         } catch (e) { }
     }
 

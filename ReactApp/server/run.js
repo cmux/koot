@@ -9,8 +9,8 @@ import convert from 'koa-convert'
 
 //
 
-import i18nRegister from 'super-project/i18n/register/isomorphic.server'
-import i18nOnServerRender from 'super-project/i18n/onServerRender'
+import i18nRegister from '../../i18n/register/isomorphic.server'
+import i18nOnServerRender from '../../i18n/onServerRender'
 
 //
 

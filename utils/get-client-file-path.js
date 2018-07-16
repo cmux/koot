@@ -18,7 +18,7 @@ const getFilePath = (filename, localeId, isPathname = false) => {
 
     if (typeof localeId === 'undefined') {
         try {
-            localeId = require('super-project/i18n').localeId
+            localeId = require('../i18n').localeId
         } catch (e) { }
     }
 

@@ -19,13 +19,13 @@ import {
     setStore,
     setHistory,
     setPageinfo,
-} from 'super-project'
+} from '../../'
 import pageinfo from '../../React/pageinfo'
 import {
     reducer as realtimeLocationReducer,
     REALTIME_LOCATION_REDUCER_NAME,
     actionUpdate,
-} from 'super-project/React/realtime-location'
+} from '../../React/realtime-location'
 // import {
 //     reducerLocaleId as i18nReducerLocaleId,
 //     reducerLocales as i18nReducerLocales,

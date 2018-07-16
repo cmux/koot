@@ -6,12 +6,12 @@ import { Provider } from 'react-redux'
 import { syncHistoryWithStore } from 'react-router-redux'
 
 import htmlInject from './inject'
-import { localeId } from 'super-project/i18n'
+import { localeId } from '../i18n'
 import {
     setStore,
     setHistory,
     setPageinfo,
-} from 'super-project'
+} from '../'
 import pageinfo from '../React/pageinfo'
 
 const path = require('path')

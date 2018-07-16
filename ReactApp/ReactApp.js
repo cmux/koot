@@ -17,7 +17,7 @@ import {
     setStore,
     setHistory,
     setPageinfo,
-} from 'super-project'
+} from '../'
 import pageinfo from '../React/pageinfo'
 
 // import ACTION_TYPE from './ActionType'
