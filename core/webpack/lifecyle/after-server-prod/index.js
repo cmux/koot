@@ -45,11 +45,13 @@ jspm_packages
 .vscode
 `
 const packageJson = {
-    "name": "super-project-server-run",
+    "name": "",
     "main": "index.js",
     "scripts": {
-        "start": "npm i --no-save && node ./index.js"
+        "start": "node index.js"
     },
+    "license": "UNLICENSED",
+    "private": true,
     "dependencies": {
     }
 }
@@ -77,6 +79,7 @@ module.exports = async (o = {}) => {
     await fs.writeJson(
         path.resolve(dist, 'package.json'),
         Object.assign({}, packageJson, {
+            name: `${packageProject.name}-server`,
             dependencies: packageProject.dependencies
         })
     )
