@@ -1,6 +1,6 @@
 {
     "name": "super-project",
-    "version": "3.0.7-alpha.53",
+    "version": "3.0.7-alpha.54",
     "description": "Base framework for Super Project.",
     "main": "index.js",
     "sideEffects": false,

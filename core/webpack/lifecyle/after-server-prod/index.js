@@ -71,7 +71,7 @@ module.exports = async (o = {}) => {
     )
 
     await fs.writeFile(
-        path.resolve(dist, '.gitignore'),
+        path.resolve(dist, './.gitignore'),
         gitIgnore,
         'utf-8'
     )
