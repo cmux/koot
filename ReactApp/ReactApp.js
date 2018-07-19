@@ -28,6 +28,9 @@ const DEFAULT_ROOT_DOM_ID = 'root'
 // redux store
 export let store
 
+// 设置常量
+setPageinfo(pageinfo)
+
 export default class ReactApp {
 
     constructor(opt) {
@@ -134,7 +137,6 @@ export default class ReactApp {
         // 设置常量
         setStore(store)
         setHistory(history)
-        setPageinfo(pageinfo)
 
         match({ history, routes }, (err/*, redirectLocation, renderProps*/) => {
             if (err) {

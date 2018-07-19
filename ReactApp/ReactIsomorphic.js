@@ -26,6 +26,9 @@ const error = require('debug')('SYSTEM:isomorphic:error')
 
 const injectOnceCache = {}
 
+// 设置全局常量
+setPageinfo(pageinfo)
+
 export default class ReactIsomorphic {
 
     createKoaMiddleware(options = {
@@ -48,9 +51,6 @@ export default class ReactIsomorphic {
             把同构时候服务端预处理数据补充到html中
             调整样式位置，从下到上
         */
-
-        // 设置全局常量
-        setPageinfo(pageinfo)
 
         // 设置常量
         const { template, onServerRender, inject, configStore, routes } = options
@@ -300,20 +300,23 @@ function ServerRenderDataToStore({ store, renderProps, ctx }) {
 function ServerRenderHtmlExtend({ store, renderProps, ctx }) {
 
     const SERVER_RENDER_EVENT_NAME = 'onServerRenderHtmlExtend'
-
     const htmlTool = new HTMLTool()
 
     // component.WrappedComponent 是redux装饰的外壳
+    let func
     for (let component of renderProps.components) {
         if (component && component.WrappedComponent && component.WrappedComponent[SERVER_RENDER_EVENT_NAME]) {
-            component.WrappedComponent[SERVER_RENDER_EVENT_NAME]({
-                htmlTool,
-                store,
-                renderProps,
-                ctx,
-            })
+            func = component.WrappedComponent[SERVER_RENDER_EVENT_NAME]
         }
     }
+
+    if (typeof func === 'function')
+        func({
+            htmlTool,
+            store,
+            renderProps,
+            ctx,
+        })
 
     return htmlTool
 }

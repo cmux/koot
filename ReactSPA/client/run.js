@@ -32,10 +32,16 @@ import {
 // } from 'super-project/i18n/redux'
 // import i18nRegister from 'super-project/i18n/register/spa.client'
 import { ImportStyleRoot } from 'sp-css-import'
-const ROUTER_REDUCDER_NAME = 'routing'
 
+
+// ============================================================================
+// 设置常量 & 变量
+// ============================================================================
+
+const ROUTER_REDUCDER_NAME = 'routing'
 let logCountRouterUpdate = 0
 let logCountHistoryUpdate = 0
+setPageinfo(pageinfo)
 
 
 
@@ -160,7 +166,6 @@ export default ({
 
     setStore(store)
     setHistory(history)
-    setPageinfo(pageinfo)
 
 
 

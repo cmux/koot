@@ -1,6 +1,7 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
+import React from 'react'
+// import PropTypes from 'prop-types'
 // import { store } from 'super-project/ReactApp'
+import { store } from '../'
 import hoistStatics from 'hoist-non-react-statics'
 
 let currentMetaTags
@@ -31,10 +32,10 @@ export default (funcGetPageInfo) => (WrappedComponent) => {
         }
     }
 
-    class SuperPage extends Component {
-        static contextTypes = {
-            store: PropTypes.object
-        }
+    class SuperPage extends React.Component {
+        // static contextTypes = {
+        //     store: PropTypes.object
+        // }
         static onServerRenderHtmlExtend = ({ htmlTool, store, renderProps = {} }) => {
             const infos = getInfo(store, renderProps)
             htmlTool.title = infos.title
@@ -44,7 +45,7 @@ export default (funcGetPageInfo) => (WrappedComponent) => {
         updateInfo() {
             if (__SERVER__) return
 
-            const infos = getInfo(this.context.store, this.props)
+            const infos = getInfo(store, this.props)
 
             // 替换页面标题
             document.title = infos.title

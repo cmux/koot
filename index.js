@@ -23,5 +23,5 @@ export const setLocaleId = o => localeId = o
  * 设置页面信息的高阶组件/方法
  * @type {Function}
  */
-export let pageinfo = () => { }
+export let pageinfo = () => (WrappedComponent) => WrappedComponent
 export const setPageinfo = o => pageinfo = o
