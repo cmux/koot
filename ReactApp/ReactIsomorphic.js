@@ -115,7 +115,8 @@ export default class ReactIsomorphic {
                 setHistory(history)
 
                 // 补充服务端提供的信息数据到store中
-                onServerRender && onServerRender({ ctx, store })
+                if (typeof onServerRender === 'function')
+                    await onServerRender({ ctx, store })
 
                 // 把同构时候服务端预处理数据补充到store中
                 await ServerRenderDataToStore({ store, renderProps, ctx })
