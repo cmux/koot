@@ -115,7 +115,8 @@ export default async (app, {
 
     /* 静态目录,用于外界访问打包好的静态文件js、css等 */
     app.use(convert(koaStatic(
-        path.resolve(process.env.SUPER_DIST_DIR, './public'),
+        // path.resolve(process.env.SUPER_DIST_DIR, './public'),
+        path.resolve(process.cwd(), process.env.SUPER_DIST_DIR, './public'),
         {
             maxage: 0,
             hidden: true,

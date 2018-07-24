@@ -10,7 +10,8 @@ module.exports = (server) => {
     const koaStatic = require('koa-static')
     const convert = require('koa-convert')
     // const rootPath = process.cwd() + '/dist/public'
-    const rootPath = path.resolve(process.env.SUPER_DIST_DIR, './public')
+    // const rootPath = path.resolve(process.env.SUPER_DIST_DIR, './public')
+    const rootPath = path.resolve(process.cwd(), process.env.SUPER_DIST_DIR, './public')
     const option = {
         maxage: 0,
         hidden: true,

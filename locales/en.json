@@ -5,9 +5,7 @@
         "config_type_error": "Error: build config file (${file}) must export ${type}",
         "build_start": "${type} Start building (STAGE ${stage} / ENV ${env})",
         "build_complete": "${type} Building complete (STAGE ${stage} / ENV ${env})",
-        "building": "Webpack building...",
-        "spa_template_emitted": "SPA HTML file emitted to ${file}",
-        "spa_template_not_found": "SPA template file not found"
+        "building": "Webpack building..."
     },
     "dev": {
         "missing_stage": "Please set STAGE.\n${indent}> ${example}"

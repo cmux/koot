@@ -17,7 +17,6 @@ const factoryConfig = async ({
         // devtool: 'source-map',
         optimization: {
             minimize: true,
-            noEmitOnErrors: true,
         },
         plugins: [
             // 在node执行环境中设置，不起作用，此处不能省略
@@ -27,6 +26,7 @@ const factoryConfig = async ({
                 },
                 __SPA__: false,
             }),
+            new webpack.NoEmitOnErrorsPlugin(),
             new MiniCssExtractPlugin({
                 // Options similar to the same options in webpackOptions.output
                 // both options are optional

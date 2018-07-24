@@ -28,7 +28,8 @@ module.exports = (localeId) => {
 
     if (typeof chunkmap !== 'object' && typeof process.env.SUPER_DIST_DIR === 'string') {
         chunkmap = fs.readJsonSync(
-            path.resolve(process.env.SUPER_DIST_DIR, '.public-chunkmap.json')
+            // path.resolve(process.env.SUPER_DIST_DIR, '.public-chunkmap.json')
+            path.resolve(process.cwd(), process.env.SUPER_DIST_DIR, '.public-chunkmap.json')
         )
     }
 

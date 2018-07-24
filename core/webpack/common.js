@@ -24,10 +24,7 @@ const factory = async ({
         }
     }
 
-    const extractCSS = (
-        process.env.WEBPACK_BUILD_ENV === 'prod' ||
-        (process.env.WEBPACK_BUILD_ENV === 'dev' && process.env.WEBPACK_BUILD_STAGE === 'client')
-    ) ? true : false
+    const extractCSS = process.env.WEBPACK_BUILD_ENV === 'prod' ? true : false
 
     return {
         module: {
@@ -198,7 +195,8 @@ const plugins = (env, stage, defines = {}) => {
         '__DEV__': env == 'dev',
         '__PROD__': env == 'prod',
         // '__SPA__': !!spa,
-        '__DIST__': JSON.stringify(process.env.SUPER_DIST_DIR),
+        // '__DIST__': JSON.stringify(process.env.SUPER_DIST_DIR),
+        '__DIST__': JSON.stringify(path.resolve(process.cwd(), process.env.SUPER_DIST_DIR)),
         __SERVER_PORT__: JSON.stringify(process.env.SERVER_PORT),
     }, defines)
 

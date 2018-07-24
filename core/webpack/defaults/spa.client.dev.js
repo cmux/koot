@@ -1,5 +1,6 @@
 const webpack = require('webpack')
-const MiniCssExtractPlugin = require("mini-css-extract-plugin")
+
+const SpaIndexPlugin = require('../plugins/spa-index')
 
 const factoryConfig = async ({
     // RUN_PATH,
@@ -26,10 +27,7 @@ const factoryConfig = async ({
             },
             __SPA__: true,
         }),
-        new MiniCssExtractPlugin({
-            filename: (localeId ? localeId : '') + ".[name].css",
-            // chunkFilename: "[id].css"
-        }),
+        new SpaIndexPlugin({ localeId }),
     ],
 })
 
