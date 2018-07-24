@@ -158,7 +158,7 @@ export default async (app, {
         // 例如：<script>//inject_critical</script>  替换为 critical
         inject,
 
-        onServerRender: (obj) => {
+        onServerRender: async (obj) => {
             let { koaCtx, reduxStore } = obj
 
             reduxStore.dispatch({ type: TELL_CLIENT_URL, data: koaCtx.origin })
@@ -200,7 +200,7 @@ export default async (app, {
                 )
 
             if (typeof onRender === 'function')
-                onRender(obj)
+                await onRender(obj)
         }
     })
 
