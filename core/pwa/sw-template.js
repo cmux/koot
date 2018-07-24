@@ -12,8 +12,10 @@ function addToCache(request, response) {
         caches.open(CACHE_NAME).then(cache => {
             cache.put(request, copy)
         })
-        return response
+    } else {
+        console.log('Request fail', response, request)
     }
+    return response
 }
 
 function fetchFromCache(event) {
