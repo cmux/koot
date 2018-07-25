@@ -18,6 +18,7 @@ const readBaseConfig = require('../../utils/read-base-config')
 const webpack = require('webpack')
 const WebpackDevServer = require('webpack-dev-server')
 const WebpackConfig = require('webpack-config').default
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 const common = require('./common')
 const createPWAsw = require('../pwa/create')
 const SuperI18nPlugin = require("./plugins/i18n")
@@ -302,8 +303,9 @@ module.exports = async (obj) => {
 
         locales.forEach(arr => {
             if (arr[2]) return
-            arr[1] = fs.readJsonSync(path.resolve(process.cwd(), arr[1]))
-            arr[2] = true
+            const pathname = path.resolve(process.cwd(), arr[1])
+            arr[1] = fs.readJsonSync(pathname)
+            arr[2] = pathname
         })
 
         process.env.SUPER_I18N = JSON.stringify(true)
@@ -723,6 +725,16 @@ module.exports = async (obj) => {
                 functionName: i18n ? i18n.expr : undefined,
             })
         )
+
+        if (ENV === 'dev') {
+            if (i18n && Array.isArray(i18n.locales) && i18n.locales.length > 0)
+                thisConfig.plugins.push(new CopyWebpackPlugin(
+                    i18n.locales.map(arr => ({
+                        from: arr[2],
+                        to: '../.locales/'
+                    }))
+                ))
+        }
 
         thisConfig.entry = defaultServerEntry
 

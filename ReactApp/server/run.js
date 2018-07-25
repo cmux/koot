@@ -1,5 +1,5 @@
 const path = require('path')
-// const fs = require('fs-extra')
+const fs = require('fs-extra')
 import cookie from 'cookie'
 
 //
@@ -21,12 +21,24 @@ const getDistPath = require('../../utils/get-dist-path')
 
 const cache = {}
 
+const getLocalesDefault = () => {
+    if (__DEV__) {
+        const locales = JSON.parse(process.env.SUPER_I18N_LOCALES)
+        return locales.map(l => ([
+            l[0],
+            fs.readJsonSync(l[2], 'utf-8'),
+            l[2]
+        ]))
+    }
+    return JSON.parse(process.env.SUPER_I18N_LOCALES)
+}
+
 export default async (app, {
     // name,
     template,
     i18n = JSON.parse(process.env.SUPER_I18N) || false,
     i18nType = JSON.parse(process.env.SUPER_I18N_TYPE) || false,
-    locales = JSON.parse(process.env.SUPER_I18N_LOCALES),
+    locales = getLocalesDefault(),
     router,
     redux,
     client,

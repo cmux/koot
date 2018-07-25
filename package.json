@@ -1,6 +1,6 @@
 {
     "name": "super-project",
-    "version": "3.0.7-alpha.58",
+    "version": "3.0.7-alpha.59",
     "description": "Base framework for Super Project.",
     "main": "index.js",
     "sideEffects": false,
@@ -73,6 +73,7 @@
         "webpack-bundle-analyzer": "^2.13.1",
         "html-webpack-plugin": "^3.2.0",
         "mini-css-extract-plugin": "^0.4.1",
+        "copy-webpack-plugin": "^4.5.2",
         "babel-loader": "^7.1.5",
         "json-loader": "^0.5.7",
         "file-loader": "^1.1.11",
@@ -110,7 +111,7 @@
         "chalk": "^2.4.1",
         "commander": "^2.16.0",
         "opn": "^5.3.0",
-        "pm2": "^3.0.0"
+        "pm2": "^3.0.2"
     },
     "peerDependencies": {
         "react": ">=16",
