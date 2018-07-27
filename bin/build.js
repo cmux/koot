@@ -18,7 +18,8 @@ program
     .option('-s, --server', 'Set STAGE to SERVER')
     .option('--stage <stage>', 'Set STAGE')
     .option('--env <env>', 'Set ENV')
-    .option('--config <config-file-path>', 'Set config file')
+    .option('--dest <destination-path>', 'Set destination directory')
+    .option('--config <config-file-path>', 'Set config file pathname')
     .option('--type <project-type>', 'Set project type')
     .parse(process.argv)
 
@@ -35,6 +36,7 @@ const run = async () => {
         env = 'prod',
         config,
         type,
+        dest,
     } = program
 
     setEnvFromCommand({
@@ -79,6 +81,8 @@ const run = async () => {
     // const {
     //     server: hasServer
     // } = buildConfig
+
+    if (dest) buildConfig.dist = dest
 
     // 如果提供了 stage，仅针对 stage 执行打包
     if (stage) {

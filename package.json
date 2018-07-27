@@ -1,6 +1,6 @@
 {
     "name": "super-project",
-    "version": "3.0.7-alpha.59",
+    "version": "3.0.7-alpha.60",
     "description": "Base framework for Super Project.",
     "main": "index.js",
     "sideEffects": false,
@@ -78,7 +78,7 @@
         "json-loader": "^0.5.7",
         "file-loader": "^1.1.11",
         "url-loader": "^1.0.1",
-        "react-hot-loader": "^4.3.3",
+        "react-hot-loader": "^4.3.4",
         "postcss-loader": "^2.1.6",
         "css-loader": "^1.0.0",
         "less-loader": "^4.1.0",
@@ -111,7 +111,7 @@
         "chalk": "^2.4.1",
         "commander": "^2.16.0",
         "opn": "^5.3.0",
-        "pm2": "^3.0.2"
+        "pm2": "^3.0.3"
     },
     "peerDependencies": {
         "react": ">=16",
