@@ -363,6 +363,10 @@ module.exports = async (obj) => {
         i18n,
         pwa,
         devServer,
+        port,
+        defines,
+        template,
+        inject,
     }
 
     await _beforeBuild(args)
