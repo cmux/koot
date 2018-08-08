@@ -31,6 +31,9 @@
         "url": "https://github.com/websage-team/super-project/issues"
     },
     "homepage": "https://github.com/websage-team/super-project",
+    "engines": {
+        "node": ">=8.0.0"
+    },
     "dependencies": {
         "sp-css-loader": "^1.3.0",
         "sp-css-import": "^2.0.4",
