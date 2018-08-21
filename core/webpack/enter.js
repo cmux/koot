@@ -288,6 +288,7 @@ module.exports = async (obj) => {
             domain = i18n.domain || domain || undefined
         }
 
+        if (ENV === 'dev') type = 'redux'
         if (type === 'store') type = 'redux'
         type = type.toLowerCase()
 

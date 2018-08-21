@@ -1,6 +1,6 @@
 {
     "name": "super-project",
-    "version": "3.0.7-alpha.64",
+    "version": "3.0.7-alpha.65",
     "description": "Base framework for Super Project.",
     "main": "index.js",
     "sideEffects": false,
@@ -69,7 +69,7 @@
         "babel-plugin-transform-runtime": "^6.23.0",
         "babel-plugin-transform-regenerator": "^6.26.0",
         "babel-plugin-transform-class-properties": "^6.24.1",
-        "webpack": "^4.16.5",
+        "webpack": "^4.17.0",
         "webpack-dev-server": "^3.1.5",
         "webpack-dev-middleware": "^3.1.3",
         "webpack-hot-middleware": "^2.22.3",
@@ -80,17 +80,17 @@
         "babel-loader": "^7.1.5",
         "json-loader": "^0.5.7",
         "file-loader": "^1.1.11",
-        "url-loader": "^1.0.1",
+        "url-loader": "^1.1.1",
         "react-hot-loader": "^4.3.4",
-        "postcss-loader": "^2.1.6",
+        "postcss-loader": "^3.0.0",
         "css-loader": "^1.0.0",
         "less-loader": "^4.1.0",
         "sass-loader": "^7.1.0",
-        "style-loader": "^0.21.0",
+        "style-loader": "^0.22.1",
         "universal-alias-loader": "^1.2.2",
-        "less": "^3.8.0",
+        "less": "^3.8.1",
         "postcss": "^7.0.2",
-        "autoprefixer": "^9.1.0",
+        "autoprefixer": "^9.1.2",
         "cookie": "^0.3.1",
         "js-cookie": "^2.2.0",
         "fs-extra": "^7.0.0",
@@ -112,7 +112,7 @@
         "progress": "^2.0.0",
         "cli-spinners": "^1.3.1",
         "chalk": "^2.4.1",
-        "commander": "^2.17.0",
+        "commander": "^2.17.1",
         "opn": "^5.3.0",
         "pm2": "^3.0.3"
     },
@@ -127,8 +127,8 @@
         "babel-loader": ">=7"
     },
     "devDependencies": {
-        "eslint": "^5.3.0",
-        "eslint-plugin-react": "^7.10.0",
+        "eslint": "^5.4.0",
+        "eslint-plugin-react": "^7.11.1",
         "babel-eslint": "^8.2.6"
     }
 }
