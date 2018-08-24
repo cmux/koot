@@ -1,14 +1,14 @@
 {
-    "name": "super-project",
-    "version": "3.0.7-alpha.65",
-    "description": "Base framework for Super Project.",
+    "name": "koot",
+    "version": "0.1.0",
+    "description": "Koot.js - React isomorphic framework created by CMUX",
     "main": "index.js",
     "sideEffects": false,
     "bin": {
-        "super-build": "./bin/build.js",
-        "super-start": "./bin/start.js",
-        "super-dev": "./bin/dev.js",
-        "super-analyze": "./bin/analyze.js"
+        "koot-build": "./bin/build.js",
+        "koot-start": "./bin/start.js",
+        "koot-dev": "./bin/dev.js",
+        "koot-analyze": "./bin/analyze.js"
     },
     "scripts": {
         "doc-server": "docsify serve docs",
@@ -16,7 +16,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/cmux/super"
+        "url": "https://github.com/cmux/koot"
     },
     "keywords": [
         "react",
@@ -38,9 +38,9 @@
         }
     ],
     "bugs": {
-        "url": "https://github.com/websage-team/super-project/issues"
+        "url": "https://github.com/cmux/koot/issues"
     },
-    "homepage": "https://github.com/websage-team/super-project",
+    "homepage": "https://github.com/cmux/koot",
     "engines": {
         "node": ">=8.0.0"
     },
@@ -82,6 +82,7 @@
         "webpack-dev-middleware": "^3.2.0",
         "webpack-hot-middleware": "^2.22.3",
         "webpack-bundle-analyzer": "^2.13.1",
+        "webpack-config": "^7.5.0",
         "html-webpack-plugin": "^3.2.0",
         "mini-css-extract-plugin": "^0.4.2",
         "copy-webpack-plugin": "^4.5.2",
@@ -104,13 +105,12 @@
         "fs-extra": "^7.0.0",
         "ejs": "^2.6.1",
         "isomorphic-fetch": "^2.2.1",
-        "xmlify": "^1.1.0",
-        "yargs": "^12.0.1",
-        "webpack-config": "^7.5.0",
-        "rimraf": "^2.6.2",
-        "copyfiles": "^2.0.0",
         "classlist-polyfill": "^1.2.0",
         "es5-shim": "^4.5.10",
+        "xmlify": "^1.1.0",
+        "yargs": "^12.0.1",
+        "rimraf": "^2.6.2",
+        "copyfiles": "^2.0.0",
         "debug": "^3.1.0",
         "glob-promise": "^3.4.0",
         "md5-file": "^4.0.0",

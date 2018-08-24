@@ -11,7 +11,7 @@ const defaults = require('../defaults/build-config')
  */
 module.exports = (
     pathname = typeof process.env.WEBPACK_BUILD_CONFIG_PATHNAME === 'undefined'
-        ? path.resolve(process.cwd(), './super.build.js')
+        ? path.resolve(process.cwd(), './koot.build.js')
         : process.env.WEBPACK_BUILD_CONFIG_PATHNAME
 ) => new Promise((resolve, reject) => {
     // 读取构建配置
@@ -19,7 +19,7 @@ module.exports = (
         console.log(
             chalk.redBright('× ')
             + __('file_not_found', {
-                file: chalk.yellowBright('./super.build.js'),
+                file: chalk.yellowBright('./koot.build.js'),
             })
         )
         return reject(new Error('FILE NOT FOUND'))
@@ -30,7 +30,7 @@ module.exports = (
         console.log(
             chalk.redBright('× ')
             + __('build.config_type_error', {
-                file: chalk.yellowBright('./super.build.js'),
+                file: chalk.yellowBright('./koot.build.js'),
                 type: chalk.green('Object')
             })
         )

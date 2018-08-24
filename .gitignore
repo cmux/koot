@@ -35,17 +35,8 @@ jspm_packages
 # Optional REPL history
 .node_repl_history
 
-# super project
+# koot.js
 node_modules/
 *.log
-dist
-/dist-*
-
-
-# Personal code
-
 .DS_Store
 .vscode
-/.cmder
-/_.bat
-src/modules

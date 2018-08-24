@@ -15,7 +15,7 @@ import i18nOnServerRender from '../../i18n/onServerRender'
 //
 
 import { CHANGE_LANGUAGE, TELL_CLIENT_URL/*, SERVER_REDUCER_NAME, serverReducer*/ } from './redux'
-import superClient from '../client/run'
+import kootClient from '../client/run'
 import ReactIsomorphic from '../ReactIsomorphic'
 const getDistPath = require('../../utils/get-dist-path')
 
@@ -23,21 +23,21 @@ const cache = {}
 
 const getLocalesDefault = () => {
     if (__DEV__) {
-        const locales = JSON.parse(process.env.SUPER_I18N_LOCALES)
+        const locales = JSON.parse(process.env.KOOT_I18N_LOCALES)
         return locales.map(l => ([
             l[0],
             fs.readJsonSync(l[2], 'utf-8'),
             l[2]
         ]))
     }
-    return JSON.parse(process.env.SUPER_I18N_LOCALES)
+    return JSON.parse(process.env.KOOT_I18N_LOCALES)
 }
 
 export default async (app, {
     // name,
     template,
-    i18n = JSON.parse(process.env.SUPER_I18N) || false,
-    i18nType = JSON.parse(process.env.SUPER_I18N_TYPE) || false,
+    i18n = JSON.parse(process.env.KOOT_I18N) || false,
+    i18nType = JSON.parse(process.env.KOOT_I18N_TYPE) || false,
     locales = getLocalesDefault(),
     router,
     redux,
@@ -48,7 +48,7 @@ export default async (app, {
 
     // if (__DEV__) console.log('\r\nServer initializing...')
     // else
-    console.log(`\r\n  \x1b[93m[super/server]\x1b[0m initializing...`)
+    console.log(`\r\n  \x1b[93m[koot/server]\x1b[0m initializing...`)
 
 
 
@@ -67,8 +67,8 @@ export default async (app, {
     if (typeof cache.template === 'string') {
         template = cache.template
     } else {
-        if (typeof process.env.SUPER_HTML_TEMPLATE === 'string')
-            template = process.env.SUPER_HTML_TEMPLATE
+        if (typeof process.env.KOOT_HTML_TEMPLATE === 'string')
+            template = process.env.KOOT_HTML_TEMPLATE
 
         if (typeof template !== 'string')
             throw new Error('Error: "template" type check fail!')
@@ -83,7 +83,7 @@ export default async (app, {
         // }
 
         cache.template = template
-        // process.env.SUPER_HTML_TEMPLATE = template
+        // process.env.KOOT_HTML_TEMPLATE = template
     }
 
     if (typeof inject !== 'object')
@@ -97,15 +97,15 @@ export default async (app, {
     // 载入目录、相关配置、自定模块等
     // ============================================================================
     // if (__DEV__) console.log('├─ client code initializing...')
-    if (__DEV__) console.log(`  \x1b[93m[super/server]\x1b[0m client code initializing...`)
-    const reactApp = await superClient({
+    if (__DEV__) console.log(`  \x1b[93m[koot/server]\x1b[0m client code initializing...`)
+    const reactApp = await kootClient({
         i18n,
         router,
         redux,
         client
     })
     // if (__DEV__) console.log('├─ client code inited')
-    if (__DEV__) console.log(`  \x1b[93m[super/server]\x1b[0m client code inited`)
+    if (__DEV__) console.log(`  \x1b[93m[koot/server]\x1b[0m client code inited`)
 
 
 
@@ -141,7 +141,7 @@ export default async (app, {
         console.log(
             `\n\n`
             + `\x1b[36m⚑\x1b[0m `
-            + `\x1b[93m[super/server]\x1b[0m `
+            + `\x1b[93m[koot/server]\x1b[0m `
             + `callback: \x1b[32m${'before'}\x1b[0m`
             + `(app)`
             + `\n`
@@ -211,8 +211,8 @@ export default async (app, {
 
                     // 如果没有，检查cookie
                     const cookies = cookie.parse(ctx.request.header.cookie || '')
-                    if (!lang && cookies[process.env.SUPER_I18N_COOKIE_KEY] && cookies[process.env.SUPER_I18N_COOKIE_KEY] !== 'null')
-                        lang = cookies[process.env.SUPER_I18N_COOKIE_KEY]
+                    if (!lang && cookies[process.env.KOOT_I18N_COOKIE_KEY] && cookies[process.env.KOOT_I18N_COOKIE_KEY] !== 'null')
+                        lang = cookies[process.env.KOOT_I18N_COOKIE_KEY]
 
                     // 如果没有，再看header里是否有语言设置
                     if (!lang)
@@ -233,7 +233,7 @@ export default async (app, {
                 console.log(
                     `\n\n`
                     + `\x1b[36m⚑\x1b[0m `
-                    + `\x1b[93m[super/server]\x1b[0m `
+                    + `\x1b[93m[koot/server]\x1b[0m `
                     + `callback: \x1b[32m${'onRender'}\x1b[0m`
                     + `({ ctx, store })`
                     + `\n`
@@ -250,7 +250,7 @@ export default async (app, {
         console.log(
             `\n\n`
             + `\x1b[36m⚑\x1b[0m `
-            + `\x1b[93m[super/server]\x1b[0m `
+            + `\x1b[93m[koot/server]\x1b[0m `
             + `callback: \x1b[32m${'after'}\x1b[0m`
             + `(app)`
             + `\n`
@@ -261,7 +261,7 @@ export default async (app, {
 
     // if (__DEV__) console.log('└─ ✔ Server inited.\r\n')
     // else
-    console.log(`  \x1b[93m[super/server]\x1b[0m init \x1b[32m${'OK'}\x1b[0m!`)
+    console.log(`  \x1b[93m[koot/server]\x1b[0m init \x1b[32m${'OK'}\x1b[0m!`)
 
     return app
 }

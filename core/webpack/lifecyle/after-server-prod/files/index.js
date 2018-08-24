@@ -1,7 +1,7 @@
 const util = require('util')
 const exec = util.promisify(require('child_process').exec)
 
-global.SUPER_DIST_DIR = __dirname
+global.KOOT_DIST_DIR = __dirname
 
 const run = async () => {
     console.log('> npm install --no-save')

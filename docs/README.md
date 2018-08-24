@@ -3,13 +3,13 @@
 ### 安装命令行工具
 
 ```bash
-npm i super-project-cli
+npm i koot-cli
 ```
 
 ### 初始化项目
 
 ```bash
-super init
+koot-init
 ```
 
 ### 运行项目

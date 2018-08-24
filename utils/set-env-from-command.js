@@ -16,7 +16,7 @@ module.exports = ({
         process.env.WEBPACK_BUILD_CONFIG_PATHNAME = config
         console.log(
             chalk.green('√ ')
-            + chalk.yellowBright('[super/build] ')
+            + chalk.yellowBright('[koot/build] ')
             + `set env ` + chalk.green('WEBPACK_BUILD_CONFIG_PATHNAME')
             + `\n             -> `
             + config
@@ -25,11 +25,11 @@ module.exports = ({
     }
 
     if (typeof type === 'string') {
-        process.env.SUPER_PROJECT_TYPE = type
+        process.env.KOOT_PROJECT_TYPE = type
         console.log(
             chalk.green('√ ')
-            + chalk.yellowBright('[super/build] ')
-            + `set env ` + chalk.green('SUPER_PROJECT_TYPE')
+            + chalk.yellowBright('[koot/build] ')
+            + `set env ` + chalk.green('KOOT_PROJECT_TYPE')
             + `\n             -> `
             + type
         )

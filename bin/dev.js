@@ -64,7 +64,7 @@ const run = async () => {
     //     console.log(
     //         chalk.redBright('× ')
     //         + __('dev.missing_stage', {
-    //             example: 'super-dev ' + chalk.green('--client'),
+    //             example: 'koot-dev ' + chalk.green('--client'),
     //             indent: '  '
     //         })
     //     )
@@ -91,7 +91,7 @@ const run = async () => {
 
     // 如果设置了 stage，仅运行该 stage
     if (stage) {
-        const cmd = `super-build --stage ${stage} --env dev`
+        const cmd = `koot-build --stage ${stage} --env dev`
         const child = npmRunScript(cmd, {})
         child.once('error', (error) => {
             console.trace(error)
@@ -107,7 +107,7 @@ const run = async () => {
 
         let waitingSpinner = false
         // spinner(
-        //     chalk.yellowBright('[super/build] ')
+        //     chalk.yellowBright('[koot/build] ')
         //     + __('build.build_start', {
         //         type: chalk.cyanBright(appType),
         //         stage: chalk.green('client'),
@@ -220,7 +220,7 @@ const run = async () => {
 
             console.log(
                 `  `
-                + chalk.yellowBright('[super/build] ')
+                + chalk.yellowBright('[koot/build] ')
                 + __('build.build_start', {
                     type: chalk.cyanBright(appType),
                     stage: chalk.green('client'),
@@ -253,7 +253,7 @@ const run = async () => {
             // waitingSpinner.succeed()
             console.log(
                 chalk.green('√ ')
-                + chalk.yellowBright('[super/build] ')
+                + chalk.yellowBright('[koot/build] ')
                 + __('build.build_complete', {
                     type: chalk.cyanBright(appType),
                     stage: chalk.green('client'),
@@ -263,7 +263,7 @@ const run = async () => {
 
             // 启动 server webpack
             // waitingSpinner = spinner(
-            //     chalk.yellowBright('[super/build] ')
+            //     chalk.yellowBright('[koot/build] ')
             //     + __('build.build_start', {
             //         type: chalk.cyanBright(appType),
             //         stage: chalk.green('server'),
@@ -272,7 +272,7 @@ const run = async () => {
             // )
             console.log(
                 `  `
-                + chalk.yellowBright('[super/build] ')
+                + chalk.yellowBright('[koot/build] ')
                 + __('build.build_start', {
                     type: chalk.cyanBright(appType),
                     stage: chalk.green('server'),
@@ -296,7 +296,7 @@ const run = async () => {
 
             // 执行
             // waitingSpinner = spinner(
-            //     chalk.yellowBright('[super/build] ')
+            //     chalk.yellowBright('[koot/build] ')
             //     + 'waiting...'
             // )
             await start('run')
@@ -304,7 +304,7 @@ const run = async () => {
 
             console.log(
                 chalk.green('√ ')
-                + chalk.yellowBright('[super/build] ')
+                + chalk.yellowBright('[koot/build] ')
                 + __('build.build_complete', {
                     type: chalk.cyanBright(appType),
                     stage: chalk.green('server'),

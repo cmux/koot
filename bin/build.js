@@ -9,7 +9,7 @@ const readBuildConfigFile = require('../utils/read-build-config-file')
 const sleep = require('../utils/sleep')
 const setEnvFromCommand = require('../utils/set-env-from-command')
 
-const superBuild = require('../core/webpack/enter')
+const kootBuild = require('../core/webpack/enter')
 
 program
     .version(require('../package').version, '-v, --version')
@@ -53,7 +53,7 @@ const run = async () => {
     //         chalk.redBright('× ')
     //         + __('build.missing_option', {
     //             option: chalk.yellowBright('stage'),
-    //             example: 'super-build ' + chalk.green('--stage client') + ' --env prod',
+    //             example: 'koot-build ' + chalk.green('--stage client') + ' --env prod',
     //             indent: '  '
     //         })
     //     )
@@ -65,7 +65,7 @@ const run = async () => {
     //         chalk.redBright('× ')
     //         + __('build.missing_option', {
     //             option: chalk.yellowBright('env'),
-    //             example: 'super-build ' + chalk.green('--env prod'),
+    //             example: 'koot-build ' + chalk.green('--env prod'),
     //             indent: '  '
     //         })
     //     )
@@ -89,24 +89,24 @@ const run = async () => {
         // if (stage === 'server' && !hasServer) {
         //     console.log(chalk.redBright('× '))
         // }
-        return await superBuild(buildConfig)
+        return await kootBuild(buildConfig)
     }
 
     // 如过没有提供 stage，自动相继打包 client 和 server
-    await superBuild({ ...buildConfig })
+    await kootBuild({ ...buildConfig })
     await sleep(100)
 
     // if (!hasServer) return
 
     console.log('\n' + ''.padEnd(60, '=') + '\n')
     process.env.WEBPACK_BUILD_STAGE = 'server'
-    await superBuild({ ...buildConfig })
+    await kootBuild({ ...buildConfig })
     await sleep(100)
 
     console.log('\n' + ''.padEnd(60, '=') + '\n')
     console.log(
         chalk.green('√ ')
-        + chalk.yellowBright('[super/build] ')
+        + chalk.yellowBright('[koot/build] ')
         + __('build.complete', {
             time: (new Date()).toLocaleString()
         })

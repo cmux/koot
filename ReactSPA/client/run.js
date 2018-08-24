@@ -29,8 +29,8 @@ import {
 // import {
 //     reducerLocaleId as i18nReducerLocaleId,
 //     reducerLocales as i18nReducerLocales,
-// } from 'super-project/i18n/redux'
-// import i18nRegister from 'super-project/i18n/register/spa.client'
+// } from 'koot/i18n/redux'
+// import i18nRegister from 'koot/i18n/register/spa.client'
 import { ImportStyleRoot } from 'sp-css-import'
 
 
@@ -46,7 +46,7 @@ setPageinfo(pageinfo)
 
 
 export default ({
-    // i18n = JSON.parse(process.env.SUPER_I18N) || false,
+    // i18n = JSON.parse(process.env.KOOT_I18N) || false,
     router,
     redux,
     client
@@ -118,7 +118,7 @@ export default ({
         onUpdate: (...args) => {
             if (__DEV__ && logCountRouterUpdate < 2) {
                 console.log(
-                    `🚩 [super/client] ` +
+                    `🚩 [koot/client] ` +
                     `callback: onRouterUpdate`,
                     ...args
                 )
@@ -146,7 +146,7 @@ export default ({
 
         if (__DEV__ && logCountHistoryUpdate < 2) {
             console.log(
-                `🚩 [super/client] ` +
+                `🚩 [koot/client] ` +
                 `callback: onHistoryUpdate`,
                 [location, store]
             )
@@ -176,13 +176,13 @@ export default ({
 
     if (__DEV__)
         console.log(
-            `🚩 [super/client] ` +
+            `🚩 [koot/client] ` +
             `callback: before`,
             // args
         )
     if (__DEV__)
         console.log(
-            `🚩 [super/client] ` +
+            `🚩 [koot/client] ` +
             `callback: before`,
             // args
         )
@@ -204,7 +204,7 @@ export default ({
         .then(() => {
             if (__DEV__)
                 console.log(
-                    `🚩 [super/client] ` +
+                    `🚩 [koot/client] ` +
                     `callback: after`,
                     { store, history }
                 )

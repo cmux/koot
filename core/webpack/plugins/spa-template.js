@@ -25,8 +25,8 @@ class SpaTemplatePlugin {
         // 失败原因
         let fail = false
 
-        // 如果环境变量中未找到模板结果，分析 super.js，获取结果
-        if (!process.env.SUPER_HTML_TEMPLATE) {
+        // 如果环境变量中未找到模板结果，分析 koot.js，获取结果
+        if (!process.env.KOOT_HTML_TEMPLATE) {
             compiler.hooks.compilation.tap(
                 "SpaTemplatePlugin",
                 (compilation, { normalModuleFactory }) => {
@@ -40,17 +40,17 @@ class SpaTemplatePlugin {
                                 compilation.modules.forEach(m => {
                                     if (typeof m.resource === 'string' &&
                                         typeof m._source === 'object' &&
-                                        /[/\\]super\.js$/.test(m.resource)
+                                        /[/\\]koot\.js$/.test(m.resource)
                                     ) {
                                         const exec = /template[ *]=[ *]['"](.+?)['"]/.exec(m._source._value)
                                         if (Array.isArray(exec) && exec.length > 1) {
                                             const t = exec[1]
                                             if (t.substr(0, 2) === './') {
-                                                process.env.SUPER_HTML_TEMPLATE = fs.readFileSync(path.resolve(
+                                                process.env.KOOT_HTML_TEMPLATE = fs.readFileSync(path.resolve(
                                                     process.cwd(), t
                                                 ), 'utf-8')
                                             } else {
-                                                process.env.SUPER_HTML_TEMPLATE = t
+                                                process.env.KOOT_HTML_TEMPLATE = t
                                             }
                                         }
                                     }
@@ -80,13 +80,13 @@ class SpaTemplatePlugin {
             const chunkmap = await writeChunkmap(compilation.getStats())
 
             // 如果环境变量中未找到模板结果，报错并返回
-            if (typeof process.env.SUPER_HTML_TEMPLATE !== 'string') {
+            if (typeof process.env.KOOT_HTML_TEMPLATE !== 'string') {
                 fail = __('build.spa_template_not_found')
                 return callback()
             }
 
             // 处理环境变量中的模板字符串
-            const template = process.env.SUPER_HTML_TEMPLATE
+            const template = process.env.KOOT_HTML_TEMPLATE
             const injectObject = require(`../../../${appType}/inject`)({
                 localeId, inject,
                 chunkmap,
@@ -141,14 +141,14 @@ class SpaTemplatePlugin {
                         setTimeout(() => {
                             console.log(
                                 chalk.redBright('× ')
-                                + chalk.yellowBright('[super/build] ')
+                                + chalk.yellowBright('[koot/build] ')
                                 + chalk.redBright(fail)
                             )
                         })
                     } else {
                         console.log(
                             chalk.green('√ ')
-                            + chalk.yellowBright('[super/build] ')
+                            + chalk.yellowBright('[koot/build] ')
                             + __('build.spa_template_emitted', {
                                 file: chalk.green(`/${filename}`)
                             })

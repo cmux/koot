@@ -1,11 +1,11 @@
-import superClient from './run'
+import kootClient from './run'
 import {
     router,
     redux,
     client,
-} from '../../../../super'
+} from '../../../../koot'
 
-export default superClient({
+export default kootClient({
     router,
     redux,
     client,

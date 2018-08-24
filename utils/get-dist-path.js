@@ -7,11 +7,11 @@ let p
  * @returns {String} 打包结果路径 (硬盘绝对路径)
  */
 module.exports = () => {
-    // console.log('global.SUPER_DIST_DIR', global.SUPER_DIST_DIR)
+    // console.log('global.KOOT_DIST_DIR', global.KOOT_DIST_DIR)
     if (typeof p !== 'string') {
-        p = typeof global.SUPER_DIST_DIR === 'string'
-            ? global.SUPER_DIST_DIR
-            : path.resolve(process.cwd(), process.env.SUPER_DIST_DIR)
+        p = typeof global.KOOT_DIST_DIR === 'string'
+            ? global.KOOT_DIST_DIR
+            : path.resolve(process.cwd(), process.env.KOOT_DIST_DIR)
     }
     return p
 }

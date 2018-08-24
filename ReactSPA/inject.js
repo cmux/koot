@@ -9,8 +9,8 @@ const getSWPathname = require('../utils/get-sw-pathname')
 const getDistPath = require('../utils/get-dist-path')
 
 const {
-    __SUPER_INJECT_METAS_START__,
-    __SUPER_INJECT_METAS_END__,
+    __KOOT_INJECT_METAS_START__,
+    __KOOT_INJECT_METAS_END__,
 } = require('../defaults/defines')
 
 module.exports = (settings = {}) => {
@@ -32,14 +32,14 @@ module.exports = (settings = {}) => {
     return Object.assign({}, {
 
         htmlLang: localeId ? ` lang="${localeId}"` : '',
-        metas: `<!--${__SUPER_INJECT_METAS_START__}--><!--${__SUPER_INJECT_METAS_END__}-->`,
+        metas: `<!--${__KOOT_INJECT_METAS_START__}--><!--${__KOOT_INJECT_METAS_END__}-->`,
         styles: (() => {
             let r = ''
             if (typeof filemap['critical.css'] === 'string') {
                 if (ENV === 'prod')
-                    r += `<style id="__super-critical-styles" type="text/css">${readClientFile('critical.css', localeId, compilation)}</style>`
+                    r += `<style id="__koot-critical-styles" type="text/css">${readClientFile('critical.css', localeId, compilation)}</style>`
                 if (ENV === 'dev')
-                    r += `<link id="__super-critical-styles" media="all" rel="stylesheet" href="/${filemap['critical.css']}" />`
+                    r += `<link id="__koot-critical-styles" media="all" rel="stylesheet" href="/${filemap['critical.css']}" />`
             }
             return r
         })(),
@@ -79,12 +79,12 @@ module.exports = (settings = {}) => {
                 }
 
                 // 如果设置了 PWA 自动注册 Service-Worker，在此注册
-                const pwaAuto = typeof process.env.SUPER_PWA_AUTO_REGISTER === 'string'
-                    ? JSON.parse(process.env.SUPER_PWA_AUTO_REGISTER)
+                const pwaAuto = typeof process.env.KOOT_PWA_AUTO_REGISTER === 'string'
+                    ? JSON.parse(process.env.KOOT_PWA_AUTO_REGISTER)
                     : false
                 const pwaPathname = getSWPathname()
                 if (pwaAuto && typeof pwaPathname === 'string') {
-                    r += `<script id="__super-pwa-register-sw" type="text/javascript">`
+                    r += `<script id="__koot-pwa-register-sw" type="text/javascript">`
                     if (ENV === 'prod')
                         r += `if ('serviceWorker' in navigator) {`
                             + `navigator.serviceWorker.register("${pwaPathname.substr(0, 1) ? pwaPathname.substr(1) : pwaPathname}",`

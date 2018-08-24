@@ -204,7 +204,7 @@ const plugins = (env, stage, defines = {}) => {
             __DEV__: env == 'dev',
             __PROD__: env == 'prod',
             // '__SPA__': !!spa,
-            // __DIST__: JSON.stringify(process.env.SUPER_DIST_DIR),
+            // __DIST__: JSON.stringify(process.env.KOOT_DIST_DIR),
 
             // 将 SERVER_PORT 赋值
             // 服务器启动时，会优先选取当前环境变量中的 SERVER_PORT，如果没有，会选择 __SERVER_PORT__
@@ -221,15 +221,15 @@ const plugins = (env, stage, defines = {}) => {
     }
 
     const envs = [
-        'SUPER_DIST_DIR',
-        'SUPER_I18N',
-        'SUPER_I18N_TYPE',
-        "SUPER_I18N_LOCALES",
-        "SUPER_I18N_COOKIE_KEY",
-        "SUPER_I18N_COOKIE_DOMAIN",
-        "SUPER_HTML_TEMPLATE",
-        "SUPER_PWA_AUTO_REGISTER",
-        "SUPER_PWA_PATHNAME",
+        'KOOT_DIST_DIR',
+        'KOOT_I18N',
+        'KOOT_I18N_TYPE',
+        "KOOT_I18N_LOCALES",
+        "KOOT_I18N_COOKIE_KEY",
+        "KOOT_I18N_COOKIE_DOMAIN",
+        "KOOT_HTML_TEMPLATE",
+        "KOOT_PWA_AUTO_REGISTER",
+        "KOOT_PWA_PATHNAME",
         "WEBPACK_BUILD_TYPE",
         "WEBPACK_BUILD_ENV",
         "WEBPACK_CHUNKMAP",
@@ -266,6 +266,7 @@ const resolve = Object.assign({
 // 这里配置需要babel处理的node_modules
 // 大部分是自己用es6语法写的模块
 const needBabelHandleList = [
+    'koot',
     'super-project',
     'sp-base',
     'sp-boilerplate',
@@ -297,6 +298,7 @@ const filterExternalsModules = () => fs
     .filter((x) => ['.bin'].concat(needBabelHandleList).indexOf(x) === -1)
     .filter((x) => !/^sp-/.test(x))
     .filter((x) => !/^super-/.test(x))
+    .filter((x) => !/^koot-/.test(x))
     .reduce((ext, mod) => {
         ext[mod] = ['commonjs', mod].join(' ') // eslint-disable-line no-param-reassign
         return ext

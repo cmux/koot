@@ -16,7 +16,7 @@ global.NOT_WEBPACK_RUN = true
 
 import App from './app'
 
-import superServer from './run'
+import kootServer from './run'
 import {
     name,
     // dir,
@@ -25,7 +25,7 @@ import {
     redux,
     client,
     server,
-} from '../../../../super'
+} from '../../../../koot'
 
 const {
     cookieKeys,
@@ -44,10 +44,10 @@ const appObj = new App()
 const app = appObj.instance()
 
 /* 公用的koa配置 */
-app.keys = cookieKeys || 'super-project';
+app.keys = cookieKeys || 'koot';
 
 (async () => {
-    await superServer(app, {
+    await kootServer(app, {
         name,
         // dir,
         template,
@@ -60,9 +60,9 @@ app.keys = cookieKeys || 'super-project';
 
 setTimeout(() => {
     if (__DEV__) {
-        console.log(`\x1b[32m√\x1b[0m ` + `\x1b[93m[super/server]\x1b[0m started on \x1b[32m${'http://localhost:' + port}\x1b[0m`)
+        console.log(`\x1b[32m√\x1b[0m ` + `\x1b[93m[koot/server]\x1b[0m started on \x1b[32m${'http://localhost:' + port}\x1b[0m`)
     } else {
-        console.log(`\x1b[32m√\x1b[0m ` + `\x1b[93m[super/server]\x1b[0m listening port \x1b[32m${port}\x1b[0m`)
+        console.log(`\x1b[32m√\x1b[0m ` + `\x1b[93m[koot/server]\x1b[0m listening port \x1b[32m${port}\x1b[0m`)
     }
     console.log(' ')
 })

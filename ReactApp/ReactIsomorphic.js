@@ -69,8 +69,8 @@ export default class ReactIsomorphic {
         let filemap = {}
 
         // 分析当前 i18n 模式
-        const i18nType = JSON.parse(process.env.SUPER_I18N)
-            ? JSON.parse(process.env.SUPER_I18N_TYPE)
+        const i18nType = JSON.parse(process.env.KOOT_I18N)
+            ? JSON.parse(process.env.KOOT_I18N_TYPE)
             : undefined
         const isI18nDefault = (i18nType === 'default')
 
@@ -150,15 +150,15 @@ export default class ReactIsomorphic {
                 const injectRealtime = {
                     htmlLang: localeId ? ` lang="${localeId}"` : '',
                     title: htmlTool.getTitle(),
-                    metas: `<!--${__SUPER_INJECT_METAS_START__}-->${htmlTool.getMetaHtml()}<!--${__SUPER_INJECT_METAS_END__}-->`,
+                    metas: `<!--${__KOOT_INJECT_METAS_START__}-->${htmlTool.getMetaHtml()}<!--${__KOOT_INJECT_METAS_END__}-->`,
                     styles: (() => {
                         if (!assetsInjectOnce || typeof thisInjectOnceCache.styles === 'undefined') {
                             let r = ''
                             if (typeof thisFilemap['critical.css'] === 'string') {
                                 if (ENV === 'prod')
-                                    r += `<style id="__super-critical-styles" type="text/css">${readClientFile('critical.css')}</style>`
+                                    r += `<style id="__koot-critical-styles" type="text/css">${readClientFile('critical.css')}</style>`
                                 if (ENV === 'dev')
-                                    r += `<link id="__super-critical-styles" media="all" rel="stylesheet" href="${getClientFilePath('critical.css')}" />`
+                                    r += `<link id="__koot-critical-styles" media="all" rel="stylesheet" href="${getClientFilePath('critical.css')}" />`
                             }
                             thisInjectOnceCache.styles = r
                         }
@@ -197,11 +197,11 @@ export default class ReactIsomorphic {
                             })
 
                             // 如果设置了 PWA 自动注册 Service-Worker，在此注册
-                            const pwaAuto = typeof process.env.SUPER_PWA_AUTO_REGISTER === 'string'
-                                ? JSON.parse(process.env.SUPER_PWA_AUTO_REGISTER)
+                            const pwaAuto = typeof process.env.KOOT_PWA_AUTO_REGISTER === 'string'
+                                ? JSON.parse(process.env.KOOT_PWA_AUTO_REGISTER)
                                 : false
                             if (pwaAuto && typeof thisInjectOnceCache.pathnameSW === 'string') {
-                                r += `<script id="__super-pwa-register-sw" type="text/javascript">`
+                                r += `<script id="__koot-pwa-register-sw" type="text/javascript">`
                                 if (ENV === 'prod')
                                     r += `if ('serviceWorker' in navigator) {`
                                         + `navigator.serviceWorker.register("${thisInjectOnceCache.pathnameSW}",`

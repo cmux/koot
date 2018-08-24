@@ -28,7 +28,7 @@ let logCountHistoryUpdate = 0
 
 
 export default ({
-    i18n = JSON.parse(process.env.SUPER_I18N) || false,
+    i18n = JSON.parse(process.env.KOOT_I18N) || false,
     router,
     redux,
     client
@@ -115,7 +115,7 @@ export default ({
             onUpdate: (...args) => {
                 if (__DEV__ && logCountRouterUpdate < 2) {
                     console.log(
-                        `🚩 [super/client] ` +
+                        `🚩 [koot/client] ` +
                         `callback: onRouterUpdate`,
                         ...args
                     )
@@ -131,7 +131,7 @@ export default ({
 
         if (__DEV__)
             console.log(
-                `🚩 [super/client] ` +
+                `🚩 [koot/client] ` +
                 `callback: before`,
                 // args
             )
@@ -162,7 +162,7 @@ export default ({
 
                     if (__DEV__ && logCountHistoryUpdate < 2) {
                         console.log(
-                            `🚩 [super/client] ` +
+                            `🚩 [koot/client] ` +
                             `callback: onHistoryUpdate`,
                             [location, store]
                         )
@@ -176,7 +176,7 @@ export default ({
             .then((appData) => {
                 if (__DEV__)
                     console.log(
-                        `🚩 [super/client] ` +
+                        `🚩 [koot/client] ` +
                         `callback: after`,
                         appData
                     )

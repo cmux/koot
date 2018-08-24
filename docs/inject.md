@@ -31,11 +31,11 @@ export default `
 ### 注入变量
 
 从上面的```HTML模板```里可以看见很多个```<script>//inject_[*]</script>```标签，这样的标签会在```SSR```阶段被动态替换成配置文件里的对应代码。
-配置文件: ```/super.js```中，```export const server = { inject }```的```inject```会指定对应关系所在的文件。
+配置文件: ```/koot.js```中，```export const server = { inject }```的```inject```会指定对应关系所在的文件。
 
 默认配置是：
 ```js
-// File: /super.js
+// File: /koot.js
 
 export const server = {
     inject: require('./src/server/lifecycle/inject').default
@@ -45,7 +45,7 @@ export const server = {
 ```js
 // File: /src/server/lifecycle/inject.js
 
-import getClientFilePath from 'super-project/utils/get-client-file-path'
+import getClientFilePath from 'koot/utils/get-client-file-path'
 export default {
     js: [getClientFilePath('client.js')], // 对应标签 <script>//inject_js</script>
     // css: [...],
@@ -53,7 +53,7 @@ export default {
     // 可自行扩展
 }
 ```
-默认打包方式会把打包后的文件加上```[hash]```值，所以```Super.js```框架提供了找到被 hash 后新文件名的方法。
+默认打包方式会把打包后的文件加上```[hash]```值，所以```koot.js```框架提供了找到被 hash 后新文件名的方法。
 
 如：```getClientFilePath('client.js')``` => ```client.8f0f500307dec12480a2.js```
 

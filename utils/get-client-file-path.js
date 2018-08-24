@@ -24,8 +24,8 @@ const getFilePath = (filename, localeId, isPathname = false) => {
 
     const pathPublic = getPublicPath()
 
-    const i18nType = JSON.parse(process.env.SUPER_I18N)
-        ? JSON.parse(process.env.SUPER_I18N_TYPE)
+    const i18nType = JSON.parse(process.env.KOOT_I18N)
+        ? JSON.parse(process.env.KOOT_I18N_TYPE)
         : undefined
     const isI18nDefault = (i18nType === 'default')
     const isDev = (process.env.WEBPACK_BUILD_ENV === 'dev' || (typeof __DEV__ !== 'undefined' && __DEV__))

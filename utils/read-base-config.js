@@ -2,19 +2,19 @@ const fs = require('fs-extra')
 const path = require('path')
 
 /**
- * 从 super.js 中读取对应配置
+ * 从 koot.js 中读取对应配置
  * @param {String} key 
  * @returns {*}
  */
 module.exports = async (key) => {
-    const pathnameSuperJS = path.resolve(__dirname, '../../../super.js')
+    const pathnameKootJS = path.resolve(__dirname, '../../../koot.js')
 
     try {
-        const config = require(pathnameSuperJS)
+        const config = require(pathnameKootJS)
         return config[key]
     } catch (e) { }
 
-    const content = await fs.readFile(pathnameSuperJS, 'utf-8')
+    const content = await fs.readFile(pathnameKootJS, 'utf-8')
     const regex = new RegExp(`${key}[ ]*=[ ]*['"](.+?)['"]`, "gm")
     const matches = regex.exec(content)
 

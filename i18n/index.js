@@ -1,5 +1,5 @@
 // import React from 'react'
-import { setLocaleId as superSetLocaleId } from '../'
+import { setLocaleId as kootSetLocaleId } from '../'
 
 export const I18N_INIT = 'I18N_INIT'
 export const I18N_LOCALES = 'I18N_LOCALES'
@@ -15,9 +15,9 @@ export const setLocaleId = newLlocalId => {
     if (typeof newLlocalId === 'undefined' || newLlocalId === null)
         return
     if (__DEV__ && __SERVER__)
-        console.log(`\n  \x1b[93m[super/i18n]\x1b[0m setLocaleId -> \x1b[32m${newLlocalId}\x1b[0m\n`)
+        console.log(`\n  \x1b[93m[koot/i18n]\x1b[0m setLocaleId -> \x1b[32m${newLlocalId}\x1b[0m\n`)
     localeId = newLlocalId
-    superSetLocaleId(localeId)
+    kootSetLocaleId(localeId)
     return localeId
 }
 
@@ -57,7 +57,7 @@ const translate = (...args) => {
     let str
     let options = {}
     const keys = []
-    const l = JSON.parse(process.env.SUPER_I18N_TYPE) === 'redux' || __SERVER__
+    const l = JSON.parse(process.env.KOOT_I18N_TYPE) === 'redux' || __SERVER__
         ? locales[localeId]
         : undefined
 

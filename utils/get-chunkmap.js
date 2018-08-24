@@ -18,8 +18,8 @@ const getChunkmap = (localeId, getFullResult = false) => {
         } catch (e) { }
     }
 
-    const i18nType = JSON.parse(process.env.SUPER_I18N)
-        ? JSON.parse(process.env.SUPER_I18N_TYPE)
+    const i18nType = JSON.parse(process.env.KOOT_I18N)
+        ? JSON.parse(process.env.KOOT_I18N_TYPE)
         : undefined
     const isI18nDefault = (i18nType === 'default')
 

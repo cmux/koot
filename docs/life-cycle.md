@@ -1,4 +1,4 @@
-# Super.js 生命周期
+# Koot.js 生命周期
 
 ### 客户端
 
@@ -27,7 +27,7 @@
 
 ### React组件
 
-在React Server Render的情况，开发时候可能需要对HTML、页面初始化状态进行扩展，所以Super.js对React组件的生命周期做了扩展。
+在React Server Render的情况，开发时候可能需要对HTML、页面初始化状态进行扩展，所以Koot.js对React组件的生命周期做了扩展。
 
 方法 | 描述 
 - | -

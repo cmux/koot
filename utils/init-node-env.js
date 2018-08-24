@@ -34,29 +34,29 @@ module.exports = () => {
         SERVER_PORT: process.env.WEBPACK_BUILD_ENV === 'dev' ? '3000' : '8080',
 
         // 项目类型。默认不存在。如果存在则默认使用
-        // SUPER_PROJECT_TYPE: ...,
+        // KOOT_PROJECT_TYPE: ...,
 
         // 总开关：i18n/多语言相关处理
-        SUPER_I18N: JSON.stringify(false),
+        KOOT_I18N: JSON.stringify(false),
         // i18n处理方式
-        SUPER_I18N_TYPE: JSON.stringify(''),
+        KOOT_I18N_TYPE: JSON.stringify(''),
         // 语言包
-        SUPER_I18N_LOCALES: JSON.stringify([]),
+        KOOT_I18N_LOCALES: JSON.stringify([]),
         // 使用的COOKIE KEY
-        SUPER_I18N_COOKIE_KEY: 'spLocaleId',
+        KOOT_I18N_COOKIE_KEY: 'spLocaleId',
         // i18n cookie 影响的域名
-        // SUPER_I18N_COOKIE_DOMAIN: '',
+        // KOOT_I18N_COOKIE_DOMAIN: '',
 
         // HTML模板内容
-        // SUPER_HTML_TEMPLATE: '',
+        // KOOT_HTML_TEMPLATE: '',
 
         // 打包目标路径（相对运行目录）
-        // SUPER_DIST_DIR: '',
+        // KOOT_DIST_DIR: '',
 
         // PWA Service-Worker 脚本是否自动注册
-        SUPER_PWA_AUTO_REGISTER: JSON.stringify(defaultsPWA.auto),
+        KOOT_PWA_AUTO_REGISTER: JSON.stringify(defaultsPWA.auto),
         // PWA Service-Worker 访问路径
-        SUPER_PWA_PATHNAME: JSON.stringify(defaultsPWA.pathname),
+        KOOT_PWA_PATHNAME: JSON.stringify(defaultsPWA.pathname),
     }
     for (let key in defaults) {
         if (typeof process.env[key] === 'undefined') {

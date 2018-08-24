@@ -3,14 +3,14 @@ const path = require('path')
 // const readBuildConfigFile = require('../utils/read-build-config-file')
 
 const extractType = () => {
-    const pathnameSuperJS = path.resolve(__dirname, '../../../super.js')
+    const pathnameKootJS = path.resolve(__dirname, '../../../koot.js')
 
     try {
-        const { type } = require(pathnameSuperJS)
+        const { type } = require(pathnameKootJS)
         return type
     } catch (e) { }
 
-    const content = fs.readFileSync(pathnameSuperJS, 'utf-8')
+    const content = fs.readFileSync(pathnameKootJS, 'utf-8')
     const matches = /type[ ]*=[ ]*['"](.+?)['"]/gm.exec(content)
     if (Array.isArray(matches) && matches.length > 1)
         return matches[1]
@@ -19,22 +19,22 @@ const extractType = () => {
 }
 
 /**
- * 从核心配置文件 (./super.js) 中读取 App 类型 (type)，并修改部分环境变量
+ * 从核心配置文件 (./koot.js) 中读取 App 类型 (type)，并修改部分环境变量
  * * WEBPACK_BUILD_TYPE: 'isomorphic' || 'spa' || etc...
- * * SUPER_PROJECT_TYPE: 'ReactApp' || 'ReactSPA' || etc...
+ * * KOOT_PROJECT_TYPE: 'ReactApp' || 'ReactSPA' || etc...
  * @async
- * @returns {String} process.env.SUPER_PROJECT_TYPE
+ * @returns {String} process.env.KOOT_PROJECT_TYPE
  */
 module.exports = async () => {
-    if (typeof process.env.SUPER_PROJECT_TYPE === 'undefined') {
-        process.env.SUPER_PROJECT_TYPE = extractType() || ''
+    if (typeof process.env.KOOT_PROJECT_TYPE === 'undefined') {
+        process.env.KOOT_PROJECT_TYPE = extractType() || ''
     }
 
-    switch (process.env.SUPER_PROJECT_TYPE.toLowerCase()) {
+    switch (process.env.KOOT_PROJECT_TYPE.toLowerCase()) {
         case 'react': {
             // if ((await readBuildConfigFile()).server)
             process.env.WEBPACK_BUILD_TYPE = 'isomorphic'
-            process.env.SUPER_PROJECT_TYPE = 'ReactApp'
+            process.env.KOOT_PROJECT_TYPE = 'ReactApp'
             // return 'ReactSPA'
             break
         }
@@ -42,13 +42,13 @@ module.exports = async () => {
         case 'react-spa':
         case 'reactspa': {
             process.env.WEBPACK_BUILD_TYPE = 'spa'
-            process.env.SUPER_PROJECT_TYPE = 'ReactSPA'
+            process.env.KOOT_PROJECT_TYPE = 'ReactSPA'
             break
         }
 
         // default:
-        //     return process.env.SUPER_PROJECT_TYPE
+        //     return process.env.KOOT_PROJECT_TYPE
     }
 
-    return process.env.SUPER_PROJECT_TYPE
+    return process.env.KOOT_PROJECT_TYPE
 }

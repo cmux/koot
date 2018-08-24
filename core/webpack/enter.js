@@ -21,7 +21,7 @@ const WebpackConfig = require('webpack-config').default
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const common = require('./common')
 const createPWAsw = require('../pwa/create')
-const SuperI18nPlugin = require("./plugins/i18n")
+const KootI18nPlugin = require("./plugins/i18n")
 const SpaTemplatePlugin = require("./plugins/spa-template")
 const DevServerAfterPlugin = require("./plugins/dev-server-after")
 const GenerateChunkmapPlugin = require("./plugins/generate-chunkmap")
@@ -219,7 +219,7 @@ module.exports = async (obj) => {
     // DEBUG && console.log('Webpack 打包环境：', TYPE, STAGE, ENV)
     console.log(
         chalk.cyan('  ')
-        + chalk.yellowBright('[super/build] ')
+        + chalk.yellowBright('[koot/build] ')
         + __('build.build_start', {
             type: chalk.cyanBright(appType),
             stage: chalk.green(STAGE),
@@ -244,8 +244,8 @@ module.exports = async (obj) => {
         if (dist.substr(0, 1) === '.') dist = path.resolve(process.cwd(), dist)
         // 将打包目录存入环境变量
         // 在打包时，会使用 DefinePlugin 插件将该值赋值到 __DIST__ 全部变量中，以供项目内代码使用
-        // process.env.SUPER_DIST_DIR = dist
-        process.env.SUPER_DIST_DIR = path.relative(process.cwd(), dist)
+        // process.env.KOOT_DIST_DIR = dist
+        process.env.KOOT_DIST_DIR = path.relative(process.cwd(), dist)
 
         // 确保打包目录存在
         await fs.ensureDir(dist)
@@ -258,11 +258,11 @@ module.exports = async (obj) => {
     if (TYPE === 'spa') {
         // SPA：临时禁用
         i18n = false
-        process.env.SUPER_I18N = JSON.stringify(false)
+        process.env.KOOT_I18N = JSON.stringify(false)
         if (STAGE === 'client') {
             console.log(
                 chalk.redBright('× ')
-                + chalk.yellowBright('[super/build] ')
+                + chalk.yellowBright('[koot/build] ')
                 + `i18n temporarily ` + chalk.redBright(`disabled`) + ` for `
                 + chalk.cyanBright('SPA')
             )
@@ -295,7 +295,7 @@ module.exports = async (obj) => {
         if (STAGE === 'client') {
             console.log(
                 chalk.green('√ ')
-                + chalk.yellowBright('[super/build] ')
+                + chalk.yellowBright('[koot/build] ')
                 + `i18n ` + chalk.yellowBright(`enabled`)
             )
             console.log(`  > type: ${chalk.yellowBright(type)}`)
@@ -309,11 +309,11 @@ module.exports = async (obj) => {
             arr[2] = pathname
         })
 
-        process.env.SUPER_I18N = JSON.stringify(true)
-        process.env.SUPER_I18N_TYPE = JSON.stringify(type)
-        process.env.SUPER_I18N_LOCALES = JSON.stringify(locales)
-        if (cookieKey) process.env.SUPER_I18N_COOKIE_KEY = cookieKey
-        if (domain) process.env.SUPER_I18N_COOKIE_DOMAIN = domain
+        process.env.KOOT_I18N = JSON.stringify(true)
+        process.env.KOOT_I18N_TYPE = JSON.stringify(type)
+        process.env.KOOT_I18N_LOCALES = JSON.stringify(locales)
+        if (cookieKey) process.env.KOOT_I18N_COOKIE_KEY = cookieKey
+        if (domain) process.env.KOOT_I18N_COOKIE_DOMAIN = domain
 
         i18n = {
             type,
@@ -326,22 +326,22 @@ module.exports = async (obj) => {
         }
     } else {
         i18n = false
-        process.env.SUPER_I18N = JSON.stringify(false)
+        process.env.KOOT_I18N = JSON.stringify(false)
     }
 
     // 处理配置：PWA
     if (pwa === true || typeof pwa === 'undefined') pwa = {}
     if (typeof pwa === 'object') {
         pwa = Object.assign({}, defaultsPWA, pwa)
-        process.env.SUPER_PWA_AUTO_REGISTER = JSON.stringify(pwa.auto)
-        process.env.SUPER_PWA_PATHNAME = JSON.stringify(pwa.pathname)
+        process.env.KOOT_PWA_AUTO_REGISTER = JSON.stringify(pwa.auto)
+        process.env.KOOT_PWA_PATHNAME = JSON.stringify(pwa.pathname)
     } else {
         pwa = false
-        process.env.SUPER_PWA_AUTO_REGISTER = JSON.stringify(false)
+        process.env.KOOT_PWA_AUTO_REGISTER = JSON.stringify(false)
     }
 
     // 处理：HTML模板（如果有）
-    if (typeof process.env.SUPER_HTML_TEMPLATE !== 'string') {
+    if (typeof process.env.KOOT_HTML_TEMPLATE !== 'string') {
         if (typeof template === 'undefined')
             template = await readBaseConfig('template')
 
@@ -349,7 +349,7 @@ module.exports = async (obj) => {
             template = await fs.readFile(path.resolve(
                 process.cwd(), template
             ))
-            process.env.SUPER_HTML_TEMPLATE = template
+            process.env.KOOT_HTML_TEMPLATE = template
         }
     }
 
@@ -373,7 +373,7 @@ module.exports = async (obj) => {
     await _beforeBuild(args)
     console.log(
         chalk.cyan('⚑ ')
-        + chalk.yellowBright('[super/build] ')
+        + chalk.yellowBright('[koot/build] ')
         + `callback: ` + chalk.green('before')
     )
     if (typeof beforeBuild === 'function')
@@ -383,7 +383,7 @@ module.exports = async (obj) => {
     if (typeof config !== 'object') config = {}
 
     // 显示loading
-    const building = spinner(chalk.yellowBright('[super/build] ') + __('build.building'))
+    const building = spinner(chalk.yellowBright('[koot/build] ') + __('build.building'))
     const buildingComplete = () => {
         building.stop()
         console.log(' ')
@@ -412,7 +412,7 @@ module.exports = async (obj) => {
         // 自定方法回调
         console.log(
             chalk.cyan('⚑ ')
-            + chalk.yellowBright('[super/build] ')
+            + chalk.yellowBright('[koot/build] ')
             + `callback: ` + chalk.green('after')
         )
         if (typeof afterBuild === 'function')
@@ -421,7 +421,7 @@ module.exports = async (obj) => {
         // 标记完成
         console.log(
             chalk.green('√ ')
-            + chalk.yellowBright('[super/build] ')
+            + chalk.yellowBright('[koot/build] ')
             + __('build.build_complete', {
                 type: chalk.cyanBright(appType),
                 stage: chalk.green(STAGE),
@@ -514,8 +514,6 @@ module.exports = async (obj) => {
             const defaultConfig = await createDefaultConfig(opt)
             // let defaultSPAConfig = await createSPADefaultConfig(opt)
             const defaultClientEntry = path.resolve(
-                // RUN_PATH,
-                // `./system/super3/client`
                 __dirname,
                 '../../',
                 appType,
@@ -600,7 +598,7 @@ module.exports = async (obj) => {
                     const isSeperateLocale = localeId && typeof localesObj === 'object'
 
                     config.plugins.unshift(
-                        new SuperI18nPlugin({
+                        new KootI18nPlugin({
                             stage: STAGE,
                             functionName: i18n ? i18n.expr : undefined,
                             localeId: i18n ? (isSeperateLocale ? localeId : undefined) : undefined,
@@ -725,7 +723,7 @@ module.exports = async (obj) => {
         //     config.output.path = path.resolve(RUN_PATH, SYSTEM_CONFIG.WEBPACK_SERVER_OUTPATH)
 
         thisConfig.plugins.unshift(
-            new SuperI18nPlugin({
+            new KootI18nPlugin({
                 stage: STAGE,
                 functionName: i18n ? i18n.expr : undefined,
             })

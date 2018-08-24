@@ -46,10 +46,10 @@ const run = async () => {
 
     // 打包
     if (build) {
-        const building = spinner(chalk.yellowBright('[super/build] ') + __('build.building'))
+        const building = spinner(chalk.yellowBright('[koot/build] ') + __('build.building'))
         await new Promise((resolve, reject) => {
             const child = npmRunScript(
-                `super-build`, {
+                `koot-build`, {
                     stdio: 'ignore'
                 }
             )

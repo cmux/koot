@@ -1,7 +1,7 @@
 /**
  * 默认的入口
  * 
- * @module super-project/defaults/entrypoints
+ * @module koot/defaults/entrypoints
  */
 
 module.exports = [
