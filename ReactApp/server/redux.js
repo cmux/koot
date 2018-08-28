@@ -1,3 +1,5 @@
+
+// TODO: change to one action type , like: CHANGE_BASE_INFO
 export const CHANGE_LANGUAGE = 'CHANGE_LANGUAGE'
 export const TELL_CLIENT_URL = 'TELL_CLIENT_URL'
 
