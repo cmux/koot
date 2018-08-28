@@ -186,6 +186,8 @@ const run = async () => {
             const pathLogErr = path.resolve(process.cwd(), `logs/dev/${stage}-error.log`)
             if (fs.existsSync(pathLogOut)) await fs.remove(pathLogOut)
             if (fs.existsSync(pathLogErr)) await fs.remove(pathLogErr)
+            await fs.ensureFile(pathLogOut)
+            await fs.ensureFile(pathLogErr)
             const config = {
                 name: `dev-${stage}-${name}`,
                 script: path.resolve(__dirname, './build.js'),
