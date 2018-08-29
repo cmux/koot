@@ -4,22 +4,18 @@ process.env.DO_WEBPACK = true
 const fs = require('fs-extra')
 const path = require('path')
 const chalk = require('chalk')
-
-const getAppType = require('../../utils/get-app-type')
-const __ = require('../../utils/translate')
-const getPort = require('../../utils/get-port')
-const spinner = require('../../utils/spinner')
-const getChunkmapPath = require('../../utils/get-chunkmap-path')
-const defaultBuildConfig = require('../../defaults/build-config')
-const getDistPath = require('../../utils/get-dist-path')
-const readBaseConfig = require('../../utils/read-base-config')
-
-//
 const webpack = require('webpack')
 const WebpackDevServer = require('webpack-dev-server')
 const WebpackConfig = require('webpack-config').default
 const CopyWebpackPlugin = require('copy-webpack-plugin')
-const common = require('./common')
+
+const __ = require('../../utils/translate')
+const spinner = require('../../utils/spinner')
+const getDistPath = require('../../utils/get-dist-path')
+const readBaseConfig = require('../../utils/read-base-config')
+
+//
+const createWebpackConfig = require('./config/create')
 const createPWAsw = require('../pwa/create')
 const KootI18nPlugin = require("./plugins/i18n")
 const SpaTemplatePlugin = require("./plugins/spa-template")
@@ -28,7 +24,6 @@ const GenerateChunkmapPlugin = require("./plugins/generate-chunkmap")
 
 const afterServerProd = require('./lifecyle/after-server-prod')
 
-const defaultsPWA = require('../../defaults/pwa')
 const defaultPublicPathName = 'includes'
 
 
@@ -124,50 +119,9 @@ function makeItButter(config) {
     return config
 }
 
-/**
- * 根据应用配置生产出一个默认webpack配置
- * 
- * @param {any} opt 应用配置
- * @param {any} _path 读取默认配置文件地址，非必须
- * @returns 
- */
-async function createDefaultConfig(opt, _path) {
-    const {
-        WEBPACK_BUILD_ENV: ENV,
-        WEBPACK_BUILD_STAGE: STAGE,
-        WEBPACK_BUILD_TYPE: TYPE,
-    } = process.env
-
-    // 根据当前环境变量，定位对应的默认配置文件
-    _path = _path || path.resolve(__dirname, `./defaults/${TYPE}.${STAGE}.${ENV}.js`)
-
-    const factory = await getConfigFactory(_path)
-    const config = await factory(opt)
-
-    return config
-}
-
-/**
- * 获取配置生成的工厂方法
- * 
- * @param {any} path 工厂方法对应的文件路径
- * @returns 工厂方法
- */
-async function getConfigFactory(path) {
-
-    let factory
-
-    if (fs.existsSync(path))
-        factory = await require(path)
-    else
-        console.log(`!!! ERROR !!!  没找到对应的配置文件: ${path}`)
-
-    return factory
-}
 
 
-
-const _beforeBuild = async () => {
+const before = async () => {
     const {
         WEBPACK_BUILD_ENV: ENV,
     } = process.env
@@ -184,193 +138,9 @@ const _afterBuild = async () => {
  * Webpack 运行入口方法
  */
 module.exports = async (obj) => {
-    let {
-        config,
-        dist,
-        aliases,
-        i18n,
-        pwa,
-        devServer,
-        beforeBuild,
-        afterBuild,
-        port,
-        defines,
-        template,
-        inject,
-    } = Object.assign({}, defaultBuildConfig, obj)
+    const webpackConfig = await createWebpackConfig(obj)
 
-    // 获取 App 类型
-    const appType = await getAppType()
-
-    // 获取当前环境的服务器端口
-    process.env.SERVER_PORT = getPort(port)
-
-    const {
-        WEBPACK_BUILD_TYPE: TYPE,
-        WEBPACK_BUILD_ENV: ENV,
-        WEBPACK_BUILD_STAGE: STAGE,
-        // WEBPACK_ANALYZE,
-        WEBPACK_DEV_SERVER_PORT: CLIENT_DEV_PORT,
-        // SERVER_DOMAIN,
-        // SERVER_PORT,
-    } = process.env
-
-    // DEBUG && console.log('============== Webpack Debug =============')
-    // DEBUG && console.log('Webpack 打包环境：', TYPE, STAGE, ENV)
-    console.log(
-        chalk.cyan('  ')
-        + chalk.yellowBright('[koot/build] ')
-        + __('build.build_start', {
-            type: chalk.cyanBright(appType),
-            stage: chalk.green(STAGE),
-            env: chalk.green(ENV),
-        })
-    )
-
-    // webpack 执行用的配置对象
-    let webpackConfigs = []
-
-    // 创建默认rules
-    const createBaseConfig = async () =>
-        await common.factory({
-            aliases,
-            env: ENV,
-            stage: STAGE,
-            spa: false,
-            defines,
-        })
-
-    { // 处理打包结果目录
-        if (dist.substr(0, 1) === '.') dist = path.resolve(process.cwd(), dist)
-        // 将打包目录存入环境变量
-        // 在打包时，会使用 DefinePlugin 插件将该值赋值到 __DIST__ 全部变量中，以供项目内代码使用
-        // process.env.KOOT_DIST_DIR = dist
-        process.env.KOOT_DIST_DIR = path.relative(process.cwd(), dist)
-
-        // 确保打包目录存在
-        await fs.ensureDir(dist)
-    }
-
-    // chunkmap 文件地址
-    const pathnameChunkmap = getChunkmapPath()
-
-    // 处理配置：i18n
-    if (TYPE === 'spa') {
-        // SPA：临时禁用
-        i18n = false
-        process.env.KOOT_I18N = JSON.stringify(false)
-        if (STAGE === 'client') {
-            console.log(
-                chalk.redBright('× ')
-                + chalk.yellowBright('[koot/build] ')
-                + `i18n temporarily ` + chalk.redBright(`disabled`) + ` for `
-                + chalk.cyanBright('SPA')
-            )
-        }
-    } else if (typeof i18n === 'object') {
-        let type = (() => {
-            if (TYPE === 'spa') return 'redux'
-            if (ENV === 'dev') return 'redux'
-            return 'default'
-        })()
-        let expr = '__'
-        let locales
-        let cookieKey
-        let domain
-
-        if (Array.isArray(i18n)) {
-            locales = [...i18n]
-        } else {
-            type = i18n.type || type
-            expr = i18n.expr || expr
-            locales = [...i18n.locales || []]
-            cookieKey = i18n.cookieKey || cookieKey
-            domain = i18n.domain || domain || undefined
-        }
-
-        if (ENV === 'dev') type = 'redux'
-        if (type === 'store') type = 'redux'
-        type = type.toLowerCase()
-
-        if (STAGE === 'client') {
-            console.log(
-                chalk.green('√ ')
-                + chalk.yellowBright('[koot/build] ')
-                + `i18n ` + chalk.yellowBright(`enabled`)
-            )
-            console.log(`  > type: ${chalk.yellowBright(type)}`)
-            console.log(`  > locales: ${locales.map(arr => arr[0]).join(', ')}`)
-        }
-
-        locales.forEach(arr => {
-            if (arr[2]) return
-            const pathname = path.resolve(process.cwd(), arr[1])
-            arr[1] = fs.readJsonSync(pathname)
-            arr[2] = pathname
-        })
-
-        process.env.KOOT_I18N = JSON.stringify(true)
-        process.env.KOOT_I18N_TYPE = JSON.stringify(type)
-        process.env.KOOT_I18N_LOCALES = JSON.stringify(locales)
-        if (cookieKey) process.env.KOOT_I18N_COOKIE_KEY = cookieKey
-        if (domain) process.env.KOOT_I18N_COOKIE_DOMAIN = domain
-
-        i18n = {
-            type,
-            expr,
-            locales,
-        }
-
-        if (ENV === 'dev' && type === 'default') {
-            console.log(`  > We recommend using ${chalk.greenBright('redux')} mode in DEV enviroment.`)
-        }
-    } else {
-        i18n = false
-        process.env.KOOT_I18N = JSON.stringify(false)
-    }
-
-    // 处理配置：PWA
-    if (pwa === true || typeof pwa === 'undefined') pwa = {}
-    if (typeof pwa === 'object') {
-        pwa = Object.assign({}, defaultsPWA, pwa)
-        process.env.KOOT_PWA_AUTO_REGISTER = JSON.stringify(pwa.auto)
-        process.env.KOOT_PWA_PATHNAME = JSON.stringify(pwa.pathname)
-    } else {
-        pwa = false
-        process.env.KOOT_PWA_AUTO_REGISTER = JSON.stringify(false)
-    }
-
-    // 处理：HTML模板（如果有）
-    if (typeof process.env.KOOT_HTML_TEMPLATE !== 'string') {
-        if (typeof template === 'undefined')
-            template = await readBaseConfig('template')
-
-        if (typeof template === 'string' && template.substr(0, 2) === './') {
-            template = await fs.readFile(path.resolve(
-                process.cwd(), template
-            ))
-            process.env.KOOT_HTML_TEMPLATE = template
-        }
-    }
-
-    // 确认默认的 publicPath
-    const defaultPublicPath = (TYPE === 'spa' ? '' : '/') + `${defaultPublicPathName}/`
-
-    // 开始前和开始后回调函数的参数
-    const args = {
-        config,
-        dist,
-        aliases,
-        i18n,
-        pwa,
-        devServer,
-        port,
-        defines,
-        template,
-        inject,
-    }
-
-    await _beforeBuild(args)
+    await before()
     console.log(
         chalk.cyan('⚑ ')
         + chalk.yellowBright('[koot/build] ')
