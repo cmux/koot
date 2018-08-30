@@ -13,11 +13,11 @@ module.exports = ({
 
     if (typeof config === 'string') {
         config = path.resolve(config)
-        process.env.WEBPACK_BUILD_CONFIG_PATHNAME = config
+        process.env.KOOT_BUILD_CONFIG_PATHNAME = config
         console.log(
             chalk.green('√ ')
             + chalk.yellowBright('[koot/build] ')
-            + `set env ` + chalk.green('WEBPACK_BUILD_CONFIG_PATHNAME')
+            + `set env ` + chalk.green('KOOT_BUILD_CONFIG_PATHNAME')
             + `\n             -> `
             + config
         )

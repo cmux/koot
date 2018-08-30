@@ -1,9 +1,9 @@
 const fs = require('fs')
-const path = require('path')
+const getPathnameProjectConfigFile = require('./get-pathname-project-config-file')
 // const readBuildConfigFile = require('../utils/read-build-config-file')
 
 const extractType = () => {
-    const pathnameKootJS = path.resolve(__dirname, '../../../koot.js')
+    const pathnameKootJS = getPathnameProjectConfigFile()
 
     try {
         const { type } = require(pathnameKootJS)

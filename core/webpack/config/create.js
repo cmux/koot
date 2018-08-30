@@ -1,24 +1,16 @@
-const fs = require('fs-extra')
-const path = require('path')
-const chalk = require('chalk')
-
-const createGlobalDefaultConfig = require('./create-global-default')
-const createTargetDefaultConfig = require('./create-target-default')
-
 // Libs & Utilities
 const getAppType = require('../../../utils/get-app-type')
 const getPort = require('../../../utils/get-port')
 const getChunkmapPathname = require('../../../utils/get-chunkmap-path')
-const log = require('../../../libs/log')
 
 // Transformers
 const transformDist = require('./transform-dist')
 const transformI18n = require('./transform-i18n')
 const transformPWA = require('./transform-pwa')
 const transformTemplate = require('./transform-template')
+const transformConfigClient = require('./transform-config-client')
 
 // Defaults & Data
-const common = require('../common')
 const defaults = require('../../../defaults/build-config')
 
 /**
@@ -28,80 +20,61 @@ const defaults = require('../../../defaults/build-config')
  * @returns {Object} 生成的完整 Webpack 配置对象
  */
 module.exports = async (kootConfig = {}) => {
-    // 抽取配置
-    let {
-        config,
-        dist,
-        aliases,
-        i18n,
-        pwa,
-        devServer,
-        beforeBuild,
-        afterBuild,
-        port,
-        defines,
-        template,
-        inject,
-    } = Object.assign({}, defaults, kootConfig)
-
-    // 确定项目类型
-    const appType = await getAppType()
-
-    // 确定服务器运行端口，并赋值到环境变量
-    process.env.SERVER_PORT = getPort(port)
-
     // 确定环境变量
     const {
         WEBPACK_BUILD_TYPE: TYPE,
-        WEBPACK_BUILD_ENV: ENV,
+        // WEBPACK_BUILD_ENV: ENV,
         WEBPACK_BUILD_STAGE: STAGE,
         // WEBPACK_ANALYZE,
-        WEBPACK_DEV_SERVER_PORT: CLIENT_DEV_PORT,
+        // WEBPACK_DEV_SERVER_PORT: CLIENT_DEV_PORT,
         // SERVER_DOMAIN,
         // SERVER_PORT,
     } = process.env
 
-    // 确认默认的 publicPath
-    const defaultPublicPath = (TYPE === 'spa' ? '' : '/') + `includes/`
+    const defaultPublicDirName = 'includes'
+    const defaultPublicPathname = (TYPE === 'spa' ? '' : '/') + `${defaultPublicDirName}/`
 
-    // Webpack 配置
-    let webpackConfig = {}
-
-    // DEBUG && console.log('============== Webpack Debug =============')
-    // DEBUG && console.log('Webpack 打包环境：', TYPE, STAGE, ENV)
-    log('build', __('build.build_start', {
-        type: chalk.cyanBright(appType),
-        stage: chalk.green(STAGE),
-        env: chalk.green(ENV),
-    }))
-
-    // ========================================================================
-    //
-    // 处理配置
-    //
-    // ========================================================================
-
-    dist = await transformDist(dist)
-    i18n = await transformI18n(i18n)
-    pwa = await transformPWA(pwa)
-    template = await transformTemplate(template)
-
-    const createGlobalDefault = await createGlobalDefaultConfig({
-        aliases, defines
+    // 抽取配置
+    const data = Object.assign({}, defaults, kootConfig, {
+        appType: await getAppType(),
+        webpackConfig: {},
+        defaultPublicDirName,
+        defaultPublicPathname,
     })
-    const pathnameChunkmap = getChunkmapPathname()
-    const callbackArgs = {
-        config,
-        dist,
-        aliases,
-        i18n,
-        pwa,
-        devServer,
-        port,
-        defines,
-        template,
-        inject,
-    }
+
+    data.portServer = getPort(data.port)
+    process.env.SERVER_PORT = data.portServer
+
+    // ========================================================================
+    //
+    // 处理配置 - 公共
+    //
+    // ========================================================================
+
+    data.dist = await transformDist(data.dist)
+    data.i18n = await transformI18n(data.i18n)
+    data.pwa = await transformPWA(data.pwa)
+    data.template = await transformTemplate(data.template)
+    data.pathnameChunkmap = await getChunkmapPathname()
+
+    if (typeof data.config === 'function') data.config = await data.config()
+    if (typeof data.config !== 'object') data.config = {}
+
+    // ========================================================================
+    //
+    // 处理配置 - 客户端 / 开发 (CLIENT / DEV)
+    //
+    // ========================================================================
+    if (STAGE === 'client')
+        data.webpackConfig = await transformConfigClient(data)
 
     // TODO:
+
+    // ========================================================================
+    //
+    // 返回结果
+    //
+    // ========================================================================
+
+    return data
 }

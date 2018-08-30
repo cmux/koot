@@ -10,7 +10,7 @@ module.exports = (server) => {
 
     const koaStatic = require('koa-static')
     const convert = require('koa-convert')
-    // const rootPath = process.cwd() + '/dist/public'
+    // const rootPath = getCwd() + '/dist/public'
     const rootPath = path.resolve(getDistPath(), './public')
     const option = {
         maxage: 0,

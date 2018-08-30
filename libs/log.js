@@ -37,6 +37,12 @@ const log = (mark, type, content) => {
             markColor = 'green'
             break
         }
+        case 'cb':
+        case 'callback': {
+            mark = '⚑ '
+            markColor = 'cyan'
+            break
+        }
         default: {
             mark = '  '
         }

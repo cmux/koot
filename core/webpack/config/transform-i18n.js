@@ -1,8 +1,7 @@
 const fs = require('fs-extra')
 const path = require('path')
 const chalk = require('chalk')
-
-const log = require('../../../libs/log')
+const getCwd = require('../../../utils/get-cwd')
 
 /**
  * 处理 i18n 配置
@@ -14,9 +13,9 @@ module.exports = async (i18n) => {
     const {
         WEBPACK_BUILD_TYPE: TYPE,
         WEBPACK_BUILD_ENV: ENV,
-        WEBPACK_BUILD_STAGE: STAGE,
+        // WEBPACK_BUILD_STAGE: STAGE,
         // WEBPACK_ANALYZE,
-        WEBPACK_DEV_SERVER_PORT: CLIENT_DEV_PORT,
+        // WEBPACK_DEV_SERVER_PORT: CLIENT_DEV_PORT,
         // SERVER_DOMAIN,
         // SERVER_PORT,
     } = process.env
@@ -25,11 +24,6 @@ module.exports = async (i18n) => {
         // SPA：临时禁用
         i18n = false
         process.env.KOOT_I18N = JSON.stringify(false)
-        if (STAGE === 'client')
-            log('error', 'build',
-                `i18n temporarily ` + chalk.redBright(`disabled`) + ` for `
-                + chalk.cyanBright('SPA')
-            )
         return i18n
     }
 
@@ -58,17 +52,9 @@ module.exports = async (i18n) => {
         if (type.toLowerCase() === 'store') type = 'redux'
         type = type.toLowerCase()
 
-        if (STAGE === 'client') {
-            log('success', 'build',
-                `i18n ` + chalk.yellowBright(`enabled`)
-            )
-            console.log(`  > type: ${chalk.yellowBright(type)}`)
-            console.log(`  > locales: ${locales.map(arr => arr[0]).join(', ')}`)
-        }
-
         locales.forEach(arr => {
             if (arr[2]) return
-            const pathname = path.resolve(process.cwd(), arr[1])
+            const pathname = path.resolve(getCwd(), arr[1])
             arr[1] = fs.readJsonSync(pathname)
             arr[2] = pathname
         })
@@ -83,10 +69,6 @@ module.exports = async (i18n) => {
             type,
             expr,
             locales,
-        }
-
-        if (ENV === 'dev' && type === 'default') {
-            console.log(`  > We recommend using ${chalk.greenBright('redux')} mode in DEV enviroment.`)
         }
 
         return i18n

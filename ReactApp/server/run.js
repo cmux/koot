@@ -75,10 +75,10 @@ export default async (app, {
 
         // if (template.substr(0, 2) === './') {
         //     // template = require(`raw-loader?` + path.resolve(
-        //     //     process.cwd(), template
+        //     //     getCwd(), template
         //     // ))
         //     template = fs.readFileSync(path.resolve(
-        //         process.cwd(), template
+        //         getCwd(), template
         //     ), 'utf-8')
         // }
 

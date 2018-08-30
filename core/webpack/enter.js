@@ -12,26 +12,23 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const __ = require('../../utils/translate')
 const spinner = require('../../utils/spinner')
 const getDistPath = require('../../utils/get-dist-path')
-const readBaseConfig = require('../../utils/read-base-config')
+const getAppType = require('../../utils/get-app-type')
+const getCwd = require('../../utils/get-cwd')
 
-//
+const log = require('../../libs/log')
+
 const createWebpackConfig = require('./config/create')
 const createPWAsw = require('../pwa/create')
 const KootI18nPlugin = require("./plugins/i18n")
-const SpaTemplatePlugin = require("./plugins/spa-template")
-const DevServerAfterPlugin = require("./plugins/dev-server-after")
-const GenerateChunkmapPlugin = require("./plugins/generate-chunkmap")
 
 const afterServerProd = require('./lifecyle/after-server-prod')
-
-const defaultPublicPathName = 'includes'
 
 
 // 调试webpack模式
 // const DEBUG = 1
 
 // 程序启动路径，作为查找文件的基础
-const RUN_PATH = process.cwd();
+const RUN_PATH = getCwd()
 
 // 初始化环境变量
 require('../../utils/init-node-env')()
@@ -43,127 +40,43 @@ require('../../utils/init-node-env')()
 process.env.DO_WEBPACK = false
 
 /**
- * 修复配置
- * 配置有可能是 Array
- * 
- * @param {any} config webpack的配置对象
- * @returns 修复后的配置对象
- */
-function makeItButter(config) {
-    // 数组情况，拆分每项分别处理
-    if (Array.isArray(config))
-        return config.map(thisConfig => makeItButter(thisConfig))
-
-    // no ref obj
-    config = Object.assign({}, config)
-
-    // try to fix a pm2 bug that will currupt [name] value
-    if (config.output) {
-        for (let key in config.output) {
-            if (typeof config.output[key] === 'string')
-                config.output[key] = config.output[key].replace(/-_-_-_-_-_-(.+?)-_-_-_-_-_-/g, '[name]')
-        }
-    }
-
-    // remove all undefined from plugins
-    if (!Array.isArray(config.plugins)) {
-        config.plugins = []
-    }
-    config.plugins = config.plugins.filter(plugin => typeof plugin !== 'undefined')
-
-    // remove duplicate plugins
-    // if (Array.isArray(config.plugins)) {
-    //     config.plugins = removeDuplicateObject(config.plugins)
-    // }
-
-    // remove duplicate rules
-
-    if (Array.isArray(config.module.rules)) {
-        config.module.rules = removeDuplicateObject(config.module.rules)
-    }
-
-    // 删除重复对象
-    function removeDuplicateObject(list) {
-        let map = {}
-        list = (() => {
-            return list.map((rule) => {
-                let key = JSON.stringify(rule)
-                key = key.toLowerCase().replace(/ /g, '')
-                if (map[key])
-                    rule = undefined
-                else
-                    map[key] = 1
-                return rule
-            })
-        })()
-        return list.filter(rule => rule != undefined)
-    }
-
-    // analyze
-    const isAnalyze = (JSON.parse(process.env.WEBPACK_ANALYZE) || config.analyze) ? true : false
-    if (isAnalyze) {
-        config.output.filename = 'entry.[id].[name].js'
-        config.output.chunkFilename = 'chunk.[id].[name].js'
-        config.plugins.push(
-            new (require('webpack-bundle-analyzer').BundleAnalyzerPlugin)()
-        )
-    }
-
-    // custom logic use
-    delete config.__ext
-    delete config.spa
-    delete config.analyzer
-    delete config.htmlPath
-
-    // no ref obj
-    return config
-}
-
-
-
-const before = async () => {
-    const {
-        WEBPACK_BUILD_ENV: ENV,
-    } = process.env
-
-    if (ENV === 'dev')
-        fs.ensureFileSync(path.resolve(getDistPath(), `./server/index.js`))
-}
-const _afterBuild = async () => {
-    // console.log(app)
-    // console.log('AFTER')
-}
-
-/**
  * Webpack 运行入口方法
  */
-module.exports = async (obj) => {
-    const webpackConfig = await createWebpackConfig(obj)
+module.exports = async (kootConfig) => {
+    const timestampStart = Date.now()
 
-    await before()
-    console.log(
-        chalk.cyan('⚑ ')
-        + chalk.yellowBright('[koot/build] ')
-        + `callback: ` + chalk.green('before')
-    )
-    if (typeof beforeBuild === 'function')
-        await beforeBuild(args)
+    // 抽取配置
+    let {
+        beforeBuild,
+        afterBuild,
+    } = kootConfig
 
-    if (typeof config === 'function') config = await config()
-    if (typeof config !== 'object') config = {}
+    // 确定项目类型
+    const appType = await getAppType()
 
-    // 显示loading
-    const building = spinner(chalk.yellowBright('[koot/build] ') + __('build.building'))
-    const buildingComplete = () => {
-        building.stop()
-        console.log(' ')
+    // 确定环境变量
+    const {
+        WEBPACK_BUILD_TYPE: TYPE,
+        WEBPACK_BUILD_ENV: ENV,
+        WEBPACK_BUILD_STAGE: STAGE,
+        WEBPACK_DEV_SERVER_PORT: CLIENT_DEV_PORT,
+    } = process.env
+
+    // DEBUG && console.log('============== Webpack Debug =============')
+    // DEBUG && console.log('Webpack 打包环境：', TYPE, STAGE, ENV)
+    log('build', __('build.build_start', {
+        type: chalk.cyanBright(appType),
+        stage: chalk.green(STAGE),
+        env: chalk.green(ENV),
+    }))
+
+    const before = async () => {
+        if (ENV === 'dev') fs.ensureFileSync(path.resolve(getDistPath(), `./server/index.js`))
+        log('callback', 'build', `callback: ` + chalk.green('before'))
+        if (typeof beforeBuild === 'function') await beforeBuild(data)
     }
 
-    /**
-     * Webpack 打包成功后的回调
-     */
     const after = async () => {
-        const theArgs = { ...args }
         console.log(' ')
 
         if (pwa && STAGE === 'client' && ENV === 'prod') {
@@ -173,253 +86,71 @@ module.exports = async (obj) => {
 
         if (STAGE === 'server' && ENV === 'prod') {
             // 生成PWA使用的 service-worker.js
-            await afterServerProd(theArgs)
+            await afterServerProd(data)
         }
 
-        // 默认方法
-        await _afterBuild(theArgs)
-
-        // 自定方法回调
-        console.log(
-            chalk.cyan('⚑ ')
-            + chalk.yellowBright('[koot/build] ')
-            + `callback: ` + chalk.green('after')
-        )
-        if (typeof afterBuild === 'function')
-            await afterBuild(theArgs)
+        log('callback', 'build', `callback: ` + chalk.green('after'))
+        if (typeof afterBuild === 'function') await afterBuild(data)
 
         // 标记完成
-        console.log(
-            chalk.green('√ ')
-            + chalk.yellowBright('[koot/build] ')
-            + __('build.build_complete', {
-                type: chalk.cyanBright(appType),
-                stage: chalk.green(STAGE),
-                env: chalk.green(ENV),
-            })
-        )
+        log('success', 'build', __('build.build_complete', {
+            type: chalk.cyanBright(appType),
+            stage: chalk.green(STAGE),
+            env: chalk.green(ENV),
+        }))
 
-        if (ENV === 'dev')
-            console.log(`  > ${(new Date()).toLocaleString()}`)
+        console.log(`  > ${Date.now() - timestampStart}ms | ${(new Date()).toLocaleString()}`)
 
         return
     }
 
-    /**
-     * 处理 Webpack 配置对象
-     * 
-     * @param {object} custom 合并 Webpack 配置对象
-     * @returns 合并后的值
-     */
-    const parseConfig = async (config = {}) => {
-        const baseConfig = await createBaseConfig()
-        // 合并 module.rules / loaders
-        if (typeof config.module === 'object') {
-            if (!Array.isArray(config.module.rules)) {
-                config.module.rules = [
-                    ...baseConfig.module.rules,
-                ]
-            } else {
-                if (config.module.rules[0] === true) {
-                    config.module.rules.shift()
-                } else {
-                    config.module.rules = [
-                        ...baseConfig.module.rules,
-                        ...config.module.rules
-                    ]
-                }
-                baseConfig.module.rules = undefined
-            }
-        } else {
-            config.module = {
-                rules: [
-                    ...baseConfig.module.rules
-                ]
-            }
-        }
+    // ========================================================================
+    //
+    // 创建对应当前环境的 Webpack 配置
+    //
+    // ========================================================================
 
-        // 合并 plugins
-        if (STAGE === 'server') {
-            config.plugins = [
-                ...baseConfig.plugins,
-            ]
-        } else if (!Array.isArray(config.plugins)) {
-            // config.plugins = [
-            //     ...baseConfig.plugins,
-            // ]
-        } else {
-            if (config.plugins[0] === true) {
-                config.plugins.shift()
-            } else {
-                config.plugins = [
-                    // ...baseConfig.plugins,
-                    ...config.plugins
-                ]
-            }
-            baseConfig.plugins = undefined
-        }
+    const data = await createWebpackConfig(Object.assign(kootConfig, {
+        afterBuild: after
+    }))
+    const {
+        webpackConfig,
+        pwa,
+        i18n,
+        devServer,
+        pathnameChunkmap,
+    } = data
 
-        return config
+    if (STAGE === 'client' && TYPE === 'spa') {
+        log('error', 'build',
+            `i18n temporarily ` + chalk.redBright(`disabled`) + ` for `
+            + chalk.cyanBright('SPA')
+        )
+    } else if (typeof i18n === 'object') {
+        if (STAGE === 'client') {
+            log('success', 'build',
+                `i18n ` + chalk.yellowBright(`enabled`)
+            )
+            console.log(`  > type: ${chalk.yellowBright(i18n.type)}`)
+            console.log(`  > locales: ${i18n.locales.map(arr => arr[0]).join(', ')}`)
+        }
+        if (ENV === 'dev' && i18n.type === 'default') {
+            console.log(`  > We recommend using ${chalk.greenBright('redux')} mode in DEV enviroment.`)
+        }
     }
 
-    /**
-     * 处理客户端配置文件
-     * [n个应用] x [m个打包配置] = [webpack打包配置集合]
-     */
-    const handlerClientConfig = async () => {
+    // ========================================================================
+    //
+    // 准备开始打包
+    //
+    // ========================================================================
 
-        // 把装载的所有子应用的 webpack 配置都加上
-        // const appsConfig = await require('../../config/apps')
+    await before()
 
-        // for (let appName in appsConfig) {
-        const handleSingleConfig = async (localeId, localesObj) => {
-            let opt = {
-                RUN_PATH,
-                CLIENT_DEV_PORT,
-                localeId,
-                /*APP_KEY: appName */
-            }
-            const baseConfig = await createBaseConfig()
-            delete baseConfig.module.rules
-            const defaultConfig = await createDefaultConfig(opt)
-            // let defaultSPAConfig = await createSPADefaultConfig(opt)
-            const defaultClientEntry = path.resolve(
-                __dirname,
-                '../../',
-                appType,
-                './client'
-            )
-
-            // let appConfig = appsConfig[appName]
-
-            // 如果没有webpack配置，则表示没有react，不需要打包
-            // if (!appConfig.webpack) continue
-
-            let clientConfigs = config
-
-            // 统一转成数组，支持多个client配置
-            if (!Array.isArray(clientConfigs)) {
-                clientConfigs = [clientConfigs]
-            }
-
-            for (let clientConfig of clientConfigs) {
-                const config = new WebpackConfig()
-                clientConfig = new WebpackConfig()
-                    .merge(baseConfig)
-                    .merge(clientConfig)
-
-                // 跟进打包环境和用户自定义配置，扩展webpack配置
-                if (clientConfig.__ext) {
-                    clientConfig.merge(clientConfig.__ext[ENV])
-                }
-
-                let _defaultConfig = (() => {
-
-                    let config = Object.assign({}, defaultConfig)
-
-                    // 如果是SPA应用
-                    // if (clientConfig.spa) {
-                    //     config = Object.assign({}, defaultSPAConfig)
-                    // }
-                    return config
-                })()
-
-                // 如果自定义了，则清除默认
-                if (clientConfig.entry) _defaultConfig.entry = undefined
-                if (clientConfig.output) _defaultConfig.output = undefined
-
-                await parseConfig(clientConfig)
-
-                config
-                    .merge(_defaultConfig)
-                    .merge(clientConfig)
-
-                { // 处理 output
-                    if (typeof config.output !== 'object')
-                        config.output = {
-                            // path: path.resolve(dist, `./public/includes`),
-                            // publicPath: 'includes/',
-                        }
-                    if (!config.output.path) {
-                        // config.output.path = path.resolve(dist, `./public`)
-                        config.output.path = path.resolve(dist, `./public/${defaultPublicPathName}`)
-                        config.output.publicPath = defaultPublicPath
-                    }
-                    if (!config.output.publicPath)
-                        config.output.publicPath = defaultPublicPath
-                }
-
-                { // 处理 entry
-                    if (
-                        typeof config.entry === 'object' &&
-                        !config.entry.client
-                    ) {
-                        config.entry.client = defaultClientEntry
-                    } else if (config.entry === 'object') {
-
-                    } else if (typeof config.entry !== 'string') {
-                        config.entry = {
-                            client: defaultClientEntry
-                        }
-                    }
-                }
-
-                { // 添加默认插件
-                    const isSeperateLocale = localeId && typeof localesObj === 'object'
-
-                    config.plugins.unshift(
-                        new KootI18nPlugin({
-                            stage: STAGE,
-                            functionName: i18n ? i18n.expr : undefined,
-                            localeId: i18n ? (isSeperateLocale ? localeId : undefined) : undefined,
-                            locales: i18n ? (isSeperateLocale ? localesObj : undefined) : undefined,
-                        })
-                    )
-
-                    if (STAGE === 'client' && ENV === 'dev')
-                        config.plugins.push(
-                            new DevServerAfterPlugin(after)
-                        )
-
-                    if (TYPE === 'spa')
-                        config.plugins.push(
-                            new SpaTemplatePlugin({
-                                localeId: isSeperateLocale ? localeId : undefined,
-                                inject,
-                            })
-                        )
-                    else
-                        config.plugins.push(
-                            await new GenerateChunkmapPlugin({
-                                localeId: isSeperateLocale ? localeId : undefined,
-                            })
-                        )
-                }
-
-                webpackConfigs.push(config)
-            }
-        }
-
-        if (typeof i18n === 'object') {
-            const {
-                type = 'default'
-            } = i18n
-            switch (type) {
-                case 'redux': {
-                    await handleSingleConfig()
-                    break
-                }
-                default: {
-                    for (let arr of i18n.locales) {
-                        await handleSingleConfig(arr[0], arr[1])
-                    }
-                }
-            }
-        } else {
-            await handleSingleConfig()
-        }
-
-        // }
+    const spinnerBuilding = spinner(chalk.yellowBright('[koot/build] ') + __('build.building'))
+    const buildingComplete = () => {
+        spinnerBuilding.stop()
+        console.log(' ')
     }
 
     /**
@@ -515,36 +246,19 @@ module.exports = async (obj) => {
         webpackConfigs = thisConfig
     }
 
-    const logConfigToFile = async () => {
-        await fs.ensureDir(
-            path.resolve(
-                RUN_PATH,
-                `./logs/webpack-config`
-            )
-        )
-        await fs.writeFile(
-            path.resolve(
-                RUN_PATH,
-                `./logs/webpack-config/${TYPE}.${STAGE}.${ENV}.${(new Date()).toISOString().replace(/:/g, '_')}.json`
-            ),
-            JSON.stringify(webpackConfigs, null, '\t'),
-            'utf-8'
-        )
-        // DEBUG && console.log('执行配置：')
-        // DEBUG && console.log('-----------------------------------------')
-        // DEBUG && console.log(JSON.stringify(webpackConfigs))
-        // DEBUG && console.log('============== Webpack Debug End =============')
-        return
-    }
+    const pathConfigLogs = path.resolve(RUN_PATH, `./logs/webpack-config`)
+    await fs.ensureDir(pathConfigLogs)
+    await fs.writeFile(
+        path.resolve(pathConfigLogs,
+            `${TYPE}.${STAGE}.${ENV}.${(new Date()).toISOString().replace(/:/g, '_')}.json`
+        ),
+        JSON.stringify(webpackConfig, null, '\t'),
+        'utf-8'
+    )
 
     // 客户端开发模式
     if (STAGE === 'client' && ENV === 'dev') {
-
-        await handlerClientConfig()
-        await logConfigToFile()
-
-        const compiler = webpack(makeItButter(webpackConfigs))
-        buildingComplete()
+        const compiler = webpack(webpackConfig)
         const devServerConfig = Object.assign({
             quiet: false,
             stats: { colors: true },
@@ -558,6 +272,8 @@ module.exports = async (obj) => {
             open: TYPE === 'spa',
         }, devServer)
 
+        buildingComplete()
+
         // more config
         // http://webpack.github.io/docs/webpack-dev-server.html
         const server = new WebpackDevServer(compiler, devServerConfig)
@@ -568,7 +284,6 @@ module.exports = async (obj) => {
 
     // 客户端打包
     if (STAGE === 'client' && ENV === 'prod') {
-
         await fs.ensureFile(pathnameChunkmap)
         await fs.writeJson(
             pathnameChunkmap,
@@ -579,25 +294,31 @@ module.exports = async (obj) => {
         )
         // process.env.NODE_ENV = 'production'
 
-        await handlerClientConfig()
-        await logConfigToFile()
-
         // 执行打包
-        const compiler = webpack(makeItButter(webpackConfigs))
+        const build = async (config) => {
+            const compiler = webpack(config)
+            await new Promise((resolve, reject) => {
+                compiler.run(async (err, stats) => {
+                    if (err)
+                        return reject(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`)
 
-        await new Promise((resolve, reject) => {
-            compiler.run(async (err, stats) => {
-                if (err) reject(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`)
+                    buildingComplete()
+                    console.log(stats.toString({
+                        chunks: false, // 输出精简内容
+                        colors: true
+                    }))
 
-                buildingComplete()
-                console.log(stats.toString({
-                    chunks: false, // 输出精简内容
-                    colors: true
-                }))
-
-                resolve()
+                    resolve()
+                })
             })
-        })
+        }
+
+        if (Array.isArray(webpackConfig)) {
+            for (let config of webpackConfig)
+                await build(config)
+        } else {
+            await build(webpackConfig)
+        }
 
         await after()
         return
@@ -605,14 +326,11 @@ module.exports = async (obj) => {
 
     // 服务端开发环境
     if (STAGE === 'server' && ENV === 'dev') {
-
-        await handlerServerConfig()
-        await logConfigToFile()
-
         await webpack(
-            makeItButter(webpackConfigs),
+            webpackConfig,
             async (err, stats) => {
-                if (err) console.log(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`)
+                if (err)
+                    throw new Error(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`)
 
                 buildingComplete()
                 console.log(stats.toString({
@@ -629,7 +347,6 @@ module.exports = async (obj) => {
 
     // 服务端打包
     if (STAGE === 'server' && ENV === 'prod') {
-
         // process.env.NODE_ENV = 'production'
         // process.env.WEBPACK_SERVER_PUBLIC_PATH =
         //     (typeof webpackConfigs.output === 'object' && webpackConfigs.output.publicPath)
@@ -648,12 +365,9 @@ module.exports = async (obj) => {
             }
         }
 
-        await handlerServerConfig()
-        await logConfigToFile()
-
         await new Promise((resolve, reject) => {
-            webpack(makeItButter(webpackConfigs), async (err, stats) => {
-                if (err) reject(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`)
+            webpack(webpackConfig, async (err, stats) => {
+                if (err) return reject(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`)
 
                 buildingComplete()
                 console.log(stats.toString({
@@ -671,5 +385,3 @@ module.exports = async (obj) => {
     }
 
 }
-
-// justDoooooooooooooIt()

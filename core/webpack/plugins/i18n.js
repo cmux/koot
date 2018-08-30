@@ -3,7 +3,7 @@ const path = require('path')
 const ParserHelpers = require("webpack/lib/ParserHelpers")
 const ConstDependency = require('webpack/lib/dependencies/ConstDependency')
 const NullFactory = require("webpack/lib/NullFactory")
-
+const getCwd = require('../../../utils/get-cwd')
 
 class I18nPlugin {
     constructor({
@@ -19,7 +19,7 @@ class I18nPlugin {
         this.locales = locales
 
         if (typeof locales === 'string' && locales.substr(0, 2) === './')
-            this.locales = fs.readJsonSync(path.resolve(process.cwd(), locales))
+            this.locales = fs.readJsonSync(path.resolve(getCwd(), locales))
     }
 
     apply(compiler) {

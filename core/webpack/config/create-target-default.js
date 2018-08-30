@@ -21,5 +21,5 @@ module.exports = async (options = {}, configFilePathname) => {
     if (!fs.existsSync(configFilePathname))
         throw new Error(`生产默认配置对象：未到对应的配置文件\n  > ${configFilePathname}`)
 
-    return await require(path)(options)
+    return await require(configFilePathname)(options)
 }

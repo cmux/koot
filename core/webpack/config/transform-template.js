@@ -1,6 +1,7 @@
 const fs = require('fs-extra')
 const path = require('path')
 const readBaseConfig = require('../../../utils/read-base-config')
+const getCwd = require('../../../utils/get-cwd')
 
 /**
  * 处理 HTML 基础模板配置
@@ -15,7 +16,7 @@ module.exports = async (template) => {
 
         if (typeof template === 'string' && template.substr(0, 2) === './') {
             template = await fs.readFile(path.resolve(
-                process.cwd(), template
+                getCwd(), template
             ))
             process.env.KOOT_HTML_TEMPLATE = template
         }

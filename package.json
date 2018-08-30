@@ -131,6 +131,7 @@
         "eslint": "^5.4.0",
         "eslint-plugin-react": "^7.11.1",
         "babel-eslint": "^9.0.0",
-        "jest": "^23.5.0"
+        "jest": "^23.5.0",
+        "is-valid-path": "^0.1.1"
     }
 }

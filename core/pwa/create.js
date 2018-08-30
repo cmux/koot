@@ -39,7 +39,7 @@ const parsePattern = pattern => {
  */
 const create = async (settings = {}, i18n) => {
     // let options = Object.assign({
-    //     outputPath: process.cwd() + '/dist/public/',
+    //     outputPath: getCwd() + '/dist/public/',
     //     outputFilename: 'service-worker.js',
     //     outputFilenameHash: false,
     //     customServiceWorkerPath: path.resolve(__dirname, '../service-worker/index.js'),

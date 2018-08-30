@@ -17,6 +17,7 @@ const getAppType = require('../utils/get-app-type')
 const setEnvFromCommand = require('../utils/set-env-from-command')
 const getChunkmapPath = require('../utils/get-chunkmap-path')
 const initNodeEnv = require('../utils/init-node-env')
+const getCwd = require('../utils/get-cwd')
 
 program
     .version(require('../package').version, '-v, --version')
@@ -73,7 +74,7 @@ const run = async () => {
 
     // 读取项目信息
     const appType = await getAppType()
-    const packageInfo = await fs.readJson(path.resolve(process.cwd(), 'package.json'))
+    const packageInfo = await fs.readJson(path.resolve(getCwd(), 'package.json'))
     const { dist, port } = await readBuildConfigFile()
     const {
         name
@@ -182,8 +183,8 @@ const run = async () => {
 
         // 根据 stage 开启 PM2 进程
         const start = (stage) => new Promise(async (resolve, reject) => {
-            const pathLogOut = path.resolve(process.cwd(), `logs/dev/${stage}.log`)
-            const pathLogErr = path.resolve(process.cwd(), `logs/dev/${stage}-error.log`)
+            const pathLogOut = path.resolve(getCwd(), `logs/dev/${stage}.log`)
+            const pathLogErr = path.resolve(getCwd(), `logs/dev/${stage}-error.log`)
             if (fs.existsSync(pathLogOut)) await fs.remove(pathLogOut)
             if (fs.existsSync(pathLogErr)) await fs.remove(pathLogErr)
             await fs.ensureFile(pathLogOut)
@@ -192,7 +193,7 @@ const run = async () => {
                 name: `dev-${stage}-${name}`,
                 script: path.resolve(__dirname, './build.js'),
                 args: `--stage ${stage} --env dev`,
-                cwd: process.cwd(),
+                cwd: getCwd(),
                 output: pathLogOut,
                 error: pathLogErr,
                 autorestart: false,

@@ -19,10 +19,12 @@ module.exports = async (options = {}) => {
     } = options
 
     return await common.factory({
-        aliases,
         env: ENV,
         stage: STAGE,
+
         spa: false,
+
+        aliases,
         defines,
     })
 }
