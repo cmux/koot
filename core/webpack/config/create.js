@@ -9,6 +9,7 @@ const transformI18n = require('./transform-i18n')
 const transformPWA = require('./transform-pwa')
 const transformTemplate = require('./transform-template')
 const transformConfigClient = require('./transform-config-client')
+const transformConfigServer = require('./transform-config-server')
 
 // Defaults & Data
 const defaults = require('../../../defaults/build-config')
@@ -65,10 +66,11 @@ module.exports = async (kootConfig = {}) => {
     // 处理配置 - 客户端 / 开发 (CLIENT / DEV)
     //
     // ========================================================================
+
     if (STAGE === 'client')
         data.webpackConfig = await transformConfigClient(data)
-
-    // TODO:
+    if (STAGE === 'server')
+        data.webpackConfig = await transformConfigServer(data)
 
     // ========================================================================
     //

@@ -1,9 +1,0 @@
-{
-    "welcome": "Welcome!",
-    "pages": {
-        "data": {
-            "title": "Sample Page: Isomorphic Data Rendering",
-            "nav": "Isomorphic Data"
-        }
-    }
-}

@@ -132,6 +132,7 @@
         "eslint-plugin-react": "^7.11.1",
         "babel-eslint": "^9.0.0",
         "jest": "^23.5.0",
-        "is-valid-path": "^0.1.1"
+        "is-valid-path": "^0.1.1",
+        "koot-boilerplate": "0.1.0"
     }
 }

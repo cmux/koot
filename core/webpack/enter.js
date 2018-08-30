@@ -6,8 +6,6 @@ const path = require('path')
 const chalk = require('chalk')
 const webpack = require('webpack')
 const WebpackDevServer = require('webpack-dev-server')
-const WebpackConfig = require('webpack-config').default
-const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 const __ = require('../../utils/translate')
 const spinner = require('../../utils/spinner')
@@ -19,7 +17,6 @@ const log = require('../../libs/log')
 
 const createWebpackConfig = require('./config/create')
 const createPWAsw = require('../pwa/create')
-const KootI18nPlugin = require("./plugins/i18n")
 
 const afterServerProd = require('./lifecyle/after-server-prod')
 
@@ -151,99 +148,6 @@ module.exports = async (kootConfig) => {
     const buildingComplete = () => {
         spinnerBuilding.stop()
         console.log(' ')
-    }
-
-    /**
-     * 处理服务端配置文件
-     * [n个应用] 公用1个服务端打包配置，并且merge了client的相关配置
-     * 注：如果客户端的配置有特殊要求或者冲突，则需要手动调整下面的代码
-     */
-    const handlerServerConfig = async () => {
-
-        // 服务端需要全部子项目的配置集合
-        // 先合并全部子项目的配置内容
-        // 再合并到服务端配置里
-
-        // const appsConfig = await require('../../config/apps')
-        let tempClientConfig = new WebpackConfig()
-        const defaultServerEntry = [
-            'babel-core/register',
-            'babel-polyfill',
-            path.resolve(
-                // __dirname, '../start'
-                __dirname,
-                '../../',
-                appType,
-                './server'
-            )
-        ]
-        if (ENV === 'dev') defaultServerEntry.push('webpack/hot/poll?1000')
-
-        // for (let appName in appsConfig) {
-
-        // 如果没有webpack配置，则表示没有react，不需要打包
-        // if (!appsConfig[appName].webpack) continue
-
-        let configs = config
-
-        if (!Array.isArray(configs))
-            configs = [configs]
-
-        configs.forEach((config) => {
-            parseConfig(config)
-            tempClientConfig.merge(config)
-        })
-        // }
-
-        let opt = { RUN_PATH, CLIENT_DEV_PORT }
-        const baseConfig = await createBaseConfig()
-        const defaultConfig = await createDefaultConfig(opt)
-        let thisConfig = new WebpackConfig()
-
-        // 注:在某些项目里，可能会出现下面的加载顺序有特定的区别，需要自行加判断
-        //    利用每个app的配置，设置 include\exclude 等。
-
-        thisConfig
-            .merge(baseConfig)
-            .merge(defaultConfig)
-            .merge({
-                module: tempClientConfig.module,
-                resolve: tempClientConfig.resolve,
-                // plugins: tempClientConfig.plugins,
-                plugins: tempClientConfig.plugins,
-            })
-
-        // 如果用户自己配置了服务端打包路径，则覆盖默认的
-        if (dist)
-            thisConfig.output.path = path.resolve(dist, './server')
-        if (!thisConfig.output.publicPath)
-            thisConfig.output.publicPath = defaultPublicPath
-        if (tempClientConfig.output && tempClientConfig.output.publicPath)
-            thisConfig.output.publicPath = tempClientConfig.output.publicPath
-        // if (SYSTEM_CONFIG.WEBPACK_SERVER_OUTPATH)
-        //     config.output.path = path.resolve(RUN_PATH, SYSTEM_CONFIG.WEBPACK_SERVER_OUTPATH)
-
-        thisConfig.plugins.unshift(
-            new KootI18nPlugin({
-                stage: STAGE,
-                functionName: i18n ? i18n.expr : undefined,
-            })
-        )
-
-        if (ENV === 'dev') {
-            if (i18n && Array.isArray(i18n.locales) && i18n.locales.length > 0)
-                thisConfig.plugins.push(new CopyWebpackPlugin(
-                    i18n.locales.map(arr => ({
-                        from: arr[2],
-                        to: '../.locales/'
-                    }))
-                ))
-        }
-
-        thisConfig.entry = defaultServerEntry
-
-        // webpackConfigs.push(thisConfig)
-        webpackConfigs = thisConfig
     }
 
     const pathConfigLogs = path.resolve(RUN_PATH, `./logs/webpack-config`)
