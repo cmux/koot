@@ -733,21 +733,26 @@ module.exports = async (obj) => {
         await logConfigToFile()
 
         // 执行打包
-        const compiler = webpack(makeItButter(webpackConfigs))
+        let configs = makeItButter(webpackConfigs)
+        if (!Array.isArray(configs)) configs = [configs]
 
-        await new Promise((resolve, reject) => {
-            compiler.run(async (err, stats) => {
-                if (err) reject(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`)
+        for (let config of configs) {
+            const compiler = webpack(config)
 
-                buildingComplete()
-                console.log(stats.toString({
-                    chunks: false, // 输出精简内容
-                    colors: true
-                }))
+            await new Promise((resolve, reject) => {
+                compiler.run(async (err, stats) => {
+                    if (err) reject(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`)
 
-                resolve()
+                    buildingComplete()
+                    console.log(stats.toString({
+                        chunks: false, // 输出精简内容
+                        colors: true
+                    }))
+
+                    setTimeout(() => resolve(), 500)
+                })
             })
-        })
+        }
 
         await after()
         return
