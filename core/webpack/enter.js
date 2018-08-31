@@ -198,6 +198,7 @@ module.exports = async (obj) => {
         WEBPACK_BUILD_STAGE: STAGE,
         // WEBPACK_ANALYZE,
         WEBPACK_DEV_SERVER_PORT: CLIENT_DEV_PORT,
+        WEBPACK_BUILD_ONE_BY_ONE: ONE_BY_ONE
         // SERVER_DOMAIN,
         // SERVER_PORT,
     } = process.env
@@ -719,14 +720,32 @@ module.exports = async (obj) => {
     // 客户端打包
     if (STAGE === 'client' && ENV === 'prod') {
 
-        await fs.ensureFile(pathnameChunkmap)
-        await fs.writeJson(
-            pathnameChunkmap,
-            {},
-            {
-                spaces: 4
-            }
-        )
+        await fs.pathExists(pathnameChunkmap)
+            .then(async(exists) => {
+
+                if(!exists){
+                    await fs.ensureFile(pathnameChunkmap)
+                    await fs.writeJson(
+                        pathnameChunkmap,
+                        {},
+                        {
+                            spaces: 4
+                        }
+                    )
+                }
+            })
+
+        // 如果不是一个接一个打包，则清空json文件
+        if(!ONE_BY_ONE){
+            await fs.writeJson(
+                pathnameChunkmap,
+                {},
+                {
+                    spaces: 4
+                }
+            )
+        }
+        
         // process.env.NODE_ENV = 'production'
 
         await handlerClientConfig()
