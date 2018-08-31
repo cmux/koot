@@ -1,12 +1,17 @@
-const fs = require('fs-extra')
 const path = require('path')
 const isValidPath = require('is-valid-path')
 
 const createConfig = require('../../core/webpack/config/create')
 
-const projects = require('../projects')
+const prepareProjects = require('../prepare-projects')
+const { dir: dirProjects, projects } = require('../projects')
 const stages = ['client', 'server']
 const envs = ['prod', 'dev']
+
+beforeAll(async (done) => {
+    await prepareProjects()
+    done()
+})
 
 describe('测试: 生成 Webpack 配置', async () => {
 
@@ -20,8 +25,8 @@ describe('测试: 生成 Webpack 配置', async () => {
     for (let project of projects) {
         for (let stage of stages) {
             for (let env of envs) {
-                test(`${project} 配置可用`, async () => {
-                    const dir = path.resolve(__dirname, '../../node_modules', project)
+                test(`${project} [${stage} | ${env}] 配置可用`, async () => {
+                    const dir = path.resolve(dirProjects, project.name)
 
                     const fileProjectConfig = path.resolve(dir, 'koot.js')
                     const fileBuildConfig = path.resolve(dir, 'koot.build.js')

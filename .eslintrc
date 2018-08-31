@@ -10,7 +10,8 @@
         "amd": true,
         "es6": true,
         "mocha": true,
-        "jquery": true
+        "jquery": true,
+        "jest": true
     },
     "parser": "babel-eslint",
     "parserOptions": {
