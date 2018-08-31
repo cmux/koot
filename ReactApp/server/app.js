@@ -57,3 +57,13 @@ export default class App {
         server.listen(port)
     }
 }
+
+/* 
+const createApp = () => {}
+const createServer = () => {}
+const run = (port) => {
+    const app = createApp()
+    const server = createServer(app)
+    server.listen(port)
+}
+ */
