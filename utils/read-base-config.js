@@ -1,5 +1,5 @@
 const fs = require('fs-extra')
-const path = require('path')
+const getPathnameProjectConfigFile = require('./get-pathname-project-config-file')
 
 /**
  * 从 koot.js 中读取对应配置
@@ -7,7 +7,7 @@ const path = require('path')
  * @returns {*}
  */
 module.exports = async (key) => {
-    const pathnameKootJS = path.resolve(__dirname, '../../../koot.js')
+    const pathnameKootJS = getPathnameProjectConfigFile()
 
     try {
         const config = require(pathnameKootJS)

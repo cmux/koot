@@ -9,6 +9,7 @@ const writeChunkmap = require('../../../utils/write-chunkmap')
 const getAppType = require('../../../utils/get-app-type')
 const __ = require('../../../utils/translate')
 const getDistPath = require('../../../utils/get-dist-path')
+const getCwd = require('../../../utils/get-cwd')
 
 class SpaTemplatePlugin {
     constructor(settings = {}) {
@@ -47,7 +48,7 @@ class SpaTemplatePlugin {
                                             const t = exec[1]
                                             if (t.substr(0, 2) === './') {
                                                 process.env.KOOT_HTML_TEMPLATE = fs.readFileSync(path.resolve(
-                                                    process.cwd(), t
+                                                    getCwd(), t
                                                 ), 'utf-8')
                                             } else {
                                                 process.env.KOOT_HTML_TEMPLATE = t

@@ -2,14 +2,14 @@ const webpack = require('webpack')
 const common = require('../common')
 
 const factoryConfig = async ({
-    RUN_PATH,
-    CLIENT_DEV_PORT,
+    pathRun,
+    clientDevServerPort,
 }) => {
 
     // let { RUN_PATH, CLIENT_DEV_PORT, APP_KEY } = opt
 
     // 此处引用 Webpack dev server 的文件，动态打包更新
-    const publicPath = `http://localhost:${CLIENT_DEV_PORT}/dist`
+    const publicPath = `http://localhost:${clientDevServerPort}/dist`
 
     return {
         mode: "development",
@@ -21,7 +21,7 @@ const factoryConfig = async ({
         output: {
             filename: 'index.js',
             chunkFilename: 'chunk.-_-_-_-_-_-[name]-_-_-_-_-_-.js',
-            path: `${RUN_PATH}/${common.outputPath}/server`,
+            path: `${pathRun}/${common.outputPath}/server`,
             publicPath: `${publicPath}/`
         },
         plugins: [

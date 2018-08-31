@@ -1,7 +1,8 @@
 const path = require('path')
+const getCwd = require('../utils/get-cwd')
 
 module.exports = {
-    dist: path.resolve(process.cwd(), './dist'),
+    dist: path.resolve(getCwd(), './dist'),
     config: {},
     aliases: {},
     i18n: false,

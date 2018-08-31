@@ -2,7 +2,7 @@ const webpack = require('webpack')
 const common = require('../common')
 
 const factoryConfig = async ({
-    RUN_PATH,
+    pathRun,
     // CLIENT_DEV_PORT,
 }) => {
 
@@ -18,7 +18,7 @@ const factoryConfig = async ({
         output: {
             filename: 'index.js',
             chunkFilename: 'chunk.[name].[chunkhash].js',
-            path: `${RUN_PATH}/${common.outputPath}/server`,
+            path: `${pathRun}/${common.outputPath}/server`,
             // publicPath: `/[need_set_in_app:__webpack_public_path__]/`,
             // publicPath: `/`,
         },

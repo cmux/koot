@@ -24,14 +24,20 @@ module.exports = () => {
         // chunkmap
         WEBPACK_CHUNKMAP: '',
 
-        // 打包配置文件路径。默认不存在。如果存在则默认使用
-        // WEBPACK_BUILD_CONFIG_PATHNAME: ...,
-
         // 客户端开发环境 webpack-dev-server 端口号 (仅限 STAGE: client && ENV: dev)
         WEBPACK_DEV_SERVER_PORT: 3001,
 
         // 服务器端口
         SERVER_PORT: process.env.WEBPACK_BUILD_ENV === 'dev' ? '3000' : '8080',
+
+        // Koot 项目启动目录路径。默认为 process.cwd()
+        KOOT_CWD: process.cwd(),
+
+        // Koot 项目配置文件路径。默认不存在。如果存在则默认使用
+        // KOOT_PROJECT_CONFIG_PATHNAME: ...,
+
+        // Koot 打包配置文件路径。默认不存在。如果存在则默认使用
+        // KOOT_BUILD_CONFIG_PATHNAME: ...,
 
         // 项目类型。默认不存在。如果存在则默认使用
         // KOOT_PROJECT_TYPE: ...,

@@ -11,6 +11,7 @@ const readBuildConfigFile = require('../utils/read-build-config-file')
 const spinner = require('../utils/spinner')
 const setEnvFromCommand = require('../utils/set-env-from-command')
 const __ = require('../utils/translate')
+const getCwd = require('../utils/get-cwd')
 
 program
     .version(require('../package').version, '-v, --version')
@@ -80,7 +81,7 @@ const run = async () => {
     //     // PM2 方式
     //     console.log('--- pm2 ---')
     //     const pm2 = require('pm2')
-    //     const packageInfo = await fs.readJson(path.resolve(process.cwd(), 'package.json'))
+    //     const packageInfo = await fs.readJson(path.resolve(getCwd(), 'package.json'))
     //     const name = `${packageInfo.name}-server`
     //     // const cmd = `pm2`
     //     //     + ` pm2.json --only ${name}`
@@ -90,8 +91,8 @@ const run = async () => {
     //         "max_memory_restart": "300M",
     //         "instances": 1,
     //         "exec_mode": "cluster",
-    //         "out_file": path.resolve(process.cwd(), "logs/dev/server.log"),
-    //         "error_file": path.resolve(process.cwd(), "logs/dev/server-error.log")
+    //         "out_file": path.resolve(getCwd(), "logs/dev/server.log"),
+    //         "error_file": path.resolve(getCwd(), "logs/dev/server-error.log")
     //     })
     // } else {
     // 正常方式

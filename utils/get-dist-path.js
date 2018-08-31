@@ -1,4 +1,5 @@
 const path = require('path')
+const getCwd = require('./get-cwd')
 
 let p
 
@@ -11,7 +12,7 @@ module.exports = () => {
     if (typeof p !== 'string') {
         p = typeof global.KOOT_DIST_DIR === 'string'
             ? global.KOOT_DIST_DIR
-            : path.resolve(process.cwd(), process.env.KOOT_DIST_DIR)
+            : path.resolve(getCwd(), process.env.KOOT_DIST_DIR)
     }
     return p
 }
