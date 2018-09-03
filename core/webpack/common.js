@@ -172,7 +172,12 @@ const factory = async ({
 
                 {
                     test: /\.(js|jsx)$/,
-                    loader: 'babel-loader'
+                    use: {
+                        loader: 'babel-loader',
+                        options: {
+                            // cacheDirectory: true
+                        }
+                    }
                 }
             ]
         },

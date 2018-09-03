@@ -33,8 +33,8 @@ module.exports = async (data = {}) => {
     } = process.env
 
     const defaultServerEntry = [
-        'babel-core/register',
-        'babel-polyfill',
+        '@babel/register',
+        '@babel/polyfill',
         path.resolve(
             __dirname,
             '../../',

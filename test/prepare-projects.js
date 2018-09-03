@@ -68,10 +68,17 @@ const prepare = async (project = {}) => {
         })
     }
 
-    { // 将当前的 koot 到目标目录中
+    { // 修改 package.json
         const pathPackage = path.resolve(dest, 'package.json')
         const p = await fs.readJson(pathPackage)
+        const pSelf = await fs.readJson(path.resolve(__dirname, '../package.json'))
         p.dependencies.koot = 'file:../../'
+        // console.log(pSelf.dependencies)
+        // console.log(Object.keys(pSelf.dependencies))
+        for (let key of Object.keys(pSelf.dependencies)) {
+            p.devDependencies[key] = pSelf.dependencies[key]
+        }
+        // console.log(p)
         await fs.writeJson(pathPackage, p, {
             spaces: 4
         })

@@ -33,10 +33,10 @@ module.exports = () => {
         // Koot 项目启动目录路径。默认为 process.cwd()
         KOOT_CWD: process.cwd(),
 
-        // Koot 项目配置文件路径。默认不存在。如果存在则默认使用
+        // Koot 项目配置文件路径 (./koot.js)。默认不存在。如果存在则默认使用
         // KOOT_PROJECT_CONFIG_PATHNAME: ...,
 
-        // Koot 打包配置文件路径。默认不存在。如果存在则默认使用
+        // Koot 打包配置文件路径 (./koot.build.js)。默认不存在。如果存在则默认使用
         // KOOT_BUILD_CONFIG_PATHNAME: ...,
 
         // 项目类型。默认不存在。如果存在则默认使用

@@ -5,15 +5,17 @@ const exec = util.promisify(require('child_process').exec)
 
 const spinner = require('../../utils/spinner')
 
-const prepareProjects = require('../prepare-projects')
+// const prepareProjects = require('../prepare-projects')
 const { dir: dirProjects, projects, commandTestBuild } = require('../projects')
 const stages = ['client', 'server']
 const envs = ['prod', 'dev']
 
-beforeAll(async (done) => {
-    await prepareProjects()
-    done()
-})
+global.kootTest = true
+
+// beforeAll(async (done) => {
+//     await prepareProjects()
+//     done()
+// })
 
 describe('测试: 使用配置案例，进行 Webpack 打包', async () => {
     for (let project of projects) {

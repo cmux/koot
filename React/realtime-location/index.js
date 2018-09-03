@@ -1,5 +1,7 @@
 export { LOCATION_UPDATE } from './actionType'
-export reducer from './reducer'
+
+import reducer from './reducer'
+export { reducer }
 export { update } from './api'
 
 export const REALTIME_LOCATION_REDUCER_NAME = 'realtimeLocation'

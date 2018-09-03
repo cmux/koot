@@ -23,12 +23,16 @@ program
     .option('--type <project-type>', 'Set project type')
     .parse(process.argv)
 
+    console.log('global.kootTest', global.kootTest)
+
 /**
  * 执行打包
  */
 const run = async () => {
     // 清空 log
     process.stdout.write('\x1B[2J\x1B[0f')
+
+    console.log('global.kootTest', global.kootTest)
 
     const {
         client, server,
