@@ -21,9 +21,8 @@ program
     .option('--dest <destination-path>', 'Set destination directory')
     .option('--config <config-file-path>', 'Set config file pathname')
     .option('--type <project-type>', 'Set project type')
+    .option('--koot-test', 'Koot test mode')
     .parse(process.argv)
-
-    console.log('global.kootTest', global.kootTest)
 
 /**
  * 执行打包
@@ -32,8 +31,6 @@ const run = async () => {
     // 清空 log
     process.stdout.write('\x1B[2J\x1B[0f')
 
-    console.log('global.kootTest', global.kootTest)
-
     const {
         client, server,
         stage: _stage,
@@ -41,7 +38,11 @@ const run = async () => {
         config,
         type,
         dest,
+        kootTest = false
     } = program
+    // console.log(program)
+
+    if (kootTest) global.kootTest = true
 
     setEnvFromCommand({
         config,

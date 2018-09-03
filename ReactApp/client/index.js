@@ -6,8 +6,9 @@ import {
     router,
     redux,
     client,
+} from '__KOOT_PROJECT_CONFIG_PATHNAME__'
 // } from '../../../../koot'
-} from '../../.projects/koot-boilerplate/koot'
+// } from '../../.projects/koot-boilerplate/koot'
 
 export default kootClient({
     router,

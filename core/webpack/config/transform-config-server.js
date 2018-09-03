@@ -34,10 +34,10 @@ module.exports = async (data = {}) => {
 
     const defaultServerEntry = [
         '@babel/register',
-        '@babel/polyfill',
+        // '@babel/polyfill',
         path.resolve(
             __dirname,
-            '../../',
+            '../../../',
             appType,
             './server'
         )

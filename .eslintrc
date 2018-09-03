@@ -33,7 +33,8 @@
         "__SERVER_PORT__": false,
         "__KOOT_INJECT_ATTRIBUTE_NAME__": false,
         "__KOOT_INJECT_METAS_START__": false,
-        "__KOOT_INJECT_METAS_END__": false
+        "__KOOT_INJECT_METAS_END__": false,
+        "__KOOT_PROJECT_CONFIG_PATHNAME__": false
     },
     "settings": {
         "import/ignore": [

@@ -3,7 +3,7 @@ const path = require('path')
 const util = require('util')
 const exec = util.promisify(require('child_process').exec)
 
-const spinner = require('../../utils/spinner')
+// const spinner = require('../../utils/spinner')
 
 // const prepareProjects = require('../prepare-projects')
 const { dir: dirProjects, projects, commandTestBuild } = require('../projects')
@@ -22,31 +22,32 @@ describe('测试: 使用配置案例，进行 Webpack 打包', async () => {
         const { name } = project
         const dir = path.resolve(dirProjects, name)
 
-        const stage = 'server'
+        const stage = 'client'
         const env = 'prod'
         const command = `${commandTestBuild}-${stage}-${env}`
 
-        test(`${name} [${stage} | ${env}] 打包可进行`, async () => {
+        test(`${name} [${stage} | ${env}] 打包可无报错`, async () => {
             const pathPackage = path.resolve(dir, 'package.json')
             const p = await fs.readJson(pathPackage)
             if (!p.scripts[command])
-                p.scripts[command] = `koot-build --stage ${stage} --env ${env}`
+                p.scripts[command] = `koot-build --stage ${stage} --env ${env} --koot-test`
             await fs.writeJson(pathPackage, p, {
                 spaces: 4
             })
 
-            const waitingBuilding = spinner(`${name} [${stage} | ${env}] - 打包中...`)
+            // const waitingBuilding = spinner(`${name} [${stage} | ${env}] - 打包中...`)
             const { stdout, stderr } = await exec(
                 `npm run ${command}`,
                 {
                     cwd: dir,
                 }
             )
-            waitingBuilding.stop()
+            // waitingBuilding.stop()
 
             // console.log('stdout', stdout)
-            console.log('stderr', stderr)
-            expect(typeof stderr).toBe('undefined')
+            // console.log('stderr', stderr)
+            expect(typeof stderr).toBe('string')
+            expect(stderr).toBe('')
         })
     }
 })
