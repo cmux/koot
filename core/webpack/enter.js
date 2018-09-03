@@ -69,7 +69,7 @@ module.exports = async (kootConfig) => {
 
     const before = async () => {
         if (ENV === 'dev') fs.ensureFileSync(path.resolve(getDistPath(), `./server/index.js`))
-        log('callback', 'build', `callback: ` + chalk.green('before'))
+        log('callback', 'build', `callback: ` + chalk.green('beforeBuild'))
         if (typeof beforeBuild === 'function') await beforeBuild(data)
     }
 
@@ -86,7 +86,7 @@ module.exports = async (kootConfig) => {
             await afterServerProd(data)
         }
 
-        log('callback', 'build', `callback: ` + chalk.green('after'))
+        log('callback', 'build', `callback: ` + chalk.green('afterBuild'))
         if (typeof afterBuild === 'function') await afterBuild(data)
 
         // 标记完成
@@ -106,10 +106,11 @@ module.exports = async (kootConfig) => {
     // 创建对应当前环境的 Webpack 配置
     //
     // ========================================================================
-
     const data = await createWebpackConfig(Object.assign(kootConfig, {
         afterBuild: after
-    }))
+    })).catch(err => {
+        console.error('生成打包配置时发生错误! \n', err)
+    })
     const {
         webpackConfig,
         pwa,
@@ -199,14 +200,16 @@ module.exports = async (kootConfig) => {
         // process.env.NODE_ENV = 'production'
 
         // 执行打包
-        const build = async (config) => {
+        const build = async (config, onComplete = buildingComplete) => {
             const compiler = webpack(config)
             await new Promise((resolve, reject) => {
                 compiler.run(async (err, stats) => {
+                    if (typeof onComplete === 'function')
+                        onComplete()
+
                     if (err)
                         return reject(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`)
 
-                    buildingComplete()
                     console.log(stats.toString({
                         chunks: false, // 输出精简内容
                         colors: true
@@ -218,8 +221,14 @@ module.exports = async (kootConfig) => {
         }
 
         if (Array.isArray(webpackConfig)) {
-            for (let config of webpackConfig)
-                await build(config)
+            for (let config of webpackConfig) {
+                const spinnerBuildingSingle = spinner(chalk.yellowBright('[koot/build] ') + __('build.building'))
+                await build(config, () => {
+                    console.log(' ')
+                    spinnerBuildingSingle.stop()
+                    console.log(' ')
+                })
+            }
         } else {
             await build(webpackConfig)
         }
@@ -233,10 +242,11 @@ module.exports = async (kootConfig) => {
         await webpack(
             webpackConfig,
             async (err, stats) => {
+                buildingComplete()
+
                 if (err)
                     throw new Error(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`)
 
-                buildingComplete()
                 console.log(stats.toString({
                     chunks: false,
                     colors: true
@@ -271,9 +281,10 @@ module.exports = async (kootConfig) => {
 
         await new Promise((resolve, reject) => {
             webpack(webpackConfig, async (err, stats) => {
+                buildingComplete()
+
                 if (err) return reject(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`)
 
-                buildingComplete()
                 console.log(stats.toString({
                     chunks: false, // Makes the build much quieter
                     colors: true

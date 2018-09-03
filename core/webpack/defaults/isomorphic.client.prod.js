@@ -1,10 +1,9 @@
 const webpack = require('webpack')
-
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 
 const factoryConfig = async (/*{
-    // RUN_PATH,
-    // CLIENT_DEV_PORT,
+    runPath,
+    clientDevPort,
     localeId,
 }*/) => {
 
@@ -34,4 +33,4 @@ const factoryConfig = async (/*{
     }
 }
 
-module.exports = async (opt) => await factoryConfig(opt)
+module.exports = factoryConfig

@@ -13,7 +13,9 @@
     "scripts": {
         "doc-server": "docsify serve docs",
         "eslint": "eslint \"!(node_modules|logs|dist|dist*)/**/*.+(js|jsx)\"",
-        "test": "jest"
+        "test": "jest",
+        "test:build": "jest ./test/webpack-build/test.js",
+        "test:config": "jest ./test/webpack-config/test.js"
     },
     "repository": {
         "type": "git",
@@ -133,6 +135,7 @@
         "babel-eslint": "^9.0.0",
         "jest": "^23.5.0",
         "is-valid-path": "^0.1.1",
-        "koot-boilerplate": "0.1.0"
+        "download-git-repo": "^1.1.0",
+        "babel-core": "^6.26.3"
     }
 }
