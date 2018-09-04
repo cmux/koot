@@ -145,9 +145,11 @@ module.exports = async (kootConfig) => {
 
     await before()
 
-    const spinnerBuilding = spinner(chalk.yellowBright('[koot/build] ') + __('build.building'))
+    const spinnerBuilding = !global.kootTest
+        ? spinner(chalk.yellowBright('[koot/build] ') + __('build.building'))
+        : undefined
     const buildingComplete = () => {
-        spinnerBuilding.stop()
+        if (spinnerBuilding) spinnerBuilding.stop()
         console.log(' ')
     }
 
@@ -221,11 +223,16 @@ module.exports = async (kootConfig) => {
         }
 
         if (Array.isArray(webpackConfig)) {
+            buildingComplete()
             for (let config of webpackConfig) {
-                const spinnerBuildingSingle = spinner(chalk.yellowBright('[koot/build] ') + __('build.building'))
+                const spinnerBuildingSingle = !global.kootTest
+                    ? spinner(chalk.yellowBright('[koot/build] ') + __('build.building'))
+                    : undefined
                 await build(config, () => {
-                    console.log(' ')
-                    spinnerBuildingSingle.stop()
+                    if (spinnerBuildingSingle) {
+                        console.log(' ')
+                        spinnerBuildingSingle.stop()
+                    }
                     console.log(' ')
                 })
             }

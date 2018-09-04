@@ -21,6 +21,7 @@ program
     .option('--dest <destination-path>', 'Set destination directory')
     .option('--config <config-file-path>', 'Set config file pathname')
     .option('--type <project-type>', 'Set project type')
+    .option('--koot-test', 'Koot test mode')
     .parse(process.argv)
 
 /**
@@ -37,7 +38,11 @@ const run = async () => {
         config,
         type,
         dest,
+        kootTest = false
     } = program
+    // console.log(program)
+
+    if (kootTest) global.kootTest = true
 
     setEnvFromCommand({
         config,

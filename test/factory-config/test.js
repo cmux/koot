@@ -3,15 +3,15 @@ const isValidPath = require('is-valid-path')
 
 const createConfig = require('../../core/webpack/config/create')
 
-const prepareProjects = require('../prepare-projects')
+// const prepareProjects = require('../prepare-projects')
 const { dir: dirProjects, projects } = require('../projects')
 const stages = ['client', 'server']
 const envs = ['prod', 'dev']
 
-beforeAll(async (done) => {
-    await prepareProjects()
-    done()
-})
+// beforeAll(async (done) => {
+//     await prepareProjects()
+//     done()
+// })
 
 describe('测试: 生成 Webpack 配置', async () => {
 

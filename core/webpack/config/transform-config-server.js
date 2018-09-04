@@ -33,11 +33,10 @@ module.exports = async (data = {}) => {
     } = process.env
 
     const defaultServerEntry = [
-        'babel-core/register',
-        'babel-polyfill',
+        path.resolve(__dirname, '../../../defaults/server-stage-0.js'),
         path.resolve(
             __dirname,
-            '../../',
+            '../../../',
             appType,
             './server'
         )
@@ -54,6 +53,8 @@ module.exports = async (data = {}) => {
         .merge(config)
 
     await transformConfigExtendDefault(result, data)
+
+    Object.assign(result.output, configTargetDefault.output)
 
     // 如果用户自己配置了服务端打包路径，则覆盖默认的
     if (dist)

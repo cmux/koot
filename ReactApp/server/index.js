@@ -25,7 +25,8 @@ import {
     redux,
     client,
     server,
-} from '../../../../koot'
+} from '__KOOT_PROJECT_CONFIG_PATHNAME__'
+// } from '../../../../koot'
 
 const {
     cookieKeys,
