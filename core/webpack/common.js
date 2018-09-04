@@ -216,7 +216,7 @@ const plugins = (env, stage, defines = {}) => {
             // 服务器启动时，会优先选取当前环境变量中的 SERVER_PORT，如果没有，会选择 __SERVER_PORT__
             __SERVER_PORT__: JSON.stringify(process.env.SERVER_PORT),
 
-            __KOOT_PROJECT_CONFIG_PATHNAME__: getPathnameProjectConfigFile(),
+            // __KOOT_PROJECT_CONFIG_PATHNAME__: getPathnameProjectConfigFile(),
         },
         defines
     )
@@ -289,42 +289,33 @@ const resolve = Object.assign({
 // 大部分是自己用es6语法写的模块
 const needBabelHandleList = [
     'koot',
-    'super-project',
-    'sp-base',
-    'sp-boilerplate',
-    'sp-css-import',
-    'sp-css-loader',
-    'sp-mongo',
-    'sp-api',
-    'sp-cors-middleware',
-    'sp-react-isomorphic',
-    'sp-model',
-    'sp-cms',
-    'sp-auth',
-    'sp-koa-views',
-    'sp-response',
-    'sp-upload',
-    'sp-i18n',
-    'super-i18n',
-    'super-ui-pagecontainer',
 ]
 
 // https://github.com/webpack/webpack/issues/2852
 // webpack 在打包服务端依赖 node_modules 的时候易出错，
 // 所以把 package.json 里描述的依赖过滤掉，只打包自己写的代码
 // 注：在上线的时候需要需要自行安装 package.json 的依赖包
-const filterExternalsModules = () => fs
-    // .readdirSync(path.resolve(__dirname, '../../', 'node_modules'))
-    .readdirSync(path.resolve(__dirname, '../../../'))
-    .concat(['react-dom/server'])
-    .filter((x) => ['.bin'].concat(needBabelHandleList).indexOf(x) === -1)
-    .filter((x) => !/^sp-/.test(x))
-    .filter((x) => !/^super-/.test(x))
-    .filter((x) => !/^koot-/.test(x))
-    .reduce((ext, mod) => {
-        ext[mod] = ['commonjs', mod].join(' ') // eslint-disable-line no-param-reassign
-        return ext
-    }, {})
+const filterExternalsModules = () => {
+    const externals = []
+        .concat(fs.readdirSync(path.resolve(__dirname, '../../../')))
+        .concat(fs.readdirSync(path.resolve(process.cwd(), 'node_modules')))
+        .concat(['react-dom/server'])
+        .filter((x) => ['.bin'].concat(needBabelHandleList).indexOf(x) === -1)
+        .filter((x) => !/^sp-/.test(x))
+        .filter((x) => !/^super-/.test(x))
+        .filter((x) => !/^koot-/.test(x))
+        .filter((x) => !/^@/.test(x))
+        .reduce((ext, mod) => {
+            // ext[mod] = ['commonjs', mod].join(' ') // eslint-disable-line no-param-reassign
+            ext[mod] = mod + '' // eslint-disable-line no-param-reassign
+            return ext
+        }, {})
+
+    externals['@babel/register'] = '@babel/register'
+    externals['@babel/polyfill'] = '@babel/polyfill'
+
+    return externals
+}
 
 // 已下属都可以在 /config/webpack.js 中扩展
 module.exports = {
