@@ -42,12 +42,12 @@ const run = async () => {
     } = program
     // console.log(program)
 
-    if (kootTest) global.kootTest = true
-
     setEnvFromCommand({
         config,
         type,
     })
+
+    process.env.KOOT_TEST_MODE = JSON.stringify(kootTest)
 
     const stage = _stage ? _stage : (client ? 'client' : (server ? 'server' : false))
 

@@ -57,7 +57,9 @@ module.exports = async (kootConfig) => {
         WEBPACK_BUILD_ENV: ENV,
         WEBPACK_BUILD_STAGE: STAGE,
         WEBPACK_DEV_SERVER_PORT: CLIENT_DEV_PORT,
+        KOOT_TEST_MODE,
     } = process.env
+    const kootTest = JSON.parse(KOOT_TEST_MODE)
 
     // DEBUG && console.log('============== Webpack Debug =============')
     // DEBUG && console.log('Webpack 打包环境：', TYPE, STAGE, ENV)
@@ -145,7 +147,7 @@ module.exports = async (kootConfig) => {
 
     await before()
 
-    const spinnerBuilding = !global.kootTest
+    const spinnerBuilding = !kootTest
         ? spinner(chalk.yellowBright('[koot/build] ') + __('build.building'))
         : undefined
     const buildingComplete = () => {
@@ -225,7 +227,7 @@ module.exports = async (kootConfig) => {
         if (Array.isArray(webpackConfig)) {
             buildingComplete()
             for (let config of webpackConfig) {
-                const spinnerBuildingSingle = !global.kootTest
+                const spinnerBuildingSingle = !kootTest
                     ? spinner(chalk.yellowBright('[koot/build] ') + __('build.building'))
                     : undefined
                 await build(config, () => {

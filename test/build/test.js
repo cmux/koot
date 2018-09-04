@@ -24,20 +24,22 @@ describe('测试: 使用配置案例，进行 Webpack 打包', async () => {
 
         const stage = 'client'
         const env = 'prod'
-        const command = `${commandTestBuild}-${stage}-${env}`
+        // const command = `${commandTestBuild}-${stage}-${env}`
+        const commandName = `${commandTestBuild}-${env}`
+        const command = `koot-build --env ${env} --koot-test`
 
         test(`${name} [${stage} | ${env}] 打包可无报错`, async () => {
             const pathPackage = path.resolve(dir, 'package.json')
             const p = await fs.readJson(pathPackage)
-            if (!p.scripts[command])
-                p.scripts[command] = `koot-build --stage ${stage} --env ${env} --koot-test`
+            if (!p.scripts[commandName])
+                p.scripts[commandName] = command
             await fs.writeJson(pathPackage, p, {
                 spaces: 4
             })
 
             // const waitingBuilding = spinner(`${name} [${stage} | ${env}] - 打包中...`)
             const { stdout, stderr } = await exec(
-                `npm run ${command}`,
+                `npm run ${commandName}`,
                 {
                     cwd: dir,
                 }

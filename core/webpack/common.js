@@ -306,13 +306,13 @@ const filterExternalsModules = () => {
         .filter((x) => !/^koot-/.test(x))
         .filter((x) => !/^@/.test(x))
         .reduce((ext, mod) => {
-            // ext[mod] = ['commonjs', mod].join(' ') // eslint-disable-line no-param-reassign
-            ext[mod] = mod + '' // eslint-disable-line no-param-reassign
+            ext[mod] = ['commonjs', mod].join(' ') // eslint-disable-line no-param-reassign
+            // ext[mod] = mod + '' // eslint-disable-line no-param-reassign
             return ext
         }, {})
 
-    externals['@babel/register'] = '@babel/register'
-    externals['@babel/polyfill'] = '@babel/polyfill'
+    externals['@babel/register'] = ['commonjs', '@babel/register'].join(' ')
+    // externals['@babel/polyfill'] = '@babel/polyfill'
 
     return externals
 }

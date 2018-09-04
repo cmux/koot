@@ -15,8 +15,8 @@
         "eslint": "eslint \"!(node_modules|logs|dist|dist*)/**/*.+(js|jsx)\"",
         "pretest": "node ./test/pre-test.js",
         "test": "jest",
-        "test:build": "jest ./test/webpack-build/test.js",
-        "test:config": "jest ./test/webpack-config/test.js"
+        "test:build": "jest ./test/build/test.js",
+        "test:config": "jest ./test/factory-config/test.js"
     },
     "repository": {
         "type": "git",

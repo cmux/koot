@@ -62,6 +62,10 @@ module.exports = async (o = {}) => {
     } = o
 
     const packageProject = await fs.readJson(path.resolve(process.cwd(), 'package.json'))
+    const {
+        KOOT_TEST_MODE,
+    } = process.env
+    const kootTest = JSON.parse(KOOT_TEST_MODE)
 
     await fs.copy(
         path.resolve(__dirname, 'files'),
@@ -76,11 +80,24 @@ module.exports = async (o = {}) => {
         'utf-8'
     )
 
+    const p = Object.assign({}, packageJson, {
+        name: `${packageProject.name}-server`,
+        dependencies: packageProject.dependencies
+    })
+
     await fs.writeJson(
         path.resolve(dist, 'package.json'),
-        Object.assign({}, packageJson, {
-            name: `${packageProject.name}-server`,
-            dependencies: packageProject.dependencies
-        })
+        p
     )
+
+    if (kootTest) {
+        Object.assign(p, packageJson, {
+            devDependencies: packageProject.devDependencies
+        })
+        p.dependencies.koot = 'file:../../../'
+        await fs.writeJson(
+            path.resolve(dist, 'package.json'),
+            p
+        )
+    }
 }

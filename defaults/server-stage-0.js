@@ -61,5 +61,5 @@ import "core-js/fn/reflect/has-metadata";
 import "core-js/fn/reflect/has-own-metadata";
 import "core-js/fn/reflect/metadata";
 
-import "@babel/register";
-import "@babel/polyfill";
+// import "@babel/register";
+// import "@babel/polyfill";
