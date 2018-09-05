@@ -183,6 +183,7 @@ export default async (app, {
     reactApp.isomorphic = new ReactIsomorphic()
 
     const isomorphic = reactApp.isomorphic.createKoaMiddleware({
+        reactApp,
 
         // react-router 配置对象
         routes: reactApp.react.router.get(),

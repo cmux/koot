@@ -75,7 +75,10 @@ const prepare = async (project = {}) => {
         p.dependencies.koot = 'file:../../'
         // console.log(pSelf.dependencies)
         // console.log(Object.keys(pSelf.dependencies))
-        for (let key of Object.keys(pSelf.dependencies)) {
+        p.devDependencies = {}
+        const keys = Object.keys(pSelf.dependencies)
+            .filter(key => !(key in p.dependencies))
+        for (let key of keys) {
             p.devDependencies[key] = pSelf.dependencies[key]
         }
         // console.log(p)
