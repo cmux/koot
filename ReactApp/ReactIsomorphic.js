@@ -1,9 +1,17 @@
 import React from 'react'
 import HTMLTool from './HTMLTool'
 import { renderToString } from 'react-dom/server'
-import { createMemoryHistory, RouterContext, match } from 'react-router'
+// import { createMemoryHistory, RouterContext, match } from 'react-router'
 import { Provider } from 'react-redux'
-import { syncHistoryWithStore } from 'react-router-redux'
+import StaticRouter from 'react-router-dom/StaticRouter'
+import { renderRoutes, matchRoutes } from 'react-router-config'
+import {
+    ConnectedRouter,
+    // routerReducer,
+    routerMiddleware,
+    // push
+} from "react-router-redux"
+import createHistory from "history/createMemoryHistory"
 
 import htmlInject from './inject'
 import { localeId } from '../i18n'
@@ -32,6 +40,7 @@ setPageinfo(pageinfo)
 export default class ReactIsomorphic {
 
     createKoaMiddleware(options = {
+        reactApp: {},
         routes: [],
         configStore: () => { },
         onServerRender: () => { },
@@ -53,7 +62,7 @@ export default class ReactIsomorphic {
         */
 
         // 设置常量
-        const { template, onServerRender, inject, configStore, routes } = options
+        const { reactApp, template, onServerRender, inject, configStore, routes } = options
         const ENV = process.env.WEBPACK_BUILD_ENV
 
         // 配置 html 注入内容
@@ -98,17 +107,22 @@ export default class ReactIsomorphic {
             const url = ctx.path + ctx.search
             try {
 
-                const memoryHistory = createMemoryHistory(url)
+                const history = createHistory({
+                    initialEntries: [url]
+                })
+
+                reactApp.redux.middleware.use(routerMiddleware(history))
+
                 const store = configStore()
-                const history = syncHistoryWithStore(memoryHistory, store)
 
                 // 根据router计算出渲染页面需要的数据，并把渲染需要的数据补充到store中
-
                 const { redirectLocation, renderProps } = await asyncReactRouterMatch({ history, routes, location: url })
 
                 // 判断是否重定向页面
                 if (redirectLocation) return ctx.redirect(redirectLocation.pathname + redirectLocation.search)
                 if (!renderProps) return await next()
+
+                // console.log(redirectLocation, renderProps)
 
                 // 设置常量
                 setStore(store)
@@ -123,14 +137,37 @@ export default class ReactIsomorphic {
 
                 // 把同构时候服务端预处理数据补充到html中(根据页面逻辑动态修改html内容)
                 const htmlTool = await ServerRenderHtmlExtend({ store, renderProps, ctx })
+                const context = {}
 
                 // 把react部分渲染出html片段，并插入到html中
-
+                // console.log('history', history)
+                // console.log('routes', routes)
+                // console.log('1',
+                //     <ConnectedRouter history={history}>
+                //         <StaticRouter context={context}>
+                //             {renderRoutes(routes)}
+                //         </StaticRouter>
+                //     </ConnectedRouter>
+                // )
+                // console.log('2',
+                //     <StaticRouter context={context}>
+                //         {renderRoutes(routes)}
+                //     </StaticRouter>
+                // )
+                // console.log('3',
+                //     renderRoutes(routes)
+                // )
                 const reactHtml = renderToString(
                     <Provider store={store} >
-                        <RouterContext {...renderProps} />
+                        {/* ConnectedRouter will use the store from Provider automatically */}
+                        <ConnectedRouter history={history}>
+                            <StaticRouter context={context}>
+                                {renderRoutes(routes)}
+                            </StaticRouter>
+                        </ConnectedRouter>
                     </Provider>
                 )
+                console.log(reactHtml)
                 const filterResult = filterStyle(reactHtml)
 
                 const thisInjectOnceCache = assetsInjectOnce ? injectOnceCache : injectOnceCache[localeId]
@@ -243,14 +280,34 @@ export default class ReactIsomorphic {
 
 // location 解构：
 // { history, routes, location }
-function asyncReactRouterMatch(location) {
+function asyncReactRouterMatch({ routes, location }) {
     return new Promise((resolve, reject) => {
-        match(location, (error, redirectLocation, renderProps) => {
-            if (error) {
-                return reject(error)
-            }
+        // match(location, (error, redirectLocation, renderProps) => {
+        //     if (error) {
+        //         return reject(error)
+        //     }
 
-            resolve({ redirectLocation, renderProps })
+        //     resolve({ redirectLocation, renderProps })
+        // })
+        const matches = matchRoutes(routes, location)
+        // console.log(location, matches)
+
+        if (!Array.isArray(matches))
+            return reject('router match failed')
+
+        if (!matches.length)
+            return {}
+
+        const match = matches[matches.length - 1].match
+        resolve({
+            renderProps: {
+                location,
+                components: matches
+                    .filter(match => typeof match.route.component !== 'undefined')
+                    .map(match => match.route.component),
+                ...match
+            },
+            match
         })
     })
 }
@@ -264,6 +321,7 @@ function asyncReactRouterMatch(location) {
  * @returns 
  */
 function ServerRenderDataToStore({ store, renderProps, ctx }) {
+    // console.log('renderProps', renderProps)
 
     const SERVER_RENDER_EVENT_NAME = 'onServerRenderStoreExtend'
 

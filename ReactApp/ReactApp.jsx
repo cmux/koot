@@ -1,8 +1,3 @@
-import React from 'react'
-import { hydrate } from 'react-dom'
-import { browserHistory, match, Router } from 'react-router'
-import { syncHistoryWithStore } from 'react-router-redux'
-import { Provider } from 'react-redux'
 import { createStore, applyMiddleware, compose } from 'redux'
 
 //
@@ -14,8 +9,6 @@ import ReactRouter from './ReactRouter'
 //
 
 import {
-    setStore,
-    setHistory,
     setPageinfo,
 } from '../'
 import pageinfo from '../React/pageinfo'
@@ -26,7 +19,7 @@ import pageinfo from '../React/pageinfo'
 const DEFAULT_ROOT_DOM_ID = 'root'
 
 // redux store
-export let store
+// export let store
 
 // 设置常量
 setPageinfo(pageinfo)
@@ -103,59 +96,4 @@ export default class ReactApp {
             return store
         }
     }
-
-
-    run(settings = {}) {
-
-        let options = Object.assign({}, settings)
-
-        // __REDUX_STATE__ 是与服务端约定好的存储redux数据对象 (在浏览器端的 html 里存在)
-        this.createConfigureStoreFactory()
-        store = this.configureStore(window.__REDUX_STATE__)
-
-        // react-router
-        browserHistory.listen(location => {
-            // TODO:
-            /*store.dispatch(realtimeLocationUpdate(location))
-            if (typeof options.browserHistoryOnUpdate === 'function') 
-                options.browserHistoryOnUpdate(location)*/
-            if (typeof options.browserHistoryOnUpdate === 'function')
-                options.browserHistoryOnUpdate(location, store)
-        })
-
-        // 
-
-        const routes = this.react.router.get()
-
-        // 用 react-router-redux 增强 history
-        const history = syncHistoryWithStore(browserHistory, store)
-
-        // 扩展 router 属性
-        let ext = this.__reactRouterExt
-        let root = this.rootDom
-
-        // 设置常量
-        setStore(store)
-        setHistory(history)
-
-        match({ history, routes }, (err/*, redirectLocation, renderProps*/) => {
-            if (err) {
-                console.log(err.stack)
-            }
-            hydrate(
-                <Provider store={store} >
-                    <Router history={history} {...ext} >
-                        {routes}
-                    </Router>
-                </Provider>,
-                document.getElementById(root)
-            )
-        })
-
-        return {
-            store,
-            history,
-        }
-    }
-
 }
