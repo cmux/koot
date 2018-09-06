@@ -4,6 +4,7 @@ const util = require('util')
 const exec = util.promisify(require('child_process').exec)
 
 const download = require('download-git-repo')
+const chalk = require('chalk')
 
 const spinner = require('../utils/spinner')
 
@@ -13,6 +14,8 @@ const { dir, projects } = require('./projects')
  * 准备测试项目
  */
 module.exports = async () => {
+    console.log(chalk.cyanBright('正在准备测试项目代码库'))
+
     await fs.ensureDir(dir)
 
     for (let project of projects) {
