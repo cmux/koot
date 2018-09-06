@@ -70,6 +70,6 @@
 |-|-|-|
 | -c 或 --client | 只对客户端环境打包 | `koot-dev -c` |
 | -s 或 --server | 只对服务器端环境打包 | `koot-dev -s` |
-| --global | 使用全局 PM2 | `koot-dev --global` |
+| -g 或 --global | 使用全局 PM2 | `koot-dev -g` |
 
 注：手动指定环境时，将不会默认打开首页。

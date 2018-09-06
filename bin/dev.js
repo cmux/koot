@@ -28,10 +28,10 @@ program
     .usage('[options]')
     .option('-c, --client', 'Set STAGE to CLIENT')
     .option('-s, --server', 'Set STAGE to SERVER')
+    .option('-g, --global', 'Connect to global PM2')
     .option('--stage <stage>', 'Set STAGE')
     .option('--config <config-file-path>', 'Set config file')
     .option('--type <project-type>', 'Set project type')
-    .option('--global', 'Connect to global PM2')
     .parse(process.argv)
 
 /**
