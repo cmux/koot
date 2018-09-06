@@ -3,17 +3,17 @@
 ### 安装命令行工具
 
 ```bash
-npm i koot-cli
+> sudo npm i -g koot-cli
 ```
 
 ### 初始化项目
 
 ```bash
-koot-init
+> koot-create
 ```
 
-### 运行项目
+### 运行开发模式
 
 ```bash
-cd [项目目录] && npm start
+> cd [项目名] && npm run dev
 ```
