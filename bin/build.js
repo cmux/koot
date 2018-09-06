@@ -94,7 +94,9 @@ const run = async () => {
         // if (stage === 'server' && !hasServer) {
         //     console.log(chalk.redBright('× '))
         // }
-        return await kootBuild(buildConfig)
+        await kootBuild(buildConfig)
+        console.log(' ')
+        return
     }
 
     // 如过没有提供 stage，自动相继打包 client 和 server

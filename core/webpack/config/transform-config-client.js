@@ -93,6 +93,9 @@ module.exports = async (data = {}) => {
             .merge(await transformConfigExtendDefault(thisConfig, data))
 
         { // 处理 output
+            // if (TYPE === 'spa') {
+            //     result.output = configTargetDefault.output
+            // }
             if (typeof result.output !== 'object')
                 result.output = {}
             if (!result.output.path) {

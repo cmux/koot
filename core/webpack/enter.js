@@ -174,7 +174,7 @@ module.exports = async (kootConfig) => {
             hot: true,
             inline: true,
             contentBase: './',
-            publicPath: '/dist/',
+            publicPath: TYPE === 'spa' ? '/' : '/dist/',
             headers: {
                 'Access-Control-Allow-Origin': '*'
             },
@@ -183,12 +183,13 @@ module.exports = async (kootConfig) => {
 
         // more config
         // http://webpack.github.io/docs/webpack-dev-server.html
-        const server = new WebpackDevServer(compiler, devServerConfig)
-        server.listen(
-            TYPE === 'spa' ? process.env.SERVER_PORT : CLIENT_DEV_PORT
-        )
-
-        buildingComplete()
+        const server = await new WebpackDevServer(compiler, devServerConfig)
+        const port = TYPE === 'spa' ? process.env.SERVER_PORT : CLIENT_DEV_PORT
+        server.listen(port, 'localhost', async (err) => {
+            if (err) console.error(err)
+            buildingComplete()
+            // await after()
+        })
     }
 
     // 客户端打包
@@ -248,7 +249,7 @@ module.exports = async (kootConfig) => {
             }
         } else {
             await build(webpackConfig)
-            console.log(' ')
+            // console.log(' ')
         }
 
         await after()
