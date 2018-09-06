@@ -116,6 +116,7 @@ const run = async () => {
             time: (new Date()).toLocaleString()
         })
     )
+    console.log(' ')
 }
 
 run()

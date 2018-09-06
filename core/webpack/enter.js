@@ -153,7 +153,6 @@ module.exports = async (kootConfig) => {
         : undefined
     const buildingComplete = () => {
         if (spinnerBuilding) spinnerBuilding.stop()
-        console.log(' ')
     }
 
     const pathConfigLogs = path.resolve(RUN_PATH, `./logs/webpack-config`)
@@ -182,14 +181,14 @@ module.exports = async (kootConfig) => {
             open: TYPE === 'spa',
         }, devServer)
 
-        buildingComplete()
-
         // more config
         // http://webpack.github.io/docs/webpack-dev-server.html
         const server = new WebpackDevServer(compiler, devServerConfig)
         server.listen(
             TYPE === 'spa' ? process.env.SERVER_PORT : CLIENT_DEV_PORT
         )
+
+        buildingComplete()
     }
 
     // 客户端打包
@@ -227,7 +226,8 @@ module.exports = async (kootConfig) => {
 
         if (Array.isArray(webpackConfig)) {
             buildingComplete()
-            let index = 0
+            // console.log(' ')
+            // let index = 0
             for (let config of webpackConfig) {
                 const localeId = config.plugins
                     .filter(plugin => typeof plugin.localeId === 'string')
@@ -244,10 +244,11 @@ module.exports = async (kootConfig) => {
                         })
                     }
                 })
-                index++
+                // index++
             }
         } else {
             await build(webpackConfig)
+            console.log(' ')
         }
 
         await after()
@@ -299,6 +300,7 @@ module.exports = async (kootConfig) => {
         await new Promise((resolve, reject) => {
             webpack(webpackConfig, async (err, stats) => {
                 buildingComplete()
+                console.log(' ')
 
                 if (err) return reject(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`)
 

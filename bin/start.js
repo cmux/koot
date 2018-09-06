@@ -11,7 +11,7 @@ const readBuildConfigFile = require('../utils/read-build-config-file')
 const spinner = require('../utils/spinner')
 const setEnvFromCommand = require('../utils/set-env-from-command')
 const __ = require('../utils/translate')
-const getCwd = require('../utils/get-cwd')
+// const getCwd = require('../utils/get-cwd')
 
 program
     .version(require('../package').version, '-v, --version')

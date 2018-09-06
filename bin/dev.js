@@ -27,6 +27,7 @@ program
     .option('--stage <stage>', 'Set STAGE')
     .option('--config <config-file-path>', 'Set config file')
     .option('--type <project-type>', 'Set project type')
+    .option('--global', 'Connect to global PM2')
     .parse(process.argv)
 
 /**
@@ -51,6 +52,7 @@ const run = async () => {
         stage: _stage,
         config,
         type,
+        global = false,
     } = program
 
     initNodeEnv()
@@ -103,224 +105,225 @@ const run = async () => {
             // process.exit(exitCode)
         })
         return
-    } else {
-        // 没有设置 STAGE，开始 PM2 进程
+    }
 
-        let waitingSpinner = false
-        // spinner(
+    // 没有设置 STAGE，开始 PM2 进程
+    let waitingSpinner = false
+    // spinner(
+    //     chalk.yellowBright('[koot/build] ')
+    //     + __('build.build_start', {
+    //         type: chalk.cyanBright(appType),
+    //         stage: chalk.green('client'),
+    //         env: chalk.green('dev'),
+    //     })
+    // )
+
+    const processes = []
+    const pathChunkmap = getChunkmapPath(dist)
+    const pathServerJS = path.resolve(dist, 'server/index.js')
+    const contentWaiting = '// WAITING FOR SERVER BUNDLING'
+
+    { // 在脚本进程关闭/结束时，同时关闭打开的 PM2 进程
+        process.stdin.resume()
+        const exitHandler = async (/*options, err*/) => {
+            // console.log(processes)
+            if (Array.isArray(processes) && processes.length) {
+                if (waitingSpinner) waitingSpinner.stop()
+                await sleep(300)
+                process.stdout.write('\x1B[2J\x1B[0f')
+                const w = spinner('WAITING FOR ENDING')
+                await Promise.all(processes.map(proc =>
+                    new Promise((resolve/*, reject*/) => {
+                        setTimeout(() => {
+                            processes.splice(processes.indexOf(proc), 1)
+                            resolve()
+                        }, 500)
+                        // console.log(proc)
+                        pm2.delete(proc)
+                    })
+                ))
+                await Promise.all(processes.map(proc =>
+                    new Promise((resolve/*, reject*/) => {
+                        setTimeout(() => resolve(), 500)
+                        // console.log(proc)
+                        pm2.delete(proc)
+                    })
+                ))
+                // console.log(JSON.stringify(processes))
+                pm2.disconnect()
+                await sleep(300)
+                w.stop()
+                try {
+                    // console.log(process.pid)
+                    process.exit(1)
+                    // process.kill(process.pid)
+                } catch (e) {
+                    console.log(e)
+                }
+            } else {
+                process.removeListener('exit', exitHandler)
+                process.removeListener('SIGINT', exitHandler)
+                process.removeListener('SIGUSR1', exitHandler)
+                process.removeListener('SIGUSR2', exitHandler)
+                process.removeListener('uncaughtException', exitHandler)
+                // 清空 log
+                process.stdout.write('\x1B[2J\x1B[0f')
+                console.log('Press CTRL+C again to terminate.')
+                process.exit(1)
+            }
+        }
+        // do something when app is closing
+        process.on('exit', exitHandler);
+        // catches ctrl+c event
+        process.on('SIGINT', exitHandler);
+        // catches "kill pid" (for example: nodemon restart)
+        process.on('SIGUSR1', exitHandler);
+        process.on('SIGUSR2', exitHandler);
+        // catches uncaught exceptions
+        process.on('uncaughtException', exitHandler);
+    }
+
+    // 根据 stage 开启 PM2 进程
+    const start = (stage) => new Promise(async (resolve, reject) => {
+        const pathLogOut = path.resolve(getCwd(), `logs/dev/${stage}.log`)
+        const pathLogErr = path.resolve(getCwd(), `logs/dev/${stage}-error.log`)
+        if (fs.existsSync(pathLogOut)) await fs.remove(pathLogOut)
+        if (fs.existsSync(pathLogErr)) await fs.remove(pathLogErr)
+        await fs.ensureFile(pathLogOut)
+        await fs.ensureFile(pathLogErr)
+        const config = {
+            name: `dev-${stage}-${name}`,
+            script: path.resolve(__dirname, './build.js'),
+            args: `--stage ${stage} --env dev`,
+            cwd: getCwd(),
+            output: pathLogOut,
+            error: pathLogErr,
+            autorestart: false,
+        }
+        if (stage === 'run') {
+            config.script = pathServerJS
+            config.watch = true
+            delete config.args
+        }
+        // console.log(config)
+        processes.push(config.name)
+        pm2.start(
+            config,
+            (err, proc) => {
+                // console.log(err)
+                if (err) return reject(err)
+                resolve(proc)
+            }
+        )
+    })
+
+    // 连接 PM2
+    // console.log('noDaemon', !global)
+    pm2.connect(!global, async (err) => {
+        if (err) {
+            // console.error(err)
+            process.exit(2)
+        }
+
+        console.log(
+            `  `
+            + chalk.yellowBright('[koot/build] ')
+            + __('build.build_start', {
+                type: chalk.cyanBright(appType),
+                stage: chalk.green('client'),
+                env: chalk.green('dev'),
+            })
+        )
+
+        // 清空 chunkmap 文件
+        await fs.ensureFile(pathChunkmap)
+        await fs.writeFile(pathChunkmap, contentWaiting)
+
+        // 清空 server 打包结果文件
+        await fs.ensureFile(pathServerJS)
+        await fs.writeFile(pathServerJS, contentWaiting)
+
+        // 启动 client webpack-dev-server
+        await start('client')
+
+        // 监视 chunkmap 文件，如果修改，进入下一步
+        await new Promise(resolve => {
+            const waiting = () => setTimeout(async () => {
+                if (!fs.existsSync(pathChunkmap)) return waiting()
+                const content = await fs.readFile(pathChunkmap, 'utf-8')
+                if (!content || content === contentWaiting) return waiting()
+                await sleep(100)
+                resolve()
+            }, 500)
+            waiting()
+        })
+        // waitingSpinner.succeed()
+        console.log(
+            chalk.green('√ ')
+            + chalk.yellowBright('[koot/build] ')
+            + __('build.build_complete', {
+                type: chalk.cyanBright(appType),
+                stage: chalk.green('client'),
+                env: chalk.green('dev'),
+            })
+        )
+
+        // 启动 server webpack
+        // waitingSpinner = spinner(
         //     chalk.yellowBright('[koot/build] ')
         //     + __('build.build_start', {
         //         type: chalk.cyanBright(appType),
-        //         stage: chalk.green('client'),
+        //         stage: chalk.green('server'),
         //         env: chalk.green('dev'),
         //     })
         // )
-
-        const processes = []
-        const pathChunkmap = getChunkmapPath(dist)
-        const pathServerJS = path.resolve(dist, 'server/index.js')
-        const contentWaiting = '// WAITING FOR SERVER BUNDLING'
-
-        { // 在脚本进程关闭/结束时，同时关闭打开的 PM2 进程
-            process.stdin.resume()
-            const exitHandler = async (/*options, err*/) => {
-                // console.log(processes)
-                if (Array.isArray(processes) && processes.length) {
-                    if (waitingSpinner) waitingSpinner.stop()
-                    await sleep(300)
-                    process.stdout.write('\x1B[2J\x1B[0f')
-                    const w = spinner('WAITING FOR ENDING')
-                    await Promise.all(processes.map(proc =>
-                        new Promise((resolve/*, reject*/) => {
-                            setTimeout(() => {
-                                processes.splice(processes.indexOf(proc), 1)
-                                resolve()
-                            }, 500)
-                            // console.log(proc)
-                            pm2.delete(proc)
-                        })
-                    ))
-                    await Promise.all(processes.map(proc =>
-                        new Promise((resolve/*, reject*/) => {
-                            setTimeout(() => resolve(), 500)
-                            // console.log(proc)
-                            pm2.delete(proc)
-                        })
-                    ))
-                    // console.log(JSON.stringify(processes))
-                    pm2.disconnect()
-                    await sleep(300)
-                    w.stop()
-                    try {
-                        // console.log(process.pid)
-                        process.exit(1)
-                        // process.kill(process.pid)
-                    } catch (e) {
-                        console.log(e)
-                    }
-                } else {
-                    process.removeListener('exit', exitHandler)
-                    process.removeListener('SIGINT', exitHandler)
-                    process.removeListener('SIGUSR1', exitHandler)
-                    process.removeListener('SIGUSR2', exitHandler)
-                    process.removeListener('uncaughtException', exitHandler)
-                    // 清空 log
-                    process.stdout.write('\x1B[2J\x1B[0f')
-                    console.log('Press CTRL+C again to terminate.')
-                    process.exit(1)
-                }
-            }
-            // do something when app is closing
-            process.on('exit', exitHandler);
-            // catches ctrl+c event
-            process.on('SIGINT', exitHandler);
-            // catches "kill pid" (for example: nodemon restart)
-            process.on('SIGUSR1', exitHandler);
-            process.on('SIGUSR2', exitHandler);
-            // catches uncaught exceptions
-            process.on('uncaughtException', exitHandler);
-        }
-
-        // 根据 stage 开启 PM2 进程
-        const start = (stage) => new Promise(async (resolve, reject) => {
-            const pathLogOut = path.resolve(getCwd(), `logs/dev/${stage}.log`)
-            const pathLogErr = path.resolve(getCwd(), `logs/dev/${stage}-error.log`)
-            if (fs.existsSync(pathLogOut)) await fs.remove(pathLogOut)
-            if (fs.existsSync(pathLogErr)) await fs.remove(pathLogErr)
-            await fs.ensureFile(pathLogOut)
-            await fs.ensureFile(pathLogErr)
-            const config = {
-                name: `dev-${stage}-${name}`,
-                script: path.resolve(__dirname, './build.js'),
-                args: `--stage ${stage} --env dev`,
-                cwd: getCwd(),
-                output: pathLogOut,
-                error: pathLogErr,
-                autorestart: false,
-            }
-            if (stage === 'run') {
-                config.script = pathServerJS
-                config.watch = true
-                delete config.args
-            }
-            processes.push(config.name)
-            pm2.start(
-                config,
-                (err, proc) => {
-                    // console.log(err)
-                    if (err) return reject(err)
-                    resolve(proc)
-                }
-            )
-        })
-
-        // 连接 PM2
-        pm2.connect(true, async (err) => {
-            if (err) {
-                // console.error(err)
-                process.exit(2)
-            }
-
-            console.log(
-                `  `
-                + chalk.yellowBright('[koot/build] ')
-                + __('build.build_start', {
-                    type: chalk.cyanBright(appType),
-                    stage: chalk.green('client'),
-                    env: chalk.green('dev'),
-                })
-            )
-
-            // 清空 chunkmap 文件
-            await fs.ensureFile(pathChunkmap)
-            await fs.writeFile(pathChunkmap, contentWaiting)
-
-            // 清空 server 打包结果文件
-            await fs.ensureFile(pathServerJS)
-            await fs.writeFile(pathServerJS, contentWaiting)
-
-            // 启动 client webpack-dev-server
-            await start('client')
-
-            // 监视 chunkmap 文件，如果修改，进入下一步
-            await new Promise(resolve => {
-                const waiting = () => setTimeout(async () => {
-                    if (!fs.existsSync(pathChunkmap)) return waiting()
-                    const content = await fs.readFile(pathChunkmap, 'utf-8')
-                    if (!content || content === contentWaiting) return waiting()
-                    await sleep(100)
-                    resolve()
-                }, 500)
-                waiting()
+        console.log(
+            `  `
+            + chalk.yellowBright('[koot/build] ')
+            + __('build.build_start', {
+                type: chalk.cyanBright(appType),
+                stage: chalk.green('server'),
+                env: chalk.green('dev'),
             })
-            // waitingSpinner.succeed()
-            console.log(
-                chalk.green('√ ')
-                + chalk.yellowBright('[koot/build] ')
-                + __('build.build_complete', {
-                    type: chalk.cyanBright(appType),
-                    stage: chalk.green('client'),
-                    env: chalk.green('dev'),
-                })
-            )
+        )
+        await start('server')
 
-            // 启动 server webpack
-            // waitingSpinner = spinner(
-            //     chalk.yellowBright('[koot/build] ')
-            //     + __('build.build_start', {
-            //         type: chalk.cyanBright(appType),
-            //         stage: chalk.green('server'),
-            //         env: chalk.green('dev'),
-            //     })
-            // )
-            console.log(
-                `  `
-                + chalk.yellowBright('[koot/build] ')
-                + __('build.build_start', {
-                    type: chalk.cyanBright(appType),
-                    stage: chalk.green('server'),
-                    env: chalk.green('dev'),
-                })
-            )
-            await start('server')
-
-            // 监视 server.js 文件，如果修改，进入下一步
-            await new Promise(resolve => {
-                const waiting = () => setTimeout(async () => {
-                    if (!fs.existsSync(pathServerJS)) return waiting()
-                    const content = await fs.readFile(pathServerJS, 'utf-8')
-                    if (!content || content === contentWaiting) return waiting()
-                    await sleep(100)
-                    resolve()
-                }, 500)
-                waiting()
-            })
-            // waitingSpinner.succeed()
-
-            // 执行
-            // waitingSpinner = spinner(
-            //     chalk.yellowBright('[koot/build] ')
-            //     + 'waiting...'
-            // )
-            await start('run')
-            await sleep(1000)
-
-            console.log(
-                chalk.green('√ ')
-                + chalk.yellowBright('[koot/build] ')
-                + __('build.build_complete', {
-                    type: chalk.cyanBright(appType),
-                    stage: chalk.green('server'),
-                    env: chalk.green('dev'),
-                })
-            )
-
-            // waitingSpinner.stop()
-            // waitingSpinner = undefined
-            npmRunScript(`pm2 logs`)
-            opn(`http://localhost:${process.env.SERVER_PORT}/`)
+        // 监视 server.js 文件，如果修改，进入下一步
+        await new Promise(resolve => {
+            const waiting = () => setTimeout(async () => {
+                if (!fs.existsSync(pathServerJS)) return waiting()
+                const content = await fs.readFile(pathServerJS, 'utf-8')
+                if (!content || content === contentWaiting) return waiting()
+                await sleep(100)
+                resolve()
+            }, 500)
+            waiting()
         })
-    }
+        // waitingSpinner.succeed()
+
+        // 执行
+        // waitingSpinner = spinner(
+        //     chalk.yellowBright('[koot/build] ')
+        //     + 'waiting...'
+        // )
+        await start('run')
+        await sleep(1000)
+
+        console.log(
+            chalk.green('√ ')
+            + chalk.yellowBright('[koot/build] ')
+            + __('build.build_complete', {
+                type: chalk.cyanBright(appType),
+                stage: chalk.green('server'),
+                env: chalk.green('dev'),
+            })
+        )
+
+        // waitingSpinner.stop()
+        // waitingSpinner = undefined
+        npmRunScript(`pm2 logs`)
+        opn(`http://localhost:${process.env.SERVER_PORT}/`)
+    })
 }
 
 run()
