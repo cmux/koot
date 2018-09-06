@@ -21,6 +21,7 @@ const getChunkmap = require('../utils/get-chunkmap')
 const getClientFilePath = require('../utils/get-client-file-path')
 const readClientFile = require('../utils/read-client-file')
 const getSWPathname = require('../utils/get-sw-pathname')
+// const log = require('../libs/log')
 
 const error = require('debug')('SYSTEM:isomorphic:error')
 
@@ -97,6 +98,10 @@ export default class ReactIsomorphic {
 
             const url = ctx.path + ctx.search
             try {
+                // if (__DEV__) {
+                //     console.log(' ')
+                //     log('server', 'Server rendering...')
+                // }
 
                 const memoryHistory = createMemoryHistory(url)
                 const store = configStore()

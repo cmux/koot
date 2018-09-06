@@ -199,6 +199,7 @@ export default async (app, {
         inject,
 
         onServerRender: async (obj) => {
+            if (__DEV__) console.log(' ')
             let { ctx, store } = obj
 
             store.dispatch({ type: TELL_CLIENT_URL, data: ctx.origin })

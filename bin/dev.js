@@ -8,16 +8,20 @@ const chalk = require('chalk')
 const npmRunScript = require('npm-run-script')
 const opn = require('opn')
 
+const checkFileUpdate = require('../libs/check-file-change')
+const contentWaiting = require('../defaults/content-waiting')
+
 const __ = require('../utils/translate')
 const sleep = require('../utils/sleep')
 const getPort = require('../utils/get-port')
-const spinner = require('../utils/spinner')
+// const spinner = require('../utils/spinner')
 const readBuildConfigFile = require('../utils/read-build-config-file')
 const getAppType = require('../utils/get-app-type')
 const setEnvFromCommand = require('../utils/set-env-from-command')
 const getChunkmapPath = require('../utils/get-chunkmap-path')
 const initNodeEnv = require('../utils/init-node-env')
 const getCwd = require('../utils/get-cwd')
+const getPathnameDevServerStart = require('../utils/get-pathname-dev-server-start')
 
 program
     .version(require('../package').version, '-v, --version')
@@ -121,38 +125,56 @@ const run = async () => {
     const processes = []
     const pathChunkmap = getChunkmapPath(dist)
     const pathServerJS = path.resolve(dist, 'server/index.js')
-    const contentWaiting = '// WAITING FOR SERVER BUNDLING'
+    const pathServerStartFlag = getPathnameDevServerStart()
 
     { // 在脚本进程关闭/结束时，同时关闭打开的 PM2 进程
         process.stdin.resume()
         const exitHandler = async (/*options, err*/) => {
-            // console.log(processes)
             if (Array.isArray(processes) && processes.length) {
                 if (waitingSpinner) waitingSpinner.stop()
                 await sleep(300)
                 process.stdout.write('\x1B[2J\x1B[0f')
-                const w = spinner('WAITING FOR ENDING')
-                await Promise.all(processes.map(proc =>
-                    new Promise((resolve/*, reject*/) => {
-                        setTimeout(() => {
-                            processes.splice(processes.indexOf(proc), 1)
-                            resolve()
-                        }, 500)
-                        // console.log(proc)
-                        pm2.delete(proc)
-                    })
-                ))
-                await Promise.all(processes.map(proc =>
-                    new Promise((resolve/*, reject*/) => {
-                        setTimeout(() => resolve(), 500)
-                        // console.log(proc)
-                        pm2.delete(proc)
-                    })
-                ))
+                console.log(chalk.redBright('Waiting for closing processes...'))
+                // console.log(processes)
+                // const w = spinner('Waiting for closing processes...')
+                // await Promise.all(processes.map(proc =>
+                //     new Promise((resolve/*, reject*/) => {
+                //         setTimeout(() => {
+                //             processes.splice(processes.indexOf(proc), 1)
+                //             resolve()
+                //         }, 500)
+                //         // console.log(proc)
+                //         // pm2.stop(proc)
+                //         pm2.delete(proc)
+                //     })
+                // ))
+                // await Promise.all(processes.map(proc =>
+                //     new Promise((resolve/*, reject*/) => {
+                //         setTimeout(() => resolve(), 500)
+                //         console.log(proc)
+                //         // pm2.stop(proc)
+                //         pm2.delete(proc)
+                //     })
+                // ))
                 // console.log(JSON.stringify(processes))
+                for (let process of processes) {
+                    await new Promise((resolve, reject) => {
+                        pm2.delete(process, (err, proc) => {
+                            // console.log('err', err)
+                            // console.log('proc', proc)
+                            // for (let key of Object.keys(proc)) {
+                            //     console.log(key, proc[key])
+                            // }
+                            if (typeof proc === 'object' && (proc.status === 'stopped' || !proc.status))
+                                return resolve(proc)
+                            if (err) return reject(err)
+                            reject('stop failed')
+                        })
+                    })
+                }
                 pm2.disconnect()
                 await sleep(300)
-                w.stop()
+                // w.stop()
                 try {
                     // console.log(process.pid)
                     process.exit(1)
@@ -212,6 +234,7 @@ const run = async () => {
             (err, proc) => {
                 // console.log(err)
                 if (err) return reject(err)
+                // console.log(JSON.stringify(proc))
                 resolve(proc)
             }
         )
@@ -243,20 +266,15 @@ const run = async () => {
         await fs.ensureFile(pathServerJS)
         await fs.writeFile(pathServerJS, contentWaiting)
 
+        // 清空服务器启动成功标识文件
+        await fs.ensureFile(pathServerStartFlag)
+        await fs.writeFile(pathServerStartFlag, contentWaiting)
+
         // 启动 client webpack-dev-server
         await start('client')
 
         // 监视 chunkmap 文件，如果修改，进入下一步
-        await new Promise(resolve => {
-            const waiting = () => setTimeout(async () => {
-                if (!fs.existsSync(pathChunkmap)) return waiting()
-                const content = await fs.readFile(pathChunkmap, 'utf-8')
-                if (!content || content === contentWaiting) return waiting()
-                await sleep(100)
-                resolve()
-            }, 500)
-            waiting()
-        })
+        await checkFileUpdate(pathChunkmap, contentWaiting)
         // waitingSpinner.succeed()
         console.log(
             chalk.green('√ ')
@@ -289,16 +307,7 @@ const run = async () => {
         await start('server')
 
         // 监视 server.js 文件，如果修改，进入下一步
-        await new Promise(resolve => {
-            const waiting = () => setTimeout(async () => {
-                if (!fs.existsSync(pathServerJS)) return waiting()
-                const content = await fs.readFile(pathServerJS, 'utf-8')
-                if (!content || content === contentWaiting) return waiting()
-                await sleep(100)
-                resolve()
-            }, 500)
-            waiting()
-        })
+        await checkFileUpdate(pathServerJS, contentWaiting)
         // waitingSpinner.succeed()
 
         // 执行
@@ -307,7 +316,10 @@ const run = async () => {
         //     + 'waiting...'
         // )
         await start('run')
-        await sleep(1000)
+
+        // 监视服务器启动标识文件，如果修改，进入下一步
+        await checkFileUpdate(pathServerStartFlag, contentWaiting)
+        await sleep(100)
 
         console.log(
             chalk.green('√ ')
