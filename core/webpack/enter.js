@@ -14,6 +14,7 @@ const getAppType = require('../../utils/get-app-type')
 const getCwd = require('../../utils/get-cwd')
 
 const log = require('../../libs/log')
+const elapse = require('../../libs/elapse.js')
 
 const createWebpackConfig = require('./config/create')
 const createPWAsw = require('../pwa/create')
@@ -98,7 +99,7 @@ module.exports = async (kootConfig) => {
             env: chalk.green(ENV),
         }))
 
-        console.log(`  > ${Date.now() - timestampStart}ms | ${(new Date()).toLocaleString()}`)
+        console.log(`  > ~${elapse(Date.now() - timestampStart)} @ ${(new Date()).toLocaleString()}`)
 
         return
     }
@@ -219,24 +220,31 @@ module.exports = async (kootConfig) => {
                         colors: true
                     }))
 
-                    resolve()
+                    setTimeout(() => resolve(), 10)
                 })
             })
         }
 
         if (Array.isArray(webpackConfig)) {
             buildingComplete()
+            let index = 0
             for (let config of webpackConfig) {
+                const localeId = config.plugins
+                    .filter(plugin => typeof plugin.localeId === 'string')
+                    .reduce((prev, cur) => cur.localeId)
                 const spinnerBuildingSingle = !kootTest
-                    ? spinner(chalk.yellowBright('[koot/build] ') + __('build.building'))
+                    ? spinner(chalk.yellowBright('[koot/build] ') + chalk.green(`${localeId} `) + __('build.building'))
                     : undefined
                 await build(config, () => {
                     if (spinnerBuildingSingle) {
-                        console.log(' ')
                         spinnerBuildingSingle.stop()
+                        setTimeout(() => {
+                            console.log(' ')
+                            log('success', 'build', chalk.green(`${localeId}`))
+                        })
                     }
-                    console.log(' ')
                 })
+                index++
             }
         } else {
             await build(webpackConfig)
