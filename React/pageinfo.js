@@ -1,7 +1,7 @@
 import React from 'react'
 // import PropTypes from 'prop-types'
 // import { store } from 'koot/ReactApp'
-import { store } from '../'
+import { store, localeId } from '../'
 import hoistStatics from 'hoist-non-react-statics'
 
 let currentMetaTags
@@ -26,9 +26,20 @@ export default (funcGetPageInfo) => (WrappedComponent) => {
         let infos = funcGetPageInfo(store.getState(), renderProps)
         if (typeof infos !== 'object') infos = {}
 
+        const {
+            title = '',
+            metas = []
+        } = infos
+
+        if (localeId)
+            metas.push({
+                name: 'koot-locale-id',
+                content: localeId
+            })
+
         return {
-            title: infos.title || '',
-            metas: infos.metas || []
+            title,
+            metas
         }
     }
 
