@@ -30,7 +30,7 @@ const addCommand = async (name, command, dir) => {
         spaces: 4
     })
 }
-const terminate = (pid) => new Promise((resolve, reject) => {
+const terminate = async (pid) => new Promise((resolve, reject) => {
     doTerminate(pid, err => {
         if (err) return reject(err)
         resolve()
