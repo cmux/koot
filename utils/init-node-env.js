@@ -31,7 +31,7 @@ module.exports = () => {
         SERVER_PORT: process.env.WEBPACK_BUILD_ENV === 'dev' ? '3000' : '8080',
 
         // Koot 项目启动目录路径。默认为 process.cwd()
-        KOOT_CWD: process.cwd(),
+        // KOOT_CWD: process.cwd(),
 
         // Koot 项目配置文件路径 (./koot.js)。默认不存在。如果存在则默认使用
         // KOOT_PROJECT_CONFIG_PATHNAME: ...,

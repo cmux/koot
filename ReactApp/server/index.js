@@ -52,6 +52,16 @@ const app = appObj.instance()
 /* 公用的koa配置 */
 app.keys = cookieKeys || 'koot';
 
+if (global.kootTest || (process.env.KOOT_TEST_MODE && JSON.parse(process.env.KOOT_TEST_MODE))) {
+    console.log(JSON.stringify({
+        'koot-test': true,
+        'process.env.SERVER_PORT': process.env.SERVER_PORT,
+        __SERVER_PORT__,
+        port,
+        app,
+    }))
+}
+
 (async () => {
     await kootServer(app, {
         name,
@@ -61,6 +71,8 @@ app.keys = cookieKeys || 'koot';
         redux,
         client,
         server,
+    }).catch(err => {
+        console.trace(err)
     })
 })();
 

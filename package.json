@@ -15,8 +15,8 @@
         "eslint": "eslint \"!(node_modules|logs|dist|dist*)/**/*.+(js|jsx)\"",
         "pretest": "node ./test/pre-test.js",
         "test": "jest",
-        "test:build": "jest ./test/build/test.js",
-        "test:config": "jest ./test/factory-config/test.js"
+        "test:config": "jest ./test/factory-config/test.js",
+        "test:react:isomorphic": "jest ./test/react-isomorphic/test.js"
     },
     "repository": {
         "type": "git",
@@ -138,6 +138,7 @@
         "jest": "^23.5.0",
         "is-valid-path": "^0.1.1",
         "download-git-repo": "^1.1.0",
-        "puppeteer": "^1.8.0"
+        "puppeteer": "^1.8.0",
+        "terminate": "^2.1.0"
     }
 }

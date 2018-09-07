@@ -20,6 +20,7 @@ program
     // .option('--pm2', 'Start with pm2')
     .option('--config <config-file-path>', 'Set config file')
     .option('--type <project-type>', 'Set project type')
+    .option('--port <port>', 'Set server port')
     .parse(process.argv)
 
 /**
@@ -33,10 +34,11 @@ const run = async () => {
         build,
         config,
         type,
+        port,
     } = program
 
     setEnvFromCommand({
-        config, type
+        config, type, port
     })
 
     // 读取构建配置
@@ -97,8 +99,8 @@ const run = async () => {
     // } else {
     // 正常方式
     const cmd = `node ${pathServerJS.replace(/\\/g, '/')}`
+    const child = npmRunScript(cmd, {})
     await new Promise((resolve, reject) => {
-        const child = npmRunScript(cmd, {})
         child.once('error', (error) => {
             console.trace(error)
             process.exit(1)
@@ -112,6 +114,50 @@ const run = async () => {
     })
     // }
 
+    /*
+    await new Promise((resolve, reject) => {
+        console.log({
+            'process.env': process.env
+        })
+        const cmd = `node ${pathServerJS.replace(/\\/g, '/')}`
+        const child = spawn(
+            'node',
+            [`${pathServerJS.replace(/\\/g, '/')}`]
+        )
+
+        // child.stdin.pipe(process.stdin)
+        child.stdout.pipe(process.stdout)
+        // child.stderr.pipe(process.stderr)
+        console.log(process.cwd())
+        console.log(cmd)
+
+        // const child = npmRunScript(cmd, {})
+        child.once('error', (error) => {
+            console.trace(error)
+            process.exit(1)
+            reject(error)
+        })
+        child.once('exit', (exitCode) => {
+            // console.trace('exit in', exitCode)
+            resolve(exitCode)
+            // process.exit(exitCode)
+        })
+    })
+    */
+    const exitHandler = (/*options, err*/) => {
+        child.kill('SIGINT')
+        process.exit(0)
+    }
+
+    // do something when app is closing
+    process.on('exit', exitHandler);
+    // catches ctrl+c event
+    process.on('SIGINT', exitHandler);
+    // catches "kill pid" (for example: nodemon restart)
+    process.on('SIGUSR1', exitHandler);
+    process.on('SIGUSR2', exitHandler);
+    // catches uncaught exceptions
+    process.on('uncaughtException', exitHandler);
 }
 
 run()
