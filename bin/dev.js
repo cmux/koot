@@ -32,6 +32,7 @@ program
     .option('--stage <stage>', 'Set STAGE')
     .option('--config <config-file-path>', 'Set config file')
     .option('--type <project-type>', 'Set project type')
+    .option('--no-open', 'Don\'t open browser automatically')
     .parse(process.argv)
 
 /**
@@ -57,6 +58,7 @@ const run = async () => {
         config,
         type,
         global = false,
+        open = true,
     } = program
 
     initNodeEnv()

@@ -12,7 +12,7 @@ const { dir: dirProjects, projects, commandTestBuild } = require('../projects')
 const projectsToUse = projects.filter(project => (
     Array.isArray(project.type) && project.type.includes('react-isomorphic')
 ))
-const sleep = require('../../utils/sleep')
+// const sleep = require('../../utils/sleep')
 
 //
 
@@ -24,8 +24,8 @@ process.env.KOOT_TEST_MODE = JSON.stringify(true)
 const addCommand = async (name, command, dir) => {
     const pathPackage = path.resolve(dir, 'package.json')
     const p = await fs.readJson(pathPackage)
-    if (!p.scripts[name])
-        p.scripts[name] = command
+    // if (!p.scripts[name])
+    p.scripts[name] = command
     await fs.writeJson(pathPackage, p, {
         spaces: 4
     })
@@ -36,10 +36,11 @@ const terminate = (pid) => new Promise((resolve, reject) => {
         resolve()
     })
 })
-const waitForPort = async (child) => await new Promise(resolve => {
+const waitForPort = async (child, regex = /port.*\[32m([0-9]+)/) => await new Promise(resolve => {
     let port
 
     child.stdout.on('data', msg => {
+        // console.log(msg)
         try {
             const obj = JSON.parse(msg)
             if (obj['koot-test']) {
@@ -48,7 +49,7 @@ const waitForPort = async (child) => await new Promise(resolve => {
         } catch (e) { }
 
         if (!port) {
-            const matches = /port.*\[32m([0-9]+)/.exec(msg)
+            const matches = regex.exec(msg)
             if (Array.isArray(matches) && matches.length > 1) {
                 port = parseInt(matches[1])
             }
@@ -168,7 +169,9 @@ describe('测试: React 同构项目', async () => {
                     errors.push(err)
                 })
 
+                // console.log(111)
                 await waitForPort(child)
+                // console.log(222)
 
                 // console.log({
                 //     port,
@@ -195,10 +198,101 @@ describe('测试: React 同构项目', async () => {
                 await terminate(child.pid)
             })
             test(`[Production] 使用打包后的执行文件启动服务器并访问`, async () => {
-                expect('TODO:').toBe(true)
+                const cwd = path.resolve(dir, 'dist')
+                const child = execSync(
+                    `node ${path.resolve(cwd, 'index.js')}`,
+                    {
+                        cwd,
+                    },
+                )
+                const errors = []
+
+                const port = await waitForPort(child)
+                child.stderr.on('data', err => {
+                    errors.push(err)
+                })
+
+                // console.log({
+                //     port,
+                //     errors,
+                // })
+                expect(errors.length).toBe(0)
+
+                const browser = await puppeteer.launch({
+                    // headless: false
+                })
+                const page = await browser.newPage()
+
+                {
+                    const res = await page.goto(`http://127.0.0.1:${port}`, {
+                        waitUntil: 'networkidle0'
+                    }).catch()
+                    const pageTitle = await page.evaluate(() => document.querySelector('title').innerText)
+                    const $app = await page.$('#app')
+
+                    expect(res.ok()).toBe(true)
+                    expect(typeof pageTitle).toBe('string')
+                    expect(typeof $app).toBe('object')
+                }
+                {
+                    await page.goto(`http://127.0.0.1:${port}?hl=zh`, {
+                        waitUntil: 'networkidle0'
+                    })
+                    const localeId = await page.evaluate(() => document.querySelector('meta[name="koot-locale-id"]').getAttribute('content'))
+
+                    expect(localeId).toBe('zh')
+                }
+
+                await browser.close()
+                await terminate(child.pid)
             })
             test(`[Development] 启动开发模式并访问`, async () => {
-                expect('TODO:').toBe(true)
+                const child = execSync(
+                    `npm run dev --no-open`,
+                    {
+                        cwd: dir,
+                    },
+                )
+                const errors = []
+
+                const port = await waitForPort(child, / on.*http:.*:([0-9]+)/)
+                child.stderr.on('data', err => {
+                    errors.push(err)
+                })
+
+                // console.log({
+                //     port,
+                //     errors,
+                // })
+                expect(errors.length).toBe(0)
+
+                const browser = await puppeteer.launch({
+                    // headless: false
+                })
+                const page = await browser.newPage()
+
+                {
+                    const res = await page.goto(`http://127.0.0.1:${port}`, {
+                        waitUntil: 'networkidle0'
+                    }).catch()
+                    const pageTitle = await page.evaluate(() => document.querySelector('title').innerText)
+                    const $app = await page.$('#app')
+
+                    expect(res.ok()).toBe(true)
+                    expect(typeof pageTitle).toBe('string')
+                    expect(typeof $app).toBe('object')
+                }
+                {
+                    await page.goto(`http://127.0.0.1:${port}?hl=zh`, {
+                        waitUntil: 'networkidle0'
+                    })
+                    const localeId = await page.evaluate(() => document.querySelector('meta[name="koot-locale-id"]').getAttribute('content'))
+
+                    expect(localeId).toBe('zh')
+                }
+
+                await browser.close()
+                await terminate(child.pid)
             })
         })
     }

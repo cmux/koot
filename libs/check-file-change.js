@@ -1,14 +1,16 @@
 const fs = require('fs-extra')
 const sleep = require('../utils/sleep')
 
+const defaultPlaceholder = require('../defaults/content-waiting')
+
 /**
  * 检查文件内容是否已更新（条件：和 placeholder 字符不同）
  * @async
  * @param {String} pathname 
- * @param {String} contentPlaceholder 
+ * @param {String} [contentPlaceholder] 
  * @returns {Promise}
  */
-module.exports = async (pathname, contentPlaceholder) =>
+module.exports = async (pathname, contentPlaceholder = defaultPlaceholder) =>
     await new Promise(resolve => {
         const waiting = () => setTimeout(async () => {
             if (!fs.existsSync(pathname))

@@ -21,6 +21,8 @@ const project = {
 //
 
 // const getPort = require('./utils/get-port')
+const getPathnameDevServerStart = require('./utils/get-pathname-dev-server-start')
+const checkFileChange = require('./libs/check-file-change')
 
 //
 
@@ -43,12 +45,12 @@ const { name } = project
 const dir = path.resolve(dirProjects, name)
 
 const run = async () => {
-    const commandName = `koot-buildtest-isomorphic-start-server`
-    const command = `koot-start --no-build`
-    await addCommand(commandName, command, dir)
+    // const commandName = `koot-buildtest-isomorphic-start-server`
+    // const command = `koot-start --no-build`
+    // await addCommand(commandName, command, dir)
 
     const child = exec(
-        `npm run ${commandName}`,
+        `npm run dev --no-open`,
         {
             cwd: dir,
             // detached: true,
@@ -62,6 +64,7 @@ const run = async () => {
     const port = await new Promise(resolve => {
         let port
         child.stdout.on('data', msg => {
+            console.log(msg)
             try {
                 const obj = JSON.parse(msg)
                 if (obj['koot-test']) {
@@ -70,7 +73,8 @@ const run = async () => {
             } catch (e) { }
 
             if (!port) {
-                const matches = /port.*\[32m([0-9]+)/.exec(msg)
+                // const matches = /port.*\[32m([0-9]+)/.exec(msg)
+                const matches = / on.*http:.*:([0-9]+)/.exec(msg)
                 if (Array.isArray(matches) && matches.length > 1) {
                     port = parseInt(matches[1])
                 }
@@ -108,7 +112,7 @@ const run = async () => {
     // console.log(stdout)
 
     const browser = await puppeteer.launch({
-        // headless: false
+        headless: false
     })
 
     // 访问首页
