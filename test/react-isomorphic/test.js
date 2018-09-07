@@ -4,7 +4,7 @@ const util = require('util')
 const execSync = require('child_process').exec
 const exec = util.promisify(execSync)
 const puppeteer = require('puppeteer')
-const terminate = require('terminate')
+const doTerminate = require('terminate')
 
 //
 
@@ -12,6 +12,7 @@ const { dir: dirProjects, projects, commandTestBuild } = require('../projects')
 const projectsToUse = projects.filter(project => (
     Array.isArray(project.type) && project.type.includes('react-isomorphic')
 ))
+const sleep = require('../../utils/sleep')
 
 //
 
@@ -29,6 +30,37 @@ const addCommand = async (name, command, dir) => {
         spaces: 4
     })
 }
+const terminate = (pid) => new Promise((resolve, reject) => {
+    doTerminate(pid, err => {
+        if (err) return reject(err)
+        resolve()
+    })
+})
+const waitForPort = async (child) => await new Promise(resolve => {
+    let port
+
+    child.stdout.on('data', msg => {
+        try {
+            const obj = JSON.parse(msg)
+            if (obj['koot-test']) {
+                port = obj.port
+            }
+        } catch (e) { }
+
+        if (!port) {
+            const matches = /port.*\[32m([0-9]+)/.exec(msg)
+            if (Array.isArray(matches) && matches.length > 1) {
+                port = parseInt(matches[1])
+            }
+        }
+
+        if (port) {
+            return resolve(port)
+        }
+    })
+})
+
+//
 
 describe('测试: React 同构项目', async () => {
     for (let project of projectsToUse) {
@@ -36,7 +68,7 @@ describe('测试: React 同构项目', async () => {
         const dir = path.resolve(dirProjects, name)
 
         describe(`项目: ${name}`, async () => {
-            test(`[Production] 打包流程`, async () => {
+            test(`[Production] 使用 koot-build 命令进行打包`, async () => {
                 const commandName = `${commandTestBuild}-isomorphic-build`
                 const command = `koot-build --env prod --koot-test`
                 await addCommand(commandName, command, dir)
@@ -50,7 +82,7 @@ describe('测试: React 同构项目', async () => {
                 expect(typeof stderr).toBe('string')
                 expect(stderr).toBe('')
             })
-            test(`[Production] 启动服务器并访问`, async () => {
+            test(`[Production] 使用 koot-start 命令启动服务器并访问`, async () => {
                 const commandName = `${commandTestBuild}-isomorphic-start-server`
                 const command = `koot-start --no-build`
                 await addCommand(commandName, command, dir)
@@ -71,27 +103,7 @@ describe('测试: React 同构项目', async () => {
                 // child.stdin.pipe(process.stdin)
                 // child.stdout.pipe(process.stdout)
                 // child.stderr.pipe(process.stderr)
-                const port = await new Promise(resolve => {
-                    let port
-                    child.stdout.on('data', msg => {
-                        try {
-                            const obj = JSON.parse(msg)
-                            if (obj['koot-test']) {
-                                port = obj.port
-                            }
-                        } catch (e) { }
-
-                        if (!port) {
-                            const matches = /port.*\[32m([0-9]+)/.exec(msg)
-                            if (Array.isArray(matches) && matches.length > 1) {
-                                port = parseInt(matches[1])
-                            }
-                        }
-
-                        if (port)
-                            return resolve(port)
-                    })
-                })
+                const port = await waitForPort(child)
                 child.stderr.on('data', err => {
                     errors.push(err)
                 })
@@ -100,6 +112,7 @@ describe('测试: React 同构项目', async () => {
                 //     port,
                 //     errors,
                 // })
+                expect(errors.length).toBe(0)
 
                 const browser = await puppeteer.launch({
                     // headless: false
@@ -109,7 +122,7 @@ describe('测试: React 同构项目', async () => {
                 {
                     const res = await page.goto(`http://127.0.0.1:${port}`, {
                         waitUntil: 'networkidle0'
-                    })
+                    }).catch()
                     const pageTitle = await page.evaluate(() => document.querySelector('title').innerText)
                     const $app = await page.$('#app')
 
@@ -127,13 +140,12 @@ describe('测试: React 同构项目', async () => {
                 }
 
                 await browser.close()
-
-                terminate(child.pid)
+                await terminate(child.pid)
             })
-            /*
-            test(`[Production] 启动服务器并访问 (自定义端口号)`, async () => {
-                const commandName = `${commandTestBuild}-isomorphic-start-server`
-                const command = `koot-start --no-build`
+            test(`[Production] 使用 koot-start 命令启动服务器并访问 (自定义端口号)`, async () => {
+                const port = '8316'
+                const commandName = `${commandTestBuild}-isomorphic-start-server-custom-port`
+                const command = `koot-start --no-build --port ${port}`
                 await addCommand(commandName, command, dir)
 
                 const child = execSync(
@@ -152,49 +164,42 @@ describe('测试: React 同构项目', async () => {
                 // child.stdin.pipe(process.stdin)
                 // child.stdout.pipe(process.stdout)
                 // child.stderr.pipe(process.stderr)
-                const port = await new Promise(resolve => {
-                    let port
-                    child.stdout.on('data', msg => {
-                        try {
-                            const obj = JSON.parse(msg)
-                            if (obj['koot-test']) {
-                                port = obj.port
-                            }
-                        } catch (e) { }
-
-                        if (!port) {
-                            const matches = /port.*\[32m([0-9]+)/.exec(msg)
-                            if (Array.isArray(matches) && matches.length > 1) {
-                                port = parseInt(matches[1])
-                            }
-                        }
-
-                        if (port)
-                            return resolve(port)
-                    })
-                })
                 child.stderr.on('data', err => {
                     errors.push(err)
                 })
 
-                console.log({
-                    port,
-                    errors,
+                await waitForPort(child)
+
+                // console.log({
+                //     port,
+                //     errors,
+                // })
+                expect(errors.length).toBe(0)
+
+                const browser = await puppeteer.launch({
+                    // headless: false
                 })
+                const page = await browser.newPage()
 
-                // console.log(stdout)
+                const res = await page.goto(`http://127.0.0.1:${port}`, {
+                    waitUntil: 'networkidle0'
+                }).catch()
+                const pageTitle = await page.evaluate(() => document.querySelector('title').innerText)
+                const $app = await page.$('#app')
 
-                // const browser = await puppeteer.launch()
-                // await browser.close()
+                expect(res.ok()).toBe(true)
+                expect(typeof pageTitle).toBe('string')
+                expect(typeof $app).toBe('object')
 
-                // expect(typeof stderr).toBe('string')
-                // expect(stderr).toBe('')
-                terminate(child.pid)
+                await browser.close()
+                await terminate(child.pid)
+            })
+            test(`[Production] 使用打包后的执行文件启动服务器并访问`, async () => {
+                expect('TODO:').toBe(true)
             })
             test(`[Development] 启动开发模式并访问`, async () => {
                 expect('TODO:').toBe(true)
             })
-            */
         })
     }
 })

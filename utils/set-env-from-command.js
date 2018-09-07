@@ -38,7 +38,7 @@ module.exports = ({
     }
 
     if (typeof port === 'string' || typeof port === 'number') {
-        process.env.SERVER_PORT = type
+        process.env.SERVER_PORT = port
         console.log(
             chalk.green('√ ')
             + chalk.yellowBright('[koot] ')
