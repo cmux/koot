@@ -1,0 +1,14 @@
+{
+    "name": "dev-run-koot-boilerplate",
+    "script": "E:\\Projects\\koot\\koot\\.projects\\koot-boilerplate\\dist\\server\\index.js",
+    "cwd": "E:\\Projects\\koot\\koot\\.projects\\koot-boilerplate",
+    "output": "E:\\Projects\\koot\\koot\\.projects\\koot-boilerplate\\logs\\dev\\run.log",
+    "error": "E:\\Projects\\koot\\koot\\.projects\\koot-boilerplate\\logs\\dev\\run-error.log",
+    "autorestart": true,
+    "watch": [
+        "dist"
+    ],
+    "watch_options": {
+        "usePolling": true
+    }
+}

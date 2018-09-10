@@ -22,6 +22,7 @@ const getChunkmapPath = require('../utils/get-chunkmap-path')
 const initNodeEnv = require('../utils/init-node-env')
 const getCwd = require('../utils/get-cwd')
 const getPathnameDevServerStart = require('../utils/get-pathname-dev-server-start')
+// const terminate = require('../utils/terminate')
 
 program
     .version(require('../package').version, '-v, --version')
@@ -82,7 +83,8 @@ const run = async () => {
 
     // 读取项目信息
     const appType = await getAppType()
-    const packageInfo = await fs.readJson(path.resolve(getCwd(), 'package.json'))
+    const cwd = getCwd()
+    const packageInfo = await fs.readJson(path.resolve(cwd, 'package.json'))
     const { dist, port } = await readBuildConfigFile()
     const {
         name
@@ -131,43 +133,26 @@ const run = async () => {
 
     { // 在脚本进程关闭/结束时，同时关闭打开的 PM2 进程
         process.stdin.resume()
+        const removeListeners = () => {
+            process.removeListener('exit', exitHandler)
+            process.removeListener('SIGINT', exitHandler)
+            process.removeListener('SIGUSR1', exitHandler)
+            process.removeListener('SIGUSR2', exitHandler)
+            process.removeListener('uncaughtException', exitHandler)
+        }
         const exitHandler = async (/*options, err*/) => {
             if (Array.isArray(processes) && processes.length) {
                 if (waitingSpinner) waitingSpinner.stop()
                 await sleep(300)
                 process.stdout.write('\x1B[2J\x1B[0f')
-                console.log(chalk.redBright('Waiting for closing processes...'))
-                // console.log(processes)
-                // const w = spinner('Waiting for closing processes...')
-                // await Promise.all(processes.map(proc =>
-                //     new Promise((resolve/*, reject*/) => {
-                //         setTimeout(() => {
-                //             processes.splice(processes.indexOf(proc), 1)
-                //             resolve()
-                //         }, 500)
-                //         // console.log(proc)
-                //         // pm2.stop(proc)
-                //         pm2.delete(proc)
-                //     })
-                // ))
-                // await Promise.all(processes.map(proc =>
-                //     new Promise((resolve/*, reject*/) => {
-                //         setTimeout(() => resolve(), 500)
-                //         console.log(proc)
-                //         // pm2.stop(proc)
-                //         pm2.delete(proc)
-                //     })
-                // ))
-                // console.log(JSON.stringify(processes))
+                console.log(chalk.redBright('Waiting for killing processes...'))
                 for (let process of processes) {
                     await new Promise((resolve, reject) => {
-                        pm2.delete(process, (err, proc) => {
+                        // console.log(process)
+                        pm2.delete(process.name, (err, proc) => {
                             // console.log('err', err)
                             // console.log('proc', proc)
-                            // for (let key of Object.keys(proc)) {
-                            //     console.log(key, proc[key])
-                            // }
-                            if (typeof proc === 'object' && (proc.status === 'stopped' || !proc.status))
+                            if (Array.isArray(proc) && proc.every(p => p.status === 'stopped'))
                                 return resolve(proc)
                             if (err) return reject(err)
                             reject('stop failed')
@@ -179,20 +164,18 @@ const run = async () => {
                 // w.stop()
                 try {
                     // console.log(process.pid)
-                    process.exit(1)
+                    removeListeners()
+                    console.log('Press CTRL+C again to exit.')
                     // process.kill(process.pid)
+                    process.exit(1)
                 } catch (e) {
                     console.log(e)
                 }
             } else {
-                process.removeListener('exit', exitHandler)
-                process.removeListener('SIGINT', exitHandler)
-                process.removeListener('SIGUSR1', exitHandler)
-                process.removeListener('SIGUSR2', exitHandler)
-                process.removeListener('uncaughtException', exitHandler)
+                removeListeners()
                 // 清空 log
                 process.stdout.write('\x1B[2J\x1B[0f')
-                console.log('Press CTRL+C again to terminate.')
+                console.log('Press CTRL+C again to exit.')
                 process.exit(1)
             }
         }
@@ -209,8 +192,8 @@ const run = async () => {
 
     // 根据 stage 开启 PM2 进程
     const start = (stage) => new Promise(async (resolve, reject) => {
-        const pathLogOut = path.resolve(getCwd(), `logs/dev/${stage}.log`)
-        const pathLogErr = path.resolve(getCwd(), `logs/dev/${stage}-error.log`)
+        const pathLogOut = path.resolve(cwd, `logs/dev/${stage}.log`)
+        const pathLogErr = path.resolve(cwd, `logs/dev/${stage}-error.log`)
         if (fs.existsSync(pathLogOut)) await fs.remove(pathLogOut)
         if (fs.existsSync(pathLogErr)) await fs.remove(pathLogErr)
         await fs.ensureFile(pathLogOut)
@@ -219,24 +202,49 @@ const run = async () => {
             name: `dev-${stage}-${name}`,
             script: path.resolve(__dirname, './build.js'),
             args: `--stage ${stage} --env dev`,
-            cwd: getCwd(),
+            cwd: cwd,
             output: pathLogOut,
             error: pathLogErr,
             autorestart: false,
         }
         if (stage === 'run') {
-            config.script = pathServerJS
-            config.watch = true
+            Object.assign(config, {
+                script: pathServerJS,
+                watch: ['dist'],
+                watch_options: {
+                    usePolling: true,
+                },
+                autorestart: true,
+            })
             delete config.args
+            // console.log(config)
+            await fs.writeJson(
+                path.resolve(__dirname, '../1.json'),
+                config,
+                {
+                    spaces: 4
+                }
+            )
         }
         // console.log(config)
-        processes.push(config.name)
+        // processes.push(config.name)
         pm2.start(
             config,
             (err, proc) => {
                 // console.log(err)
                 if (err) return reject(err)
+                processes.push({
+                    ...proc,
+                    name: config.name,
+                })
                 // console.log(JSON.stringify(proc))
+                // fs.writeJsonSync(
+                //     path.resolve(__dirname, '../2.json'),
+                //     proc,
+                //     {
+                //         spaces: 4
+                //     }
+                // )
                 resolve(proc)
             }
         )
@@ -336,7 +344,9 @@ const run = async () => {
         // waitingSpinner.stop()
         // waitingSpinner = undefined
         npmRunScript(`pm2 logs`)
-        opn(`http://localhost:${process.env.SERVER_PORT}/`)
+
+        if (open)
+            return opn(`http://localhost:${process.env.SERVER_PORT}/`)
     })
 }
 
