@@ -60,10 +60,46 @@ const waitForPort = async (child, regex = /port.*\[32m([0-9]+)/) => await new Pr
         }
     })
 })
+const testPage = async (port) => {
+    const browser = await puppeteer.launch({
+        // headless: false
+    })
+    const page = await browser.newPage()
+    const url = isNaN(port) ? port : `http://127.0.0.1:${port}`
+
+    {
+        const res = await page.goto(url, {
+            waitUntil: 'networkidle0'
+        }).catch()
+        const pageTitle = await page.evaluate(() => document.querySelector('title').innerText)
+        const $app = await page.$('#app')
+
+        expect(res.ok()).toBe(true)
+        expect(typeof pageTitle).toBe('string')
+        expect(typeof $app).toBe('object')
+    }
+    {
+        await page.goto(`${url}?hl=zh`, {
+            waitUntil: 'networkidle0'
+        })
+        const localeId = await page.evaluate(() => document.querySelector('meta[name="koot-locale-id"]').getAttribute('content'))
+        expect(localeId).toBe('zh')
+    }
+    {
+        await page.goto(`${url}?hl=en`, {
+            waitUntil: 'networkidle0'
+        })
+        const localeId = await page.evaluate(() => document.querySelector('meta[name="koot-locale-id"]').getAttribute('content'))
+        expect(localeId).toBe('en')
+    }
+
+    await browser.close()
+}
 
 //
 
 describe('测试: React 同构项目', async () => {
+
     for (let project of projectsToUse) {
         const { name } = project
         const dir = path.resolve(dirProjects, name)
@@ -83,7 +119,7 @@ describe('测试: React 同构项目', async () => {
                 expect(typeof stderr).toBe('string')
                 expect(stderr).toBe('')
             })
-            test(`[Production] 使用 koot-start 命令启动服务器并访问`, async () => {
+            test(`[Production] 使用 koot-start (--no-build) 命令启动服务器并访问`, async () => {
                 const commandName = `${commandTestBuild}-isomorphic-start-server`
                 const command = `koot-start --no-build`
                 await addCommand(commandName, command, dir)
@@ -115,35 +151,10 @@ describe('测试: React 同构项目', async () => {
                 // })
                 expect(errors.length).toBe(0)
 
-                const browser = await puppeteer.launch({
-                    // headless: false
-                })
-                const page = await browser.newPage()
-
-                {
-                    const res = await page.goto(`http://127.0.0.1:${port}`, {
-                        waitUntil: 'networkidle0'
-                    }).catch()
-                    const pageTitle = await page.evaluate(() => document.querySelector('title').innerText)
-                    const $app = await page.$('#app')
-
-                    expect(res.ok()).toBe(true)
-                    expect(typeof pageTitle).toBe('string')
-                    expect(typeof $app).toBe('object')
-                }
-                {
-                    await page.goto(`http://127.0.0.1:${port}?hl=zh`, {
-                        waitUntil: 'networkidle0'
-                    })
-                    const localeId = await page.evaluate(() => document.querySelector('meta[name="koot-locale-id"]').getAttribute('content'))
-
-                    expect(localeId).toBe('zh')
-                }
-
-                await browser.close()
+                await testPage(port)
                 await terminate(child.pid)
             })
-            test(`[Production] 使用 koot-start 命令启动服务器并访问 (自定义端口号)`, async () => {
+            test(`[Production] 使用 koot-start (--no-build) 命令启动服务器并访问 (自定义端口号)`, async () => {
                 const port = '8316'
                 const commandName = `${commandTestBuild}-isomorphic-start-server-custom-port`
                 const command = `koot-start --no-build --port ${port}`
@@ -179,22 +190,7 @@ describe('测试: React 同构项目', async () => {
                 // })
                 expect(errors.length).toBe(0)
 
-                const browser = await puppeteer.launch({
-                    // headless: false
-                })
-                const page = await browser.newPage()
-
-                const res = await page.goto(`http://127.0.0.1:${port}`, {
-                    waitUntil: 'networkidle0'
-                }).catch()
-                const pageTitle = await page.evaluate(() => document.querySelector('title').innerText)
-                const $app = await page.$('#app')
-
-                expect(res.ok()).toBe(true)
-                expect(typeof pageTitle).toBe('string')
-                expect(typeof $app).toBe('object')
-
-                await browser.close()
+                await testPage(port)
                 await terminate(child.pid)
             })
             test(`[Production] 使用打包后的执行文件启动服务器并访问`, async () => {
@@ -218,38 +214,13 @@ describe('测试: React 同构项目', async () => {
                 // })
                 expect(errors.length).toBe(0)
 
-                const browser = await puppeteer.launch({
-                    // headless: false
-                })
-                const page = await browser.newPage()
-
-                {
-                    const res = await page.goto(`http://127.0.0.1:${port}`, {
-                        waitUntil: 'networkidle0'
-                    }).catch()
-                    const pageTitle = await page.evaluate(() => document.querySelector('title').innerText)
-                    const $app = await page.$('#app')
-
-                    expect(res.ok()).toBe(true)
-                    expect(typeof pageTitle).toBe('string')
-                    expect(typeof $app).toBe('object')
-                }
-                {
-                    await page.goto(`http://127.0.0.1:${port}?hl=zh`, {
-                        waitUntil: 'networkidle0'
-                    })
-                    const localeId = await page.evaluate(() => document.querySelector('meta[name="koot-locale-id"]').getAttribute('content'))
-
-                    expect(localeId).toBe('zh')
-                }
-
-                await browser.close()
+                await testPage(port)
                 await terminate(child.pid)
             })
             test(`[Development] 启动开发模式并访问`, async () => {
                 // const port = '8316'
                 const commandName = `${commandTestBuild}-isomorphic-dev`
-                const command = `koot-dev --no-build`
+                const command = `koot-dev --no-open`
                 await addCommand(commandName, command, dir)
 
                 const child = execSync(
@@ -271,34 +242,10 @@ describe('测试: React 同构项目', async () => {
                 // })
                 expect(errors.length).toBe(0)
 
-                const browser = await puppeteer.launch({
-                    // headless: false
-                })
-                const page = await browser.newPage()
-
-                {
-                    const res = await page.goto(`http://127.0.0.1:${port}`, {
-                        waitUntil: 'networkidle0'
-                    }).catch()
-                    const pageTitle = await page.evaluate(() => document.querySelector('title').innerText)
-                    const $app = await page.$('#app')
-
-                    expect(res.ok()).toBe(true)
-                    expect(typeof pageTitle).toBe('string')
-                    expect(typeof $app).toBe('object')
-                }
-                {
-                    await page.goto(`http://127.0.0.1:${port}?hl=zh`, {
-                        waitUntil: 'networkidle0'
-                    })
-                    const localeId = await page.evaluate(() => document.querySelector('meta[name="koot-locale-id"]').getAttribute('content'))
-
-                    expect(localeId).toBe('zh')
-                }
-
-                await browser.close()
-                terminate(child.pid)
+                await testPage(port)
+                await terminate(child.pid)
             })
         })
+
     }
 })
