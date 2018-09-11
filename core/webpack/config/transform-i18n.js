@@ -1,6 +1,6 @@
 const fs = require('fs-extra')
 const path = require('path')
-const chalk = require('chalk')
+// const chalk = require('chalk')
 const getCwd = require('../../../utils/get-cwd')
 
 /**

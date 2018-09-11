@@ -91,7 +91,7 @@ const prepare = async (project = {}) => {
     }
 
     const waitingInstalling = spinner(`${name} - 安装中...`)
-    const { stdout, stderr } = await exec(
+    const { /*stdout,*/ stderr } = await exec(
         'npm install --no-save',
         {
             cwd: dest,
