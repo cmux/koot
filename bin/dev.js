@@ -218,13 +218,13 @@ const run = async () => {
             })
             delete config.args
             // console.log(config)
-            await fs.writeJson(
-                path.resolve(__dirname, '../1.json'),
-                config,
-                {
-                    spaces: 4
-                }
-            )
+            // await fs.writeJson(
+            //     path.resolve(__dirname, '../1.json'),
+            //     config,
+            //     {
+            //         spaces: 4
+            //     }
+            // )
         }
         // console.log(config)
         // processes.push(config.name)

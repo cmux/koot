@@ -247,8 +247,13 @@ describe('测试: React 同构项目', async () => {
                 await terminate(child.pid)
             })
             test(`[Development] 启动开发模式并访问`, async () => {
+                // const port = '8316'
+                const commandName = `${commandTestBuild}-isomorphic-dev`
+                const command = `koot-dev --no-build`
+                await addCommand(commandName, command, dir)
+
                 const child = execSync(
-                    `npm run dev --no-open`,
+                    `npm run ${commandName}`,
                     {
                         cwd: dir,
                     },
@@ -292,7 +297,7 @@ describe('测试: React 同构项目', async () => {
                 }
 
                 await browser.close()
-                await terminate(child.pid)
+                terminate(child.pid)
             })
         })
     }
