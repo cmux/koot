@@ -1,6 +1,6 @@
 {
     "name": "koot",
-    "version": "0.2.2",
+    "version": "0.2.3",
     "description": "Koot.js - React isomorphic framework created by CMUX",
     "main": "index.js",
     "sideEffects": false,
@@ -15,7 +15,7 @@
         "eslint": "eslint \"!(node_modules|logs|dist|dist*)/**/*.+(js|jsx)\"",
         "pretest": "node ./test/pre-test.js",
         "test": "jest",
-        "test:config": "jest ./test/factory-config/test.js",
+        "test:factoryconfig": "jest ./test/factory-config/test.js",
         "test:react:isomorphic": "jest ./test/react-isomorphic/test.js"
     },
     "repository": {

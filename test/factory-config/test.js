@@ -76,6 +76,8 @@ describe('测试: 生成 Webpack 配置', async () => {
                                 expect(typeof entry.client).toBe('string')
                             }
                             expect(Array.isArray(plugins)).toBe(true)
+                            expect(plugins.some(p => p === null)).toBe(false)
+                            expect(plugins.some(p => typeof p === 'undefined')).toBe(false)
                             expect(Array.isArray(module.rules)).toBe(true)
                         }
                     } else {
@@ -87,6 +89,7 @@ describe('测试: 生成 Webpack 配置', async () => {
                             plugins,
                             module,
                         } = webpackConfig
+                        // console.log(plugins)
                         expect(mode).toBe(modeToBe)
                         expect(typeof output).toBe('object')
                         expect(typeof output.path).toBe('string')
@@ -97,6 +100,8 @@ describe('测试: 生成 Webpack 配置', async () => {
                             expect(Array.isArray(entry)).toBe(true)
                         }
                         expect(Array.isArray(plugins)).toBe(true)
+                        expect(plugins.some(p => p === null)).toBe(false)
+                        expect(plugins.some(p => typeof p === 'undefined')).toBe(false)
                         expect(Array.isArray(module.rules)).toBe(true)
                     }
                 })

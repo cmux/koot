@@ -83,7 +83,7 @@ module.exports = async (data = {}) => {
 
     result.entry = defaultServerEntry
 
-    await transformConfigLast(result)
+    return await transformConfigLast(result)
 
-    return result
+    // return result
 }
