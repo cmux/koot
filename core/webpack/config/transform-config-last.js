@@ -25,7 +25,11 @@ const transform = async (config) => {
 
     // remove all undefined from plugins
     if (!Array.isArray(config.plugins)) config.plugins = []
-    config.plugins = config.plugins.filter(plugin => typeof plugin !== 'undefined')
+    config.plugins = config.plugins
+        .filter(plugin => (
+            typeof plugin !== 'undefined' &&
+            plugin !== null
+        ))
 
     if (Array.isArray(config.module.rules)) {
         config.module.rules = removeDuplicateObject(config.module.rules)
