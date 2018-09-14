@@ -93,6 +93,34 @@ const testPage = async (port) => {
         expect(localeId).toBe('en')
     }
 
+    const testLinksToOtherLang = async (urlAppend) => {
+        await page.goto(`${url}${urlAppend}`, {
+            waitUntil: 'networkidle0'
+        })
+
+        const localeId = await page.evaluate(() => document.querySelector('meta[name="koot-locale-id"]').getAttribute('content'))
+        const linksToOtherLang = await page.$$eval(`link[rel="alternate"][hreflang][href]:not([hreflang="${localeId}"])`, els => (
+            Array.from(els).map(el => ({
+                lang: el.getAttribute('hreflang'),
+                href: el.getAttribute('href')
+            }))
+        ))
+        expect(Array.isArray(linksToOtherLang)).toBe(true)
+        expect(linksToOtherLang.length).toBeGreaterThan(0)
+
+        for (let { lang, href } of linksToOtherLang) {
+            await page.goto(href, {
+                waitUntil: 'networkidle0'
+            })
+            const localeId = await page.evaluate(() => document.querySelector('meta[name="koot-locale-id"]').getAttribute('content'))
+            expect(lang).toBe(localeId)
+        }
+    }
+    await testLinksToOtherLang('')
+    await testLinksToOtherLang('?hl=zh')
+    await testLinksToOtherLang('?test=a')
+    await testLinksToOtherLang('?test=a&hl=zh')
+
     await browser.close()
 }
 

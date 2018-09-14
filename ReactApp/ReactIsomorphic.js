@@ -13,6 +13,7 @@ import {
     setPageinfo,
 } from '../'
 import pageinfo from '../React/pageinfo'
+import { changeLocaleQueryKey } from '../defaults/defines'
 
 const path = require('path')
 
@@ -58,7 +59,7 @@ export default class ReactIsomorphic {
         const ENV = process.env.WEBPACK_BUILD_ENV
 
         // 配置 html 注入内容
-        // html [只更新1次]的部分
+        // html [只更新1次]的部分（启动/重启服务器后不会更改的部分）
         const injectOnce = {
             // js: inject.js ? inject.js.map((js) => `<script src="${js}" defer></script>`).join('') : '', // 引用js文件标签
             // css: inject.css ? inject.css.map((css) => `<link rel="stylesheet" href="${css}">`).join('') : '', // 引用css文件标签
@@ -70,7 +71,11 @@ export default class ReactIsomorphic {
         let filemap = {}
 
         // 分析当前 i18n 模式
-        const i18nType = JSON.parse(process.env.KOOT_I18N)
+        const i18nEnabled = JSON.parse(process.env.KOOT_I18N)
+        const i18nLocales = i18nEnabled
+            ? JSON.parse(process.env.KOOT_I18N_LOCALES)
+            : []
+        const i18nType = i18nEnabled
             ? JSON.parse(process.env.KOOT_I18N_TYPE)
             : undefined
         const isI18nDefault = (i18nType === 'default')
@@ -95,8 +100,17 @@ export default class ReactIsomorphic {
         // koa 中间件结构
         // 每次请求时均会执行
         return async (ctx, next) => {
+            // console.log('ctx.url', ctx.url)
+            // console.log('ctx.originalUrl', ctx.originalUrl)
+            // console.log('ctx.origin', ctx.origin)
+            // console.log('ctx.href', ctx.href)
+            // console.log('ctx.path', ctx.path)
+            // console.log('ctx.querystring', ctx.querystring)
+            // console.log('ctx.search', ctx.search)
+            // console.log('ctx.hash', ctx.hash)
 
             const url = ctx.path + ctx.search
+
             try {
                 // if (__DEV__) {
                 //     console.log(' ')
@@ -224,6 +238,28 @@ export default class ReactIsomorphic {
                         return `<script type="text/javascript">${htmlTool.getReduxScript(store)}</script>`
                             + thisInjectOnceCache.scriptsInBody
                     })(),
+                }
+
+                if (i18nEnabled) {
+                    const localeIds = i18nLocales.map(arr => arr[0])
+                    // console.log('localeIds', localeIds)
+                    // console.log('ctx.query', ctx.query)
+                    // console.log('ctx.querystring', ctx.querystring)
+                    injectRealtime.metas += localeIds
+                        .map(l => {
+                            const href = (typeof ctx.query[changeLocaleQueryKey] === 'string')
+                                ? ctx.href.replace(
+                                    new RegExp(`${changeLocaleQueryKey}=[a-zA-Z]+`),
+                                    `${changeLocaleQueryKey}=${l}`
+                                )
+                                : ctx.href + (ctx.querystring ? `&` : (
+                                    ctx.href.substr(ctx.href.length - 1) === '?'
+                                        ? ''
+                                        : `?`
+                                )) + `${changeLocaleQueryKey}=${l}`
+                            return `<link rel="alternate" hreflang="${l}" href="${href}" />`
+                        })
+                        .join('')
                 }
 
                 const injectResult = Object.assign({}, injectRealtime, injectOnce, inject)

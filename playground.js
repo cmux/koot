@@ -50,7 +50,7 @@ const run = async () => {
     // await addCommand(commandName, command, dir)
 
     const child = exec(
-        `npm run dev --no-open`,
+        `npm run dev:no-open`,
         {
             cwd: dir,
             // detached: true,
@@ -132,11 +132,26 @@ const run = async () => {
     // const elTitle = await page.$('title')
     const pageTitle = await page.evaluate(() => document.querySelector('title').innerText)
     // const elApp = await page.evaluate(() => document.querySelector('#app'))
-    console.log(pageTitle)
+    console.log('pageTitle', pageTitle)
     // console.log(elApp)
     // console.log(await page.$('#aapp'))
     const localeId = await page.evaluate(() => document.querySelector('meta[name="koot-locale-id"]').getAttribute('content'))
-    console.log(localeId)
+    console.log('localeId', localeId)
+
+    const linksToOtherLang = await page.$$eval(`link[rel="alternate"][hreflang][href]:not([hreflang="${localeId}"])`, els => (
+        Array.from(els).map(el => ({
+            lang: el.getAttribute('hreflang'),
+            href: el.getAttribute('href')
+        }))
+    ))
+    console.log(linksToOtherLang)
+    for (let { lang, href } of linksToOtherLang) {
+        await page.goto(href, {
+            waitUntil: 'networkidle0'
+        })
+        const localeId = await page.evaluate(() => document.querySelector('meta[name="koot-locale-id"]').getAttribute('content'))
+        console.log(lang, localeId)
+    }
 
     await browser.close()
 
