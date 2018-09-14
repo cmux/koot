@@ -210,11 +210,11 @@ const run = async () => {
         if (stage === 'run') {
             Object.assign(config, {
                 script: pathServerJS,
-                watch: true,
+                watch: ['dist'],
                 watch_options: {
                     usePolling: true,
                 },
-                autorestart: true,
+                // autorestart: true,
             })
             delete config.args
             // console.log(config)
