@@ -33,6 +33,24 @@ const getLocalesDefault = () => {
     }
     return JSON.parse(process.env.KOOT_I18N_LOCALES)
 }
+const doI18nRegister = (
+    locales = getLocalesDefault(),
+    i18nType = JSON.parse(process.env.KOOT_I18N_TYPE) || false,
+) => {
+    const availableLocales = []
+    const localesObj = {}
+    locales.forEach(arr => {
+        const [localeId, localeObj] = arr
+        availableLocales.push(localeId)
+        localesObj[localeId] = localeObj
+    })
+    // 服务器端注册多语言
+    i18nRegister({
+        localeIds: availableLocales,
+        locales: localesObj,
+        type: i18nType,
+    })
+}
 
 export default async (app, {
     // name,
@@ -115,21 +133,7 @@ export default async (app, {
     // 对应client的server端处理
     // ============================================================================
 
-    if (i18n) {
-        const availableLocales = []
-        const localesObj = {}
-        locales.forEach(arr => {
-            const [localeId, localeObj] = arr
-            availableLocales.push(localeId)
-            localesObj[localeId] = localeObj
-        })
-        // 服务器端注册多语言
-        i18nRegister({
-            localeIds: availableLocales,
-            locales: localesObj,
-            type: i18nType,
-        })
-    }
+    if (i18n) doI18nRegister(locales, i18nType)
 
 
 
@@ -226,6 +230,8 @@ export default async (app, {
 
                     return lang
                 })()
+
+                if (__DEV__) doI18nRegister()
 
                 store.dispatch({ type: CHANGE_LANGUAGE, data: lang })
                 i18nOnServerRender(obj)

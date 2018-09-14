@@ -210,7 +210,7 @@ const run = async () => {
         if (stage === 'run') {
             Object.assign(config, {
                 script: pathServerJS,
-                watch: ['dist'],
+                watch: [pathServerJS],
                 watch_options: {
                     usePolling: true,
                 },
