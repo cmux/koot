@@ -11,6 +11,7 @@ import convert from 'koa-convert'
 
 import i18nRegister from '../../i18n/register/isomorphic.server'
 import i18nOnServerRender from '../../i18n/onServerRender'
+import { changeLocaleQueryKey } from '../../defaults/defines'
 
 //
 
@@ -208,8 +209,7 @@ export default async (app, {
                 let lang = (() => {
 
                     // 先查看URL参数是否有语音设置
-                    // hl 这个参数名是参考了Instargram
-                    let lang = ctx.query.hl
+                    let lang = ctx.query[changeLocaleQueryKey]
 
                     // 如果没有，检查cookie
                     const cookies = cookie.parse(ctx.request.header.cookie || '')

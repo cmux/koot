@@ -12,6 +12,7 @@ const { dir: dirProjects, projects, commandTestBuild } = require('../projects')
 const projectsToUse = projects.filter(project => (
     Array.isArray(project.type) && project.type.includes('react-isomorphic')
 ))
+const { changeLocaleQueryKey } = require('../../defaults/defines')
 // const sleep = require('../../utils/sleep')
 
 //
@@ -79,14 +80,14 @@ const testPage = async (port) => {
         expect(typeof $app).toBe('object')
     }
     {
-        await page.goto(`${url}?hl=zh`, {
+        await page.goto(`${url}?${changeLocaleQueryKey}=zh`, {
             waitUntil: 'networkidle0'
         })
         const localeId = await page.evaluate(() => document.querySelector('meta[name="koot-locale-id"]').getAttribute('content'))
         expect(localeId).toBe('zh')
     }
     {
-        await page.goto(`${url}?hl=en`, {
+        await page.goto(`${url}?${changeLocaleQueryKey}=en`, {
             waitUntil: 'networkidle0'
         })
         const localeId = await page.evaluate(() => document.querySelector('meta[name="koot-locale-id"]').getAttribute('content'))
@@ -117,9 +118,9 @@ const testPage = async (port) => {
         }
     }
     await testLinksToOtherLang('')
-    await testLinksToOtherLang('?hl=zh')
+    await testLinksToOtherLang(`?${changeLocaleQueryKey}=zh`)
     await testLinksToOtherLang('?test=a')
-    await testLinksToOtherLang('?test=a&hl=zh')
+    await testLinksToOtherLang(`?test=a&${changeLocaleQueryKey}=zh`)
 
     await browser.close()
 }
