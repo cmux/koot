@@ -1,4 +1,4 @@
-const webpackBundleAnalyzer = require('webpack-bundle-analyzer')
+// const webpackBundleAnalyzer = require('webpack-bundle-analyzer')
 
 /**
  * Webpack 配置处理 - 最终处理
@@ -57,9 +57,9 @@ const transform = async (config) => {
     if (isAnalyze) {
         config.output.filename = 'entry.[id].[name].js'
         config.output.chunkFilename = 'chunk.[id].[name].js'
-        config.plugins.push(
-            new (webpackBundleAnalyzer.BundleAnalyzerPlugin)()
-        )
+        // config.plugins.push(
+        //     new (webpackBundleAnalyzer.BundleAnalyzerPlugin)()
+        // )
     }
 
     // custom logic use

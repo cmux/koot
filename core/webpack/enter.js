@@ -83,7 +83,7 @@ module.exports = async (kootConfig = {}) => {
     const after = async () => {
         console.log(' ')
 
-        if (pwa && STAGE === 'client' && ENV === 'prod') {
+        if (!analyze && pwa && STAGE === 'client' && ENV === 'prod') {
             // 生成PWA使用的 service-worker.js
             await createPWAsw(pwa, i18n)
         }

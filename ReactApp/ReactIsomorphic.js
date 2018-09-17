@@ -100,14 +100,17 @@ export default class ReactIsomorphic {
         // koa 中间件结构
         // 每次请求时均会执行
         return async (ctx, next) => {
-            // console.log('ctx.url', ctx.url)
-            // console.log('ctx.originalUrl', ctx.originalUrl)
-            // console.log('ctx.origin', ctx.origin)
-            // console.log('ctx.href', ctx.href)
-            // console.log('ctx.path', ctx.path)
-            // console.log('ctx.querystring', ctx.querystring)
-            // console.log('ctx.search', ctx.search)
-            // console.log('ctx.hash', ctx.hash)
+
+            console.log(' ')
+            console.log('ctx.url', ctx.url)
+            console.log('ctx.originalUrl', ctx.originalUrl)
+            console.log('ctx.origin', ctx.origin)
+            console.log('ctx.href', ctx.href)
+            console.log('ctx.path', ctx.path)
+            console.log('ctx.querystring', ctx.querystring)
+            console.log('ctx.search', ctx.search)
+            console.log('ctx.hash', ctx.hash)
+            console.log(' ')
 
             const url = ctx.path + ctx.search
 
