@@ -2,6 +2,7 @@
 * [指南](/guide)
 * [项目结构](/folders)
 * [命令](/task)
+* [可修改的环境变量](/env)
 * [生命周期](/life-cycle)
 * [i18n/多语言](/i18n)
 * [HTML注入](/inject)
