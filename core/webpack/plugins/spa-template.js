@@ -119,7 +119,7 @@ class SpaTemplatePlugin {
                 size: () => html.length
             }
 
-            console.log(html)
+            // console.log(html)
 
             // 生产环境：写入文件
             if (process.env.WEBPACK_BUILD_ENV === 'prod') {

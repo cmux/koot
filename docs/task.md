@@ -73,3 +73,21 @@
 | -g 或 --global | 使用全局 PM2 | `koot-dev -g` |
 
 注：手动指定环境时，将不会默认打开首页。
+
+---
+
+### koot-analyze
+
+默认行为：进行生产模式 (ENV: prod) 客户端环境 (STAGE: client) 的打包分析，并自动打开浏览器访问对结果页面。
+
+**可用选项**
+
+| 选项 | 说明 | 示例 |
+|-|-|-|
+| -c 或 --client | 只对客户端环境打包 | `koot-dev -c` |
+| -s 或 --server | 只对服务器端环境打包 | `koot-dev -s` |
+| --stage \<client\|server\> | 指定打包环境 | `koot-build --stage client` |
+| --type \<project-type> | 指定项目类型，忽略 koot.js 中的配置 | `koot-build --type react-spa` |
+| --config \<config-file-path> | 指定打包配置文件地址 | `koot-build --config ./koot.build.qa.js` |
+
+注：手动指定环境时，将不会默认打开首页。

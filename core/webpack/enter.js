@@ -39,14 +39,18 @@ process.env.DO_WEBPACK = false
 
 /**
  * Webpack 运行入口方法
+ * @async
+ * @param {Object} kootConfig
+ * @param {Boolean} [kootConfig.analyze=false] 是否为打包分析（analyze）模式
  */
-module.exports = async (kootConfig) => {
+module.exports = async (kootConfig = {}) => {
     const timestampStart = Date.now()
 
     // 抽取配置
     let {
         beforeBuild,
         afterBuild,
+        analyze = false,
     } = kootConfig
 
     // 确定项目类型
@@ -215,10 +219,11 @@ module.exports = async (kootConfig) => {
                     if (err)
                         return reject(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`)
 
-                    console.log(stats.toString({
-                        chunks: false, // 输出精简内容
-                        colors: true
-                    }))
+                    if (!analyze)
+                        console.log(stats.toString({
+                            chunks: false, // 输出精简内容
+                            colors: true
+                        }))
 
                     setTimeout(() => resolve(), 10)
                 })
@@ -305,10 +310,11 @@ module.exports = async (kootConfig) => {
 
                 if (err) return reject(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`)
 
-                console.log(stats.toString({
-                    chunks: false, // Makes the build much quieter
-                    colors: true
-                }))
+                if (!analyze)
+                    console.log(stats.toString({
+                        chunks: false, // Makes the build much quieter
+                        colors: true
+                    }))
 
                 resolve()
             })

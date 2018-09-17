@@ -1,3 +1,5 @@
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+
 // Libs & Utilities
 const getAppType = require('../../../utils/get-app-type')
 const getPort = require('../../../utils/get-port')
@@ -42,6 +44,9 @@ module.exports = async (kootConfig = {}) => {
         defaultPublicDirName,
         defaultPublicPathname,
     })
+    const {
+        analyze = false
+    } = data
 
     data.portServer = getPort(data.port)
     process.env.SERVER_PORT = data.portServer
@@ -71,6 +76,23 @@ module.exports = async (kootConfig = {}) => {
         data.webpackConfig = await transformConfigClient(data)
     if (STAGE === 'server')
         data.webpackConfig = await transformConfigServer(data)
+
+    // ========================================================================
+    //
+    // 模式: analyze
+    //
+    // ========================================================================
+
+    if (analyze) {
+        if (Array.isArray(data.webpackConfig))
+            data.webpackConfig = data.webpackConfig[0]
+        data.webpackConfig.plugins.push(
+            new BundleAnalyzerPlugin({
+                analyzerPort: process.env.SERVER_PORT,
+                defaultSizes: 'gzip'
+            })
+        )
+    }
 
     // ========================================================================
     //
