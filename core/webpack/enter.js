@@ -189,7 +189,7 @@ module.exports = async (kootConfig = {}) => {
         // http://webpack.github.io/docs/webpack-dev-server.html
         const server = await new WebpackDevServer(compiler, devServerConfig)
         const port = TYPE === 'spa' ? process.env.SERVER_PORT : CLIENT_DEV_PORT
-        server.listen(port, 'localhost', async (err) => {
+        server.listen(port, '0.0.0.0', async (err) => {
             if (err) console.error(err)
             buildingComplete()
             // await after()
