@@ -11,7 +11,7 @@ let nodeCommentEnd
 /**
  * @callback funcGetPageInfo
  * @param {Object} state 当前 state
- * @param {Object} ownProps 组件自身的 props
+ * @param {Object} renderProps 服务器端渲染时的 props
  * @returns {Object}
  */
 

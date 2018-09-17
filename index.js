@@ -25,3 +25,10 @@ export const setLocaleId = o => localeId = o
  */
 export let pageinfo = () => (WrappedComponent) => WrappedComponent
 export const setPageinfo = o => pageinfo = o
+
+/**
+ * 负责数据同构的高阶组件/方法
+ * @type {Function}
+ */
+export let load = () => (WrappedComponent) => WrappedComponent
+export const setLoad = o => load = o
