@@ -9,6 +9,9 @@ module.exports = () => {
         return isDev ? '/' : ''
 
     return isDev
-        ? `http://localhost:${process.env.WEBPACK_DEV_SERVER_PORT || 3001}/dist/`
+        ? `${typeof global.koaCtxOrigin === 'string'
+            ? global.koaCtxOrigin.split(':').slice(0, 2).join(':')
+            : 'http://localhost'
+        }:${process.env.WEBPACK_DEV_SERVER_PORT || 3001}/dist/`
         : '/'
 }

@@ -101,16 +101,16 @@ export default class ReactIsomorphic {
         // 每次请求时均会执行
         return async (ctx, next) => {
 
-            console.log(' ')
-            console.log('ctx.url', ctx.url)
-            console.log('ctx.originalUrl', ctx.originalUrl)
-            console.log('ctx.origin', ctx.origin)
-            console.log('ctx.href', ctx.href)
-            console.log('ctx.path', ctx.path)
-            console.log('ctx.querystring', ctx.querystring)
-            console.log('ctx.search', ctx.search)
-            console.log('ctx.hash', ctx.hash)
-            console.log(' ')
+            // console.log(' ')
+            // console.log('ctx.url', ctx.url)
+            // console.log('ctx.originalUrl', ctx.originalUrl)
+            // console.log('ctx.origin', ctx.origin)
+            // console.log('ctx.href', ctx.href)
+            // console.log('ctx.path', ctx.path)
+            // console.log('ctx.querystring', ctx.querystring)
+            // console.log('ctx.search', ctx.search)
+            // console.log('ctx.hash', ctx.hash)
+            // console.log(' ')
 
             const url = ctx.path + ctx.search
 
@@ -166,6 +166,8 @@ export default class ReactIsomorphic {
                 // console.log(thisInjectOnceCache)
                 // console.log(thisFilemap)
                 // console.log(thisEntrypoints)
+
+                global.koaCtxOrigin = ctx.origin
 
                 // 配置 html 注入内容
                 // html [实时更新]的部分
@@ -272,6 +274,13 @@ export default class ReactIsomorphic {
                 const html = htmlInject(template, injectResult)
                 ctx.body = html
 
+                if (__DEV__) {
+                    delete thisInjectOnceCache.styles
+                    delete thisInjectOnceCache.scriptsInBody
+                    delete thisInjectOnceCache.pathnameSW
+                }
+
+                global.koaCtxOrigin = undefined
 
             } catch (e) {
                 // console.error('Server-Render Error Occures: %s', e.stack)
