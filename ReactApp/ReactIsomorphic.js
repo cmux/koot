@@ -14,6 +14,7 @@ import {
 } from '../'
 import pageinfo from '../React/pageinfo'
 import { changeLocaleQueryKey } from '../defaults/defines'
+import { publicPathPrefix } from '../defaults/webpack-dev-server'
 
 const path = require('path')
 
@@ -167,7 +168,7 @@ export default class ReactIsomorphic {
                 // console.log(thisFilemap)
                 // console.log(thisEntrypoints)
 
-                global.koaCtxOrigin = ctx.origin
+                // global.koaCtxOrigin = ctx.origin
 
                 // 配置 html 注入内容
                 // html [实时更新]的部分
@@ -271,16 +272,25 @@ export default class ReactIsomorphic {
 
                 // 响应给客户端
 
-                const html = htmlInject(template, injectResult)
-                ctx.body = html
+                let html = htmlInject(template, injectResult)
 
                 if (__DEV__) {
                     delete thisInjectOnceCache.styles
                     delete thisInjectOnceCache.scriptsInBody
-                    delete thisInjectOnceCache.pathnameSW
+                    // delete thisInjectOnceCache.pathnameSW
+
+                    // 开发模式：替换 localhost
+                    const origin = ctx.origin.split('://')[1]
+                    // origin = origin.split(':')[0]
+                    html = html.replace(
+                        /:\/\/localhost:([0-9]+)/mg,
+                        `://${origin}/${publicPathPrefix}`
+                    )
                 }
 
-                global.koaCtxOrigin = undefined
+                ctx.body = html
+
+                // global.koaCtxOrigin = undefined
 
             } catch (e) {
                 // console.error('Server-Render Error Occures: %s', e.stack)

@@ -31,6 +31,7 @@ import {
     client,
     server,
 } from '__KOOT_PROJECT_CONFIG_PATHNAME__'
+import { publicPathPrefix } from '../../defaults/webpack-dev-server'
 // } from '../../../../koot'
 
 const {
@@ -75,6 +76,29 @@ if (global.kootTest || (process.env.KOOT_TEST_MODE && JSON.parse(process.env.KOO
         console.trace(err)
     })
 })();
+
+if (__DEV__) {
+    const Koa = require('koa')
+    const mount = require('koa-mount')
+    const proxy = require('koa-better-http-proxy')
+    const proxyServer = new Koa()
+    proxyServer.use(proxy('localhost', {
+        port: process.env.WEBPACK_DEV_SERVER_PORT || 3001,
+        userResDecorator: function (proxyRes, proxyResData, ctx) {
+            const data = proxyResData.toString('utf8')
+
+            if (/\ufffd/.test(data) === true)
+                return proxyResData
+
+            const origin = ctx.origin.split('://')[1]
+            return data.replace(
+                /:\/\/localhost:([0-9]+)/mg,
+                `://${origin}/${publicPathPrefix}`
+            )
+        }
+    }))
+    app.use(mount(`/${publicPathPrefix}`, proxyServer))
+}
 
 /* 系统运行 */
 appObj.run(port)
