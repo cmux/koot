@@ -1,6 +1,7 @@
 const path = require('path')
 const DefaultWebpackConfig = require('webpack-config').default
 
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 const KootI18nPlugin = require('../plugins/i18n')
 const DevServerAfterPlugin = require('../plugins/dev-server-after')
 const SpaTemplatePlugin = require('../plugins/spa-template')
@@ -27,6 +28,7 @@ module.exports = async (data = {}) => {
         inject,
         defaultPublicDirName, defaultPublicPathname,
         afterBuild = () => { },
+        staticAssets,
     } = data
 
     const defaultClientEntry = path.resolve(
@@ -35,6 +37,8 @@ module.exports = async (data = {}) => {
         appType,
         './client'
     )
+
+    const pathPublic = path.resolve(dist, `public`)
 
     const getWebpackConfig = async () => {
         if (typeof i18n === 'object') {
@@ -59,6 +63,7 @@ module.exports = async (data = {}) => {
         }
     }
 
+    let index = 0
     const handleSingleConfig = async (localeId, localesObj) => {
         const {
             WEBPACK_BUILD_TYPE: TYPE,
@@ -99,11 +104,16 @@ module.exports = async (data = {}) => {
             if (typeof result.output !== 'object')
                 result.output = {}
             if (!result.output.path) {
-                result.output.path = path.resolve(dist, `./public/${defaultPublicDirName}`)
+                result.output.path = path.resolve(pathPublic, defaultPublicDirName)
                 result.output.publicPath = defaultPublicPathname
             }
-            if (!result.output.publicPath)
+            if (!result.output.publicPath) {
                 result.output.publicPath = defaultPublicPathname
+            }
+            const outputPathLastCharacter = result.output.publicPath.substr(result.output.publicPath.length - 1)
+            if (outputPathLastCharacter !== '/' || outputPathLastCharacter !== '\\') {
+                result.output.publicPath += '/'
+            }
         }
 
         { // 处理 entry
@@ -143,7 +153,17 @@ module.exports = async (data = {}) => {
                         localeId: isSeperateLocale ? localeId : undefined,
                     })
                 )
+
+            if (typeof staticAssets === 'string' && !index)
+                result.plugins.push(new CopyWebpackPlugin([
+                    {
+                        from: staticAssets,
+                        to: path.relative(result.output.path, pathPublic)
+                    }
+                ]))
         }
+
+        index++
 
         return await transformConfigLast(result)
     }
