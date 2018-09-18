@@ -7,6 +7,7 @@ const KootI18nPlugin = require('../plugins/i18n')
 const createTargetDefaultConfig = require('./create-target-default')
 const transformConfigExtendDefault = require('./transform-config-extend-default')
 const transformConfigLast = require('./transform-config-last')
+const transformOutputPublicpath = require('./transform-output-publicpath')
 
 const getCwd = require('../../../utils/get-cwd')
 
@@ -64,10 +65,7 @@ module.exports = async (data = {}) => {
     if (!result.output.publicPath)
         result.output.publicPath = defaultPublicPathname
 
-    const outputPathLastCharacter = result.output.publicPath.substr(result.output.publicPath.length - 1)
-    if (outputPathLastCharacter !== '/' || outputPathLastCharacter !== '\\') {
-        result.output.publicPath += '/'
-    }
+    result.output.publicPath = transformOutputPublicpath(result.output.publicPath)
 
     result.plugins.unshift(
         new KootI18nPlugin({
