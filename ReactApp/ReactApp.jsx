@@ -17,8 +17,10 @@ import {
     setStore,
     setHistory,
     setPageinfo,
+    setLoad,
 } from '../'
 import pageinfo from '../React/pageinfo'
+import load from '../React/load'
 
 // import ACTION_TYPE from './ActionType'
 
@@ -30,6 +32,7 @@ export let store
 
 // 设置常量
 setPageinfo(pageinfo)
+setLoad(load)
 
 export default class ReactApp {
 
