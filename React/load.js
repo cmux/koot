@@ -54,7 +54,7 @@ export default (funcFetchData, options = {}) => (WrappedComponent) => {
         static onServerRenderStoreExtend({ store, renderProps }) {
             if (typeof funcFetchData !== 'function')
                 return new Promise(resolve => resolve())
-            console.log('onServerRenderStoreExtend')
+            // console.log('onServerRenderStoreExtend')
             return funcFetchData(store.getState(), renderProps, store.dispatch)
         }
 
@@ -62,7 +62,7 @@ export default (funcFetchData, options = {}) => (WrappedComponent) => {
             this.mounted = true
 
             if (!this.state.loaded) {
-                console.log('componentDidMount')
+                // console.log('componentDidMount')
                 funcFetchData(store.getState(), this.props, store.dispatch)
                     .then(() => {
                         if (!this.mounted) return

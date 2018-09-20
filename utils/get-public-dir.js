@@ -1,3 +1,5 @@
+const getWDSport = require('./get-webpack-dev-server-port')
+
 /**
  * 获取浏览器环境中的访问根路径
  * @returns {String} 浏览器环境中的访问根路径
@@ -8,10 +10,13 @@ module.exports = () => {
     if (process.env.WEBPACK_BUILD_TYPE === 'spa')
         return isDev ? '/' : ''
 
-    return isDev
-        ? `${typeof global.koaCtxOrigin === 'string'
+    if (isDev) {
+        const port = getWDSport()
+        const origin = typeof global.koaCtxOrigin === 'string'
             ? global.koaCtxOrigin.split(':').slice(0, 2).join(':')
             : 'http://localhost'
-        }:${process.env.WEBPACK_DEV_SERVER_PORT || 3001}/dist/`
-        : '/'
+        return `${origin}:${port}/dist/`
+    }
+
+    return '/'
 }

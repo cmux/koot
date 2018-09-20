@@ -184,11 +184,12 @@ module.exports = async (kootConfig = {}) => {
             },
             open: TYPE === 'spa',
         }, devServer)
+        const port = TYPE === 'spa' ? process.env.SERVER_PORT : CLIENT_DEV_PORT
 
         // more config
         // http://webpack.github.io/docs/webpack-dev-server.html
         const server = await new WebpackDevServer(compiler, devServerConfig)
-        const port = TYPE === 'spa' ? process.env.SERVER_PORT : CLIENT_DEV_PORT
+        server.use(require('webpack-hot-middleware')(compiler))
         server.listen(port, '0.0.0.0', async (err) => {
             if (err) console.error(err)
             buildingComplete()

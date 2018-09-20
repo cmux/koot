@@ -1,9 +1,17 @@
 import React from 'react'
 import { hydrate } from 'react-dom'
-import { browserHistory, match, Router } from 'react-router'
+import { browserHistory, match } from 'react-router'
 import { syncHistoryWithStore } from 'react-router-redux'
-import { Provider } from 'react-redux'
 import { createStore, applyMiddleware, compose } from 'redux'
+// let render = (() => {
+//     if (__DEV__) {
+//         const { render } = require('react-dom')
+//         return render
+//     } else {
+//         const { hydrate } = require('react-dom')
+//         return hydrate
+//     }
+// })()
 
 //
 
@@ -21,6 +29,7 @@ import {
 } from '../'
 import pageinfo from '../React/pageinfo'
 import load from '../React/load'
+import Root from '../React/root'
 
 // import ACTION_TYPE from './ActionType'
 
@@ -141,29 +150,17 @@ export default class ReactApp {
         setStore(store)
         setHistory(history)
 
-        const app = (
-            <Provider store={store} >
-                <Router history={history} {...ext} >
-                    {routes}
-                </Router>
-            </Provider>
-        )
-        let App
-
-        if (__DEV__) {
-            const { hot } = require('react-hot-loader')
-            console.log(hot)
-            App = hot(module)(
-                () => app
-            )
-        }
-
         match({ history, routes }, (err/*, redirectLocation, renderProps*/) => {
             if (err) {
                 console.log(err.stack)
             }
             hydrate(
-                __DEV__ ? <App /> : app,
+                <Root
+                    store={store}
+                    history={history}
+                    routes={routes}
+                    {...ext}
+                />,
                 document.getElementById(root)
             )
         })

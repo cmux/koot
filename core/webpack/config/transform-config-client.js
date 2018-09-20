@@ -1,4 +1,5 @@
 const path = require('path')
+const webpack = require('webpack')
 const DefaultWebpackConfig = require('webpack-config').default
 
 const CopyWebpackPlugin = require('copy-webpack-plugin')
@@ -7,12 +8,17 @@ const DevServerAfterPlugin = require('../plugins/dev-server-after')
 const SpaTemplatePlugin = require('../plugins/spa-template')
 const GenerateChunkmapPlugin = require('../plugins/generate-chunkmap')
 
+const {
+    entryClientHMR
+} = require('../../../defaults/webpack-dev-server')
+
 const createTargetDefaultConfig = require('./create-target-default')
 const transformConfigExtendDefault = require('./transform-config-extend-default')
 const transformConfigLast = require('./transform-config-last')
 const transformOutputPublicpath = require('./transform-output-publicpath')
 
 const getCwd = require('../../../utils/get-cwd')
+const getWDSport = require('../../../utils/get-webpack-dev-server-port')
 
 /**
  * Webpack 配置处理 - 客户端配置
@@ -122,6 +128,14 @@ module.exports = async (data = {}) => {
                     client: defaultClientEntry
                 }
             }
+            if (ENV === 'dev') {
+                for (let key in result.entry) {
+                    if (!Array.isArray(result.entry[key]))
+                        result.entry[key] = [result.entry[key]]
+                    result.entry[key].unshift('webpack/hot/only-dev-server')
+                }
+                result.entry[entryClientHMR] = `webpack-dev-server/client?http://localhost:${getWDSport()}/sockjs-node/`
+            }
         }
 
         { // 添加默认插件
@@ -133,10 +147,14 @@ module.exports = async (data = {}) => {
                     locales: i18n ? (isSeperateLocale ? localesObj : undefined) : undefined,
                 })
             )
-            if (ENV === 'dev')
+            if (ENV === 'dev') {
                 result.plugins.push(
                     new DevServerAfterPlugin(afterBuild)
                 )
+                result.plugins.push(
+                    new webpack.HotModuleReplacementPlugin()
+                )
+            }
 
             if (TYPE === 'spa')
                 result.plugins.push(

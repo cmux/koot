@@ -213,7 +213,15 @@ export default class ReactIsomorphic {
                             // Object.keys(thisEntrypoints).filter(key => (
                             //     key !== 'critical' && key !== 'polyfill'
                             // ))
-                            defaultEntrypoints.forEach(key => {
+                            let entryToRender = defaultEntrypoints
+                            if (__DEV__) {
+                                const { entryClientHMR } = require('../defaults/webpack-dev-server')
+                                entryToRender = [
+                                    entryClientHMR,
+                                    ...defaultEntrypoints
+                                ]
+                            }
+                            entryToRender.forEach(key => {
                                 if (Array.isArray(thisEntrypoints[key])) {
                                     thisEntrypoints[key].forEach(file => {
                                         if (ENV === 'prod')

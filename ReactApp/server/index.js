@@ -82,8 +82,10 @@ if (__DEV__) {
     const mount = require('koa-mount')
     const proxy = require('koa-better-http-proxy')
     const proxyServer = new Koa()
+    const getWDSport = require('../../utils/get-webpack-dev-server-port')
+    const port = getWDSport()
     proxyServer.use(proxy('localhost', {
-        port: process.env.WEBPACK_DEV_SERVER_PORT || 3001,
+        port,
         userResDecorator: function (proxyRes, proxyResData, ctx) {
             const data = proxyResData.toString('utf8')
 
@@ -91,10 +93,15 @@ if (__DEV__) {
                 return proxyResData
 
             const origin = ctx.origin.split('://')[1]
-            return data.replace(
-                /:\/\/localhost:([0-9]+)/mg,
-                `://${origin}/${publicPathPrefix}`
-            )
+            return data
+                .replace(
+                    /:\/\/localhost:([0-9]+)/mg,
+                    `://${origin}/${publicPathPrefix}`
+                )
+                .replace(
+                    new RegExp(`://${origin}/${publicPathPrefix}/sockjs-node/`, 'mg'),
+                    `://localhost:${port}/sockjs-node/`
+                )
         }
     }))
     app.use(mount(`/${publicPathPrefix}`, proxyServer))
