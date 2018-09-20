@@ -152,6 +152,9 @@ module.exports = async (data = {}) => {
                     new DevServerAfterPlugin(afterBuild)
                 )
                 result.plugins.push(
+                    new webpack.NamedModulesPlugin()
+                )
+                result.plugins.push(
                     new webpack.HotModuleReplacementPlugin()
                 )
             }
