@@ -141,16 +141,29 @@ export default class ReactApp {
         setStore(store)
         setHistory(history)
 
+        const app = (
+            <Provider store={store} >
+                <Router history={history} {...ext} >
+                    {routes}
+                </Router>
+            </Provider>
+        )
+        let App
+
+        if (__DEV__) {
+            const { hot } = require('react-hot-loader')
+            console.log(hot)
+            App = hot(module)(
+                () => app
+            )
+        }
+
         match({ history, routes }, (err/*, redirectLocation, renderProps*/) => {
             if (err) {
                 console.log(err.stack)
             }
             hydrate(
-                <Provider store={store} >
-                    <Router history={history} {...ext} >
-                        {routes}
-                    </Router>
-                </Provider>,
+                __DEV__ ? <App /> : app,
                 document.getElementById(root)
             )
         })
