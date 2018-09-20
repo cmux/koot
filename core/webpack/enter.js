@@ -177,6 +177,7 @@ module.exports = async (kootConfig = {}) => {
             stats: { colors: true },
             hot: true,
             inline: true,
+            historyApiFallback: true,
             contentBase: './',
             publicPath: TYPE === 'spa' ? '/' : '/dist/',
             headers: {

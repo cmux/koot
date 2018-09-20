@@ -29,7 +29,7 @@ import {
 } from '../'
 import pageinfo from '../React/pageinfo'
 import load from '../React/load'
-import Root from '../React/root'
+import Root from '../React/root.jsx'
 
 // import ACTION_TYPE from './ActionType'
 
