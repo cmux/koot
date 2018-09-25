@@ -1,3 +1,12 @@
+## 0.5.0
+**2018-09-25**
+- `koot-dev` 命令新选项
+  - `--no-open` 禁用自动打开浏览器
+- **ReactApp** (React同构)
+  - 新的组件装饰器 `@fetchdata`
+    - 与 `@pageinfo` 类似，可直接从 `koot` 主文件中载入：`import { fetchdata } from 'koot'`
+    - 用法参见文档的(React装饰器)[]章节
+
 ## 0.4.3
 **2018-09-18**
 - **ReactApp** (React同构)

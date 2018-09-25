@@ -9,7 +9,7 @@
 ### 初始化项目
 
 ```bash
-> koot-create
+> koot
 ```
 
 ### 运行开发模式

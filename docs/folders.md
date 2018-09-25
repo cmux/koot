@@ -5,14 +5,13 @@
 ├── README.md
 ├── node_modules
 ├── dist
-├── .babelrc
 ├── .eslintrc
 ├── .gitignore
-├── package.json
+├── babel.config.js
 ├── koot.js
 ├── koot.bulid.js
+├── package.json
 ├── postcss.config.js
-├── yarn.lock
 ├── logs
 │   ├── dev
 │   ├── online

@@ -1,36 +1,62 @@
-# HTML注入
+# HTML 内容注入
 
-HTML注入主要是只在SSR阶段，根据HTTP请求，动态的向```HTML模板```里插入代码。
+HTML 内容注入主要是只在SSR阶段，根据HTTP请求，动态的向```HTML模板```里插入代码。
 
-### HTML模板
+### HTML 模板
 
-默认情况，模板文件在 ```/src/html.js```。
-如下：
-```js
-export default `
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="UTF-8">
-        <title><script>//inject_title</script></title>
-        <script>//inject_metas</script>
-        <script>//inject_css</script>
-        <script>//inject_style</script>
-    </head>
-    <body>
-        <div id="boat-loader">LOADING...</div>
-        <div id="root"><script>//inject_react</script></div>
-        <script>//inject_redux</script>
-        <script>//inject_js</script>
-    </body>
-    </html>
+默认情况，模板文件在 ```/src/template.ejs```
+
+```ejs
+<!DOCTYPE html>
+<html>
+
+<head<%- inject.htmlLang %>>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+
+    <title><%= inject.title %></title>
+
+    <base target="_self">
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="format-detection" content="telephone=no,email=no,address=no">
+    <meta name="format-detection" content="email=no">
+    <meta name="format-detection" content="address=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="HandheldFriendly" content="true">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- IE/Edge/Multi-engine -->
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <!-- iOS Safari -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- Customize -->
+    <meta name="theme-color" content="#0092f5" />
+
+    <%- inject.metas %>
+    <%- inject.styles %>
+</head>
+
+<body>
+    <div id="main-loader"></div>
+    <div id="root"><%- inject.react %></div>
+    <%- inject.scripts %>
+</body>
+
+</html>
+
+<%- inject.performanceInfos %>
 `
 
 ```
 
 ### 注入变量
 
-从上面的```HTML模板```里可以看见很多个```<script>//inject_[*]</script>```标签，这样的标签会在```SSR```阶段被动态替换成配置文件里的对应代码。
+从上面的```HTML模板```里可以看见很多个```<%- inject.[*] %>```标签，这样的标签会在```SSR```阶段被动态替换成配置文件里的对应代码。
 配置文件: ```/koot.js```中，```export const server = { inject }```的```inject```会指定对应关系所在的文件。
 
 默认配置是：
@@ -58,16 +84,15 @@ export default {
 如：```getClientFilePath('client.js')``` => ```client.8f0f500307dec12480a2.js```
 
 
-### 注入时机
+### 默认注入项
 
-注入到HTML模板的代码可能是每个页面都需要的，也可能是在特定页面才需要的，所以为了减少字符串匹配的性能消耗，我们把每个页面都需要的注入标签在服务端程序启动时就替换好，有特定需求的会在页面被渲染时候才注入。
+以下注入项会默认启用，只要模板中有响应的 ``inject.[*]`` 即会自动替换为对应结果
 
-注入变量 | 时机 | 必填 | 说明
+注入变量 | 时机 | 内容说明
 - | - | -
-js | 服务端启动 | 是 |一般是 client.js
-css | 服务端启动 | 否 | 可选，可自定义浏览器预加载的 CSS
-title | 页面渲染 | 否 | 页面标题
-metas | 页面渲染 | 否 | <meta> 标签
-redux | 页面渲染 | 是 | 服务端准备好的 redux store
-react | 页面渲染 | 是 | React 在服务端渲染好的 HTML 代码
-style | 页面渲染 | 是 | React 在服务端渲染好的 CSS 代码
+htmlLang | 页面渲染 | 当前请求匹配到的语言 ID
+title | 页面渲染 | 页面标题，受多语言影响
+metas | 页面渲染 | &lt;meta&gt; 标签
+styles | 页面渲染 | 同构结果的全部 CSS 代码
+react | 页面渲染 | 同构结果的全部 HTML 代码
+scripts | 页面渲染 | 默认使用的外部 JS 代码和文件引用
