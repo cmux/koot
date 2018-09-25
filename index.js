@@ -30,5 +30,5 @@ export const setPageinfo = o => pageinfo = o
  * 负责数据同构的高阶组件/方法
  * @type {Function}
  */
-export let load = () => (WrappedComponent) => WrappedComponent
-export const setLoad = o => load = o
+export let fetchdata = () => (WrappedComponent) => WrappedComponent
+export const setFetchdata = o => fetchdata = o

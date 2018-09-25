@@ -11,10 +11,10 @@ import {
     setStore,
     setHistory,
     setPageinfo,
-    setLoad,
+    setFetchdata,
 } from '../'
 import pageinfo from '../React/pageinfo'
-import load from '../React/load'
+import fetchdata from '../React/fetchdata'
 import { changeLocaleQueryKey } from '../defaults/defines'
 import { publicPathPrefix } from '../defaults/webpack-dev-server'
 
@@ -33,7 +33,7 @@ const injectOnceCache = {}
 
 // 设置全局常量
 setPageinfo(pageinfo)
-setLoad(load)
+setFetchdata(fetchdata)
 
 export default class ReactIsomorphic {
 

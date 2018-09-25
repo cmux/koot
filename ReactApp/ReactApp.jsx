@@ -25,10 +25,10 @@ import {
     setStore,
     setHistory,
     setPageinfo,
-    setLoad,
+    setFetchdata,
 } from '../'
 import pageinfo from '../React/pageinfo'
-import load from '../React/load'
+import fetchdata from '../React/fetchdata'
 import Root from '../React/root.jsx'
 
 // import ACTION_TYPE from './ActionType'
@@ -41,7 +41,7 @@ export let store
 
 // 设置常量
 setPageinfo(pageinfo)
-setLoad(load)
+setFetchdata(fetchdata)
 
 export default class ReactApp {
 

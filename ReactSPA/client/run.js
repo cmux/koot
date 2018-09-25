@@ -19,10 +19,10 @@ import {
     setStore,
     setHistory,
     setPageinfo,
-    setLoad,
+    setFetchdata,
 } from '../../'
 import pageinfo from '../../React/pageinfo'
-import load from '../../React/load'
+import fetchdata from '../../React/fetchdata'
 import {
     reducer as realtimeLocationReducer,
     REALTIME_LOCATION_REDUCER_NAME,
@@ -44,7 +44,7 @@ const ROUTER_REDUCDER_NAME = 'routing'
 let logCountRouterUpdate = 0
 let logCountHistoryUpdate = 0
 setPageinfo(pageinfo)
-setLoad(load)
+setFetchdata(fetchdata)
 
 
 
