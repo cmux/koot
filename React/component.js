@@ -7,7 +7,15 @@ import { hot } from 'react-hot-loader'
 import hoistStatics from 'hoist-non-react-statics'
 import { ImportStyle } from 'sp-css-import'
 
-import { store } from '../index.js'
+import { store, localeId } from '../index.js'
+
+// 当前 meta 标签
+let currentMetaTags
+// meta 标签区域结尾的 HTML 注释代码
+let nodeCommentEnd
+
+// 是否已挂载了组件
+let everMounted = false
 
 /**
  * 获取数据
@@ -47,4 +55,196 @@ import { store } from '../index.js'
  * @returns {Function} 封装好的 React 组件
  */
 export default (options = {}) => (WrappedComponent) => {
+
+    const {
+        connect = false,
+        pageinfo,
+        data: {
+            fetch: dataFetch,
+            check: dataCheck,
+        } = {},
+        styles,
+        hot = true,
+    } = options
+
+    const doPageinfo = (store, props) => {
+        if (typeof pageinfo !== 'function') return {}
+
+        let infos = pageinfo(store.getState(), props)
+        if (typeof infos !== 'object') infos = {}
+
+        const {
+            title = '',
+            metas = []
+        } = infos
+
+        if (localeId)
+            metas.push({
+                name: 'koot-locale-id',
+                content: localeId
+            })
+
+        return {
+            title,
+            metas
+        }
+    }
+
+    class KootReactComponent extends React.Component {
+        static onServerRenderHtmlExtend = ({ htmlTool, store, renderProps = {} }) => {
+            const {
+                title,
+                metas
+            } = doPageinfo(store, getPropsFromRenderProps(renderProps))
+            htmlTool.title = title
+            htmlTool.metas = metas
+        }
+
+        static onServerRenderStoreExtend({ store, renderProps }) {
+            if (typeof funcFetchData !== 'function')
+                return new Promise(resolve => resolve())
+            // console.log('onServerRenderStoreExtend')
+            return dataFetch(store.getState(), getPropsFromRenderProps(renderProps), store.dispatch)
+        }
+
+        //
+
+        clientUpdatePageInfo() {
+            const {
+                title,
+                metas
+            } = doPageinfo(store, getPropsFromComponentProps(this.props))
+            clientUpdatePageInfo(title, metas)
+        }
+
+        //
+
+        mounted = false
+        state = {
+            loaded: typeof dataCheck === 'function'
+                ? dataCheck(store.getState(), getPropsFromComponentProps(this.props))
+                : undefined,
+        }
+
+        //
+
+        componentDidUpdate(prevProps) {
+            if (typeof prevProps.location === 'object' &&
+                typeof this.props.location === 'object' &&
+                prevProps.location.pathname !== this.props.location.pathname
+            )
+                this.clientUpdatePageInfo()
+        }
+
+        componentDidMount() {
+            this.mounted = true
+
+            if (!this.state.loaded) {
+                dataFetch(store.getState(), getPropsFromComponentProps(this.props), store.dispatch)
+                    .then(() => {
+                        if (!this.mounted) return
+                        this.setState({
+                            loaded: true,
+                        })
+                    })
+            }
+
+            if (everMounted) {
+                this.clientUpdatePageInfo()
+            } else {
+                everMounted = true
+            }
+        }
+
+        componentWillUnmount() {
+            this.mounted = false
+        }
+
+        //
+
+        render = () => <WrappedComponent loaded={this.state.loaded} {...this.props} />
+    }
+
+    return hoistStatics(KootReactComponent, WrappedComponent)
+}
+
+/**
+ * 基于 renderProps 返回同构 props
+ * @param {Object} renderProps 
+ * @return {Object}
+ */
+const getPropsFromRenderProps = (renderProps = {}) => {
+    return {
+        ...renderProps
+    }
+}
+
+/**
+ * 基于组件 props 返回同构 props
+ * @param {Object} componentProps 
+ * @return {Object}
+ */
+const getPropsFromComponentProps = (componentProps = {}) => {
+    return {
+        ...componentProps
+    }
+}
+
+/**
+ * (浏览器环境) 更新页面信息
+ * @param {String} title
+ * @param {Object[]} metas
+ */
+const clientUpdatePageInfo = (title, metas = []) => {
+    if (__SERVER__) return
+
+    // 替换页面标题
+    document.title = title
+
+    // 替换 metas
+    const head = document.getElementsByTagName('head')[0]
+    if (!Array.isArray(currentMetaTags)) {
+        currentMetaTags = []
+        // 移除所有在 KOOT_METAS 里的 meta 标签
+        // 采用 DOM 操作的初衷：如果使用 innerHTML 的字符串替换方法，浏览器可能会全局重新渲染一次，造成“闪屏”
+        const childNodes = head.childNodes
+        const nodesToRemove = []
+        let meetStart = false
+        let meetEnd = false
+        let i = 0
+        while (!meetEnd && childNodes[i] instanceof Node) {
+            const node = childNodes[i]
+            if (node.nodeType === Node.COMMENT_NODE) {
+                if (node.nodeValue === __KOOT_INJECT_METAS_START__)
+                    meetStart = true
+                if (node.nodeValue === __KOOT_INJECT_METAS_END__) {
+                    meetEnd = true
+                    nodeCommentEnd = node
+                }
+            } else if (meetStart && node.nodeType === Node.ELEMENT_NODE && node.tagName === 'META') {
+                nodesToRemove.push(node)
+            }
+            i++
+        }
+        nodesToRemove.forEach(el => head.removeChild(el))
+    }
+
+    currentMetaTags.forEach(el => {
+        el.parentNode.removeChild(el)
+    })
+    currentMetaTags = metas
+        .filter(meta => typeof meta === 'object')
+        .map(meta => {
+            const el = document.createElement('meta')
+            for (var key in meta) {
+                el.setAttribute(key, meta[key])
+            }
+            // el.setAttribute(__KOOT_INJECT_ATTRIBUTE_NAME__, '')
+            if (nodeCommentEnd) {
+                head.insertBefore(el, nodeCommentEnd)
+            } else {
+                head.appendChild(el)
+            }
+            return el
+        })
 }
