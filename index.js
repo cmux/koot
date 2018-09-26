@@ -20,6 +20,13 @@ export let localeId
 export const setLocaleId = o => localeId = o
 
 /**
+ * 通用的高阶组件/方法的装饰器
+ * @type {Function}
+ */
+export let component = () => (WrappedComponent) => WrappedComponent
+export const setComponent = o => component = o
+
+/**
  * 设置页面信息的高阶组件/方法
  * @type {Function}
  */

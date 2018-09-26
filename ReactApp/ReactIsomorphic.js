@@ -10,9 +10,11 @@ import { localeId } from '../i18n'
 import {
     setStore,
     setHistory,
+    setComponent,
     setPageinfo,
     setFetchdata,
 } from '../'
+import component from '../React/component'
 import pageinfo from '../React/pageinfo'
 import fetchdata from '../React/fetchdata'
 import { changeLocaleQueryKey } from '../defaults/defines'
@@ -32,6 +34,7 @@ const error = require('debug')('SYSTEM:isomorphic:error')
 const injectOnceCache = {}
 
 // 设置全局常量
+setComponent(component)
 setPageinfo(pageinfo)
 setFetchdata(fetchdata)
 
