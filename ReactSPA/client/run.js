@@ -18,11 +18,11 @@ import thunk from 'redux-thunk'
 import {
     setStore,
     setHistory,
-    setComponent,
+    setWrapper,
     setPageinfo,
     setFetchdata,
 } from '../../'
-import component from '../../React/component'
+import componentWrapper from '../../React/component-wrapper'
 import pageinfo from '../../React/pageinfo'
 import fetchdata from '../../React/fetchdata'
 import {
@@ -45,7 +45,7 @@ import { ImportStyleRoot } from 'sp-css-import'
 const ROUTER_REDUCDER_NAME = 'routing'
 let logCountRouterUpdate = 0
 let logCountHistoryUpdate = 0
-setComponent(component)
+setWrapper(componentWrapper)
 setPageinfo(pageinfo)
 setFetchdata(fetchdata)
 
