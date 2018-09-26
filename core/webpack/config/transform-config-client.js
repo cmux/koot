@@ -8,9 +8,9 @@ const DevServerAfterPlugin = require('../plugins/dev-server-after')
 const SpaTemplatePlugin = require('../plugins/spa-template')
 const GenerateChunkmapPlugin = require('../plugins/generate-chunkmap')
 
-const {
-    entryClientHMR
-} = require('../../../defaults/webpack-dev-server')
+// const {
+//     entryClientHMR
+// } = require('../../../defaults/webpack-dev-server')
 
 const createTargetDefaultConfig = require('./create-target-default')
 const transformConfigExtendDefault = require('./transform-config-extend-default')
@@ -133,8 +133,9 @@ module.exports = async (data = {}) => {
                     if (!Array.isArray(result.entry[key]))
                         result.entry[key] = [result.entry[key]]
                     result.entry[key].unshift('webpack/hot/only-dev-server')
+                    result.entry[key].unshift(`webpack-dev-server/client?http://localhost:${getWDSport()}/sockjs-node/`)
                 }
-                result.entry[entryClientHMR] = `webpack-dev-server/client?http://localhost:${getWDSport()}/sockjs-node/`
+                // result.entry[entryClientHMR] = `webpack-dev-server/client?http://localhost:${getWDSport()}/sockjs-node/`
             }
         }
 
