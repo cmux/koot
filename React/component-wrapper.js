@@ -50,7 +50,7 @@ let everMounted = false
  * @param {Object} [options.data] 同构数据相关
  * @param {callbackFetchData} [options.data.fetch]
  * @param {callbackCheckLoaded} [options.data.check]
- * @param {String} [options.styles] 组件 CSS 结果
+ * @param {Object} [options.styles] 组件 CSS 结果
  * @param {Boolean} [options.hot=true] （仅针对开发模式）是否允许热加载/热更新
  * @returns {Function} 封装好的 React 组件
  */
@@ -101,7 +101,7 @@ export default (options = {}) => (WrappedComponent) => {
         }
 
         static onServerRenderStoreExtend({ store, renderProps }) {
-            if (typeof funcFetchData !== 'function')
+            if (typeof dataFetch !== 'function')
                 return new Promise(resolve => resolve())
             // console.log('onServerRenderStoreExtend')
             return dataFetch(store.getState(), getPropsFromRenderProps(renderProps), store.dispatch)
@@ -139,7 +139,7 @@ export default (options = {}) => (WrappedComponent) => {
         componentDidMount() {
             this.mounted = true
 
-            if (!this.state.loaded) {
+            if (!this.state.loaded && typeof dataFetch === 'function') {
                 dataFetch(store.getState(), getPropsFromComponentProps(this.props), store.dispatch)
                     .then(() => {
                         if (!this.mounted) return
@@ -165,22 +165,24 @@ export default (options = {}) => (WrappedComponent) => {
         render = () => <WrappedComponent loaded={this.state.loaded} {...this.props} />
     }
 
-    let KootComponent = hoistStatics(KootReactComponent, WrappedComponent)
-
-    if (_connect === true) {
-        KootComponent = connect(_connect)(KootComponent)
-    } else if (typeof _connect === 'function') {
-        KootComponent = connect(_connect)(KootComponent)
-    }
-
-    if (typeof styles === 'string') {
-        KootComponent = ImportStyle(styles)(KootComponent)
-    }
-
     if (_hot && __DEV__ && __CLIENT__) {
         const { hot, setConfig } = require('react-hot-loader')
         setConfig({ logLevel: 'debug' })
         KootComponent = hot(module)(KootComponent)
+    }
+
+    let KootComponent = hoistStatics(KootReactComponent, WrappedComponent)
+
+    if (typeof styles === 'object' &&
+        typeof styles.wrapper === 'string'
+    ) {
+        KootComponent = ImportStyle(styles)(KootComponent)
+    }
+
+    if (_connect === true) {
+        KootComponent = connect(() => ({}))(KootComponent)
+    } else if (typeof _connect === 'function') {
+        KootComponent = connect(_connect)(KootComponent)
     }
 
     return KootComponent
@@ -248,7 +250,8 @@ const clientUpdatePageInfo = (title, metas = []) => {
     }
 
     currentMetaTags.forEach(el => {
-        el.parentNode.removeChild(el)
+        if (el && el.parentNode)
+            el.parentNode.removeChild(el)
     })
     currentMetaTags = metas
         .filter(meta => typeof meta === 'object')
