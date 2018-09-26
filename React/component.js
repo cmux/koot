@@ -3,7 +3,7 @@
 
 import React from 'react'
 import { connect } from 'react-redux'
-import { hot } from 'react-hot-loader'
+// import { hot } from 'react-hot-loader'
 import hoistStatics from 'hoist-non-react-statics'
 import { ImportStyle } from 'sp-css-import'
 
@@ -57,14 +57,14 @@ let everMounted = false
 export default (options = {}) => (WrappedComponent) => {
 
     const {
-        connect = false,
+        connect: _connect = false,
         pageinfo,
         data: {
             fetch: dataFetch,
             check: dataCheck,
         } = {},
         styles,
-        hot = true,
+        hot: _hot = true,
     } = options
 
     const doPageinfo = (store, props) => {
@@ -165,7 +165,25 @@ export default (options = {}) => (WrappedComponent) => {
         render = () => <WrappedComponent loaded={this.state.loaded} {...this.props} />
     }
 
-    return hoistStatics(KootReactComponent, WrappedComponent)
+    let KootComponent = hoistStatics(KootReactComponent, WrappedComponent)
+
+    if (_connect === true) {
+        KootComponent = connect(_connect)(KootComponent)
+    } else if (typeof _connect === 'function') {
+        KootComponent = connect(_connect)(KootComponent)
+    }
+
+    if (typeof styles === 'string') {
+        KootComponent = ImportStyle(styles)(KootComponent)
+    }
+
+    if (_hot && __DEV__ && __CLIENT__) {
+        const { hot, setConfig } = require('react-hot-loader')
+        setConfig({ logLevel: 'debug' })
+        KootComponent = hot(module)(KootComponent)
+    }
+
+    return KootComponent
 }
 
 /**
