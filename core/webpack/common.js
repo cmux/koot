@@ -172,14 +172,26 @@ const factory = async ({
                 //
 
                 {
-                    test: /\.(js|jsx)$/,
+                    test: /\.js$/,
                     use: {
                         loader: 'babel-loader',
                         options: {
                             // cacheDirectory: true
                         }
                     }
-                }
+                },
+                {
+                    test: /\.jsx$/,
+                    use: [
+                        require.resolve('react-hot-loader-loader'),
+                        {
+                            loader: 'babel-loader',
+                            options: {
+                                // cacheDirectory: true
+                            }
+                        }
+                    ]
+                },
             ]
         },
         resolve: {

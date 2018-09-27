@@ -3,13 +3,13 @@
 const React = require('react')
 import ReactDOM from 'react-dom'
 import {
-    Router,
+    // Router,
     hashHistory,
     // browserHistory,
     // createMemoryHistory,
 } from 'react-router'
 import { syncHistoryWithStore, routerReducer } from 'react-router-redux'
-import { Provider } from 'react-redux'
+// import { Provider } from 'react-redux'
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
 import thunk from 'redux-thunk'
 
@@ -36,7 +36,7 @@ import Root from '../../React/root.jsx'
 //     reducerLocales as i18nReducerLocales,
 // } from 'koot/i18n/redux'
 // import i18nRegister from 'koot/i18n/register/spa.client'
-import { ImportStyleRoot } from 'sp-css-import'
+// import { ImportStyleRoot } from 'sp-css-import'
 
 
 // ============================================================================
