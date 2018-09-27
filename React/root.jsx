@@ -16,10 +16,10 @@ const Root = ({
 
 let e = Root
 
-if (__DEV__) {
-    const { hot, setConfig } = require('react-hot-loader')
-    setConfig({ logLevel: 'debug' })
-    e = hot(module)(Root)
-}
+// if (__DEV__) {
+//     const { hot, setConfig } = require('react-hot-loader')
+//     setConfig({ logLevel: 'debug' })
+//     e = hot(module)(Root)
+// }
 
 export default e

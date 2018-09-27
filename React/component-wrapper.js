@@ -218,7 +218,7 @@ export default (options = {}) => (WrappedComponent) => {
             // console.log('this.kootClassNames', this.kootClassNames)
             // console.log('this.props.className', this.props.className)
             if (__CLIENT__ && this.kootClassNames instanceof HTMLElement) {
-                console.log(this.kootClassNames)
+                // console.log(this.kootClassNames)
                 this.kootClassNames = [this.kootClassNames.getAttribute('id')]
             }
             const props = Object.assign({}, this.props, {

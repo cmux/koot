@@ -13,7 +13,8 @@ const outputPath = 'dist'
 // 执行顺序，从右到左
 const factory = async ({
     aliases,
-    env, stage,
+    env = process.env.WEBPACK_BUILD_ENV,
+    stage = process.env.WEBPACK_BUILD_STAGE,
     // spa = false,
     defines = {},
 }) => {
@@ -26,9 +27,31 @@ const factory = async ({
     }
 
     const extractCSS = (
-        process.env.WEBPACK_BUILD_ENV === 'prod' ||
-        (process.env.WEBPACK_BUILD_ENV === 'dev' && process.env.WEBPACK_BUILD_STAGE === 'client')
+        env === 'prod' ||
+        (env === 'dev' && stage === 'client')
     ) ? true : false
+
+    let rulesJS = [
+        {
+            test: /\.(js|jsx)$/,
+            use: [
+                {
+                    loader: 'babel-loader',
+                    // options: {
+                    // cacheDirectory: true
+                    // }
+                }
+            ]
+        }
+    ]
+    if (env === 'dev' && stage === 'client') {
+        rulesJS.push({
+            test: /\.jsx$/,
+            use: [
+                require.resolve('react-hot-loader-loader'),
+            ]
+        })
+    }
 
     return {
         module: {
@@ -171,27 +194,7 @@ const factory = async ({
 
                 //
 
-                {
-                    test: /\.js$/,
-                    use: {
-                        loader: 'babel-loader',
-                        options: {
-                            // cacheDirectory: true
-                        }
-                    }
-                },
-                {
-                    test: /\.jsx$/,
-                    use: [
-                        require.resolve('react-hot-loader-loader'),
-                        {
-                            loader: 'babel-loader',
-                            options: {
-                                // cacheDirectory: true
-                            }
-                        }
-                    ]
-                },
+                ...rulesJS
             ]
         },
         resolve: {
