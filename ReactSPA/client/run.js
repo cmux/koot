@@ -30,6 +30,7 @@ import {
     REALTIME_LOCATION_REDUCER_NAME,
     actionUpdate,
 } from '../../React/realtime-location'
+import Root from '../../React/root.jsx'
 // import {
 //     reducerLocaleId as i18nReducerLocaleId,
 //     reducerLocales as i18nReducerLocales,
@@ -200,7 +201,7 @@ export default ({
         }
 
         return new Promise(resolve => {
-            if(typeof _before === 'function')
+            if (typeof _before === 'function')
                 _before()
             resolve()
         })
@@ -220,18 +221,18 @@ export default ({
                 })
         })
         .then(() => {
-            const AppWrapper = ImportStyleRoot()(
-                (props) => <div {...props} />
-            )
             // console.log('store', store)
             // console.log('routerConfig', routerConfig)
 
+            const { history, routes, ...ext } = routerConfig
+
             ReactDOM.render(
-                <Provider store={store} >
-                    <AppWrapper>
-                        <Router {...routerConfig} />
-                    </AppWrapper>
-                </Provider>,
+                <Root
+                    store={store}
+                    history={history}
+                    routes={routes}
+                    {...ext}
+                />,
                 document.getElementById('root')
             )
 

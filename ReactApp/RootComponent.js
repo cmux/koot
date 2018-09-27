@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import { ImportStyleRoot } from 'sp-css-import'
+// import { ImportStyleRoot } from 'sp-css-import'
 
-@ImportStyleRoot()
+// @ImportStyleRoot()
 class RootComponent extends Component {
     render() {
         return (

@@ -4,7 +4,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 // import { hot } from 'react-hot-loader'
-import PropTypes from 'prop-types'
+// import PropTypes from 'prop-types'
 import hoistStatics from 'hoist-non-react-statics'
 // import { ImportStyle } from 'sp-css-import'
 
@@ -18,6 +18,10 @@ import {
     fromServerProps as getRenderPropsFromServerProps,
     fromComponentProps as getRenderPropsFromComponentProps
 } from './get-render-props'
+import {
+    append as appendStyle,
+    remove as removeStyle,
+} from './styles'
 import clientUpdatePageInfo from './client-update-page-info'
 
 //
@@ -74,9 +78,17 @@ export default (options = {}) => (WrappedComponent) => {
             fetch: dataFetch,
             check: dataCheck,
         } = {},
-        styles,
+        styles: _styles,
         // hot: _hot = true,
     } = options
+
+    const styles = (!Array.isArray(_styles) ? [_styles] : styles).filter(obj => (
+        typeof obj === 'object' && typeof obj.wrapper === 'string'
+    ))
+    const hasStyles = (
+        Array.isArray(styles) &&
+        styles.length > 0
+    )
 
     const doPageinfo = (store, props) => {
         if (typeof pageinfo !== 'function')
@@ -124,11 +136,6 @@ export default (options = {}) => (WrappedComponent) => {
             )
         }
 
-        static contextTypes = {
-            appendStyle: PropTypes.func,
-            removeStyle: PropTypes.func
-        }
-
         //
 
         clientUpdatePageInfo() {
@@ -150,21 +157,26 @@ export default (options = {}) => (WrappedComponent) => {
                 : undefined,
         }
         mounted = false
-        classNameWrapper = (typeof styles === 'object' && typeof styles.wrapper === 'string')
-            ? stylesHandleWapperCssLoader(styles).map(obj => obj.wrapper)
-            : []
+        kootClassNames = []
 
         //
 
-        constructor(props, context) {
-            super(props, context)
+        constructor() {
+            super()
 
-            if (typeof styles !== 'object' || typeof styles.wrapper !== 'string') {
-            } else if (context && typeof context.appendStyle === 'function')
-                context.appendStyle(styles)
-            else if (__DEV__) {
-                console.warn(`It seems that a component has no \`appendStyle\` function in \`context\`. Have you use \`ImportStyleRoot\` to the root component?`)
-                console.warn('Related component: ', this)
+            if (hasStyles) {
+                // if (context && typeof context.appendStyle === 'function') {
+                this.kootClassNames = styles.map(obj => obj.wrapper)
+                appendStyle(styles)
+                // console.log('----------')
+                // console.log('styles', styles)
+                // console.log('theStyles', theStyles)
+                // console.log('this.classNameWrapper', this.classNameWrapper)
+                // console.log('----------')
+                // } else if (__DEV__) {
+                //     console.warn(`It seems that a component has no \`appendStyle\` function in \`context\`. Have you use \`ImportStyleRoot\` to the root component?`)
+                //     console.warn('Related component: ', this)
+                // }
             }
         }
 
@@ -198,18 +210,22 @@ export default (options = {}) => (WrappedComponent) => {
 
         componentWillUnmount() {
             this.mounted = false
-
-            if (this.context && this.context.removeStyle)
-                this.context.removeStyle(styles)
+            if (hasStyles) {
+                removeStyle(styles)
+            }
         }
 
         //
 
         render = () => {
+            // console.log('styles', styles)
+            // console.log('this', this)
+            // console.log('this.kootClassNames', this.kootClassNames)
+            // console.log('this.props.className', this.props.className)
             const props = Object.assign({}, this.props, {
                 loaded: this.state.loaded,
-                className: this.classNameWrapper.concat(this.props.className).join(' ').trim(),
-                "data-class-name": this.classNameWrapper.join(' ').trim(),
+                className: this.kootClassNames.concat(this.props.className).join(' ').trim(),
+                "data-class-name": this.kootClassNames.join(' ').trim(),
             })
             return <WrappedComponent {...props} />
         }
@@ -236,19 +252,4 @@ export default (options = {}) => (WrappedComponent) => {
     }
 
     return KootComponent
-}
-
-// 统一处理，把 string, object 都转化成array
-const stylesHandleWapperCssLoader = (styles) => {
-
-    // 如果是对象
-    if (typeof styles === 'object' && !styles.length) {
-        styles = [styles]
-    }
-
-    if (typeof styles === 'object' && styles.length) {
-        return styles
-    }
-
-    throw 'stylesHandleWapperCssLoader() styles type must be array or object'
 }
