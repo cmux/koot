@@ -32,10 +32,3 @@ export const setWrapper = o => wrapper = o
  */
 export let pageinfo = () => (WrappedComponent) => WrappedComponent
 export const setPageinfo = o => pageinfo = o
-
-/**
- * 负责数据同构的高阶组件/方法
- * @type {Function}
- */
-export let fetchdata = () => (WrappedComponent) => WrappedComponent
-export const setFetchdata = o => fetchdata = o
