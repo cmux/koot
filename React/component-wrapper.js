@@ -161,11 +161,10 @@ export default (options = {}) => (WrappedComponent) => {
 
         //
 
-        constructor() {
-            super()
+        constructor(props) {
+            super(props)
 
             if (hasStyles) {
-                // if (context && typeof context.appendStyle === 'function') {
                 this.kootClassNames = styles.map(obj => obj.wrapper)
                 appendStyle(styles)
                 // console.log('----------')
@@ -173,10 +172,6 @@ export default (options = {}) => (WrappedComponent) => {
                 // console.log('theStyles', theStyles)
                 // console.log('this.classNameWrapper', this.classNameWrapper)
                 // console.log('----------')
-                // } else if (__DEV__) {
-                //     console.warn(`It seems that a component has no \`appendStyle\` function in \`context\`. Have you use \`ImportStyleRoot\` to the root component?`)
-                //     console.warn('Related component: ', this)
-                // }
             }
         }
 
@@ -222,6 +217,10 @@ export default (options = {}) => (WrappedComponent) => {
             // console.log('this', this)
             // console.log('this.kootClassNames', this.kootClassNames)
             // console.log('this.props.className', this.props.className)
+            if (__CLIENT__ && this.kootClassNames instanceof HTMLElement) {
+                console.log(this.kootClassNames)
+                this.kootClassNames = [this.kootClassNames.getAttribute('id')]
+            }
             const props = Object.assign({}, this.props, {
                 loaded: this.state.loaded,
                 className: this.kootClassNames.concat(this.props.className).join(' ').trim(),

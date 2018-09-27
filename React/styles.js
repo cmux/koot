@@ -24,6 +24,7 @@ export const append = (style) => {
     if (Array.isArray(style))
         return style.forEach(theStyle => append(theStyle))
 
+    // console.log(style)
     if (!styleMap[style.wrapper]) {
         styleMap[style.wrapper] = {
             css: style.css,

@@ -16,6 +16,9 @@ import {
 } from '../'
 import componentWrapper from '../React/component-wrapper'
 import pageinfo from '../React/pageinfo'
+import {
+    get as getStyles,
+} from '../React/styles'
 // import fetchdata from '../React/fetchdata'
 import { changeLocaleQueryKey } from '../defaults/defines'
 import { publicPathPrefix } from '../defaults/webpack-dev-server'
@@ -154,13 +157,16 @@ export default class ReactIsomorphic {
                 const htmlTool = await ServerRenderHtmlExtend({ store, renderProps, ctx })
 
                 // 把react部分渲染出html片段，并插入到html中
-
                 const reactHtml = renderToString(
                     <Provider store={store} >
                         <RouterContext {...renderProps} />
                     </Provider>
                 )
-                const filterResult = filterStyle(reactHtml)
+                // const filterResult = filterStyle(reactHtml)
+                const styles = getStyles()
+                const reactStyles = Object.keys(styles).map(wrapper => (
+                    `<style id=${wrapper}>${styles[wrapper].css}</style>`
+                ))
 
                 const thisInjectOnceCache = assetsInjectOnce ? injectOnceCache : injectOnceCache[localeId]
                 const thisFilemap = assetsInjectOnce ? filemap : filemap[localeId]
@@ -193,9 +199,9 @@ export default class ReactIsomorphic {
                             }
                             thisInjectOnceCache.styles = r
                         }
-                        return thisInjectOnceCache.styles + filterResult.style
+                        return thisInjectOnceCache.styles + reactStyles
                     })(),
-                    react: filterResult.html,
+                    react: reactHtml,
                     scripts: (() => {
                         if (!assetsInjectOnce || typeof thisInjectOnceCache.scriptsInBody === 'undefined') {
                             let r = ''
@@ -404,23 +410,23 @@ function ServerRenderHtmlExtend({ store, renderProps, ctx }) {
 // serverRender 的时候，react逻辑渲染的css代码会在html比较靠后的地方渲染出来，
 // 为了更快的展现出正常的网页样式，在服务端处理的时候用正则表达式把匹配到的css
 // 移动到html的header里，让页面展现更快。
-function filterStyle(htmlString) {
+// function filterStyle(htmlString) {
 
-    // 获取样式代码
-    let styleCollectionString = htmlString
-        .replace(/\r\n/gi, '')
-        .replace(/\n/gi, '')
-        .match(/<div id="styleCollection(.*?)>(.*?)<\/div>/gi)[0]
+//     // 获取样式代码
+//     let styleCollectionString = htmlString
+//         .replace(/\r\n/gi, '')
+//         .replace(/\n/gi, '')
+//         .match(/<div id="styleCollection(.*?)>(.*?)<\/div>/gi)[0]
 
-    // 提取 css
-    let style = styleCollectionString.substr(styleCollectionString.indexOf('>') + 1, styleCollectionString.length)
-    style = style.substr(0, style.length - 6)
+//     // 提取 css
+//     let style = styleCollectionString.substr(styleCollectionString.indexOf('>') + 1, styleCollectionString.length)
+//     style = style.substr(0, style.length - 6)
 
-    // 去掉 <div id="styleCollection">...</div>
-    let html = htmlString.replace(/\n/gi, '').replace(styleCollectionString, '')
+//     // 去掉 <div id="styleCollection">...</div>
+//     let html = htmlString.replace(/\n/gi, '').replace(styleCollectionString, '')
 
-    return {
-        html,
-        style
-    }
-}
+//     return {
+//         html,
+//         style
+//     }
+// }
