@@ -13,13 +13,15 @@ function AddReactHotLoader(source) {
     const functionName = getExportDefaultFunctionName(source)
 
     if (className) {
-        newSource = transformSourceForClass(newSource, className);
+        newSource = transformSourceForClass(newSource, className)
     } else if (classNameExported) {
-        newSource = transformSourceForClassExported(newSource, classNameExported);
+        newSource = transformSourceForClassExported(newSource, classNameExported)
     } else if (functionName) {
-        newSource = transformSourceForNamedFunction(newSource, functionName);
+        newSource = transformSourceForNamedFunction(newSource, functionName)
+    } else if (checkExportClassDirectly(source)) {
+        newSource = transformSourceForExportClassDirectly(newSource)
     } else {
-        newSource = transformSourceDefault(newSource);
+        newSource = transformSourceDefault(newSource)
     }
     // console.log(newSource)
     return newSource
@@ -28,8 +30,10 @@ function AddReactHotLoader(source) {
 // transforms
 
 function transformSourceForClass(source, className) {
-    source = source.replace(/^\s*export\s+default\s+/m, '')
-    source += `\nexport default hot(module)(${className});`
+    // source = source.replace(/^\s*export\s+default\s+/m, '')
+    // source += `\nexport default hot(module)(${className});`
+    const regex = new RegExp(`^\\s*export\\s+default\\s+class\\s+${className}\\s+`, 'm')
+    source = source.replace(regex, `@hot(module)\nexport default class ${className} `)
     return source
 }
 
@@ -48,6 +52,14 @@ function transformSourceForNamedFunction(source, functionName) {
 function transformSourceDefault(source) {
     source = source.replace(/^\s*export\s+default/m, 'const reactAppToMakeSuperHot =')
     source += `\nexport default hot(module)(reactAppToMakeSuperHot);`
+    return source
+}
+
+function transformSourceForExportClassDirectly(source) {
+    source = source.replace(
+        /(^|\r|\n)export\s+default\s+class\s+/,
+        `$1@hot(module)\nexport default class `
+    )
     return source
 }
 
@@ -89,5 +101,13 @@ function getExportDefaultClassNameExported(source) {
 
     return ''
 }
+
+// checkers
+
+function checkExportClassDirectly(source) {
+    return /(^|\r|\n)export\s+default\s+class\s+/.test(source)
+}
+
+//
 
 module.exports = AddReactHotLoader

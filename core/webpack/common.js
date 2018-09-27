@@ -48,7 +48,7 @@ const factory = async ({
         rulesJS.push({
             test: /\.jsx$/,
             use: [
-                require(path.resolve(__dirname, './loaders/react-hot')),
+                require.resolve('./loaders/react-hot'),
             ]
         })
     }
