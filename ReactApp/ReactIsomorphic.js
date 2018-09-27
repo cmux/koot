@@ -164,9 +164,11 @@ export default class ReactIsomorphic {
                 )
                 // const filterResult = filterStyle(reactHtml)
                 const styles = getStyles()
-                const reactStyles = Object.keys(styles).map(wrapper => (
-                    `<style id=${wrapper}>${styles[wrapper].css}</style>`
-                ))
+                const reactStyles = Object.keys(styles)
+                    .map(wrapper => (
+                        `<style id=${wrapper}>${styles[wrapper].css}</style>`
+                    ))
+                    .join('')
 
                 const thisInjectOnceCache = assetsInjectOnce ? injectOnceCache : injectOnceCache[localeId]
                 const thisFilemap = assetsInjectOnce ? filemap : filemap[localeId]
