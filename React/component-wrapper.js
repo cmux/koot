@@ -4,18 +4,30 @@
 import React from 'react'
 import { connect } from 'react-redux'
 // import { hot } from 'react-hot-loader'
+import PropTypes from 'prop-types'
 import hoistStatics from 'hoist-non-react-statics'
-import { ImportStyle } from 'sp-css-import'
+// import { ImportStyle } from 'sp-css-import'
+
+//
 
 import { store, localeId } from '../index.js'
 
-// 当前 meta 标签
-let currentMetaTags
-// meta 标签区域结尾的 HTML 注释代码
-let nodeCommentEnd
+//
+
+import {
+    fromServerProps as getRenderPropsFromServerProps,
+    fromComponentProps as getRenderPropsFromComponentProps
+} from './get-render-props'
+import clientUpdatePageInfo from './client-update-page-info'
+
+//
 
 // 是否已挂载了组件
 let everMounted = false
+const defaultPageInfo = {
+    title: '',
+    metas: []
+}
 
 /**
  * 获取数据
@@ -51,7 +63,6 @@ let everMounted = false
  * @param {callbackFetchData} [options.data.fetch]
  * @param {callbackCheckLoaded} [options.data.check]
  * @param {Object} [options.styles] 组件 CSS 结果
- * @param {Boolean} [options.hot=true] （仅针对开发模式）是否允许热加载/热更新
  * @returns {Function} 封装好的 React 组件
  */
 export default (options = {}) => (WrappedComponent) => {
@@ -64,18 +75,20 @@ export default (options = {}) => (WrappedComponent) => {
             check: dataCheck,
         } = {},
         styles,
-        hot: _hot = true,
+        // hot: _hot = true,
     } = options
 
     const doPageinfo = (store, props) => {
-        if (typeof pageinfo !== 'function') return {}
+        if (typeof pageinfo !== 'function')
+            return { ...defaultPageInfo }
 
         let infos = pageinfo(store.getState(), props)
-        if (typeof infos !== 'object') infos = {}
+        if (typeof infos !== 'object')
+            infos = { ...defaultPageInfo }
 
         const {
-            title = '',
-            metas = []
+            title = defaultPageInfo.title,
+            metas = defaultPageInfo.metas
         } = infos
 
         if (localeId)
@@ -95,7 +108,7 @@ export default (options = {}) => (WrappedComponent) => {
             const {
                 title,
                 metas
-            } = doPageinfo(store, getPropsFromRenderProps(renderProps))
+            } = doPageinfo(store, getRenderPropsFromServerProps(renderProps))
             htmlTool.title = title
             htmlTool.metas = metas
         }
@@ -104,29 +117,56 @@ export default (options = {}) => (WrappedComponent) => {
             if (typeof dataFetch !== 'function')
                 return new Promise(resolve => resolve())
             // console.log('onServerRenderStoreExtend')
-            return dataFetch(store.getState(), getPropsFromRenderProps(renderProps), store.dispatch)
+            return dataFetch(
+                store.getState(),
+                getRenderPropsFromServerProps(renderProps),
+                store.dispatch
+            )
+        }
+
+        static contextTypes = {
+            appendStyle: PropTypes.func,
+            removeStyle: PropTypes.func
         }
 
         //
 
         clientUpdatePageInfo() {
+            if (typeof pageinfo !== 'function')
+                return
+
             const {
                 title,
                 metas
-            } = doPageinfo(store, getPropsFromComponentProps(this.props))
+            } = doPageinfo(store, getRenderPropsFromComponentProps(this.props))
             clientUpdatePageInfo(title, metas)
         }
 
         //
 
-        mounted = false
         state = {
             loaded: typeof dataCheck === 'function'
-                ? dataCheck(store.getState(), getPropsFromComponentProps(this.props))
+                ? dataCheck(store.getState(), getRenderPropsFromComponentProps(this.props))
                 : undefined,
         }
+        mounted = false
+        classNameWrapper = (typeof styles === 'object' && typeof styles.wrapper === 'string')
+            ? stylesHandleWapperCssLoader(styles).map(obj => obj.wrapper)
+            : []
 
         //
+
+        constructor(props, context) {
+            super(props, context)
+
+            if (typeof styles !== 'object' || typeof styles.wrapper !== 'string') {
+            } else if (context && typeof context.appendStyle === 'function')
+                context.appendStyle(styles)
+            else if (__DEV__) {
+                console.warn(`It seems that a component has no \`appendStyle\` function in \`context\`. Have you use \`ImportStyleRoot\` to the root component?`)
+                console.warn('Related component: ', this)
+            }
+        }
 
         componentDidUpdate(prevProps) {
             if (typeof prevProps.location === 'object' &&
@@ -140,7 +180,7 @@ export default (options = {}) => (WrappedComponent) => {
             this.mounted = true
 
             if (!this.state.loaded && typeof dataFetch === 'function') {
-                dataFetch(store.getState(), getPropsFromComponentProps(this.props), store.dispatch)
+                dataFetch(store.getState(), getRenderPropsFromComponentProps(this.props), store.dispatch)
                     .then(() => {
                         if (!this.mounted) return
                         this.setState({
@@ -158,26 +198,36 @@ export default (options = {}) => (WrappedComponent) => {
 
         componentWillUnmount() {
             this.mounted = false
+
+            if (this.context && this.context.removeStyle)
+                this.context.removeStyle(styles)
         }
 
         //
 
-        render = () => <WrappedComponent loaded={this.state.loaded} {...this.props} />
+        render = () => {
+            const props = Object.assign({}, this.props, {
+                loaded: this.state.loaded,
+                className: this.classNameWrapper.concat(this.props.className).join(' ').trim(),
+                "data-class-name": this.classNameWrapper.join(' ').trim(),
+            })
+            return <WrappedComponent {...props} />
+        }
     }
 
-    if (_hot && __DEV__ && __CLIENT__) {
-        const { hot, setConfig } = require('react-hot-loader')
-        setConfig({ logLevel: 'debug' })
-        KootComponent = hot(module)(KootComponent)
-    }
+    // if (_hot && __DEV__ && __CLIENT__) {
+    //     const { hot, setConfig } = require('react-hot-loader')
+    //     setConfig({ logLevel: 'debug' })
+    //     KootComponent = hot(module)(KootComponent)
+    // }
 
     let KootComponent = hoistStatics(KootReactComponent, WrappedComponent)
 
-    if (typeof styles === 'object' &&
-        typeof styles.wrapper === 'string'
-    ) {
-        KootComponent = ImportStyle(styles)(KootComponent)
-    }
+    // if (typeof styles === 'object' &&
+    //     typeof styles.wrapper === 'string'
+    // ) {
+    //     KootComponent = ImportStyle(styles)(KootComponent)
+    // }
 
     if (_connect === true) {
         KootComponent = connect(() => ({}))(KootComponent)
@@ -188,84 +238,17 @@ export default (options = {}) => (WrappedComponent) => {
     return KootComponent
 }
 
-/**
- * 基于 renderProps 返回同构 props
- * @param {Object} renderProps 
- * @return {Object}
- */
-const getPropsFromRenderProps = (renderProps = {}) => {
-    return {
-        ...renderProps
-    }
-}
+// 统一处理，把 string, object 都转化成array
+const stylesHandleWapperCssLoader = (styles) => {
 
-/**
- * 基于组件 props 返回同构 props
- * @param {Object} componentProps 
- * @return {Object}
- */
-const getPropsFromComponentProps = (componentProps = {}) => {
-    return {
-        ...componentProps
-    }
-}
-
-/**
- * (浏览器环境) 更新页面信息
- * @param {String} title
- * @param {Object[]} metas
- */
-const clientUpdatePageInfo = (title, metas = []) => {
-    if (__SERVER__) return
-
-    // 替换页面标题
-    document.title = title
-
-    // 替换 metas
-    const head = document.getElementsByTagName('head')[0]
-    if (!Array.isArray(currentMetaTags)) {
-        currentMetaTags = []
-        // 移除所有在 KOOT_METAS 里的 meta 标签
-        // 采用 DOM 操作的初衷：如果使用 innerHTML 的字符串替换方法，浏览器可能会全局重新渲染一次，造成“闪屏”
-        const childNodes = head.childNodes
-        const nodesToRemove = []
-        let meetStart = false
-        let meetEnd = false
-        let i = 0
-        while (!meetEnd && childNodes[i] instanceof Node) {
-            const node = childNodes[i]
-            if (node.nodeType === Node.COMMENT_NODE) {
-                if (node.nodeValue === __KOOT_INJECT_METAS_START__)
-                    meetStart = true
-                if (node.nodeValue === __KOOT_INJECT_METAS_END__) {
-                    meetEnd = true
-                    nodeCommentEnd = node
-                }
-            } else if (meetStart && node.nodeType === Node.ELEMENT_NODE && node.tagName === 'META') {
-                nodesToRemove.push(node)
-            }
-            i++
-        }
-        nodesToRemove.forEach(el => head.removeChild(el))
+    // 如果是对象
+    if (typeof styles === 'object' && !styles.length) {
+        styles = [styles]
     }
 
-    currentMetaTags.forEach(el => {
-        if (el && el.parentNode)
-            el.parentNode.removeChild(el)
-    })
-    currentMetaTags = metas
-        .filter(meta => typeof meta === 'object')
-        .map(meta => {
-            const el = document.createElement('meta')
-            for (var key in meta) {
-                el.setAttribute(key, meta[key])
-            }
-            // el.setAttribute(__KOOT_INJECT_ATTRIBUTE_NAME__, '')
-            if (nodeCommentEnd) {
-                head.insertBefore(el, nodeCommentEnd)
-            } else {
-                head.appendChild(el)
-            }
-            return el
-        })
+    if (typeof styles === 'object' && styles.length) {
+        return styles
+    }
+
+    throw 'stylesHandleWapperCssLoader() styles type must be array or object'
 }

@@ -26,11 +26,11 @@ import {
     setHistory,
     setWrapper,
     setPageinfo,
-    setFetchdata,
+    // setFetchdata,
 } from '../'
 import componentWrapper from '../React/component-wrapper'
 import pageinfo from '../React/pageinfo'
-import fetchdata from '../React/fetchdata'
+// import fetchdata from '../React/fetchdata'
 import Root from '../React/root.jsx'
 
 // import ACTION_TYPE from './ActionType'
@@ -44,7 +44,7 @@ export let store
 // 设置常量
 setWrapper(componentWrapper)
 setPageinfo(pageinfo)
-setFetchdata(fetchdata)
+// setFetchdata(fetchdata)
 
 export default class ReactApp {
 

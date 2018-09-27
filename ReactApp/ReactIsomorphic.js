@@ -12,11 +12,11 @@ import {
     setHistory,
     setWrapper,
     setPageinfo,
-    setFetchdata,
+    // setFetchdata,
 } from '../'
 import componentWrapper from '../React/component-wrapper'
 import pageinfo from '../React/pageinfo'
-import fetchdata from '../React/fetchdata'
+// import fetchdata from '../React/fetchdata'
 import { changeLocaleQueryKey } from '../defaults/defines'
 import { publicPathPrefix } from '../defaults/webpack-dev-server'
 
@@ -36,7 +36,7 @@ const injectOnceCache = {}
 // 设置全局常量
 setWrapper(componentWrapper)
 setPageinfo(pageinfo)
-setFetchdata(fetchdata)
+// setFetchdata(fetchdata)
 
 export default class ReactIsomorphic {
 

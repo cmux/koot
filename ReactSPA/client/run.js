@@ -20,11 +20,11 @@ import {
     setHistory,
     setWrapper,
     setPageinfo,
-    setFetchdata,
+    // setFetchdata,
 } from '../../'
 import componentWrapper from '../../React/component-wrapper'
 import pageinfo from '../../React/pageinfo'
-import fetchdata from '../../React/fetchdata'
+// import fetchdata from '../../React/fetchdata'
 import {
     reducer as realtimeLocationReducer,
     REALTIME_LOCATION_REDUCER_NAME,
@@ -47,7 +47,7 @@ let logCountRouterUpdate = 0
 let logCountHistoryUpdate = 0
 setWrapper(componentWrapper)
 setPageinfo(pageinfo)
-setFetchdata(fetchdata)
+// setFetchdata(fetchdata)
 
 
 
