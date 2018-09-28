@@ -1,3 +1,4 @@
 # React 相关
 
-* [组件装饰器](/react-decorators)
+* [高阶组件](/react-hoc)
+* [热更新](/react-hmr)

@@ -7,5 +7,7 @@
 * [i18n/多语言](/i18n)
 * [HTML 内容注入](/inject)
 * [React 相关](/react)
-  * [组件装饰器](/react-decorators)
+  * [高阶组件](/react-hoc)
+  * [热更新](/react-hmr)
+  * [组件同构属性对象](/react-render-props)
 * [相关](/other)

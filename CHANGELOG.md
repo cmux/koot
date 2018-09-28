@@ -1,11 +1,17 @@
 ## 0.5.0
-**2018-09-25**
-- `koot-dev` 命令新选项
-  - `--no-open` 禁用自动打开浏览器
+**2018-09-29**
+- `koot-dev`
+  - 新的命令选项 `--no-open`：禁用自动打开浏览器
+  - 针对 React 组件自动启用热更新
+    - 注意事项请参见文档的 [React组件热更新](https://koot.js.org/react-hmr) 章节
 - **ReactApp** (React同构)
-  - 新的组件装饰器 `@fetchdata`
-    - 与 `@pageinfo` 类似，可直接从 `koot` 主文件中载入：`import { fetchdata } from 'koot'`
-    - 用法参见文档的(React装饰器)[]章节
+  - 新的高阶组件 `wrapper`
+    - `import { wrapper } from 'koot'`
+    - 可作为组件装饰器使用
+    - 提供同构数据功能
+    - 包含 `pageinfo` 和 `ImportStyle` 功能
+    - 具体用法请参见文档的 [React高阶组件](https://koot.js.org/react-hoc) 章节
+  - 优化 CSS 处理相关流程
 
 ## 0.4.3
 **2018-09-18**
