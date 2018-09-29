@@ -1,10 +1,12 @@
 ## 0.5.0
-**2018-09-29**
-- `koot-dev`
+**2018-10-08**
+- 核心
+  - 为避免版本冲突，将所有 NPM 依赖包的版本改为固定版本
+- 开发模式 (`koot-dev`)
   - 新的命令选项 `--no-open`：禁用自动打开浏览器
   - 针对 React 组件自动启用热更新
     - 注意事项请参见文档的 [React组件热更新](https://koot.js.org/react-hmr) 章节
-- **ReactApp** (React同构)
+- React同构 (`ReactApp`)
   - 新的高阶组件 `wrapper`
     - `import { wrapper } from 'koot'`
     - 可作为组件装饰器使用
