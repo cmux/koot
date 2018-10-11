@@ -24,6 +24,7 @@ module.exports = async (data = {}) => {
         dist,
         defaultPublicPathname,
         i18n,
+        staticAssets,
     } = data
 
     const {
@@ -82,6 +83,14 @@ module.exports = async (data = {}) => {
                     to: '../.locales/'
                 }))
             ))
+
+        if (typeof staticAssets === 'string')
+            result.plugins.push(new CopyWebpackPlugin([
+                {
+                    from: staticAssets,
+                    to: path.relative(result.output.path, path.resolve(dist, `public`))
+                }
+            ]))
     }
 
     result.entry = defaultServerEntry

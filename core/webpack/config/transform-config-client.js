@@ -174,7 +174,7 @@ module.exports = async (data = {}) => {
                     })
                 )
 
-            if (typeof staticAssets === 'string' && !index)
+            if (ENV !== 'dev' && typeof staticAssets === 'string' && !index)
                 result.plugins.push(new CopyWebpackPlugin([
                     {
                         from: staticAssets,
