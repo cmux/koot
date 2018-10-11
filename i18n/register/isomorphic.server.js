@@ -15,7 +15,7 @@ export default ({
     locales,
 }) => {
     if (!__SERVER__) return
-    if (availableLocales.length) return
+    if (!__DEV__ && availableLocales.length) return
 
     setAvailableLocales(localeIds)
     for (let key in locales) setLocales(key, locales[key])
