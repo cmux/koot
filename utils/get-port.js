@@ -7,14 +7,18 @@ require('./init-node-env')()
  * @returns {Number}
  */
 module.exports = (port, env = process.env.WEBPACK_BUILD_ENV) => {
+    const defaultPort = typeof process.env.SERVER_PORT === 'undefined' && typeof __SERVER_PORT__ !== 'undefined'
+        ? __SERVER_PORT__
+        : process.env.SERVER_PORT
+
     if (typeof port === 'object') {
         if (typeof port[env] !== 'undefined')
             return port[env]
-        return process.env.SERVER_PORT
+        return defaultPort
     }
 
     if (typeof port !== 'undefined' && typeof port !== 'boolean')
         return port
 
-    return process.env.SERVER_PORT
+    return defaultPort
 }
