@@ -18,11 +18,11 @@ import thunk from 'redux-thunk'
 import {
     setStore,
     setHistory,
-    setWrapper,
+    setExtender,
     setPageinfo,
     // setFetchdata,
 } from '../../'
-import componentWrapper from '../../React/component-wrapper'
+import componentExtender from '../../React/component-extender'
 import pageinfo from '../../React/pageinfo'
 // import fetchdata from '../../React/fetchdata'
 import {
@@ -46,7 +46,7 @@ import Root from '../../React/root.jsx'
 const ROUTER_REDUCDER_NAME = 'routing'
 let logCountRouterUpdate = 0
 let logCountHistoryUpdate = 0
-setWrapper(componentWrapper)
+setExtender(componentExtender)
 setPageinfo(pageinfo)
 // setFetchdata(fetchdata)
 

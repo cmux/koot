@@ -7,8 +7,8 @@
   - 针对 React 组件自动启用热更新
     - 注意事项请参见文档的 [React组件热更新](https://koot.js.org/react-hmr) 章节
 - React同构 (`ReactApp`)
-  - 新的高阶组件 `wrapper`
-    - `import { wrapper } from 'koot'`
+  - 新的高阶组件 `extend`
+    - `import { extend } from 'koot'`
     - 可作为组件装饰器使用
     - 提供同构数据功能
     - 包含 `pageinfo` 和 `ImportStyle` 功能

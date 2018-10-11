@@ -59,7 +59,7 @@ const defaultPageInfo = {
  */
 
 /**
- * 通用组件装饰器/高阶组件
+ * 高阶组件/组件装饰器：组件扩展
  * @param {Object} options 选项
  * @param {Boolean|Function} [options.connect] react-redux 的 connect() 的参数。如果为 true，表示使用 connect()，但不连接任何数据
  * @param {callbackGetPageInfo} [options.pageinfo]

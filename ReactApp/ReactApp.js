@@ -24,11 +24,11 @@ import ReactRouter from './ReactRouter'
 import {
     setStore,
     setHistory,
-    setWrapper,
+    setExtender,
     setPageinfo,
     // setFetchdata,
 } from '../'
-import componentWrapper from '../React/component-wrapper'
+import componentExtender from '../React/component-extender'
 import pageinfo from '../React/pageinfo'
 // import fetchdata from '../React/fetchdata'
 import Root from '../React/root.jsx'
@@ -42,7 +42,7 @@ const DEFAULT_ROOT_DOM_ID = 'root'
 export let store
 
 // 设置常量
-setWrapper(componentWrapper)
+setExtender(componentExtender)
 setPageinfo(pageinfo)
 // setFetchdata(fetchdata)
 

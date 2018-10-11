@@ -23,8 +23,8 @@ export const setLocaleId = o => localeId = o
  * 通用的高阶组件/方法的装饰器
  * @type {Function}
  */
-export let wrapper = () => (WrappedComponent) => WrappedComponent
-export const setWrapper = o => wrapper = o
+export let extend = () => (WrappedComponent) => WrappedComponent
+export const setExtender = o => extend = o
 
 /**
  * 设置页面信息的高阶组件/方法

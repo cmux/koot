@@ -1,17 +1,17 @@
 # React 高阶组件
 
-## 完整封装 (`wrapper`)
+## 组件扩展 (`extend`)
 
 #### 使用
 
 ```jsx
-import { wrapper } from 'koot'
+import { extend } from 'koot'
 
 class HomePage extends React.Component {
     // ...
 }
 
-export default wrapper({
+export default extend({
     pageinfo: (state, renderProps) => ({
         title: __('pages.home.title'),
         metas: [
@@ -24,9 +24,9 @@ export default wrapper({
 也可以作为装饰器使用
 
 ```jsx
-import { wrapper } from 'koot'
+import { extend } from 'koot'
 
-@wrapper({
+@extend({
     // ...
 })
 class HomePage extends React.Component {
@@ -69,10 +69,10 @@ export default HomePage
 #### 示例：使用所有参数
 
 ```jsx
-import { wrapper } from 'koot'
+import { extend } from 'koot'
 import { fetchUser } from '@api/user'
 
-@wrapper({
+@extend({
     connect: (state) => ({
         user: state.user || {}
     }),

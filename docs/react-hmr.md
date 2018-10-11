@@ -8,9 +8,9 @@
 
 ```jsx
 import React from 'react'
-import { wrapper } from 'koot'
+import { extend } from 'koot'
 
-export default wrapper({
+export default extend({
     connect: () => ({})
 })(props => <div {...props} />)
 ```
@@ -19,11 +19,11 @@ export default wrapper({
 
 ```jsx
 import React from 'react'
-import { wrapper } from 'koot'
+import { extend } from 'koot'
 
-const C = props => <div {...props} />
+const Comp = props => <div {...props} />
 
-export default wrapper({
+export default extend({
     connect: () => ({})
-})(C)
+})(Comp)
 ```

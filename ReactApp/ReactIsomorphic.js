@@ -10,11 +10,11 @@ import { localeId } from '../i18n'
 import {
     setStore,
     setHistory,
-    setWrapper,
+    setExtender,
     setPageinfo,
     // setFetchdata,
 } from '../'
-import componentWrapper from '../React/component-wrapper'
+import componentExtender from '../React/component-extender'
 import pageinfo from '../React/pageinfo'
 import {
     get as getStyles,
@@ -37,7 +37,7 @@ const error = require('debug')('SYSTEM:isomorphic:error')
 const injectOnceCache = {}
 
 // 设置全局常量
-setWrapper(componentWrapper)
+setExtender(componentExtender)
 setPageinfo(pageinfo)
 // setFetchdata(fetchdata)
 
