@@ -90,7 +90,8 @@ export default (funcGetPageInfo) => (WrappedComponent) => {
             }
 
             currentMetaTags.forEach(el => {
-                el.parentNode.removeChild(el)
+                if (el && el.parentNode)
+                    el.parentNode.removeChild(el)
             })
             currentMetaTags = infos.metas
                 .filter(meta => typeof meta === 'object')
