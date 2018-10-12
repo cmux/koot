@@ -64,6 +64,9 @@ export default HomePage
       - _Object_ `state` 当前 Redux state
       - _Object_ `renderProps` [组件同构属性对象](/react-render-props)
     - 返回值：_Boolean_
+- _Function_ `data`
+<br>为 _Function_ 时，同 `data.fetch`
+<br>该情况下，数据检查操作建议写在 redux action 中
 - _Object_ `styles` CSS 结构
 
 #### 示例：使用所有参数

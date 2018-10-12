@@ -75,7 +75,7 @@ export default (options = {}) => (WrappedComponent) => {
         connect: _connect = false,
         pageinfo,
         data: {
-            fetch: dataFetch,
+            fetch: _dataFetch,
             check: dataCheck,
         } = {},
         styles: _styles,
@@ -89,6 +89,9 @@ export default (options = {}) => (WrappedComponent) => {
         Array.isArray(styles) &&
         styles.length > 0
     )
+    const dataFetch = typeof options.data === 'function' || Array.isArray(options.data)
+        ? options.data
+        : (typeof _dataFetch === 'function' || Array.isArray(_dataFetch) ? _dataFetch : undefined)
 
     const doPageinfo = (store, props) => {
         if (typeof pageinfo !== 'function')
@@ -115,6 +118,13 @@ export default (options = {}) => (WrappedComponent) => {
         }
     }
 
+    const doFetchData = (renderProps) => {
+        const r = dataFetch(store.getState(), renderProps, store.dispatch)
+        if (Array.isArray(r))
+            return Promise.all(r)
+        return r
+    }
+
     class KootReactComponent extends React.Component {
         static onServerRenderHtmlExtend = ({ htmlTool, store, renderProps = {} }) => {
             const {
@@ -125,15 +135,11 @@ export default (options = {}) => (WrappedComponent) => {
             htmlTool.metas = metas
         }
 
-        static onServerRenderStoreExtend({ store, renderProps }) {
-            if (typeof dataFetch !== 'function')
+        static onServerRenderStoreExtend({ /*store,*/ renderProps }) {
+            if (typeof dataFetch === 'undefined')
                 return new Promise(resolve => resolve())
             // console.log('onServerRenderStoreExtend')
-            return dataFetch(
-                store.getState(),
-                getRenderPropsFromServerProps(renderProps),
-                store.dispatch
-            )
+            return doFetchData(getRenderPropsFromServerProps(renderProps))
         }
 
         //
@@ -186,8 +192,8 @@ export default (options = {}) => (WrappedComponent) => {
         componentDidMount() {
             this.mounted = true
 
-            if (!this.state.loaded && typeof dataFetch === 'function') {
-                dataFetch(store.getState(), getRenderPropsFromComponentProps(this.props), store.dispatch)
+            if (!this.state.loaded && typeof dataFetch !== 'undefined') {
+                doFetchData(getRenderPropsFromComponentProps(this.props))
                     .then(() => {
                         if (!this.mounted) return
                         this.setState({
