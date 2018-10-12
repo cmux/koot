@@ -1,3 +1,11 @@
+## 0.5.2
+**2018-10-12**
+- React
+  - 高阶组件 `extend`
+    - `data` 可传入 _Function_，作为传统的 `data.fetch`
+      - 该情况下，数据检查操作建议写在 redux action 中
+    - `data.fetch` 可传入 _Array_，核心代码会自动执行 `Promise.all()`
+
 ## 0.5.1
 **2018-10-11**
 - 错误修正
