@@ -1,3 +1,9 @@
+## 0.5.5
+**2018-??-??**
+- 核心
+  - Webpack
+    - `less-loader` 默认开启 Javascript 选项 (`javascriptEnabled`)
+
 ## 0.5.4
 **2018-10-15**
 - React

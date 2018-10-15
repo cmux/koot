@@ -31,6 +31,13 @@ const factory = async ({
         (env === 'dev' && stage === 'client')
     ) ? true : false
 
+    const useLessLoader = {
+        loader: "less-loader",
+        options: {
+            javascriptEnabled: true
+        }
+    }
+
     let rulesJS = [
         {
             test: /\.(js|jsx)$/,
@@ -76,7 +83,7 @@ const factory = async ({
                     use: [
                         useSpCssLoader,
                         "postcss-loader",
-                        "less-loader",
+                        useLessLoader,
                         useUniversalAliasLoader
                     ]
                 }, {
@@ -135,7 +142,7 @@ const factory = async ({
                         MiniCssExtractPlugin.loader,
                         "css-loader",
                         "postcss-loader",
-                        "less-loader",
+                        useLessLoader,
                         useUniversalAliasLoader
                     ]
                     // use: ExtractTextPlugin.extract({
@@ -176,7 +183,7 @@ const factory = async ({
                         "style-loader",
                         "css-loader",
                         "postcss-loader",
-                        "less-loader",
+                        useLessLoader",
                         useUniversalAliasLoader
                     ]
                 }, {
