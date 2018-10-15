@@ -1,17 +1,28 @@
-import RootComponent from './RootComponent'
+// import RootComponent from './RootComponent'
 
 export default class ReactRouter {
 
     constructor() {
-        this.rootRouter = {
-            path: '/',
-            component: RootComponent,
-            childRoutes: []
-        }
+        // 之前的rootRouter格式
+        // this.rootRouter = {
+        //     path: '/',
+        //     component: RootComponent,
+        //     childRoutes: []
+        // }
+        this.rootRouter = null
     }
 
     add(router) {
-        this.rootRouter.childRoutes.push(router)
+
+        // 修改用外面传进来的router，并兼任之前的版本
+        // 这里的重点区别是react-router和koa-router的根路由path
+        // react-router是 '/'
+        // koa-router是 ''
+        // this.rootRouter.childRoutes.push(router)
+        if (router.path === '') {
+            router.path = '/'
+            this.rootRouter = router
+        }
     }
 
     get() {
