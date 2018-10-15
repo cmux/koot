@@ -183,7 +183,7 @@ const factory = async ({
                         "style-loader",
                         "css-loader",
                         "postcss-loader",
-                        useLessLoader",
+                        useLessLoader,
                         useUniversalAliasLoader
                     ]
                 }, {
