@@ -56,6 +56,7 @@ export default ({
     // i18n = JSON.parse(process.env.KOOT_I18N) || false,
     router,
     redux,
+    store,
     client
 }) => {
     const {
@@ -85,16 +86,20 @@ export default ({
     // 兼容配置嵌套
     if (!redux) redux = client.redux
 
-    {
-        const { combineReducers } = redux
-        if (typeof combineReducers === 'object') {
-            for (let key in combineReducers) {
-                reducersObject[key] = combineReducers[key]
+    if (typeof store === 'undefined') {
+        {
+            const { combineReducers } = redux
+            if (typeof combineReducers === 'object') {
+                for (let key in combineReducers) {
+                    reducersObject[key] = combineReducers[key]
+                }
             }
         }
+        const reducers = combineReducers(reducersObject)
+        store = compose(applyMiddleware(thunk))(createStore)(reducers)
+    } else {
+
     }
-    const reducers = combineReducers(reducersObject)
-    const store = compose(applyMiddleware(thunk))(createStore)(reducers)
 
 
 

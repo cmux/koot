@@ -31,6 +31,7 @@ export default ({
     i18n = JSON.parse(process.env.KOOT_I18N) || false,
     router,
     redux,
+    store,
     client
 }) => {
     // ============================================================================
@@ -68,14 +69,19 @@ export default ({
     if (!redux)
         redux = client.redux
 
-    const { combineReducers } = redux
-    if (typeof combineReducers === 'object') {
-        for (let key in combineReducers) {
-            reducers[key] = combineReducers[key]
+    if (typeof store === 'undefined') {
+        const { combineReducers } = redux
+        if (typeof combineReducers === 'object') {
+            for (let key in combineReducers) {
+                // reducers[key] = combineReducers[key]
+                reactApp.redux.reducer.use(key, combineReducers[key])
+            }
         }
-    }
-    for (let key in reducers) {
-        reactApp.redux.reducer.use(key, reducers[key])
+        for (let key in reducers) {
+            reactApp.redux.reducer.use(key, reducers[key])
+        }
+    } else {
+        reactApp.store = store
     }
 
 
