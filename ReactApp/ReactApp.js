@@ -130,8 +130,9 @@ export default class ReactApp {
             this.createConfigureStoreFactory()
             store = this.configureStore(window.__REDUX_STATE__)
         } else {
-            const currentState = this.store.getState()
-            const newState = Object.assign(currentState, window.__REDUX_STATE__)
+            store = this.store
+            // const currentState = this.store.getState()
+            // const newState = Object.assign(currentState, window.__REDUX_STATE__)
         }
 
         // react-router

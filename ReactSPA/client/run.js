@@ -56,7 +56,7 @@ export default ({
     // i18n = JSON.parse(process.env.KOOT_I18N) || false,
     router,
     redux,
-    store,
+    // store,
     client
 }) => {
     const {
@@ -86,7 +86,8 @@ export default ({
     // 兼容配置嵌套
     if (!redux) redux = client.redux
 
-    if (typeof store === 'undefined') {
+    let store
+    if (typeof redux.store === 'undefined') {
         {
             const { combineReducers } = redux
             if (typeof combineReducers === 'object') {
@@ -98,8 +99,12 @@ export default ({
         const reducers = combineReducers(reducersObject)
         store = compose(applyMiddleware(thunk))(createStore)(reducers)
     } else {
-
+        store = redux.store
     }
+    console.log(
+        redux,
+        store
+    )
 
 
 

@@ -1,5 +1,12 @@
-## 0.5.5
+## 0.5.6
 **2018-??-??**
+- 核心
+  - 项目配置文件 `koot.js`
+    - `redux` 新增可选配置项 `store`
+      - 项目自创建的 Redux store。提供该对象时，`redux.combineReducers` 配置项会被忽略
+
+## 0.5.5
+**2018-10-15**
 - 核心
   - Webpack
     - `less-loader` 默认开启 Javascript 选项 (`javascriptEnabled`)
