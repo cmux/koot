@@ -75,11 +75,11 @@ export default ({
         else
             router = {}
     }
-    reactApp.react.router.use({
-        path: '',
-        // component: App, 可扩展1层component
-        childRoutes: [router]
-    })
+
+    // 2018/10/20 
+    // add by mazhenyu(@zrainma@sina.com)
+    // 去掉默认外部的根结构，前端传入已处理
+    reactApp.react.router.use(router)
 
 
 
