@@ -31,6 +31,7 @@ import {
     actionUpdate,
 } from '../../React/realtime-location'
 import Root from '../../React/root.jsx'
+import { reducers } from '../../React/redux'
 // import {
 //     reducerLocaleId as i18nReducerLocaleId,
 //     reducerLocales as i18nReducerLocales,
@@ -43,7 +44,7 @@ import Root from '../../React/root.jsx'
 // 设置常量 & 变量
 // ============================================================================
 
-const ROUTER_REDUCDER_NAME = 'routing'
+// const ROUTER_REDUCDER_NAME = 'routing'
 let logCountRouterUpdate = 0
 let logCountHistoryUpdate = 0
 setExtender(componentExtender)
@@ -70,14 +71,14 @@ export default ({
     // Redux/Reducer 初始化
     // ============================================================================
 
-    const reducersObject = {
-        // 路由状态扩展
-        [ROUTER_REDUCDER_NAME]: routerReducer,
-        // 目的：新页面请求处理完成后再改变URL
-        [REALTIME_LOCATION_REDUCER_NAME]: realtimeLocationReducer,
-        // 对应服务器生成的store
-        // [SERVER_REDUCER_NAME]: serverReducer,
-    }
+    // const reducersObject = {
+    //     // 路由状态扩展
+    //     [ROUTER_REDUCDER_NAME]: routerReducer,
+    //     // 目的：新页面请求处理完成后再改变URL
+    //     [REALTIME_LOCATION_REDUCER_NAME]: realtimeLocationReducer,
+    //     // 对应服务器生成的store
+    //     // [SERVER_REDUCER_NAME]: serverReducer,
+    // }
     // if (i18n) {
     //     reducersObject.localeId = i18nReducerLocaleId
     //     reducersObject.locales = i18nReducerLocales
@@ -92,12 +93,11 @@ export default ({
             const { combineReducers } = redux
             if (typeof combineReducers === 'object') {
                 for (let key in combineReducers) {
-                    reducersObject[key] = combineReducers[key]
+                    reducers[key] = combineReducers[key]
                 }
             }
         }
-        const reducers = combineReducers(reducersObject)
-        store = compose(applyMiddleware(thunk))(createStore)(reducers)
+        store = compose(applyMiddleware(thunk))(createStore)(combineReducers(reducers))
     } else {
         store = redux.store
     }
