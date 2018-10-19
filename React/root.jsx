@@ -9,7 +9,7 @@ const Root = ({
     ...props
 }) =>
     <Provider store={store} >
-        <Router history={history} {...props} >
+        <Router history={history} {...props} onUpdate={} >
             {routes}
         </Router>
     </Provider>

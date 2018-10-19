@@ -8,12 +8,12 @@ const getCwd = require('../utils/get-cwd')
  * @param {String} str
  * @returns {String}
  */
-module.exports = str => {
+module.exports = (str, cwd = '.') => {
     if (fs.existsSync(str))
         return str
 
     {
-        const p = path.resolve(str)
+        const p = path.resolve(cwd, str)
         if (fs.existsSync(p))
             return p
     }
@@ -36,8 +36,5 @@ module.exports = str => {
             return p
     }
 
-    console.log(str)
-    console.log(path.resolve(str))
-
-    return ''
+    return str
 }
