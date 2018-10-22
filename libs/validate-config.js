@@ -17,6 +17,11 @@ module.exports = async (projectDir = getCwd()) => {
         ? process.env.KOOT_BUILD_CONFIG_PATHNAME
         : path.resolve(projectDir, 'koot.config.js')
 
+    if (!fs.existsSync(fileFullConfig)) {
+        const buildConfig = await readBuildConfigFile()
+        return validateBuildConfig(buildConfig)
+    }
+
     const fullConfig = require(fileFullConfig)
 
     // 项目配置项

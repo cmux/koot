@@ -5,7 +5,7 @@ const program = require('commander')
 const chalk = require('chalk')
 
 const __ = require('../utils/translate')
-// const readBuildConfigFile = require('../utils/read-build-config-file')
+const readBuildConfigFile = require('../utils/read-build-config-file')
 const sleep = require('../utils/sleep')
 const setEnvFromCommand = require('../utils/set-env-from-command')
 const validateConfig = require('../libs/validate-config')
@@ -85,7 +85,8 @@ const run = async () => {
     process.env.WEBPACK_BUILD_ENV = env
 
     // 读取构建配置
-    const buildConfig = await validateConfig()
+    // const buildConfig = await validateConfig()
+    const buildConfig = await readBuildConfigFile()
     // const {
     //     server: hasServer
     // } = buildConfig

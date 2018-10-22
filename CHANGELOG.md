@@ -1,9 +1,15 @@
 ## 0.6.0 (开发中)
 **2018-??-??**
 - 核心
-  - 项目配置文件 `koot.js`
+  - 新的配置方式 `koot.config.js`
+    - 整合原有的 `koot.js` 和 `koot.build.js`
+    - 原有配置方式依旧可用
+    - 请参照模板项目了解新的配置文件内容和写法
+  - 项目配置
     - `redux` 新增可选配置项 `store`
       - 项目自创建的 Redux store。提供该对象时，`redux.combineReducers` 配置项会被忽略
+- React
+  - 路由 (router) 移除配置外层包裹的空层级
 
 ## 0.5.5
 **2018-10-15**
