@@ -16,8 +16,11 @@ module.exports = async (projectDir = getCwd()) => {
     let fileFullConfig = typeof process.env.KOOT_BUILD_CONFIG_PATHNAME === 'string'
         ? process.env.KOOT_BUILD_CONFIG_PATHNAME
         : path.resolve(projectDir, 'koot.config.js')
+    
+    // console.log('fileFullConfig', fileFullConfig)
 
     if (!fs.existsSync(fileFullConfig)) {
+        // console.log('no full config file found. fall back')
         const buildConfig = await readBuildConfigFile()
         return validateBuildConfig(buildConfig)
     }
