@@ -13,18 +13,20 @@ const { keyFileProjectConfigTemp } = require('../defaults/before-build')
  */
 module.exports = async (projectDir = getCwd()) => {
 
+    const ENV = process.env.WEBPACK_BUILD_ENV
+
+    // 拼接完整配置文件名
     let fileFullConfig = typeof process.env.KOOT_BUILD_CONFIG_PATHNAME === 'string'
         ? process.env.KOOT_BUILD_CONFIG_PATHNAME
         : path.resolve(projectDir, 'koot.config.js')
-    
-    // console.log('fileFullConfig', fileFullConfig)
 
+    // 如果完整配置文件不存在，转为旧模式 (koot.js + koot.build.js)
     if (!fs.existsSync(fileFullConfig)) {
-        // console.log('no full config file found. fall back')
         const buildConfig = await readBuildConfigFile()
         return validateBuildConfig(buildConfig)
     }
 
+    // 获取完整配置
     const fullConfig = require(fileFullConfig)
 
     // 项目配置项
@@ -44,6 +46,7 @@ module.exports = async (projectDir = getCwd()) => {
 
     if (isFullConfig) {
 
+        // 将打包配置从完整配置中分离
         const buildConfig = propertiesToExtract.reduce((configRemains, curr) => {
             // console.log(configRemains)
             const [key, defaultValue] = curr
@@ -62,6 +65,8 @@ module.exports = async (projectDir = getCwd()) => {
         //     server = {},
         //     ...buildConfig
         // } = require(fileFullConfig)
+
+        // 转换项目配置: 将路径转为 require()
         const validateProjectConfig = (keys) => {
             keys.forEach(key => {
                 if (eval(`typeof projectConfig.${key} === 'string'`)) {
@@ -86,14 +91,22 @@ module.exports = async (projectDir = getCwd()) => {
         ])
 
         // console.log(projectConfig)
-        const temp = propertiesToExtract.map(([key]) => (
-            `export const ${key} = ${JSON.stringify(projectConfig[key])};`
-                .replace(/"require\((.+?)\).default"/, `require($1).default`)
-        )).join('\n')
+        // 生成项目配置文件内容
+        const temp = propertiesToExtract.map(([key]) => {
+            if (key === 'server')
+                return `export const ${key} = __SERVER__ ? ${JSON.stringify(projectConfig[key])} : {};`
+            return `export const ${key} = ${JSON.stringify(projectConfig[key])};`
+        })
+            .join('\n')
+            .replace(/"require\((.+?)\).default"/g, `require($1).default`)
+
         // console.log(temp)
+
+        // 写入项目配置文件 (临时)
         const pathTemp = path.resolve(projectDir, `.koot.project.config.${Date.now()}.js`)
         process.env.KOOT_PROJECT_CONFIG_PATHNAME = pathTemp
         await fs.writeFile(pathTemp, temp, 'utf-8')
+
         return {
             ...validateBuildConfig(buildConfig),
             [keyFileProjectConfigTemp]: pathTemp

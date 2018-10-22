@@ -2,7 +2,7 @@ import React from 'react'
 import { Provider } from 'react-redux'
 import { Router } from 'react-router'
 
-const Root = ({
+export default ({
     store,
     history,
     routes,
@@ -14,7 +14,7 @@ const Root = ({
         </Router>
     </Provider>
 
-let e = Root
+// let e = Root
 
 // if (__DEV__) {
 //     const { hot, setConfig } = require('react-hot-loader')
@@ -22,4 +22,4 @@ let e = Root
 //     e = hot(module)(Root)
 // }
 
-export default e
+// export default e

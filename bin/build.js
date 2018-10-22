@@ -137,7 +137,7 @@ const after = async (config = {}) => {
 
     // 移除临时配置文件
     if (fileProjectConfigTemp) {
-        await fs.remove(fileProjectConfigTemp)
+        // await fs.remove(fileProjectConfigTemp)
     }
 }
 

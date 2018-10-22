@@ -26,8 +26,8 @@ import componentExtender from '../../React/component-extender'
 import pageinfo from '../../React/pageinfo'
 // import fetchdata from '../../React/fetchdata'
 import {
-    reducer as realtimeLocationReducer,
-    REALTIME_LOCATION_REDUCER_NAME,
+    // reducer as realtimeLocationReducer,
+    // REALTIME_LOCATION_REDUCER_NAME,
     actionUpdate,
 } from '../../React/realtime-location'
 import Root from '../../React/root.jsx'

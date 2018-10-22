@@ -1,13 +1,13 @@
-import thunk from 'redux-thunk'
-import { browserHistory } from 'react-router'
-import { routerMiddleware } from 'react-router-redux'
+// import thunk from 'redux-thunk'
+// import { browserHistory } from 'react-router'
+// import { routerMiddleware } from 'react-router-redux'
 
 //
 
 import { ReactApp } from '../index'
 import { actionUpdate } from '../../React/realtime-location'
 import i18nRegister from '../../i18n/register/isomorphic.client'
-import { reducers } from '../../React/redux'
+import { reducers, middlewares } from '../../React/redux'
 
 //
 
@@ -30,9 +30,13 @@ export default ({
 
     const reactApp = new ReactApp({ rootDom: 'root' })
 
-    if (typeof redux.store !== 'undefined') {
-        reactApp.redux.middleware.use(thunk)
-        reactApp.redux.middleware.use(routerMiddleware(browserHistory))
+    if (typeof redux.store === 'undefined') {
+        middlewares.forEach(middleware => {
+            // console.log(middleware)
+            reactApp.redux.middleware.use(middleware)
+        })
+        // reactApp.redux.middleware.use(thunk)
+        // reactApp.redux.middleware.use(routerMiddleware(browserHistory))
         // const routerHistory = browserHistory
         // if (__CLIENT__) self.routerHistory = browserHistory
     }
