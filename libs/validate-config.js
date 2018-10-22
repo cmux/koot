@@ -5,7 +5,7 @@ const validatePathname = require('./validate-pathname')
 const getCwd = require('../utils/get-cwd')
 const readBuildConfigFile = require('../utils/read-build-config-file')
 // const getPathnameBuildConfigFile = require('../utils/get-pathname-build-config-file')
-const { keyFileProjectConfigTemp } = require('../defaults/before-build')
+const { keyFileProjectConfigTemp, filenameProjectConfigTemp } = require('../defaults/before-build')
 
 /**
  * 根据 koot.config.js 生成 koot.js 和构建配置对象
@@ -13,7 +13,7 @@ const { keyFileProjectConfigTemp } = require('../defaults/before-build')
  */
 module.exports = async (projectDir = getCwd()) => {
 
-    const ENV = process.env.WEBPACK_BUILD_ENV
+    // const ENV = process.env.WEBPACK_BUILD_ENV
 
     // 拼接完整配置文件名
     let fileFullConfig = typeof process.env.KOOT_BUILD_CONFIG_PATHNAME === 'string'
@@ -103,7 +103,7 @@ module.exports = async (projectDir = getCwd()) => {
         // console.log(temp)
 
         // 写入项目配置文件 (临时)
-        const pathTemp = path.resolve(projectDir, `.koot.project.config.${Date.now()}.js`)
+        const pathTemp = path.resolve(projectDir, filenameProjectConfigTemp.replace(/\*/g, Date.now()))
         process.env.KOOT_PROJECT_CONFIG_PATHNAME = pathTemp
         await fs.writeFile(pathTemp, temp, 'utf-8')
 

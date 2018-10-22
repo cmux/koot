@@ -23,6 +23,7 @@ const initNodeEnv = require('../utils/init-node-env')
 const getCwd = require('../utils/get-cwd')
 const getPathnameDevServerStart = require('../utils/get-pathname-dev-server-start')
 // const terminate = require('../utils/terminate')
+const removeTempProjectConfig = require('../libs/remove-temp-project-config')
 
 program
     .version(require('../package').version, '-v, --version')
@@ -50,6 +51,10 @@ program
  * ****************************************************************************
  */
 const run = async () => {
+
+    // 清除所有临时配置文件
+    await removeTempProjectConfig()
+
     // 清空 log
     process.stdout.write('\x1B[2J\x1B[0f')
 
@@ -141,6 +146,7 @@ const run = async () => {
             process.removeListener('uncaughtException', exitHandler)
         }
         const exitHandler = async (/*options, err*/) => {
+            await removeTempProjectConfig()
             if (Array.isArray(processes) && processes.length) {
                 if (waitingSpinner) waitingSpinner.stop()
                 await sleep(300)

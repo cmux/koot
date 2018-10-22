@@ -10,6 +10,8 @@
       - 项目自创建的 Redux store。提供该对象时，`redux.combineReducers` 配置项会被忽略
 - React
   - 路由 (router) 移除配置外层包裹的空层级
+- `sp-css-loader`
+  - 开发模式下启用CSS样式名可读性规则：CSS样式名以 `.[class]__component` 方式命名即可
 
 ## 0.5.5
 **2018-10-15**

@@ -31,6 +31,7 @@ program
  * 执行打包
  */
 const run = async () => {
+
     // 清空 log
     process.stdout.write('\x1B[2J\x1B[0f')
 
@@ -131,13 +132,15 @@ const run = async () => {
 }
 
 const after = async (config = {}) => {
+    const ENV = process.env.WEBPACK_BUILD_ENV
+
     const {
         [keyFileProjectConfigTemp]: fileProjectConfigTemp
     } = config
 
     // 移除临时配置文件
-    if (fileProjectConfigTemp) {
-        // await fs.remove(fileProjectConfigTemp)
+    if (ENV === 'prod' && fileProjectConfigTemp) {
+        await fs.remove(fileProjectConfigTemp)
     }
 }
 
