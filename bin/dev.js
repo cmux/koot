@@ -24,6 +24,7 @@ const getCwd = require('../utils/get-cwd')
 const getPathnameDevServerStart = require('../utils/get-pathname-dev-server-start')
 // const terminate = require('../utils/terminate')
 const removeTempProjectConfig = require('../libs/remove-temp-project-config')
+const validateConfig = require('../libs/validate-config')
 
 program
     .version(require('../package').version, '-v, --version')
@@ -85,6 +86,9 @@ const run = async () => {
     //     )
     //     return
     // }
+    
+    // 确定配置文件
+    await validateConfig()
 
     // 读取项目信息
     const appType = await getAppType()
