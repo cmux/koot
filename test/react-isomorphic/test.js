@@ -13,6 +13,7 @@ const projectsToUse = projects.filter(project => (
     Array.isArray(project.type) && project.type.includes('react-isomorphic')
 ))
 const { changeLocaleQueryKey } = require('../../defaults/defines')
+const removeTempProjectConfig = require('../../libs/remove-temp-project-config')
 // const sleep = require('../../utils/sleep')
 
 //
@@ -274,7 +275,9 @@ describe('测试: React 同构项目', async () => {
                 await testPage(port)
                 await terminate(child.pid)
             })
-        })
 
+            // 移除临时项目配置文件
+            await removeTempProjectConfig(dir)
+        })
     }
 })

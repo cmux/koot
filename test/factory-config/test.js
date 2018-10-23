@@ -95,7 +95,8 @@ describe('测试: 生成 Webpack 配置', async () => {
                         expect(typeof output.path).toBe('string')
                         if (stage === 'client' && typeof entry === 'object') {
                             expect(('client' in entry)).toBe(true)
-                            expect(typeof entry.client).toBe('string')
+                            // 启用热更新后，client 入口从 string 变为 array
+                            expect(Array.isArray(entry.client)).toBe(true)
                         } else if (stage === 'server') {
                             expect(Array.isArray(entry)).toBe(true)
                         }

@@ -8,10 +8,17 @@
   - 项目配置
     - `redux` 新增可选配置项 `store`
       - 项目自创建的 Redux store。提供该对象时，`redux.combineReducers` 配置项会被忽略
+  - 开发模式
+    - 启用 `babel-loader` 的缓存，加速热更新的响应速度
 - React
   - 路由 (router) 移除配置外层包裹的空层级
 - `sp-css-loader`
-  - 开发模式下启用CSS样式名可读性规则：CSS样式名以 `.[class]__component` 方式命名即可
+  - 开发模式下启用CSS样式名可读性规则：CSS样式名以 `.[class]__component` 方式命名时，DOM 上的样式名会变为类似 `.nav__a8c0` 的结果
+- 更新依赖包
+  - `webpack` -> _4.22.0_
+  - `webpack-dev-server` -> _3.1.10_
+  - `copy-webpack-plugin` -> _4.5.4_
+  - `autoprefixer` -> _9.3.0_
 
 ## 0.5.5
 **2018-10-15**
