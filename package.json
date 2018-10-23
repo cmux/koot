@@ -52,7 +52,7 @@
         "node": ">=8.0.0"
     },
     "dependencies": {
-        "sp-css-loader": "1.4.0",
+        "sp-css-loader": "1.5.0",
         "sp-css-import": "2.1.1",
         "sp-koa-views": "1.0.1",
         "koa": "2.5.3",
