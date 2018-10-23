@@ -1,6 +1,6 @@
 {
     "name": "koot",
-    "version": "0.6.0-alpha.9",
+    "version": "0.5.5",
     "description": "Koot.js - React isomorphic framework created by CMUX",
     "main": "index.js",
     "sideEffects": false,
@@ -17,8 +17,6 @@
         "test": "jest",
         "test:factoryconfig": "jest ./test/factory-config/test.js",
         "test:react:isomorphic": "jest ./test/react-isomorphic/test.js",
-        "test:libs:validate-pathname": "jest ./test/libs/validate-pathname",
-        "test:libs:validate-config": "jest ./test/libs/validate-config",
         "check-updates": "ncu -x react-router,koa-body,koa-compress,koa-json,koa-onerror,koa-static,koa-compose,koa-helmet,koa-mount"
     },
     "repository": {
@@ -52,7 +50,7 @@
         "node": ">=8.0.0"
     },
     "dependencies": {
-        "sp-css-loader": "1.5.0",
+        "sp-css-loader": "1.3.0",
         "sp-css-import": "2.1.1",
         "sp-koa-views": "1.0.1",
         "koa": "2.5.3",
@@ -93,7 +91,7 @@
         "webpack-dev-server": "3.1.9",
         "webpack-dev-middleware": "3.4.0",
         "webpack-hot-middleware": "2.24.3",
-        "webpack-bundle-analyzer": "3.0.3",
+        "webpack-bundle-analyzer": "3.0.2",
         "webpack-config": "7.5.0",
         "html-webpack-plugin": "3.2.0",
         "mini-css-extract-plugin": "0.4.4",
@@ -111,7 +109,7 @@
         "universal-alias-loader": "1.2.2",
         "less": "3.8.1",
         "postcss": "7.0.5",
-        "autoprefixer": "9.2.1",
+        "autoprefixer": "9.2.0",
         "cookie": "0.3.1",
         "js-cookie": "2.2.0",
         "fs-extra": "7.0.0",
@@ -129,7 +127,7 @@
         "os-locale": "3.0.1",
         "npm-run-script": "0.0.4",
         "ora": "3.0.0",
-        "progress": "2.0.1",
+        "progress": "2.0.0",
         "cli-spinners": "1.3.1",
         "chalk": "2.4.1",
         "commander": "2.19.0",

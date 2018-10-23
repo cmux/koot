@@ -65,13 +65,7 @@ export default class ReactIsomorphic {
         */
 
         // 设置常量
-        const {
-            template,
-            onServerRender,
-            inject,
-            configStore, store: _store,
-            routes
-        } = options
+        const { template, onServerRender, inject, configStore, routes } = options
         const ENV = process.env.WEBPACK_BUILD_ENV
 
         // 配置 html 注入内容
@@ -137,7 +131,7 @@ export default class ReactIsomorphic {
                 // }
 
                 const memoryHistory = createMemoryHistory(url)
-                const store = _store || configStore()
+                const store = configStore()
                 const history = syncHistoryWithStore(memoryHistory, store)
 
                 // 根据router计算出渲染页面需要的数据，并把渲染需要的数据补充到store中

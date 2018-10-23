@@ -1,15 +1,25 @@
-// import thunk from 'redux-thunk'
-// import { browserHistory } from 'react-router'
-// import { routerMiddleware } from 'react-router-redux'
+import thunk from 'redux-thunk'
+import { browserHistory } from 'react-router'
+import { routerMiddleware, routerReducer } from 'react-router-redux'
 
 //
 
 import { ReactApp } from '../index'
-import { actionUpdate } from '../../React/realtime-location'
+import {
+    reducer as realtimeLocationReducer,
+    REALTIME_LOCATION_REDUCER_NAME,
+    actionUpdate
+} from '../../React/realtime-location'
+import {
+    reducerLocaleId as i18nReducerLocaleId,
+    reducerLocales as i18nReducerLocales,
+} from '../../i18n/redux'
 import i18nRegister from '../../i18n/register/isomorphic.client'
-import { reducers, middlewares } from '../../React/redux'
 
 //
+
+import { SERVER_REDUCER_NAME, serverReducer } from '../server/redux'
+const ROUTER_REDUCDER_NAME = 'routing'
 
 let logCountRouterUpdate = 0
 let logCountHistoryUpdate = 0
@@ -21,7 +31,6 @@ export default ({
     i18n = JSON.parse(process.env.KOOT_I18N) || false,
     router,
     redux,
-    // store,
     client
 }) => {
     // ============================================================================
@@ -30,16 +39,10 @@ export default ({
 
     const reactApp = new ReactApp({ rootDom: 'root' })
 
-    if (typeof redux.store === 'undefined') {
-        middlewares.forEach(middleware => {
-            // console.log(middleware)
-            reactApp.redux.middleware.use(middleware)
-        })
-        // reactApp.redux.middleware.use(thunk)
-        // reactApp.redux.middleware.use(routerMiddleware(browserHistory))
-        // const routerHistory = browserHistory
-        // if (__CLIENT__) self.routerHistory = browserHistory
-    }
+    reactApp.redux.middleware.use(thunk)
+    reactApp.redux.middleware.use(routerMiddleware(browserHistory))
+    // const routerHistory = browserHistory
+    // if (__CLIENT__) self.routerHistory = browserHistory
 
 
 
@@ -48,23 +51,31 @@ export default ({
     // Redux/Reducer 初始化
     // ============================================================================
 
+    const reducers = {
+        // 路由状态扩展
+        [ROUTER_REDUCDER_NAME]: routerReducer,
+        // 目的：新页面请求处理完成后再改变URL
+        [REALTIME_LOCATION_REDUCER_NAME]: realtimeLocationReducer,
+        // 对应服务器生成的store
+        [SERVER_REDUCER_NAME]: serverReducer,
+    }
+    if (i18n) {
+        reducers.localeId = i18nReducerLocaleId
+        reducers.locales = i18nReducerLocales
+    }
+
     // 兼容配置嵌套
     if (!redux)
         redux = client.redux
 
-    if (typeof redux.store === 'undefined') {
-        const { combineReducers } = redux
-        if (typeof combineReducers === 'object') {
-            for (let key in combineReducers) {
-                // reducers[key] = combineReducers[key]
-                reactApp.redux.reducer.use(key, combineReducers[key])
-            }
+    const { combineReducers } = redux
+    if (typeof combineReducers === 'object') {
+        for (let key in combineReducers) {
+            reducers[key] = combineReducers[key]
         }
-        for (let key in reducers) {
-            reactApp.redux.reducer.use(key, reducers[key])
-        }
-    } else {
-        reactApp.store = redux.store
+    }
+    for (let key in reducers) {
+        reactApp.redux.reducer.use(key, reducers[key])
     }
 
 
@@ -79,11 +90,11 @@ export default ({
         else
             router = {}
     }
-
-    // 2018/10/20 
-    // add by mazhenyu(@zrainma@sina.com)
-    // 去掉默认外部的根结构，前端传入已处理
-    reactApp.react.router.use(router)
+    reactApp.react.router.use({
+        path: '',
+        // component: App, 可扩展1层component
+        childRoutes: [router]
+    })
 
 
 

@@ -28,7 +28,6 @@ import {
     template,
     router,
     redux,
-    // store,
     client,
     server,
 } from '__KOOT_PROJECT_CONFIG_PATHNAME__'
@@ -71,7 +70,6 @@ if (global.kootTest || (process.env.KOOT_TEST_MODE && JSON.parse(process.env.KOO
         template,
         router,
         redux,
-        // store,
         client,
         server,
     }).catch(err => {

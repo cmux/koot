@@ -65,7 +65,6 @@ export default class ReactApp {
             middleware: reduxMiddleware,
             reducer: reduxReducer
         }
-        // this.store = undefined
 
 
         // react
@@ -125,15 +124,9 @@ export default class ReactApp {
 
         let options = Object.assign({}, settings)
 
-        if (typeof this.store === 'undefined') {
-            // __REDUX_STATE__ 是与服务端约定好的存储redux数据对象 (在浏览器端的 html 里存在)
-            this.createConfigureStoreFactory()
-            store = this.configureStore(window.__REDUX_STATE__)
-        } else {
-            store = this.store
-            // const currentState = this.store.getState()
-            // const newState = Object.assign(currentState, window.__REDUX_STATE__)
-        }
+        // __REDUX_STATE__ 是与服务端约定好的存储redux数据对象 (在浏览器端的 html 里存在)
+        this.createConfigureStoreFactory()
+        store = this.configureStore(window.__REDUX_STATE__)
 
         // react-router
         browserHistory.listen(location => {

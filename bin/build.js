@@ -1,16 +1,13 @@
 #!/usr/bin/env node
 
-const fs = require('fs-extra')
+// const path = require('path')
 const program = require('commander')
 const chalk = require('chalk')
 
-const { keyFileProjectConfigTemp } = require('../defaults/before-build')
-
 const __ = require('../utils/translate')
-// const readBuildConfigFile = require('../utils/read-build-config-file')
+const readBuildConfigFile = require('../utils/read-build-config-file')
 const sleep = require('../utils/sleep')
 const setEnvFromCommand = require('../utils/set-env-from-command')
-const validateConfig = require('../libs/validate-config')
 
 const kootBuild = require('../core/webpack/enter')
 
@@ -31,7 +28,6 @@ program
  * 执行打包
  */
 const run = async () => {
-
     // 清空 log
     process.stdout.write('\x1B[2J\x1B[0f')
 
@@ -88,8 +84,7 @@ const run = async () => {
     process.env.WEBPACK_BUILD_ENV = env
 
     // 读取构建配置
-    const buildConfig = await validateConfig()
-    // const buildConfig = await readBuildConfigFile()
+    const buildConfig = await readBuildConfigFile()
     // const {
     //     server: hasServer
     // } = buildConfig
@@ -102,7 +97,6 @@ const run = async () => {
         //     console.log(chalk.redBright('× '))
         // }
         await kootBuild(buildConfig)
-        await after(buildConfig)
         console.log(' ')
         return
     }
@@ -126,22 +120,7 @@ const run = async () => {
             time: (new Date()).toLocaleString()
         })
     )
-
-    await after(buildConfig)
     console.log(' ')
-}
-
-const after = async (config = {}) => {
-    const ENV = process.env.WEBPACK_BUILD_ENV
-
-    const {
-        [keyFileProjectConfigTemp]: fileProjectConfigTemp
-    } = config
-
-    // 移除临时配置文件
-    if (ENV === 'prod' && fileProjectConfigTemp) {
-        await fs.remove(fileProjectConfigTemp)
-    }
 }
 
 run()
