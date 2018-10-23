@@ -86,15 +86,12 @@ const run = async () => {
     //     )
     //     return
     // }
-    
-    // 确定配置文件
-    await validateConfig()
 
     // 读取项目信息
-    const appType = await getAppType()
+    // const { dist, port } = await readBuildConfigFile()
+    const { dist, port } = await validateConfig()
     const cwd = getCwd()
     const packageInfo = await fs.readJson(path.resolve(cwd, 'package.json'))
-    const { dist, port } = await readBuildConfigFile()
     const {
         name
     } = packageInfo
