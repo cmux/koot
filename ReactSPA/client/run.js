@@ -8,7 +8,7 @@ import {
     // browserHistory,
     // createMemoryHistory,
 } from 'react-router'
-import { syncHistoryWithStore, routerReducer } from 'react-router-redux'
+import { syncHistoryWithStore/*, routerReducer*/ } from 'react-router-redux'
 // import { Provider } from 'react-redux'
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
 import thunk from 'redux-thunk'

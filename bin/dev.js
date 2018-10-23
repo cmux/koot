@@ -15,7 +15,7 @@ const __ = require('../utils/translate')
 const sleep = require('../utils/sleep')
 const getPort = require('../utils/get-port')
 // const spinner = require('../utils/spinner')
-const readBuildConfigFile = require('../utils/read-build-config-file')
+// const readBuildConfigFile = require('../utils/read-build-config-file')
 const getAppType = require('../utils/get-app-type')
 const setEnvFromCommand = require('../utils/set-env-from-command')
 const getChunkmapPath = require('../utils/get-chunkmap-path')
@@ -90,6 +90,7 @@ const run = async () => {
     // 读取项目信息
     // const { dist, port } = await readBuildConfigFile()
     const { dist, port } = await validateConfig()
+    const appType = await getAppType()
     const cwd = getCwd()
     const packageInfo = await fs.readJson(path.resolve(cwd, 'package.json'))
     const {
