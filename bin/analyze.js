@@ -4,7 +4,8 @@ const program = require('commander')
 // const chalk = require('chalk')
 
 // const __ = require('../utils/translate')
-const readBuildConfigFile = require('../utils/read-build-config-file')
+const validateConfig = require('../libs/validate-config')
+// const readBuildConfigFile = require('../utils/read-build-config-file')
 const setEnvFromCommand = require('../utils/set-env-from-command')
 
 const kootBuild = require('../core/webpack/enter')
@@ -45,7 +46,7 @@ const run = async () => {
     process.env.WEBPACK_BUILD_ENV = 'prod'
 
     // 读取构建配置
-    const buildConfig = await readBuildConfigFile()
+    const buildConfig = await validateConfig()
 
     await kootBuild({
         analyze: true,

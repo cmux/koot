@@ -7,9 +7,10 @@ const npmRunScript = require('npm-run-script')
 const chalk = require('chalk')
 // const opn = require('opn')
 const sleep = require('../utils/sleep')
-const readBuildConfigFile = require('../utils/read-build-config-file')
+// const readBuildConfigFile = require('../utils/read-build-config-file')
 const spinner = require('../utils/spinner')
 const setEnvFromCommand = require('../utils/set-env-from-command')
+const validateConfig = require('../libs/validate-config')
 const __ = require('../utils/translate')
 // const getCwd = require('../utils/get-cwd')
 
@@ -45,7 +46,7 @@ const run = async () => {
     const {
         dist,
         // server,
-    } = await readBuildConfigFile()
+    } = await validateConfig()
 
     // 打包
     if (build) {
