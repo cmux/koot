@@ -12,6 +12,14 @@
     - 启用 `babel-loader` 的缓存，加速热更新的响应速度
 - React
   - 路由 (router) 移除配置外层包裹的空层级
+  - 模板 (`ejs`)
+    - 新语法
+      - `content(文件名)`
+<br>输出对应文件的文件内容到 HTML 代码中，如 `content('critical.css')` 会读取打包结果中的 `critical.css` 并渲染到 HTML 代码中
+      - `pathname(文件名)`
+<br>输出对应文件的访问地址到 HTML 代码中，如 `pathname('critical.css')` 会将打包结果中 `critical.css` 的 URL 访问地址渲染到 HTML 代码中
+    - 如果模板文件中针对 `critical` 使用上述新语法，则 `styles` 和 `scripts` 两个注入内容中不会出现 `critical` 的相关内容
+    - 模板项目已更新，可供参考
 - `sp-css-loader`
   - 开发模式下启用CSS样式名可读性规则：CSS样式名以 `.[class]__component` 方式命名时，DOM 上的样式名会变为类似 `.nav__a8c0` 的结果
 - 更新依赖包

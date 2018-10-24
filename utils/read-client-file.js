@@ -1,5 +1,7 @@
 const fs = require('fs-extra')
 const path = require('path')
+const isUrl = require('is-url')
+
 const getFilePath = require('./get-client-file-path')
 const generateFilemap = require('./generate-filemap-from-compilation')
 const getDistPath = require('./get-dist-path')
@@ -36,6 +38,17 @@ const readClientFile = (filename, localeId, compilation, isPathname = false) => 
                 if (typeof obj._cachedSource !== 'undefined') return obj._cachedSource
                 // return '123'
             }
+        }
+    }
+
+    const pathname = getFilePath(filename, localeId, isPathname)
+    if (isUrl(pathname)) {
+        if (__DEV__) {
+            const syncRequest = require('sync-request')
+            // console.log(`${pathname} is URL`)
+            return syncRequest('GET', pathname, {}).getBody()
+        } else {
+            return `<!-- The pathname for file '${filename}' is a URL. Rendering file content from URL can only be done in DEV mode. -->`
         }
     }
 
