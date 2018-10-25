@@ -10,6 +10,7 @@ const opn = require('opn')
 
 const checkFileUpdate = require('../libs/check-file-change')
 const contentWaiting = require('../defaults/content-waiting')
+const { keyFileProjectConfigTemp } = require('../defaults/before-build')
 
 const __ = require('../utils/translate')
 const sleep = require('../utils/sleep')
@@ -89,13 +90,22 @@ const run = async () => {
 
     // 读取项目信息
     // const { dist, port } = await readBuildConfigFile()
-    const { dist, port } = await validateConfig()
+    const {
+        dist,
+        port,
+        [keyFileProjectConfigTemp]: fileProjectConfigTemp
+    } = await validateConfig()
     const appType = await getAppType()
     const cwd = getCwd()
     const packageInfo = await fs.readJson(path.resolve(cwd, 'package.json'))
     const {
         name
     } = packageInfo
+
+    // 如果有临时项目配置文件，更改环境变量
+    if (fileProjectConfigTemp) {
+        process.env.KOOT_PROJECT_CONFIG_PATHNAME = fileProjectConfigTemp
+    }
 
     // 如果为 SPA，强制设置 STAGE
     if (process.env.WEBPACK_BUILD_TYPE === 'spa') {

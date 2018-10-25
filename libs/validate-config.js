@@ -5,7 +5,11 @@ const validatePathname = require('./validate-pathname')
 const getCwd = require('../utils/get-cwd')
 const readBuildConfigFile = require('../utils/read-build-config-file')
 // const getPathnameBuildConfigFile = require('../utils/get-pathname-build-config-file')
-const { keyFileProjectConfigTemp, filenameProjectConfigTemp } = require('../defaults/before-build')
+const {
+    keyFileProjectConfigTemp,
+    filenameProjectConfigTemp,
+    propertiesToExtract,
+} = require('../defaults/before-build')
 
 /**
  * 根据 koot.config.js 生成 koot.js 和构建配置对象
@@ -15,7 +19,7 @@ module.exports = async (projectDir = getCwd()) => {
 
     // const ENV = process.env.WEBPACK_BUILD_ENV
 
-    // 拼接完整配置文件名
+    /** @type {String} 完整配置文件路径名 */
     let fileFullConfig = typeof process.env.KOOT_BUILD_CONFIG_PATHNAME === 'string'
         ? process.env.KOOT_BUILD_CONFIG_PATHNAME
         : path.resolve(projectDir, 'koot.config.js')
@@ -26,19 +30,13 @@ module.exports = async (projectDir = getCwd()) => {
         return validateBuildConfig(buildConfig)
     }
 
-    // 获取完整配置
+    /** @type {Object} 完整配置 */
     const fullConfig = require(fileFullConfig)
 
-    // 项目配置项
-    let propertiesToExtract = [
-        ['name', ''],
-        ['type', 'react'],
-        ['template', ''],
-        ['router', ''],
-        ['redux', {}],
-        ['client', {}],
-        ['server', {}]
-    ]
+    /** @type {Boolean} 是否定制了项目配置文件路径名 */
+    const isCustomProjectConfig = typeof process.env.KOOT_PROJECT_CONFIG_PATHNAME === 'string'
+
+    // 项目配置
     const projectConfig = {}
 
     // 目标文件是否是完整配置文件
@@ -54,6 +52,14 @@ module.exports = async (projectDir = getCwd()) => {
             delete configRemains[key]
             return configRemains
         }, fullConfig)
+
+        // 如果定制了配置文件路径，直接返回结果
+        if (isCustomProjectConfig) {
+            return {
+                ...validateBuildConfig(buildConfig),
+                [keyFileProjectConfigTemp]: process.env.KOOT_PROJECT_CONFIG_PATHNAME
+            }
+        }
 
         // const {
         //     name,
