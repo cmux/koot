@@ -78,8 +78,7 @@ export default class ReactIsomorphic {
         } = options
         // const ENV = process.env.WEBPACK_BUILD_ENV
 
-        // 配置 HTML 注入替换内容
-        // 静态注入内容（一次服务器session内不会更改的部分）
+        /** @type {Object} 静态注入内容（一次服务器进程内不会更改的部分） */
         const injectOnce = {}
 
         /** @type {Object} chunkmap */
@@ -206,92 +205,6 @@ export default class ReactIsomorphic {
 
                 // global.koaCtxOrigin = ctx.origin
 
-                // 配置 html 注入内容
-                // html [实时更新]的部分
-                /*
-                const injectRealtime = {
-                    htmlLang: localeId ? ` lang="${localeId}"` : '',
-                    title: htmlTool.getTitle(),
-                    metas: `<!--${__KOOT_INJECT_METAS_START__}-->${htmlTool.getMetaHtml()}<!--${__KOOT_INJECT_METAS_END__}-->`,
-                    styles: (() => {
-                        if (!isIsormorphicInjectOnce || typeof thisInjectOnceCache.styles === 'undefined') {
-                            let r = ''
-                            if (typeof thisFilemap['critical.css'] === 'string') {
-                                if (ENV === 'prod')
-                                    r += `<style id="__koot-critical-styles" type="text/css">${readClientFile('critical.css')}</style>`
-                                if (ENV === 'dev')
-                                    r += `<link id="__koot-critical-styles" media="all" rel="stylesheet" href="${getClientFilePath('critical.css')}" />`
-                            }
-                            thisInjectOnceCache.styles = r
-                        }
-                        return thisInjectOnceCache.styles + reactStyles
-                    })(),
-                    react: reactHtml,
-                    scripts: (() => {
-                        if (!isIsormorphicInjectOnce || typeof thisInjectOnceCache.scriptsInBody === 'undefined') {
-                            let r = ''
-
-                            // 优先引入 critical
-                            if (Array.isArray(thisEntrypoints.critical)) {
-                                thisEntrypoints.critical
-                                    .filter(file => path.extname(file) === '.js')
-                                    .forEach(file => {
-                                        if (ENV === 'prod')
-                                            r += `<script type="text/javascript">${readClientFile(true, file)}</script>`
-                                        if (ENV === 'dev')
-                                            r += `<script type="text/javascript" src="${getClientFilePath(true, file)}"></script>`
-                                    })
-                            }
-
-                            // 引入其他入口
-                            // Object.keys(thisEntrypoints).filter(key => (
-                            //     key !== 'critical' && key !== 'polyfill'
-                            // ))
-                            // let entryToRender = defaultEntrypoints
-                            // if (__DEV__) {
-                            //     const { entryClientHMR } = require('../defaults/webpack-dev-server')
-                            //     entryToRender = [
-                            //         entryClientHMR,
-                            //         ...defaultEntrypoints
-                            //     ]
-                            // }
-                            defaultEntrypoints.forEach(key => {
-                                if (Array.isArray(thisEntrypoints[key])) {
-                                    thisEntrypoints[key].forEach(file => {
-                                        if (ENV === 'prod')
-                                            r += `<script type="text/javascript" src="${getClientFilePath(true, file)}" defer></script>`
-                                        if (ENV === 'dev')
-                                            r += `<script type="text/javascript" src="${getClientFilePath(true, file)}" defer></script>`
-                                    })
-                                }
-                            })
-
-                            // 如果设置了 PWA 自动注册 Service-Worker，在此注册
-                            const pwaAuto = typeof process.env.KOOT_PWA_AUTO_REGISTER === 'string'
-                                ? JSON.parse(process.env.KOOT_PWA_AUTO_REGISTER)
-                                : false
-                            if (pwaAuto && typeof thisInjectOnceCache.pathnameSW === 'string') {
-                                r += `<script id="__koot-pwa-register-sw" type="text/javascript">`
-                                if (ENV === 'prod')
-                                    r += `if ('serviceWorker' in navigator) {`
-                                        + `navigator.serviceWorker.register("${thisInjectOnceCache.pathnameSW}",`
-                                        + `{scope: '/'}`
-                                        + `)`
-                                        + `.catch(err => {console.log('👩‍💻 Service Worker SUPPORTED. ERROR', err)})`
-                                        + `}else{console.log('👩‍💻 Service Worker not supported!')}`
-                                if (ENV === 'dev')
-                                    r += `console.log('👩‍💻 No Service Worker for DEV mode.')`
-                                r += `</script>`
-                            }
-
-                            thisInjectOnceCache.scriptsInBody = r
-                        }
-                        return `<script type="text/javascript">${htmlTool.getReduxScript(store)}</script>`
-                            + thisInjectOnceCache.scriptsInBody
-                    })(),
-                }
-                */
-
                 // 开发模式: 将 content('critical.js') 转为 pathname()
                 if (__DEV__)
                     template = template
@@ -304,6 +217,7 @@ export default class ReactIsomorphic {
                             `<script$1 src="<%$2pathname('critical.js')$3%>"></script>`
                         )
 
+                /** @type {Object} 实时 (本次访问请求) 注入 */
                 const injectRealtime = validateInject({
                     injectCache: thisInjectOnceCache,
                     filemap: thisFilemap,
@@ -320,6 +234,7 @@ export default class ReactIsomorphic {
                     },
                 })
 
+                // i18n 启用时: 添加其他语种页面跳转信息的 meta 标签
                 if (i18nEnabled) {
                     const localeIds = i18nLocales.map(arr => arr[0])
                     // console.log('localeIds', localeIds)
@@ -345,6 +260,7 @@ export default class ReactIsomorphic {
                 // 渲染模板
                 let html = renderTemplate(template, Object.assign(injectRealtime, injectOnce, inject))
 
+                // 开发模式: 将结果中指向 webpack-dev-server 的 URL 转换为指向本服务器的代理地址
                 if (__DEV__) {
                     delete thisInjectOnceCache.styles
                     delete thisInjectOnceCache.scriptsInBody
