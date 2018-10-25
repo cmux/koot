@@ -80,6 +80,7 @@ export default async (app, {
         inject,
         before,
         after,
+        cacheMaxAge,
     } = server
     const onRender = server.render || server.onRender
 
@@ -205,6 +206,8 @@ export default async (app, {
         // 对HTML基础模板的自定义注入
         // 例如：<script>//inject_critical</script>  替换为 critical
         inject,
+
+        cacheMaxAge,
 
         onServerRender: async (obj) => {
             if (__DEV__) console.log(' ')

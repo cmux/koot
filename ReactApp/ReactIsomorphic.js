@@ -37,8 +37,6 @@ import validateInject from '../React/validate-inject'
 
 const error = require('debug')('SYSTEM:isomorphic:error')
 
-const injectOnceCache = {}
-
 // 设置全局常量
 setExtender(componentExtender)
 setPageinfo(pageinfo)
@@ -46,6 +44,10 @@ setPageinfo(pageinfo)
 
 export default class ReactIsomorphic {
 
+    /** 
+     * @param {Object} options
+     * @param {Number} [options.cacheMaxAge] 渲染结果缓存存在时间 (单位: ms)
+     */
     createKoaMiddleware(options = {
         routes: [],
         configStore: () => { },
@@ -71,15 +73,25 @@ export default class ReactIsomorphic {
             onServerRender,
             inject,
             configStore, store: _store,
-            routes
+            routes,
+            cacheMaxAge = __DEV__ ? 1 : (5 * 1000),
         } = options
         let {
             template
         } = options
         // const ENV = process.env.WEBPACK_BUILD_ENV
 
+        /** @type {Map} 渲染结果缓存 */
+        const renderCache = new Map()
+
         /** @type {Object} 静态注入内容（一次服务器进程内不会更改的部分） */
         const injectOnce = {}
+        /**
+         * @type {Object}
+         * 注入内容缓存
+         * 如果是多语言分包模式，则第一级为语种 ID
+         */
+        const injectOnceCache = {}
 
         /** @type {Object} chunkmap */
         const chunkmap = getChunkmap(true)
@@ -113,6 +125,7 @@ export default class ReactIsomorphic {
                 injectOnceCache[thisLocaleId] = {
                     pathnameSW: getSWPathname(thisLocaleId)
                 }
+                renderCache.set(thisLocaleId, new Map())
             }
         } else {
             entrypoints = chunkmap['.entrypoints']
@@ -135,6 +148,7 @@ export default class ReactIsomorphic {
             // console.log('ctx.hash', ctx.hash)
             // console.log(' ')
 
+            /** @type {String} 本次请求的 URL */
             const url = ctx.path + ctx.search
 
             try {
@@ -179,6 +193,29 @@ export default class ReactIsomorphic {
                         <RouterContext {...renderProps} />
                     </Provider>
                 )
+
+                /** @type {Object} 本次请求的渲染结果缓存 */
+                const thisRenderCache = isIsormorphicInjectOnce ? renderCache : renderCache.get(localeId)
+
+                // 如果当前缓存可用，直接输出结果
+                if (thisRenderCache.has(url)) {
+                    const { html, timestamp } = thisRenderCache.get(url)
+                    if (Date.now() - timestamp < cacheMaxAge) {
+                        console.log('')
+                        console.log(`cached result: ${url} | ${timestamp} | ${Date.now() - timestamp}`)
+                        console.log('')
+                        ctx.body = html
+                        return
+                    }
+                }
+
+                /** @type {Object} 本次请求的静态注入对象/本次请求的当前语言的静态注入缓存对象 */
+                const thisInjectOnceCache = isIsormorphicInjectOnce ? injectOnceCache : injectOnceCache[localeId]
+                /** @type {Object} 本次请求的 (当前语言的) 文件名对应表 */
+                const thisFilemap = isIsormorphicInjectOnce ? filemap : filemap[localeId]
+                /** @type {Object} 本次请求的 (当前语言的) 入口表 */
+                const thisEntrypoints = isIsormorphicInjectOnce ? entrypoints : entrypoints[localeId]
+
                 // const filterResult = filterStyle(reactHtml)
                 // CSS 同构结果片段
                 const styles = getStyles()
@@ -187,13 +224,6 @@ export default class ReactIsomorphic {
                         `<style id=${wrapper}>${styles[wrapper].css}</style>`
                     ))
                     .join('')
-
-                /** @type {Object} 静态注入对象/当前语言的静态注入缓存对象 */
-                const thisInjectOnceCache = isIsormorphicInjectOnce ? injectOnceCache : injectOnceCache[localeId]
-                /** @type {Object} (当前语言的) 文件名对应表 */
-                const thisFilemap = isIsormorphicInjectOnce ? filemap : filemap[localeId]
-                /** @type {Object} (当前语言的) 入口表 */
-                const thisEntrypoints = isIsormorphicInjectOnce ? entrypoints : entrypoints[localeId]
 
                 // console.log(chunkmap)
                 // console.log(filemap)
@@ -275,6 +305,13 @@ export default class ReactIsomorphic {
                     )
                 }
 
+                // 暂存入缓存
+                thisRenderCache.set(url, {
+                    html,
+                    timestamp: Date.now()
+                })
+
+                // 渲染输出
                 ctx.body = html
 
                 // global.koaCtxOrigin = undefined
