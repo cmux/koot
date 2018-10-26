@@ -1,7 +1,15 @@
+const fs = require('fs-extra')
 const path = require('path')
 const isValidPath = require('is-valid-path')
 
 const createConfig = require('../../core/webpack/config/create')
+const validateConfig = require('../../libs/validate-config')
+
+const {
+    keyFileProjectConfigTemp,
+    // filenameProjectConfigTemp,
+    // propertiesToExtract,
+} = require('../../defaults/before-build')
 
 // const prepareProjects = require('../prepare-projects')
 const { dir: dirProjects, projects } = require('../projects')
@@ -25,19 +33,30 @@ describe('测试: 生成 Webpack 配置', async () => {
     for (let project of projects) {
         for (let stage of stages) {
             for (let env of envs) {
-                test(`${project} [${stage} | ${env}] 配置可用`, async () => {
+                test(`${project.name} [${stage} | ${env}] 配置可用`, async () => {
                     const dir = path.resolve(dirProjects, project.name)
 
-                    const fileProjectConfig = path.resolve(dir, 'koot.js')
-                    const fileBuildConfig = path.resolve(dir, 'koot.build.js')
+                    const {
+                        [keyFileProjectConfigTemp]: fileProjectConfig,
+                        ...buildConfig
+                    } = await validateConfig(dir)
+
+                    // console.log(
+                    //     fileProjectConfig,
+                    //     buildConfig,
+                    // )
+
+                    // const fileProjectConfig = path.resolve(dir, 'koot.js')
+                    // const fileBuildConfig = path.resolve(dir, 'koot.build.js')
 
                     process.env.WEBPACK_BUILD_STAGE = stage
                     process.env.WEBPACK_BUILD_ENV = env
                     process.env.KOOT_CWD = dir
                     process.env.KOOT_PROJECT_CONFIG_PATHNAME = fileProjectConfig
-                    process.env.KOOT_BUILD_CONFIG_PATHNAME = fileBuildConfig
+                    // process.env.KOOT_BUILD_CONFIG_PATHNAME = fileBuildConfig
 
-                    const config = await createConfig(require(fileBuildConfig))
+                    // const config = await createConfig(require(fileBuildConfig))
+                    const config = await createConfig(buildConfig)
 
                     const modeToBe = stage === 'server' || env === 'dev' ? 'development' : 'production'
 
@@ -89,7 +108,9 @@ describe('测试: 生成 Webpack 配置', async () => {
                             plugins,
                             module,
                         } = webpackConfig
+                        // console.log(webpackConfig)
                         // console.log(plugins)
+                        // console.log(module.rules)
                         expect(mode).toBe(modeToBe)
                         expect(typeof output).toBe('object')
                         expect(typeof output.path).toBe('string')
@@ -105,6 +126,13 @@ describe('测试: 生成 Webpack 配置', async () => {
                         expect(plugins.some(p => typeof p === 'undefined')).toBe(false)
                         expect(Array.isArray(module.rules)).toBe(true)
                     }
+
+                    delete process.env.KOOT_CWD
+                    // delete process.env.KOOT_PROJECT_CONFIG_PATHNAME
+                    delete process.env.KOOT_BUILD_CONFIG_PATHNAME
+
+                    if (fileProjectConfig)
+                        await fs.remove(fileProjectConfig)
                 })
             }
         }

@@ -31,18 +31,24 @@ module.exports = async (projectDir = getCwd()) => {
     }
 
     /** @type {Object} 完整配置 */
-    const fullConfig = require(fileFullConfig)
+    const fullConfig = { ...require(fileFullConfig) }
 
     /** @type {Boolean} 是否定制了项目配置文件路径名 */
     const isCustomProjectConfig = typeof process.env.KOOT_PROJECT_CONFIG_PATHNAME === 'string'
 
-    // 项目配置
-    const projectConfig = {}
-
     // 目标文件是否是完整配置文件
     const isFullConfig = propertiesToExtract.some(([key]) => typeof fullConfig[key] !== 'undefined')
 
+    // console.log({
+    //     fileFullConfig,
+    //     isCustomProjectConfig,
+    //     fullConfig,
+    // })
+
     if (isFullConfig) {
+
+        // 项目配置
+        const projectConfig = {}
 
         // 将打包配置从完整配置中分离
         const buildConfig = propertiesToExtract.reduce((configRemains, curr) => {

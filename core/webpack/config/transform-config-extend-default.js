@@ -23,7 +23,8 @@ module.exports = async (config = {}, data = {}) => {
             }
         }
     } else {
-        config.module = configGlobalDefault.module.rules
+        // config.module = configGlobalDefault.module.rules
+        config.module = configGlobalDefault.module
     }
 
     // 合并 plugins
