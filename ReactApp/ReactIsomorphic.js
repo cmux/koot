@@ -15,6 +15,7 @@ import {
     setPageinfo,
     // setFetchdata,
 } from '../'
+import RenderCache from './render-cache'
 import componentExtender from '../React/component-extender'
 import pageinfo from '../React/pageinfo'
 import {
@@ -74,7 +75,7 @@ export default class ReactIsomorphic {
             inject,
             configStore, store: _store,
             routes,
-            cacheMaxAge = __DEV__ ? 1 : (5 * 1000),
+            renderCache: optionRenderCache,
         } = options
         let {
             template
@@ -82,7 +83,7 @@ export default class ReactIsomorphic {
         // const ENV = process.env.WEBPACK_BUILD_ENV
 
         /** @type {Map} 渲染结果缓存 */
-        const renderCache = new Map()
+        let renderCache
 
         /** @type {Object} 静态注入内容（一次服务器进程内不会更改的部分） */
         const injectOnce = {}
@@ -118,6 +119,7 @@ export default class ReactIsomorphic {
 
         // 针对 i18n 分包形式的项目，静态注入按语言缓存
         if (isI18nDefault) {
+            renderCache = new Map()
             for (let l in chunkmap) {
                 const thisLocaleId = l.substr(0, 1) === '.' ? l.substr(1) : l
                 entrypoints[thisLocaleId] = chunkmap[l]['.entrypoints']
@@ -125,12 +127,13 @@ export default class ReactIsomorphic {
                 injectOnceCache[thisLocaleId] = {
                     pathnameSW: getSWPathname(thisLocaleId)
                 }
-                renderCache.set(thisLocaleId, new Map())
+                renderCache.set(thisLocaleId, new RenderCache(optionRenderCache))
             }
         } else {
             entrypoints = chunkmap['.entrypoints']
             filemap = chunkmap['.files']
             injectOnceCache.pathnameSW = getSWPathname()
+            renderCache = new RenderCache(optionRenderCache)
         }
 
         // koa 中间件结构
@@ -198,15 +201,10 @@ export default class ReactIsomorphic {
                 const thisRenderCache = isIsormorphicInjectOnce ? renderCache : renderCache.get(localeId)
 
                 // 如果当前缓存可用，直接输出结果
-                if (thisRenderCache.has(url)) {
-                    const { html, timestamp } = thisRenderCache.get(url)
-                    if (Date.now() - timestamp < cacheMaxAge) {
-                        console.log('')
-                        console.log(`cached result: ${url} | ${timestamp} | ${Date.now() - timestamp}`)
-                        console.log('')
-                        ctx.body = html
-                        return
-                    }
+                const cacheResult = thisRenderCache.get(url)
+                if (!__DEV__ && cacheResult !== false) {
+                    ctx.body = cacheResult
+                    return
                 }
 
                 /** @type {Object} 本次请求的静态注入对象/本次请求的当前语言的静态注入缓存对象 */
@@ -306,10 +304,7 @@ export default class ReactIsomorphic {
                 }
 
                 // 暂存入缓存
-                thisRenderCache.set(url, {
-                    html,
-                    timestamp: Date.now()
-                })
+                thisRenderCache.set(url, html)
 
                 // 渲染输出
                 ctx.body = html
