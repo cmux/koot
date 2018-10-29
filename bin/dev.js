@@ -10,12 +10,13 @@ const opn = require('opn')
 
 const checkFileUpdate = require('../libs/check-file-change')
 const contentWaiting = require('../defaults/content-waiting')
+const { keyFileProjectConfigTemp } = require('../defaults/before-build')
 
 const __ = require('../utils/translate')
 const sleep = require('../utils/sleep')
 const getPort = require('../utils/get-port')
 // const spinner = require('../utils/spinner')
-const readBuildConfigFile = require('../utils/read-build-config-file')
+// const readBuildConfigFile = require('../utils/read-build-config-file')
 const getAppType = require('../utils/get-app-type')
 const setEnvFromCommand = require('../utils/set-env-from-command')
 const getChunkmapPath = require('../utils/get-chunkmap-path')
@@ -23,6 +24,8 @@ const initNodeEnv = require('../utils/init-node-env')
 const getCwd = require('../utils/get-cwd')
 const getPathnameDevServerStart = require('../utils/get-pathname-dev-server-start')
 // const terminate = require('../utils/terminate')
+const removeTempProjectConfig = require('../libs/remove-temp-project-config')
+const validateConfig = require('../libs/validate-config')
 
 program
     .version(require('../package').version, '-v, --version')
@@ -50,6 +53,10 @@ program
  * ****************************************************************************
  */
 const run = async () => {
+
+    // 清除所有临时配置文件
+    await removeTempProjectConfig()
+
     // 清空 log
     process.stdout.write('\x1B[2J\x1B[0f')
 
@@ -82,13 +89,23 @@ const run = async () => {
     // }
 
     // 读取项目信息
+    // const { dist, port } = await readBuildConfigFile()
+    const {
+        dist,
+        port,
+        [keyFileProjectConfigTemp]: fileProjectConfigTemp
+    } = await validateConfig()
     const appType = await getAppType()
     const cwd = getCwd()
     const packageInfo = await fs.readJson(path.resolve(cwd, 'package.json'))
-    const { dist, port } = await readBuildConfigFile()
     const {
         name
     } = packageInfo
+
+    // 如果有临时项目配置文件，更改环境变量
+    if (fileProjectConfigTemp) {
+        process.env.KOOT_PROJECT_CONFIG_PATHNAME = fileProjectConfigTemp
+    }
 
     // 如果为 SPA，强制设置 STAGE
     if (process.env.WEBPACK_BUILD_TYPE === 'spa') {
@@ -141,6 +158,7 @@ const run = async () => {
             process.removeListener('uncaughtException', exitHandler)
         }
         const exitHandler = async (/*options, err*/) => {
+            await removeTempProjectConfig()
             if (Array.isArray(processes) && processes.length) {
                 if (waitingSpinner) waitingSpinner.stop()
                 await sleep(300)

@@ -7,7 +7,7 @@ module.exports = {
     projects: [
         {
             name: 'koot-boilerplate',
-            github: 'cmux/koot-boilerplate',
+            github: 'cmux/koot-boilerplate#dev-0.6',
             type: [
                 'react-isomorphic',
                 'react-spa'

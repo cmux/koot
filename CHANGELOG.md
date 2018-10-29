@@ -1,5 +1,40 @@
+## 0.6.0
+**2018-10-29**
+- 核心
+  - 新的配置方式 `koot.config.js`
+    - 整合原有的 `koot.js` 和 `koot.build.js`
+    - 原有配置方式依旧可用
+    - 请参照模板项目了解新的配置文件内容和写法
+  - 项目配置
+    - `redux` 新增可选配置项 `store`
+      - 项目自创建的 Redux store。提供该对象时，`redux.combineReducers` 配置项会被忽略
+  - 开发模式
+    - 启用 `babel-loader` 的缓存，加速热更新的响应速度
+- React
+  - 路由 (router) 移除配置外层包裹的空层级
+  - 模板 (`ejs`)
+    - 新语法
+      - `content(文件名)`
+<br>输出对应文件的文件内容到 HTML 代码中，如 `content('critical.css')` 会读取打包结果中的 `critical.css` 并渲染到 HTML 代码中
+      - `pathname(文件名)`
+<br>输出对应文件的访问地址到 HTML 代码中，如 `pathname('critical.css')` 会将打包结果中 `critical.css` 的 URL 访问地址渲染到 HTML 代码中
+    - 如果模板文件中针对 `critical` 使用上述新语法，则 `styles` 和 `scripts` 两个注入内容中不会出现 `critical` 的相关内容
+    - 模板项目已更新，可供参考
+- React 同构
+  - 生产 (`prod`) 环境开启渲染缓存，缓存默认存在 **5秒**
+- `sp-css-loader`
+  - 开发模式下启用CSS样式名可读性规则：CSS样式名以 `.[class]__component` 方式命名时，DOM 上的样式名会变为类似 `.nav__a8c0` 的结果
+- 更新依赖包
+  - `react` -> _16.6.0_
+  - `react-dom` -> _16.6.0_
+  - `react-redux` -> _5.1.0_
+  - `webpack` -> _4.23.1_
+  - `webpack-dev-server` -> _3.1.10_
+  - `copy-webpack-plugin` -> _4.5.4_
+  - `autoprefixer` -> _9.3.1_
+
 ## 0.5.5
-**2018-??-??**
+**2018-10-15**
 - 核心
   - Webpack
     - `less-loader` 默认开启 Javascript 选项 (`javascriptEnabled`)

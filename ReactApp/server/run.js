@@ -60,6 +60,7 @@ export default async (app, {
     locales = getLocalesDefault(),
     router,
     redux,
+    // store,
     client,
     server,
 }) => {
@@ -79,6 +80,7 @@ export default async (app, {
         inject,
         before,
         after,
+        renderCache,
     } = server
     const onRender = server.render || server.onRender
 
@@ -121,6 +123,7 @@ export default async (app, {
         i18n,
         router,
         redux,
+        // store,
         client
     })
     // if (__DEV__) console.log('├─ client code inited')
@@ -194,7 +197,8 @@ export default async (app, {
         routes: reactApp.react.router.get(),
 
         // redux store 对象
-        configStore: reactApp.createConfigureStoreFactory(),
+        configStore: typeof redux.store === 'undefined' ? reactApp.createConfigureStoreFactory() : undefined,
+        store: typeof redux.store === 'undefined' ? undefined : redux.store,
 
         // HTML基础模板
         template,
@@ -202,6 +206,8 @@ export default async (app, {
         // 对HTML基础模板的自定义注入
         // 例如：<script>//inject_critical</script>  替换为 critical
         inject,
+
+        renderCache,
 
         onServerRender: async (obj) => {
             if (__DEV__) console.log(' ')

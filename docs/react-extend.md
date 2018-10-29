@@ -1,6 +1,4 @@
-# React 高阶组件
-
-## 组件扩展 (`extend`)
+# React 组件扩展 (`extend`)
 
 #### 使用
 

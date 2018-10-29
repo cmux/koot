@@ -103,6 +103,9 @@ module.exports = async (kootConfig = {}) => {
             env: chalk.green(ENV),
         }))
 
+        // console.log(`  > start: ${timestampStart}`)
+        // console.log(`  > end: ${Date.now()}`)
+        // console.log(`  > ms: ${Date.now() - timestampStart}`)
         console.log(`  > ~${elapse(Date.now() - timestampStart)} @ ${(new Date()).toLocaleString()}`)
 
         return

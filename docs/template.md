@@ -1,8 +1,8 @@
-# HTML 内容注入
+# HTML 模板
 
-HTML 内容注入主要是只在SSR阶段，根据HTTP请求，动态的向```HTML模板```里插入代码。
+同构与 SPA 模式均默认使用 HTML 模板文件。HTML 模板文件采用 `.ejs` 格式，遵循 `ejs` 语法。
 
-### HTML 模板
+### 模板文件
 
 默认情况，模板文件在 ```/src/template.ejs```
 
@@ -56,20 +56,22 @@ HTML 内容注入主要是只在SSR阶段，根据HTTP请求，动态的向```HT
 
 ### 注入变量
 
-从上面的```HTML模板```里可以看见很多个```<%- inject.[*] %>```标签，这样的标签会在```SSR```阶段被动态替换成配置文件里的对应代码。
-配置文件: ```/koot.js```中，```export const server = { inject }```的```inject```会指定对应关系所在的文件。
+从上面的```HTML模板```里可以看见很多个```<%- inject.[*] %>```标签，这样的标签会被替换成对应的结果。
+在配置文件中，```server.inject``` 选项可指定自定义注入方法的文件。
 
 默认配置是：
 ```js
-// File: /koot.js
+// File: /koot.config.js
 
-export const server = {
-    inject: require('./src/server/lifecycle/inject').default
+// ...
+server: {
+    inject: './server/inject'
 }
+// ...
 ```
 
 ```js
-// File: /src/server/lifecycle/inject.js
+// File: /server/inject.js
 
 import getClientFilePath from 'koot/utils/get-client-file-path'
 export default {
@@ -96,3 +98,27 @@ metas | 页面渲染 | &lt;meta&gt; 标签
 styles | 页面渲染 | 同构结果的全部 CSS 代码
 react | 页面渲染 | 同构结果的全部 HTML 代码
 scripts | 页面渲染 | 默认使用的外部 JS 代码和文件引用
+
+### EJS 语法扩展
+
+`pathanme(文件名)`
+
+将 `文件名` 对应的文件的 **URL 访问地址**注入到模板中。
+
+`文件名` 为 `webpack` 配置中的入口 (`entry`)，需添加扩展名。
+
+例:
+```ejs
+<script type="text/javascript" src="<%- pathname('entry.js') %>"></script>
+```
+
+`content(文件名)`
+
+将 `文件名` 对应的文件的**文件内容**注入到模板中。
+
+`文件名` 的解释参见上文。
+
+例:
+```ejs
+<style><%- content('critical.css') %></style>
+```

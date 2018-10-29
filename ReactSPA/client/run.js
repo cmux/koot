@@ -8,7 +8,7 @@ import {
     // browserHistory,
     // createMemoryHistory,
 } from 'react-router'
-import { syncHistoryWithStore, routerReducer } from 'react-router-redux'
+import { syncHistoryWithStore/*, routerReducer*/ } from 'react-router-redux'
 // import { Provider } from 'react-redux'
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
 import thunk from 'redux-thunk'
@@ -26,11 +26,12 @@ import componentExtender from '../../React/component-extender'
 import pageinfo from '../../React/pageinfo'
 // import fetchdata from '../../React/fetchdata'
 import {
-    reducer as realtimeLocationReducer,
-    REALTIME_LOCATION_REDUCER_NAME,
+    // reducer as realtimeLocationReducer,
+    // REALTIME_LOCATION_REDUCER_NAME,
     actionUpdate,
 } from '../../React/realtime-location'
 import Root from '../../React/root.jsx'
+import { reducers } from '../../React/redux'
 // import {
 //     reducerLocaleId as i18nReducerLocaleId,
 //     reducerLocales as i18nReducerLocales,
@@ -43,7 +44,7 @@ import Root from '../../React/root.jsx'
 // 设置常量 & 变量
 // ============================================================================
 
-const ROUTER_REDUCDER_NAME = 'routing'
+// const ROUTER_REDUCDER_NAME = 'routing'
 let logCountRouterUpdate = 0
 let logCountHistoryUpdate = 0
 setExtender(componentExtender)
@@ -56,6 +57,7 @@ export default ({
     // i18n = JSON.parse(process.env.KOOT_I18N) || false,
     router,
     redux,
+    // store,
     client
 }) => {
     const {
@@ -69,14 +71,14 @@ export default ({
     // Redux/Reducer 初始化
     // ============================================================================
 
-    const reducersObject = {
-        // 路由状态扩展
-        [ROUTER_REDUCDER_NAME]: routerReducer,
-        // 目的：新页面请求处理完成后再改变URL
-        [REALTIME_LOCATION_REDUCER_NAME]: realtimeLocationReducer,
-        // 对应服务器生成的store
-        // [SERVER_REDUCER_NAME]: serverReducer,
-    }
+    // const reducersObject = {
+    //     // 路由状态扩展
+    //     [ROUTER_REDUCDER_NAME]: routerReducer,
+    //     // 目的：新页面请求处理完成后再改变URL
+    //     [REALTIME_LOCATION_REDUCER_NAME]: realtimeLocationReducer,
+    //     // 对应服务器生成的store
+    //     // [SERVER_REDUCER_NAME]: serverReducer,
+    // }
     // if (i18n) {
     //     reducersObject.localeId = i18nReducerLocaleId
     //     reducersObject.locales = i18nReducerLocales
@@ -85,16 +87,24 @@ export default ({
     // 兼容配置嵌套
     if (!redux) redux = client.redux
 
-    {
-        const { combineReducers } = redux
-        if (typeof combineReducers === 'object') {
-            for (let key in combineReducers) {
-                reducersObject[key] = combineReducers[key]
+    let store
+    if (typeof redux.store === 'undefined') {
+        {
+            const { combineReducers } = redux
+            if (typeof combineReducers === 'object') {
+                for (let key in combineReducers) {
+                    reducers[key] = combineReducers[key]
+                }
             }
         }
+        store = compose(applyMiddleware(thunk))(createStore)(combineReducers(reducers))
+    } else {
+        store = redux.store
     }
-    const reducers = combineReducers(reducersObject)
-    const store = compose(applyMiddleware(thunk))(createStore)(reducers)
+    console.log(
+        redux,
+        store
+    )
 
 
 

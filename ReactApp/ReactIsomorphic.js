@@ -5,7 +5,8 @@ import { createMemoryHistory, RouterContext, match } from 'react-router'
 import { Provider } from 'react-redux'
 import { syncHistoryWithStore } from 'react-router-redux'
 
-import htmlInject from './inject'
+// import htmlInject from './inject'
+import renderTemplate from '../React/render-template'
 import { localeId } from '../i18n'
 import {
     setStore,
@@ -14,6 +15,7 @@ import {
     setPageinfo,
     // setFetchdata,
 } from '../'
+import RenderCache from './render-cache'
 import componentExtender from '../React/component-extender'
 import pageinfo from '../React/pageinfo'
 import {
@@ -23,18 +25,18 @@ import {
 import { changeLocaleQueryKey } from '../defaults/defines'
 import { publicPathPrefix } from '../defaults/webpack-dev-server'
 
-const path = require('path')
+// const path = require('path')
 
-const defaultEntrypoints = require('../defaults/entrypoints')
+// const defaultEntrypoints = require('../defaults/entrypoints')
 const getChunkmap = require('../utils/get-chunkmap')
-const getClientFilePath = require('../utils/get-client-file-path')
-const readClientFile = require('../utils/read-client-file')
+// const getClientFilePath = require('../utils/get-client-file-path')
+// const readClientFile = require('../utils/read-client-file')
 const getSWPathname = require('../utils/get-sw-pathname')
 // const log = require('../libs/log')
 
-const error = require('debug')('SYSTEM:isomorphic:error')
+import validateInject from '../React/validate-inject'
 
-const injectOnceCache = {}
+const error = require('debug')('SYSTEM:isomorphic:error')
 
 // 设置全局常量
 setExtender(componentExtender)
@@ -43,6 +45,10 @@ setPageinfo(pageinfo)
 
 export default class ReactIsomorphic {
 
+    /** 
+     * @param {Object} options
+     * @param {Number} [options.cacheMaxAge] 渲染结果缓存存在时间 (单位: ms)
+     */
     createKoaMiddleware(options = {
         routes: [],
         configStore: () => { },
@@ -64,35 +70,56 @@ export default class ReactIsomorphic {
             调整样式位置，从下到上
         */
 
-        // 设置常量
-        const { template, onServerRender, inject, configStore, routes } = options
-        const ENV = process.env.WEBPACK_BUILD_ENV
+        const {
+            onServerRender,
+            inject,
+            configStore, store: _store,
+            routes,
+            renderCache: optionRenderCache,
+        } = options
+        let {
+            template
+        } = options
+        // const ENV = process.env.WEBPACK_BUILD_ENV
 
-        // 配置 html 注入内容
-        // html [只更新1次]的部分（启动/重启服务器后不会更改的部分）
-        const injectOnce = {
-            // js: inject.js ? inject.js.map((js) => `<script src="${js}" defer></script>`).join('') : '', // 引用js文件标签
-            // css: inject.css ? inject.css.map((css) => `<link rel="stylesheet" href="${css}">`).join('') : '', // 引用css文件标签
-        }
+        /** @type {Map} 渲染结果缓存 */
+        let renderCache
 
-        // 处理 chunkmap
+        /** @type {Object} 静态注入内容（一次服务器进程内不会更改的部分） */
+        const injectOnce = {}
+        /**
+         * @type {Object}
+         * 注入内容缓存
+         * 如果是多语言分包模式，则第一级为语种 ID
+         */
+        const injectOnceCache = {}
+
+        /** @type {Object} chunkmap */
         const chunkmap = getChunkmap(true)
+        /** @type {Object} webpack 的入口，从 chunkmap 中抽取 */
         let entrypoints = {}
+        /** @type {Object} 文件名与实际结果的文件名的对应表，从 chunkmap 中抽取 */
         let filemap = {}
 
-        // 分析当前 i18n 模式
+        /** @type {Boolean} i18n 是否启用 */
         const i18nEnabled = JSON.parse(process.env.KOOT_I18N)
+        /** @type {Array} i18n 配置数组 */
         const i18nLocales = i18nEnabled
             ? JSON.parse(process.env.KOOT_I18N_LOCALES)
             : []
+        /** @type {String|undefined} i18n 类型 */
         const i18nType = i18nEnabled
             ? JSON.parse(process.env.KOOT_I18N_TYPE)
             : undefined
+        /** @type {Boolean} i18n 类型是否是默认 (分包) 形式 */
         const isI18nDefault = (i18nType === 'default')
 
-        // 针对 i18n 分包形式的项目，单次注入按语言缓存
-        const assetsInjectOnce = !isI18nDefault
+        /** @type {Boolean} 同构内容是否为静态注入（一次服务器session内不会更改）。i18n 类型不为分包形式时为 true */
+        const isIsormorphicInjectOnce = !isI18nDefault
+
+        // 针对 i18n 分包形式的项目，静态注入按语言缓存
         if (isI18nDefault) {
+            renderCache = new Map()
             for (let l in chunkmap) {
                 const thisLocaleId = l.substr(0, 1) === '.' ? l.substr(1) : l
                 entrypoints[thisLocaleId] = chunkmap[l]['.entrypoints']
@@ -100,11 +127,13 @@ export default class ReactIsomorphic {
                 injectOnceCache[thisLocaleId] = {
                     pathnameSW: getSWPathname(thisLocaleId)
                 }
+                renderCache.set(thisLocaleId, new RenderCache(optionRenderCache))
             }
         } else {
             entrypoints = chunkmap['.entrypoints']
             filemap = chunkmap['.files']
             injectOnceCache.pathnameSW = getSWPathname()
+            renderCache = new RenderCache(optionRenderCache)
         }
 
         // koa 中间件结构
@@ -122,6 +151,7 @@ export default class ReactIsomorphic {
             // console.log('ctx.hash', ctx.hash)
             // console.log(' ')
 
+            /** @type {String} 本次请求的 URL */
             const url = ctx.path + ctx.search
 
             try {
@@ -131,16 +161,20 @@ export default class ReactIsomorphic {
                 // }
 
                 const memoryHistory = createMemoryHistory(url)
-                const store = configStore()
+                const store = _store || configStore()
                 const history = syncHistoryWithStore(memoryHistory, store)
 
                 // 根据router计算出渲染页面需要的数据，并把渲染需要的数据补充到store中
-
-                const { redirectLocation, renderProps } = await asyncReactRouterMatch({ history, routes, location: url })
+                const {
+                    redirectLocation,
+                    renderProps
+                } = await asyncReactRouterMatch({ history, routes, location: url })
 
                 // 判断是否重定向页面
-                if (redirectLocation) return ctx.redirect(redirectLocation.pathname + redirectLocation.search)
-                if (!renderProps) return await next()
+                if (redirectLocation)
+                    return ctx.redirect(redirectLocation.pathname + redirectLocation.search)
+                if (!renderProps)
+                    return await next()
 
                 // 设置常量
                 setStore(store)
@@ -162,17 +196,32 @@ export default class ReactIsomorphic {
                         <RouterContext {...renderProps} />
                     </Provider>
                 )
+
+                /** @type {Object} 本次请求的渲染结果缓存 */
+                const thisRenderCache = isIsormorphicInjectOnce ? renderCache : renderCache.get(localeId)
+
+                // 如果当前缓存可用，直接输出结果
+                const cacheResult = thisRenderCache.get(url)
+                if (!__DEV__ && cacheResult !== false) {
+                    ctx.body = cacheResult
+                    return
+                }
+
+                /** @type {Object} 本次请求的静态注入对象/本次请求的当前语言的静态注入缓存对象 */
+                const thisInjectOnceCache = isIsormorphicInjectOnce ? injectOnceCache : injectOnceCache[localeId]
+                /** @type {Object} 本次请求的 (当前语言的) 文件名对应表 */
+                const thisFilemap = isIsormorphicInjectOnce ? filemap : filemap[localeId]
+                /** @type {Object} 本次请求的 (当前语言的) 入口表 */
+                const thisEntrypoints = isIsormorphicInjectOnce ? entrypoints : entrypoints[localeId]
+
                 // const filterResult = filterStyle(reactHtml)
+                // CSS 同构结果片段
                 const styles = getStyles()
                 const reactStyles = Object.keys(styles)
                     .map(wrapper => (
                         `<style id=${wrapper}>${styles[wrapper].css}</style>`
                     ))
                     .join('')
-
-                const thisInjectOnceCache = assetsInjectOnce ? injectOnceCache : injectOnceCache[localeId]
-                const thisFilemap = assetsInjectOnce ? filemap : filemap[localeId]
-                const thisEntrypoints = assetsInjectOnce ? entrypoints : entrypoints[localeId]
 
                 // console.log(chunkmap)
                 // console.log(filemap)
@@ -184,90 +233,36 @@ export default class ReactIsomorphic {
 
                 // global.koaCtxOrigin = ctx.origin
 
-                // 配置 html 注入内容
-                // html [实时更新]的部分
-                const injectRealtime = {
-                    htmlLang: localeId ? ` lang="${localeId}"` : '',
+                // 开发模式: 将 content('critical.js') 转为 pathname()
+                if (__DEV__)
+                    template = template
+                        // .replace(
+                        //     /<style(.*?)><%(.*?)content\(['"]critical\.css['"]\)(.*?)%><\/style>/,
+                        //     `<link id="__koot-critical-styles" media="all" rel="stylesheet" href="<%$2pathname('critical.css')$3%>" />`
+                        // )
+                        .replace(
+                            /<script(.*?)><%(.*?)content\(['"]critical\.js['"]\)(.*?)%><\/script>/,
+                            `<script$1 src="<%$2pathname('critical.js')$3%>"></script>`
+                        )
+
+                /** @type {Object} 实时 (本次访问请求) 注入 */
+                const injectRealtime = validateInject({
+                    injectCache: thisInjectOnceCache,
+                    filemap: thisFilemap,
+                    entrypoints: thisEntrypoints,
+                    localeId,
                     title: htmlTool.getTitle(),
-                    metas: `<!--${__KOOT_INJECT_METAS_START__}-->${htmlTool.getMetaHtml()}<!--${__KOOT_INJECT_METAS_END__}-->`,
-                    styles: (() => {
-                        if (!assetsInjectOnce || typeof thisInjectOnceCache.styles === 'undefined') {
-                            let r = ''
-                            if (typeof thisFilemap['critical.css'] === 'string') {
-                                if (ENV === 'prod')
-                                    r += `<style id="__koot-critical-styles" type="text/css">${readClientFile('critical.css')}</style>`
-                                if (ENV === 'dev')
-                                    r += `<link id="__koot-critical-styles" media="all" rel="stylesheet" href="${getClientFilePath('critical.css')}" />`
-                            }
-                            thisInjectOnceCache.styles = r
-                        }
-                        return thisInjectOnceCache.styles + reactStyles
-                    })(),
-                    react: reactHtml,
-                    scripts: (() => {
-                        if (!assetsInjectOnce || typeof thisInjectOnceCache.scriptsInBody === 'undefined') {
-                            let r = ''
+                    metaHtml: htmlTool.getMetaHtml(),
+                    reactHtml,
+                    stylesHtml: reactStyles,
+                    reduxHtml: htmlTool.getReduxScript(store),
+                    needInjectCritical: {
+                        styles: !/(content|pathname)\(['"]critical\.css['"]\)/.test(template),
+                        scripts: !/(content|pathname)\(['"]critical\.js['"]\)/.test(template),
+                    },
+                })
 
-                            // 优先引入 critical
-                            if (Array.isArray(thisEntrypoints.critical)) {
-                                thisEntrypoints.critical
-                                    .filter(file => path.extname(file) === '.js')
-                                    .forEach(file => {
-                                        if (ENV === 'prod')
-                                            r += `<script type="text/javascript">${readClientFile(true, file)}</script>`
-                                        if (ENV === 'dev')
-                                            r += `<script type="text/javascript" src="${getClientFilePath(true, file)}"></script>`
-                                    })
-                            }
-
-                            // 引入其他入口
-                            // Object.keys(thisEntrypoints).filter(key => (
-                            //     key !== 'critical' && key !== 'polyfill'
-                            // ))
-                            // let entryToRender = defaultEntrypoints
-                            // if (__DEV__) {
-                            //     const { entryClientHMR } = require('../defaults/webpack-dev-server')
-                            //     entryToRender = [
-                            //         entryClientHMR,
-                            //         ...defaultEntrypoints
-                            //     ]
-                            // }
-                            defaultEntrypoints.forEach(key => {
-                                if (Array.isArray(thisEntrypoints[key])) {
-                                    thisEntrypoints[key].forEach(file => {
-                                        if (ENV === 'prod')
-                                            r += `<script type="text/javascript" src="${getClientFilePath(true, file)}" defer></script>`
-                                        if (ENV === 'dev')
-                                            r += `<script type="text/javascript" src="${getClientFilePath(true, file)}" defer></script>`
-                                    })
-                                }
-                            })
-
-                            // 如果设置了 PWA 自动注册 Service-Worker，在此注册
-                            const pwaAuto = typeof process.env.KOOT_PWA_AUTO_REGISTER === 'string'
-                                ? JSON.parse(process.env.KOOT_PWA_AUTO_REGISTER)
-                                : false
-                            if (pwaAuto && typeof thisInjectOnceCache.pathnameSW === 'string') {
-                                r += `<script id="__koot-pwa-register-sw" type="text/javascript">`
-                                if (ENV === 'prod')
-                                    r += `if ('serviceWorker' in navigator) {`
-                                        + `navigator.serviceWorker.register("${thisInjectOnceCache.pathnameSW}",`
-                                        + `{scope: '/'}`
-                                        + `)`
-                                        + `.catch(err => {console.log('👩‍💻 Service Worker SUPPORTED. ERROR', err)})`
-                                        + `}else{console.log('👩‍💻 Service Worker not supported!')}`
-                                if (ENV === 'dev')
-                                    r += `console.log('👩‍💻 No Service Worker for DEV mode.')`
-                                r += `</script>`
-                            }
-
-                            thisInjectOnceCache.scriptsInBody = r
-                        }
-                        return `<script type="text/javascript">${htmlTool.getReduxScript(store)}</script>`
-                            + thisInjectOnceCache.scriptsInBody
-                    })(),
-                }
-
+                // i18n 启用时: 添加其他语种页面跳转信息的 meta 标签
                 if (i18nEnabled) {
                     const localeIds = i18nLocales.map(arr => arr[0])
                     // console.log('localeIds', localeIds)
@@ -290,12 +285,10 @@ export default class ReactIsomorphic {
                         .join('')
                 }
 
-                const injectResult = Object.assign({}, injectRealtime, injectOnce, inject)
+                // 渲染模板
+                let html = renderTemplate(template, Object.assign(injectRealtime, injectOnce, inject))
 
-                // 响应给客户端
-
-                let html = htmlInject(template, injectResult)
-
+                // 开发模式: 将结果中指向 webpack-dev-server 的 URL 转换为指向本服务器的代理地址
                 if (__DEV__) {
                     delete thisInjectOnceCache.styles
                     delete thisInjectOnceCache.scriptsInBody
@@ -310,6 +303,10 @@ export default class ReactIsomorphic {
                     )
                 }
 
+                // 暂存入缓存
+                thisRenderCache.set(url, html)
+
+                // 渲染输出
                 ctx.body = html
 
                 // global.koaCtxOrigin = undefined

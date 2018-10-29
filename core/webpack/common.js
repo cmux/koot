@@ -18,7 +18,15 @@ const factory = async ({
     // spa = false,
     defines = {},
 }) => {
-    const useSpCssLoader = 'sp-css-loader?length=8&mode=replace'
+    // const useSpCssLoader = {
+    //     loader: 'sp-css-loader',
+    //     options: {
+    //         length: 4,
+    //         mode: 'replace',
+    //         readable: env === 'dev' ? 'true' : 'false',
+    //     }
+    // }
+    const useSpCssLoader = `sp-css-loader?length=4&mode=replace&readable=${env === 'dev' ? 'true' : 'false'}`
     const useUniversalAliasLoader = {
         loader: "universal-alias-loader",
         options: {
@@ -44,9 +52,9 @@ const factory = async ({
             use: [
                 {
                     loader: 'babel-loader',
-                    // options: {
-                    // cacheDirectory: true
-                    // }
+                    options: {
+                        cacheDirectory: true
+                    }
                 }
             ]
         }

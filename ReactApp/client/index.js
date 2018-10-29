@@ -5,6 +5,7 @@ import kootClient from './run'
 import {
     router,
     redux,
+    // store,
     client,
 } from '__KOOT_PROJECT_CONFIG_PATHNAME__'
 // } from '../../../../koot'
@@ -13,5 +14,6 @@ import {
 export default kootClient({
     router,
     redux,
+    // store,
     client,
 })
