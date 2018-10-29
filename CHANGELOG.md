@@ -1,4 +1,4 @@
-## 0.6.0 (开发中)
+## 0.6.0
 **2018-10-29**
 - 核心
   - 新的配置方式 `koot.config.js`
@@ -27,7 +27,7 @@
 - 更新依赖包
   - `react` -> _16.6.0_
   - `react-dom` -> _16.6.0_
-  - `react-redux` -> _15.1.0_
+  - `react-redux` -> _5.1.0_
   - `webpack` -> _4.23.1_
   - `webpack-dev-server` -> _3.1.10_
   - `copy-webpack-plugin` -> _4.5.4_
