@@ -1,5 +1,5 @@
 ## 0.6.0 (开发中)
-**2018-??-??**
+**2018-10-29**
 - 核心
   - 新的配置方式 `koot.config.js`
     - 整合原有的 `koot.js` 和 `koot.build.js`
@@ -25,10 +25,13 @@
 - `sp-css-loader`
   - 开发模式下启用CSS样式名可读性规则：CSS样式名以 `.[class]__component` 方式命名时，DOM 上的样式名会变为类似 `.nav__a8c0` 的结果
 - 更新依赖包
-  - `webpack` -> _4.22.0_
+  - `react` -> _16.6.0_
+  - `react-dom` -> _16.6.0_
+  - `react-redux` -> _15.1.0_
+  - `webpack` -> _4.23.1_
   - `webpack-dev-server` -> _3.1.10_
   - `copy-webpack-plugin` -> _4.5.4_
-  - `autoprefixer` -> _9.3.0_
+  - `autoprefixer` -> _9.3.1_
 
 ## 0.5.5
 **2018-10-15**
