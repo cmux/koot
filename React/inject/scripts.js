@@ -37,7 +37,7 @@ export default (needInjectCritical, injectCache, entrypoints, reduxHtml) => {
                     // if (ENV === 'dev')
                     // return `<script type="text/javascript" src="${getClientFilePath(true, file)}" defer></script>`
                     return `<script type="text/javascript" src="${getClientFilePath(true, file)}" defer></script>`
-                })
+                }).join('')
             }
         })
 
