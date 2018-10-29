@@ -15,7 +15,6 @@ module.exports = async (i18n) => {
         WEBPACK_BUILD_ENV: ENV,
         // WEBPACK_BUILD_STAGE: STAGE,
         // WEBPACK_ANALYZE,
-        // WEBPACK_DEV_SERVER_PORT: CLIENT_DEV_PORT,
         // SERVER_DOMAIN,
         // SERVER_PORT,
     } = process.env

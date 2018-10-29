@@ -9,5 +9,7 @@ module.exports = {
         ['redux', {}],
         ['client', {}],
         ['server', {}]
-    ]
+    ],
+
+    filenameWebpackDevServerPortTemp: '.dev_webpack-dev-server_port'
 }

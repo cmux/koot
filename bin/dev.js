@@ -12,6 +12,10 @@ const checkFileUpdate = require('../libs/check-file-change')
 const contentWaiting = require('../defaults/content-waiting')
 const { keyFileProjectConfigTemp } = require('../defaults/before-build')
 
+const {
+    filenameWebpackDevServerPortTemp
+} = require('../defaults/before-build')
+
 const __ = require('../utils/translate')
 const sleep = require('../utils/sleep')
 const getPort = require('../utils/get-port')
@@ -358,6 +362,9 @@ const run = async () => {
                 env: chalk.green('dev'),
             })
         )
+
+        // 移除临时文件
+        await fs.remove(path.resolve(dist, filenameWebpackDevServerPortTemp))
 
         // waitingSpinner.stop()
         // waitingSpinner = undefined

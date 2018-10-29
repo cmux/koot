@@ -271,6 +271,7 @@ const plugins = (env, stage, defines = {}) => {
         "WEBPACK_BUILD_TYPE",
         "WEBPACK_BUILD_ENV",
         "WEBPACK_CHUNKMAP",
+        "WEBPACK_DEV_SERVER_PORT",
         // "WEBPACK_SERVER_PUBLIC_PATH",
     ]
     const envsToDefine = envs.filter(key => (

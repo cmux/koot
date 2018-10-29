@@ -1,6 +1,6 @@
 {
     "name": "koot",
-    "version": "0.6.0",
+    "version": "0.7.0-alpha.1",
     "description": "Koot.js - React isomorphic framework created by CMUX",
     "main": "index.js",
     "sideEffects": false,
@@ -137,7 +137,8 @@
         "pm2": "3.2.2",
         "terminate": "2.1.0",
         "is-url": "1.2.4",
-        "sync-request": "6.0.0"
+        "sync-request": "6.0.0",
+        "portfinder": "1.0.19"
     },
     "peerDependencies": {},
     "devDependencies": {

@@ -21,6 +21,13 @@ const createPWAsw = require('../pwa/create')
 
 const afterServerProd = require('./lifecyle/after-server-prod')
 
+const validateWebpackDevServerPort = require('./config/validate-webpack-dev-server-port')
+const validateDist = require('./config/validate-dist')
+
+const {
+    filenameWebpackDevServerPortTemp
+} = require('../../defaults/before-build')
+
 
 // 调试webpack模式
 // const DEBUG = 1
@@ -61,7 +68,7 @@ module.exports = async (kootConfig = {}) => {
         WEBPACK_BUILD_TYPE: TYPE,
         WEBPACK_BUILD_ENV: ENV,
         WEBPACK_BUILD_STAGE: STAGE,
-        WEBPACK_DEV_SERVER_PORT: CLIENT_DEV_PORT,
+        // WEBPACK_DEV_SERVER_PORT,
         KOOT_TEST_MODE,
     } = process.env
     const kootTest = JSON.parse(KOOT_TEST_MODE)
@@ -109,6 +116,38 @@ module.exports = async (kootConfig = {}) => {
         console.log(`  > ~${elapse(Date.now() - timestampStart)} @ ${(new Date()).toLocaleString()}`)
 
         return
+    }
+
+    // ========================================================================
+    //
+    // 最优先流程
+    //
+    // ========================================================================
+    // CLIENT / DEV: 确定 webpack-dev-server 端口号
+    if (ENV === 'dev') {
+        // 读取已有结果
+        const dist = await validateDist(kootConfig.dist)
+        const pathnameTemp = path.resolve(dist, filenameWebpackDevServerPortTemp)
+        const getExistResult = async () => {
+            if (fs.existsSync(pathnameTemp)) {
+                const content = await fs.readFile(pathnameTemp)
+                if (!isNaN(content))
+                    return parseInt(content)
+            }
+            return undefined
+        }
+        const existResult = await getExistResult()
+        if (existResult) {
+            process.env.WEBPACK_DEV_SERVER_PORT = existResult
+        } else {
+            process.env.WEBPACK_DEV_SERVER_PORT = await validateWebpackDevServerPort(kootConfig.port)
+            // 将 webpack-dev-server 端口写入临时文件
+            await fs.writeFile(
+                pathnameTemp,
+                process.env.WEBPACK_DEV_SERVER_PORT,
+                'utf-8'
+            )
+        }
     }
 
     // ========================================================================
@@ -163,14 +202,21 @@ module.exports = async (kootConfig = {}) => {
     }
 
     const pathConfigLogs = path.resolve(RUN_PATH, `./logs/webpack-config`)
-    await fs.ensureDir(pathConfigLogs)
-    await fs.writeFile(
-        path.resolve(pathConfigLogs,
-            `${TYPE}.${STAGE}.${ENV}.${(new Date()).toISOString().replace(/:/g, '_')}.json`
-        ),
-        JSON.stringify(webpackConfig, null, '\t'),
-        'utf-8'
-    )
+    // const filenameConfigLog = `${TYPE}.${STAGE}.${ENV}.${(new Date()).toISOString().replace(/:/g, '_')}.json`
+    try {
+        await fs.ensureDir(pathConfigLogs)
+        await fs.writeFile(
+            path.resolve(pathConfigLogs,
+                `${TYPE}.${STAGE}.${ENV}.${(new Date()).toISOString().replace(/:/g, '_')}.json`
+            ),
+            JSON.stringify(webpackConfig, null, '\t'),
+            'utf-8'
+        )
+    } catch (err) {
+        log('error', 'build',
+            `write webpack config to file failed`
+        )
+    }
 
     // 客户端开发模式
     if (STAGE === 'client' && ENV === 'dev') {
@@ -188,7 +234,7 @@ module.exports = async (kootConfig = {}) => {
             },
             open: TYPE === 'spa',
         }, devServer)
-        const port = TYPE === 'spa' ? process.env.SERVER_PORT : CLIENT_DEV_PORT
+        const port = TYPE === 'spa' ? process.env.SERVER_PORT : process.env.WEBPACK_DEV_SERVER_PORT
 
         // more config
         // http://webpack.github.io/docs/webpack-dev-server.html
