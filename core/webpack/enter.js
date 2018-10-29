@@ -160,14 +160,20 @@ module.exports = async (kootConfig = {}) => {
     }
 
     const pathConfigLogs = path.resolve(RUN_PATH, `./logs/webpack-config`)
-    await fs.ensureDir(pathConfigLogs)
-    await fs.writeFile(
-        path.resolve(pathConfigLogs,
-            `${TYPE}.${STAGE}.${ENV}.${(new Date()).toISOString().replace(/:/g, '_')}.json`
-        ),
-        JSON.stringify(webpackConfig, null, '\t'),
-        'utf-8'
-    )
+    try {
+        await fs.ensureDir(pathConfigLogs)
+        await fs.writeFile(
+            path.resolve(pathConfigLogs,
+                `${TYPE}.${STAGE}.${ENV}.${(new Date()).toISOString().replace(/:/g, '_')}.json`
+            ),
+            JSON.stringify(webpackConfig, null, '\t'),
+            'utf-8'
+        )
+    } catch (err) {
+        log('error', 'build',
+            `write webpack config to file failed`
+        )
+    }
 
     // 客户端开发模式
     if (STAGE === 'client' && ENV === 'dev') {
