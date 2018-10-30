@@ -8,12 +8,12 @@ const doTerminate = require('terminate')
 
 //
 
-const { dir: dirProjects, projects, commandTestBuild } = require('../projects')
+const projects = require('../../projects/get')()
 const projectsToUse = projects.filter(project => (
     Array.isArray(project.type) && project.type.includes('react-isomorphic')
 ))
-const { changeLocaleQueryKey } = require('../../defaults/defines')
-const removeTempProjectConfig = require('../../libs/remove-temp-project-config')
+const { changeLocaleQueryKey } = require('../../../defaults/defines')
+const removeTempProjectConfig = require('../../../libs/remove-temp-project-config')
 // const sleep = require('../../utils/sleep')
 
 //
@@ -25,6 +25,7 @@ process.env.KOOT_TEST_MODE = JSON.stringify(true)
 
 /** @type {Boolean} 是否进行完整测试。如果为否，仅测试一次打包结果 */
 const fullTest = true
+const commandTestBuild = 'koot-buildtest'
 
 //
 
@@ -143,9 +144,10 @@ const testPage = async (port) => {
 
 describe('测试: React 同构项目', async () => {
 
-    for (let project of projectsToUse) {
-        const { name } = project
-        const dir = path.resolve(dirProjects, name)
+    for (let {
+        name,
+        dir,
+    } of projectsToUse) {
 
         describe(`项目: ${name}`, async () => {
             test(`[Production] 使用 koot-build 命令进行打包`, async () => {

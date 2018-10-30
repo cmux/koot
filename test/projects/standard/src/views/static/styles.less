@@ -1,0 +1,21 @@
+@import '~base.less';
+
+.component{
+    .block{
+        overflow: hidden;
+        position: relative;
+        text-align: left;
+        padding-left: 200px;
+        min-height: 102px;
+        img{
+            display: block;
+            width: 180px;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        & + .block{
+            margin-top: 30px;
+        }
+    }
+}

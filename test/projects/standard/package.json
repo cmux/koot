@@ -1,57 +1,43 @@
 {
-    "name": "koot",
-    "version": "0.7.0-alpha.1",
-    "description": "Koot.js - React isomorphic framework created by CMUX",
-    "main": "index.js",
-    "sideEffects": false,
-    "bin": {
-        "koot-build": "./bin/build.js",
-        "koot-start": "./bin/start.js",
-        "koot-dev": "./bin/dev.js",
-        "koot-analyze": "./bin/analyze.js"
-    },
-    "scripts": {
-        "doc-server": "docsify serve docs",
-        "eslint": "eslint \"!(node_modules|logs|dist|dist*)/**/*.+(js|jsx)\"",
-        "pretest": "node ./test/pre-test.js",
-        "test": "jest",
-        "test:factoryconfig": "jest ./test/factory-config/test.js",
-        "test:react:isomorphic": "jest ./test/react-isomorphic/test.js",
-        "test:libs:validate-pathname": "jest ./test/libs/validate-pathname",
-        "test:libs:validate-config": "jest ./test/libs/validate-config",
-        "check-updates": "ncu -x react-router,koa-body,koa-compress,koa-json,koa-onerror,koa-static,koa-compose,koa-helmet,koa-mount"
+    "name": "koot-boilerplate",
+    "version": "0.3.0",
+    "description": "Koot.js 模板项目",
+    "author": {
+        "name": "Diablohu",
+        "email": "diablohudream@gmail.com",
+        "url": "http://diablohu.com"
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/cmux/koot"
+        "url": "https://github.com/cmux/koot-boilerplate"
     },
-    "keywords": [
-        "react",
-        "style",
-        "import-style",
-        "import-css",
-        "isomorphic"
-    ],
     "license": "Apache-2.0",
-    "author": {
-        "name": "dongwenxiao",
-        "email": "cs_victor@126.com"
-    },
-    "contributors": [
-        {
-            "name": "diablohu",
-            "email": "diablohudream@gmail.com",
-            "url": "http://diablohu.com"
-        }
-    ],
-    "bugs": {
-        "url": "https://github.com/cmux/koot/issues"
-    },
-    "homepage": "https://github.com/cmux/koot",
-    "engines": {
-        "node": ">=8.0.0"
+    "scripts": {
+        "start": "koot-start",
+        "start:server": "koot-start --no-build",
+        "build": "koot-build",
+        "build:client": "koot-build -c",
+        "build:server": "koot-build -s",
+        "dev": "koot-dev",
+        "dev:client": "koot-dev -c",
+        "dev:server": "koot-dev -s",
+        "dev:global-pm2": "koot-dev -g",
+        "dev:no-open": "koot-dev --no-open",
+        "analyze": "koot-analyze",
+        "eslint": "eslint \"src/**/*.+(js|jsx)\"",
+        "koot-buildtest-isomorphic-build": "koot-build --env prod --koot-test",
+        "koot-buildtest-isomorphic-start-server": "koot-start --no-build",
+        "koot-buildtest-isomorphic-start-server-custom-port": "koot-start --no-build --port 8316",
+        "koot-buildtest-isomorphic-dev": "koot-dev --no-open"
     },
     "dependencies": {
+        "koot": "file:../../../",
+        "normalize.css": "8.0.0",
+        "cssnano": "4.1.7",
+        "svg-url-loader": "2.3.2",
+        "axios": "0.18.0"
+    },
+    "devDependencies": {
         "sp-css-loader": "1.5.1",
         "sp-css-import": "2.1.1",
         "sp-koa-views": "1.0.1",
@@ -141,14 +127,9 @@
         "portfinder": "1.0.19",
         "acorn": "6.0.2"
     },
-    "peerDependencies": {},
-    "devDependencies": {
-        "eslint": "5.8.0",
-        "eslint-plugin-react": "7.11.1",
-        "babel-eslint": "10.0.1",
-        "jest": "23.6.0",
-        "is-valid-path": "0.1.1",
-        "download-git-repo": "1.1.0",
-        "puppeteer": "1.9.0"
-    }
+    "engines": {
+        "node": ">=8.0.0"
+    },
+    "private": true,
+    "sideEffects": false
 }

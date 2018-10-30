@@ -2,17 +2,17 @@ const fs = require('fs-extra')
 const path = require('path')
 const isValidPath = require('is-valid-path')
 
-const createConfig = require('../../core/webpack/config/create')
-const validateConfig = require('../../libs/validate-config')
+const createConfig = require('../../../core/webpack/config/create')
+const validateConfig = require('../../../libs/validate-config')
 
 const {
     keyFileProjectConfigTemp,
     // filenameProjectConfigTemp,
     // propertiesToExtract,
-} = require('../../defaults/before-build')
+} = require('../../../defaults/before-build')
 
 // const prepareProjects = require('../prepare-projects')
-const { dir: dirProjects, projects } = require('../projects')
+const projects = require('../../projects/get')()
 const stages = ['client', 'server']
 const envs = ['prod', 'dev']
 
@@ -30,12 +30,13 @@ describe('测试: 生成 Webpack 配置', async () => {
     //         return stat.isDirectory()
     //     })
 
-    for (let project of projects) {
+    for (let {
+        name,
+        dir,
+    } of projects) {
         for (let stage of stages) {
             for (let env of envs) {
-                test(`${project.name} [${stage} | ${env}] 配置可用`, async () => {
-                    const dir = path.resolve(dirProjects, project.name)
-
+                test(`${name} [${stage} | ${env}] 配置可用`, async () => {
                     const {
                         [keyFileProjectConfigTemp]: fileProjectConfig,
                         ...buildConfig

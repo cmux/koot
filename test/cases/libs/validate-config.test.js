@@ -1,15 +1,15 @@
 const fs = require('fs-extra')
 const path = require('path')
 
-const validateConfig = require('../../libs/validate-config')
-const { keyFileProjectConfigTemp } = require('../../defaults/before-build')
+const validateConfig = require('../../../libs/validate-config')
+const { keyFileProjectConfigTemp } = require('../../../defaults/before-build')
 
 test(`测试: libs/validate-config`, async () => {
 
     const {
         [keyFileProjectConfigTemp]: fileProjectConfig,
         ...buildConfig
-    } = await validateConfig(path.resolve(__dirname, '../../.projects/koot-boilerplate'))
+    } = await validateConfig(path.resolve(__dirname, '../../projects/standard'))
 
     expect(fs.existsSync(fileProjectConfig)).toBe(true)
     const contentProjectConfig = await fs.readFile(fileProjectConfig, 'utf-8')
