@@ -172,7 +172,7 @@ describe('测试: React 同构项目', async () => {
             })
             test(`[Production] 使用 koot-start (--no-build) 命令启动服务器并访问`, async () => {
                 const commandName = `${commandTestBuild}-isomorphic-start-server`
-                const command = `koot-start --no-build`
+                const command = `koot-start --no-build --koot-test`
                 await addCommand(commandName, command, dir)
 
                 const child = execSync(
@@ -209,7 +209,7 @@ describe('测试: React 同构项目', async () => {
                 test(`[Production] 使用 koot-start (--no-build) 命令启动服务器并访问 (自定义端口号)`, async () => {
                     const port = '8316'
                     const commandName = `${commandTestBuild}-isomorphic-start-server-custom-port`
-                    const command = `koot-start --no-build --port ${port}`
+                    const command = `koot-start --no-build --port ${port} --koot-test`
                     await addCommand(commandName, command, dir)
 
                     const child = execSync(
@@ -272,7 +272,7 @@ describe('测试: React 同构项目', async () => {
                 test(`[Development] 启动开发模式并访问`, async () => {
                     // const port = '8316'
                     const commandName = `${commandTestBuild}-isomorphic-dev`
-                    const command = `koot-dev --no-open`
+                    const command = `koot-dev --no-open --koot-test`
                     await addCommand(commandName, command, dir)
 
                     const child = execSync(

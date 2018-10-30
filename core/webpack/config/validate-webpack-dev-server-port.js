@@ -13,8 +13,8 @@ module.exports = async (portUsed) => {
     // 检查环境变量中设定的端口，如果可用，直接返回结果
     if (isNumber(process.env.WEBPACK_DEV_SERVER_PORT)) {
         const port = parseInt(process.env.WEBPACK_DEV_SERVER_PORT)
-        const isOpen = await isPortReachable(port)
-        if (isOpen)
+        const isPortOpen = !(await isPortReachable(port))
+        if (isPortOpen)
             return port
     }
 
