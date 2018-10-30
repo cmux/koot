@@ -45,6 +45,15 @@ const run = async () => {
     if (!port) {
         console.log(`\x1b[31m×\x1b[0m ` + `\x1b[93m[koot/server]\x1b[0m port \x1b[32m${process.env.SERVER_PORT}\x1b[0m has been taken.`)
         console.log(' ')
+
+        if (__DEV__) {
+            await fs.writeFile(
+                getPathnameDevServerStart(),
+                `port ${process.env.SERVER_PORT} has been taken.`,
+                'utf-8'
+            )
+        }
+
         return
     }
 

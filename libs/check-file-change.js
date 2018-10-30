@@ -19,7 +19,7 @@ module.exports = async (pathname, contentPlaceholder = defaultPlaceholder) =>
             if (!content || content === contentPlaceholder)
                 return waiting()
             await sleep(100)
-            resolve()
+            resolve(content)
         }, 500)
         waiting()
     })

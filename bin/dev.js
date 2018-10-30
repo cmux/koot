@@ -40,6 +40,7 @@ program
     .option('--stage <stage>', 'Set STAGE')
     .option('--config <config-file-path>', 'Set config file')
     .option('--type <project-type>', 'Set project type')
+    .option('--port <port>', 'Set server port')
     .option('--no-open', 'Don\'t open browser automatically')
     .parse(process.argv)
 
@@ -71,12 +72,14 @@ const run = async () => {
         type,
         global = false,
         open = true,
+        port,
     } = program
 
     initNodeEnv()
     setEnvFromCommand({
         config,
         type,
+        port,
     })
 
     let stage = _stage ? _stage : (client ? 'client' : (server ? 'server' : false))
@@ -96,7 +99,7 @@ const run = async () => {
     // const { dist, port } = await readBuildConfigFile()
     const {
         dist,
-        port,
+        port: configPort,
         [keyFileProjectConfigTemp]: fileProjectConfigTemp
     } = await validateConfig()
     const appType = await getAppType()
@@ -118,8 +121,8 @@ const run = async () => {
     }
 
     // 如果配置中存在 port，修改环境变量
-    if (typeof port !== 'undefined')
-        process.env.SERVER_PORT = getPort(port, 'dev')
+    if (typeof port === 'undefined' && typeof configPort !== 'undefined')
+        process.env.SERVER_PORT = getPort(configPort, 'dev')
 
     // 如果设置了 stage，仅运行该 stage
     if (stage) {
@@ -152,62 +155,66 @@ const run = async () => {
     const pathServerJS = path.resolve(dist, 'server/index.js')
     const pathServerStartFlag = getPathnameDevServerStart()
 
+    const removeListeners = () => {
+        process.removeListener('exit', exitHandler)
+        process.removeListener('SIGINT', exitHandler)
+        process.removeListener('SIGUSR1', exitHandler)
+        process.removeListener('SIGUSR2', exitHandler)
+        process.removeListener('uncaughtException', exitHandler)
+    }
+    const exitHandler = async (options = {}) => {
+        const {
+            silent = false
+        } = options
+        await removeTempProjectConfig()
+        if (Array.isArray(processes) && processes.length) {
+            if (waitingSpinner) waitingSpinner.stop()
+            await sleep(300)
+            if (!silent) process.stdout.write('\x1B[2J\x1B[0f')
+            if (!silent) console.log('\n\n\n' + chalk.redBright('!! Please wait for killing processes !!') + '\n\n')
+            for (let process of processes) {
+                await new Promise((resolve, reject) => {
+                    // console.log(process)
+                    pm2.delete(process.name, (err, proc) => {
+                        // console.log('err', err)
+                        // console.log('proc', proc)
+                        if (Array.isArray(proc) && proc.every(p => p.status === 'stopped'))
+                            return resolve(proc)
+                        if (err) return reject(err)
+                        reject('stop failed')
+                    })
+                })
+            }
+            pm2.disconnect()
+            await sleep(300)
+            // w.stop()
+            try {
+                // console.log(process.pid)
+                removeListeners()
+                console.log('\n\n\n' + chalk.cyanBright('Press CTRL+C again to exit.') + '\n\n')
+                // process.kill(process.pid)
+                process.exit(1)
+            } catch (e) {
+                // console.log(e)
+            }
+        } else {
+            removeListeners()
+            // 清空 log
+            process.stdout.write('\x1B[2J\x1B[0f')
+            console.log('Press CTRL+C again to exit.')
+
+            // 发送信息
+            if (process.send) {
+                process.send("Koot dev mode exit successfully")
+            }
+
+            // 退出
+            process.exit(1)
+        }
+    }
+
     { // 在脚本进程关闭/结束时，同时关闭打开的 PM2 进程
         process.stdin.resume()
-        const removeListeners = () => {
-            process.removeListener('exit', exitHandler)
-            process.removeListener('SIGINT', exitHandler)
-            process.removeListener('SIGUSR1', exitHandler)
-            process.removeListener('SIGUSR2', exitHandler)
-            process.removeListener('uncaughtException', exitHandler)
-        }
-        const exitHandler = async (/*options, err*/) => {
-            await removeTempProjectConfig()
-            if (Array.isArray(processes) && processes.length) {
-                if (waitingSpinner) waitingSpinner.stop()
-                await sleep(300)
-                process.stdout.write('\x1B[2J\x1B[0f')
-                console.log(chalk.redBright('Waiting for killing processes...'))
-                for (let process of processes) {
-                    await new Promise((resolve, reject) => {
-                        // console.log(process)
-                        pm2.delete(process.name, (err, proc) => {
-                            // console.log('err', err)
-                            // console.log('proc', proc)
-                            if (Array.isArray(proc) && proc.every(p => p.status === 'stopped'))
-                                return resolve(proc)
-                            if (err) return reject(err)
-                            reject('stop failed')
-                        })
-                    })
-                }
-                pm2.disconnect()
-                await sleep(300)
-                // w.stop()
-                try {
-                    // console.log(process.pid)
-                    removeListeners()
-                    console.log('Press CTRL+C again to exit.')
-                    // process.kill(process.pid)
-                    process.exit(1)
-                } catch (e) {
-                    console.log(e)
-                }
-            } else {
-                removeListeners()
-                // 清空 log
-                process.stdout.write('\x1B[2J\x1B[0f')
-                console.log('Press CTRL+C again to exit.')
-
-                // 发送信息
-                if (process.send) {
-                    process.send("Koot dev mode exit successfully")
-                }
-
-                // 退出
-                process.exit(1)
-            }
-        }
         // do something when app is closing
         process.on('exit', exitHandler);
         // catches ctrl+c event
@@ -359,6 +366,7 @@ const run = async () => {
         //     + 'waiting...'
         // )
 
+        await sleep(500)
         console.log(
             chalk.green('√ ')
             + chalk.yellowBright('[koot/build] ')
@@ -368,23 +376,31 @@ const run = async () => {
                 env: chalk.green('dev'),
             })
         )
-        await sleep(100)
 
         // 启动服务器
         await start('run')
 
         // 监视服务器启动标识文件，如果修改，进入下一步
-        await checkFileUpdate(pathServerStartFlag, contentWaiting)
+        const errServerRun = await checkFileUpdate(pathServerStartFlag, contentWaiting)
 
         // 移除临时文件
         await fs.remove(path.resolve(dist, filenameWebpackDevServerPortTemp))
 
         // waitingSpinner.stop()
         // waitingSpinner = undefined
-        npmRunScript(`pm2 logs`)
 
-        if (open)
-            return opn(`http://localhost:${process.env.SERVER_PORT}/`)
+        if (errServerRun !== ' ' && errServerRun) {
+            console.log(' ')
+            console.log(chalk.redBright(errServerRun))
+            console.log(' ')
+            await exitHandler({
+                silent: true
+            })
+        } else {
+            npmRunScript(`pm2 logs`)
+            if (open)
+                return opn(`http://localhost:${process.env.SERVER_PORT}/`)
+        }
     })
 }
 
