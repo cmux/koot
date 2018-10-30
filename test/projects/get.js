@@ -25,5 +25,8 @@ module.exports = () =>
         .map(filename => ({
             name: filename,
             dir: path.resolve(__dirname, filename),
-            // type: []
+            // type: [
+            //     'react-isomorphic',
+            //     'react-spa'
+            // ]
         }))

@@ -1,4 +1,5 @@
 const portfinder = require('portfinder')
+const isPortReachable = require('is-port-reachable')
 
 /**
  * 仅限开发模式
@@ -8,6 +9,15 @@ const portfinder = require('portfinder')
  * @returns {Number} 最终确定的 webpack-dev-server 端口
  */
 module.exports = async (portUsed) => {
+
+    // 检查环境变量中设定的端口，如果可用，直接返回结果
+    if (isNumber(process.env.WEBPACK_DEV_SERVER_PORT)) {
+        const port = parseInt(process.env.WEBPACK_DEV_SERVER_PORT)
+        const isOpen = await isPortReachable(port)
+        if (isOpen)
+            return port
+    }
+
     const portStart = 3000
     const portEnd = 65535
 
