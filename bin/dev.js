@@ -198,6 +198,13 @@ const run = async () => {
                 // 清空 log
                 process.stdout.write('\x1B[2J\x1B[0f')
                 console.log('Press CTRL+C again to exit.')
+
+                // 发送信息
+                if (process.send) {
+                    process.send("Koot dev mode exit successfully")
+                }
+
+                // 退出
                 process.exit(1)
             }
         }
@@ -303,7 +310,7 @@ const run = async () => {
         await fs.writeFile(pathServerStartFlag, contentWaiting)
 
         // 启动 client webpack-dev-server
-        await start('client')
+        /*const processClient = */await start('client')
 
         // 监视 chunkmap 文件，如果修改，进入下一步
         await checkFileUpdate(pathChunkmap, contentWaiting)
@@ -317,6 +324,10 @@ const run = async () => {
                 env: chalk.green('dev'),
             })
         )
+        // console.log(processClient[0].process, processClient[0].pid)
+        // console.log(
+        //     `  [${}]`
+        // )
 
         // 启动 server webpack
         // waitingSpinner = spinner(
@@ -347,11 +358,6 @@ const run = async () => {
         //     chalk.yellowBright('[koot/build] ')
         //     + 'waiting...'
         // )
-        await start('run')
-
-        // 监视服务器启动标识文件，如果修改，进入下一步
-        await checkFileUpdate(pathServerStartFlag, contentWaiting)
-        await sleep(100)
 
         console.log(
             chalk.green('√ ')
@@ -362,6 +368,13 @@ const run = async () => {
                 env: chalk.green('dev'),
             })
         )
+        await sleep(100)
+
+        // 启动服务器
+        await start('run')
+
+        // 监视服务器启动标识文件，如果修改，进入下一步
+        await checkFileUpdate(pathServerStartFlag, contentWaiting)
 
         // 移除临时文件
         await fs.remove(path.resolve(dist, filenameWebpackDevServerPortTemp))

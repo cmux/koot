@@ -2,7 +2,7 @@ const fs = require('fs-extra')
 const path = require('path')
 const util = require('util')
 const execSync = require('child_process').exec
-const exec = util.promisify(execSync)
+const exec = util.promisify(require('child_process').exec)
 const puppeteer = require('puppeteer')
 const doTerminate = require('terminate')
 
@@ -19,15 +19,16 @@ process.env.KOOT_TEST_MODE = JSON.stringify(true)
 
 //
 
-/** @type {Boolean} 是否进行完整测试。如果为否，仅测试一次打包结果 */
-const fullTest = true
-const commandTestBuild = 'koot-buildtest'
-
 const projects = require('../../projects/get')()
 const projectsToUse = projects.filter(project => (
     // Array.isArray(project.type) && project.type.includes('react-isomorphic')
     project.name === 'standard'
 ))
+
+/** @type {Boolean} 是否进行完整测试。如果为否，仅测试一次打包结果 */
+const fullTest = true
+const commandTestBuild = 'koot-buildtest'
+const headless = true
 
 //
 
@@ -72,7 +73,7 @@ const waitForPort = async (child, regex = /port.*\[32m([0-9]+)/) => await new Pr
 })
 const testPage = async (port) => {
     const browser = await puppeteer.launch({
-        headless: false
+        headless
     })
     const page = await browser.newPage()
     const url = isNaN(port) ? port : `http://127.0.0.1:${port}`
@@ -157,14 +158,14 @@ describe('测试: React 同构项目', async () => {
                 const command = `koot-build --env prod --koot-test`
                 await addCommand(commandName, command, dir)
 
-                console.log(commandName)
+                // console.log(commandName)
                 const { /*stdout,*/ stderr } = await exec(
                     `npm run ${commandName}`, {
                         cwd: dir,
                     }
                 )
 
-                console.log(stderr)
+                // console.log(stderr)
 
                 expect(typeof stderr).toBe('string')
                 expect(stderr).toBe('')
@@ -278,6 +279,7 @@ describe('测试: React 同构项目', async () => {
                         `npm run ${commandName}`,
                         {
                             cwd: dir,
+                            stdio: ['pipe', 'pipe', 'pipe', 'ipc']
                         },
                     )
                     const errors = []

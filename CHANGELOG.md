@@ -6,6 +6,7 @@
       - 解决方案：隐藏的 `webpack-dev-server` 的启动端口会自动更改
 - 添加依赖包
   - `portfinder`
+  - `is-port-reachable`
 - 其他
   - 更新测试项目和测试案例
 

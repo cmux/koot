@@ -92,9 +92,11 @@ module.exports = async (o = {}) => {
 
     if (kootTest) {
         Object.assign(p, packageJson, {
-            devDependencies: packageProject.devDependencies
+            devDependencies: packageProject.devDependencies || {}
         })
-        p.dependencies.koot = 'file:../../../'
+        if (/file:/.test(p.dependencies.koot)) {
+            p.dependencies.koot = p.dependencies.koot.replace(/file:/, 'file:../')
+        }
         await fs.writeJson(
             path.resolve(dist, 'package.json'),
             p

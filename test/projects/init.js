@@ -12,7 +12,7 @@ const getProjects = require('./get')
  * @async
  */
 module.exports = async () => {
-    console.log('\n' + chalk.cyanBright('准备测试项目代码库...'))
+    console.log(chalk.cyanBright('准备测试项目代码库...'))
 
     for (let { name } of getProjects()) {
         await initProject(name)
@@ -45,15 +45,18 @@ const initProject = async (name) => {
             pkg.dependencies = {}
         pkg.dependencies.koot = 'file:../../../'
 
+        // 清空 devDependencies
+        // delete pkg.devDependencies
+
         // 将 koot 的所有依赖替换入目标项目的 dev-dependencies
         pkg.devDependencies = pkgKoot.dependencies
 
         // 添加命令
         const commands = [
-            ['isomorphic-build', 'koot-build --env prod --koot-test'],
-            ['isomorphic-start-server', 'koot-start --no-build'],
-            ['isomorphic-start-server-custom-port', 'koot-start --no-build --port 8316'],
-            ['isomorphic-dev', 'koot-dev --no-open'],
+            // ['isomorphic-build', 'koot-build --env prod --koot-test'],
+            // ['isomorphic-start-server', 'koot-start --no-build'],
+            // ['isomorphic-start-server-custom-port', 'koot-start --no-build --port 8316'],
+            // ['isomorphic-dev', 'koot-dev --no-open'],
         ]
         commands.forEach(([name, cmd]) => {
             pkg.scripts[`koot-buildtest-${name}`] = cmd
