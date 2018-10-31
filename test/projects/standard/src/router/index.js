@@ -9,7 +9,7 @@ export default {
     indexRoute: {
         getComponent: (nextState, cb) => {
             require.ensure([], (require) => {
-                if (routeCheck(nextState)) cb(null, require('@views/home').default)
+                if (routeCheck(nextState)) cb(null, require('@views/home1').default)
             }, 'Page: Home')
         }
     },

@@ -11,6 +11,7 @@ const __ = require('../utils/translate')
 const sleep = require('../utils/sleep')
 const setEnvFromCommand = require('../utils/set-env-from-command')
 const validateConfig = require('../libs/validate-config')
+const spinner = require('../utils/spinner')
 
 const kootBuild = require('../core/webpack/enter')
 
@@ -144,4 +145,8 @@ const after = async (config = {}) => {
     }
 }
 
-run()
+run().catch(err => {
+    // spinner(chalk.yellowBright('[koot/build] ')).fail()
+    // console.log('\n')
+    // console.trace(err)
+})

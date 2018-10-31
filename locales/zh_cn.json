@@ -6,6 +6,7 @@
         "build_start": "开始打包：${type} [STAGE ${stage} | ENV ${env}]",
         "build_complete": "打包完成：${type} [STAGE ${stage} | ENV ${env}]",
         "building": "Webpack 打包中……",
+        "building_locale": "Webpack 打包中 (语种 ${locale})……",
         "spa_template_emitted": "SPA HTML 页面文件已输出至 ${file}",
         "spa_template_not_found": "SPA 模板文件未找到",
         "complete": "打包完成！(${time})"

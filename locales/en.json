@@ -6,6 +6,7 @@
         "build_start": "Start building: ${type} [STAGE ${stage} | ENV ${env}]",
         "build_complete": "Building complete: ${type} [STAGE ${stage} | ENV ${env}]",
         "building": "Webpack building...",
+        "building_locale": "Webpack building (locale ${locale})...",
         "spa_template_emitted": "SPA HTML file emitted to ${file}",
         "spa_template_not_found": "SPA template file not found",
         "complete": "Build complete! (${time})"

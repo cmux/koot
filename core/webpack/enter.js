@@ -49,8 +49,44 @@ process.env.DO_WEBPACK = false
  * @async
  * @param {Object} kootConfig
  * @param {Boolean} [kootConfig.analyze=false] 是否为打包分析（analyze）模式
+ * @returns {Object}
  */
 module.exports = async (kootConfig = {}) => {
+    /**
+     * @type {Object} 返回结果
+     * @property {Boolean|Error[]} errors 发生的错误对象
+     * @property {Boolean|String[]} warnings 发生的警告内容
+     * @property {Function} addError 添加错误
+     * @property {Function} addWarning 添加警告
+     */
+    const result = {
+        errors: false,
+        warnings: false,
+    }
+    Object.defineProperties(result, {
+        addError: {
+            value: (err) => {
+                if (!Array.isArray(result.errors))
+                    result.errors = []
+                result.errors.push(!(err instanceof Error) ? new Error(err) : err)
+            },
+        },
+        addWarning: {
+            value: (warning) => {
+                if (!Array.isArray(result.warnings))
+                    result.warnings = []
+                result.warnings.push(warning)
+            },
+        },
+        hasError: {
+            value: () => Array.isArray(result.errors),
+        },
+        hasWarning: {
+            value: () => Array.isArray(result.warnings),
+        },
+    })
+
+    /** @type {Number} 过程开始时间 */
     const timestampStart = Date.now()
 
     // 抽取配置
@@ -198,7 +234,13 @@ module.exports = async (kootConfig = {}) => {
         ? spinner(chalk.yellowBright('[koot/build] ') + __('build.building'))
         : undefined
     const buildingComplete = () => {
-        if (spinnerBuilding) spinnerBuilding.stop()
+        if (spinnerBuilding) {
+            if (result.hasError()) {
+                spinnerBuilding.fail()
+            } else {
+                spinnerBuilding.stop()
+            }
+        }
     }
 
     const pathConfigLogs = path.resolve(RUN_PATH, `./logs/webpack-config`)
@@ -264,17 +306,37 @@ module.exports = async (kootConfig = {}) => {
             const compiler = webpack(config)
             await new Promise((resolve, reject) => {
                 compiler.run(async (err, stats) => {
-                    if (typeof onComplete === 'function')
+                    const info = stats.toJson()
+
+                    if (stats.hasWarnings()) {
+                        result.addWarning(info.warnings)
+                    }
+
+                    if (stats.hasErrors()) {
+                        result.addError(info.errors)
                         onComplete()
+                        console.log(stats.toString({
+                            chunks: false,
+                            colors: true
+                        }))
+                        reject(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${info.errors}`)
+                        return
+                    }
 
-                    if (err)
-                        return reject(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`)
+                    if (err) {
+                        reject(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`)
+                        return onComplete()
+                    }
 
-                    if (!analyze)
+                    onComplete()
+
+                    // 非分析模式: log stats
+                    if (!analyze) {
                         console.log(stats.toString({
                             chunks: false, // 输出精简内容
                             colors: true
                         }))
+                    }
 
                     setTimeout(() => resolve(), 10)
                 })
@@ -290,15 +352,23 @@ module.exports = async (kootConfig = {}) => {
                     .filter(plugin => typeof plugin.localeId === 'string')
                     .reduce((prev, cur) => cur.localeId)
                 const spinnerBuildingSingle = !kootTest
-                    ? spinner(chalk.yellowBright('[koot/build] ') + chalk.green(`${localeId} `) + __('build.building'))
+                    ? spinner(
+                        (chalk.yellowBright('[koot/build] ') + __('build.building_locale', {
+                            locale: localeId
+                        })).replace(new RegExp(' ' + localeId + '\\)'), ` ${chalk.green(localeId)})`)
+                    )
                     : undefined
                 await build(config, () => {
                     if (spinnerBuildingSingle) {
-                        spinnerBuildingSingle.stop()
-                        setTimeout(() => {
-                            console.log(' ')
-                            log('success', 'build', chalk.green(`${localeId}`))
-                        })
+                        if (result.hasError()) {
+                            spinnerBuildingSingle.fail()
+                        } else {
+                            spinnerBuildingSingle.stop()
+                            setTimeout(() => {
+                                console.log(' ')
+                                log('success', 'build', chalk.green(`${localeId}`))
+                            })
+                        }
                     }
                 })
                 // index++
@@ -309,7 +379,7 @@ module.exports = async (kootConfig = {}) => {
         }
 
         await after()
-        return
+        return result
     }
 
     // 服务端开发环境
@@ -376,4 +446,5 @@ module.exports = async (kootConfig = {}) => {
         return
     }
 
+    return result
 }

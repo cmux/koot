@@ -7,7 +7,7 @@ export default {
     name: 'app-root',
 
     indexRoute: {
-        component: require('@views/home').default
+        component: require('@views/home1').default
     }
 
 }
