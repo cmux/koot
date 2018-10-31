@@ -1,5 +1,5 @@
 const fs = require('fs-extra')
-const path = require('path')
+// const path = require('path')
 const isValidPath = require('is-valid-path')
 
 const createConfig = require('../../../core/webpack/config/create')
@@ -118,7 +118,7 @@ describe('测试: 生成 Webpack 配置', async () => {
                         if (stage === 'client' && typeof entry === 'object') {
                             expect(('client' in entry)).toBe(true)
                             // 启用热更新后，client 入口从 string 变为 array
-                            expect(Array.isArray(entry.client)).toBe(true)
+                            expect(Array.isArray(entry.client)).toBe(stage === 'client' && env === 'prod' ? false : true)
                         } else if (stage === 'server') {
                             expect(Array.isArray(entry)).toBe(true)
                         }

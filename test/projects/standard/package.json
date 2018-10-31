@@ -26,7 +26,7 @@
         "analyze": "koot-analyze",
         "eslint": "eslint \"src/**/*.+(js|jsx)\"",
         "koot-buildtest-isomorphic-build": "koot-build --env prod --koot-test",
-        "koot-buildtest-isomorphic-start-server": "koot-start --no-build",
+        "koot-buildtest-isomorphic-start-server": "koot-start --no-build --koot-test",
         "koot-buildtest-isomorphic-start-server-custom-port": "koot-start --no-build --port 8080",
         "koot-buildtest-isomorphic-dev": "koot-dev --no-open"
     },
