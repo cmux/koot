@@ -29,21 +29,26 @@ program
     .option('--config <config-file-path>', 'Set config file')
     .option('--type <project-type>', 'Set project type')
     .option('--port <port>', 'Set server port')
+    .option('--koot-test', 'Koot test mode')
     .parse(process.argv)
 
 /**
  * 打包生产环境，并启动服务器（如果可用）
  */
 const run = async () => {
-    // 清空 log
-    process.stdout.write('\x1B[2J\x1B[0f')
+    // console.log('================')
 
     const {
         build,
         config,
         type,
         port,
+        kootTest = false
     } = program
+
+    if (!kootTest)
+        // 清空 log
+        process.stdout.write('\x1B[2J\x1B[0f')
 
     setEnvFromCommand({
         config, type, port
@@ -149,7 +154,9 @@ const run = async () => {
     // } else {
     // 正常方式
     const cmd = `node ${pathServerJS.replace(/\\/g, '/')}`
+    // console.log('cmd', cmd)
     const child = npmRunScript(cmd, {})
+    // console.log('child', child)
     await new Promise((resolve, reject) => {
         child.once('error', (error) => {
             console.trace(error)

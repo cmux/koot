@@ -42,6 +42,7 @@ program
     .option('--type <project-type>', 'Set project type')
     .option('--port <port>', 'Set server port')
     .option('--no-open', 'Don\'t open browser automatically')
+    .option('--koot-test', 'Koot test mode')
     .parse(process.argv)
 
 /**

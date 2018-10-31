@@ -191,10 +191,12 @@ describe('测试: React 同构项目', async () => {
                 // child.stdin.pipe(process.stdin)
                 // child.stdout.pipe(process.stdout)
                 // child.stderr.pipe(process.stderr)
+                // console.log('===============')
                 const port = await waitForPort(child)
                 child.stderr.on('data', err => {
                     errors.push(err)
                 })
+                // console.log('port', port)
 
                 // console.log({
                 //     port,

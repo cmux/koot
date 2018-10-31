@@ -18,6 +18,7 @@ program
     .option('--stage <stage>', 'Set STAGE')
     .option('--config <config-file-path>', 'Set config file pathname')
     .option('--type <project-type>', 'Set project type')
+    .option('--koot-test', 'Koot test mode')
     .parse(process.argv)
 
 const run = async () => {
