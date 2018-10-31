@@ -11,5 +11,7 @@ module.exports = {
         ['server', {}]
     ],
 
+    keyConfigQuiet: '__QUIET__',
+
     filenameWebpackDevServerPortTemp: '.dev_webpack-dev-server_port'
 }

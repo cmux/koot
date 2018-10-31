@@ -1,11 +1,18 @@
 #!/usr/bin/env node
 
-// const fs = require('fs-extra')
+const fs = require('fs-extra')
 const path = require('path')
+const util = require('util')
+const exec = util.promisify(require('child_process').exec)
+
 const program = require('commander')
 const npmRunScript = require('npm-run-script')
 const chalk = require('chalk')
 // const opn = require('opn')
+
+const {
+    keyFileProjectConfigTemp
+} = require('../defaults/before-build')
 const sleep = require('../utils/sleep')
 // const readBuildConfigFile = require('../utils/read-build-config-file')
 const spinner = require('../utils/spinner')
@@ -46,28 +53,68 @@ const run = async () => {
     const {
         dist,
         // server,
+        [keyFileProjectConfigTemp]: filenameProjectConfigTemp,
     } = await validateConfig()
+
+    const afterBuild = async () => {
+        // 删除过程中创建的临时文件
+        const fileProjectConfigTemp = path.resolve(dist, filenameProjectConfigTemp)
+        if (fs.existsSync(fileProjectConfigTemp))
+            await fs.remove(filenameProjectConfigTemp)
+    }
 
     // 打包
     if (build) {
         const building = spinner(chalk.yellowBright('[koot/build] ') + __('build.building'))
-        await new Promise((resolve, reject) => {
-            const child = npmRunScript(
-                `koot-build`, {
-                    stdio: 'ignore'
+        const { /*stdout,*/ stderr } = await exec(
+            `koot-build`, {
+                env: {
+                    KOOT_COMMAND_START: JSON.stringify(true)
                 }
-            )
-            child.once('error', (error) => {
-                console.trace(error)
-                process.exit(1)
-                reject(error)
-            })
-            child.once('exit', (exitCode) => {
-                // console.trace('exit in', exitCode)
-                resolve(exitCode)
-                // process.exit(exitCode)
-            })
-        })
+            }
+        )
+        // await new Promise((resolve, reject) => {
+        //     const child = npmRunScript(
+        //         `koot-build`, {
+        //             // stdio: 'ignore',
+        //             env: {
+        //                 KOOT_COMMAND_START: JSON.stringify(true)
+        //             }
+        //         }
+        //     )
+        //     // child.stdin.pipe(process.stdin)
+        //     // child.stdout.pipe(process.stdout)
+        //     // child.stderr.pipe(process.stderr)
+        //     // child.stderr.on('data', err => {
+        //     //     console.trace(err)
+        //     // })
+        //     child.once('error', (error) => {
+        //         console.trace(error)
+        //         process.exit(1)
+        //         reject(error)
+        //     })
+        //     child.once('exit', (exitCode) => {
+        //         // console.trace('exit in', exitCode)
+        //         resolve(exitCode)
+        //         // process.exit(exitCode)
+        //     })
+        //     console.log(child.stderr)
+        // })
+
+        // 打包过程中遭遇错误
+        if (stderr && stderr !== ' ') {
+            await afterBuild()
+
+            // 标记 spinner 为出错
+            building.fail()
+
+            // 打出错误报告
+            console.log('')
+            console.trace(stderr)
+
+            // 终止流程
+            return
+        }
         building.succeed()
         await sleep(100)
     }
@@ -77,6 +124,8 @@ const run = async () => {
     //     opn(path.resolve(dist, 'public/index.html'))
     //     return
     // }
+
+    await afterBuild()
 
     // 运行服务器
     const pathServerJS = path.resolve(dist, 'server/index.js')

@@ -4,14 +4,14 @@ const fs = require('fs-extra')
 const program = require('commander')
 const chalk = require('chalk')
 
-const { keyFileProjectConfigTemp } = require('../defaults/before-build')
+const { keyFileProjectConfigTemp, keyConfigQuiet } = require('../defaults/before-build')
 
 const __ = require('../utils/translate')
 // const readBuildConfigFile = require('../utils/read-build-config-file')
 const sleep = require('../utils/sleep')
 const setEnvFromCommand = require('../utils/set-env-from-command')
 const validateConfig = require('../libs/validate-config')
-const spinner = require('../utils/spinner')
+// const spinner = require('../utils/spinner')
 
 const kootBuild = require('../core/webpack/enter')
 
@@ -28,13 +28,21 @@ program
     .option('--koot-test', 'Koot test mode')
     .parse(process.argv)
 
+/** 判断是否是通过 koot-start 命令启动
+ * @returns {Boolean}
+ */
+const isFromCommandStart = () => (process.env.KOOT_COMMAND_START && JSON.parse(process.env.KOOT_COMMAND_START))
+
 /**
  * 执行打包
  */
 const run = async () => {
+    /** @type {Boolean} 是否为通过 koot-start 命令启动 */
+    const fromCommandStart = isFromCommandStart()
 
-    // 清空 log
-    process.stdout.write('\x1B[2J\x1B[0f')
+    if (!fromCommandStart)
+        // 清空 log
+        process.stdout.write('\x1B[2J\x1B[0f')
 
     const {
         client, server,
@@ -97,6 +105,12 @@ const run = async () => {
 
     if (dest) buildConfig.dist = dest
 
+    // 如果通过 koot-start 命令启动...
+    if (fromCommandStart) {
+        // 非报错 log 不打出
+        buildConfig[keyConfigQuiet] = true
+    }
+
     // 如果提供了 stage，仅针对 stage 执行打包
     if (stage) {
         // if (stage === 'server' && !hasServer) {
@@ -104,7 +118,7 @@ const run = async () => {
         // }
         await kootBuild(buildConfig)
         await after(buildConfig)
-        console.log(' ')
+        if (!fromCommandStart) console.log(' ')
         return
     }
 
@@ -114,13 +128,13 @@ const run = async () => {
 
     // if (!hasServer) return
 
-    console.log('\n' + ''.padEnd(60, '=') + '\n')
+    if (!fromCommandStart) console.log('\n' + ''.padEnd(60, '=') + '\n')
     process.env.WEBPACK_BUILD_STAGE = 'server'
     await kootBuild({ ...buildConfig })
     await sleep(100)
 
-    console.log('\n' + ''.padEnd(60, '=') + '\n')
-    console.log(
+    if (!fromCommandStart) console.log('\n' + ''.padEnd(60, '=') + '\n')
+    if (!fromCommandStart) console.log(
         chalk.green('√ ')
         + chalk.yellowBright('[koot/build] ')
         + __('build.complete', {
@@ -129,7 +143,7 @@ const run = async () => {
     )
 
     await after(buildConfig)
-    console.log(' ')
+    if (!fromCommandStart) console.log(' ')
 }
 
 const after = async (config = {}) => {
@@ -146,6 +160,10 @@ const after = async (config = {}) => {
 }
 
 run().catch(err => {
+    if (isFromCommandStart()) {
+        // throw err
+        console.error(err)
+    }
     // spinner(chalk.yellowBright('[koot/build] ')).fail()
     // console.log('\n')
     // console.trace(err)

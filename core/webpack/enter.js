@@ -25,7 +25,9 @@ const validateWebpackDevServerPort = require('./config/validate-webpack-dev-serv
 const validateDist = require('./config/validate-dist')
 
 const {
-    filenameWebpackDevServerPortTemp
+    filenameWebpackDevServerPortTemp,
+    keyFileProjectConfigTemp,
+    keyConfigQuiet,
 } = require('../../defaults/before-build')
 
 
@@ -94,6 +96,7 @@ module.exports = async (kootConfig = {}) => {
         beforeBuild,
         afterBuild,
         analyze = false,
+        [keyConfigQuiet]: quietMode = false,
     } = kootConfig
 
     // 确定项目类型
@@ -111,20 +114,22 @@ module.exports = async (kootConfig = {}) => {
 
     // DEBUG && console.log('============== Webpack Debug =============')
     // DEBUG && console.log('Webpack 打包环境：', TYPE, STAGE, ENV)
-    log('build', __('build.build_start', {
-        type: chalk.cyanBright(appType),
-        stage: chalk.green(STAGE),
-        env: chalk.green(ENV),
-    }))
+    if (!quietMode)
+        log('build', __('build.build_start', {
+            type: chalk.cyanBright(appType),
+            stage: chalk.green(STAGE),
+            env: chalk.green(ENV),
+        }))
 
     const before = async () => {
         if (ENV === 'dev') fs.ensureFileSync(path.resolve(getDistPath(), `./server/index.js`))
-        log('callback', 'build', `callback: ` + chalk.green('beforeBuild'))
+        if (!quietMode)
+            log('callback', 'build', `callback: ` + chalk.green('beforeBuild'))
         if (typeof beforeBuild === 'function') await beforeBuild(data)
     }
 
     const after = async () => {
-        console.log(' ')
+        if (!quietMode) console.log(' ')
 
         if (!analyze && pwa && STAGE === 'client' && ENV === 'prod') {
             // 生成PWA使用的 service-worker.js
@@ -149,7 +154,8 @@ module.exports = async (kootConfig = {}) => {
         // console.log(`  > start: ${timestampStart}`)
         // console.log(`  > end: ${Date.now()}`)
         // console.log(`  > ms: ${Date.now() - timestampStart}`)
-        console.log(`  > ~${elapse(Date.now() - timestampStart)} @ ${(new Date()).toLocaleString()}`)
+        if (!quietMode)
+            console.log(`  > ~${elapse(Date.now() - timestampStart)} @ ${(new Date()).toLocaleString()}`)
 
         return
     }
@@ -205,20 +211,22 @@ module.exports = async (kootConfig = {}) => {
     } = data
 
     if (STAGE === 'client' && TYPE === 'spa') {
-        log('error', 'build',
-            `i18n temporarily ` + chalk.redBright(`disabled`) + ` for `
-            + chalk.cyanBright('SPA')
-        )
+        if (!quietMode)
+            log('error', 'build',
+                `i18n temporarily ` + chalk.redBright(`disabled`) + ` for `
+                + chalk.cyanBright('SPA')
+            )
     } else if (typeof i18n === 'object') {
         if (STAGE === 'client') {
-            log('success', 'build',
-                `i18n ` + chalk.yellowBright(`enabled`)
-            )
-            console.log(`  > type: ${chalk.yellowBright(i18n.type)}`)
-            console.log(`  > locales: ${i18n.locales.map(arr => arr[0]).join(', ')}`)
+            if (!quietMode)
+                log('success', 'build',
+                    `i18n ` + chalk.yellowBright(`enabled`)
+                )
+            if (!quietMode) console.log(`  > type: ${chalk.yellowBright(i18n.type)}`)
+            if (!quietMode) console.log(`  > locales: ${i18n.locales.map(arr => arr[0]).join(', ')}`)
         }
         if (ENV === 'dev' && i18n.type === 'default') {
-            console.log(`  > We recommend using ${chalk.greenBright('redux')} mode in DEV enviroment.`)
+            if (!quietMode) console.log(`  > We recommend using ${chalk.greenBright('redux')} mode in DEV enviroment.`)
         }
     }
 
@@ -230,7 +238,7 @@ module.exports = async (kootConfig = {}) => {
 
     await before()
 
-    const spinnerBuilding = !kootTest
+    const spinnerBuilding = (!kootTest && !quietMode)
         ? spinner(chalk.yellowBright('[koot/build] ') + __('build.building'))
         : undefined
     const buildingComplete = () => {
@@ -241,6 +249,23 @@ module.exports = async (kootConfig = {}) => {
                 spinnerBuilding.stop()
             }
         }
+    }
+
+    /**
+     * 打包过程出错处理
+     * @param {Error|String} err 
+     */
+    const buildingError = (err) => {
+        // 移除过程中创建的临时文件
+        const pathnameTemp = path.resolve(data.dist, data[keyFileProjectConfigTemp])
+        if (fs.existsSync(pathnameTemp))
+            fs.removeSync(pathnameTemp)
+
+        // 将错误添加入结果对象
+        result.addError(err)
+
+        // 返回结果对象
+        return result
     }
 
     const pathConfigLogs = path.resolve(RUN_PATH, `./logs/webpack-config`)
@@ -313,25 +338,25 @@ module.exports = async (kootConfig = {}) => {
                     }
 
                     if (stats.hasErrors()) {
-                        result.addError(info.errors)
                         onComplete()
                         console.log(stats.toString({
                             chunks: false,
                             colors: true
                         }))
                         reject(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${info.errors}`)
-                        return
+                        return buildingError(info.errors)
                     }
 
                     if (err) {
+                        onComplete()
                         reject(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`)
-                        return onComplete()
+                        return buildingError(err)
                     }
 
                     onComplete()
 
                     // 非分析模式: log stats
-                    if (!analyze) {
+                    if (!analyze && !quietMode) {
                         console.log(stats.toString({
                             chunks: false, // 输出精简内容
                             colors: true
@@ -351,7 +376,7 @@ module.exports = async (kootConfig = {}) => {
                 const localeId = config.plugins
                     .filter(plugin => typeof plugin.localeId === 'string')
                     .reduce((prev, cur) => cur.localeId)
-                const spinnerBuildingSingle = !kootTest
+                const spinnerBuildingSingle = (!kootTest && !quietMode)
                     ? spinner(
                         (chalk.yellowBright('[koot/build] ') + __('build.building_locale', {
                             locale: localeId
@@ -412,6 +437,8 @@ module.exports = async (kootConfig = {}) => {
         //         ? webpackConfigs.output.publicPath
         //         : ''
 
+        // 确定 chunkmap
+        // 如果没有设定，创建空文件
         if (!fs.pathExistsSync(pathnameChunkmap)) {
             await fs.ensureFile(pathnameChunkmap)
             process.env.WEBPACK_CHUNKMAP = ''
@@ -426,12 +453,32 @@ module.exports = async (kootConfig = {}) => {
 
         await new Promise((resolve, reject) => {
             webpack(webpackConfig, async (err, stats) => {
+                const info = stats.toJson()
+
+                if (stats.hasWarnings()) {
+                    result.addWarning(info.warnings)
+                }
+
+                if (stats.hasErrors()) {
+                    buildingComplete()
+                    console.log(stats.toString({
+                        chunks: false,
+                        colors: true
+                    }))
+                    reject(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${info.errors}`)
+                    return buildingError(info.errors)
+                }
+
+                if (err) {
+                    buildingComplete()
+                    reject(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`)
+                    return buildingError(err)
+                }
+
                 buildingComplete()
-                console.log(' ')
+                if (!quietMode) console.log(' ')
 
-                if (err) return reject(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`)
-
-                if (!analyze)
+                if (!analyze && !quietMode)
                     console.log(stats.toString({
                         chunks: false, // Makes the build much quieter
                         colors: true
@@ -443,7 +490,7 @@ module.exports = async (kootConfig = {}) => {
 
         await after()
 
-        return
+        return result
     }
 
     return result
