@@ -20,6 +20,7 @@ const createWebpackConfig = require('./config/create')
 const createPWAsw = require('../pwa/create')
 
 const afterServerProd = require('./lifecyle/after-server-prod')
+const cleanAndWriteLogFiles = require('./lifecyle/before/clean-and-write-log-files')
 
 const validateWebpackDevServerPort = require('./config/validate-webpack-dev-server-port')
 const validateDist = require('./config/validate-dist')
@@ -122,9 +123,15 @@ module.exports = async (kootConfig = {}) => {
         }))
 
     const before = async () => {
-        if (ENV === 'dev') fs.ensureFileSync(path.resolve(getDistPath(), `./server/index.js`))
+        // 开发模式
+        if (ENV === 'dev') {
+            // 确保 server/index.js 存在
+            fs.ensureFileSync(path.resolve(getDistPath(), `./server/index.js`))
+        }
+
         if (!quietMode)
             log('callback', 'build', `callback: ` + chalk.green('beforeBuild'))
+
         if (typeof beforeBuild === 'function') await beforeBuild(data)
     }
 
@@ -268,22 +275,10 @@ module.exports = async (kootConfig = {}) => {
         return result
     }
 
-    const pathConfigLogs = path.resolve(RUN_PATH, `./logs/webpack-config`)
-    // const filenameConfigLog = `${TYPE}.${STAGE}.${ENV}.${(new Date()).toISOString().replace(/:/g, '_')}.json`
-    try {
-        await fs.ensureDir(pathConfigLogs)
-        await fs.writeFile(
-            path.resolve(pathConfigLogs,
-                `${TYPE}.${STAGE}.${ENV}.${(new Date()).toISOString().replace(/:/g, '_')}.json`
-            ),
-            JSON.stringify(webpackConfig, null, '\t'),
-            'utf-8'
-        )
-    } catch (err) {
-        log('error', 'build',
-            `write webpack config to file failed`
-        )
-    }
+    // 处理记录文件
+    await cleanAndWriteLogFiles(webpackConfig, {
+        quietMode
+    })
 
     // 客户端开发模式
     if (STAGE === 'client' && ENV === 'dev') {

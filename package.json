@@ -52,7 +52,7 @@
         "node": ">=8.0.0"
     },
     "dependencies": {
-        "sp-css-loader": "1.5.1",
+        "sp-css-loader": "1.5.2",
         "sp-css-import": "2.1.1",
         "sp-koa-views": "1.0.1",
         "koa": "2.5.3",
@@ -104,7 +104,7 @@
         "url-loader": "1.1.2",
         "react-hot-loader": "4.3.11",
         "postcss-loader": "3.0.0",
-        "css-loader": "1.0.0",
+        "css-loader": "1.0.1",
         "less-loader": "4.1.0",
         "sass-loader": "7.1.0",
         "style-loader": "0.23.1",
