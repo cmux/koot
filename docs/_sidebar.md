@@ -3,6 +3,7 @@
 * [项目结构](/folders)
 * [NPM 命令](/task)
 * [可修改的环境变量](/env)
+* [配置](/config)
 * [生命周期](/life-cycle)
 * [i18n/多语言](/i18n)
 * [HTML 模板](/template)

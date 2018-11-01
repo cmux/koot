@@ -6,6 +6,7 @@ const common = require('../common')
  * @param {Object} [options={}] 生产配置时使用的选项
  * @param {Object} [options.aliases]
  * @param {Object} [options.defines]
+ * @param {Object} [options.css]
  * @returns {Object} 通用配置对象
  */
 module.exports = async (options = {}) => {
@@ -16,6 +17,7 @@ module.exports = async (options = {}) => {
     const {
         aliases,
         defines,
+        css,
     } = options
 
     return await common.factory({
@@ -26,5 +28,6 @@ module.exports = async (options = {}) => {
 
         aliases,
         defines,
+        css,
     })
 }

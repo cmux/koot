@@ -2,8 +2,9 @@ const fs = require('fs')
 const path = require('path')
 const webpack = require('webpack')
 // const ExtractTextPlugin = require("extract-text-webpack-plugin")
-const MiniCssExtractPlugin = require("mini-css-extract-plugin")
+// const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 
+const createModuleRules = require('./config/create/module-rules')
 const defaultDefines = require('../../defaults/defines.js')
 const getPathnameProjectConfigFile = require('../../utils/get-pathname-project-config-file')
 
@@ -12,12 +13,15 @@ const outputPath = 'dist'
 
 // 执行顺序，从右到左
 const factory = async ({
-    aliases,
     env = process.env.WEBPACK_BUILD_ENV,
     stage = process.env.WEBPACK_BUILD_STAGE,
     // spa = false,
+
+    aliases,
     defines = {},
+    css = {},
 }) => {
+
     // const useSpCssLoader = {
     //     loader: 'sp-css-loader',
     //     options: {
@@ -26,191 +30,14 @@ const factory = async ({
     //         readable: env === 'dev' ? 'true' : 'false',
     //     }
     // }
-    const useSpCssLoader = `sp-css-loader?length=4&mode=replace&readable=${env === 'dev' ? 'true' : 'false'}`
-    const useUniversalAliasLoader = {
-        loader: "universal-alias-loader",
-        options: {
-            alias: aliases
-        }
-    }
-
-    const extractCSS = (
-        env === 'prod' ||
-        (env === 'dev' && stage === 'client')
-    ) ? true : false
-
-    const useLessLoader = {
-        loader: "less-loader",
-        options: {
-            javascriptEnabled: true
-        }
-    }
-
-    let rulesJS = [
-        {
-            test: /\.(js|jsx)$/,
-            use: [
-                {
-                    loader: 'babel-loader',
-                    options: {
-                        cacheDirectory: true
-                    }
-                }
-            ]
-        }
-    ]
-    if (env === 'dev' && stage === 'client') {
-        rulesJS.push({
-            test: /\.jsx$/,
-            use: [
-                require.resolve('./loaders/react-hot'),
-            ]
-        })
-    }
 
     return {
         module: {
-            rules: [
-                // {
-                //     test: /\.json$/,
-                //     loader: 'json-loader'
-                // },
-
-                // CSS - general
-                {
-                    test: /\.css$/,
-                    exclude: [/\.g\.css$/, /node_modules/],
-                    use: [
-                        useSpCssLoader,
-                        "postcss-loader",
-                        useUniversalAliasLoader
-                    ]
-                }, {
-                    test: /\.less$/,
-                    exclude: [/\.g\.less$/, /node_modules/],
-                    use: [
-                        useSpCssLoader,
-                        "postcss-loader",
-                        useLessLoader,
-                        useUniversalAliasLoader
-                    ]
-                }, {
-                    test: /\.scss$/,
-                    exclude: [/\.g\.scss$/, /node_modules/],
-                    use: [
-                        useSpCssLoader,
-                        "postcss-loader",
-                        "sass-loader",
-                        useUniversalAliasLoader
-                    ]
-                },
-
-                // CSS - in node_modules
-                {
-                    test: /\.css$/,
-                    include: /node_modules/,
-                    use: [
-                        "style-loader",
-                        "postcss-loader"
-                    ]
-                }, {
-                    test: /\.less$/,
-                    include: /node_modules/,
-                    use: [
-                        "style-loader",
-                        "postcss-loader",
-                        "less-loader"
-                    ]
-                }, {
-                    test: /\.scss$/,
-                    include: /node_modules/,
-                    use: [
-                        "style-loader",
-                        "postcss-loader",
-                        "sass-loader"
-                    ]
-                },
-
-                // CSS - critical
-                {
-                    test: extractCSS ? /critical\.g\.css$/ : /^IMPOSSIBLE$/,
-                    use: [
-                        MiniCssExtractPlugin.loader,
-                        "css-loader",
-                        "postcss-loader",
-                        useUniversalAliasLoader
-                    ]
-                    // use: ExtractTextPlugin.extract({
-                    //     fallback: "style-loader",
-                    //     use: ["css-loader", "postcss-loader"]
-                    // })
-                }, {
-                    test: extractCSS ? /critical\.g\.less$/ : /^IMPOSSIBLE$/,
-                    use: [
-                        MiniCssExtractPlugin.loader,
-                        "css-loader",
-                        "postcss-loader",
-                        useLessLoader,
-                        useUniversalAliasLoader
-                    ]
-                    // use: ExtractTextPlugin.extract({
-                    //     fallback: "style-loader",
-                    //     use: ["css-loader", "postcss-loader", "less-loader"]
-                    // })
-                }, {
-                    test: extractCSS ? /critical\.g\.scss$/ : /^IMPOSSIBLE$/,
-                    use: [
-                        MiniCssExtractPlugin.loader,
-                        "css-loader",
-                        "postcss-loader",
-                        "sass-loader",
-                        useUniversalAliasLoader
-                    ]
-                    // use: ExtractTextPlugin.extract({
-                    //     fallback: "style-loader",
-                    //     use: ["css-loader", "postcss-loader", "sass-loader"]
-                    // })
-                },
-
-                // CSS - other global
-                {
-                    test: /\.g\.css$/,
-                    exclude: extractCSS ? /critical\.g\.css$/ : undefined,
-                    // loader: 'style-loader!postcss-loader'
-                    use: [
-                        "style-loader",
-                        "css-loader",
-                        "postcss-loader",
-                        useUniversalAliasLoader
-                    ]
-                }, {
-                    test: /\.g\.less$/,
-                    exclude: extractCSS ? /critical\.g\.less$/ : undefined,
-                    // loader: 'style-loader!postcss-loader!less-loader'
-                    use: [
-                        "style-loader",
-                        "css-loader",
-                        "postcss-loader",
-                        useLessLoader,
-                        useUniversalAliasLoader
-                    ]
-                }, {
-                    test: /\.g\.scss$/,
-                    exclude: extractCSS ? /critical\.g\.scss$/ : undefined,
-                    // loader: 'style-loader!postcss-loader!sass-loader'
-                    use: [
-                        "style-loader",
-                        "css-loader",
-                        "postcss-loader",
-                        "sass-loader",
-                        useUniversalAliasLoader
-                    ]
-                },
-
-                //
-
-                ...rulesJS
-            ]
+            rules: createModuleRules({
+                aliases,
+                defines,
+                css,
+            })
         },
         resolve: {
             alias: { ...aliases },

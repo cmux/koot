@@ -2,10 +2,10 @@ const createGlobalDefaultConfig = require('./create-global-default')
 
 module.exports = async (config = {}, data = {}) => {
     const {
-        aliases, defines,
+        aliases, defines, css,
     } = data
     const configGlobalDefault = await createGlobalDefaultConfig({
-        aliases, defines,
+        aliases, defines, css,
     })
 
     // 合并 module.rules / loaders

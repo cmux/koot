@@ -101,6 +101,13 @@ module.exports = {
         onRender: './server/lifecycle/on-render',
     },
 
+    // ========================================================================
+    //
+    // 以上部分引入文件的选项需填写文件路径
+    // 以下部分引入文件的选项需使用 require() 方式直接引用
+    //
+    // ========================================================================
+
     /** 
      * @type {String} 打包目标目录
      * 默认会在该目录下建立 public 和 server 目录，分别对应 web 服务器和服务器执行代码
@@ -161,6 +168,24 @@ module.exports = {
         "~base.less": path.resolve('./src/constants/less/base.less'),
         "~Assets": path.resolve('./src/assets'),
         "~/": path.resolve('./src')
+    },
+
+    /**
+     * @type {Object} CSS 打包相关设置
+     * @namespace
+     * @property {Object} test 文件名规则。规则会自动应用到 `.less` `.sass` 和 `.scss` 文件上
+     * @property {String|RegExp} test.normal 标准 CSS 文件，在打包时不会被 koot 定制的 css-loader 处理
+     * @property {String|RegExp} test.component 组件 CSS 文件，在打包时会被 koot 定制的 css-loader 处理
+     * @property {Array} extract 这些文件在打包时会拆成独立文件
+     */
+    css: {
+        test: {
+            normal: /^((?!component).)*\.css$/,
+            component: /\.component.css$/,
+        },
+        extract: [
+            /critical\.less/,
+        ]
     },
 
     /** @type {(Number|Object|String)} 服务器运行端口 */

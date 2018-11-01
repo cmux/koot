@@ -280,6 +280,12 @@ module.exports = async (kootConfig = {}) => {
         quietMode
     })
 
+    // if (Array.isArray(webpackConfig)) {
+    //     webpackConfig.forEach(config => console.log(config.module.rules))
+    // } else {
+    //     console.log(webpackConfig.module.rules)
+    // }
+
     // 客户端开发模式
     if (STAGE === 'client' && ENV === 'dev') {
         const compiler = webpack(webpackConfig)
@@ -324,6 +330,7 @@ module.exports = async (kootConfig = {}) => {
         // 执行打包
         const build = async (config, onComplete = buildingComplete) => {
             const compiler = webpack(config)
+            // console.log('compiler')
             await new Promise((resolve, reject) => {
                 compiler.run(async (err, stats) => {
                     const info = stats.toJson()

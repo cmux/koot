@@ -7,7 +7,7 @@ const doCricital = () => {
     self.isCriticalInit = true
 
     // 加载最优先CSS
-    require('./critical.g.less')
+    require('./critical.less')
 
     // App 初始化失败
     self.onInitError = () => {
