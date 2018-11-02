@@ -11,7 +11,7 @@ const __ = require('../../utils/translate')
 const spinner = require('../../utils/spinner')
 const getDistPath = require('../../utils/get-dist-path')
 const getAppType = require('../../utils/get-app-type')
-const getCwd = require('../../utils/get-cwd')
+// const getCwd = require('../../utils/get-cwd')
 
 const log = require('../../libs/log')
 const elapse = require('../../libs/elapse.js')
@@ -36,7 +36,7 @@ const {
 // const DEBUG = 1
 
 // 程序启动路径，作为查找文件的基础
-const RUN_PATH = getCwd()
+// const RUN_PATH = getCwd()
 
 // 初始化环境变量
 require('../../utils/init-node-env')()

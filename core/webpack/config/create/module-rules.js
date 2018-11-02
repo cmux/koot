@@ -69,12 +69,12 @@ module.exports = (options = {}) => {
     // 处理 CSS 规则
     {
         const {
-            test: cssTest = {},
+            fileBasename: cssTest = {},
             extract: cssExtract = [/critical\.css$/, /critical\.less$/, /critical\.sass$/]
         } = css
         const {
-            normal: cssTestNormal = /^((?!component).)*\.css$/,
-            component: cssTestComponent = /\.component\.css$/,
+            normal: cssTestNormal = /^((?!\.component\.).)*$/,
+            component: cssTestComponent = /\.component$/,
         } = cssTest
 
         /** @type {Boolean} 是否允许抽取 CSS */
@@ -207,9 +207,11 @@ const validateCssFilenameTest = (test, basename = '') => {
         // console.log(regStr)
 
         return {
-            css: test,
-            less: new RegExp(regStr.replace(/\.css\$$/, '.less$')),
-            sass: new RegExp(regStr.replace(/\.css\$$/, '.(sass|scss)$')),
+            css: new RegExp(`${regStr}\\.css$`),
+            less: new RegExp(`${regStr}\\.less$`),
+            sass: new RegExp(`${regStr}\\.(sass|scss)$`),
+            // less: new RegExp(regStr.replace(/\.css\$$/, '.less$')),
+            // sass: new RegExp(regStr.replace(/\.css\$$/, '.(sass|scss)$')),
         }
     }
 

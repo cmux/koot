@@ -11,6 +11,13 @@ const daysToKeep = 2
  * @async
  */
 module.exports = async (config = {}, options = {}) => {
+    // 扩展不支持 toJSON 的类
+    {
+        Object.defineProperty(RegExp.prototype, "toJSON", {
+            value: RegExp.prototype.toString
+        })
+    }
+
     const {
         quietMode = false
     } = options

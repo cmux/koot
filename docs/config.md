@@ -6,11 +6,11 @@
 
 CSS 打包相关设置
 
-- _Object_ `css.test`
-<br>文件名规则。规则会自动应用到 `.less` `.sass` 和 `.scss` 文件上
-- _RegExp_ `css.test.normal`
+- _Object_ `css.fileBasename`
+<br>文件名规则，不包含扩展名部分。规则会自动应用到 `.less` `.sass` 和 `.scss` 文件上
+- _RegExp_ `css.fileBasename.normal`
 <br>标准 CSS 文件，在打包时不会被 koot 定制的 css-loader 处理
-- _RegExp_ `css.test.component`
+- _RegExp_ `css.fileBasename.component`
 <br>组件 CSS 文件，在打包时会被 koot 定制的 css-loader 处理
 - _Array_ `css.extract`
 <br>这些文件在打包时会拆分成独立文件
@@ -21,9 +21,9 @@ CSS 打包相关设置
 module.exports = {
     // ...
     css: {
-        test: {
-            normal: /^((?!component).)*\.css$/,
-            component: /\.component\.css$/,
+        fileBasename: {
+            normal: /^((?!\.component\.).)*$/,
+            component: /\.component$/,
         },
         extract: [
             /critical\.css$/,

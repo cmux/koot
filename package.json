@@ -1,6 +1,6 @@
 {
     "name": "koot",
-    "version": "0.7.0-alpha.3",
+    "version": "0.7.0-alpha.4",
     "description": "Koot.js - React isomorphic framework created by CMUX",
     "main": "index.js",
     "sideEffects": false,
@@ -102,7 +102,7 @@
         "json-loader": "0.5.7",
         "file-loader": "2.0.0",
         "url-loader": "1.1.2",
-        "react-hot-loader": "4.3.11",
+        "react-hot-loader": "4.3.12",
         "postcss-loader": "3.0.0",
         "css-loader": "1.0.1",
         "less-loader": "4.1.0",
@@ -150,6 +150,6 @@
         "jest": "23.6.0",
         "is-valid-path": "0.1.1",
         "download-git-repo": "1.1.0",
-        "puppeteer": "1.9.0"
+        "puppeteer": "1.10.0"
     }
 }

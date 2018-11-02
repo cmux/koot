@@ -166,18 +166,18 @@ module.exports = {
     /**
      * @type {Object} CSS 打包相关设置
      * @namespace
-     * @property {Object} test 文件名规则。规则会自动应用到 `.less` `.sass` 和 `.scss` 文件上
-     * @property {RegExp} test.normal 标准 CSS 文件，在打包时不会被 koot 定制的 css-loader 处理
-     * @property {RegExp} test.component 组件 CSS 文件，在打包时会被 koot 定制的 css-loader 处理
+     * @property {Object} fileBasename 文件名规则，不包含扩展名部分。规则会自动应用到 `.less` `.sass` 和 `.scss` 文件上
+     * @property {RegExp} fileBasename.normal 标准 CSS 文件，在打包时不会被 koot 定制的 css-loader 处理
+     * @property {RegExp} fileBasename.component 组件 CSS 文件，在打包时会被 koot 定制的 css-loader 处理
      * @property {Array} extract 这些文件在打包时会拆成独立文件
      */
     css: {
-        test: {
-            normal: /\.g\.css$/,
-            component: /^((?!g).)*\.css$/,
+        fileBasename: {
+            normal: /\.g/,
+            component: /^((?!\.g\.).)*/,
         },
         extract: [
-            /critical\.g\.less/,
+            /critical\.g\.less$/,
         ]
     },
 
