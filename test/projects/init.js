@@ -28,7 +28,7 @@ const initProject = async (name) => {
     const cwd = path.resolve(__dirname, name)
     const filePackagejson = path.resolve(cwd, 'package.json')
     const pkgKoot = await fs.readJson(path.resolve(__dirname, '../../package.json'))
-    const title = `测试项目 ${name}`
+    // const title = `测试项目 ${name}`
     const titleInTerminal = '测试项目 ' + chalk.yellow(name)
 
     const error = (err) => {
@@ -83,7 +83,8 @@ const initProject = async (name) => {
         )
         waiting.stop()
         if (stderr) {
-            return error(stderr)
+            if (!/^npm WARN/.test(stderr))
+                return error(stderr)
         } else {
         }
     }
