@@ -13,5 +13,7 @@ module.exports = {
 
     keyConfigQuiet: '__QUIET__',
 
-    filenameWebpackDevServerPortTemp: '.dev_webpack-dev-server_port'
+    filenameWebpackDevServerPortTemp: '.dev_webpack-dev-server_port',
+    filenameBuilding: '.koot-building',
+    filenameBuildFail: '.koot-build-fail'
 }

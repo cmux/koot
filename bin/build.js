@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 
 const fs = require('fs-extra')
+const path = require('path')
 const program = require('commander')
 const chalk = require('chalk')
 
-const { keyFileProjectConfigTemp, keyConfigQuiet } = require('../defaults/before-build')
+const { keyFileProjectConfigTemp, keyConfigQuiet, filenameBuilding } = require('../defaults/before-build')
 
 const __ = require('../utils/translate')
 // const readBuildConfigFile = require('../utils/read-build-config-file')
@@ -150,6 +151,7 @@ const after = async (config = {}) => {
     const ENV = process.env.WEBPACK_BUILD_ENV
 
     const {
+        dist,
         [keyFileProjectConfigTemp]: fileProjectConfigTemp
     } = config
 
@@ -157,6 +159,11 @@ const after = async (config = {}) => {
     if (ENV === 'prod' && fileProjectConfigTemp) {
         await fs.remove(fileProjectConfigTemp)
     }
+
+    // 移除标记文件
+    const fileBuilding = path.resolve(dist, filenameBuilding)
+    if (fs.existsSync(fileBuilding))
+        await fs.remove(fileBuilding)
 }
 
 run().catch(err => {

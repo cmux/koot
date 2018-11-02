@@ -29,6 +29,8 @@ const {
     filenameWebpackDevServerPortTemp,
     keyFileProjectConfigTemp,
     keyConfigQuiet,
+    filenameBuilding,
+    filenameBuildFail,
 } = require('../../defaults/before-build')
 
 
@@ -123,19 +125,37 @@ module.exports = async (kootConfig = {}) => {
         }))
 
     const before = async () => {
+        const dist = getDistPath()
+
         // 开发模式
         if (ENV === 'dev') {
             // 确保 server/index.js 存在
-            fs.ensureFileSync(path.resolve(getDistPath(), `./server/index.js`))
+            fs.ensureFileSync(path.resolve(dist, `./server/index.js`))
         }
 
         if (!quietMode)
             log('callback', 'build', `callback: ` + chalk.green('beforeBuild'))
 
+        // 清除遗留文件
+        const filesToRemove = [
+            filenameBuilding,
+            filenameBuildFail
+        ]
+        for (let filename of filesToRemove) {
+            const file = path.resolve(dist, filename)
+            if (fs.existsSync(file))
+                await fs.remove(file)
+        }
+
+        // 创建空文件标记
+        fs.ensureFileSync(path.resolve(dist, filenameBuilding))
+
         if (typeof beforeBuild === 'function') await beforeBuild(data)
     }
 
     const after = async () => {
+        const dist = getDistPath()
+
         if (!quietMode) console.log(' ')
 
         if (!analyze && pwa && STAGE === 'client' && ENV === 'prod') {
@@ -146,6 +166,17 @@ module.exports = async (kootConfig = {}) => {
         if (STAGE === 'server' && ENV === 'prod') {
             // 生成PWA使用的 service-worker.js
             await afterServerProd(data)
+        }
+
+        // 清除遗留文件
+        const filesToRemove = [
+            filenameBuilding,
+            filenameBuildFail
+        ]
+        for (let filename of filesToRemove) {
+            const file = path.resolve(dist, filename)
+            if (fs.existsSync(file))
+                await fs.remove(file)
         }
 
         log('callback', 'build', `callback: ` + chalk.green('afterBuild'))
@@ -264,12 +295,28 @@ module.exports = async (kootConfig = {}) => {
      */
     const buildingError = (err) => {
         // 移除过程中创建的临时文件
-        const pathnameTemp = path.resolve(data.dist, data[keyFileProjectConfigTemp])
-        if (fs.existsSync(pathnameTemp))
-            fs.removeSync(pathnameTemp)
+        if (data[keyFileProjectConfigTemp]) {
+            const pathnameTemp = path.resolve(data.dist, data[keyFileProjectConfigTemp])
+            if (fs.existsSync(pathnameTemp))
+                fs.removeSync(pathnameTemp)
+        }
 
         // 将错误添加入结果对象
         result.addError(err)
+
+        // 将错误写入文件
+        const fileFail = path.resolve(data.dist, filenameBuildFail)
+        fs.ensureFileSync(fileFail)
+        fs.writeFileSync(
+            fileFail,
+            result.errors.join('\r\n\r\n'),
+            'utf-8'
+        )
+
+        // 移除标记文件
+        const fileBuilding = path.resolve(data.dist, filenameBuilding)
+        if (fs.existsSync(fileBuilding))
+            fs.removeSync(fileBuilding)
 
         // 返回结果对象
         return result

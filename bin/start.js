@@ -11,7 +11,8 @@ const chalk = require('chalk')
 // const opn = require('opn')
 
 const {
-    keyFileProjectConfigTemp
+    keyFileProjectConfigTemp,
+    filenameBuildFail,
 } = require('../defaults/before-build')
 const sleep = require('../utils/sleep')
 // const readBuildConfigFile = require('../utils/read-build-config-file')
@@ -63,15 +64,18 @@ const run = async () => {
 
     const afterBuild = async () => {
         // 删除过程中创建的临时文件
-        const fileProjectConfigTemp = path.resolve(dist, filenameProjectConfigTemp)
-        if (fs.existsSync(fileProjectConfigTemp))
-            await fs.remove(filenameProjectConfigTemp)
+        if (filenameProjectConfigTemp) {
+            const fileProjectConfigTemp = path.resolve(dist, filenameProjectConfigTemp)
+            if (fs.existsSync(fileProjectConfigTemp))
+                await fs.remove(filenameProjectConfigTemp)
+        }
     }
 
     // 打包
     if (build) {
         const building = spinner(chalk.yellowBright('[koot/build] ') + __('build.building'))
-        const { /*stdout,*/ stderr } = await exec(
+        const fileBuildFail = path.resolve(dist, filenameBuildFail)
+        const { stderr } = await exec(
             `koot-build`, {
                 env: {
                     KOOT_COMMAND_START: JSON.stringify(true)
@@ -107,11 +111,16 @@ const run = async () => {
         // })
 
         // 打包过程中遭遇错误
-        if (stderr && stderr !== ' ') {
+        if (
+            fs.existsSync(fileBuildFail) &&
+            stderr && stderr !== ' '
+        ) {
             await afterBuild()
 
             // 标记 spinner 为出错
             building.fail()
+
+            console.log(typeof stderr)
 
             // 打出错误报告
             console.log('')
