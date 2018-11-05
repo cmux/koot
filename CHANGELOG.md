@@ -17,7 +17,7 @@
 - 更新依赖包
   - `react-hot-loader` -> _4.3.12_
   - `sp-css-loader` -> _1.5.2_
-  - `sp-css-import` -> _3.0.0_ (major)
+  - `sp-css-import` -> _3.0.1_ (major)
   - `css-loader` -> _1.0.1_
 - 其他
   - 更新测试项目和测试案例
