@@ -120,7 +120,7 @@ const run = async () => {
             // 标记 spinner 为出错
             building.fail()
 
-            console.log(typeof stderr)
+            // console.log(typeof stderr)
 
             // 打出错误报告
             console.log('')

@@ -53,7 +53,7 @@
     },
     "dependencies": {
         "sp-css-loader": "1.5.2",
-        "sp-css-import": "2.1.1",
+        "sp-css-import": "3.0.0",
         "sp-koa-views": "1.0.1",
         "koa": "2.5.3",
         "koa-body": "2.6.0",
@@ -140,7 +140,7 @@
         "sync-request": "6.0.0",
         "portfinder": "1.0.19",
         "is-port-reachable": "2.0.0",
-        "acorn": "6.0.2"
+        "acorn": "6.0.3"
     },
     "peerDependencies": {},
     "devDependencies": {

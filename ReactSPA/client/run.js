@@ -37,7 +37,6 @@ import { reducers } from '../../React/redux'
 //     reducerLocales as i18nReducerLocales,
 // } from 'koot/i18n/redux'
 // import i18nRegister from 'koot/i18n/register/spa.client'
-// import { ImportStyleRoot } from 'sp-css-import'
 
 
 // ============================================================================
