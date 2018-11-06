@@ -36,6 +36,7 @@ module.exports = async (data = {}) => {
         defaultPublicDirName, defaultPublicPathname,
         afterBuild = () => { },
         staticAssets,
+        analyze = false,
     } = data
 
     const defaultClientEntry = path.resolve(
@@ -118,6 +119,12 @@ module.exports = async (data = {}) => {
                 result.output.publicPath = defaultPublicPathname
             }
             result.output.publicPath = transformOutputPublicpath(result.output.publicPath)
+
+            // analyze 模式，强制修改输出文件名
+            if (analyze) {
+                result.output.filename = 'entry-[id].[name].js'
+                result.output.chunkFilename = 'chunck-[id].[name].js'
+            }
         }
 
         { // 处理 entry

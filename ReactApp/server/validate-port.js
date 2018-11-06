@@ -1,6 +1,8 @@
 const fs = require('fs-extra')
 const isPortReachable = require('is-port-reachable')
 const inquirer = require('inquirer')
+// const osLocale = require('os-locale')
+
 const getPathnameDevServerStart = require('../../utils/get-pathname-dev-server-start')
 
 /**
@@ -18,6 +20,9 @@ const getPathnameDevServerStart = require('../../utils/get-pathname-dev-server-s
  * @returns {Number|Boolean} 如果最终没有结果，返回 false，否则返回可用的端口数
  */
 module.exports = async () => {
+    // const locale = osLocale.sync()
+    // console.log('locale', locale)
+
     // __SERVER_PORT__ 为打包的全局变量
     // 设置环境变量
     if (typeof process.env.SERVER_PORT === 'undefined' && typeof __SERVER_PORT__ !== 'undefined')
