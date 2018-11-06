@@ -1,7 +1,7 @@
 
 // TODO: change to one action type , like: CHANGE_BASE_INFO
-export const CHANGE_LANGUAGE = 'CHANGE_LANGUAGE'
-export const TELL_CLIENT_URL = 'TELL_CLIENT_URL'
+import { CHANGE_LANGUAGE, TELL_CLIENT_URL } from '../action-types'
+export { CHANGE_LANGUAGE, TELL_CLIENT_URL }
 
 export const SERVER_REDUCER_NAME = 'server'
 

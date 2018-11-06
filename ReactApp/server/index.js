@@ -15,13 +15,14 @@ global.NOT_WEBPACK_RUN = true
 // 
 
 const fs = require('fs-extra')
-const getPathnameDevServerStart = require('../../utils/get-pathname-dev-server-start')
 
-//
+import KoaApp from './class-koa-app'
+import modifyKoaApp from './modify-koa-app'
+import validatePort from './validate-port'
 
-import App from './app'
+import { publicPathPrefix } from '../../defaults/webpack-dev-server'
+import getPathnameDevServerStart from '../../utils/get-pathname-dev-server-start'
 
-import kootServer from './run'
 import {
     name,
     // dir,
@@ -32,38 +33,25 @@ import {
     client,
     server,
 } from '__KOOT_PROJECT_CONFIG_PATHNAME__'
-import { publicPathPrefix } from '../../defaults/webpack-dev-server'
 // } from '../../../../koot'
 
 const {
     cookieKeys,
 } = server
 
+//
+
 const run = async () => {
-    const port = await require('./validate-port')()
-
-    if (!port) {
-        console.log(`\x1b[31m×\x1b[0m ` + `\x1b[93m[koot/server]\x1b[0m port \x1b[32m${process.env.SERVER_PORT}\x1b[0m has been taken.`)
-        console.log(' ')
-
-        if (__DEV__) {
-            await fs.writeFile(
-                getPathnameDevServerStart(),
-                `port ${process.env.SERVER_PORT} has been taken.`,
-                'utf-8'
-            )
-        }
-
-        return
-    }
+    const port = await validatePort()
+    if (!port) return
 
     // console.log('process.env.SERVER_PORT', process.env.SERVER_PORT)
     // console.log('__SERVER_PORT__', __SERVER_PORT__)
     // console.log('port', port)
 
     // const serverConfig = require('../config/system')
-    const appObj = new App()
-    const app = appObj.instance()
+    const koaApp = new KoaApp()
+    const app = koaApp.instance()
 
     /* 公用的koa配置 */
     app.keys = cookieKeys || 'koot';
@@ -78,7 +66,7 @@ const run = async () => {
         }))
     }
 
-    await kootServer(app, {
+    await modifyKoaApp(app, {
         name,
         // dir,
         template,
@@ -123,7 +111,7 @@ const run = async () => {
     }
 
     // 开启服务器
-    appObj.run(port)
+    koaApp.run(port)
 
     // 最终 log
     setTimeout(() => {

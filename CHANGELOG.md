@@ -12,8 +12,9 @@
 - React 同构
   - 现在启动服务器时会对设定的端口进行检查。如果端口被占用，会报告相应的错误
 - 添加依赖包
-  - `portfinder`
+  - `inquirer`
   - `is-port-reachable`
+  - `portfinder`
 - 更新依赖包
   - major
     - `sp-css-import` -> _3.0.1_

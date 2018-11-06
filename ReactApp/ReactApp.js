@@ -33,7 +33,7 @@ import pageinfo from '../React/pageinfo'
 // import fetchdata from '../React/fetchdata'
 import Root from '../React/root.jsx'
 
-// import ACTION_TYPE from './ActionType'
+// import ACTION_TYPE from './action-types'
 
 // 默认根 DOM 结点 ID
 const DEFAULT_ROOT_DOM_ID = 'root'

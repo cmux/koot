@@ -126,7 +126,8 @@
         "sync-request": "6.0.0",
         "portfinder": "1.0.19",
         "is-port-reachable": "2.0.0",
-        "acorn": "6.0.4"
+        "acorn": "6.0.4",
+        "inquirer": "6.2.0"
     },
     "engines": {
         "node": ">=8.0.0"

@@ -15,7 +15,7 @@ import { changeLocaleQueryKey } from '../../defaults/defines'
 
 //
 
-import { CHANGE_LANGUAGE, TELL_CLIENT_URL/*, SERVER_REDUCER_NAME, serverReducer*/ } from './redux'
+import { CHANGE_LANGUAGE, TELL_CLIENT_URL } from '../action-types'
 import kootClient from '../client/run'
 import ReactIsomorphic from '../ReactIsomorphic'
 const getDistPath = require('../../utils/get-dist-path')
@@ -52,6 +52,21 @@ const doI18nRegister = (
     })
 }
 
+/**
+ * 为 Koa server 进行调整、添加中间件等操作，以支持 React 同构
+ * @async
+ * @param {Object} app Koa server/app 实例
+ * @param {Object} options
+ * @param {String} [options.template] HTML 模板内容
+ * @param {Boolean|Array} [options.i18n] i18n 设置项
+ * @param {Boolean|String} [options.i18nType] i18n 类型
+ * @param {Object} [options.locales] i18n 语言包
+ * @param {Object} [options.router] 路由设置
+ * @param {Object} [options.redux] redux 设置
+ * @param {Object} [options.client] 客户端/浏览器端设置项
+ * @param {Object} [options.server] 服务器端设置项
+ * @returns {Object} 调整后的 Koa server/app 实例
+ */
 export default async (app, {
     // name,
     template,
