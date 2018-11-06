@@ -3,7 +3,7 @@ import getLanguagelistFromState from '../get-language-list-from-state'
 import parseLocaleId from '../parse-locale-id'
 
 import {
-    I18N_INIT, I18N_LOCALES,
+    I18N_INIT, I18N_SET_LOCALES,
     localeId, locales,
     setLocaleId
 } from '../index'
@@ -35,7 +35,7 @@ export const reducerLocaleId = (state = null, action) => {
  */
 export const reducerLocales = (state = {}, action) => {
     switch (action.type) {
-        case I18N_LOCALES:
+        case I18N_SET_LOCALES:
             return Object.assign({}, state, action.locales)
     }
     return state
@@ -67,7 +67,7 @@ export const actionInit = (state) => {
  */
 export const actionLocales = () => {
     return {
-        type: I18N_LOCALES,
+        type: I18N_SET_LOCALES,
         locales: locales[localeId]
     }
 }

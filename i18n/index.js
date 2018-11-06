@@ -1,8 +1,8 @@
 // import React from 'react'
 import { setLocaleId as kootSetLocaleId } from '../'
 
-export const I18N_INIT = 'I18N_INIT'
-export const I18N_LOCALES = 'I18N_LOCALES'
+export const I18N_INIT = '@@KOOT@@I18N_INIT'
+export const I18N_SET_LOCALES = '@@KOOT@@I18N_SET_LOCALES'
 
 // 当前项目可用的语言包代码，与语言包文件名精确匹配
 // 注：无论何种环境，在使用任何函数前，需要使用 register() 函数定义/初始化该 Array

@@ -15,10 +15,15 @@
   - `portfinder`
   - `is-port-reachable`
 - 更新依赖包
-  - `react-hot-loader` -> _4.3.12_
-  - `sp-css-loader` -> _1.5.2_
-  - `sp-css-import` -> _3.0.1_ (major)
-  - `css-loader` -> _1.0.1_
+  - major
+    - `sp-css-import` -> _3.0.1_
+  - minor
+    - `copy-webpack-plugin` -> _4.6.0_
+    - `webpack` -> _4.25.1_
+  - patch
+    - `css-loader` -> _1.0.1_
+    - `react-hot-loader` -> _4.3.12_
+    - `sp-css-loader` -> _1.5.2_
 - 其他
   - 更新测试项目和测试案例
   - `koot-cli`
