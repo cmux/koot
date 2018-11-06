@@ -1,0 +1,40 @@
+{
+    "name": "koot",
+    "description": "Koot.js - React isomorphic framework created by CMUX",
+    "scripts": {
+        "doc-server": "docsify serve docs"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/cmux/koot"
+    },
+    "keywords": [
+        "react",
+        "isomorphic"
+    ],
+    "author": {
+        "name": "dongwenxiao",
+        "email": "cs_victor@126.com"
+    },
+    "contributors": [
+        {
+            "name": "diablohu",
+            "email": "diablohudream@gmail.com",
+            "url": "http://diablohu.com"
+        }
+    ],
+    "bugs": {
+        "url": "https://github.com/cmux/koot/issues"
+    },
+    "homepage": "https://github.com/cmux/koot",
+    "engines": {
+        "node": ">=8.0.0"
+    },
+    "license": "Apache-2.0",
+    "devDependencies": {
+        "lerna": "^3.4.3"
+    },
+    "dependencies": {
+        "docsify-cli": "^4.3.0"
+    }
+}

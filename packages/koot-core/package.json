@@ -1,0 +1,26 @@
+{
+  "name": "koot-core",
+  "version": "0.0.0",
+  "description": "> TODO: description",
+  "author": "dongwenxiao <cs_victor@126.com>",
+  "homepage": "https://github.com/cmux/koot#readme",
+  "license": "ISC",
+  "main": "lib/koot-core.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cmux/koot.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "bugs": {
+    "url": "https://github.com/cmux/koot/issues"
+  }
+}
