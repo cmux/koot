@@ -26,7 +26,7 @@
   - patch
     - `css-loader` -> _1.0.1_
     - `react-hot-loader` -> _4.3.12_
-    - `sp-css-loader` -> _1.5.2_
+    - `sp-css-loader` -> _1.5.3_
 - 其他
   - 更新测试项目和测试案例
   - `koot-cli`

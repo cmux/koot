@@ -73,8 +73,8 @@ module.exports = (options = {}) => {
             extract: cssExtract = [/critical\.css$/, /critical\.less$/, /critical\.sass$/]
         } = css
         const {
-            normal: cssTestNormal = /^((?!\.component\.).)*$/,
-            component: cssTestComponent = /\.component$/,
+            normal: cssTestNormal = /^((?!\.(component|module)\.).)*$/,
+            component: cssTestComponent = /\.(component|module)$/,
         } = cssTest
 
         /** @type {Boolean} 是否允许抽取 CSS */
@@ -104,7 +104,7 @@ module.exports = (options = {}) => {
         // CSS: component
         rules.push({
             test: testComponent.css,
-            exclude: [/*testNormal.css, *//node_modules/],
+            exclude: [/*testNormal.css, *//node_modules\/((?!koot-.+?\/).)*\//],
             use: [
                 useSpCssLoader,
                 "postcss-loader",
@@ -113,7 +113,7 @@ module.exports = (options = {}) => {
         })
         rules.push({
             test: testComponent.less,
-            exclude: [/*testNormal.less, *//node_modules/],
+            exclude: [/*testNormal.less, *//node_modules\/((?!koot-.+?\/).)*\//],
             use: [
                 useSpCssLoader,
                 "postcss-loader",
@@ -123,7 +123,7 @@ module.exports = (options = {}) => {
         })
         rules.push({
             test: testComponent.sass,
-            exclude: [/*testNormal.sass, *//node_modules/],
+            exclude: [/*testNormal.sass, *//node_modules\/((?!koot-.+?\/).)*\//],
             use: [
                 useSpCssLoader,
                 "postcss-loader",
