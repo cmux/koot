@@ -1,0 +1,22 @@
+{
+    "title": "Koot.js 模板项目",
+    "pages": {
+        "home": {
+            "title": "欢迎"
+        },
+        "extend": {
+            "title": "组件扩展",
+            "description": "简介：Koot.js 组件扩展",
+            "isomorphic": "同构数据",
+            "isomorphic_content": "当直接访问本页或刷新本页时，上面的值会直接在服务器端获取并渲染到同构结果中；当从其他页面访问到本页时，上值会通过浏览器端获取并渲染。"
+        },
+        "static": {
+            "title": "静态资源",
+            "description": "简介：Koot.js 静态资源使用",
+            "method_require": "require() 方法",
+            "method_require_content": "使用 require() 引用静态文件。文件名将会被自动 Hash 化。",
+            "method_static": "静态资源文件夹方法",
+            "method_static_content": "将静态文件放入静态资源文件夹中，该路径可在 koot.build.js 中设置。"
+        }
+    }
+}

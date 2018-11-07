@@ -1,0 +1,17 @@
+{
+    "file_not_found": "File not found: ${file}",
+    "missing_option": "Please provide option ${option}.\n${indent}> ${example}",
+    "build": {
+        "config_type_error": "Error: build config file (${file}) must export ${type}",
+        "build_start": "Start building: ${type} [STAGE ${stage} | ENV ${env}]",
+        "build_complete": "Building complete: ${type} [STAGE ${stage} | ENV ${env}]",
+        "building": "Webpack building...",
+        "building_locale": "Webpack building (locale ${locale})...",
+        "spa_template_emitted": "SPA HTML file emitted to ${file}",
+        "spa_template_not_found": "SPA template file not found",
+        "complete": "Build complete! (${time})"
+    },
+    "dev": {
+        "missing_stage": "Please set STAGE.\n${indent}> ${example}"
+    }
+}

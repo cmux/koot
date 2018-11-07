@@ -1,0 +1,1 @@
+export const LOCATION_UPDATE = '@@KOOT@@LOCATION_UPDATE'
