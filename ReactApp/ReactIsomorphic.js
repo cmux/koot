@@ -272,7 +272,7 @@ export default class ReactIsomorphic {
                         .map(l => {
                             const href = (typeof ctx.query[changeLocaleQueryKey] === 'string')
                                 ? ctx.href.replace(
-                                    new RegExp(`${changeLocaleQueryKey}=[a-zA-Z]+`),
+                                    new RegExp(`${changeLocaleQueryKey}=[a-zA-Z-_]+`),
                                     `${changeLocaleQueryKey}=${l}`
                                 )
                                 : ctx.href + (ctx.querystring ? `&` : (

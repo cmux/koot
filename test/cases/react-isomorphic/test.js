@@ -137,8 +137,10 @@ const testPage = async (port) => {
     }
     await testLinksToOtherLang('')
     await testLinksToOtherLang(`?${changeLocaleQueryKey}=zh`)
+    await testLinksToOtherLang(`?${changeLocaleQueryKey}=zh-tw`)
     await testLinksToOtherLang('?test=a')
     await testLinksToOtherLang(`?test=a&${changeLocaleQueryKey}=zh`)
+    await testLinksToOtherLang(`?test=a&${changeLocaleQueryKey}=zh-tw`)
 
     await browser.close()
 }
