@@ -19,6 +19,7 @@ module.exports = (options = {}) => {
         {
             test: /\.css$/,
             include: /node_modules/,
+            exclude: /node_modules\/koot-.+?\//,
             use: [
                 "style-loader",
                 "postcss-loader"
@@ -26,6 +27,7 @@ module.exports = (options = {}) => {
         }, {
             test: /\.less$/,
             include: /node_modules/,
+            exclude: /node_modules\/koot-.+?\//,
             use: [
                 "style-loader",
                 "postcss-loader",
@@ -34,6 +36,7 @@ module.exports = (options = {}) => {
         }, {
             test: /\.(scss|sass)$/,
             include: /node_modules/,
+            exclude: /node_modules\/koot-.+?\//,
             use: [
                 "style-loader",
                 "postcss-loader",
@@ -73,8 +76,8 @@ module.exports = (options = {}) => {
             extract: cssExtract = [/critical\.css$/, /critical\.less$/, /critical\.sass$/]
         } = css
         const {
-            normal: cssTestNormal = /^((?!\.(component|module)\.).)*$/,
-            component: cssTestComponent = /\.(component|module)$/,
+            normal: cssTestNormal = /^((?!\.(component|module)\.).)*/,
+            component: cssTestComponent = /\.(component|module)/,
         } = cssTest
 
         /** @type {Boolean} 是否允许抽取 CSS */
@@ -101,10 +104,42 @@ module.exports = (options = {}) => {
         const testNormal = validateCssFilenameTest(cssTestNormal)
         const testComponent = validateCssFilenameTest(cssTestComponent, 'component')
 
+        // node_modules/koot-component
+        rules.push({
+            test: /\.(component|module)\.css$/,
+            include: /node_modules\/koot-component/,
+            use: [
+                useSpCssLoader,
+                "postcss-loader",
+                useUniversalAliasLoader
+            ]
+        })
+        rules.push({
+            test: /\.(component|module)\.less$/,
+            include: /node_modules\/koot-component/,
+            use: [
+                useSpCssLoader,
+                "postcss-loader",
+                useLessLoader,
+                useUniversalAliasLoader
+            ]
+        })
+        rules.push({
+            test: /\.(component|module)\.(scss|sass)$/,
+            include: /node_modules\/koot-component/,
+            use: [
+                useSpCssLoader,
+                "postcss-loader",
+                useSassLoader,
+                useUniversalAliasLoader
+            ]
+        })
+
         // CSS: component
+        // /node_modules\/((?!koot-.+?\/).)*\//
         rules.push({
             test: testComponent.css,
-            exclude: [/*testNormal.css, *//node_modules\/((?!koot-.+?\/).)*\//],
+            exclude: [/*testNormal.css, *//node_modules/],
             use: [
                 useSpCssLoader,
                 "postcss-loader",
@@ -113,7 +148,7 @@ module.exports = (options = {}) => {
         })
         rules.push({
             test: testComponent.less,
-            exclude: [/*testNormal.less, *//node_modules\/((?!koot-.+?\/).)*\//],
+            exclude: [/*testNormal.less, *//node_modules/],
             use: [
                 useSpCssLoader,
                 "postcss-loader",
@@ -123,7 +158,7 @@ module.exports = (options = {}) => {
         })
         rules.push({
             test: testComponent.sass,
-            exclude: [/*testNormal.sass, *//node_modules\/((?!koot-.+?\/).)*\//],
+            exclude: [/*testNormal.sass, *//node_modules/],
             use: [
                 useSpCssLoader,
                 "postcss-loader",
