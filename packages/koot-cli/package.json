@@ -1,26 +1,70 @@
 {
-  "name": "koot-cli",
-  "version": "0.0.0",
-  "description": "> TODO: description",
-  "author": "dongwenxiao <cs_victor@126.com>",
-  "homepage": "https://github.com/cmux/koot#readme",
-  "license": "ISC",
-  "main": "lib/koot-cli.js",
-  "directories": {
-    "lib": "lib",
-    "test": "__tests__"
-  },
-  "files": [
-    "lib"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/cmux/koot.git"
-  },
-  "scripts": {
-    "test": "echo \"Error: run tests from root\" && exit 1"
-  },
-  "bugs": {
-    "url": "https://github.com/cmux/koot/issues"
-  }
+    "name": "koot-cli",
+    "version": "0.4.2",
+    "description": "CLI for creating and upgrading Koot.js project",
+    "main": "index.js",
+    "sideEffects": false,
+    "bin": {
+        "koot": "./bin/koot.js",
+        "koot-create": "./bin/koot-create.js",
+        "koot-upgrade": "./bin/koot-upgrade.js"
+    },
+    "scripts": {
+        "init": "node ./bin/init",
+        "eslint": "eslint \"!(node_modules|logs|dist|dist*|test)/**/*.+(js|jsx)\"",
+        "test": "jest"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/cmux/koot-cli"
+    },
+    "keywords": [
+        "es6/7",
+        "fullstack",
+        "react",
+        "react-server-render",
+        "react-router",
+        "redux",
+        "koa2",
+        "webpack2",
+        "http2"
+    ],
+    "license": "Apache-2.0",
+    "author": {
+        "name": "diablohu",
+        "email": "diablohudream@gmail.com",
+        "url": "http://diablohu.com"
+    },
+    "contributors": [
+        {
+            "name": "dongwenxiao",
+            "email": "cs_victor@126.com"
+        }
+    ],
+    "bugs": {
+        "url": "https://github.com/cmux/koot-cli/issues"
+    },
+    "engines": {
+        "node": ">=8.0.0"
+    },
+    "dependencies": {
+        "inquirer": "^6.2.0",
+        "fs-extra": "^7.0.0",
+        "ora": "^3.0.0",
+        "chalk": "^2.4.1",
+        "download-git-repo": "^1.1.0",
+        "os-locale": "^3.0.1",
+        "npm-email": "^3.0.0",
+        "semver": "^5.5.1",
+        "package-json": "^5.0.0",
+        "glob-promise": "^3.4.0",
+        "gitignore-globs": "^0.1.1",
+        "isbinaryfile": "^3.0.3",
+        "latest-version": "^4.0.0"
+    },
+    "devDependencies": {
+        "jest": "^23.6.0",
+        "eslint": "^5.6.1",
+        "babel-eslint": "^10.0.1"
+    }
 }

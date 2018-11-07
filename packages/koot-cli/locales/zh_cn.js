@@ -1,0 +1,68 @@
+module.exports = {
+    "welcome": "欢迎使用 Koot CLI :)",
+
+    "please_wait": "请稍候……",
+    "aborted": "已终止。",
+    "required_info": "(*) 必填项",
+    "yes": "是",
+    "no": "否",
+    "ok": "确认",
+    "cancel": "取消",
+    "invalid_input": "格式错误",
+    "dir_exist": "目录已存在",
+
+    "about_to_create_new_project": "创建全新 Koot.js 项目...",
+    "welcome_exist_select": "请选择命令:",
+    "welcome_exist_select_dev": "进入开发模式",
+    "welcome_exist_select_analyze": "分析打包结果",
+    "welcome_exist_select_build": "打包正式版本",
+    "welcome_exist_select_start": "打包正式版本并开启服务器",
+    "welcome_exist_select_upgrade": "升级 Koot.js",
+    "welcome_exist_current_super_project": "Koot CLI 工具需要 [koot] 才能运行，但当前项目目前使用 [super-project]。是否升级到 [koot]？",
+
+    "koot-cli_updated": "koot-cli 已更新",
+    "koot-cli_updated_description": "推荐将 koot-cli 更新到最新版本。使用以下命令可更新:",
+
+    "project_name_required": "项目名称 (*)",
+    "project_name_needed": "请输入项目名称",
+    "project_description": "项目描述",
+    "project_author": "作者名 (推荐填写 NPM 用户名)",
+    "project_mode": "项目模式",
+    "project_i18n_enabled": "多语言支持 (i18n)",
+    "project_i18n_type": "多语言 (i18n) 模式",
+    "project_dist_dir": "打包结果目录 (*)",
+    "project_dist_dir_needed": "请输入项目打包结果目录",
+
+    "project_mode_isomorphic": "同构 (Isomorphic)",
+    "project_mode_spa": "单页面应用 (SPA)",
+
+    "confirm_remove_exist_dir": "目标目录已存在",
+    "confirm_remove_exist_dir_remove": "删除目标目录",
+    "confirm_remove_exist_dir_overwrite": "覆盖已有文件",
+    "confirm_remove_exist_dir_input": "选择其他目录",
+    "removing_exist_dir": "删除目标目录",
+    "input_dir": "请输入路径名 (*)",
+
+    "downloading_boilerplate": "下载模板",
+    "copying_boilerplate": "复制模板",
+
+    "whats_next": "接下来……",
+    "step_goto_dir": "进入项目目录",
+    "step_install_dependencies": "安装依赖",
+    "step_run_dev": "运行开发模式",
+    "step_visit": "等待浏览器自动打开页面",
+
+    "welcome_upgrade": "Koot.js 项目升级",
+    "upgrade_confirmation": "是否升级？",
+    "no_need_to_upgrade": "无需升级",
+    "upgrade_determining": "正在分析 package.json",
+    "upgrade_error:package.json not exist": "文件未找到：package.json",
+    "upgrade_error:not koot.js project": "项目并非基于 Koot.js",
+    "upgrade_error:super-project version invalid": "[super-project] 版本号不合法",
+    "upgrade_error:super-project version too low": "[super-project] 版本过旧。请手动更新到 [koot]",
+    "upgrading": "正在升级",
+    "upgrade_files_changed": "修改的文件：",
+    "upgrade_files_removed": "删除的文件：",
+    "upgrade_0.2.0_warning": "已将 Babel 更新至 7.0，此次更新需要重写 Babel 配置。本更新程序已将现有的配置文件（.babelrc）删除，并生成了新的配置文件（babel.config.js）。如果打包失败，请参照 Babel 7.0 的全新文档自行修改 babel.config.js。",
+    "upgrade_0.7.0_warning": "新配置项: css。详情请参见文档 -> [https://koot.js.org/#/config]"
+}
