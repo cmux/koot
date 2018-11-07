@@ -145,12 +145,7 @@
     },
     "peerDependencies": {},
     "devDependencies": {
-        "eslint": "5.8.0",
-        "eslint-plugin-react": "7.11.1",
-        "babel-eslint": "10.0.1",
-        "jest": "23.6.0",
         "is-valid-path": "0.1.1",
-        "download-git-repo": "1.1.0",
-        "puppeteer": "1.10.0"
+        "download-git-repo": "1.1.0"
     }
 }
