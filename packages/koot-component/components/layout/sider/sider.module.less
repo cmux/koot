@@ -1,0 +1,28 @@
+.component {
+    width: 256px;
+    height: 100%;
+
+    background-color: #2b303b;
+    overflow: hidden;
+
+    transition: width 400ms cubic-bezier(.05,.74,.27,.99);
+    
+    &.sider-collapsed {
+        width: 80px;
+        .sider-inner {
+            transform: translate3d(-176px, 0, 0);
+            &:hover {
+                transform: translate3d(0, 0, 0);
+            }
+        }
+    }
+
+    .sider-inner {
+        width: 256px;
+        position: absolute;
+        min-height: 100%;
+        z-index: 1000;
+        background-color: #2b303b;
+        transition: transform 400ms cubic-bezier(.05,.74,.27,.99);
+    }
+}
