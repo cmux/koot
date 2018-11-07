@@ -11,7 +11,6 @@
         "koot-analyze": "./bin/analyze.js"
     },
     "scripts": {
-        "doc-server": "docsify serve docs",
         "eslint": "eslint \"!(node_modules|logs|dist|dist*|test)/**/*.+(js|jsx)\"",
         "pretest": "node ./test/pre-test.js",
         "test": "jest",
