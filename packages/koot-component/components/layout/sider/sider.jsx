@@ -14,10 +14,6 @@ class Sider extends Component {
         collapsed: PropTypes.bool, 
     }
 
-    componentDidMount() {
-        // console.info(this.props)
-    }
-
     render() {
         const { className, collapsed } = this.props;
         const classes = classNames([

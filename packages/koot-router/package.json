@@ -1,11 +1,11 @@
 {
   "name": "koot-router",
-  "version": "0.0.0",
-  "description": "> TODO: description",
-  "author": "dongwenxiao <cs_victor@126.com>",
+  "version": "1.0.0",
+  "description": "以纯 json 的格式定义路由",
+  "author": "zrain <zrainma@sina.com>",
   "homepage": "https://github.com/cmux/koot#readme",
   "license": "ISC",
-  "main": "lib/koot-router.js",
+  "main": "index.js",
   "directories": {
     "lib": "lib",
     "test": "__tests__"
@@ -22,5 +22,8 @@
   },
   "bugs": {
     "url": "https://github.com/cmux/koot/issues"
+  },
+  "peerDependencies": {
+    "react-router": "3.2.1"
   }
 }

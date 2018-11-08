@@ -1,7 +1,7 @@
 import { createStore, applyMiddleware, compose, bindActionCreators } from 'redux';
-import ReduxModule from './lib/redux-module.js';
-import { isObject } from './lib/utils.js';
-import createActionMiddleware from './lib/action.middleware.js';
+import ReduxModule from './redux-module.js';
+import { isObject } from './utils.js';
+import createActionMiddleware from './action.middleware.js';
 
 /**
  * 创建一个 redux-module-store

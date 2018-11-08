@@ -2,7 +2,10 @@ import { Component } from 'react';
 import { renderTransfer } from './lib/core.js';
 import { Form } from 'antd';
 import PropTypes from 'prop-types';
-import './form.module.less';
+
+@KootExtend({
+    styles: require('./form.module.less'),
+})
 
 class FormComponent extends Component {
 
@@ -19,9 +22,12 @@ class FormComponent extends Component {
             __rootProps: props
         })
         const form = renderTransfer(nextConfig)
-
         return form;
     }
 }
 
-export default Form.create()(FormComponent);
+export default Form.create({
+    onValuesChange: (props, changedValues, allValues) => {
+        props.onChange && props.onChange(allValues);
+    }
+})(FormComponent);

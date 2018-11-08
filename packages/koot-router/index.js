@@ -1,0 +1,1 @@
+export { default as createReactRouterConfiguration } from './lib/create-react-router-configuration';

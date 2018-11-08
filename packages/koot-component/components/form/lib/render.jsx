@@ -494,7 +494,7 @@ export const renderUploadHandler = (configItem = {}) => {
  * @param {Object} configItem json配置单元
  */
 export const renderSubmitButtonHandler = (configItem = {}) => {
-    const label = 'Submit';
+    const label = configItem.label || 'Submit';
     const props = getConfigItemProps(configItem);
     props.onClick = () => {
         onSubmitHandler && onSubmitHandler(configItem);

@@ -42,7 +42,14 @@ const getMenuItemAbbreviation = ( name ) => {
     return '';
 }
 
-
+const isNeedShow = ( childrenList ) => {
+    childrenList.forEach(item => {
+        if( item.meta && item.meta.showMenu !== false ){
+            return true;
+        }
+    })
+    return false;
+}
 
 const renderMenuItemContent = ( routeItem ) => {
     let abbreviation;
@@ -58,7 +65,7 @@ const renderMenuItemContent = ( routeItem ) => {
                 { routeItem.meta && routeItem.meta.detail }
             </span>
             {
-                routeItem.children
+                routeItem.children && isNeedShow(routeItem.children)
                 ?   <span className="nav-icon-arrow">
                         <Icon type="left" theme="outlined" />
                     </span>
@@ -81,7 +88,17 @@ const renderMenuList = ( _baseUrl, _routeList ) => {
         _routeList.map((routeItem, routeIndex) => {
             const currentUrl = `${_baseUrl}${routeItem.path}`;
             const key = `${currentUrl}-${routeIndex}`;
-            if( routeItem.children && routeItem.children.length > 0 ){
+            if( routeItem.meta ){
+                const { showMenu } = routeItem.meta;
+                if( showMenu === false ){
+                    return '';
+                }
+            }
+            if( 
+                routeItem.children && 
+                routeItem.children.length > 0 &&
+                isNeedShow( routeItem.children )
+            ){
                 return (
                     <SubMenu 
                         key={key}

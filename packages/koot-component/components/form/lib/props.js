@@ -1,4 +1,5 @@
 import * as Types from './constants';
+import { onSubmitHandler, onChangeHandler } from './event.js';
 
 /**
  * FormItem 默认 Props
@@ -8,18 +9,17 @@ import * as Types from './constants';
 const formItemPropsHandler = (props) => {
     // formLabel 默认布局
     const formItemLayout = {
-        labelCol: {
-            xs: { span: 24 },
-            sm: { span: 6 },
-        },
-        wrapperCol: {
-            xs: { span: 24 },
-            sm: { span: 10 },
-        },
+        // labelCol: {
+        //     xs: { span: 24 },
+        //     sm: { span: 24 },
+        // },
+        // wrapperCol: {
+        //     xs: { span: 24 },
+        //     sm: { span: 10 },
+        // },
     };
     const defaultProps = Object.assign({}, formItemLayout, {
         colon: false,
-        label: ' '
     })
     return Object.assign({}, defaultProps, props);
 }
@@ -102,6 +102,9 @@ export const getConfigItemProps = (configItem = {}) => {
             props = passwordPropsHandler(props);
             break;
         case Types.BUTTON:
+            props = buttonPropsHandler(props);
+            break;
+        case Types.SUBMIT:
             props = buttonPropsHandler(props);
             break;
         default:

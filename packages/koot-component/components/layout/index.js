@@ -1,11 +1,25 @@
-export { default as Sider } from './sider/sider.jsx';
+import Sider from './sider/sider.jsx';
 
-export { default as SiderHeader } from './sider/sider-header.jsx';
+import SiderHeader from './sider/sider-header.jsx';
 
-export { default as SiderSwitch } from './sider/sider-switch.jsx';
+import SiderFooter from './sider/sider-footer.jsx'; 
 
-export { default as Content } from './content/content.jsx';
+import SiderSwitch from './sider/sider-switch.jsx';
 
-export { default as Header } from './header/header.jsx';
+import Content from './content/content.jsx';
 
-export { default as Footer } from './footer/footer.jsx';
+import Header from './header/header.jsx';
+
+import Footer from './footer/footer.jsx';
+
+import Layout from './layout.jsx';
+
+Layout.Sider = Sider;
+Layout.SiderHeader = SiderHeader;
+Layout.SiderSwitch = SiderSwitch;
+Layout.Content = Content;
+Layout.Header = Header;
+Layout.Footer = Footer;
+Layout.SiderFooter = SiderFooter;
+
+export default Layout;
