@@ -1,3 +1,5 @@
+// const path = require('path')
+
 import React from 'react'
 import HTMLTool from './HTMLTool'
 import { renderToString } from 'react-dom/server'
@@ -5,9 +7,9 @@ import { createMemoryHistory, RouterContext, match } from 'react-router'
 import { Provider } from 'react-redux'
 import { syncHistoryWithStore } from 'react-router-redux'
 
-// import htmlInject from './inject'
-import renderTemplate from '../React/render-template'
-import { localeId } from '../i18n'
+import { changeLocaleQueryKey } from '../defaults/defines'
+import { publicPathPrefix } from '../defaults/webpack-dev-server'
+
 import {
     setStore,
     setHistory,
@@ -15,17 +17,20 @@ import {
     setPageinfo,
     // setFetchdata,
 } from '../'
+import { localeId } from '../i18n'
 import RenderCache from './render-cache'
+// import htmlInject from './inject'
+
+import onRequestGetStore from './server/on-request/get-store'
+
+import renderTemplate from '../React/render-template'
 import componentExtender from '../React/component-extender'
 import pageinfo from '../React/pageinfo'
 import {
     get as getStyles,
 } from '../React/styles'
+import validateInject from '../React/validate-inject'
 // import fetchdata from '../React/fetchdata'
-import { changeLocaleQueryKey } from '../defaults/defines'
-import { publicPathPrefix } from '../defaults/webpack-dev-server'
-
-// const path = require('path')
 
 // const defaultEntrypoints = require('../defaults/entrypoints')
 const getChunkmap = require('../utils/get-chunkmap')
@@ -33,8 +38,6 @@ const getChunkmap = require('../utils/get-chunkmap')
 // const readClientFile = require('../utils/read-client-file')
 const getSWPathname = require('../utils/get-sw-pathname')
 // const log = require('../libs/log')
-
-import validateInject from '../React/validate-inject'
 
 const error = require('debug')('SYSTEM:isomorphic:error')
 
@@ -161,7 +164,7 @@ export default class ReactIsomorphic {
                 // }
 
                 const memoryHistory = createMemoryHistory(url)
-                const store = _store || configStore()
+                const store = onRequestGetStore( _store || configStore )
                 const history = syncHistoryWithStore(memoryHistory, store)
 
                 // 根据router计算出渲染页面需要的数据，并把渲染需要的数据补充到store中
