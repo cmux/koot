@@ -132,8 +132,8 @@ class ReduxModule {
      * @return {[type]}            [description]
      */
     getStateByActionName( actionName ) {
-        const actionCollection = this.actionCollection;
-        if( actionCollection[actionName] ){
+        // const actionCollection = this.actionCollection;
+        if( this.__actions[actionName] ){
             return this.__state;
         }else{
             const childrenModuleNames = Object.keys(this.__children);
