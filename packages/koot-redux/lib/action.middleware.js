@@ -39,7 +39,6 @@ const getObjectActionPayload = ( action ) => {
 
 const commitHandler = ( store ) => ( action, payload ) => {
     const reducerName = getName(action);
-
     const reducerFn = getReducerFnByName(reducerName);
 
     if( isObject(action) ){
@@ -54,7 +53,7 @@ const commitHandler = ( store ) => ( action, payload ) => {
         })
     }else{
         throw new Error(
-            `The reducer function is not registered!`
+            `ActionMiddlewareError: The reducer function '${reducerName}' is not registered!`
         )
     }
 }
@@ -125,35 +124,55 @@ const createActionMiddleware = function( moduleInstance = {} ){
      */
     const actionMiddleware = store => next => ( action, payload ) => {
 
-        //  判断是否为对象形
-        if( isObject(action) ){
-            // 是否为 moduleRecuer
-            const { isModuleReducer } = action;
-            if( isModuleReducer ){
-                delete action.isModuleReducer;
-                next(action);
-                return;
-            }
-            payload = getObjectActionPayload(action);
-        }
-
         const actionName = getName(action);
 
         const actionFn = getActionFnByName(actionName);
-        //  判断 moduleActon 是否存在
+
+        // 判断 是否为我们定义的 action
         if( actionFn ){
-            return actionHandler({
-                actionName,
-                actionFn,
-                store,
-                payload
-            })
+            // 判断 是否为传统对象形式参数
+            if( isObject(action) ){
+                const { isModuleReducer } = action;
+                if( isModuleReducer ){
+                    delete action.isModuleReducer;
+                    next(action);
+                    return;
+                }
+                payload = getObjectActionPayload(action);
+                next({
+                    type: actionName,
+                    payload
+                });
+                return;
+            }else{
+                return actionHandler({
+                    actionName,
+                    actionFn,
+                    store,
+                    payload
+                })
+            }
         }else{
-            next({
-                type: actionName,
-                payload
-            });
-            return;
+            // 不是我们的 action 且为传统 action 对象
+            if( isObject(action) ){
+                const { isModuleReducer } = action;
+                if( isModuleReducer ){
+                    delete action.isModuleReducer;
+                    next(action);
+                    return;
+                }
+                // 检查是否为我们的reducers
+                const reducer = getReducerFnByName(actionName);
+                if( reducer ){
+                    throw new Error(`ActionMiddlewareError: You Must call the reducer '${actionName}' in a Action`)
+                }
+                next(action);
+                return;
+            }else{
+                throw new Error(
+                    `ActionMiddlewareError: The reducer function '${reducerName}' is not registered!`
+                )
+            }
         }
     }
 

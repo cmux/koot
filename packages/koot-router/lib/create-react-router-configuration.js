@@ -36,7 +36,6 @@ const routerHandler = ( _router ) => {
     }
 
     if( component ){
-        console.info('isExtendsReactComponent', isExtendsReactComponent(component))
         if( isExtendsReactComponent(component) ){
             result.component = component;
         }else{

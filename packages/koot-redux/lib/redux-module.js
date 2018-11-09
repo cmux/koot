@@ -224,6 +224,7 @@ class ReduxModule {
         return ( moduleState = this.__initState, action ) => {
 
             const { type, payload } = action;
+            const reducerHandler = this.__reducers[type];
             let finaState;
             
             // 执行当前 module 里引入的外部 reducer
@@ -236,7 +237,6 @@ class ReduxModule {
             this.__state = finaState;
 
             // 如果当前 module 的 reducer 存在则执行 并 同步结果
-            const reducerHandler = this.__reducers[type];
             if( reducerHandler ){
                 // 执行当前 module 的 reducer
                 const moduleStateResult = reducerHandler(moduleState, payload);
