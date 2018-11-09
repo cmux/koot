@@ -1,4 +1,4 @@
 # React 相关
 
-* [高阶组件](/react-hoc)
+* [组件扩展 (`extend`)](/react-extend)
 * [热更新](/react-hmr)
