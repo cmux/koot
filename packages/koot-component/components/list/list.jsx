@@ -12,10 +12,27 @@ class List extends Component {
     render() {
         const { config } = this.props;
         const { columns, dataSource } = config;
-
+        const props = this.propsHandler(config);
         return (
-            <Table columns={columns} dataSource={dataSource} size="middle"></Table>
+            <Table
+                columns={columns}
+                dataSource={dataSource}
+                {...props}
+            >
+            </Table>
         );
+    }
+
+    propsHandler = ( config ) => {
+        const nextConfig = Object.assign({}, config);
+
+        delete nextConfig.type;
+        delete nextConfig.name;
+        delete nextConfig.columns;
+        delete nextConfig.dataSource;
+        delete nextConfig.page;
+
+        return nextConfig;
     }
 }
 

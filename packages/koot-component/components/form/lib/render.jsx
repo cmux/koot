@@ -10,18 +10,19 @@ import {
     Select,
     Switch,
     Checkbox,
-    Radio,
-    Upload
+    Radio
 } from 'antd';
 import { renderChildrenHandler, isFinalElement, getKey, getName } from './core.js';
 import { getConfigItemProps } from './props.js';
 import { onSubmitHandler } from './event.js';
+import Upload from './componnets/upload.component.jsx';
 const FormItem = Form.Item;
 const InputGroup = Input.Group;
 const CheckboxGroup = Checkbox.Group;
 const RadioGroup = Radio.Group;
 const Option = Select.Option;
 const { MonthPicker, RangePicker, WeekPicker } = DatePicker;
+
 
 /**
  * antd Form.getFieldDecorator 包装模版函数
