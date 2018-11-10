@@ -72,6 +72,7 @@
 | -s 或 --server | 只对服务器端环境打包 | `koot-dev -s` |
 | -g 或 --global | 使用全局 PM2 | `koot-dev -g` |
 | --no-open | 禁止自动打开浏览器/页面 | `koot-dev --no-open` |
+| --no-dll | 不使用 DLL 模式 | `koot-dev --no-dll` |
 
 注：手动指定环境时，将不会默认打开首页。
 
