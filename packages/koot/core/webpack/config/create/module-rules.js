@@ -7,7 +7,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 module.exports = (options = {}) => {
     const env = process.env.WEBPACK_BUILD_ENV
     const stage = process.env.WEBPACK_BUILD_STAGE
-    const regExpKootModules = /koot-.+?/
+    const regExpKootModules = /koot-component/
 
     const {
         aliases = {},
