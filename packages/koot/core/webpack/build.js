@@ -427,8 +427,8 @@ module.exports = async (kootBuildConfig = {}) => {
             watchOptions: {
                 // aggregateTimeout: 20 * 1000,
                 ignored: [
-                    /node_modules/,
-                    'node_modules',
+                    // /node_modules/,
+                    // 'node_modules',
                     getDistPath(),
                     path.resolve(getDistPath(), '**/*')
                 ]
