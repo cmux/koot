@@ -41,3 +41,14 @@ Webpack 打包相关配置
 
 - _Array_ `webpack.dll`
 <br>**仅开发模式** 供 `webpack.DllPlugin` 使用。webpack 的监控不会处理这些库/library，以期提高开发模式的打包更新速度
+
+
+### `redux`
+
+首屏渲染时候，在server端把cookie同步到redux的state中。在页面初始化状态里的```state.server.cookie```中。
+
+```js
+redux.syncCookie = 'token' // 单参数
+redux.syncCookie = ['token', 'sid'] // 支持多参数
+redux.syncCookie = false // 不同步cookie
+```
