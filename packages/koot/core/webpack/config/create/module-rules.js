@@ -7,6 +7,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 module.exports = (options = {}) => {
     const env = process.env.WEBPACK_BUILD_ENV
     const stage = process.env.WEBPACK_BUILD_STAGE
+    const regExpKootModules = /koot-.+?/
 
     const {
         aliases = {},
@@ -14,36 +15,7 @@ module.exports = (options = {}) => {
         css = {},
     } = options
 
-    const rules = [
-        // CSS - in node_modules
-        {
-            test: /\.css$/,
-            include: /node_modules/,
-            exclude: /node_modules\/koot-.+?\//,
-            use: [
-                "style-loader",
-                "postcss-loader"
-            ]
-        }, {
-            test: /\.less$/,
-            include: /node_modules/,
-            exclude: /node_modules\/koot-.+?\//,
-            use: [
-                "style-loader",
-                "postcss-loader",
-                "less-loader"
-            ]
-        }, {
-            test: /\.(scss|sass)$/,
-            include: /node_modules/,
-            exclude: /node_modules\/koot-.+?\//,
-            use: [
-                "style-loader",
-                "postcss-loader",
-                "sass-loader"
-            ]
-        },
-    ]
+    const rules = []
 
     // 处理 JS 规则
     {
@@ -104,72 +76,104 @@ module.exports = (options = {}) => {
         const testNormal = validateCssFilenameTest(cssTestNormal)
         const testComponent = validateCssFilenameTest(cssTestComponent, 'component')
 
-        // node_modules/koot-component
-        rules.push({
-            test: /\.(component|module)\.css$/,
-            include: /node_modules\/koot-component/,
-            use: [
-                useSpCssLoader,
-                "postcss-loader",
-                useUniversalAliasLoader
-            ]
-        })
-        rules.push({
-            test: /\.(component|module)\.less$/,
-            include: /node_modules\/koot-component/,
-            use: [
-                useSpCssLoader,
-                "postcss-loader",
-                useLessLoader,
-                useUniversalAliasLoader
-            ]
-        })
-        rules.push({
-            test: /\.(component|module)\.(scss|sass)$/,
-            include: /node_modules\/koot-component/,
-            use: [
-                useSpCssLoader,
-                "postcss-loader",
-                useSassLoader,
-                useUniversalAliasLoader
-            ]
-        })
+        const rulesCSS = []
+        const rulesLESS = []
+        const rulesSASS = []
 
-        // CSS: component
-        // /node_modules\/((?!koot-.+?\/).)*\//
-        rules.push({
-            test: testComponent.css,
-            exclude: [/*testNormal.css, *//node_modules/],
-            use: [
-                useSpCssLoader,
-                "postcss-loader",
-                useUniversalAliasLoader
-            ]
-        })
-        rules.push({
-            test: testComponent.less,
-            exclude: [/*testNormal.less, *//node_modules/],
-            use: [
-                useSpCssLoader,
-                "postcss-loader",
-                useLessLoader,
-                useUniversalAliasLoader
-            ]
-        })
-        rules.push({
-            test: testComponent.sass,
-            exclude: [/*testNormal.sass, *//node_modules/],
-            use: [
-                useSpCssLoader,
-                "postcss-loader",
-                useSassLoader,
-                useUniversalAliasLoader
-            ]
-        })
+        const validateCssRule = ({
+            test, tests, type, ...rule
+        }) => {
+            const use = [useUniversalAliasLoader]
 
-        // CSS: extract
+            switch (type) {
+                case 'koot': {
+                    use.unshift("postcss-loader")
+                    use.unshift(useSpCssLoader)
+                    break
+                }
+                default: {
+                    use.unshift("postcss-loader")
+                    use.unshift("css-loader")
+                    use.unshift("style-loader")
+                }
+            }
+
+            if (typeof tests === 'object') {
+                Object.keys(tests).forEach(key => {
+                    const useThis = [...use]
+                    if (key === 'less') {
+                        useThis.splice(useThis.length - 1, 0, useLessLoader)
+                        rulesLESS.push({
+                            test: tests[key],
+                            use: useThis,
+                            ...rule
+                        })
+                    } else if (key === 'sass') {
+                        useThis.splice(useThis.length - 1, 0, useSassLoader)
+                        rulesSASS.push({
+                            test: tests[key],
+                            use: useThis,
+                            ...rule
+                        })
+                    } else {
+                        rulesCSS.push({
+                            test: tests[key],
+                            use: useThis,
+                            ...rule
+                        })
+                    }
+                })
+            } else if (test instanceof RegExp) {
+                const str = test.toString()
+                if (/\.less/.test(str)) {
+                    use.splice(use.length - 1, 0, useLessLoader)
+                    rulesLESS.push({
+                        test: test,
+                        use,
+                        ...rule
+                    })
+                } else if (/\.(scss|sass)/.test(str)) {
+                    use.splice(use.length - 1, 0, useSassLoader)
+                    rulesSASS.push({
+                        test: test,
+                        use,
+                        ...rule
+                    })
+                } else {
+                    rulesCSS.push({
+                        test: test,
+                        use,
+                        ...rule
+                    })
+                }
+            } else {
+                if (/\.less$/.test(test)) {
+                    use.splice(use.length - 1, 0, useLessLoader)
+                    rulesLESS.push({
+                        test: test,
+                        use,
+                        ...rule
+                    })
+                } else if (/\.(scss|sass)$/.test(test)) {
+                    use.splice(use.length - 1, 0, useSassLoader)
+                    rulesSASS.push({
+                        test: test,
+                        use,
+                        ...rule
+                    })
+                } else {
+                    rulesCSS.push({
+                        test: test,
+                        use,
+                        ...rule
+                    })
+                }
+            }
+        }
+
+        // extract
         if (extractCSS) {
-            const arr = (!Array.isArray(cssExtract)) ? [cssExtract] : cssExtract
+            const arr = (!Array.isArray(cssExtract)) ? [cssExtract] : [...cssExtract]
             arr.forEach(test => {
                 const use = [
                     MiniCssExtractPlugin.loader,
@@ -193,40 +197,85 @@ module.exports = (options = {}) => {
             })
         }
 
+        // node_modules/koot-component
+        validateCssRule({
+            tests: {
+                css: /\.(component|module)\.css$/,
+                less: /\.(component|module)\.less$/,
+                sass: /\.(component|module)\.(scss|sass)$/,
+            },
+            include: regExpKootModules,
+            type: 'koot'
+        })
+
+        // CSS: component
+        validateCssRule({
+            tests: {
+                css: testComponent.css,
+                less: testComponent.less,
+                sass: testComponent.sass,
+            },
+            exclude: [/*testNormal.css, *//node_modules/, regExpKootModules],
+            type: 'koot'
+        })
+
         // CSS: normal
+        const excludeNormal = Array.isArray(cssExtract) ? [...cssExtract] : []
+        excludeNormal.push(regExpKootModules)
+        validateCssRule({
+            tests: {
+                css: testNormal.css,
+                less: testNormal.less,
+                sass: testNormal.sass,
+            },
+            exclude: excludeNormal,
+            type: 'normal'
+        })
+
+        // 
+
         rules.push({
-            test: testNormal.css,
-            exclude: extractCSS ? cssExtract : [],
-            // loader: 'style-loader!postcss-loader'
-            use: [
-                "style-loader",
-                "css-loader",
-                "postcss-loader",
-                useUniversalAliasLoader
+            test: /\.css$/,
+            oneOf: [
+                ...rulesCSS,
+                {
+                    include: /node_modules/,
+                    exclude: regExpKootModules,
+                    use: [
+                        "style-loader",
+                        "postcss-loader"
+                    ]
+                },
             ]
         })
         rules.push({
-            test: testNormal.less,
-            exclude: extractCSS ? cssExtract : [],
-            // loader: 'style-loader!postcss-loader'
-            use: [
-                "style-loader",
-                "css-loader",
-                "postcss-loader",
-                useLessLoader,
-                useUniversalAliasLoader
+            test: /\.less$/,
+            oneOf: [
+                ...rulesLESS,
+                {
+                    include: /node_modules/,
+                    exclude: regExpKootModules,
+                    use: [
+                        "style-loader",
+                        "postcss-loader",
+                        "less-loader"
+                    ]
+                },
             ]
         })
         rules.push({
-            test: testNormal.sass,
-            exclude: extractCSS ? cssExtract : [],
-            // loader: 'style-loader!postcss-loader'
-            use: [
-                "style-loader",
-                "css-loader",
-                "postcss-loader",
-                useSassLoader,
-                useUniversalAliasLoader
+            test: /\.(scss|sass)$/,
+            oneOf: [
+                ...rulesSASS,
+                {
+                    include: /node_modules/,
+                    exclude: regExpKootModules,
+                    use: [
+                        "style-loader",
+                        "postcss-loader",
+                        "sass-loader"
+                    ]
+                },
             ]
         })
     }
