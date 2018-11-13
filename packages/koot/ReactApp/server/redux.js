@@ -1,3 +1,4 @@
+
 // TODO: change to one action type , like: CHANGE_BASE_INFO
 import { CHANGE_LANGUAGE, TELL_CLIENT_URL, SYNC_COOKIE } from '../action-types'
 export { CHANGE_LANGUAGE, TELL_CLIENT_URL, SYNC_COOKIE }

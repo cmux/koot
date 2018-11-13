@@ -7,5 +7,5 @@ export default {
     CHANGE_LANGUAGE,
     GET_ORIGIN_URL,
     TELL_CLIENT_URL,
-    SYNC_COOKIE
+    SYNC_COOKIE,
 }

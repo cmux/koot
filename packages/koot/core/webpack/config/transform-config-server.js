@@ -3,6 +3,7 @@ const DefaultWebpackConfig = require('webpack-config').default
 
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const KootI18nPlugin = require('../plugins/i18n')
+const DevServerAfterPlugin = require('../plugins/dev-server-after')
 
 const createTargetDefaultConfig = require('./create-target-default')
 const transformConfigExtendDefault = require('./transform-config-extend-default')
@@ -14,10 +15,10 @@ const getCwd = require('../../../utils/get-cwd')
 /**
  * Webpack 配置处理 - 服务器端配置
  * @async
- * @param {Object} data 
+ * @param {Object} kootBuildConfig 
  * @returns {Object} 处理后的配置
  */
-module.exports = async (data = {}) => {
+module.exports = async (kootBuildConfig = {}) => {
     const {
         config = {},
         appType,
@@ -25,7 +26,7 @@ module.exports = async (data = {}) => {
         defaultPublicPathname,
         i18n,
         staticAssets,
-    } = data
+    } = kootBuildConfig
 
     const {
         // WEBPACK_BUILD_TYPE: TYPE,
@@ -52,11 +53,12 @@ module.exports = async (data = {}) => {
         clientDevServerPort,
     })
 
+    /** @type {Object} 当前环境的 webpack 配置对象 */
     const result = new DefaultWebpackConfig()
         .merge(configTargetDefault)
         .merge(config)
 
-    await transformConfigExtendDefault(result, data)
+    await transformConfigExtendDefault(result, kootBuildConfig)
 
     Object.assign(result.output, configTargetDefault.output)
 
@@ -91,11 +93,24 @@ module.exports = async (data = {}) => {
                     to: path.relative(result.output.path, path.resolve(dist, `public`))
                 }
             ]))
+
+        result.plugins.push(
+            new DevServerAfterPlugin({ dist })
+        )
+
+        result.watchOptions = {
+            ignored: [
+                /node_modules/,
+                'node_modules',
+                dist,
+                path.resolve(dist, '**/*')
+            ]
+        }
     }
 
     result.entry = defaultServerEntry
 
-    return await transformConfigLast(result)
+    return await transformConfigLast(result, kootBuildConfig)
 
     // return result
 }

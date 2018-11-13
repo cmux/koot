@@ -1,12 +1,14 @@
 const path = require('path')
 const webpack = require('webpack')
 const DefaultWebpackConfig = require('webpack-config').default
-
 const CopyWebpackPlugin = require('copy-webpack-plugin')
+
 const KootI18nPlugin = require('../plugins/i18n')
 const DevServerAfterPlugin = require('../plugins/dev-server-after')
 const SpaTemplatePlugin = require('../plugins/spa-template')
 const GenerateChunkmapPlugin = require('../plugins/generate-chunkmap')
+
+const { keyConfigBuildDll, keyConfigOutputPathShouldBe } = require('../../../defaults/before-build')
 
 // const {
 //     entryClientHMR
@@ -23,10 +25,10 @@ const getWDSport = require('../../../utils/get-webpack-dev-server-port')
 /**
  * Webpack 配置处理 - 客户端配置
  * @async
- * @param {Object} data 
+ * @param {Object} kootBuildConfig 
  * @returns {Object} 处理后的配置
  */
-module.exports = async (data = {}) => {
+module.exports = async (kootBuildConfig = {}) => {
     const {
         config,
         appType,
@@ -37,7 +39,8 @@ module.exports = async (data = {}) => {
         afterBuild = () => { },
         staticAssets,
         analyze = false,
-    } = data
+        [keyConfigBuildDll]: createDll = false
+    } = kootBuildConfig
 
     const defaultClientEntry = path.resolve(
         __dirname,
@@ -103,7 +106,7 @@ module.exports = async (data = {}) => {
 
         const result = new DefaultWebpackConfig()
             .merge(configTargetDefault)
-            .merge(await transformConfigExtendDefault(thisConfig, data))
+            .merge(await transformConfigExtendDefault(thisConfig, kootBuildConfig))
 
         { // 处理 output
             // if (TYPE === 'spa') {
@@ -124,6 +127,12 @@ module.exports = async (data = {}) => {
             if (analyze) {
                 result.output.filename = 'entry-[id].[name].js'
                 result.output.chunkFilename = 'chunck-[id].[name].js'
+            }
+
+            // [开发模式]
+            if (ENV === 'dev') {
+                // 标记打包目录（对应 prod 模式的结果）
+                result[keyConfigOutputPathShouldBe] = path.resolve(pathPublic, defaultPublicDirName)
             }
         }
 
@@ -157,7 +166,7 @@ module.exports = async (data = {}) => {
             )
             if (ENV === 'dev') {
                 result.plugins.push(
-                    new DevServerAfterPlugin(afterBuild)
+                    new DevServerAfterPlugin({ after: afterBuild })
                 )
                 result.plugins.push(
                     new webpack.NamedModulesPlugin()
@@ -174,7 +183,7 @@ module.exports = async (data = {}) => {
                         inject,
                     })
                 )
-            else
+            else if (!createDll)
                 result.plugins.push(
                     await new GenerateChunkmapPlugin({
                         localeId: isSeperateLocale ? localeId : undefined,
@@ -192,7 +201,7 @@ module.exports = async (data = {}) => {
 
         index++
 
-        return await transformConfigLast(result)
+        return await transformConfigLast(result, kootBuildConfig)
     }
 
     return await getWebpackConfig()

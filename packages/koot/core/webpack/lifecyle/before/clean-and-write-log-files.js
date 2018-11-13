@@ -19,7 +19,8 @@ module.exports = async (config = {}, options = {}) => {
     }
 
     const {
-        quietMode = false
+        quietMode = false,
+        createDll = false,
     } = options
 
     const {
@@ -48,7 +49,7 @@ module.exports = async (config = {}, options = {}) => {
     try {
         await fs.writeFile(
             path.resolve(dir,
-                `${TYPE}.${STAGE}.${ENV}.${(new Date()).toISOString().replace(/:/g, '_')}.json`
+                `${TYPE}.${STAGE}.${ENV}${createDll ? '.dll' : ''}.${(new Date()).toISOString().replace(/:/g, '_')}.json`
             ),
             JSON.stringify(config, null, '\t'),
             'utf-8'

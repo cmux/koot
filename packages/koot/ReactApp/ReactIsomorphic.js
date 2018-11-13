@@ -5,43 +5,36 @@ import { createMemoryHistory, RouterContext, match } from 'react-router'
 import { Provider } from 'react-redux'
 import { syncHistoryWithStore } from 'react-router-redux'
 
-// import htmlInject from './inject'
-import renderTemplate from '../React/render-template'
-import { localeId } from '../i18n'
+import { changeLocaleQueryKey } from '../defaults/defines'
+import { publicPathPrefix } from '../defaults/webpack-dev-server'
+
 import {
     setStore,
     setHistory,
     setExtender,
     setPageinfo,
-    // setFetchdata,
 } from '../'
+import { localeId } from '../i18n'
 import RenderCache from './render-cache'
+
+import onRequestGetStore from './server/on-request/get-store'
+
+import renderTemplate from '../React/render-template'
 import componentExtender from '../React/component-extender'
 import pageinfo from '../React/pageinfo'
 import {
     get as getStyles,
 } from '../React/styles'
-// import fetchdata from '../React/fetchdata'
-import { changeLocaleQueryKey } from '../defaults/defines'
-import { publicPathPrefix } from '../defaults/webpack-dev-server'
-
-// const path = require('path')
-
-// const defaultEntrypoints = require('../defaults/entrypoints')
-const getChunkmap = require('../utils/get-chunkmap')
-// const getClientFilePath = require('../utils/get-client-file-path')
-// const readClientFile = require('../utils/read-client-file')
-const getSWPathname = require('../utils/get-sw-pathname')
-// const log = require('../libs/log')
-
 import validateInject from '../React/validate-inject'
+
+const getChunkmap = require('../utils/get-chunkmap')
+const getSWPathname = require('../utils/get-sw-pathname')
 
 const error = require('debug')('SYSTEM:isomorphic:error')
 
 // 设置全局常量
 setExtender(componentExtender)
 setPageinfo(pageinfo)
-// setFetchdata(fetchdata)
 
 export default class ReactIsomorphic {
 
@@ -161,7 +154,7 @@ export default class ReactIsomorphic {
                 // }
 
                 const memoryHistory = createMemoryHistory(url)
-                const store = _store || configStore()
+                const store = onRequestGetStore( _store || configStore )
                 const history = syncHistoryWithStore(memoryHistory, store)
 
                 // 根据router计算出渲染页面需要的数据，并把渲染需要的数据补充到store中
@@ -272,7 +265,7 @@ export default class ReactIsomorphic {
                         .map(l => {
                             const href = (typeof ctx.query[changeLocaleQueryKey] === 'string')
                                 ? ctx.href.replace(
-                                    new RegExp(`${changeLocaleQueryKey}=[a-zA-Z]+`),
+                                    new RegExp(`${changeLocaleQueryKey}=[a-zA-Z-_]+`),
                                     `${changeLocaleQueryKey}=${l}`
                                 )
                                 : ctx.href + (ctx.querystring ? `&` : (
@@ -288,23 +281,26 @@ export default class ReactIsomorphic {
                 // 渲染模板
                 let html = renderTemplate(template, Object.assign(injectRealtime, injectOnce, inject))
 
-                // 开发模式: 将结果中指向 webpack-dev-server 的 URL 转换为指向本服务器的代理地址
+                // 开发模式:
                 if (__DEV__) {
+                    // 将结果中指向 webpack-dev-server 的 URL 转换为指向本服务器的代理地址
+                    // 替换 localhost 为 origin，以允许外部请求访问
+
                     delete thisInjectOnceCache.styles
                     delete thisInjectOnceCache.scriptsInBody
                     // delete thisInjectOnceCache.pathnameSW
 
-                    // 开发模式：替换 localhost
                     const origin = ctx.origin.split('://')[1]
                     // origin = origin.split(':')[0]
                     html = html.replace(
                         /:\/\/localhost:([0-9]+)/mg,
                         `://${origin}/${publicPathPrefix}`
                     )
+                } else {
+                    // HTML 结果暂存入缓存
+                    thisRenderCache.set(url, html)
                 }
 
-                // 暂存入缓存
-                thisRenderCache.set(url, html)
 
                 // 渲染输出
                 ctx.body = html
@@ -403,29 +399,3 @@ function ServerRenderHtmlExtend({ store, renderProps, ctx }) {
 
     return htmlTool
 }
-
-// TODO: move to ImportStyle npm
-// 样式处理
-// serverRender 的时候，react逻辑渲染的css代码会在html比较靠后的地方渲染出来，
-// 为了更快的展现出正常的网页样式，在服务端处理的时候用正则表达式把匹配到的css
-// 移动到html的header里，让页面展现更快。
-// function filterStyle(htmlString) {
-
-//     // 获取样式代码
-//     let styleCollectionString = htmlString
-//         .replace(/\r\n/gi, '')
-//         .replace(/\n/gi, '')
-//         .match(/<div id="styleCollection(.*?)>(.*?)<\/div>/gi)[0]
-
-//     // 提取 css
-//     let style = styleCollectionString.substr(styleCollectionString.indexOf('>') + 1, styleCollectionString.length)
-//     style = style.substr(0, style.length - 6)
-
-//     // 去掉 <div id="styleCollection">...</div>
-//     let html = htmlString.replace(/\n/gi, '').replace(styleCollectionString, '')
-
-//     return {
-//         html,
-//         style
-//     }
-// }

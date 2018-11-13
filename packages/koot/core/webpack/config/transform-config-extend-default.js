@@ -1,9 +1,16 @@
 const createGlobalDefaultConfig = require('./create-global-default')
 
-module.exports = async (config = {}, data = {}) => {
+/**
+ * Webpack 配置处理 - 确保默认值
+ * @async
+ * @param {Object} config webpack 配置对象
+ * @param {Object} kootBuildConfig
+ * @returns {Object} 处理后的 webpack 配置对象
+ */
+module.exports = async (config = {}, kootBuildConfig = {}) => {
     const {
         aliases, defines, css,
-    } = data
+    } = kootBuildConfig
     const configGlobalDefault = await createGlobalDefaultConfig({
         aliases, defines, css,
     })

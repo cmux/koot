@@ -12,4 +12,5 @@ module.exports = {
     afterBuild: () => { },
     port: undefined,
     defines: {},
+    webpackDll: []
 }

@@ -45,9 +45,20 @@ Webpack 打包相关配置
 
 ### `redux`
 
-首屏渲染时候，在server端把cookie同步到redux的state中。在页面初始化状态里的```state.server.cookie```中。
+服务器端同构时把 `cookie` 中对应的项同步到 redux state 的 `server.cookie` 中
 
-```js
+```javascript
+// 默认配置
+module.exports = {
+    // ...
+    redux: {
+        // ...
+        syncCookie: []
+    }
+    // ...
+}
+
+// 可用配置
 redux.syncCookie = 'token' // 单参数
 redux.syncCookie = ['token', 'sid'] // 支持多参数
 redux.syncCookie = false // 不同步cookie

@@ -20,6 +20,8 @@ import kootClient from '../client/run'
 import ReactIsomorphic from '../ReactIsomorphic'
 const getDistPath = require('../../utils/get-dist-path')
 
+import middlewareRouterDev from './middlewares/router-dev'
+
 const cache = {}
 
 const getLocalesDefault = () => {
@@ -40,11 +42,11 @@ const doI18nRegister = (
     const availableLocales = []
     const localesObj = {}
     locales.forEach(arr => {
-            const [localeId, localeObj] = arr
-            availableLocales.push(localeId)
-            localesObj[localeId] = localeObj
-        })
-        // 服务器端注册多语言
+        const [localeId, localeObj] = arr
+        availableLocales.push(localeId)
+        localesObj[localeId] = localeObj
+    })
+    // 服务器端注册多语言
     i18nRegister({
         localeIds: availableLocales,
         locales: localesObj,
@@ -67,7 +69,7 @@ const doI18nRegister = (
  * @param {Object} [options.server] 服务器端设置项
  * @returns {Object} 调整后的 Koa server/app 实例
  */
-export default async(app, {
+export default async (app, {
     // name,
     template,
     i18n = JSON.parse(process.env.KOOT_I18N) || false,
@@ -119,7 +121,7 @@ export default async(app, {
         // }
 
         cache.template = template
-            // process.env.KOOT_HTML_TEMPLATE = template
+        // process.env.KOOT_HTML_TEMPLATE = template
     }
 
     if (typeof inject !== 'object')
@@ -135,13 +137,13 @@ export default async(app, {
     // if (__DEV__) console.log('├─ client code initializing...')
     if (__DEV__) console.log(`  \x1b[93m[koot/server]\x1b[0m client code initializing...`)
     const reactApp = await kootClient({
-            i18n,
-            router,
-            redux,
-            // store,
-            client
-        })
-        // if (__DEV__) console.log('├─ client code inited')
+        i18n,
+        router,
+        redux,
+        // store,
+        client
+    })
+    // if (__DEV__) console.log('├─ client code inited')
     if (__DEV__) console.log(`  \x1b[93m[koot/server]\x1b[0m client code inited`)
 
 
@@ -162,12 +164,12 @@ export default async(app, {
 
     if (__DEV__)
         console.log(
-            `\n\n` +
-            `\x1b[36m⚑\x1b[0m ` +
-            `\x1b[93m[koot/server]\x1b[0m ` +
-            `callback: \x1b[32m${'before'}\x1b[0m` +
-            `(app)` +
-            `\n`
+            `\n\n`
+            + `\x1b[36m⚑\x1b[0m `
+            + `\x1b[93m[koot/server]\x1b[0m `
+            + `callback: \x1b[32m${'before'}\x1b[0m`
+            + `(app)`
+            + `\n`
         )
     if (typeof before === 'function') {
         await before(app)
@@ -175,7 +177,8 @@ export default async(app, {
 
     /* 静态目录,用于外界访问打包好的静态文件js、css等 */
     app.use(convert(koaStatic(
-        path.resolve(getDistPath(), './public'), {
+        path.resolve(getDistPath(), './public'),
+        {
             maxage: 0,
             hidden: true,
             index: 'index.html',
@@ -223,9 +226,9 @@ export default async(app, {
 
         renderCache,
 
-        onServerRender: async(obj) => {
+        onServerRender: async (obj) => {
             if (__DEV__) console.log(' ')
-            
+
             let { ctx, store } = obj
 
             // 告诉前端，当前的url是啥
@@ -243,7 +246,7 @@ export default async(app, {
                     cookies = [cookies]
 
                 // 获取需要的cookie值
-                let data = {}
+                const data = {}
                 cookies.forEach(c => {
                     data[c] = ctx.cookies.get(c)
                 })
@@ -251,7 +254,6 @@ export default async(app, {
                 // 同步到state中
                 store.dispatch({ type: SYNC_COOKIE, data })
             }
-
 
             if (i18n) {
                 let lang = (() => {
@@ -283,12 +285,12 @@ export default async(app, {
 
             if (__DEV__)
                 console.log(
-                    `\n\n` +
-                    `\x1b[36m⚑\x1b[0m ` +
-                    `\x1b[93m[koot/server]\x1b[0m ` +
-                    `callback: \x1b[32m${'onRender'}\x1b[0m` +
-                    `({ ctx, store })` +
-                    `\n`
+                    `\n\n`
+                    + `\x1b[36m⚑\x1b[0m `
+                    + `\x1b[93m[koot/server]\x1b[0m `
+                    + `callback: \x1b[32m${'onRender'}\x1b[0m`
+                    + `({ ctx, store })`
+                    + `\n`
                 )
 
             if (typeof onRender === 'function')
@@ -298,15 +300,17 @@ export default async(app, {
 
     app.use(isomorphic)
 
-    if (__DEV__)
+    if (__DEV__) {
+        app.use(middlewareRouterDev)
         console.log(
-            `\n\n` +
-            `\x1b[36m⚑\x1b[0m ` +
-            `\x1b[93m[koot/server]\x1b[0m ` +
-            `callback: \x1b[32m${'after'}\x1b[0m` +
-            `(app)` +
-            `\n`
+            `\n\n`
+            + `\x1b[36m⚑\x1b[0m `
+            + `\x1b[93m[koot/server]\x1b[0m `
+            + `callback: \x1b[32m${'after'}\x1b[0m`
+            + `(app)`
+            + `\n`
         )
+    }
     if (typeof after === 'function') {
         await after(app)
     }

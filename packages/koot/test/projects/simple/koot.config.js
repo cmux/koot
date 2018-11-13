@@ -122,6 +122,7 @@ module.exports = {
      * @property {Function} beforeBuild 在 Webpack 打包执行前运行的方法，可为异步
      * @property {Function} afterBuild 在 Webpack 打包完成后运行的方法，可为异步
      * @property {Object} defines 扩展 webpack.DefinePlugin 的内容
+     * @property {String[]} dll [仅开发模式] 供 webpack.DllPlugin 使用。webpack 的监控不会处理这些库/library，以期提高开发模式的打包更新速度
      */
     webpack: {
         config: async () => {
@@ -144,6 +145,16 @@ module.exports = {
         defines: {
             __QA__: JSON.stringify(false),
         },
+        dll: [
+            'react',
+            'react-dom',
+            'redux',
+            'redux-thunk',
+            'react-redux',
+            'react-router',
+            'react-router-redux',
+            'koot',
+        ]
     },
 
     /** 

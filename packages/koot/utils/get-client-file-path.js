@@ -36,6 +36,13 @@ const getFilePath = (filename, localeId, isPathname = false) => {
 
     const chunkmap = getChunkmap(localeId)
 
+    // console.log('----------')
+    // console.log(filename)
+    // console.log(chunkmap['.files'])
+    // console.log(chunkmap['.files'][filename])
+    // console.log(pathPublic + chunkmap['.files'][filename].replace(/(^\.\/|^)public\//, ''))
+    // console.log('----------')
+
     if (typeof chunkmap === 'object' &&
         typeof chunkmap['.files'] === 'object' &&
         typeof chunkmap['.files'][filename] === 'string'
@@ -43,7 +50,15 @@ const getFilePath = (filename, localeId, isPathname = false) => {
         return pathPublic + chunkmap['.files'][filename].replace(/(^\.\/|^)public\//, '')
     }
 
-    if (isDev) return pathPublic + (isI18nDefault ? localeId : '') + `.${filename}`
+    if (isDev) {
+        const prefix = pathPublic + (isI18nDefault ? localeId : '')
+        if (
+            typeof chunkmap['.files'] === 'object' &&
+            typeof chunkmap['.files'][filename] === 'string'
+        )
+            return prefix + chunkmap['.files'][filename]
+        return prefix + `.${filename}`
+    }
 
     if (typeof chunkmap === 'object') {
 

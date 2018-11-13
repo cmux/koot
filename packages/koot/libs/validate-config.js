@@ -158,6 +158,10 @@ const validateBuildConfig = (config = {}) => {
             config.defines = config.webpack.defines
             delete config.webpack.defines
         }
+        if (typeof config.webpack.dll !== 'undefined') {
+            config.webpackDll = config.webpack.dll
+            delete config.webpack.dll
+        }
         delete config.webpack
     }
 

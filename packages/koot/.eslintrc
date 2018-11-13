@@ -1,0 +1,82 @@
+{
+    "extends": "eslint:recommended",
+    "plugins": [
+        "react"
+    ],
+    "env": {
+        "browser": true,
+        "node": true,
+        "commonjs": true,
+        "amd": true,
+        "es6": true,
+        "mocha": true,
+        "jquery": true,
+        "jest": true
+    },
+    "parser": "babel-eslint",
+    "parserOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "impliedStrict": true,
+            "jsx": true,
+            "experimentalObjectRestSpread": true
+        }
+    },
+    "globals": {
+        "__": false,
+        "__DEV__": false,
+        "__CLIENT__": false,
+        "__SERVER__": false,
+        "__SPA__": false,
+        "__REDUX_STATE__": true,
+        "__SERVER_PORT__": false,
+        "__KOOT_INJECT_ATTRIBUTE_NAME__": false,
+        "__KOOT_INJECT_METAS_START__": false,
+        "__KOOT_INJECT_METAS_END__": false,
+        "__KOOT_PROJECT_CONFIG_PATHNAME__": false
+    },
+    "settings": {
+        "import/ignore": [
+            "node_modules"
+        ]
+    },
+    "rules": {
+        "no-const-assign": 1,
+        "no-extra-semi": 2,
+        "semi": 0,
+        "no-case-declarations": 2,
+        "no-console": 0,
+        "no-fallthrough": 0,
+        "no-empty": 0,
+        "no-empty-pattern": 2,
+        "no-mixed-spaces-and-tabs": 0,
+        "no-octal": 2,
+        "no-redeclare": [
+            2,
+            {
+                "builtinGlobals": true
+            }
+        ],
+        "no-self-assign": 2,
+        "no-this-before-super": 1,
+        "no-undef": 1,
+        "no-unreachable": 1,
+        "no-unused-vars": 1,
+        "no-use-before-define": 0,
+        "constructor-super": 1,
+        "curly": 0,
+        "eqeqeq": 0,
+        "func-names": 0,
+        "valid-typeof": 1,
+        "indent": [
+            "error",
+            4,
+            {
+                "SwitchCase": 1
+            }
+        ],
+        "react/jsx-uses-react": "error",
+        "react/jsx-uses-vars": "error"
+    }
+}

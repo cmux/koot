@@ -8,8 +8,7 @@
         "allowSyntheticDefaultImports": true,
         "jsx": "react",
         "baseUrl": ".",
-        "paths": {
-        }
+        "paths": {}
     },
     "exclude": [
         ".*",

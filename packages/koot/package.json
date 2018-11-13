@@ -1,6 +1,6 @@
 {
     "name": "koot",
-    "version": "0.7.0-rc.9",
+    "version": "0.7.0-rc.10",
     "description": "Koot.js - React isomorphic framework created by CMUX",
     "main": "index.js",
     "sideEffects": false,
@@ -69,17 +69,17 @@
         "koa-helmet": "3.3.0",
         "koa-mount": "3.0.0",
         "koa-better-http-proxy": "0.2.4",
-        "react": "16.6.0",
-        "react-dom": "16.6.0",
+        "react": "16.6.1",
+        "react-dom": "16.6.1",
         "react-router": "3.2.0",
         "redux": "4.0.1",
         "redux-thunk": "2.3.0",
         "react-redux": "5.1.0",
         "react-router-redux": "4.0.8",
-        "@babel/core": "7.1.2",
+        "@babel/core": "7.1.5",
         "@babel/register": "7.0.0",
         "@babel/polyfill": "7.0.0",
-        "@babel/preset-env": "7.1.0",
+        "@babel/preset-env": "7.1.5",
         "@babel/preset-react": "7.0.0",
         "@babel/preset-flow": "7.0.0",
         "@babel/plugin-transform-runtime": "7.1.0",
@@ -113,7 +113,7 @@
         "autoprefixer": "9.3.1",
         "cookie": "0.3.1",
         "js-cookie": "2.2.0",
-        "fs-extra": "7.0.0",
+        "fs-extra": "7.0.1",
         "ejs": "2.6.1",
         "isomorphic-fetch": "2.2.1",
         "classlist-polyfill": "1.2.0",
@@ -145,6 +145,11 @@
     "peerDependencies": {},
     "devDependencies": {
         "is-valid-path": "0.1.1",
-        "download-git-repo": "1.1.0"
+        "download-git-repo": "1.1.0",
+        "eslint": "5.9.0",
+        "eslint-plugin-react": "7.11.1",
+        "babel-eslint": "10.0.1",
+        "jest": "23.6.0",
+        "puppeteer": "1.10.0"
     }
 }

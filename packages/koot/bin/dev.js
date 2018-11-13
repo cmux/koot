@@ -8,13 +8,17 @@ const chalk = require('chalk')
 const npmRunScript = require('npm-run-script')
 const opn = require('opn')
 
-const checkFileUpdate = require('../libs/check-file-change')
 const contentWaiting = require('../defaults/content-waiting')
-const { keyFileProjectConfigTemp } = require('../defaults/before-build')
-
 const {
-    filenameWebpackDevServerPortTemp
+    keyFileProjectConfigTemp,
+    filenameWebpackDevServerPortTemp,
+    // filenameDll, filenameDllManifest,
 } = require('../defaults/before-build')
+
+const checkFileUpdate = require('../libs/check-file-change')
+const removeTempBuild = require('../libs/remove-temp-build')
+const removeTempProjectConfig = require('../libs/remove-temp-project-config')
+const validateConfig = require('../libs/validate-config')
 
 const __ = require('../utils/translate')
 const sleep = require('../utils/sleep')
@@ -28,8 +32,8 @@ const initNodeEnv = require('../utils/init-node-env')
 const getCwd = require('../utils/get-cwd')
 const getPathnameDevServerStart = require('../utils/get-pathname-dev-server-start')
 // const terminate = require('../utils/terminate')
-const removeTempProjectConfig = require('../libs/remove-temp-project-config')
-const validateConfig = require('../libs/validate-config')
+
+const kootBuildVendorDll = require('../core/webpack/build-vendor-dll')
 
 program
     .version(require('../package').version, '-v, --version')
@@ -42,6 +46,7 @@ program
     .option('--type <project-type>', 'Set project type')
     .option('--port <port>', 'Set server port')
     .option('--no-open', 'Don\'t open browser automatically')
+    .option('--no-dll', 'Don\'t use Webpack\'s DLL plugin')
     .option('--koot-test', 'Koot test mode')
     .parse(process.argv)
 
@@ -60,6 +65,8 @@ program
  */
 const run = async () => {
 
+    process.env.WEBPACK_BUILD_ENV = 'dev'
+
     // 清除所有临时配置文件
     await removeTempProjectConfig()
 
@@ -74,6 +81,7 @@ const run = async () => {
         global = false,
         open = true,
         port,
+        dll = true,
     } = program
 
     initNodeEnv()
@@ -98,17 +106,20 @@ const run = async () => {
 
     // 读取项目信息
     // const { dist, port } = await readBuildConfigFile()
+    const buildConfig = await validateConfig()
     const {
         dist,
         port: configPort,
         [keyFileProjectConfigTemp]: fileProjectConfigTemp
-    } = await validateConfig()
+    } = buildConfig
     const appType = await getAppType()
     const cwd = getCwd()
     const packageInfo = await fs.readJson(path.resolve(cwd, 'package.json'))
     const {
         name
     } = packageInfo
+
+    await removeTempBuild(dist)
 
     // 如果有临时项目配置文件，更改环境变量
     if (fileProjectConfigTemp) {
@@ -124,6 +135,30 @@ const run = async () => {
     // 如果配置中存在 port，修改环境变量
     if (typeof port === 'undefined' && typeof configPort !== 'undefined')
         process.env.SERVER_PORT = getPort(configPort, 'dev')
+
+    // 如果开启了 Webpack DLL 插件模式，此处执行相关打包流程
+    if (dll && process.env.WEBPACK_BUILD_STAGE !== 'server') {
+        // DLL 打包
+        if (stage) {
+            process.env.WEBPACK_BUILD_STAGE = stage
+            await kootBuildVendorDll(buildConfig)
+        } else {
+            const stageCurrent = process.env.WEBPACK_BUILD_STAGE
+
+            process.env.WEBPACK_BUILD_STAGE = 'client'
+            await kootBuildVendorDll(buildConfig)
+            await sleep(500)
+            process.env.WEBPACK_BUILD_STAGE = 'server'
+            await kootBuildVendorDll(buildConfig)
+
+            process.env.WEBPACK_BUILD_STAGE = stageCurrent
+        }
+
+        await sleep(500)
+        // console.log('result', result)
+        // console.log(111)
+        // return
+    }
 
     // 如果设置了 stage，仅运行该 stage
     if (stage) {
@@ -168,6 +203,7 @@ const run = async () => {
             silent = false
         } = options
         await removeTempProjectConfig()
+        await removeTempBuild(dist)
         if (Array.isArray(processes) && processes.length) {
             if (waitingSpinner) waitingSpinner.stop()
             await sleep(300)

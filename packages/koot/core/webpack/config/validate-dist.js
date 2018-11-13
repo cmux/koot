@@ -1,4 +1,4 @@
-// const fs = require('fs-extra')
+const fs = require('fs-extra')
 const path = require('path')
 const getCwd = require('../../../utils/get-cwd')
 
@@ -12,6 +12,9 @@ module.exports = async (dist = '') => {
     // 如果为相对路径，转为绝对路径
     if (dist.substr(0, 1) === '.')
         dist = path.resolve(getCwd(), dist)
+    
+    // 确保路径存在
+    await fs.ensureDir(dist)
 
     return dist
 }

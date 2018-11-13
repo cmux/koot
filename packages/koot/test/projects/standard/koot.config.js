@@ -192,6 +192,7 @@ module.exports = {
     // i18n: false,
     i18n: [
         ['zh', './src/locales/zh.json'],
+        ['zh-tw', './src/locales/zh-tw.json'],
         ['en', './src/locales/en.json'],
     ],
     // i18n: {
