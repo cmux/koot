@@ -19,24 +19,30 @@ module.exports = (options = {}) => {
 
     // 处理 JS 规则
     {
-        let rulesJS = {
-            test: /\.(js|jsx)$/,
-            use: [
-                {
-                    loader: 'babel-loader',
-                    options: {
-                        cacheDirectory: true
-                    }
+        const useJS = [
+            {
+                loader: 'babel-loader',
+                options: {
+                    cacheDirectory: true
                 }
-            ]
-        }
-        rules.push(rulesJS)
+            }
+        ]
         if (env === 'dev' && stage === 'client') {
+            rules.push({
+                test: /\.js$/,
+                use: useJS
+            })
             rules.push({
                 test: /\.jsx$/,
                 use: [
+                    ...useJS,
                     require.resolve('../../loaders/react-hot'),
                 ]
+            })
+        } else {
+            rules.push({
+                test: /\.(js|jsx)$/,
+                use: useJS
             })
         }
     }
