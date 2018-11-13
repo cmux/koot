@@ -5,8 +5,8 @@ module.exports = {
 
     hmrOptions: {
         multiStep: true,
-        fullBuildTimeout: 0.5 * 1000,
-        requestTimeout: 5 * 60 * 1000
+        // fullBuildTimeout: 0.5 * 1000,
+        // requestTimeout: 5 * 60 * 1000
     },
 
 }
