@@ -3,6 +3,7 @@
     "missing_option": "请提供 ${option} 选项。\n${indent}> ${example}",
     "build": {
         "config_type_error": "错误：打包配置文件（${file}）需输出 ${type}",
+        "dev_build_dll": "",
         "build_start": "开始打包：${type} [STAGE ${stage} | ENV ${env}]",
         "build_complete": "打包完成：${type} [STAGE ${stage} | ENV ${env}]",
         "building": "Webpack 打包中……",

@@ -41,5 +41,5 @@ module.exports = (store) => {
 const stateKeysPreserved = [
     'localeId',
     'locales',
-    'server'
+    // 'server'
 ]

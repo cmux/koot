@@ -23,7 +23,7 @@ const validateConfig = require('../libs/validate-config')
 const __ = require('../utils/translate')
 const sleep = require('../utils/sleep')
 const getPort = require('../utils/get-port')
-// const spinner = require('../utils/spinner')
+const spinner = require('../utils/spinner')
 // const readBuildConfigFile = require('../utils/read-build-config-file')
 const getAppType = require('../utils/get-app-type')
 const setEnvFromCommand = require('../utils/set-env-from-command')
@@ -138,6 +138,9 @@ const run = async () => {
 
     // 如果开启了 Webpack DLL 插件模式，此处执行相关打包流程
     if (dll && process.env.WEBPACK_BUILD_STAGE !== 'server') {
+        const msg = 'Generating DLLs'
+        const waiting = spinner(msg + '...')
+
         // DLL 打包
         if (stage) {
             process.env.WEBPACK_BUILD_STAGE = stage
@@ -158,6 +161,9 @@ const run = async () => {
         // console.log('result', result)
         // console.log(111)
         // return
+
+        waiting.stop()
+        spinner(msg).succeed()
     }
 
     // 如果设置了 stage，仅运行该 stage
@@ -265,12 +271,16 @@ const run = async () => {
 
     // 根据 stage 开启 PM2 进程
     const start = (stage) => new Promise(async (resolve, reject) => {
+
+        // console.log(`starting ${stage}`)
+
         const pathLogOut = path.resolve(cwd, `logs/dev/${stage}.log`)
         const pathLogErr = path.resolve(cwd, `logs/dev/${stage}-error.log`)
         if (fs.existsSync(pathLogOut)) await fs.remove(pathLogOut)
         if (fs.existsSync(pathLogErr)) await fs.remove(pathLogErr)
         await fs.ensureFile(pathLogOut)
         await fs.ensureFile(pathLogErr)
+
         const config = {
             name: `dev-${stage}-${name}`,
             script: path.resolve(__dirname, './build.js'),
@@ -280,25 +290,36 @@ const run = async () => {
             error: pathLogErr,
             autorestart: false,
         }
-        if (stage === 'run') {
-            Object.assign(config, {
-                script: pathServerJS,
-                watch: [pathServerJS],
-                watch_options: {
-                    usePolling: true,
-                },
-                // autorestart: true,
-            })
-            delete config.args
-            // console.log(config)
-            // await fs.writeJson(
-            //     path.resolve(__dirname, '../1.json'),
-            //     config,
-            //     {
-            //         spaces: 4
-            //     }
-            // )
+
+        switch (stage) {
+            case 'run': {
+                Object.assign(config, {
+                    script: pathServerJS,
+                    watch: [pathServerJS],
+                    watch_options: {
+                        usePolling: true,
+                    },
+                    // autorestart: true,
+                })
+                delete config.args
+                // console.log(config)
+                // await fs.writeJson(
+                //     path.resolve(__dirname, '../1.json'),
+                //     config,
+                //     {
+                //         spaces: 4
+                //     }
+                // )
+                break
+            }
+            case 'main': {
+                Object.assign(config, {
+                    script: path.resolve(__dirname, '../ReactApp/server/index-dev.js'),
+                })
+                delete config.args
+            }
         }
+
         // console.log(config)
         // processes.push(config.name)
         pm2.start(
@@ -322,6 +343,13 @@ const run = async () => {
             }
         )
     })
+
+    // 启动过程结束
+    const complete = () => {
+        npmRunScript(`pm2 logs`)
+        if (open)
+            return opn(`http://localhost:${process.env.SERVER_PORT}/`)
+    }
 
     // 连接 PM2
     // console.log('noDaemon', !global)
@@ -426,18 +454,27 @@ const run = async () => {
         // waitingSpinner.stop()
         // waitingSpinner = undefined
 
-        if (errServerRun !== ' ' && errServerRun) {
+        /** @type {Object} 服务器相关信息 */
+        let infosServer
+        try {
+            infosServer = JSON.parse(errServerRun)
+        } catch (e) { }
+
+        if (typeof infosServer !== 'object' && errServerRun !== ' ' && errServerRun) {
+            // 出错
             console.log(' ')
             console.log(chalk.redBright(errServerRun))
             console.log(' ')
             await exitHandler({
                 silent: true
             })
-        } else {
-            npmRunScript(`pm2 logs`)
-            if (open)
-                return opn(`http://localhost:${process.env.SERVER_PORT}/`)
+            return
         }
+
+        await start('main')
+        await checkFileUpdate(pathServerStartFlag, contentWaiting)
+
+        return complete()
     })
 }
 

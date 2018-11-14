@@ -30,6 +30,9 @@ module.exports = () => {
         // 服务器端口
         SERVER_PORT: process.env.WEBPACK_BUILD_ENV === 'dev' ? '3000' : '8080',
 
+        // 服务器端口 (开发模式主服务器)
+        SERVER_PORT_DEV_MAIN: '3000',
+
         // Koot 项目启动目录路径。默认为 process.cwd()
         // KOOT_CWD: process.cwd(),
 

@@ -76,7 +76,7 @@ const initProject = async (name) => {
     {
         const waiting = spinner(`${titleInTerminal} - 安装中...`)
         const { /*stdout,*/ stderr } = await exec(
-            'npm install --no-save',
+            'npm install --no-package-lock',
             {
                 cwd,
             }

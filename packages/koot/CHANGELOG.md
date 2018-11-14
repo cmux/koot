@@ -4,11 +4,13 @@
   - 配置项
     - **新** `css` - CSS 打包相关设置。详情请参见文档的 [配置](https://koot.js.org/config) 章节
     - **新** `webpack.dll` - 开发模式下供 `webpack.DllPlugin` 使用。webpack 的监控不会处理这些库/library，以期提高开发模式的打包更新速度。详情请参见文档的 [配置](https://koot.js.org/config) 章节
+    - **新** `redux.syncCookie` - 允许服务器端在同构时将 `cookie` 中对应的项同步到 redux state 的 `server.cookie` 中。详情请参见文档的 [配置](https://koot.js.org/config) 章节
   - 生产模式
     - 使用 `koot-start` 命令时，如果打包过程发生错误，现在会显示更详细的错误记录
   - 开发模式
     - 现在可以同时启动多个 Koot 项目的开发模式了
-    - 使用 `webpack.DllPlugin` 提高打包更新速度
+    - 启用 `webpack` 热更新的 `多步骤 (multiStep)` 机制提高热更新速度
+    - 启用 `webpack.DllPlugin` 提高打包更新速度
   - 分析模式
     - 输出的文件名结果现在具有可读性
   - 执行打包时会自动清理 `/logs/webpack-config/` 目录下创建于 2 天前的报告文件
@@ -16,6 +18,7 @@
 - React同构 (`ReactApp`)
   - 现在启动服务器时会对设定的端口进行检查。如果端口被占用，会报告相应的错误
   - 对于传入完整 `store` 的项目，现在每次请求时会尝试使用全新的 `state`
+  - 优化服务器端初始化 `store` 的流程
 - 错误修正
   - 修复生成了错误的多语言跳转 meta 链接地址的问题
 - 添加依赖包
@@ -29,13 +32,15 @@
     - `copy-webpack-plugin` -> _4.6.0_
     - `webpack` -> _4.25.1_
   - patch
-    - `@babel/core` -> _7.1.5_
-    - `@babel/preset-env` -> _7.1.5_
+    - `@babel/core` -> _7.1.6_
+    - `@babel/plugin-proposal-decorators` -> _7.1.6_
+    - `@babel/preset-env` -> _7.1.6_
     - `css-loader` -> _1.0.1_
     - `fs-extra` -> _7.0.1_
-    - `react` -> _16.6.1_
-    - `react-dom` -> _16.6.1_
+    - `react` -> _16.6.3_
+    - `react-dom` -> _16.6.3_
     - `react-hot-loader` -> _4.3.12_
+    - `react-redux` -> _5.1.1
     - `sp-css-loader` -> _1.5.3_
 - 其他
   - 更新测试项目和测试案例

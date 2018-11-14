@@ -88,6 +88,7 @@ const translate = (...args) => {
         }
     }
 
+    // console.log(localeId)
     // console.log(keys, length, key, l)
 
     if (typeof l === 'undefined') {

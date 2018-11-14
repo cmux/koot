@@ -150,18 +150,25 @@ export default class ReactIsomorphic {
             try {
                 // if (__DEV__) {
                 //     console.log(' ')
-                //     log('server', 'Server rendering...')
+                //     console.log('server', 'Server rendering...')
                 // }
 
-                const memoryHistory = createMemoryHistory(url)
                 const store = onRequestGetStore( _store || configStore )
+                const memoryHistory = createMemoryHistory(url)
                 const history = syncHistoryWithStore(memoryHistory, store)
+                
+                // 补充服务端提供的信息数据到store中
+                if (typeof onServerRender === 'function') {
+                    await onServerRender({ ctx, store })
+                }
 
                 // 根据router计算出渲染页面需要的数据，并把渲染需要的数据补充到store中
                 const {
                     redirectLocation,
                     renderProps
                 } = await asyncReactRouterMatch({ history, routes, location: url })
+
+                // console.log('renderProps', renderProps)
 
                 // 判断是否重定向页面
                 if (redirectLocation)
@@ -172,10 +179,6 @@ export default class ReactIsomorphic {
                 // 设置常量
                 setStore(store)
                 setHistory(history)
-
-                // 补充服务端提供的信息数据到store中
-                if (typeof onServerRender === 'function')
-                    await onServerRender({ ctx, store })
 
                 // 把同构时候服务端预处理数据补充到store中
                 await ServerRenderDataToStore({ store, renderProps, ctx })
@@ -212,7 +215,7 @@ export default class ReactIsomorphic {
                 const styles = getStyles()
                 const reactStyles = Object.keys(styles)
                     .map(wrapper => (
-                        `<style id=${wrapper}>${styles[wrapper].css}</style>`
+                        `<style id="${wrapper}">${styles[wrapper].css}</style>`
                     ))
                     .join('')
 

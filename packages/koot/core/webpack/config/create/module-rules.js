@@ -23,10 +23,13 @@ module.exports = (options = {}) => {
             {
                 loader: 'babel-loader',
                 options: {
-                    cacheDirectory: true
+                    cacheDirectory: true,
                 }
             }
         ]
+        if (env === 'dev') {
+            useJS[0].options.compact = false
+        }
         if (env === 'dev' && stage === 'client') {
             rules.push({
                 test: /\.js$/,

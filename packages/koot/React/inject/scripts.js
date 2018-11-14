@@ -16,7 +16,7 @@ export default (needInjectCritical, injectCache, entrypoints, reduxHtml) => {
 
     const ENV = process.env.WEBPACK_BUILD_ENV
 
-    if (typeof injectCache.scriptsInBody === 'undefined') {
+    if (__DEV__ || typeof injectCache.scriptsInBody === 'undefined') {
         let r = ''
 
         // 入口: critical
@@ -31,9 +31,12 @@ export default (needInjectCritical, injectCache, entrypoints, reduxHtml) => {
         }
 
         // 其他默认入口
+        // console.log('defaultEntrypoints', defaultEntrypoints)
+        // console.log('entrypoints', entrypoints)
         defaultEntrypoints.forEach(key => {
             if (Array.isArray(entrypoints[key])) {
                 r += entrypoints[key].map(file => {
+                    // console.log(file)
                     // if (ENV === 'dev')
                     // return `<script type="text/javascript" src="${getClientFilePath(true, file)}" defer></script>`
                     return `<script type="text/javascript" src="${getClientFilePath(true, file)}" defer></script>`
