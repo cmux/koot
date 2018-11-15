@@ -13,6 +13,7 @@ module.exports = (options = {}) => {
         aliases = {},
         // defines = {},
         css = {},
+        createDll = false,
     } = options
 
     const rules = []
@@ -30,7 +31,7 @@ module.exports = (options = {}) => {
         if (env === 'dev') {
             useJS[0].options.compact = false
         }
-        if (env === 'dev' && stage === 'client') {
+        if (!createDll && env === 'dev' && stage === 'client') {
             rules.push({
                 test: /\.js$/,
                 use: useJS

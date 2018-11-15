@@ -223,15 +223,20 @@ export default (options = {}) => (WrappedComponent) => {
             // console.log('this', this)
             // console.log('this.kootClassNames', this.kootClassNames)
             // console.log('this.props.className', this.props.className)
+
             if (__CLIENT__ && this.kootClassNames instanceof HTMLElement) {
                 // console.log(this.kootClassNames)
                 this.kootClassNames = [this.kootClassNames.getAttribute('id')]
             }
+
             const props = Object.assign({}, this.props, {
-                loaded: this.state.loaded,
                 className: this.kootClassNames.concat(this.props.className).join(' ').trim(),
                 "data-class-name": this.kootClassNames.join(' ').trim(),
             })
+
+            if (typeof dataFetch !== 'undefined')
+                props.loaded = this.state.loaded
+
             return <WrappedComponent {...props} />
         }
     }

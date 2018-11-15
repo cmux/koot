@@ -6,6 +6,7 @@ const webpack = require('webpack')
 
 const createModuleRules = require('./config/create/module-rules')
 const defaultDefines = require('../../defaults/defines.js')
+const { keyConfigBuildDll } = require('../../defaults/before-build')
 const getPathnameProjectConfigFile = require('../../utils/get-pathname-project-config-file')
 
 // 打包结果目录
@@ -20,6 +21,7 @@ const factory = async ({
     aliases,
     defines = {},
     css = {},
+    [keyConfigBuildDll]: createDll = false,
 }) => {
 
     // const useSpCssLoader = {
@@ -37,6 +39,7 @@ const factory = async ({
                 aliases,
                 defines,
                 css,
+                createDll
             })
         },
         resolve: {
