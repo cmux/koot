@@ -13,11 +13,14 @@
     - 启用 `webpack.DllPlugin` 提高打包更新速度
   - 分析模式
     - 输出的文件名结果现在具有可读性
-  - 执行打包时会自动清理 `/logs/webpack-config/` 目录下创建于 2 天前的报告文件
-  - `/logs/webpack-config/` 目录下新生成的报告文件中，现在会正确的显示正则表达式
+  - Webpack 打包
+    - 重写 CSS 相关 `loader`，现在会确保同构结果中 CSS 样式名的正确性
+    - 执行打包时会自动清理 `/logs/webpack-config/` 目录下创建于 2 天前的报告文件
+    - `/logs/webpack-config/` 目录下新生成的报告文件中，现在会正确的显示正则表达式
 - React
   - 高阶组件 `extend()`
     - `pageinfo` 和 `data` 不再要求必须使用 `connect`
+    - 使用新的 `context` 语法重写样式、CSS 相关逻辑
 - React同构 (`ReactApp`)
   - 现在启动服务器时会对设定的端口进行检查。如果端口被占用，会报告相应的错误
   - 对于传入完整 `store` 的项目，现在每次请求时会尝试使用全新的 `state`
@@ -29,9 +32,11 @@
   - `inquirer`
   - `is-port-reachable`
   - `portfinder`
+- 移除依赖包
+  - `sp-css-loader`
 - 更新依赖包
   - major
-    - `sp-css-import` -> _3.0.1_
+    - `sp-css-import` -> _4.0.0_
   - minor
     - `copy-webpack-plugin` -> _4.6.0_
     - `webpack` -> _4.25.1_
@@ -52,6 +57,7 @@
     - 更新项目到 v0.7 时，会自动添加兼容旧版规则的 `css` 配置
   - `sp-css-import`
     - 更新核心代码，以兼容 koot v0.6 后的新结构
+    - 使用新的 `context` 语法重写样式、CSS 相关逻辑
 
 ## 0.6.1
 **2018-10-29**

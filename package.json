@@ -2,7 +2,8 @@
     "name": "koot-packages",
     "description": "All modules and packages for Koot.js",
     "scripts": {
-        "doc-server": "docsify serve docs"
+        "doc-server": "docsify serve docs",
+        "eslint:koot": "eslint \"packages/koot/!(node_modules|logs|dist|dist*|test)/**/*.+(js|jsx)\""
     },
     "repository": {
         "type": "git",

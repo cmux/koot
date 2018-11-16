@@ -1,6 +1,6 @@
 {
     "name": "koot",
-    "version": "0.7.0-rc.13",
+    "version": "0.7.0-rc.14",
     "description": "Koot.js - React isomorphic framework created by CMUX",
     "main": "index.js",
     "sideEffects": false,
@@ -11,7 +11,6 @@
         "koot-analyze": "./bin/analyze.js"
     },
     "scripts": {
-        "eslint": "eslint \"!(node_modules|logs|dist|dist*|test)/**/*.+(js|jsx)\"",
         "pretest": "node ./test/pre-test.js",
         "test": "jest",
         "test:factoryconfig": "jest ./test/cases/actory-config/test.js",
@@ -51,9 +50,8 @@
         "node": ">=8.0.0"
     },
     "dependencies": {
-        "sp-css-loader": "1.5.3",
-        "sp-css-import": "3.0.1",
         "sp-koa-views": "1.0.1",
+        "sp-css-import": "4.0.0",
         "koa": "2.5.3",
         "koa-body": "2.6.0",
         "koa-compress": "2.0.0",
@@ -125,6 +123,7 @@
         "copyfiles": "2.1.0",
         "debug": "4.1.0",
         "glob-promise": "3.4.0",
+        "md5": "2.2.1",
         "md5-file": "4.0.0",
         "os-locale": "3.0.1",
         "npm-run-script": "0.0.4",

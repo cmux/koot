@@ -1,23 +1,20 @@
 import React from 'react'
 import { Provider } from 'react-redux'
-import { Router } from 'react-router'
+import { RouterContext } from 'react-router'
 
-import { StyleMapContext } from './styles'
+import { StyleMapContext, StylesContainer } from '../React/styles'
 
 export default ({
     store,
-    history,
-    routes,
     ...props
 }) => {
 
     return (
         <StyleMapContext.Provider value={{}}>
             <Provider store={store} >
-                <Router history={history} {...props} >
-                    {routes}
-                </Router>
+                <RouterContext {...props} />
             </Provider>
+            <StylesContainer />
         </StyleMapContext.Provider>
     )
 

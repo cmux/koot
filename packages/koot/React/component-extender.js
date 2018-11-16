@@ -21,6 +21,7 @@ import {
 import {
     append as appendStyle,
     remove as removeStyle,
+    StyleMapContext,
 } from './styles'
 import clientUpdatePageInfo from './client-update-page-info'
 
@@ -178,6 +179,10 @@ export default (options = {}) => (WrappedComponent) => {
 
         //
 
+        static contextType = StyleMapContext
+
+        //
+
         clientUpdatePageInfo() {
             if (typeof pageinfo !== 'function')
                 return
@@ -202,12 +207,12 @@ export default (options = {}) => (WrappedComponent) => {
 
         //
 
-        constructor(props) {
-            super(props)
+        constructor(props, context) {
+            super(props, context)
 
             if (hasStyles) {
                 this.kootClassNames = styles.map(obj => obj.wrapper)
-                appendStyle(styles)
+                appendStyle(context, styles)
                 // console.log('----------')
                 // console.log('styles', styles)
                 // console.log('theStyles', theStyles)
@@ -247,7 +252,7 @@ export default (options = {}) => (WrappedComponent) => {
         componentWillUnmount() {
             this.mounted = false
             if (hasStyles) {
-                removeStyle(styles)
+                removeStyle(this.context, styles)
             }
         }
 

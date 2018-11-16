@@ -121,6 +121,10 @@ export default class ReactApp {
     }
 
 
+    /**
+     * 客户端/浏览器环境运行
+     * @param {Object} settings 
+     */
     run(settings = {}) {
 
         let options = Object.assign({}, settings)

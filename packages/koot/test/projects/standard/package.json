@@ -38,9 +38,8 @@
         "axios": "0.18.0"
     },
     "devDependencies": {
-        "sp-css-loader": "1.5.3",
-        "sp-css-import": "3.0.1",
         "sp-koa-views": "1.0.1",
+        "sp-css-import": "4.0.0",
         "koa": "2.5.3",
         "koa-body": "2.6.0",
         "koa-compress": "2.0.0",
@@ -112,6 +111,7 @@
         "copyfiles": "2.1.0",
         "debug": "4.1.0",
         "glob-promise": "3.4.0",
+        "md5": "2.2.1",
         "md5-file": "4.0.0",
         "os-locale": "3.0.1",
         "npm-run-script": "0.0.4",

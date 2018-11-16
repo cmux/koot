@@ -1,8 +1,7 @@
 import React from 'react'
 import HTMLTool from './HTMLTool'
 import { renderToString } from 'react-dom/server'
-import { createMemoryHistory, RouterContext, match } from 'react-router'
-import { Provider } from 'react-redux'
+import { createMemoryHistory, match } from 'react-router'
 import { syncHistoryWithStore } from 'react-router-redux'
 
 import { changeLocaleQueryKey } from '../defaults/defines'
@@ -16,15 +15,14 @@ import {
 } from '../'
 import { localeId } from '../i18n'
 import RenderCache from './render-cache'
+import RootIsomorphic from './root-isomorphic'
 
 import onRequestGetStore from './server/on-request/get-store'
 
 import renderTemplate from '../React/render-template'
 import componentExtender from '../React/component-extender'
 import pageinfo from '../React/pageinfo'
-import {
-    get as getStyles,
-} from '../React/styles'
+import { parseHtmlForStyles } from '../React/styles'
 import validateInject from '../React/validate-inject'
 
 const getChunkmap = require('../utils/get-chunkmap')
@@ -153,10 +151,10 @@ export default class ReactIsomorphic {
                 //     console.log('server', 'Server rendering...')
                 // }
 
-                const store = onRequestGetStore( _store || configStore )
+                const store = onRequestGetStore(_store || configStore)
                 const memoryHistory = createMemoryHistory(url)
                 const history = syncHistoryWithStore(memoryHistory, store)
-                
+
                 // 补充服务端提供的信息数据到store中
                 if (typeof onServerRender === 'function') {
                     await onServerRender({ ctx, store })
@@ -187,11 +185,15 @@ export default class ReactIsomorphic {
                 const htmlTool = await ServerRenderHtmlExtend({ store, renderProps, ctx })
 
                 // 把react部分渲染出html片段，并插入到html中
-                const reactHtml = renderToString(
-                    <Provider store={store} >
-                        <RouterContext {...renderProps} />
-                    </Provider>
-                )
+                const {
+                    html: reactHtml,
+                    htmlStyles: stylesHtml
+                } = parseHtmlForStyles(renderToString(
+                    <RootIsomorphic
+                        store={store}
+                        {...renderProps}
+                    />
+                ))
 
                 /** @type {Object} 本次请求的渲染结果缓存 */
                 const thisRenderCache = isIsormorphicInjectOnce ? renderCache : renderCache.get(localeId)
@@ -209,15 +211,6 @@ export default class ReactIsomorphic {
                 const thisFilemap = isIsormorphicInjectOnce ? filemap : filemap[localeId]
                 /** @type {Object} 本次请求的 (当前语言的) 入口表 */
                 const thisEntrypoints = isIsormorphicInjectOnce ? entrypoints : entrypoints[localeId]
-
-                // const filterResult = filterStyle(reactHtml)
-                // CSS 同构结果片段
-                const styles = getStyles()
-                const reactStyles = Object.keys(styles)
-                    .map(wrapper => (
-                        `<style id="${wrapper}">${styles[wrapper].css}</style>`
-                    ))
-                    .join('')
 
                 // console.log(chunkmap)
                 // console.log(filemap)
@@ -250,7 +243,7 @@ export default class ReactIsomorphic {
                     title: htmlTool.getTitle(),
                     metaHtml: htmlTool.getMetaHtml(),
                     reactHtml,
-                    stylesHtml: reactStyles,
+                    stylesHtml,
                     reduxHtml: htmlTool.getReduxScript(store),
                     needInjectCritical: {
                         styles: !/(content|pathname)\(['"]critical\.css['"]\)/.test(template),

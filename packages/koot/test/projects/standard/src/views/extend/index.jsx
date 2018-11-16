@@ -60,7 +60,7 @@ class PageExtend extends React.Component {
         return (
             <div className={this.props.className}>
                 <h2>{__('pages.extend.isomorphic')}</h2>
-                <p className="timestamp">Server 123 Time: <strong>{(new Date(this.props.serverTimestamp)).toISOString()}</strong></p>
+                <p className="timestamp">Server Time: <strong>{(new Date(this.props.serverTimestamp)).toISOString()}</strong></p>
                 <p>{__('pages.extend.isomorphic_content')}</p>
             </div>
         )
