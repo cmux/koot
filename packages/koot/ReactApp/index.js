@@ -1,6 +1,5 @@
-import ReactApp, { store } from './ReactApp'
+import ReactApp from './ReactApp'
 
 export {
     ReactApp,
-    store,
 }

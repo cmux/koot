@@ -15,6 +15,10 @@
  */
 module.exports = (store) => {
 
+    if (typeof store === 'function') {
+        return store()
+    }
+
     if (typeof store === 'object') {
         // 清空 state
         const state = store.getState()
@@ -28,10 +32,6 @@ module.exports = (store) => {
         })
 
         return store
-    }
-
-    if (typeof store === 'function') {
-        return store()
     }
 
     return {}

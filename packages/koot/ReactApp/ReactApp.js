@@ -65,7 +65,7 @@ export default class ReactApp {
             middleware: reduxMiddleware,
             reducer: reduxReducer
         }
-        // this.store = undefined
+        this.store = undefined
 
 
         // react
@@ -128,11 +128,7 @@ export default class ReactApp {
         if (typeof this.store === 'undefined') {
             // __REDUX_STATE__ 是与服务端约定好的存储redux数据对象 (在浏览器端的 html 里存在)
             this.createConfigureStoreFactory()
-            store = this.configureStore(window.__REDUX_STATE__)
-        } else {
-            store = this.store
-            // const currentState = this.store.getState()
-            // const newState = Object.assign(currentState, window.__REDUX_STATE__)
+            this.store = this.configureStore(window.__REDUX_STATE__)
         }
 
         // react-router
@@ -142,7 +138,7 @@ export default class ReactApp {
             if (typeof options.browserHistoryOnUpdate === 'function') 
                 options.browserHistoryOnUpdate(location)*/
             if (typeof options.browserHistoryOnUpdate === 'function')
-                options.browserHistoryOnUpdate(location, store)
+                options.browserHistoryOnUpdate(location, this.store)
         })
 
         // 
@@ -150,14 +146,14 @@ export default class ReactApp {
         const routes = this.react.router.get()
 
         // 用 react-router-redux 增强 history
-        const history = syncHistoryWithStore(browserHistory, store)
+        const history = syncHistoryWithStore(browserHistory, this.store)
 
         // 扩展 router 属性
         let ext = this.__reactRouterExt
         let root = this.rootDom
 
         // 设置常量
-        setStore(store)
+        setStore(this.store)
         setHistory(history)
 
         match({ history, routes }, (err/*, redirectLocation, renderProps*/) => {
@@ -166,7 +162,7 @@ export default class ReactApp {
             }
             hydrate(
                 <Root
-                    store={store}
+                    store={this.store}
                     history={history}
                     routes={routes}
                     {...ext}
@@ -175,8 +171,10 @@ export default class ReactApp {
             )
         })
 
+        // store = this.store
+
         return {
-            store,
+            store: this.store,
             history,
         }
     }
