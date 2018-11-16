@@ -1,6 +1,6 @@
 {
     "name": "koot",
-    "version": "0.6.3-rc.1",
+    "version": "0.6.3",
     "description": "Koot.js - React isomorphic framework created by CMUX",
     "main": "index.js",
     "sideEffects": false,

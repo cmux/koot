@@ -1,5 +1,8 @@
 ## 0.6.3
-**2018-11-??**
+**2018-11-16**
+- React
+  - 高阶组件 `extend()`
+    - `pageinfo` 和 `data` 不再要求必须使用 `connect`
 - React同构 (`ReactApp`)
   - 对于传入完整 `store` 的项目，每次请求时会尝试使用全新的 `state`
 
