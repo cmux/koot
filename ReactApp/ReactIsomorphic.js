@@ -350,16 +350,19 @@ function asyncReactRouterMatch(location) {
  */
 function ServerRenderDataToStore({ store, renderProps, ctx }) {
 
+    /** @type {String} 静态方法名 */
     const SERVER_RENDER_EVENT_NAME = 'onServerRenderStoreExtend'
 
+    /** @type {Array} 需要执行的异步方法列表 */
     let serverRenderTasks = []
+
     for (let component of renderProps.components) {
-
         // component.WrappedComponent 是redux装饰的外壳
-        if (component && component.WrappedComponent && component.WrappedComponent[SERVER_RENDER_EVENT_NAME]) {
+        const c = component && component.WrappedComponent ? component.WrappedComponent : component
 
-            // 预处理异步数据的
-            const tasks = component.WrappedComponent[SERVER_RENDER_EVENT_NAME]({
+        if (c && typeof c[SERVER_RENDER_EVENT_NAME] === 'function') {
+            // 预处理异步数据
+            const tasks = c[SERVER_RENDER_EVENT_NAME]({
                 store,
                 renderProps,
                 ctx,
@@ -370,6 +373,7 @@ function ServerRenderDataToStore({ store, renderProps, ctx }) {
                 serverRenderTasks.push(tasks)
             }
         }
+
     }
 
     return Promise.all(serverRenderTasks)
@@ -385,16 +389,28 @@ function ServerRenderDataToStore({ store, renderProps, ctx }) {
  */
 function ServerRenderHtmlExtend({ store, renderProps, ctx }) {
 
+    /** @type {String} 静态方法名 */
     const SERVER_RENDER_EVENT_NAME = 'onServerRenderHtmlExtend'
+
+    /**
+     * @type {Function}
+     * @async
+     * 需要执行的方法
+     * 仅执行第一个匹配的组件的对应方法
+     */
+    let func
+
     const htmlTool = new HTMLTool()
 
-    // component.WrappedComponent 是redux装饰的外壳
-    let func
-    for (let component of renderProps.components) {
-        if (component && component.WrappedComponent && component.WrappedComponent[SERVER_RENDER_EVENT_NAME]) {
-            func = component.WrappedComponent[SERVER_RENDER_EVENT_NAME]
+    renderProps.components.some(component => {
+        // component.WrappedComponent 是redux装饰的外壳
+        const c = component && component.WrappedComponent ? component.WrappedComponent : component
+        if (c && c[SERVER_RENDER_EVENT_NAME]) {
+            func = c[SERVER_RENDER_EVENT_NAME]
+            return false
         }
-    }
+        return true
+    })
 
     if (typeof func === 'function')
         func({
