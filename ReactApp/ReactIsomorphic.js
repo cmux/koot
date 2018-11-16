@@ -402,7 +402,7 @@ function ServerRenderHtmlExtend({ store, renderProps, ctx }) {
 
     const htmlTool = new HTMLTool()
 
-    renderProps.components.some(component => {
+    renderProps.components.reverse().some(component => {
         // component.WrappedComponent 是redux装饰的外壳
         const c = component && component.WrappedComponent ? component.WrappedComponent : component
         if (c && c[SERVER_RENDER_EVENT_NAME]) {
