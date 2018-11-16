@@ -15,12 +15,16 @@
     - 输出的文件名结果现在具有可读性
   - 执行打包时会自动清理 `/logs/webpack-config/` 目录下创建于 2 天前的报告文件
   - `/logs/webpack-config/` 目录下新生成的报告文件中，现在会正确的显示正则表达式
+- React
+  - 高阶组件 `extend()`
+    - `pageinfo` 和 `data` 不再要求必须使用 `connect`
 - React同构 (`ReactApp`)
   - 现在启动服务器时会对设定的端口进行检查。如果端口被占用，会报告相应的错误
   - 对于传入完整 `store` 的项目，现在每次请求时会尝试使用全新的 `state`
   - 优化服务器端初始化 `store` 的流程
 - 错误修正
   - 修复生成了错误的多语言跳转 meta 链接地址的问题
+  - 修正某些情况下 React 组件热更新不起作用的问题
 - 添加依赖包
   - `inquirer`
   - `is-port-reachable`

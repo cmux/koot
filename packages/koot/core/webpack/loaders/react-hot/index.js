@@ -21,8 +21,10 @@ function AddReactHotLoader(source) {
     } else if (checkExportClassDirectly(source)) {
         newSource = transformSourceForExportClassDirectly(newSource)
     } else {
+        newSource = require('./export-anonymous-functional-component-with-hoc')(newSource)
         newSource = transformSourceDefault(newSource)
     }
+
     // console.log(newSource)
     return newSource
 }

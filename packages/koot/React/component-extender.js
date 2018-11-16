@@ -234,6 +234,7 @@ export default (options = {}) => (WrappedComponent) => {
                 "data-class-name": this.kootClassNames.join(' ').trim(),
             })
 
+            if (__SERVER__) console.log('extender this.state.loaded', this.state.loaded)
             if (typeof dataFetch !== 'undefined')
                 props.loaded = this.state.loaded
 
