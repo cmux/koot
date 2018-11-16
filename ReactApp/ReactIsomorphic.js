@@ -402,14 +402,12 @@ function ServerRenderHtmlExtend({ store, renderProps, ctx }) {
 
     const htmlTool = new HTMLTool()
 
-    renderProps.components.reverse().some(component => {
+    renderProps.components.forEach(component => {
         // component.WrappedComponent 是redux装饰的外壳
         const c = component && component.WrappedComponent ? component.WrappedComponent : component
         if (c && c[SERVER_RENDER_EVENT_NAME]) {
             func = c[SERVER_RENDER_EVENT_NAME]
-            return true
         }
-        return false
     })
 
     if (typeof func === 'function')
