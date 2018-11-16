@@ -407,9 +407,9 @@ function ServerRenderHtmlExtend({ store, renderProps, ctx }) {
         const c = component && component.WrappedComponent ? component.WrappedComponent : component
         if (c && c[SERVER_RENDER_EVENT_NAME]) {
             func = c[SERVER_RENDER_EVENT_NAME]
-            return false
+            return true
         }
-        return true
+        return false
     })
 
     if (typeof func === 'function')
