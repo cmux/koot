@@ -6,6 +6,11 @@ import {
     resetServerTimestamp
 } from '@store/infos/actions'
 
+const check = props => {
+    if (props.serverTimestamp)
+        return true
+}
+
 @extend({
     connect: (state) => ({
         localeId: state.localeId,
@@ -19,25 +24,28 @@ import {
         ]
     }),
     styles: require('./styles.less'),
-    data: {
-        fetch: (state, renderProps, dispatch) => (
-            new Promise(resolve => {
-                dispatch(updateServerTimestamp())
-                setTimeout(() => resolve(), 200)
-            })
-        ),
-        check: (state, renderProps) => {
-            // console.log(renderProps, state)
-            return !!renderProps.serverTimestamp
-        }
-    },
 
-    // data: (state, renderProps, dispatch) => {
-    //     return new Promise(resolve => {
-    //         dispatch(updateServerTimestamp())
-    //         setTimeout(() => resolve(), 200)
-    //     })
-    // }
+    // data: {
+    //     fetch: (state, renderProps, dispatch) => (
+    //         new Promise(resolve => {
+    //             dispatch(updateServerTimestamp())
+    //             setTimeout(() => resolve(), 200)
+    //         })
+    //     ),
+    //     check: (state, renderProps) => {
+    //         // console.log(renderProps, state)
+    //         return !!renderProps.serverTimestamp
+    //     }
+    // },
+
+    data: (state, renderProps, dispatch) => {
+        if (check(renderProps))
+            return true
+        return new Promise(resolve => {
+            dispatch(updateServerTimestamp())
+            setTimeout(() => resolve(), 200)
+        })
+    }
 })
 class PageExtend extends React.Component {
     reset = false
@@ -54,7 +62,7 @@ class PageExtend extends React.Component {
     }
 
     render() {
-        if (!this.props.loaded)
+        if (!check(this.props))
             return <div>LOADING...</div>
 
         return (

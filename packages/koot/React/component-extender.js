@@ -111,7 +111,6 @@ export default (options = {}) => (WrappedComponent) => {
         const result = dataFetch(store.getState(), renderProps, store.dispatch)
         // if (result === true) {
         //     isDataPreloaded = true
-        //     console.log('=================')
         //     return new Promise(resolve => resolve())
         // }
         if (Array.isArray(result))
@@ -275,7 +274,7 @@ export default (options = {}) => (WrappedComponent) => {
             })
 
             // if (__SERVER__) console.log('extender this.state.loaded', this.state.loaded)
-            if (typeof dataFetch !== 'undefined')
+            if (typeof dataFetch !== 'undefined' && typeof dataCheck === 'function')
                 props.loaded = this.state.loaded
 
             return <WrappedComponent {...props} />
