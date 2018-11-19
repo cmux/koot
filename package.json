@@ -3,7 +3,8 @@
     "description": "All modules and packages for Koot.js",
     "scripts": {
         "doc-server": "docsify serve docs",
-        "eslint:koot": "eslint \"packages/koot/!(node_modules|logs|dist|dist*|test)/**/*.+(js|jsx)\""
+        "eslint:koot": "eslint \"packages/koot/!(node_modules|logs|dist|dist*|test)/**/*.+(js|jsx)\"",
+        "lerna:bootstrap": "lerna bootstrap"
     },
     "repository": {
         "type": "git",
