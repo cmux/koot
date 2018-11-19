@@ -21,8 +21,10 @@ function AddReactHotLoader(source) {
     } else if (checkExportClassDirectly(source)) {
         newSource = transformSourceForExportClassDirectly(newSource)
     } else {
+        newSource = require('./export-anonymous-functional-component-with-hoc')(newSource)
         newSource = transformSourceDefault(newSource)
     }
+
     // console.log(newSource)
     return newSource
 }
@@ -80,7 +82,7 @@ function getExportDefaultClassName(source) {
 
 function getExportDefaultFunctionName(source) {
     let functionName = ''
-    const matches = source.match(/^\s*export\s+default\s+function\s+([^(\s]*)\s?\(/m)
+    const matches = source.match(/^\s*export\s+default\s+function\s+([^(\s^;]*)\s?\(/m)
     if (matches && matches[1]) {
         functionName = matches[1]
     }
@@ -89,7 +91,7 @@ function getExportDefaultFunctionName(source) {
 
 function getExportDefaultClassNameExported(source) {
     let className = ''
-    const matches = source.match(/^\s*export\s+default\s+([^(\s]*)[;]*(\n|$)/m)
+    const matches = source.match(/^\s*export\s+default\s+([^(\s^;]*)[;]*(\n|$)/m)
     if (matches && matches[1]) {
         className = matches[1]
     }

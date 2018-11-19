@@ -1,6 +1,8 @@
 const webpack = require('webpack')
 const common = require('../common')
 
+const { hmrOptions } = require('../../../defaults/webpack-dev-server')
+
 const factoryConfig = async ({
     pathRun,
     clientDevServerPort,
@@ -28,7 +30,7 @@ const factoryConfig = async ({
             new webpack.DefinePlugin({
                 __SPA__: false,
             }),
-            new webpack.HotModuleReplacementPlugin({ quiet: true })
+            new webpack.HotModuleReplacementPlugin(hmrOptions)
         ],
         externals: common.filterExternalsModules(),
     }

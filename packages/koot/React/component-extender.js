@@ -10,7 +10,7 @@ import hoistStatics from 'hoist-non-react-statics'
 
 //
 
-import { store, localeId } from '../index.js'
+import { store } from '../index.js'
 
 //
 
@@ -21,6 +21,7 @@ import {
 import {
     append as appendStyle,
     remove as removeStyle,
+    StyleMapContext,
 } from './styles'
 import clientUpdatePageInfo from './client-update-page-info'
 
@@ -82,22 +83,60 @@ export default (options = {}) => (WrappedComponent) => {
         // hot: _hot = true,
     } = options
 
+    // 样式相关
+
+    /** @type {Object} 经过 koot-css-loader 处理后的 css 文件的结果对象 */
     const styles = (!Array.isArray(_styles) ? [_styles] : styles).filter(obj => (
         typeof obj === 'object' && typeof obj.wrapper === 'string'
     ))
+
+    /** @type {Boolean} 是否有上述结果对象 */
     const hasStyles = (
         Array.isArray(styles) &&
         styles.length > 0
     )
+
+    // 同构数据相关
+
+    /** @type {Boolean} 同构数据是否已经获取成功 */
+    // let isDataPreloaded = false
+
+    /** @type {Function} 获取同构数据 */
     const dataFetch = typeof options.data === 'function' || Array.isArray(options.data)
         ? options.data
         : (typeof _dataFetch === 'function' || Array.isArray(_dataFetch) ? _dataFetch : undefined)
 
+    /** @type {Function} 获取同构数据的执行方法 */
+    const doFetchData = (store, renderProps) => {
+        const result = dataFetch(store.getState(), renderProps, store.dispatch)
+        // if (result === true) {
+        //     isDataPreloaded = true
+        //     return new Promise(resolve => resolve())
+        // }
+        if (Array.isArray(result))
+            return Promise.all(result)
+        if (result instanceof Promise)
+            return result
+        return new Promise(resolve => resolve(result))
+    }
+
+    // 页面信息相关
+
+    /** 
+     * 更新页面信息
+     * @param {Object} store
+     * @param {Object} props renderProps
+     * @returns {Object} infos
+     * @returns {String} infos.title
+     * @returns {Array} infos.metas
+     */
     const doPageinfo = (store, props) => {
         if (typeof pageinfo !== 'function')
             return { ...defaultPageInfo }
 
-        let infos = pageinfo(store.getState(), props)
+        const state = store.getState()
+
+        let infos = pageinfo(state, props)
         if (typeof infos !== 'object')
             infos = { ...defaultPageInfo }
 
@@ -106,10 +145,10 @@ export default (options = {}) => (WrappedComponent) => {
             metas = defaultPageInfo.metas
         } = infos
 
-        if (localeId)
+        if (state.localeId)
             metas.push({
                 name: 'koot-locale-id',
-                content: localeId
+                content: state.localeId
             })
 
         return {
@@ -118,12 +157,7 @@ export default (options = {}) => (WrappedComponent) => {
         }
     }
 
-    const doFetchData = (renderProps) => {
-        const r = dataFetch(store.getState(), renderProps, store.dispatch)
-        if (Array.isArray(r))
-            return Promise.all(r)
-        return r
-    }
+    // 装饰组件
 
     class KootReactComponent extends React.Component {
         static onServerRenderHtmlExtend = ({ htmlTool, store, renderProps = {} }) => {
@@ -135,12 +169,16 @@ export default (options = {}) => (WrappedComponent) => {
             htmlTool.metas = metas
         }
 
-        static onServerRenderStoreExtend({ /*store,*/ renderProps }) {
+        static onServerRenderStoreExtend({ store, renderProps }) {
             if (typeof dataFetch === 'undefined')
                 return new Promise(resolve => resolve())
             // console.log('onServerRenderStoreExtend')
-            return doFetchData(getRenderPropsFromServerProps(renderProps))
+            return doFetchData(store, getRenderPropsFromServerProps(renderProps))
         }
+
+        //
+
+        static contextType = StyleMapContext
 
         //
 
@@ -160,19 +198,20 @@ export default (options = {}) => (WrappedComponent) => {
         state = {
             loaded: typeof dataCheck === 'function'
                 ? dataCheck(store.getState(), getRenderPropsFromComponentProps(this.props))
-                : undefined,
+                : undefined
+            ,
         }
         mounted = false
         kootClassNames = []
 
         //
 
-        constructor(props) {
-            super(props)
+        constructor(props, context) {
+            super(props, context)
 
             if (hasStyles) {
                 this.kootClassNames = styles.map(obj => obj.wrapper)
-                appendStyle(styles)
+                appendStyle(context, styles)
                 // console.log('----------')
                 // console.log('styles', styles)
                 // console.log('theStyles', theStyles)
@@ -193,7 +232,7 @@ export default (options = {}) => (WrappedComponent) => {
             this.mounted = true
 
             if (!this.state.loaded && typeof dataFetch !== 'undefined') {
-                doFetchData(getRenderPropsFromComponentProps(this.props))
+                doFetchData(store, getRenderPropsFromComponentProps(this.props))
                     .then(() => {
                         if (!this.mounted) return
                         this.setState({
@@ -212,7 +251,7 @@ export default (options = {}) => (WrappedComponent) => {
         componentWillUnmount() {
             this.mounted = false
             if (hasStyles) {
-                removeStyle(styles)
+                removeStyle(this.context, styles)
             }
         }
 
@@ -223,15 +262,21 @@ export default (options = {}) => (WrappedComponent) => {
             // console.log('this', this)
             // console.log('this.kootClassNames', this.kootClassNames)
             // console.log('this.props.className', this.props.className)
+
             if (__CLIENT__ && this.kootClassNames instanceof HTMLElement) {
                 // console.log(this.kootClassNames)
                 this.kootClassNames = [this.kootClassNames.getAttribute('id')]
             }
+
             const props = Object.assign({}, this.props, {
-                loaded: this.state.loaded,
                 className: this.kootClassNames.concat(this.props.className).join(' ').trim(),
                 "data-class-name": this.kootClassNames.join(' ').trim(),
             })
+
+            // if (__SERVER__) console.log('extender this.state.loaded', this.state.loaded)
+            if (typeof dataFetch !== 'undefined' && typeof dataCheck === 'function')
+                props.loaded = this.state.loaded
+
             return <WrappedComponent {...props} />
         }
     }

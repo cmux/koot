@@ -1,8 +1,7 @@
 import React from 'react'
 import HTMLTool from './HTMLTool'
 import { renderToString } from 'react-dom/server'
-import { createMemoryHistory, RouterContext, match } from 'react-router'
-import { Provider } from 'react-redux'
+import { createMemoryHistory, match } from 'react-router'
 import { syncHistoryWithStore } from 'react-router-redux'
 
 import { changeLocaleQueryKey } from '../defaults/defines'
@@ -16,15 +15,14 @@ import {
 } from '../'
 import { localeId } from '../i18n'
 import RenderCache from './render-cache'
+import RootIsomorphic from './root-isomorphic'
 
 import onRequestGetStore from './server/on-request/get-store'
 
 import renderTemplate from '../React/render-template'
 import componentExtender from '../React/component-extender'
 import pageinfo from '../React/pageinfo'
-import {
-    get as getStyles,
-} from '../React/styles'
+import { parseHtmlForStyles } from '../React/styles'
 import validateInject from '../React/validate-inject'
 
 const getChunkmap = require('../utils/get-chunkmap')
@@ -150,18 +148,25 @@ export default class ReactIsomorphic {
             try {
                 // if (__DEV__) {
                 //     console.log(' ')
-                //     log('server', 'Server rendering...')
+                //     console.log('server', 'Server rendering...')
                 // }
 
+                const store = onRequestGetStore(_store || configStore)
                 const memoryHistory = createMemoryHistory(url)
-                const store = onRequestGetStore( _store || configStore )
                 const history = syncHistoryWithStore(memoryHistory, store)
+
+                // 补充服务端提供的信息数据到store中
+                if (typeof onServerRender === 'function') {
+                    await onServerRender({ ctx, store })
+                }
 
                 // 根据router计算出渲染页面需要的数据，并把渲染需要的数据补充到store中
                 const {
                     redirectLocation,
                     renderProps
                 } = await asyncReactRouterMatch({ history, routes, location: url })
+
+                // console.log('renderProps', renderProps)
 
                 // 判断是否重定向页面
                 if (redirectLocation)
@@ -173,10 +178,6 @@ export default class ReactIsomorphic {
                 setStore(store)
                 setHistory(history)
 
-                // 补充服务端提供的信息数据到store中
-                if (typeof onServerRender === 'function')
-                    await onServerRender({ ctx, store })
-
                 // 把同构时候服务端预处理数据补充到store中
                 await ServerRenderDataToStore({ store, renderProps, ctx })
 
@@ -184,11 +185,15 @@ export default class ReactIsomorphic {
                 const htmlTool = await ServerRenderHtmlExtend({ store, renderProps, ctx })
 
                 // 把react部分渲染出html片段，并插入到html中
-                const reactHtml = renderToString(
-                    <Provider store={store} >
-                        <RouterContext {...renderProps} />
-                    </Provider>
-                )
+                const {
+                    html: reactHtml,
+                    htmlStyles: stylesHtml
+                } = parseHtmlForStyles(renderToString(
+                    <RootIsomorphic
+                        store={store}
+                        {...renderProps}
+                    />
+                ))
 
                 /** @type {Object} 本次请求的渲染结果缓存 */
                 const thisRenderCache = isIsormorphicInjectOnce ? renderCache : renderCache.get(localeId)
@@ -206,15 +211,6 @@ export default class ReactIsomorphic {
                 const thisFilemap = isIsormorphicInjectOnce ? filemap : filemap[localeId]
                 /** @type {Object} 本次请求的 (当前语言的) 入口表 */
                 const thisEntrypoints = isIsormorphicInjectOnce ? entrypoints : entrypoints[localeId]
-
-                // const filterResult = filterStyle(reactHtml)
-                // CSS 同构结果片段
-                const styles = getStyles()
-                const reactStyles = Object.keys(styles)
-                    .map(wrapper => (
-                        `<style id=${wrapper}>${styles[wrapper].css}</style>`
-                    ))
-                    .join('')
 
                 // console.log(chunkmap)
                 // console.log(filemap)
@@ -247,7 +243,7 @@ export default class ReactIsomorphic {
                     title: htmlTool.getTitle(),
                     metaHtml: htmlTool.getMetaHtml(),
                     reactHtml,
-                    stylesHtml: reactStyles,
+                    stylesHtml,
                     reduxHtml: htmlTool.getReduxScript(store),
                     needInjectCritical: {
                         styles: !/(content|pathname)\(['"]critical\.css['"]\)/.test(template),
@@ -343,16 +339,19 @@ function asyncReactRouterMatch(location) {
  */
 function ServerRenderDataToStore({ store, renderProps, ctx }) {
 
+    /** @type {String} 静态方法名 */
     const SERVER_RENDER_EVENT_NAME = 'onServerRenderStoreExtend'
 
+    /** @type {Array} 需要执行的异步方法列表 */
     let serverRenderTasks = []
+
     for (let component of renderProps.components) {
-
         // component.WrappedComponent 是redux装饰的外壳
-        if (component && component.WrappedComponent && component.WrappedComponent[SERVER_RENDER_EVENT_NAME]) {
+        const c = component && component.WrappedComponent ? component.WrappedComponent : component
 
-            // 预处理异步数据的
-            const tasks = component.WrappedComponent[SERVER_RENDER_EVENT_NAME]({
+        if (c && typeof c[SERVER_RENDER_EVENT_NAME] === 'function') {
+            // 预处理异步数据
+            const tasks = c[SERVER_RENDER_EVENT_NAME]({
                 store,
                 renderProps,
                 ctx,
@@ -363,6 +362,7 @@ function ServerRenderDataToStore({ store, renderProps, ctx }) {
                 serverRenderTasks.push(tasks)
             }
         }
+
     }
 
     return Promise.all(serverRenderTasks)
@@ -378,16 +378,26 @@ function ServerRenderDataToStore({ store, renderProps, ctx }) {
  */
 function ServerRenderHtmlExtend({ store, renderProps, ctx }) {
 
+    /** @type {String} 静态方法名 */
     const SERVER_RENDER_EVENT_NAME = 'onServerRenderHtmlExtend'
+
+    /**
+     * @type {Function}
+     * @async
+     * 需要执行的方法
+     * 仅执行第一个匹配的组件的对应方法
+     */
+    let func
+
     const htmlTool = new HTMLTool()
 
-    // component.WrappedComponent 是redux装饰的外壳
-    let func
-    for (let component of renderProps.components) {
-        if (component && component.WrappedComponent && component.WrappedComponent[SERVER_RENDER_EVENT_NAME]) {
-            func = component.WrappedComponent[SERVER_RENDER_EVENT_NAME]
+    renderProps.components.forEach(component => {
+        // component.WrappedComponent 是redux装饰的外壳
+        const c = component && component.WrappedComponent ? component.WrappedComponent : component
+        if (c && c[SERVER_RENDER_EVENT_NAME]) {
+            func = c[SERVER_RENDER_EVENT_NAME]
         }
-    }
+    })
 
     if (typeof func === 'function')
         func({

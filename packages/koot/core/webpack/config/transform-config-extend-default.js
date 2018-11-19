@@ -8,12 +8,7 @@ const createGlobalDefaultConfig = require('./create-global-default')
  * @returns {Object} 处理后的 webpack 配置对象
  */
 module.exports = async (config = {}, kootBuildConfig = {}) => {
-    const {
-        aliases, defines, css,
-    } = kootBuildConfig
-    const configGlobalDefault = await createGlobalDefaultConfig({
-        aliases, defines, css,
-    })
+    const configGlobalDefault = await createGlobalDefaultConfig(kootBuildConfig)
 
     // 合并 module.rules / loaders
     if (typeof config.module === 'object') {

@@ -9,6 +9,7 @@ const SpaTemplatePlugin = require('../plugins/spa-template')
 const GenerateChunkmapPlugin = require('../plugins/generate-chunkmap')
 
 const { keyConfigBuildDll, keyConfigOutputPathShouldBe } = require('../../../defaults/before-build')
+const { hmrOptions } = require('../../../defaults/webpack-dev-server')
 
 // const {
 //     entryClientHMR
@@ -172,7 +173,7 @@ module.exports = async (kootBuildConfig = {}) => {
                     new webpack.NamedModulesPlugin()
                 )
                 result.plugins.push(
-                    new webpack.HotModuleReplacementPlugin()
+                    new webpack.HotModuleReplacementPlugin(hmrOptions)
                 )
             }
 

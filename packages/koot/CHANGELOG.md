@@ -1,48 +1,65 @@
 ## 0.7.0
-**2018-11-??**
+**2018-11-19**
 - 核心
   - 配置项
     - **新** `css` - CSS 打包相关设置。详情请参见文档的 [配置](https://koot.js.org/config) 章节
     - **新** `webpack.dll` - 开发模式下供 `webpack.DllPlugin` 使用。webpack 的监控不会处理这些库/library，以期提高开发模式的打包更新速度。详情请参见文档的 [配置](https://koot.js.org/config) 章节
+    - **新** `redux.syncCookie` - 允许服务器端在同构时将 `cookie` 中对应的项同步到 redux state 的 `server.cookie` 中。详情请参见文档的 [配置](https://koot.js.org/config) 章节
   - 生产模式
     - 使用 `koot-start` 命令时，如果打包过程发生错误，现在会显示更详细的错误记录
   - 开发模式
     - 现在可以同时启动多个 Koot 项目的开发模式了
-    - 使用 `webpack.DllPlugin` 提高打包更新速度
+    - 启用 `webpack` 热更新的 `多步骤 (multiStep)` 机制提高热更新速度
+    - 启用 `webpack.DllPlugin` 提高打包更新速度
   - 分析模式
     - 输出的文件名结果现在具有可读性
-  - 执行打包时会自动清理 `/logs/webpack-config/` 目录下创建于 2 天前的报告文件
-  - `/logs/webpack-config/` 目录下新生成的报告文件中，现在会正确的显示正则表达式
+  - Webpack 打包
+    - 重写 CSS 相关 `loader`，现在会确保同构结果中 CSS 样式名的正确性
+    - 执行打包时会自动清理 `/logs/webpack-config/` 目录下创建于 2 天前的报告文件
+    - `/logs/webpack-config/` 目录下新生成的报告文件中，现在会正确的显示正则表达式
+- React
+  - 高阶组件 `extend()`
+    - `pageinfo` 和 `data` 不再要求必须使用 `connect`
+    - 使用新的 `context` 语法重写样式、CSS 相关逻辑
 - React同构 (`ReactApp`)
   - 现在启动服务器时会对设定的端口进行检查。如果端口被占用，会报告相应的错误
   - 对于传入完整 `store` 的项目，现在每次请求时会尝试使用全新的 `state`
+  - 优化服务器端初始化 `store` 的流程
 - 错误修正
   - 修复生成了错误的多语言跳转 meta 链接地址的问题
+  - 修正某些情况下 React 组件热更新不起作用的问题
 - 添加依赖包
   - `inquirer`
   - `is-port-reachable`
   - `portfinder`
+- 移除依赖包
+  - `sp-css-loader`
 - 更新依赖包
   - major
-    - `sp-css-import` -> _3.0.1_
+    - `sp-css-import` -> _4.0.0_
   - minor
     - `copy-webpack-plugin` -> _4.6.0_
     - `webpack` -> _4.25.1_
   - patch
-    - `@babel/core` -> _7.1.5_
-    - `@babel/preset-env` -> _7.1.5_
+    - `@babel/core` -> _7.1.6_
+    - `@babel/plugin-proposal-decorators` -> _7.1.6_
+    - `@babel/preset-env` -> _7.1.6_
     - `css-loader` -> _1.0.1_
     - `fs-extra` -> _7.0.1_
-    - `react` -> _16.6.1_
-    - `react-dom` -> _16.6.1_
+    - `postcss` -> _7.0.6_
+    - `react` -> _16.6.3_
+    - `react-dom` -> _16.6.3_
     - `react-hot-loader` -> _4.3.12_
+    - `react-redux` -> _5.1.1
     - `sp-css-loader` -> _1.5.3_
+    - `yargs` -> _12.0.4_
 - 其他
   - 更新测试项目和测试案例
   - `koot-cli`
     - 更新项目到 v0.7 时，会自动添加兼容旧版规则的 `css` 配置
   - `sp-css-import`
     - 更新核心代码，以兼容 koot v0.6 后的新结构
+    - 使用新的 `context` 语法重写样式、CSS 相关逻辑
 
 ## 0.6.1
 **2018-10-29**

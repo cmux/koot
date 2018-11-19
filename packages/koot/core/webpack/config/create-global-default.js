@@ -1,3 +1,4 @@
+const { keyConfigBuildDll } = require('../../../defaults/before-build')
 const common = require('../common')
 
 /**
@@ -29,5 +30,7 @@ module.exports = async (options = {}) => {
         aliases,
         defines,
         css,
+
+        [keyConfigBuildDll]: options[keyConfigBuildDll]
     })
 }

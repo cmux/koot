@@ -47,6 +47,7 @@ const getFilePath = (filename, localeId, isPathname = false) => {
         typeof chunkmap['.files'] === 'object' &&
         typeof chunkmap['.files'][filename] === 'string'
     ) {
+        // console.log(filename, chunkmap['.files'][filename].replace(/(^\.\/|^)public\//, ''))
         return pathPublic + chunkmap['.files'][filename].replace(/(^\.\/|^)public\//, '')
     }
 

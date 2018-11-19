@@ -100,8 +100,8 @@ module.exports = async (kootBuildConfig = {}) => {
 
         result.watchOptions = {
             ignored: [
-                /node_modules/,
-                'node_modules',
+                // /node_modules/,
+                // 'node_modules',
                 dist,
                 path.resolve(dist, '**/*')
             ]

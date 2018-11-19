@@ -45,7 +45,7 @@ Webpack 打包相关配置
 
 ### `redux`
 
-服务器端同构时把 `cookie` 中对应的项同步到 redux state 的 `server.cookie` 中
+允许服务器端在同构时将 `cookie` 中对应的项同步到 redux state 的 `server.cookie` 中
 
 ```javascript
 // 默认配置

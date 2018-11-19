@@ -7,6 +7,8 @@ const chalk = require('chalk')
 const webpack = require('webpack')
 const WebpackDevServer = require('webpack-dev-server')
 
+const resetCssLoader = require('./loaders/css/reset')
+
 const {
     filenameWebpackDevServerPortTemp, keyFileProjectConfigTemp,
     keyConfigBuildDll,
@@ -224,6 +226,12 @@ module.exports = async (kootBuildConfig = {}) => {
         return
     }
 
+    /** @type {Function} @async 在每次打包前，webpack 为 Array 时，每一项执行前均会执行该方法 */
+    const beforeEachBuild = async () => {
+        // 重置数据
+        resetCssLoader()
+    }
+
 
 
 
@@ -411,6 +419,7 @@ module.exports = async (kootBuildConfig = {}) => {
     // CLIENT / DEV
     if (STAGE === 'client' && ENV === 'dev' && !createDll) {
         // await sleep(20 * 1000)
+        await beforeEachBuild()
         const compiler = webpack(webpackConfig)
         const devServerConfig = Object.assign({
             quiet: false,
@@ -465,6 +474,7 @@ module.exports = async (kootBuildConfig = {}) => {
 
         // 执行打包
         const build = async (config, onComplete = buildingComplete) => {
+            await beforeEachBuild()
             const compiler = webpack(config)
             // console.log('compiler')
             await new Promise((resolve, reject) => {
@@ -554,6 +564,7 @@ module.exports = async (kootBuildConfig = {}) => {
 
     // 服务端开发环境
     if (STAGE === 'server' && ENV === 'dev' && !createDll) {
+        await beforeEachBuild()
         await webpack(
             webpackConfig,
             async (err, stats) => {
@@ -596,6 +607,7 @@ module.exports = async (kootBuildConfig = {}) => {
             }
         }
 
+        await beforeEachBuild()
         await new Promise((resolve, reject) => {
             webpack(webpackConfig, async (err, stats) => {
                 const info = stats.toJson()

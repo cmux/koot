@@ -20,7 +20,7 @@ import KoaApp from './class-koa-app'
 import modifyKoaApp from './modify-koa-app'
 import validatePort from './validate-port'
 
-import { publicPathPrefix } from '../../defaults/webpack-dev-server'
+import getFreePort from '../../libs/get-free-port'
 import getPathnameDevServerStart from '../../utils/get-pathname-dev-server-start'
 
 import {
@@ -45,6 +45,13 @@ const run = async () => {
     const port = await validatePort()
     if (!port) return
 
+    if (__DEV__) {
+        // 在随机端口启用服务器
+        const portFree = await getFreePort(port)
+        process.env.SERVER_PORT = portFree
+        process.env.SERVER_PORT_DEV_MAIN = port
+    }
+
     // console.log('process.env.SERVER_PORT', process.env.SERVER_PORT)
     // console.log('__SERVER_PORT__', __SERVER_PORT__)
     // console.log('port', port)
@@ -55,16 +62,6 @@ const run = async () => {
 
     /* 公用的koa配置 */
     app.keys = cookieKeys || 'koot';
-
-    if (require('./is-test-mode')()) {
-        console.log(JSON.stringify({
-            'koot-test': true,
-            'process.env.SERVER_PORT': process.env.SERVER_PORT,
-            __SERVER_PORT__,
-            port,
-            app,
-        }))
-    }
 
     await modifyKoaApp(app, {
         name,
@@ -79,54 +76,28 @@ const run = async () => {
         console.trace(err)
     })
 
-    // [开发模式] 开启 webpack-dev-server 代理转发
     if (__DEV__) {
-        const Koa = require('koa')
-        const mount = require('koa-mount')
-        const proxy = require('koa-better-http-proxy')
-        const proxyServer = new Koa()
-        const getWDSport = require('../../utils/get-webpack-dev-server-port')
-        const port = getWDSport()
-        proxyServer.use(proxy('localhost', {
-            port,
-            userResDecorator: function (proxyRes, proxyResData, ctx) {
-                const data = proxyResData.toString('utf8')
-
-                if (/\ufffd/.test(data) === true)
-                    return proxyResData
-
-                const origin = ctx.origin.split('://')[1]
-                return data
-                    .replace(
-                        /:\/\/localhost:([0-9]+)/mg,
-                        `://${origin}/${publicPathPrefix}`
-                    )
-                    .replace(
-                        new RegExp(`://${origin}/${publicPathPrefix}/sockjs-node/`, 'mg'),
-                        `://localhost:${port}/sockjs-node/`
-                    )
-            }
-        }))
-        app.use(mount(`/${publicPathPrefix}`, proxyServer))
-    }
-
-    // 开启服务器
-    koaApp.run(port)
-
-    // 最终 log
-    setTimeout(() => {
-        if (__DEV__) {
+        // 开发模式
+        koaApp.run(process.env.SERVER_PORT)
+        // 标记必要信息
+        setTimeout(() => {
             console.log(`\x1b[32m√\x1b[0m ` + `\x1b[93m[koot/server]\x1b[0m started on \x1b[32m${'http://localhost:' + port}\x1b[0m`)
-            fs.writeFileSync(
+            fs.writeJsonSync(
                 getPathnameDevServerStart(),
-                ' ',
-                'utf-8'
+                {
+                    port: process.env.SERVER_PORT_DEV_MAIN,
+                    portServer: process.env.SERVER_PORT
+                }
             )
-        } else {
+            console.log(' ')
+        })
+    } else {
+        koaApp.run(port)
+        setTimeout(() => {
             console.log(`\x1b[32m√\x1b[0m ` + `\x1b[93m[koot/server]\x1b[0m listening port \x1b[32m${port}\x1b[0m`)
-        }
-        console.log(' ')
-    })
+            console.log(' ')
+        })
+    }
 
 }
 

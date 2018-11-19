@@ -20,6 +20,15 @@ const getPathnameDevServerStart = require('../../utils/get-pathname-dev-server-s
  * @returns {Number|Boolean} 如果最终没有结果，返回 false，否则返回可用的端口数
  */
 module.exports = async () => {
+
+    if (__DEV__) {
+        let infos
+        try {
+            infos = await fs.readJson(getPathnameDevServerStart())
+        } catch (e) { }
+        if (typeof infos === 'object')
+            return infos.port
+    }
     // const locale = osLocale.sync()
     // console.log('locale', locale)
 
