@@ -6,6 +6,7 @@ const readConfigFile = require('../../lib/read-config-file')
 const addConfigOption = require('../../lib/add-config-option')
 
 const msgUpgrading = require('./msg-upgrading')
+const updateVersionInPackagejson = require('./update-version-in-packagejson')
 
 module.exports = async (cwd = process.cwd(), lastVersion = '0.6.0') => {
     const p = await readConfigFile(cwd)
@@ -39,6 +40,8 @@ module.exports = async (cwd = process.cwd(), lastVersion = '0.6.0') => {
             '@property {Array} extract 这些文件在打包时会拆成独立文件'
         ]
     )
+
+    await updateVersionInPackagejson(cwd, '0.7.0')
 
     waiting.stop()
     spinner(msg).finish()

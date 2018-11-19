@@ -48,7 +48,7 @@ module.exports = async (cwd = process.cwd(), name, value, comments = [], overwri
 
     await fs.writeFile(
         file,
-        content.replace(/{/, `{\n${getComments()}    ${name}: ${getValue()},\n`),
+        content.replace(/module\.exports\s+=\s+{/, `module.exports = {\n${getComments()}    ${name}: ${getValue()},\n`),
         'utf-8'
     )
 }
