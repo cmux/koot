@@ -2,9 +2,9 @@
 **2018-11-19**
 - 核心
   - 配置项
-    - **新** `css` - CSS 打包相关设置。详情请参见文档的 [配置](https://koot.js.org/config) 章节
-    - **新** `webpack.dll` - 开发模式下供 `webpack.DllPlugin` 使用。webpack 的监控不会处理这些库/library，以期提高开发模式的打包更新速度。详情请参见文档的 [配置](https://koot.js.org/config) 章节
-    - **新** `redux.syncCookie` - 允许服务器端在同构时将 `cookie` 中对应的项同步到 redux state 的 `server.cookie` 中。详情请参见文档的 [配置](https://koot.js.org/config) 章节
+    - **新** `css` - CSS 打包相关设置。详情请参见文档的 [配置](https://koot.js.org/#/config) 章节
+    - **新** `webpack.dll` - 开发模式下供 `webpack.DllPlugin` 使用。webpack 的监控不会处理这些库/library，以期提高开发模式的打包更新速度。详情请参见文档的 [配置](https://koot.js.org/#/config) 章节
+    - **新** `redux.syncCookie` - 允许服务器端在同构时将 `cookie` 中对应的项同步到 redux state 的 `server.cookie` 中。详情请参见文档的 [配置](https://koot.js.org/#/config) 章节
   - 生产模式
     - 使用 `koot-start` 命令时，如果打包过程发生错误，现在会显示更详细的错误记录
   - 开发模式
