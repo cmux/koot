@@ -1,0 +1,49 @@
+{
+    "name": "koot-boilerplate",
+    "version": "0.5.0",
+    "description": "Koot.js 模板项目",
+    "author": {
+        "name": "Diablohu",
+        "email": "diablohudream@gmail.com",
+        "url": "http://diablohu.com"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/cmux/koot-boilerplate"
+    },
+    "license": "Apache-2.0",
+    "scripts": {
+        "start": "koot-start",
+        "start:server": "koot-start --no-build",
+        "build": "koot-build",
+        "build:client": "koot-build -c",
+        "build:server": "koot-build -s",
+        "build:spa": "koot-build -c --type react-spa --config koot.build.spa.js",
+        "build:qa": "koot-build -c --config koot.build.qa.js",
+        "build:custom": "koot-build --config koot.build.custom-output.js",
+        "dev": "koot-dev",
+        "dev:client": "koot-dev -c",
+        "dev:server": "koot-dev -s",
+        "dev:global-pm2": "koot-dev -g",
+        "dev:no-open": "koot-dev --no-open",
+        "dev:spa": "koot-dev --type react-spa --config koot.build.spa.js",
+        "dev:qa": "koot-dev --config koot.build.qa.js",
+        "analyze": "koot-analyze",
+        "eslint": "eslint \"src/**/*.+(js|jsx)\""
+    },
+    "dependencies": {
+        "koot": "0.7.0",
+        "normalize.css": "8.0.0",
+        "cssnano": "4.1.7",
+        "svg-url-loader": "2.3.2",
+        "axios": "0.18.0"
+    },
+    "devDependencies": {
+        "eslint": "5.8.0",
+        "eslint-plugin-react": "7.11.1",
+        "babel-eslint": "10.0.1"
+    },
+    "engines": {
+        "node": ">=8.0.0"
+    }
+}

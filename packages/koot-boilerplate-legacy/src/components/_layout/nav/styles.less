@@ -1,0 +1,56 @@
+@import '~base.less';
+
+.component{
+    background: linear-gradient(to top, transparent 20px, @theme-lightblue-a700);
+    text-align: center;
+
+    .logo{
+        display: block;
+        height: 300px;
+        position: relative;
+        text-align: center;
+        line-height: 300px;
+        font-size: 75px;
+        letter-spacing: .25em;
+        font-style: italic;
+        color: @color-background;
+        text-shadow: 0 0 .25em fade(@color-base, 25%);
+        // &::before{
+        //     content: "Koot.js";
+        //     text-align: center;
+        //     line-height: 0;
+        //     position: absolute;
+        //     top: 50%;
+        //     left: 0;
+        //     right: 0;
+        //     font-size: 75px;
+        //     letter-spacing: .25em;
+        //     font-style: italic;
+        //     color: @color-background;
+        //     text-shadow: 0 0 .25em fade(@color-base, 25%);
+        // }
+    }
+
+    .nav-item{
+        display: inline-block;
+        position: relative;
+        &.on{
+            cursor: default;
+            color: @color-base;
+            pointer-events: none;
+        }
+        & + .nav-item{
+            margin-left: 10px;
+            padding-left: 11px;
+            &::before{
+                content: "";
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                width: 1px;
+                background: @color-border;
+            }
+        }
+    }
+}

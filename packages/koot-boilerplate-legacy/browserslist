@@ -1,0 +1,26 @@
+# Browsers that should be supported
+# If a component has its own browserslist file, that file will be used instead of this one.
+#
+# https://github.com/ai/browserslist
+
+> 5%
+
+# IE / Edge
+not Explorer <= 11
+not ExplorerMobile <= 11
+Edge >= 14
+
+# Chrome
+Chrome >= 49
+ChromeAndroid >= 59
+
+# Firefox
+Firefox >= 50
+FirefoxAndroid >= 53
+
+# Safari
+Safari >= 9
+
+# Systems
+iOS >= 8
+Android >= 4.4

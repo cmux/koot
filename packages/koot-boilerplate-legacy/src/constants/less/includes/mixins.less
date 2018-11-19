@@ -1,0 +1,62 @@
+// mixins
+
+// 鼠标等 pointer 设备限定：hover
+.hover( @rules ) {
+    html.is-hover &:hover{
+        @rules();
+    }
+}
+
+.hover( @rulesHover ; @rulesActive ) {
+    html.is-hover &:hover{
+        @rulesHover();
+    }
+    &:active,
+    html.is-hover &:hover:active{
+        @rulesActive();
+    }
+}
+
+.hover( @rulesHover ; @rulesActive; @isActiveDiff ) {
+    html.is-hover &:hover{
+        @rulesHover();
+    }
+    html.is-hover &:hover:active{
+        @rulesActive();
+    }
+}
+
+.hover-nopseudo( @rulesHover ) {
+    html.is-hover &{
+        @rulesHover();
+    }
+}
+
+// 浏览器特征/兼容
+.browser-ie9( @rules ){
+    html.ie9 &{
+        @rules();
+    }
+}
+.browser-ie8( @rules ){
+    html.ie8 &{
+        @rules();
+    }
+}
+.browser-ie7( @rules ){
+    html.ie7 &{
+        @rules();
+    }
+}
+.platform-mobile( @rules ){
+    html.is-mobile &{
+        @rules();
+    }
+}
+
+// App 状态
+.is-ready( @rules ){
+    body.is-ready &{
+        @rules();
+    }
+}
