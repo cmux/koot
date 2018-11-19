@@ -4,7 +4,7 @@
     "scripts": {
         "doc-server": "docsify serve docs",
         "eslint:koot": "eslint \"packages/koot/!(node_modules|logs|dist|dist*|test)/**/*.+(js|jsx)\"",
-        "lerna:bootstrap": "lerna bootstrap"
+        "lerna:bootstrap": "lerna bootstrap --hoist"
     },
     "repository": {
         "type": "git",

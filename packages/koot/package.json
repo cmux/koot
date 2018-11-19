@@ -146,7 +146,6 @@
     "devDependencies": {
         "is-valid-path": "0.1.1",
         "download-git-repo": "1.1.0",
-        "jest": "23.6.0",
         "puppeteer": "1.10.0"
     }
 }
