@@ -1,5 +1,5 @@
 ## 0.7.0
-**2018-11-??**
+**2018-11-19**
 - 核心
   - 配置项
     - **新** `css` - CSS 打包相关设置。详情请参见文档的 [配置](https://koot.js.org/config) 章节
@@ -46,11 +46,13 @@
     - `@babel/preset-env` -> _7.1.6_
     - `css-loader` -> _1.0.1_
     - `fs-extra` -> _7.0.1_
+    - `postcss` -> _7.0.6_
     - `react` -> _16.6.3_
     - `react-dom` -> _16.6.3_
     - `react-hot-loader` -> _4.3.12_
     - `react-redux` -> _5.1.1
     - `sp-css-loader` -> _1.5.3_
+    - `yargs` -> _12.0.4_
 - 其他
   - 更新测试项目和测试案例
   - `koot-cli`
