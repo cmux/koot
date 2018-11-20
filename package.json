@@ -3,6 +3,7 @@
     "description": "All modules and packages for Koot.js",
     "scripts": {
         "doc-server": "docsify serve docs",
+        "lerna": "lerna-wizard",
         "lerna:bootstrap": "lerna bootstrap --hoist",
         "pretest": "node ./test/pre-test.js",
         "test": "jest",
@@ -40,7 +41,8 @@
     },
     "license": "Apache-2.0",
     "devDependencies": {
-        "lerna": "3.4.3"
+        "lerna": "3.4.3",
+        "lerna-wizard": "1.0.9"
     },
     "dependencies": {
         "docsify-cli": "4.3.0",
