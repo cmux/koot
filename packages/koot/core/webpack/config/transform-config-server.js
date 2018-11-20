@@ -3,7 +3,7 @@ const DefaultWebpackConfig = require('webpack-config').default
 
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const KootI18nPlugin = require('../plugins/i18n')
-const DevServerAfterPlugin = require('koot-webpack/plugins/dev-server-after')
+const DevModePlugin = require('koot-webpack/plugins/dev-mode')
 
 const createTargetDefaultConfig = require('./create-target-default')
 const transformConfigExtendDefault = require('./transform-config-extend-default')
@@ -95,7 +95,7 @@ module.exports = async (kootBuildConfig = {}) => {
             ]))
 
         result.plugins.push(
-            new DevServerAfterPlugin({ dist })
+            new DevModePlugin({ dist })
         )
 
         result.watchOptions = {
