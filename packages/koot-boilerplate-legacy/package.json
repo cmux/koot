@@ -32,13 +32,11 @@
         "eslint": "eslint \"src/**/*.+(js|jsx)\""
     },
     "dependencies": {
-        "koot": "0.7.0",
-        "normalize.css": "8.0.0",
+        "axios": "0.18.0",
         "cssnano": "4.1.7",
-        "svg-url-loader": "2.3.2",
-        "axios": "0.18.0"
-    },
-    "devDependencies": {
+        "koot": "^0.7.1-alpha.0",
+        "normalize.css": "8.0.0",
+        "svg-url-loader": "2.3.2"
     },
     "engines": {
         "node": ">=8.0.0"
