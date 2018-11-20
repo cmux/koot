@@ -5,6 +5,7 @@
         "doc-server": "docsify serve docs",
         "lerna": "lerna-wizard",
         "lerna:bootstrap": "lerna bootstrap --hoist",
+        "lerna:publish": "lerna publish",
         "pretest": "node ./test/pre-test.js",
         "test": "jest",
         "test:factoryconfig": "jest ./test/cases/actory-config/test.js",
