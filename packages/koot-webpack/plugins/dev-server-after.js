@@ -4,8 +4,9 @@ const opn = require('opn')
 
 const { ConcatSource } = require("webpack-sources")
 
-const getPort = require('../../../utils/get-port')
-const { filenameDll } = require('../../../defaults/before-build')
+const getPort = require('../libs/require-koot')('utils/get-port')
+const { filenameDll } = require('../libs/require-koot')('defaults/before-build')
+const isHotUpdate = require('../libs/compilation-is-hot-update')
 
 let opened = false
 
@@ -23,6 +24,14 @@ class DevServerAfter {
         const TYPE = process.env.WEBPACK_BUILD_TYPE
         const ENV = process.env.WEBPACK_BUILD_ENV
         const STAGE = process.env.WEBPACK_BUILD_STAGE
+
+        let hotUpdate = false
+
+        // 检查是否为热更新
+        compiler.hooks.afterEmit.tapAsync.bind(compiler.hooks.afterEmit, 'GenerateChunkmap')(async (compilation, callback) => {
+            hotUpdate = isHotUpdate(compilation)
+            callback()
+        })
 
         // [server / dev] 如果存在 DLL 结果，写入到 index.js 文件开端
         if (STAGE === 'server' && ENV === 'dev') {
@@ -56,6 +65,12 @@ class DevServerAfter {
         // hook: done
         // 执行 after 回调，并打开浏览器窗口
         compiler.hooks.done.tapAsync.bind(compiler.hooks.done, 'DevServerAfter')((compilation, callback) => {
+            // console.log('\n\n\nhotUpdate', hotUpdate)
+
+            // 如果当前为热更新，取消流程
+            if (hotUpdate)
+                return callback()
+
             if (typeof after === 'function')
                 setTimeout(() => {
                     after()

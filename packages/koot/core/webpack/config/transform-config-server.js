@@ -3,7 +3,7 @@ const DefaultWebpackConfig = require('webpack-config').default
 
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const KootI18nPlugin = require('../plugins/i18n')
-const DevServerAfterPlugin = require('../plugins/dev-server-after')
+const DevServerAfterPlugin = require('koot-webpack/plugins/dev-server-after')
 
 const createTargetDefaultConfig = require('./create-target-default')
 const transformConfigExtendDefault = require('./transform-config-extend-default')

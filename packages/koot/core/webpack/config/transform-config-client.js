@@ -4,7 +4,7 @@ const DefaultWebpackConfig = require('webpack-config').default
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 const KootI18nPlugin = require('../plugins/i18n')
-const DevServerAfterPlugin = require('../plugins/dev-server-after')
+const DevServerAfterPlugin = require('koot-webpack/plugins/dev-server-after')
 const SpaTemplatePlugin = require('../plugins/spa-template')
 const GenerateChunkmapPlugin = require('koot-webpack/plugins/generate-chunkmap')
 
