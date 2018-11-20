@@ -1,0 +1,33 @@
+{
+    "name": "koot-webpack",
+    "version": "0.7.0",
+    "description": "Webpack related resources for Koot.js",
+    "sideEffects": false,
+    "scripts": {},
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/cmux/koot"
+    },
+    "keywords": [
+        "webpack",
+        "koot"
+    ],
+    "license": "Apache-2.0",
+    "author": {
+        "name": "diablohu",
+        "email": "diablohudream@gmail.com",
+        "url": "http://diablohu.com"
+    },
+    "bugs": {
+        "url": "https://github.com/cmux/koot/issues"
+    },
+    "homepage": "https://github.com/cmux/koot",
+    "engines": {
+        "node": ">=8.0.0"
+    },
+    "dependencies": {},
+    "peerDependencies": {
+        "koot": "0.7.0"
+    },
+    "devDependencies": {}
+}

@@ -44,6 +44,7 @@
         "node": ">=8.0.0"
     },
     "dependencies": {
+        "koot-webpack": "0.7.0",
         "sp-koa-views": "1.0.1",
         "sp-css-import": "4.0.0",
         "koa": "2.5.3",
