@@ -26,6 +26,6 @@
         "node": ">=8.0.0"
     },
     "peerDependencies": {
-        "koot": "0.7.0"
+        "koot": "^0.7.0"
     }
 }
