@@ -1,10 +1,9 @@
 // const { defaults } = require('jest-config')
 
 module.exports = {
-    setupTestFrameworkScriptFile: './test/jest-setup.js',
+    // setupTestFrameworkScriptFile: './test/jest-setup.js',
     testPathIgnorePatterns: [
         "/node_modules/",
         "/test/projects/",
-        "/.projects/",
     ]
 }

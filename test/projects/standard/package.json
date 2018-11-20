@@ -31,7 +31,7 @@
         "koot-buildtest-isomorphic-dev": "koot-dev --no-open --koot-test"
     },
     "dependencies": {
-        "koot": "file:../../../",
+        "koot": "file:../../../packages/koot",
         "normalize.css": "8.0.0",
         "cssnano": "4.1.7",
         "svg-url-loader": "2.3.2",

@@ -3,8 +3,14 @@
     "description": "All modules and packages for Koot.js",
     "scripts": {
         "doc-server": "docsify serve docs",
-        "eslint:koot": "eslint \"packages/koot/!(node_modules|logs|dist|dist*|test)/**/*.+(js|jsx)\"",
-        "lerna:bootstrap": "lerna bootstrap --hoist"
+        "lerna:bootstrap": "lerna bootstrap --hoist",
+        "pretest": "node ./test/pre-test.js",
+        "test": "jest",
+        "test:factoryconfig": "jest ./test/cases/actory-config/test.js",
+        "test:react:isomorphic": "jest ./test/cases/react-isomorphic/test.js",
+        "test:libs:validate-pathname": "jest ./test/cases/libs/validate-pathname",
+        "test:libs:validate-config": "jest ./test/cases/libs/validate-config",
+        "eslint:koot": "eslint \"packages/koot/!(node_modules|logs|dist|dist*|test)/**/*.+(js|jsx)\""
     },
     "repository": {
         "type": "git",

@@ -11,12 +11,6 @@
         "koot-analyze": "./bin/analyze.js"
     },
     "scripts": {
-        "pretest": "node ./test/pre-test.js",
-        "test": "jest",
-        "test:factoryconfig": "jest ./test/cases/actory-config/test.js",
-        "test:react:isomorphic": "jest ./test/cases/react-isomorphic/test.js",
-        "test:libs:validate-pathname": "jest ./test/cases/libs/validate-pathname",
-        "test:libs:validate-config": "jest ./test/cases/libs/validate-config",
         "check-updates": "ncu -x react-router,koa-body,koa-compress,koa-json,koa-onerror,koa-static,koa-compose,koa-helmet,koa-mount"
     },
     "repository": {

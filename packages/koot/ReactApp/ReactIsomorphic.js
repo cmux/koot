@@ -185,6 +185,7 @@ export default class ReactIsomorphic {
                 const htmlTool = await ServerRenderHtmlExtend({ store, renderProps, ctx })
 
                 // 把react部分渲染出html片段，并插入到html中
+                // TODO: 变量提升相关
                 const {
                     html: reactHtml,
                     htmlStyles: stylesHtml

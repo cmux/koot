@@ -1,3 +1,9 @@
+// jest configuration
+
+jest.setTimeout(24 * 60 * 60 * 1 * 1000)
+
+//
+
 const fs = require('fs-extra')
 const path = require('path')
 const util = require('util')
@@ -8,8 +14,8 @@ const doTerminate = require('terminate')
 
 //
 
-const { changeLocaleQueryKey } = require('../../../defaults/defines')
-const removeTempProjectConfig = require('../../../libs/remove-temp-project-config')
+const { changeLocaleQueryKey } = require('../../../packages/koot/defaults/defines')
+const removeTempProjectConfig = require('../../../packages/koot/libs/remove-temp-project-config')
 // const sleep = require('../../utils/sleep')
 
 //

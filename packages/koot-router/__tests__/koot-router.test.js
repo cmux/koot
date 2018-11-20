@@ -1,6 +1,6 @@
 'use strict';
 
-const kootRouter = require('..');
+// const kootRouter = require('..');
 
 describe('koot-router', () => {
     it('needs tests');

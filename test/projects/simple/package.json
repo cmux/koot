@@ -32,7 +32,7 @@
         "koot-buildtest-isomorphic-dev": "koot-dev --no-open"
     },
     "dependencies": {
-        "koot": "file:../../../",
+        "koot": "file:../../../packages/koot",
         "normalize.css": "8.0.0"
     },
     "devDependencies": {

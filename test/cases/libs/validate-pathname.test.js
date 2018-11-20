@@ -1,6 +1,6 @@
 const fs = require('fs-extra')
 const path = require('path')
-const validatePathname = require('../../../libs/validate-pathname')
+const validatePathname = require('../../../packages/koot/libs/validate-pathname')
 
 const doTest = (p) => {
     const pathname = validatePathname(p)

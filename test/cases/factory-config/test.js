@@ -2,14 +2,14 @@ const fs = require('fs-extra')
 // const path = require('path')
 const isValidPath = require('is-valid-path')
 
-const createConfig = require('../../../core/webpack/config/create')
-const validateConfig = require('../../../libs/validate-config')
+const createConfig = require('../../../packages/koot/core/webpack/config/create')
+const validateConfig = require('../../../packages/koot/libs/validate-config')
 
 const {
     keyFileProjectConfigTemp,
     // filenameProjectConfigTemp,
     // propertiesToExtract,
-} = require('../../../defaults/before-build')
+} = require('../../../packages/koot/defaults/before-build')
 
 // const prepareProjects = require('../prepare-projects')
 const projects = require('../../projects/get')()

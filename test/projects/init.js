@@ -4,8 +4,10 @@ const util = require('util')
 const exec = util.promisify(require('child_process').exec)
 const chalk = require('chalk')
 
-const spinner = require('../../utils/spinner')
+const spinner = require('../../packages/koot/utils/spinner')
 const getProjects = require('./get')
+
+const kootDirRelative = '../../packages/koot'
 
 /**
  * 初始化所有测试项目
@@ -27,7 +29,7 @@ module.exports = async () => {
 const initProject = async (name) => {
     const cwd = path.resolve(__dirname, name)
     const filePackagejson = path.resolve(cwd, 'package.json')
-    const pkgKoot = await fs.readJson(path.resolve(__dirname, '../../package.json'))
+    const pkgKoot = await fs.readJson(path.resolve(__dirname, kootDirRelative, 'package.json'))
     // const title = `测试项目 ${name}`
     const titleInTerminal = '测试项目 ' + chalk.yellow(name)
 
@@ -43,7 +45,7 @@ const initProject = async (name) => {
         // koot -> 本地
         if (typeof pkg.dependencies !== 'object')
             pkg.dependencies = {}
-        pkg.dependencies.koot = 'file:../../../'
+        pkg.dependencies.koot = `file:../${kootDirRelative}`
 
         // 清空 devDependencies
         // delete pkg.devDependencies

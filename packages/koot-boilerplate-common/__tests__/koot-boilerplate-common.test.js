@@ -1,6 +1,6 @@
 'use strict';
 
-const kootBoilerplateCommon = require('..');
+// const kootBoilerplateCommon = require('..');
 
 describe('koot-boilerplate-common', () => {
     it('needs tests');
