@@ -147,8 +147,12 @@ const getChildrenControlElement = (configItem) => {
  * 是否为最终渲染的表单控制元素
  * @return {Boolean}
  */
-export const isFinalElement = (configItem) => {
+export const isNeedWrapFormItem = (configItem) => {
     const parentFormItem = getParentRenderFormItem(configItem);
+    // 如果不存在 formItem 父级元素，默认添加一个
+    if( !parentFormItem ){
+        return true;
+    }
     const childrenControlElement = getChildrenControlElement(parentFormItem);
     if( childrenControlElement && childrenControlElement.length > 1 ){
         return true;

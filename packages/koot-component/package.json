@@ -10,11 +10,7 @@
   "license": "ISC",
   "peerDependencies": {
     "antd": ">=3.0.0",
-    "koot": ">=0.7",
-    "react": ">=16.0.0",
-    "react-dom": ">=16.0.0",
-    "react-redux": ">5.0.0",
-    "react-router": "^3.2.1"
+    "koot": ">=0.7"
   },
   "dependencies": {
     "classnames": "^2.2.6",

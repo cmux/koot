@@ -12,7 +12,7 @@ import {
     Checkbox,
     Radio
 } from 'antd';
-import { renderChildrenHandler, isFinalElement, getKey, getName } from './core.js';
+import { renderChildrenHandler, isNeedWrapFormItem, getKey, getName } from './core.js';
 import { getConfigItemProps } from './props.js';
 import { onSubmitHandler } from './event.js';
 import Upload from './componnets/upload.component.jsx';
@@ -42,7 +42,7 @@ const antdFieldDecorator = ( configItem, reactDom ) => {
             initialValue: defaultValue
         }
     )(reactDom)
-    return renderFinalHandler(configItem, finalComponent);
+    return finalRenderHandler(configItem, finalComponent);
 }
 
 /**
@@ -546,13 +546,6 @@ export const renderTextHandler = (configItem = {}) => {
  * @param {Object} configItem 
  */
 export const renderCustomizeHandler = (configItem = {}) => {
-    // const CustomizeFuncionComponent = function( props ){
-    //     return configItem.render()
-    // }
-    // return antdFieldDecorator(
-    //     configItem, 
-    //     CustomizeFuncionComponent
-    // )
     return configItem.render && configItem.render()
 }
 
@@ -565,8 +558,8 @@ export const renderCustomizeHandler = (configItem = {}) => {
  * @param {Object}          configItem  json配置单元
  * @param {AntdReactDom}    dom         通过 antd getFieldDecorator 高阶函数注册好的 dom
  */
-export const renderFinalHandler = (configItem = {}, dom) => {
-    const flag = isFinalElement(configItem);
+export const finalRenderHandler = (configItem = {}, dom) => {
+    const flag = isNeedWrapFormItem(configItem);
     const key = getKey(configItem);
     const props = getConfigItemProps(configItem);
     props.key = key;
