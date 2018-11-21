@@ -18,6 +18,7 @@ import { onSubmitHandler } from './event.js';
 import Upload from './componnets/upload.component.jsx';
 const FormItem = Form.Item;
 const InputGroup = Input.Group;
+const TextArea = Input.TextArea;
 const CheckboxGroup = Checkbox.Group;
 const RadioGroup = Radio.Group;
 const Option = Select.Option;
@@ -31,14 +32,14 @@ const { MonthPicker, RangePicker, WeekPicker } = DatePicker;
  * @param {*} reactDom 
  */
 const antdFieldDecorator = ( configItem, reactDom ) => {
-    const { initialValue, __rootProps } = configItem;
+    const { defaultValue, __rootProps } = configItem;
     const { getFieldDecorator } = __rootProps.form;
     const name = getName(configItem);  
     const finalComponent = getFieldDecorator(
         name,
         {
             // ... props
-            initialValue
+            initialValue: defaultValue
         }
     )(reactDom)
     return renderFinalHandler(configItem, finalComponent);
@@ -135,6 +136,24 @@ export const renderInputHandler = (configItem = {}) => {
                 {...props}
             >
             </Input>
+        )
+    )
+}
+
+/**
+ * 渲染 antd TextArea 组件
+ * 
+ * @param {Object} configItem json配置单元
+ */
+export const renderTextAreaHandler  = (configItem = {}) => {
+    const props = getConfigItemProps(configItem);
+    return antdFieldDecorator(
+        configItem, 
+        (
+            <TextArea 
+                {...props}
+            >
+            </TextArea>
         )
     )
 }
@@ -519,6 +538,22 @@ export const renderTextHandler = (configItem = {}) => {
     return (
         <span key={key}>{label}</span>
     )
+}
+
+/**
+ * @description 渲染自定义组件部分
+ * 
+ * @param {Object} configItem 
+ */
+export const renderCustomizeHandler = (configItem = {}) => {
+    // const CustomizeFuncionComponent = function( props ){
+    //     return configItem.render()
+    // }
+    // return antdFieldDecorator(
+    //     configItem, 
+    //     CustomizeFuncionComponent
+    // )
+    return configItem.render && configItem.render()
 }
 
 

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Menu, Icon } from 'antd';
-import { Link } from 'react-router';
+import { Link, } from 'react-router';
 import animation from './openAnimation.js';
 import classNames from 'classnames';
 
@@ -87,7 +87,7 @@ const renderMenuList = ( _baseUrl, _routeList ) => {
     return (
         _routeList.map((routeItem, routeIndex) => {
             const currentUrl = `${_baseUrl}${routeItem.path}`;
-            const key = `${currentUrl}-${routeIndex}`;
+            const key = `${currentUrl}`;
             if( routeItem.meta ){
                 const { showMenu } = routeItem.meta;
                 if( showMenu === false ){
@@ -140,17 +140,19 @@ class Nav extends Component {
 
     state = {
         openKeys: [],
+        selectKeys: []
     }
 
     render() {
-        const { className, routeList, baseUrl } = this.props;
-        const { openKeys } = this.state;
-        const { openChangeHandler } = this;
+        const { className, routeList, baseUrl,  } = this.props;
+        const { openKeys, selectKeys } = this.state;
+        const { openChangeHandler, selectChangeHandler } = this;
         const menuNodeList = routeList && routeList.length > 0 && renderMenuList(baseUrl, routeList);
         const classes = classNames([
             className,
             'nav-component-wrapper'
         ]);
+       
         return (
             <Menu
                 theme="transparent"
@@ -158,7 +160,9 @@ class Nav extends Component {
                 className={classes}
                 openAnimation={animation}
                 openKeys={openKeys}
+                selectedKeys={selectKeys}
                 onOpenChange={openChangeHandler}
+                onSelect={selectChangeHandler}
             >
                 {
                     menuNodeList
@@ -167,10 +171,52 @@ class Nav extends Component {
         );
     }
 
+    componentDidMount() {
+        const { router } = this.props;
+        const { selectKeys, openKeys } = this.state;
+        const mathRoutesPathList = this.getMatchRoutesPath(router);
+        const nextSelectKeys = selectKeys.concat(mathRoutesPathList);
+        const nextOpenKeys = openKeys.concat(mathRoutesPathList);
+        this.setState({
+            selectKeys: nextSelectKeys,
+            openKeys: nextOpenKeys
+        })
+    }
+
+    getMatchRoutesPath = ( router ) => {
+        const { routes, params } = router;
+        let tempUrl = '';
+        let result = []
+        routes.forEach((route, index) => {
+            if( index > 0 ){
+                tempUrl = tempUrl + `/${route.path}`;
+                result.push(tempUrl);
+            }
+        })
+        result = result.map(item => {
+            Object.keys(params).forEach(key => {
+                let patt = new RegExp(`/:${key}`,'g')
+                if( item.search(patt) !== -1 ){
+                    if( params[key] ){
+                        item = item.replace(patt, `/${params[key]}`);
+                    }
+                }
+            })
+            return item;
+        })
+        return result;
+    }
+
     openChangeHandler = ( openKeys ) => {
         const latestOpenKey = openKeys.find(key => this.state.openKeys.indexOf(key) === -1);
         this.setState({
             openKeys: latestOpenKey ? [latestOpenKey] : []
+        })
+    }
+
+    selectChangeHandler = ({key, selectedKeys}) => {
+        this.setState({
+            selectKeys: selectedKeys
         })
     }
 }

@@ -8,6 +8,8 @@ export const COL = 'col';
 
 export const INPUT = 'input';
 
+export const TEXT_AREA = 'textArea';
+
 export const INPUT_GROUP = 'inputGroup';
 
 export const BUTTON = 'button';
@@ -41,6 +43,8 @@ export const RADIO = 'radio';
 export const UPLOAD = 'upload';
 
 export const PASSWORD = 'password';
+
+export const CUSTOMIZE = 'customize';
 
 // TODO
 

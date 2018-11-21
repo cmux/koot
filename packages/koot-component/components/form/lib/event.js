@@ -5,6 +5,7 @@
  * @param {Object} configItem 
  */
 export const onSubmitHandler = ( configItem ) => {
+    console.info('event.js - onSubmitHandler')
     const { __rootProps } = configItem;
     const { onSubmit } = __rootProps;
     const formData = __rootProps.form.getFieldsValue();

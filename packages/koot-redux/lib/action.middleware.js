@@ -170,7 +170,7 @@ const createActionMiddleware = function( moduleInstance = {} ){
                 return;
             }else{
                 throw new Error(
-                    `ActionMiddlewareError: The reducer function '${reducerName}' is not registered!`
+                    `ActionMiddlewareError: The reducer function '${actionName}' is not registered!`
                 )
             }
         }

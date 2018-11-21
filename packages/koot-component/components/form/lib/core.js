@@ -38,6 +38,8 @@ export const renderTransfer = (configItem = {}) => {
         // react 组件部分
         case Types.INPUT:
             return Renders.renderInputHandler(configItem);
+        case Types.TEXT_AREA:
+            return Renders.renderTextAreaHandler(configItem);
         case Types.INPUT_GROUP:
             return Renders.renderInputGroupHandler(configItem);
         case Types.PASSWORD:
@@ -73,9 +75,11 @@ export const renderTransfer = (configItem = {}) => {
         case Types.SUBMIT:
             return Renders.renderSubmitButtonHandler(configItem);
         
-        // 自定义 组件部分
+        // 自定义扩展组件部分
         case Types.TEXT:
             return Renders.renderTextHandler(configItem);
+        case Types.CUSTOMIZE:
+            return Renders.renderCustomizeHandler(configItem);
         default:
             return '';
     }

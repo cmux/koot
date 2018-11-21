@@ -53,7 +53,7 @@ class SiderSwitch extends Component {
 
 const mapStateToProps = state => {
     return {
-        collapsed: state.siderModule.collapsed
+        collapsed: state.SiderModule.collapsed
     }
 }
 
