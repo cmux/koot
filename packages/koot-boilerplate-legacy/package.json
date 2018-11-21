@@ -1,5 +1,6 @@
 {
     "name": "koot-boilerplate",
+    "private": true,
     "version": "0.5.1",
     "description": "Koot.js 模板项目",
     "author": {
