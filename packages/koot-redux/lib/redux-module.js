@@ -165,7 +165,7 @@ class ReduxModule {
             let childrenActions = [];
             childrenModuleNames.forEach(childrenModuleName => {
                 const childrenModuleItem = this.__children[childrenModuleName];
-                childrenActions.push(childrenModuleItem.actionCollection);
+                childrenActions.push(childrenModuleItem.reducerCollection);
             })
             // 合并最终全部 actions
             finalReducers = childrenActions.reduce((p, childrenAction) => {
