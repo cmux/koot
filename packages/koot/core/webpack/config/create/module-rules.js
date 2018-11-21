@@ -40,7 +40,7 @@ module.exports = (options = {}) => {
                 test: /\.jsx$/,
                 use: [
                     ...useJS,
-                    require.resolve('../../loaders/react-hot'),
+                    require.resolve('koot-webpack/loaders/react-hot'),
                 ]
             })
         } else {

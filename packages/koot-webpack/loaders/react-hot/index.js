@@ -6,27 +6,33 @@ function AddReactHotLoader(source) {
     if (!source || !/^\s*export\s+default/m.exec(source))
         return source
 
-    let newSource = getImportLine() + source
+    let theSource = getImportLine() + source
+
+    {
+        const newSource = require('./transforms/export-default-named-class-component')(theSource)
+        if (newSource !== theSource)
+            return newSource
+    }
 
     const className = getExportDefaultClassName(source)
     const classNameExported = getExportDefaultClassNameExported(source)
     const functionName = getExportDefaultFunctionName(source)
 
     if (className) {
-        newSource = transformSourceForClass(newSource, className)
+        theSource = transformSourceForClass(theSource, className)
     } else if (classNameExported) {
-        newSource = transformSourceForClassExported(newSource, classNameExported)
+        theSource = transformSourceForClassExported(theSource, classNameExported)
     } else if (functionName) {
-        newSource = transformSourceForNamedFunction(newSource, functionName)
+        theSource = transformSourceForNamedFunction(theSource, functionName)
     } else if (checkExportClassDirectly(source)) {
-        newSource = transformSourceForExportClassDirectly(newSource)
+        theSource = transformSourceForExportClassDirectly(theSource)
     } else {
-        newSource = require('./export-anonymous-functional-component-with-hoc')(newSource)
-        newSource = transformSourceDefault(newSource)
+        theSource = require('./transforms/export-anonymous-functional-component-with-hoc')(theSource)
+        theSource = transformSourceDefault(theSource)
     }
 
-    // console.log(newSource)
-    return newSource
+    // console.log(theSource)
+    return theSource
 }
 
 // transforms
