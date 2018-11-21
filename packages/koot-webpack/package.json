@@ -1,6 +1,6 @@
 {
     "name": "koot-webpack",
-    "version": "0.7.1-alpha.0",
+    "version": "0.7.1",
     "description": "Webpack related resources for Koot.js",
     "sideEffects": false,
     "scripts": {},
@@ -26,6 +26,6 @@
         "node": ">=8.0.0"
     },
     "peerDependencies": {
-        "koot": "^0.7.0"
+        "koot": ">=0.7.0"
     }
 }

@@ -6,6 +6,7 @@
         "lerna": "lerna-wizard",
         "lerna:bootstrap": "lerna bootstrap --hoist",
         "lerna:publish": "lerna publish",
+        "lerna:version": "lerna version",
         "pretest": "node ./test/pre-test.js",
         "test": "jest",
         "test:factoryconfig": "jest ./test/cases/actory-config/test.js",

@@ -142,26 +142,23 @@ const validateBuildConfig = (config = {}) => {
 
     // 改变配置项: webpack.config -> config
     if (typeof config.webpack === 'object') {
-        if (typeof config.webpack.config !== 'undefined') {
-            config.config = config.webpack.config
-            delete config.webpack.config
+        /**
+         * 将配置中的 webpack 对象内的内容应用到配置对象顶层
+         * @param {String} nameInObject 
+         * @param {String} nameAfter 
+         */
+        const applyWebpackConfig = (nameInObject, nameAfter) => {
+            if (typeof config.webpack[nameInObject] !== 'undefined') {
+                config[nameAfter] = config.webpack[nameInObject]
+                delete config.webpack[nameInObject]
+            }
         }
-        if (typeof config.webpack.beforeBuild !== 'undefined') {
-            config.beforeBuild = config.webpack.beforeBuild
-            delete config.webpack.beforeBuild
-        }
-        if (typeof config.webpack.afterBuild !== 'undefined') {
-            config.afterBuild = config.webpack.afterBuild
-            delete config.webpack.afterBuild
-        }
-        if (typeof config.webpack.defines !== 'undefined') {
-            config.defines = config.webpack.defines
-            delete config.webpack.defines
-        }
-        if (typeof config.webpack.dll !== 'undefined') {
-            config.webpackDll = config.webpack.dll
-            delete config.webpack.dll
-        }
+        applyWebpackConfig('config', 'config')
+        applyWebpackConfig('beforeBuild', 'beforeBuild')
+        applyWebpackConfig('afterBuild', 'afterBuild')
+        applyWebpackConfig('defines', 'defines')
+        applyWebpackConfig('dll', 'webpackDll')
+        applyWebpackConfig('hmr', 'webpackHmr')
         delete config.webpack
     }
 
