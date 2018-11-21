@@ -24,7 +24,10 @@ module.exports = (store) => {
         const state = store.getState()
         Object.keys(state)
             .filter(key => !stateKeysPreserved.includes(key))
-            .forEach(key => delete state[key])
+            .forEach(key => {
+                state[key] = undefined
+                delete state[key]
+            })
 
         // 触发 reducer 初始化
         store.dispatch({

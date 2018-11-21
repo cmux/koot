@@ -39,9 +39,11 @@ module.exports = {
 
 Webpack 打包相关配置
 
-- _Array_ `webpack.dll`
-<br>**仅开发模式** 供 `webpack.DllPlugin` 使用。webpack 的监控不会处理这些库/library，以期提高开发模式的打包更新速度
-
+- _Array_ `webpack.dll` (可选)
+<br>**仅开发模式** 供 `webpack.DllPlugin` 使用。webpack 的监控不会处理这些库/library，以期提高开发模式的打包更新速度。
+- _Object_ `webpack.hmr` (可选)
+<br>**仅开发模式** `webpack.HotModuleReplacementPlugin` 插件的配置对象。
+<br>如果遭遇在开发模式下在保存文件后 `webpack` 不断无限的刷新打包的问题，请配置该选项为 `{ multiStep: false }`
 
 ### `redux`
 

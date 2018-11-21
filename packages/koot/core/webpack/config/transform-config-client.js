@@ -40,6 +40,7 @@ module.exports = async (kootBuildConfig = {}) => {
         afterBuild = () => { },
         staticAssets,
         analyze = false,
+        webpackHmr = {},
         [keyConfigBuildDll]: createDll = false
     } = kootBuildConfig
 
@@ -173,7 +174,7 @@ module.exports = async (kootBuildConfig = {}) => {
                     new webpack.NamedModulesPlugin()
                 )
                 result.plugins.push(
-                    new webpack.HotModuleReplacementPlugin(hmrOptions)
+                    new webpack.HotModuleReplacementPlugin(Object.assign({}, hmrOptions, webpackHmr))
                 )
             }
 
