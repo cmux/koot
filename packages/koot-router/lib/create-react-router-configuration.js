@@ -45,7 +45,18 @@ const routerHandler = ( _router ) => {
 
     if( redirect ){
         const onEnterHook = (nextState, replace) => {
-            replace(redirect);
+            let nextRedirect = redirect;
+            const { params } = nextState;
+            // 支持 redirect/:xxx 的形式
+            Object.keys(params).forEach(key => {
+                let patt = new RegExp(`/:${key}`,'g')
+                if( nextRedirect.search(patt) !== -1 ){
+                    if( params[key] ){
+                        nextRedirect = nextRedirect.replace(patt, `/${params[key]}`);
+                    }
+                }
+            })
+            replace(nextRedirect);
         }
 
         if( !result.indexRoute ){
