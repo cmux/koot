@@ -67,6 +67,19 @@ const buttonPropsHandler = (props) => {
 }
 
 /**
+ * TextArea Props 处理函数
+ * 
+ * @param {Object} props 
+ */
+const textAreaHandler = (props) => {
+    props.autosize = {
+        minRows: 2,
+        maxRows: 6
+    }
+    return props;
+}
+
+/**
  * @description 根据配置对象生成 props
  * 
  * @param {Object} configItem 
@@ -81,7 +94,9 @@ export const getConfigItemProps = (configItem = {}) => {
     delete props.name
     delete props.data
     delete props.children
+    delete props.render
     delete props.initialValue
+    delete props.defaultValue
     delete props.__parent
     delete props.__rootProps
     
@@ -107,6 +122,8 @@ export const getConfigItemProps = (configItem = {}) => {
         case Types.SUBMIT:
             props = buttonPropsHandler(props);
             break;
+        case Types.TEXT_AREA:
+            props = textAreaHandler(props);
         default:
             break;
     }

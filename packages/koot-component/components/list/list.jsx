@@ -13,10 +13,15 @@ class List extends Component {
         const { config } = this.props;
         const { columns, dataSource } = config;
         const props = this.propsHandler(config);
+        const nextDataSource = dataSource.map((dataItem, index) => {
+            return Object.assign({}, dataItem, {
+                key: index
+            })
+        })
         return (
             <Table
                 columns={columns}
-                dataSource={dataSource}
+                dataSource={nextDataSource}
                 {...props}
             >
             </Table>
