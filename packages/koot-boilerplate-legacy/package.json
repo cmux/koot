@@ -1,6 +1,6 @@
 {
     "name": "koot-boilerplate",
-    "version": "0.5.0",
+    "version": "0.5.1",
     "description": "Koot.js 模板项目",
     "author": {
         "name": "Diablohu",
@@ -34,7 +34,7 @@
     "dependencies": {
         "axios": "0.18.0",
         "cssnano": "4.1.7",
-        "koot": "^0.7.1-alpha.0",
+        "koot": "^0.7.1",
         "normalize.css": "8.0.0",
         "svg-url-loader": "2.3.2"
     },
