@@ -4,9 +4,9 @@ const DefaultWebpackConfig = require('webpack-config').default
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 const KootI18nPlugin = require('../plugins/i18n')
-const DevServerAfterPlugin = require('../plugins/dev-server-after')
+const DevModePlugin = require('koot-webpack/plugins/dev-mode')
 const SpaTemplatePlugin = require('../plugins/spa-template')
-const GenerateChunkmapPlugin = require('../plugins/generate-chunkmap')
+const GenerateChunkmapPlugin = require('koot-webpack/plugins/generate-chunkmap')
 
 const { keyConfigBuildDll, keyConfigOutputPathShouldBe } = require('../../../defaults/before-build')
 const { hmrOptions } = require('../../../defaults/webpack-dev-server')
@@ -167,7 +167,7 @@ module.exports = async (kootBuildConfig = {}) => {
             )
             if (ENV === 'dev') {
                 result.plugins.push(
-                    new DevServerAfterPlugin({ after: afterBuild })
+                    new DevModePlugin({ after: afterBuild })
                 )
                 result.plugins.push(
                     new webpack.NamedModulesPlugin()

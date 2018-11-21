@@ -174,7 +174,9 @@ module.exports = async (kootBuildConfig = {}) => {
         // 创建空文件标记
         fs.ensureFileSync(path.resolve(dist, filenameBuilding))
 
-        if (typeof beforeBuild === 'function') await beforeBuild(data)
+        // 创建 DLL 模式下不执行传入的生命周期方法
+        if (!createDll && typeof beforeBuild === 'function')
+            await beforeBuild(data)
     }
 
     /** @type {Function} @async 流程回调: webpack 执行后 */
@@ -206,7 +208,10 @@ module.exports = async (kootBuildConfig = {}) => {
 
         if (!createDll)
             log('callback', 'build', `callback: ` + chalk.green('afterBuild'))
-        if (typeof afterBuild === 'function') await afterBuild(data)
+
+        // 创建 DLL 模式下不执行传入的生命周期方法
+        if (!createDll && typeof afterBuild === 'function')
+            await afterBuild(data)
 
         // 标记完成
         if (!createDll)
@@ -424,6 +429,7 @@ module.exports = async (kootBuildConfig = {}) => {
         const devServerConfig = Object.assign({
             quiet: false,
             stats: { colors: true },
+            clientLogLevel: 'error',
             hot: true,
             inline: true,
             historyApiFallback: true,
