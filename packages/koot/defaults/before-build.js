@@ -11,6 +11,9 @@ module.exports = {
         ['client', {}],
         ['server', {}]
     ],
+    typesSPA: [
+        'react-spa'
+    ],
 
     // 打包 DLL 相关
     keyConfigBuildDll: '__BUILD_DLL__',

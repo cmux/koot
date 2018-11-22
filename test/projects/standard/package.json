@@ -18,6 +18,7 @@
         "build": "koot-build",
         "build:client": "koot-build -c",
         "build:server": "koot-build -s",
+        "build:spa": "koot-build --config koot.config.spa.js",
         "dev": "koot-dev",
         "dev:client": "koot-dev -c",
         "dev:server": "koot-dev -s",

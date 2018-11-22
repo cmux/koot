@@ -8,7 +8,8 @@ const readBuildConfigFile = require('../utils/read-build-config-file')
 const {
     keyFileProjectConfigTemp,
     filenameProjectConfigTemp,
-    propertiesToExtract,
+    propertiesToExtract: _propertiesToExtract,
+    typesSPA,
 } = require('../defaults/before-build')
 
 /**
@@ -36,6 +37,9 @@ module.exports = async (projectDir = getCwd()) => {
     /** @type {Boolean} 是否定制了项目配置文件路径名 */
     const isCustomProjectConfig = typeof process.env.KOOT_PROJECT_CONFIG_PATHNAME === 'string'
 
+    /** @type {Array} 需要抽取到项目配置中的项 */
+    const propertiesToExtract = [..._propertiesToExtract]
+
     // 目标文件是否是完整配置文件
     const isFullConfig = propertiesToExtract.some(([key]) => typeof fullConfig[key] !== 'undefined')
 
@@ -46,6 +50,31 @@ module.exports = async (projectDir = getCwd()) => {
     // })
 
     if (isFullConfig) {
+
+        /** @type {Boolean} 当前项目是否是 SPA */
+        const isSPA = typesSPA.includes(fullConfig.type)
+
+        if (isSPA) {
+            // SPA 项目: 添加顶层项 inject
+            propertiesToExtract.push(['inject', undefined])
+
+            // SPA 项目: 如果配置顶层没有 inject 同时 server.inject 存在值，将 server.inject 移至顶层
+            if (!fullConfig.inject &&
+                typeof fullConfig.server === 'object' &&
+                typeof fullConfig.server.inject !== 'undefined'
+            ) {
+                fullConfig.inject = fullConfig.server.inject
+            }
+        } else {
+            // 同构项目: 如果配置顶层有 inject 同时 server.inject 没有值，将 inject 移至顶层 server.inject
+            if (!!fullConfig.inject &&
+                typeof fullConfig.server === 'object' &&
+                !fullConfig.server.inject
+            ) {
+                fullConfig.inject.server = fullConfig.inject
+                delete fullConfig.inject
+            }
+        }
 
         // 项目配置
         const projectConfig = {}
@@ -100,13 +129,16 @@ module.exports = async (projectDir = getCwd()) => {
             'server.before',
             'server.after',
             'server.onRender',
+            'inject',
         ])
 
         // console.log(projectConfig)
         // 生成项目配置文件内容
         const temp = propertiesToExtract.map(([key]) => {
-            if (key === 'server')
+            if (key === 'server') {
+                if (isSPA) return ''
                 return `export const ${key} = __SERVER__ ? ${JSON.stringify(projectConfig[key])} : {};`
+            }
             return `export const ${key} = ${JSON.stringify(projectConfig[key])};`
         })
             .join('\n')

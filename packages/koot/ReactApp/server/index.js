@@ -31,7 +31,7 @@ import {
     redux,
     // store,
     client,
-    server,
+    server
 } from '__KOOT_PROJECT_CONFIG_PATHNAME__'
 // } from '../../../../koot'
 
@@ -71,7 +71,7 @@ const run = async () => {
         redux,
         // store,
         client,
-        server,
+        server
     }).catch(err => {
         console.trace(err)
     })
