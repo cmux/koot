@@ -30,6 +30,7 @@ class List extends Component {
 
     propsHandler = ( config ) => {
         const nextConfig = Object.assign({}, config);
+        this.defaultPropsHandler(nextConfig);
 
         delete nextConfig.type;
         delete nextConfig.name;
@@ -38,6 +39,23 @@ class List extends Component {
         delete nextConfig.page;
 
         return nextConfig;
+    }
+
+    defaultPropsHandler = ( config ) => {
+        const pagination = {
+            size: "small",
+            showSizeChanger: true,
+            showQuickJumper: true,
+            pageSize: config.page.pageSize,
+            current: config.page.pageIndex,
+            total: config.page.total,
+            onChange: config.page.onPageIndexChange,
+            onShowSizeChange: config.page.onPageSizeChange,
+            showTotal: total => `Total ${total} items`, 
+        }
+        config.size = config.size || 'middle';
+        config.bordered = config.bordered || true;
+        config.pagination = config.pagination || pagination;
     }
 }
 
