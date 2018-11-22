@@ -1,6 +1,6 @@
 {
   "name": "koot-redux",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "模块化的redux, redux版本的vuex",
   "author": "zrain <zrainma@sina.com>",
   "homepage": "https://github.com/cmux/koot#readme",
