@@ -18,6 +18,7 @@ export const onSubmitHandler = ( configItem ) => {
  * @param {Object} configItem 
  */
 export const onChangeHandler = ( configItem ) => {
+    console.info('event.js - onChangeHandler')
     const { __rootProps } = configItem;
     const { onChange } = __rootProps;
     const formData = __rootProps.form.getFieldsValue();

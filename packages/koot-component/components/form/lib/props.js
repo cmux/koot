@@ -1,5 +1,4 @@
 import * as Types from './constants';
-import { onSubmitHandler, onChangeHandler } from './event.js';
 
 /**
  * FormItem 默认 Props
