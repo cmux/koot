@@ -46,8 +46,8 @@ module.exports = {
      * @property {Pathname} [store] 使用自创建的 store，而非 koot 创建的 store。如果提供，会忽略 combineReducers 属性。详细使用方法请参阅 [文档](https://koot.js.org/react/create-store)
      */
     redux: {
-        combineReducers: './src/store/reducers',
-        // store: './src/store',
+        // combineReducers: './src/store/reducers',
+        store: './src/store/create',
     },
 
     /**
@@ -184,7 +184,7 @@ module.exports = {
     /** @type {(Number|Object|String)} 服务器运行端口 */
     // port: 3080,
     port: {
-        dev: 8082,
+        dev: 8083,
         prod: 8081,
     },
 

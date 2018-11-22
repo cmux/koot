@@ -101,4 +101,4 @@ const run = async () => {
 
 }
 
-run()
+run().catch(err => console.trace(err))

@@ -15,7 +15,7 @@ module.exports = (...args) => {
     const keys = []
 
     args.forEach((value, index) => {
-        if (index == args.length - 1 && typeof value === 'object') {
+        if (index == args.length - 1 && typeof value === 'object' && !Array.isArray(value)) {
             options = value
             return
         }

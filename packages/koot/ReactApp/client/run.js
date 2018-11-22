@@ -63,6 +63,8 @@ export default ({
         for (let key in reducers) {
             reactApp.redux.reducer.use(key, reducers[key])
         }
+    } else if (typeof redux.store === 'function' && __CLIENT__) {
+        reactApp.store = redux.store()
     } else {
         reactApp.store = redux.store
     }

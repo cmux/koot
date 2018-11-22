@@ -13,7 +13,7 @@ import {
     setExtender,
     setPageinfo,
 } from '../'
-import { localeId } from '../i18n'
+// import { localeId } from '../i18n'
 import RenderCache from './render-cache'
 import RootIsomorphic from './root-isomorphic'
 
@@ -196,6 +196,13 @@ export default class ReactIsomorphic {
                     />
                 ))
 
+                const localeId = store.getState().localeId
+                // console.log({
+                //     store,
+                //     state: store.getState(),
+                //     localeId
+                // })
+
                 /** @type {Object} 本次请求的渲染结果缓存 */
                 const thisRenderCache = isIsormorphicInjectOnce ? renderCache : renderCache.get(localeId)
 
@@ -276,7 +283,7 @@ export default class ReactIsomorphic {
                 }
 
                 // 渲染模板
-                let html = renderTemplate(template, Object.assign(injectRealtime, injectOnce, inject))
+                let html = renderTemplate(template, Object.assign(injectRealtime, injectOnce, inject), store)
 
                 // 开发模式:
                 if (__DEV__) {

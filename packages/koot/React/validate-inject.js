@@ -29,7 +29,7 @@ export default (options = {}) => {
         filemap = {},
         entrypoints = {},
 
-        localeId = theLocaleId,
+        localeId = __SERVER__ ? undefined : theLocaleId,
         title,
         metaHtml,
         reactHtml,
