@@ -6,13 +6,22 @@ class List extends Component {
 
     static propTypes = {
         children: PropTypes.node,
-        config: PropTypes.object.isRequired,
+        config: PropTypes.oneOfType([
+            PropTypes.func.isRequired,
+            PropTypes.object.isRequired
+        ]),
     }
 
     render() {
         const { config } = this.props;
-        const { columns, dataSource } = config;
-        const props = this.propsHandler(config);
+        let nextConfig;
+        if( typeof config === 'function' ){
+            nextConfig = config();
+        }else{
+            nextConfig = config;
+        }
+        const props = this.propsHandler(nextConfig);
+        const { columns, dataSource } = nextConfig;
         const nextDataSource = dataSource && dataSource.map((dataItem, index) => {
             return Object.assign({}, dataItem, {
                 key: index
