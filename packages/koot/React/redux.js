@@ -13,6 +13,9 @@ import {
 
 //
 
+/**
+ * @type {Array}
+ */
 export const reducers = {
     // 路由状态扩展
     'routing': routerReducer,
@@ -28,11 +31,17 @@ if (JSON.parse(process.env.KOOT_I18N) || false) {
 
 //
 
+/**
+ * @type {Object}
+ */
 export let initialState = {}
 if (__CLIENT__) initialState = window.__REDUX_STATE__
 
 //
 
+/**
+ * @type {Array}
+ */
 export const middlewares = [
     thunk,
     routerMiddleware(browserHistory),
