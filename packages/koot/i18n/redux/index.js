@@ -4,7 +4,8 @@ import parseLocaleId from '../parse-locale-id'
 
 import {
     I18N_INIT, I18N_SET_LOCALES,
-    localeId, locales,
+    locales,
+    // localeId, locales,
     setLocaleId
 } from '../index'
 
@@ -50,9 +51,13 @@ export const reducerLocales = (state = {}, action) => {
 export const actionInit = (state) => {
     // setLocaleId(localeId)
 
-    init(parseLanguageList(
-        (typeof state === 'object') ? getLanguagelistFromState(state) : state
-    ))
+    const localeId = __SERVER__
+        ? init(parseLanguageList(
+            (typeof state === 'object') ? getLanguagelistFromState(state) : state
+        ), state.localeId)
+        : state.localeId
+
+    setLocaleId(localeId)
 
     return {
         type: I18N_INIT,
@@ -65,10 +70,10 @@ export const actionInit = (state) => {
  * 
  * @returns {Object}
  */
-export const actionLocales = () => {
+export const actionLocales = (state) => {
     return {
         type: I18N_SET_LOCALES,
-        locales: locales[localeId]
+        locales: locales[state.localeId]
     }
 }
 
@@ -79,19 +84,22 @@ export const actionLocales = () => {
  * 
  * @returns (如果已初始化)locales[localeId]
  */
-const init = (langList = []) => {
+const init = (langList = [], localeId) => {
     if (__SERVER__) {
         // console.log(locales[localeId])
         if (typeof langList === 'string')
             if (langList.indexOf(';') > -1)
                 langList = parseLanguageList(langList)
             else
-                return init([langList])
+                return init([langList], localeId)
 
         const parsed = parseLocaleId(langList)
-        if (parsed) setLocaleId(parsed)
+        // if (parsed) setLocaleId(parsed)
         // else setLocaleId(localeId)
 
-        if (locales[localeId]) return locales[localeId]
+        if (parsed) return parsed
+        return localeId
+
+        // if (locales[localeId]) return locales[localeId]
     }
 }
