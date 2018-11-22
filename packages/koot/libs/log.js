@@ -43,6 +43,11 @@ const log = (mark, type, content) => {
             markColor = 'cyan'
             break
         }
+        case 'warning': {
+            mark = '! '
+            markColor = 'yellowBright'
+            break
+        }
         default: {
             mark = '  '
         }

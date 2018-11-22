@@ -23,7 +23,7 @@ const getAppType = require('../../utils/get-app-type')
 // const getCwd = require('../../utils/get-cwd')
 // const sleep = require('../../utils/sleep')
 
-const log = require('../../libs/log')
+const _log = require('../../libs/log')
 const elapse = require('../../libs/elapse.js')
 
 const createWebpackConfig = require('./config/create')
@@ -139,13 +139,17 @@ module.exports = async (kootBuildConfig = {}) => {
     // 开发环境下创建 DLL 模式时，默认为静音模式
     if (ENV === 'dev' && createDll) quietMode = true
 
+    const log = (...args) => {
+        if (quietMode) return
+        return _log(...args)
+    }
+
     // log: 打包流程正式开始
-    if (!quietMode)
-        log('build', __('build.build_start', {
-            type: chalk.cyanBright(appType),
-            stage: chalk.green(STAGE),
-            env: chalk.green(ENV),
-        }))
+    log('build', __('build.build_start', {
+        type: chalk.cyanBright(appType),
+        stage: chalk.green(STAGE),
+        env: chalk.green(ENV),
+    }))
 
     /** @type {Function} @async 流程回调: webpack 执行前 */
     const before = async () => {
@@ -157,8 +161,7 @@ module.exports = async (kootBuildConfig = {}) => {
             fs.ensureFileSync(path.resolve(dist, `./server/index.js`))
         }
 
-        if (!quietMode)
-            log('callback', 'build', `callback: ` + chalk.green('beforeBuild'))
+        log('callback', 'build', `callback: ` + chalk.green('beforeBuild'))
 
         // 清除遗留文件
         const filesToRemove = [
@@ -206,20 +209,18 @@ module.exports = async (kootBuildConfig = {}) => {
                 await fs.remove(file)
         }
 
-        if (!createDll)
-            log('callback', 'build', `callback: ` + chalk.green('afterBuild'))
+        log('callback', 'build', `callback: ` + chalk.green('afterBuild'))
 
         // 创建 DLL 模式下不执行传入的生命周期方法
         if (!createDll && typeof afterBuild === 'function')
             await afterBuild(data)
 
         // 标记完成
-        if (!createDll)
-            log('success', 'build', __('build.build_complete', {
-                type: chalk.cyanBright(appType),
-                stage: chalk.green(STAGE),
-                env: chalk.green(ENV),
-            }))
+        log('success', 'build', __('build.build_complete', {
+            type: chalk.cyanBright(appType),
+            stage: chalk.green(STAGE),
+            env: chalk.green(ENV),
+        }))
 
         // await sleep(20 * 1000)
         // console.log(`  > start: ${timestampStart}`)
@@ -231,7 +232,7 @@ module.exports = async (kootBuildConfig = {}) => {
         return
     }
 
-    /** @type {Function} @async 在每次打包前，webpack 为 Array 时，每一项执行前均会执行该方法 */
+    /** @type {Function} @async 在每次打包前均会执行的方法。如 webpack 为 Array 时，针对每个打包执行开始前。before() 仅针对整体打包流程 */
     const beforeEachBuild = async () => {
         // 重置数据
         resetCssLoader()
@@ -251,6 +252,7 @@ module.exports = async (kootBuildConfig = {}) => {
     // 最优先流程
     //
     // ========================================================================
+
     // 开发模式: 确定 webpack-dev-server 端口号
     if (ENV === 'dev') {
         // 尝试读取记录端口号的临时文件
@@ -306,20 +308,13 @@ module.exports = async (kootBuildConfig = {}) => {
         pathnameChunkmap,
     } = data
 
-    if (STAGE === 'client') {
-        if (TYPE === 'spa') {
-            if (!quietMode)
-                log('error', 'build',
-                    `i18n temporarily ` + chalk.redBright(`disabled`) + ` for `
-                    + chalk.cyanBright('SPA')
-                )
-        }
+    if (TYPE === 'spa' && typeof !!kootBuildConfig.i18n) {
+        log('error', 'build', chalk.redBright(__('build.spa_i18n_disabled_temporarily')))
     } else if (typeof i18n === 'object') {
         if (STAGE === 'client') {
-            if (!quietMode)
-                log('success', 'build',
-                    `i18n ` + chalk.yellowBright(`enabled`)
-                )
+            log('success', 'build',
+                `i18n ` + chalk.yellowBright(`enabled`)
+            )
             if (!quietMode) console.log(`  > type: ${chalk.yellowBright(i18n.type)}`)
             if (!quietMode) console.log(`  > locales: ${i18n.locales.map(arr => arr[0]).join(', ')}`)
         }

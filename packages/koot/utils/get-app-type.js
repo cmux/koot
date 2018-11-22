@@ -31,7 +31,11 @@ module.exports = async () => {
     }
 
     switch (process.env.KOOT_PROJECT_TYPE.toLowerCase()) {
-        case 'react': {
+        case 'isomorphic':
+        case 'react':
+        case 'react-isomorphic':
+        case 'react_isomorphic':
+        case 'reactisomorphic': {
             // if ((await readBuildConfigFile()).server)
             process.env.WEBPACK_BUILD_TYPE = 'isomorphic'
             process.env.KOOT_PROJECT_TYPE = 'ReactApp'
@@ -39,7 +43,9 @@ module.exports = async () => {
             break
         }
 
+        case 'spa':
         case 'react-spa':
+        case 'react_spa':
         case 'reactspa': {
             process.env.WEBPACK_BUILD_TYPE = 'spa'
             process.env.KOOT_PROJECT_TYPE = 'ReactSPA'

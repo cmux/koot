@@ -9,7 +9,8 @@
         "building_locale": "Webpack building (locale ${locale})...",
         "spa_template_emitted": "SPA HTML file emitted to ${file}",
         "spa_template_not_found": "SPA template file not found",
-        "complete": "Build complete! (${time})"
+        "complete": "Build complete! (${time})",
+        "spa_i18n_disabled_temporarily": "i18n support is disabled for SPA project that will be re-enabled in the future"
     },
     "dev": {
         "missing_stage": "Please set STAGE.\n${indent}> ${example}"
