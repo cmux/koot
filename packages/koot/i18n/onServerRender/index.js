@@ -11,11 +11,9 @@ export default ({
     if (typeof store !== 'object' && typeof store.getState !== 'function')
         return
 
-    const state = store.getState()
-
-    store.dispatch(actionInit(state))
+    store.dispatch(actionInit(store.getState()))
     if (JSON.parse(process.env.KOOT_I18N_TYPE) === 'redux')
-        store.dispatch(actionLocales(state))
+        store.dispatch(actionLocales(store.getState()))
 
     // console.log(2)
 }

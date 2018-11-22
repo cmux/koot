@@ -184,7 +184,7 @@ module.exports = {
     /** @type {(Number|Object|String)} 服务器运行端口 */
     // port: 3080,
     port: {
-        dev: 8082,
+        dev: 8083,
         prod: 8081,
     },
 
