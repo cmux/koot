@@ -25,12 +25,12 @@ const extractType = () => {
  * @async
  * @returns {String} process.env.KOOT_PROJECT_TYPE
  */
-module.exports = async () => {
-    if (typeof process.env.KOOT_PROJECT_TYPE === 'undefined') {
-        process.env.KOOT_PROJECT_TYPE = extractType() || ''
+module.exports = async (projectType = process.env.KOOT_PROJECT_TYPE) => {
+    if (!projectType) {
+        projectType = extractType() || ''
     }
 
-    switch (process.env.KOOT_PROJECT_TYPE.toLowerCase()) {
+    switch (projectType.toLowerCase()) {
         case 'isomorphic':
         case 'react':
         case 'react-isomorphic':
@@ -56,5 +56,5 @@ module.exports = async () => {
         //     return process.env.KOOT_PROJECT_TYPE
     }
 
-    return process.env.KOOT_PROJECT_TYPE
+    return projectType
 }

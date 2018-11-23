@@ -2,6 +2,7 @@ const fs = require('fs-extra')
 const path = require('path')
 
 const validatePathname = require('./validate-pathname')
+// const validateAppType = require('../utils/get-app-type')
 const getCwd = require('../utils/get-cwd')
 const readBuildConfigFile = require('../utils/read-build-config-file')
 // const getPathnameBuildConfigFile = require('../utils/get-pathname-build-config-file')

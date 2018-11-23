@@ -5,7 +5,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 const KootI18nPlugin = require('../plugins/i18n')
 const DevModePlugin = require('koot-webpack/plugins/dev-mode')
-const SpaTemplatePlugin = require('../plugins/spa-template')
+const SpaTemplatePlugin = require('koot-webpack/plugins/spa-template')
 const GenerateChunkmapPlugin = require('koot-webpack/plugins/generate-chunkmap')
 
 const { keyConfigBuildDll, keyConfigOutputPathShouldBe } = require('../../../defaults/before-build')
@@ -52,29 +52,6 @@ module.exports = async (kootBuildConfig = {}) => {
     )
 
     const pathPublic = path.resolve(dist, `public`)
-
-    const getWebpackConfig = async () => {
-        if (typeof i18n === 'object') {
-            const {
-                type = 'default'
-            } = i18n
-            switch (type) {
-                case 'redux': {
-                    return await handleSingleConfig()
-                }
-                default: {
-                    const configs = []
-                    for (let arr of i18n.locales) {
-                        const thisConfig = await handleSingleConfig(arr[0], arr[1])
-                        configs.push(thisConfig)
-                    }
-                    return configs
-                }
-            }
-        } else {
-            return await handleSingleConfig()
-        }
-    }
 
     let index = 0
     const handleSingleConfig = async (localeId, localesObj) => {
@@ -178,27 +155,30 @@ module.exports = async (kootBuildConfig = {}) => {
                 )
             }
 
-            if (TYPE === 'spa')
-                result.plugins.push(
-                    new SpaTemplatePlugin({
-                        localeId: isSeperateLocale ? localeId : undefined,
-                        inject,
-                    })
-                )
-            else if (!createDll)
-                result.plugins.push(
-                    await new GenerateChunkmapPlugin({
-                        localeId: isSeperateLocale ? localeId : undefined,
-                    })
-                )
+            if (!createDll) {
+                if (TYPE === 'spa') {
+                    result.plugins.push(
+                        new SpaTemplatePlugin({
+                            localeId: isSeperateLocale ? localeId : undefined,
+                            inject,
+                        })
+                    )
+                } else {
+                    result.plugins.push(
+                        await new GenerateChunkmapPlugin({
+                            localeId: isSeperateLocale ? localeId : undefined,
+                        })
+                    )
+                }
 
-            if (ENV !== 'dev' && typeof staticAssets === 'string' && !index)
-                result.plugins.push(new CopyWebpackPlugin([
-                    {
-                        from: staticAssets,
-                        to: path.relative(result.output.path, pathPublic)
-                    }
-                ]))
+                if (ENV !== 'dev' && typeof staticAssets === 'string' && !index)
+                    result.plugins.push(new CopyWebpackPlugin([
+                        {
+                            from: staticAssets,
+                            to: path.relative(result.output.path, pathPublic)
+                        }
+                    ]))
+            }
         }
 
         index++
@@ -206,5 +186,27 @@ module.exports = async (kootBuildConfig = {}) => {
         return await transformConfigLast(result, kootBuildConfig)
     }
 
-    return await getWebpackConfig()
+    return await (async () => {
+        if (typeof i18n === 'object') {
+            const {
+                type = 'default'
+            } = i18n
+            switch (type) {
+                case 'redux': {
+                    return await handleSingleConfig()
+                }
+                default: {
+                    // 多语言拆包模式: 每个语种一次打包
+                    const configs = []
+                    for (let arr of i18n.locales) {
+                        const thisConfig = await handleSingleConfig(arr[0], arr[1])
+                        configs.push(thisConfig)
+                    }
+                    return configs
+                }
+            }
+        }
+
+        return await handleSingleConfig()
+    })()
 }

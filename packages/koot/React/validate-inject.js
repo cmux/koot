@@ -1,9 +1,7 @@
-import { localeId as theLocaleId } from '../index'
-
-import injectHtmlLang from './inject/htmlLang'
-import injectMetas from './inject/metas'
-import injectStyles from './inject/styles'
-import injectScripts from './inject/scripts'
+const injectHtmlLang = require('./inject/htmlLang')
+const injectMetas = require('./inject/metas')
+const injectStyles = require('./inject/styles')
+const injectScripts = require('./inject/scripts')
 
 /**
  * 生成 ejs 使用的模板替换对象
@@ -22,14 +20,15 @@ import injectScripts from './inject/scripts'
  * @param {Boolean} [needInjectCritical.scripts=false]
  * @returns {Object}
  */
-export default (options = {}) => {
+module.exports = (options = {}) => {
     const {
         injectCache = {},
 
         filemap = {},
         entrypoints = {},
 
-        localeId = __SERVER__ ? undefined : theLocaleId,
+        localeId,
+
         title,
         metaHtml,
         reactHtml,

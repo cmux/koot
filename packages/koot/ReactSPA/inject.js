@@ -1,6 +1,7 @@
 const path = require('path')
 const fs = require('fs-extra')
 
+const validateInject = require('../React/validate-inject')
 const defaultEntrypoints = require('../defaults/entrypoints')
 
 const getChunkmap = require('../utils/get-chunkmap')
@@ -13,7 +14,31 @@ const {
     __KOOT_INJECT_METAS_END__,
 } = require('../defaults/defines')
 
-module.exports = (settings = {}) => {
+module.exports = (options = {}) => {
+    const {
+        localeId,
+        filemap,
+        entrypoints,
+        needInjectCritical,
+    } = options
+
+    return validateInject({
+        localeId,
+
+        filemap,
+        entrypoints,
+
+        title: 'TEST',
+        metas: '',
+        reactHtml: '<!-- REACT ROOT -->',
+        stylesHtml: '',
+        reduxHtml: '',
+
+        needInjectCritical,
+    })
+}
+
+const old = (settings = {}) => {
     const {
         WEBPACK_BUILD_ENV: ENV,
     } = process.env

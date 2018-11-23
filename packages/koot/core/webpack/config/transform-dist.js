@@ -4,7 +4,9 @@ const validate = require('./validate-dist')
 const getCwd = require('../../../utils/get-cwd')
 
 /**
- * 处理打包路径
+ * 处理打包路径。确保目标路径存在。以下内容写入环境变量
+ *   - KOOT_DIST_DIR - 打包路径相对于项目根目录的相对路径
+ *
  * @async
  * @param {String} dist 
  * @returns {String} 绝对路径

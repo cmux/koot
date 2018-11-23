@@ -1,7 +1,7 @@
 const ejs = require('ejs')
 
-import readClientFile from '../utils/read-client-file'
-import getClientFilePath from '../utils/get-client-file-path'
+const readClientFile = require('../utils/read-client-file')
+const getClientFilePath = require('../utils/get-client-file-path')
 
 /**
  * 渲染 ejs 模板
@@ -10,7 +10,7 @@ import getClientFilePath from '../utils/get-client-file-path'
  * @param {Object} [state] 当前 Redux state。也可以传入 Redux store
  * @returns {String}
  */
-export default (template = DEFAULT_TEMPLATE, inject = {}, state = {}) => {
+module.exports = (template = DEFAULT_TEMPLATE, inject = {}, state = {}) => {
     if (typeof state === 'object' && state.getState === 'function')
         state = state.getState()
 

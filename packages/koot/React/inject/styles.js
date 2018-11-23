@@ -1,10 +1,10 @@
 const fs = require('fs-extra')
 const path = require('path')
 
-import { filenameDll } from '../../defaults/before-build'
-import { dll } from '../../defaults/dev-request-uri'
-import readClientFile from '../../utils/read-client-file'
-import getClientFilePath from '../../utils/get-client-file-path'
+const { filenameDll } = require('../../defaults/before-build')
+const { dll } = require('../../defaults/dev-request-uri')
+const readClientFile = require('../../utils/read-client-file')
+const getClientFilePath = require('../../utils/get-client-file-path')
 
 /**
  * 注入: CSS 代码
@@ -14,7 +14,7 @@ import getClientFilePath from '../../utils/get-client-file-path'
  * @param {String} stylesHtml
  * @returns {String}
  */
-export default (needInjectCritical, injectCache, filemap, stylesHtml) => {
+module.exports = (needInjectCritical, injectCache, filemap, stylesHtml) => {
 
     if (typeof injectCache.styles === 'undefined') {
         injectCache.styles = (needInjectCritical && typeof filemap['critical.css'] === 'string')

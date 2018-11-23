@@ -24,6 +24,7 @@ import componentExtender from '../React/component-extender'
 import pageinfo from '../React/pageinfo'
 import { parseHtmlForStyles } from '../React/styles'
 import validateInject from '../React/validate-inject'
+import isNeedInjectCritical from '../React/inject/is-need-inject-critical'
 
 const getChunkmap = require('../utils/get-chunkmap')
 const getSWPathname = require('../utils/get-sw-pathname')
@@ -253,10 +254,7 @@ export default class ReactIsomorphic {
                     reactHtml,
                     stylesHtml,
                     reduxHtml: htmlTool.getReduxScript(store),
-                    needInjectCritical: {
-                        styles: !/(content|pathname)\(['"]critical\.css['"]\)/.test(template),
-                        scripts: !/(content|pathname)\(['"]critical\.js['"]\)/.test(template),
-                    },
+                    needInjectCritical: isNeedInjectCritical(template),
                 })
 
                 // i18n 启用时: 添加其他语种页面跳转信息的 meta 标签
