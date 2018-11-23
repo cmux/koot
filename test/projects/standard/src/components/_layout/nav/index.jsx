@@ -6,11 +6,11 @@ import Link from '@components/link'
 const Nav = props => {
     const items = [
         {
-            title: __('pages.home.title'),
+            title: __SPA__ ? '首页' : __('pages.home.title'),
             to: '/'
         },
         {
-            title: __('pages.static.title'),
+            title: __SPA__ ? '静态资源' : __('pages.static.title'),
             to: '/static'
         }
     ]

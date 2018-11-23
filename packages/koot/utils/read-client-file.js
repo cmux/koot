@@ -5,6 +5,7 @@ const isUrl = require('is-url')
 const getFilePath = require('./get-client-file-path')
 const generateFilemap = require('./generate-filemap-from-compilation')
 const getDistPath = require('./get-dist-path')
+const getPort = require('./get-port')
 
 /**
  * 读取目标客户端打包结果文件的内容
@@ -50,6 +51,12 @@ const readClientFile = (filename, localeId, compilation, isPathname = false) => 
         } else {
             return `<!-- The pathname for file '${filename}' is a URL. Rendering file content from URL can only be done in DEV mode. -->`
         }
+    }
+
+    if (process.env.WEBPACK_BUILD_TYPE === 'spa' && process.env.WEBPACK_BUILD_ENV === 'dev') {
+        return `<!-- http://localhost:${getPort()}${pathname} -->`
+        // const syncRequest = require('sync-request')
+        // return syncRequest('GET', `http://localhost:${getPort()}${pathname}`, {}).getBody()
     }
 
     return fs.readFileSync(

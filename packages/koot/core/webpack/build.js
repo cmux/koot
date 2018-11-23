@@ -442,6 +442,11 @@ module.exports = async (kootBuildConfig = {}) => {
                     getDistPath(),
                     path.resolve(getDistPath(), '**/*')
                 ]
+            },
+            before: (app) => {
+                if (appType === 'ReactSPA') {
+                    require('../../ReactSPA/dev-server/extend')(app)
+                }
             }
         }, devServer)
         const port = TYPE === 'spa' ? process.env.SERVER_PORT : process.env.WEBPACK_DEV_SERVER_PORT

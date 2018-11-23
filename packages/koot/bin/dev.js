@@ -42,6 +42,7 @@ program
     .option('-s, --server', 'Set STAGE to SERVER')
     .option('-g, --global', 'Connect to global PM2')
     .option('--stage <stage>', 'Set STAGE')
+    .option('--dest <destination-path>', 'Set destination directory (for temporary files)')
     .option('--config <config-file-path>', 'Set config file')
     .option('--type <project-type>', 'Set project type')
     .option('--port <port>', 'Set server port')
@@ -76,6 +77,7 @@ const run = async () => {
     const {
         client, server,
         stage: _stage,
+        dest,
         config,
         type,
         global = false,
@@ -91,7 +93,12 @@ const run = async () => {
         port,
     })
 
-    let stage = _stage ? _stage : (client ? 'client' : (server ? 'server' : false))
+    let stage = (() => {
+        if (_stage) return _stage
+        if (client) return 'client'
+        if (server) return 'server'
+        return false
+    })()
 
     // if (!stage) {
     //     console.log(
@@ -107,6 +114,9 @@ const run = async () => {
     // 读取项目信息
     // const { dist, port } = await readBuildConfigFile()
     const buildConfig = await validateConfig()
+
+    if (dest) buildConfig.dist = dest
+
     const {
         dist,
         port: configPort,
@@ -178,6 +188,8 @@ const run = async () => {
             // console.trace('exit in', exitCode)
             // process.exit(exitCode)
         })
+        if (open && process.env.WEBPACK_BUILD_TYPE === 'spa')
+            openBrowserPage()
         return
     }
 
@@ -476,6 +488,10 @@ const run = async () => {
 
         return complete()
     })
+}
+
+const openBrowserPage = () => {
+    return opn(`http://localhost:${process.env.SERVER_PORT}/`)
 }
 
 run()

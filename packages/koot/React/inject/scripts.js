@@ -67,6 +67,7 @@ module.exports = (needInjectCritical, injectCache, entrypoints, reduxHtml) => {
         injectCache.scriptsInBody = r
     }
 
-    return `<script type="text/javascript">${reduxHtml}</script>${injectCache.scriptsInBody}`
+    return `<script type="text/javascript">${reduxHtml ? reduxHtml : `window.__REDUX_STATE__ = {}`}</script>`
+        + `${injectCache.scriptsInBody}`
 
 }

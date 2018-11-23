@@ -55,6 +55,7 @@
 | --env &lt;prod&#124;dev&gt; | 指定打包模式 | `koot-build --env dev` |
 | --type &lt;project-type&gt; | 指定项目类型，忽略 koot.js 中的配置 | `koot-build --type react-spa` |
 | --config &lt;config-file-path&gt; | 指定打包配置文件地址 | `koot-build --config ./koot.build.qa.js` |
+| --dest &lt;dist-path&gt; | 指定打包结果目录 | `koot-build --dest ./package-qa` |
 
 以上命令可混合使用，如：`koot-build -c --env dev --config ./koot.build.qa.js`
 
@@ -71,6 +72,7 @@
 | -c 或 --client | 只对客户端环境打包 | `koot-dev -c` |
 | -s 或 --server | 只对服务器端环境打包 | `koot-dev -s` |
 | -g 或 --global | 使用全局 PM2 | `koot-dev -g` |
+| --dest &lt;dist-path&gt; | 指定打包结果目录 (供临时文件使用) | `koot-build --dest ./package-qa` |
 | --no-open | 禁止自动打开浏览器/页面 | `koot-dev --no-open` |
 | --no-dll | 不使用 DLL 模式 | `koot-dev --no-dll` |
 
