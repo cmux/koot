@@ -132,19 +132,21 @@ class ReduxModule {
      * @return {[type]}            [description]
      */
     getStateByActionName( actionName ) {
-        // const actionCollection = this.actionCollection;
         if( this.__actions[actionName] ){
             return this.__state;
         }else{
             const childrenModuleNames = Object.keys(this.__children);
-            let result;
             if( childrenModuleNames.length ){
+                let result;
                 childrenModuleNames.forEach(childrenModuleName => {
                     const childrenModuleItem = this.__children[childrenModuleName];
-                    result = childrenModuleItem.getStateByActionName(actionName);
+                    const scopedState = childrenModuleItem.getStateByActionName(actionName);
+                    if( scopedState ){
+                        result = scopedState;
+                    }
                 })
+                return result;
             }
-            return result;
         }
     }
 
@@ -249,7 +251,6 @@ class ReduxModule {
                             childrenFinalState[childrenModuleName] = result;
                         }
                     })
-
                     finaState =  Object.assign({}, this.__state, moduleState, finaState, childrenFinalState);
                 }
             }

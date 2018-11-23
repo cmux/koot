@@ -546,7 +546,12 @@ export const renderTextHandler = (configItem = {}) => {
  * @param {Object} configItem 
  */
 export const renderCustomizeHandler = (configItem = {}) => {
-    return configItem.render && configItem.render()
+    const props = getConfigItemProps(configItem);
+    const CustomizeComponent = configItem.render && configItem.render(props);
+    return antdFieldDecorator(
+        configItem, 
+        CustomizeComponent
+    )
 }
 
 

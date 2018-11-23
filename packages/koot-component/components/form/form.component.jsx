@@ -11,23 +11,34 @@ class FormComponent extends Component {
 
     static propTypes = {
         children: PropTypes.node,
-        config: PropTypes.object.isRequired,
+        config: PropTypes.oneOfType([
+            PropTypes.func.isRequired,
+            PropTypes.object.isRequired
+        ]),
         onChange: PropTypes.func
     }
 
     render() {
         const { props } = this;
         const { config } = props;
-        const nextConfig = Object.assign({}, config, {
+        const formFieldsValue = props.form.getFieldsValue();
+        const formData = Object.keys(formFieldsValue).length === 0 ? undefined : formFieldsValue;
+        let nextConfig;
+        if( typeof config === 'function' ){
+            nextConfig = config(formData);
+        }else{
+            nextConfig = config;
+        }
+        nextConfig = Object.assign({}, nextConfig, {
             __rootProps: props
         })
-        const form = renderTransfer(nextConfig)
-        return form;
+        return renderTransfer(nextConfig);
     }
 }
 
 export default Form.create({
     onValuesChange: (props, changedValues, allValues) => {
-        props.onChange && props.onChange(allValues);
+        const { onChange } = props;
+        onChange && typeof onChange === 'function' && onChange(allValues);
     }
 })(FormComponent);
