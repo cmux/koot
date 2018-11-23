@@ -12,6 +12,12 @@ const getDistPath = require('../libs/require-koot')('utils/get-dist-path')
 const getCwd = require('../libs/require-koot')('utils/get-cwd')
 const getChunkmap = require('../libs/require-koot')('utils/get-chunkmap')
 
+/**
+ * Webpack 插件 - 生成 SPA 主页面文件
+ * @class SpaTemplatePlugin
+ * @classdesc Webpack 插件 - 生成 SPA 主页面文件
+ * @property {String} localeId
+ */
 class SpaTemplatePlugin {
     constructor(settings = {}) {
         this.localeId = settings.localeId
@@ -73,7 +79,7 @@ class SpaTemplatePlugin {
             )
         }
 
-        // hook: 文件吐出
+        // hook: 在文件吐出时修改模板文件代码
         const hookStep = process.env.WEBPACK_BUILD_ENV === 'prod' ? 'afterEmit' : 'emit'
         compiler.hooks[hookStep].tapAsync.bind(compiler.hooks[hookStep], 'SpaTemplatePlugin')(async (compilation, callback) => {
             const appType = await getAppType()
@@ -115,7 +121,11 @@ class SpaTemplatePlugin {
             })()
             // console.log(Object.assign({}, defaultInject, inject))
 
-            const html = renderTemplate(template, Object.assign({}, defaultInject, inject))
+            const html = renderTemplate({
+                template,
+                inject: Object.assign({}, defaultInject, inject),
+                compilation
+            })
 
             // 写入 Webpack 文件流
             if (compilation.fileDependencies.add) {

@@ -156,7 +156,7 @@ module.exports = async (kootBuildConfig = {}) => {
         const dist = getDistPath()
 
         // 开发模式
-        if (ENV === 'dev') {
+        if (ENV === 'dev' && TYPE !== 'spa') {
             // 确保 server/index.js 存在
             fs.ensureFileSync(path.resolve(dist, `./server/index.js`))
         }
@@ -176,7 +176,8 @@ module.exports = async (kootBuildConfig = {}) => {
 
         // 创建空文件标记
         fs.ensureFileSync(path.resolve(dist, filenameBuilding))
-
+        // console.log(path.resolve(dist, filenameBuilding))
+        // console.log(fs.existsSync(path.resolve(dist, filenameBuilding)))
         // 创建 DLL 模式下不执行传入的生命周期方法
         if (!createDll && typeof beforeBuild === 'function')
             await beforeBuild(data)
@@ -255,29 +256,33 @@ module.exports = async (kootBuildConfig = {}) => {
 
     // 开发模式: 确定 webpack-dev-server 端口号
     if (ENV === 'dev') {
-        // 尝试读取记录端口号的临时文件
-        const dist = await validateDist(kootBuildConfig.dist)
-        const pathnameTemp = path.resolve(dist, filenameWebpackDevServerPortTemp)
-        const getExistResult = async () => {
-            if (fs.existsSync(pathnameTemp)) {
-                const content = await fs.readFile(pathnameTemp)
-                if (!isNaN(content))
-                    return parseInt(content)
-            }
-            return undefined
-        }
-        const existResult = await getExistResult()
-        if (existResult) {
-            process.env.WEBPACK_DEV_SERVER_PORT = existResult
+        if (TYPE === 'spa') {
+            process.env.WEBPACK_DEV_SERVER_PORT = process.env.SERVER_PORT
         } else {
-            // 如果上述临时文件不存在，从配置中解析结果
-            process.env.WEBPACK_DEV_SERVER_PORT = await validateWebpackDevServerPort(kootBuildConfig.port)
-            // 将 webpack-dev-server 端口写入临时文件
-            await fs.writeFile(
-                pathnameTemp,
-                process.env.WEBPACK_DEV_SERVER_PORT,
-                'utf-8'
-            )
+            // 尝试读取记录端口号的临时文件
+            const dist = await validateDist(kootBuildConfig.dist)
+            const pathnameTemp = path.resolve(dist, filenameWebpackDevServerPortTemp)
+            const getExistResult = async () => {
+                if (fs.existsSync(pathnameTemp)) {
+                    const content = await fs.readFile(pathnameTemp)
+                    if (!isNaN(content))
+                        return parseInt(content)
+                }
+                return undefined
+            }
+            const existResult = await getExistResult()
+            if (existResult) {
+                process.env.WEBPACK_DEV_SERVER_PORT = existResult
+            } else {
+                // 如果上述临时文件不存在，从配置中解析结果
+                process.env.WEBPACK_DEV_SERVER_PORT = await validateWebpackDevServerPort(kootBuildConfig.port)
+                // 将 webpack-dev-server 端口写入临时文件
+                await fs.writeFile(
+                    pathnameTemp,
+                    process.env.WEBPACK_DEV_SERVER_PORT,
+                    'utf-8'
+                )
+            }
         }
     }
 

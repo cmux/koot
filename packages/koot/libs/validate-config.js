@@ -172,6 +172,9 @@ const validateBuildConfig = (config = {}) => {
         config.dist = config.dest
         delete config.dest
     }
+    if (typeof config.dist !== 'undefined') {
+        process.env.KOOT_DIST_DIR = config.dist
+    }
 
     // 改变配置项: webpack.config -> config
     if (typeof config.webpack === 'object') {

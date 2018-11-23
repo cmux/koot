@@ -5,12 +5,19 @@ const getClientFilePath = require('../utils/get-client-file-path')
 
 /**
  * 渲染 ejs 模板
- * @param {String} template ejs 模板内容
- * @param {Object} inject 注入对象
- * @param {Object} [state] 当前 Redux state。也可以传入 Redux store
+ * @param {Object} options
+ * @param {String} options.template ejs 模板内容
+ * @param {Object} [options.inject={}] 注入对象
+ * @param {Object} [options.state] 当前 Redux state。也可以传入 Redux store
+ * @param {Object} [options.compilation] webpack compilation
  * @returns {String}
  */
-module.exports = (template = DEFAULT_TEMPLATE, inject = {}, state = {}) => {
+module.exports = ({
+    template = DEFAULT_TEMPLATE,
+    inject = {},
+    state = {},
+    compilation,
+}) => {
     if (typeof state === 'object' && typeof state.getState === 'function')
         state = state.getState()
 
@@ -23,13 +30,23 @@ module.exports = (template = DEFAULT_TEMPLATE, inject = {}, state = {}) => {
         console.log(e)
     }
 
+    // 开发模式: 将 content('critical.js') 转为 pathname() 方式
+    if (process.env.WEBPACK_BUILD_ENV === 'dev')
+        template = template
+            .replace(
+                /<script(.*?)><%(.*?)content\(['"]critical\.js['"]\)(.*?)%><\/script>/,
+                `<script$1 src="<%$2pathname('critical.js')$3%>"></script>`
+            )
+
     // console.log(template)
+
+    const localeId = typeof state === 'object' ? state.localeId : undefined
 
     return ejs.render(
         template, {
             inject,
-            content: readClientFile,
-            pathname: getClientFilePath,
+            content: (filename) => readClientFile(filename, localeId, compilation),
+            pathname: (filename) => getClientFilePath(filename, localeId),
         }, {}
     )
 }

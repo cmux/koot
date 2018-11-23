@@ -19,10 +19,13 @@ const readClientFile = (filename, localeId, compilation, isPathname = false) => 
     // 如果第一个参数为 true，表示标记为 pathname
     if (filename === true) return readClientFile(localeId, compilation || undefined, isPathname || undefined, true)
 
-    // 如果提供了 webpack compilation 数据，直接从其中查询对应文件的最终内容并返回
+    // 如果提供了 webpack compilation 数据，尝试从其中查询对应文件的最终内容并返回
     if (typeof compilation === 'object') {
         const filemap = generateFilemap(compilation)
         if (typeof filemap === 'object') {
+            // console.log('\n' + filename)
+            // console.log(`typeof filemap["${filename}"]`, typeof filemap[filename])
+            // console.log(`typeof compilation.assets["${filemap[filename]}"]`, typeof compilation.assets[filemap[filename]])
             // for (let key in compilation) {
             //     console.log(key)
             // }
@@ -30,13 +33,15 @@ const readClientFile = (filename, localeId, compilation, isPathname = false) => 
             if (typeof filemap[filename] === 'string' &&
                 typeof compilation.assets[filemap[filename]] !== 'undefined'
             ) {
-                const obj = compilation.assets[filemap[filename]]
+                const asset = compilation.assets[filemap[filename]]
                 // console.log(filename, filemap[filename])
-                // if (!obj._value) {
-                //     console.log(obj)
+                // if (!asset._value) {
+                //     console.log(asset)
                 // }
-                if (typeof obj._value !== 'undefined') return obj._value
-                if (typeof obj._cachedSource !== 'undefined') return obj._cachedSource
+                // console.log('typeof asset.source', typeof asset.source)
+                if (typeof asset.source === 'function') return asset.source()
+                if (typeof asset._value !== 'undefined') return asset._value
+                if (typeof asset._cachedSource !== 'undefined') return asset._cachedSource
                 // return '123'
             }
         }

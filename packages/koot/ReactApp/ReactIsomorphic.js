@@ -231,18 +231,6 @@ export default class ReactIsomorphic {
 
                 // global.koaCtxOrigin = ctx.origin
 
-                // 开发模式: 将 content('critical.js') 转为 pathname()
-                if (__DEV__)
-                    template = template
-                        // .replace(
-                        //     /<style(.*?)><%(.*?)content\(['"]critical\.css['"]\)(.*?)%><\/style>/,
-                        //     `<link id="__koot-critical-styles" media="all" rel="stylesheet" href="<%$2pathname('critical.css')$3%>" />`
-                        // )
-                        .replace(
-                            /<script(.*?)><%(.*?)content\(['"]critical\.js['"]\)(.*?)%><\/script>/,
-                            `<script$1 src="<%$2pathname('critical.js')$3%>"></script>`
-                        )
-
                 /** @type {Object} 实时 (本次访问请求) 注入 */
                 const injectRealtime = validateInject({
                     injectCache: thisInjectOnceCache,
@@ -281,7 +269,11 @@ export default class ReactIsomorphic {
                 }
 
                 // 渲染模板
-                let html = renderTemplate(template, Object.assign(injectRealtime, injectOnce, inject), store)
+                let html = renderTemplate({
+                    template,
+                    inject: Object.assign(injectRealtime, injectOnce, inject),
+                    store
+                })
 
                 // 开发模式:
                 if (__DEV__) {

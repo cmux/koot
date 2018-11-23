@@ -12,6 +12,7 @@ const contentWaiting = require('../defaults/content-waiting')
 const {
     keyFileProjectConfigTemp,
     filenameWebpackDevServerPortTemp,
+    filenameBuilding,
     // filenameDll, filenameDllManifest,
 } = require('../defaults/before-build')
 
@@ -84,6 +85,7 @@ const run = async () => {
         open = true,
         port,
         dll = true,
+        kootTest = false,
     } = program
 
     initNodeEnv()
@@ -97,24 +99,37 @@ const run = async () => {
         if (_stage) return _stage
         if (client) return 'client'
         if (server) return 'server'
+
+        // false - 同构项目的完整开发模式
         return false
     })()
 
-    // if (!stage) {
-    //     console.log(
-    //         chalk.redBright('× ')
-    //         + __('dev.missing_stage', {
-    //             example: 'koot-dev ' + chalk.green('--client'),
-    //             indent: '  '
-    //         })
-    //     )
-    //     return
-    // }
+    /** @type {String} build 命令的附加参数 */
+    const buildCmdArgs = '--env dev'
+        + (typeof dest === 'string' ? ` --dest ${dest}` : '')
+        + (typeof config === 'string' ? ` --config ${config}` : '')
+        + (typeof type === 'string' ? ` --type ${type}` : '')
+        + (kootTest ? ` --koot-test` : '')
 
-    // 读取项目信息
-    // const { dist, port } = await readBuildConfigFile()
+
+
+
+
+
+
+
+
+
+    // ========================================================================
+    //
+    // 准备项目配置和相关变量
+    //
+    // ========================================================================
+
+    // 验证、读取项目配置信息
     const buildConfig = await validateConfig()
 
+    // 如果在命令中设置了 dest，强制修改配置中的 dist
     if (dest) buildConfig.dist = dest
 
     const {
@@ -129,6 +144,13 @@ const run = async () => {
         name
     } = packageInfo
 
+    /** @type {Array} 正在运行的进程/服务列表 */
+    const processes = []
+
+    /** @type {Boolean} 全局等待提示 */
+    let waitingSpinner = false
+
+    // 清理遗留的临时文件
     await removeTempBuild(dist)
 
     // 如果有临时项目配置文件，更改环境变量
@@ -146,70 +168,21 @@ const run = async () => {
     if (typeof port === 'undefined' && typeof configPort !== 'undefined')
         process.env.SERVER_PORT = getPort(configPort, 'dev')
 
-    // 如果开启了 Webpack DLL 插件模式，此处执行相关打包流程
-    if (dll && process.env.WEBPACK_BUILD_STAGE !== 'server') {
-        const msg = 'Generating DLLs'
-        const waiting = spinner(msg + '...')
 
-        // DLL 打包
-        if (stage) {
-            process.env.WEBPACK_BUILD_STAGE = stage
-            await kootBuildVendorDll(buildConfig)
-        } else {
-            const stageCurrent = process.env.WEBPACK_BUILD_STAGE
 
-            process.env.WEBPACK_BUILD_STAGE = 'client'
-            await kootBuildVendorDll(buildConfig)
-            await sleep(500)
-            process.env.WEBPACK_BUILD_STAGE = 'server'
-            await kootBuildVendorDll(buildConfig)
 
-            process.env.WEBPACK_BUILD_STAGE = stageCurrent
-        }
 
-        await sleep(500)
-        // console.log('result', result)
-        // console.log(111)
-        // return
 
-        waiting.stop()
-        spinner(msg).succeed()
-    }
 
-    // 如果设置了 stage，仅运行该 stage
-    if (stage) {
-        const cmd = `koot-build --stage ${stage} --env dev`
-        const child = npmRunScript(cmd, {})
-        child.once('error', (error) => {
-            console.trace(error)
-            process.exit(1)
-        })
-        child.once('exit', (/*exitCode*/) => {
-            // console.trace('exit in', exitCode)
-            // process.exit(exitCode)
-        })
-        if (open && process.env.WEBPACK_BUILD_TYPE === 'spa')
-            openBrowserPage()
-        return
-    }
 
-    // 没有设置 STAGE，开始 PM2 进程
-    let waitingSpinner = false
-    // spinner(
-    //     chalk.yellowBright('[koot/build] ')
-    //     + __('build.build_start', {
-    //         type: chalk.cyanBright(appType),
-    //         stage: chalk.green('client'),
-    //         env: chalk.green('dev'),
-    //     })
-    // )
 
-    const processes = []
-    const pathChunkmap = getChunkmapPath(dist)
-    const pathServerJS = path.resolve(dist, 'server/index.js')
-    const pathServerStartFlag = getPathnameDevServerStart()
 
-    const removeListeners = () => {
+    // ========================================================================
+    //
+    // 进程关闭行为
+    //
+    // ========================================================================
+    const removeAllExitListeners = () => {
         process.removeListener('exit', exitHandler)
         process.removeListener('SIGINT', exitHandler)
         process.removeListener('SIGUSR1', exitHandler)
@@ -245,7 +218,7 @@ const run = async () => {
             // w.stop()
             try {
                 // console.log(process.pid)
-                removeListeners()
+                removeAllExitListeners()
                 console.log('\n\n\n' + chalk.cyanBright('Press CTRL+C again to exit.') + '\n\n')
                 // process.kill(process.pid)
                 process.exit(1)
@@ -253,7 +226,7 @@ const run = async () => {
                 // console.log(e)
             }
         } else {
-            removeListeners()
+            removeAllExitListeners()
             // 清空 log
             process.stdout.write('\x1B[2J\x1B[0f')
             console.log('Press CTRL+C again to exit.')
@@ -267,19 +240,117 @@ const run = async () => {
             process.exit(1)
         }
     }
+    // 在脚本进程关闭/结束时，同时关闭打开的 PM2 进程
+    process.stdin.resume()
+    // do something when app is closing
+    process.on('exit', exitHandler);
+    // catches ctrl+c event
+    process.on('SIGINT', exitHandler);
+    // catches "kill pid" (for example: nodemon restart)
+    process.on('SIGUSR1', exitHandler);
+    process.on('SIGUSR2', exitHandler);
+    // catches uncaught exceptions
+    process.on('uncaughtException', exitHandler);
 
-    { // 在脚本进程关闭/结束时，同时关闭打开的 PM2 进程
-        process.stdin.resume()
-        // do something when app is closing
-        process.on('exit', exitHandler);
-        // catches ctrl+c event
-        process.on('SIGINT', exitHandler);
-        // catches "kill pid" (for example: nodemon restart)
-        process.on('SIGUSR1', exitHandler);
-        process.on('SIGUSR2', exitHandler);
-        // catches uncaught exceptions
-        process.on('uncaughtException', exitHandler);
+
+
+
+
+
+
+
+
+
+    // ========================================================================
+    //
+    // 如果开启了 Webpack DLL 插件，此时执行 DLL 打包
+    //
+    // ========================================================================
+    if (dll && process.env.WEBPACK_BUILD_STAGE !== 'server') {
+        const msg = 'Generating DLLs'
+        const waiting = spinner(msg + '...')
+
+        // DLL 打包
+        if (stage) {
+            process.env.WEBPACK_BUILD_STAGE = stage
+            await kootBuildVendorDll(buildConfig)
+        } else {
+            const stageCurrent = process.env.WEBPACK_BUILD_STAGE
+
+            process.env.WEBPACK_BUILD_STAGE = 'client'
+            await kootBuildVendorDll(buildConfig)
+            await sleep(500)
+            process.env.WEBPACK_BUILD_STAGE = 'server'
+            await kootBuildVendorDll(buildConfig)
+
+            process.env.WEBPACK_BUILD_STAGE = stageCurrent
+        }
+
+        await sleep(500)
+        // console.log('result', result)
+        // console.log(111)
+        // return
+
+        waiting.stop()
+        spinner(msg).succeed()
     }
+
+
+
+
+
+
+
+
+
+
+    // ========================================================================
+    //
+    // 如果设置了 stage，仅运行该 stage
+    //
+    // ========================================================================
+    if (stage) {
+        const cmd = `koot-build --stage ${stage} ${buildCmdArgs}`
+        const child = npmRunScript(cmd, {})
+        child.once('error', (error) => {
+            console.trace(error)
+            process.exit(1)
+        })
+        child.once('exit', async (/*exitCode*/) => {
+            // console.trace('exit in', exitCode)
+            // process.exit(exitCode)
+        })
+        if (open && process.env.WEBPACK_BUILD_TYPE === 'spa')
+            openBrowserPage()
+        return
+    }
+
+
+
+
+
+
+
+
+
+
+    // ========================================================================
+    //
+    // 没有设置 STAGE，表示同构项目的完整开发模式，开启多个进程
+    //
+    // ========================================================================
+    // spinner(
+    //     chalk.yellowBright('[koot/build] ')
+    //     + __('build.build_start', {
+    //         type: chalk.cyanBright(appType),
+    //         stage: chalk.green('client'),
+    //         env: chalk.green('dev'),
+    //     })
+    // )
+
+    const pathChunkmap = getChunkmapPath(dist)
+    const pathServerJS = path.resolve(dist, 'server/index.js')
+    const pathServerStartFlag = getPathnameDevServerStart()
 
     // 根据 stage 开启 PM2 进程
     const start = (stage) => new Promise(async (resolve, reject) => {
@@ -296,7 +367,7 @@ const run = async () => {
         const config = {
             name: `dev-${stage}-${name}`,
             script: path.resolve(__dirname, './build.js'),
-            args: `--stage ${stage} --env dev`,
+            args: `--stage ${stage} ${buildCmdArgs}`,
             cwd: cwd,
             output: pathLogOut,
             error: pathLogErr,
@@ -477,10 +548,9 @@ const run = async () => {
             console.log(' ')
             console.log(chalk.redBright(errServerRun))
             console.log(' ')
-            await exitHandler({
+            return await exitHandler({
                 silent: true
             })
-            return
         }
 
         await start('main')
