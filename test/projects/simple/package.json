@@ -88,12 +88,12 @@
         "koa-response-time": "2.0.0",
         "koa-router": "7.4.0",
         "koa-static": "3.0.0",
-        "koot-webpack": "^0.7.2",
+        "koot-webpack": "^0.7.3",
         "less": "3.8.1",
         "less-loader": "4.1.0",
         "md5": "2.2.1",
         "md5-file": "4.0.0",
-        "mini-css-extract-plugin": "0.4.4",
+        "mini-css-extract-plugin": "0.4.5",
         "npm-run-script": "0.0.4",
         "opn": "5.4.0",
         "ora": "3.0.0",
@@ -120,14 +120,14 @@
         "terminate": "2.1.0",
         "universal-alias-loader": "1.2.2",
         "url-loader": "1.1.2",
-        "webpack": "4.25.1",
+        "webpack": "4.26.0",
         "webpack-bundle-analyzer": "3.0.3",
         "webpack-config": "7.5.0",
         "webpack-dev-middleware": "3.4.0",
         "webpack-dev-server": "3.1.10",
         "webpack-hot-middleware": "2.24.3",
         "xmlify": "1.1.0",
-        "yargs": "12.0.4"
+        "yargs": "12.0.5"
     },
     "engines": {
         "node": ">=8.0.0"
