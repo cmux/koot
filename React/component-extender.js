@@ -10,7 +10,7 @@ import hoistStatics from 'hoist-non-react-statics'
 
 //
 
-import { store, localeId } from '../index.js'
+import { store } from '../index.js'
 
 //
 
@@ -28,10 +28,6 @@ import clientUpdatePageInfo from './client-update-page-info'
 
 // 是否已挂载了组件
 let everMounted = false
-const defaultPageInfo = {
-    title: '',
-    metas: []
-}
 
 /**
  * 获取数据
@@ -94,23 +90,39 @@ export default (options = {}) => (WrappedComponent) => {
         : (typeof _dataFetch === 'function' || Array.isArray(_dataFetch) ? _dataFetch : undefined)
 
     const doPageinfo = (store, props) => {
-        if (typeof pageinfo !== 'function')
-            return { ...defaultPageInfo }
+        const defaultPageInfo = {
+            title: '',
+            metas: []
+        }
 
-        let infos = pageinfo(store.getState(), props)
+        if (typeof pageinfo !== 'function')
+            return defaultPageInfo
+
+        const state = store.getState()
+
+        let infos = pageinfo(state, props)
         if (typeof infos !== 'object')
-            infos = { ...defaultPageInfo }
+            infos = defaultPageInfo
 
         const {
             title = defaultPageInfo.title,
             metas = defaultPageInfo.metas
         } = infos
 
-        if (localeId)
-            metas.push({
-                name: 'koot-locale-id',
-                content: localeId
-            })
+        if (state.localeId) {
+            if (!metas.some(meta => {
+                if (meta.name === 'koot-locale-id') {
+                    meta.content = state.localeId
+                    return true
+                }
+                return false
+            })) {
+                metas.push({
+                    name: 'koot-locale-id',
+                    content: state.localeId
+                })
+            }
+        }
 
         return {
             title,
