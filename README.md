@@ -1,4 +1,9 @@
 <!-- # Koot  -->
+<p align="center">
+      <a href="http://https://koot.js.org">
+            <img alt="koot" src="./docs/koot-logo@2x.png" width="144">
+      </a>
+</p>
 <img src="./docs/koot-logo@2x.png" width="300px" />
 
 Koot提供了基于React和Koa的完整前端技术解决方案。 
