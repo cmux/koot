@@ -28,5 +28,11 @@
     </a>
 </p> 
 
-文档: https://koot.js.org
+## Docs
+
+**[View the docs here](https://koot.js.org)**
+
+## Packages
+
+This repository is a monorepo that we manage using [Lerna](https://github.com/lerna/lerna). That means that we actually publish [several packages](/packages) to npm from the same codebase, including:
 
