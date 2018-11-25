@@ -1,12 +1,10 @@
-# `koot-boilerplate-common`
+# `koot-boilerplate`
 
 > TODO: description
 
 ## Usage
 
-```
-// TODO: 
-```
+> TODO: Usage
 
 ## 开发规范
 
@@ -15,7 +13,7 @@
 * 好的命名自带注释属性;
 
 #### 目录
-英文全部小写，连字符使用 '-'。（例如：some-component）;
+英文全部小写，连字符使用 '-'。（例如：some-component）;
 
 #### 文件
 英文全部小写，连字符使用 '-'。（例如：some-component.jsx）;
@@ -31,4 +29,4 @@
 
 #### css 样式
 因为 css 本身就是用中划线作为连接符
-推荐使用中划线作为连接符（例如：font-family）
+推荐使用中划线作为连接符（例如：font-family）
