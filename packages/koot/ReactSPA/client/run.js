@@ -59,6 +59,12 @@ export default ({
     // store,
     client
 }) => {
+    // console.log({
+    //     router,
+    //     redux,
+    //     client
+    // })
+
     const {
         before,
         after,
@@ -97,13 +103,11 @@ export default ({
             }
         }
         store = compose(applyMiddleware(thunk))(createStore)(combineReducers(reducers))
+    } else if (typeof redux.store === 'function' && __CLIENT__) {
+        store = redux.store()
     } else {
         store = redux.store
     }
-    console.log(
-        redux,
-        store
-    )
 
 
 

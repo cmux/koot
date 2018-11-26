@@ -11,8 +11,9 @@ const __ = require('../utils/translate')
 // const readBuildConfigFile = require('../utils/read-build-config-file')
 const sleep = require('../utils/sleep')
 const setEnvFromCommand = require('../utils/set-env-from-command')
+const getAppType = require('../utils/get-app-type')
 const validateConfig = require('../libs/validate-config')
-// const spinner = require('../utils/spinner')
+const spinner = require('../utils/spinner')
 
 const kootBuild = require('../core/webpack/enter')
 
@@ -63,7 +64,12 @@ const run = async () => {
 
     process.env.KOOT_TEST_MODE = JSON.stringify(kootTest)
 
-    const stage = _stage ? _stage : (client ? 'client' : (server ? 'server' : false))
+    const stage = (() => {
+        if (_stage) return _stage
+        if (client) return 'client'
+        if (server) return 'server'
+        return false
+    })()
 
     // TODO: 
 
@@ -99,6 +105,7 @@ const run = async () => {
 
     // 读取构建配置
     const buildConfig = await validateConfig()
+    await getAppType()
     // const buildConfig = await readBuildConfigFile()
     // const {
     //     server: hasServer
@@ -113,7 +120,8 @@ const run = async () => {
     }
 
     // 如果提供了 stage，仅针对 stage 执行打包
-    if (stage) {
+    // SPA: 仅打包 client
+    if (process.env.WEBPACK_BUILD_TYPE === 'spa' || stage) {
         // if (stage === 'server' && !hasServer) {
         //     console.log(chalk.redBright('× '))
         // }
@@ -169,9 +177,8 @@ const after = async (config = {}) => {
 run().catch(err => {
     if (isFromCommandStart()) {
         // throw err
-        console.error(err)
+        return console.error(err)
     }
-    // spinner(chalk.yellowBright('[koot/build] ')).fail()
-    // console.log('\n')
-    // console.trace(err)
+    spinner(chalk.yellowBright('[koot/build] ')).fail()
+    console.trace(err)
 })

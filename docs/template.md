@@ -56,15 +56,16 @@
 
 ### 注入变量
 
-从上面的```HTML模板```里可以看见很多个```<%- inject.[*] %>```标签，这样的标签会被替换成对应的结果。
-在配置文件中，```server.inject``` 选项可指定自定义注入方法的文件。
+从上面的 ```HTML模板``` 里可见多个 ```<%- inject.[*] %>``` 标签，这样的标签会被替换成对应的结果。
+在配置文件中，`inject` 或 `server.inject` 选项可指定自定义注入方法的文件。
 
-默认配置是：
+示例配置：
 ```js
 // File: /koot.config.js
 
 // ...
 server: {
+    // ...
     inject: './server/inject'
 }
 // ...
@@ -75,12 +76,24 @@ server: {
 
 import getClientFilePath from 'koot/utils/get-client-file-path'
 export default {
-    js: [getClientFilePath('client.js')], // 对应标签 <script>//inject_js</script>
-    // css: [...],
-    // ... 
-    // 可自行扩展
+    // <%- inject.insertCustomJs %>
+    insertCustomJs: `<script src="${getClientFilePath('custom-js.js')}"></script>`,
+
+    // <%- inject.metaLocaleId %>
+    // 支持函数方法
+    metaLocaleId: (template, state) => `<meta name="locale" content="${state.localeId}" />`
 }
 ```
+
+示例配置 (SPA)：
+```js
+// File: /koot.config.js
+
+// ...
+inject: './spa/inject'
+// ...
+```
+
 默认打包方式会把打包后的文件加上```[hash]```值，所以```koot.js```框架提供了找到被 hash 后新文件名的方法。
 
 如：```getClientFilePath('client.js')``` => ```client.8f0f500307dec12480a2.js```

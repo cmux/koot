@@ -3,4 +3,4 @@
  * @param {String} localeId 当前语种 ID
  * @returns {String}
  */
-export default (localeId) => localeId ? ` lang="${localeId}"` : ''
+module.exports = (localeId) => localeId ? ` lang="${localeId}"` : ''

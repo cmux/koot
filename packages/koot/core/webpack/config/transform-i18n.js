@@ -4,10 +4,15 @@ const path = require('path')
 const getCwd = require('../../../utils/get-cwd')
 
 /**
- * 处理 i18n 配置
+ * 处理 i18n 配置。以下内容写入环境变量
+ *   - KOOT_I18N - 不可用 (false) 或完整的配置数组
+ *   - KOOT_I18N_TYPE - 类型
+ *   - KOOT_I18N_LOCALES - 语言包内容
+ *   - KOOT_I18N_COOKIE_KEY - 使用的 cookie 键值
+ *   - KOOT_I18N_COOKIE_DOMAIN - cookie 的作用域
  * @async
  * @param {*} i18n
- * @return {Boolean|Object}
+ * @return {Boolean|Object} 不可用 (false) 或完整配置数组
  */
 module.exports = async (i18n) => {
     const {
@@ -19,6 +24,7 @@ module.exports = async (i18n) => {
         // SERVER_PORT,
     } = process.env
 
+    // TODO:
     if (TYPE === 'spa') {
         // SPA：临时禁用
         i18n = false

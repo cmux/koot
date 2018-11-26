@@ -71,7 +71,7 @@ module.exports = (options = {}) => {
         const useSpCssLoader = {
             loader: require.resolve('../../loaders/css'),
             options: {
-                length: 4,
+                length: env === 'dev' ? 16 : 4,
                 mode: 'replace',
                 readable: env === 'dev' ? true : false
             }

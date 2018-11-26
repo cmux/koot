@@ -23,7 +23,7 @@ export default extend({
             <div className="block">
                 <h2>{__('pages.static.method_static')}</h2>
                 <p>{__('pages.static.method_static_content')}</p>
-                <img src="/photo.jpg" />
+                <img src={(__SPA__ ? '' : '/') + "photo.jpg"} />
             </div>
         </div>
 )
