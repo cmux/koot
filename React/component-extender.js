@@ -28,6 +28,10 @@ import clientUpdatePageInfo from './client-update-page-info'
 
 // 是否已挂载了组件
 let everMounted = false
+const defaultPageInfo = {
+    title: '',
+    metas: []
+}
 
 /**
  * 获取数据
