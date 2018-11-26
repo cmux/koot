@@ -29,7 +29,7 @@
         "dev:global-pm2": "koot-dev -g",
         "dev:no-open": "koot-dev --no-open",
         "dev:qa": "koot-dev --config koot.build.qa.js",
-        "dev:spa": "koot-build --type react-spa --dest dist-spa",
+        "dev:spa": "koot-dev --type react-spa --dest dist-spa",
         "analyze": "koot-analyze",
         "eslint": "eslint \"src/**/*.+(js|jsx)\""
     },

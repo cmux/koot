@@ -13,6 +13,7 @@ const sleep = require('../utils/sleep')
 const setEnvFromCommand = require('../utils/set-env-from-command')
 const getAppType = require('../utils/get-app-type')
 const validateConfig = require('../libs/validate-config')
+const validateConfigDist = require('../libs/validate-config-dist')
 const spinner = require('../utils/spinner')
 
 const kootBuild = require('../core/webpack/enter')
@@ -27,6 +28,7 @@ program
     .option('--dest <destination-path>', 'Set destination directory')
     .option('--config <config-file-path>', 'Set config file pathname')
     .option('--type <project-type>', 'Set project type')
+    .option('--koot-dev', 'Koot dev mode')
     .option('--koot-test', 'Koot test mode')
     .parse(process.argv)
 
@@ -39,12 +41,6 @@ const isFromCommandStart = () => (process.env.KOOT_COMMAND_START && JSON.parse(p
  * 执行打包
  */
 const run = async () => {
-    /** @type {Boolean} 是否为通过 koot-start 命令启动 */
-    const fromCommandStart = isFromCommandStart()
-
-    if (!fromCommandStart)
-        // 清空 log
-        process.stdout.write('\x1B[2J\x1B[0f')
 
     const {
         client, server,
@@ -53,14 +49,22 @@ const run = async () => {
         config,
         type,
         dest,
-        kootTest = false
+        kootDev = false,
+        kootTest = false,
     } = program
     // console.log(program)
+
+    /** @type {Boolean} 是否为通过 koot-start 命令启动 */
+    const fromCommandStart = isFromCommandStart()
+    const fromOtherCommand = kootDev || fromCommandStart
+    if (!fromOtherCommand)
+        // 清空 log
+        process.stdout.write('\x1B[2J\x1B[0f')
 
     setEnvFromCommand({
         config,
         type,
-    })
+    }, fromOtherCommand)
 
     process.env.KOOT_TEST_MODE = JSON.stringify(kootTest)
 
@@ -111,10 +115,10 @@ const run = async () => {
     //     server: hasServer
     // } = buildConfig
 
-    if (dest) buildConfig.dist = dest
+    if (dest) buildConfig.dist = validateConfigDist(dest)
 
     // 如果通过 koot-start 命令启动...
-    if (fromCommandStart) {
+    if (fromOtherCommand) {
         // 非报错 log 不打出
         buildConfig[keyConfigQuiet] = true
     }

@@ -12,7 +12,7 @@ const contentWaiting = require('../defaults/content-waiting')
 const {
     keyFileProjectConfigTemp,
     filenameWebpackDevServerPortTemp,
-    filenameBuilding,
+    // filenameBuilding,
     // filenameDll, filenameDllManifest,
 } = require('../defaults/before-build')
 
@@ -20,6 +20,7 @@ const checkFileUpdate = require('../libs/check-file-change')
 const removeTempBuild = require('../libs/remove-temp-build')
 const removeTempProjectConfig = require('../libs/remove-temp-project-config')
 const validateConfig = require('../libs/validate-config')
+const validateConfigDist = require('../libs/validate-config-dist')
 
 const __ = require('../utils/translate')
 const sleep = require('../utils/sleep')
@@ -110,6 +111,7 @@ const run = async () => {
         + (typeof config === 'string' ? ` --config ${config}` : '')
         + (typeof type === 'string' ? ` --type ${type}` : '')
         + (kootTest ? ` --koot-test` : '')
+        + ' --koot-dev'
 
 
 
@@ -130,7 +132,7 @@ const run = async () => {
     const buildConfig = await validateConfig()
 
     // 如果在命令中设置了 dest，强制修改配置中的 dist
-    if (dest) buildConfig.dist = dest
+    if (dest) buildConfig.dist = validateConfigDist(dest)
 
     const {
         dist,
