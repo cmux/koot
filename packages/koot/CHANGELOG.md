@@ -1,16 +1,23 @@
 ## 0.7.4
-**????-??-??**
+**2018-11-??**
+- 核心
+  - Webpack 打包
+    - 现在每种打包模式仅保留最近 5 次打包的日志文件 (`/logs/webpack-config/` 目录下)
 - React同构 (`ReactApp`)
   - 注入 (`inject`) 现在支持函数写法，详情请参见文档的 [HTML 模板](https://koot.js.org/#/template) 章节
 - React SPA
   - 不启用多语言的项目现在可以恢复使用 SPA 模式了
 - 错误修正
   - 修复并发访问时存在多个 `koot-locale-id` meta 标签的问题
+  - 修复某些情况下，HTML 同构结果中 `<script>` 标签之间会出现额外逗号 (`,`) 的问题
 - 更新依赖包
   - major
   - minor
     - `webpack` -> _4.26.1_
   - patch
+    - `mini-css-extract-plugin` -> _0.4.5_
+    - `terminate` -> _2.1.2_
+    - `yargs` -> _12.0.5_
 
 ## 0.7.3
 **2018-11-22**

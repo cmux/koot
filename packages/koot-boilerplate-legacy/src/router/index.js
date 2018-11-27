@@ -14,17 +14,8 @@ export default {
         }
     },
 
-    childRoutes: [
-        {
-            path: 'extend',
-            name: 'Page: Component Extender',
-            getComponent: (nextState, cb) => {
-                require.ensure([], (require) => {
-                    if (routeCheck(nextState)) cb(null, require('@views/extend').default)
-                }, 'Page: Component Extender')
-            }
-        },
-        {
+    childRoutes: (() => {
+        const children = [{
             path: 'static',
             name: 'Page: Static Assets',
             getComponent: (nextState, cb) => {
@@ -32,7 +23,19 @@ export default {
                     if (routeCheck(nextState)) cb(null, require('@views/static').default)
                 }, 'Page: Static Assets')
             }
-        },
-    ]
+        }]
+        if (!__SPA__) {
+            children.push({
+                path: 'extend',
+                name: 'Page: Component Extender',
+                getComponent: (nextState, cb) => {
+                    require.ensure([], (require) => {
+                        if (routeCheck(nextState)) cb(null, require('@views/extend').default)
+                    }, 'Page: Component Extender')
+                }
+            })
+        }
+        return children
+    })()
 
 }

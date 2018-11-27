@@ -2,6 +2,7 @@ const fs = require('fs-extra')
 const path = require('path')
 
 const validatePathname = require('./validate-pathname')
+const validateConfigDist = require('./validate-config-dist')
 // const validateAppType = require('../utils/get-app-type')
 const getCwd = require('../utils/get-cwd')
 const readBuildConfigFile = require('../utils/read-build-config-file')
@@ -173,7 +174,7 @@ const validateBuildConfig = (config = {}) => {
         delete config.dest
     }
     if (typeof config.dist !== 'undefined') {
-        process.env.KOOT_DIST_DIR = config.dist
+        validateConfigDist(config.dist)
     }
 
     // 改变配置项: webpack.config -> config
@@ -195,6 +196,7 @@ const validateBuildConfig = (config = {}) => {
         applyWebpackConfig('defines', 'defines')
         applyWebpackConfig('dll', 'webpackDll')
         applyWebpackConfig('hmr', 'webpackHmr')
+        applyWebpackConfig('compilerHook', 'webpackCompilerHook')
         delete config.webpack
     }
 

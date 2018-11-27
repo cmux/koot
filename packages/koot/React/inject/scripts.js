@@ -30,6 +30,7 @@ module.exports = (needInjectCritical, injectCache, entrypoints, reduxHtml) => {
                         return `<script type="text/javascript" src="${getClientFilePath(true, file)}"></script>`
                     return `<script type="text/javascript">${readClientFile(true, file)}</script>`
                 })
+                .join('')
         }
 
         // 其他默认入口

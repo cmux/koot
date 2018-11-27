@@ -1,6 +1,11 @@
 const fs = require('fs')
 const path = require('path')
 
+/**
+ * 引用 koot 主包中的文件
+ * @param {String} theModule module 名
+ * @returns {*} module
+ */
 module.exports = (theModule) => {
     try {
         return require(`koot/${theModule}`)
