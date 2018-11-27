@@ -33,6 +33,7 @@ const getChunkmapPath = require('../utils/get-chunkmap-path')
 const initNodeEnv = require('../utils/init-node-env')
 const getCwd = require('../utils/get-cwd')
 const getPathnameDevServerStart = require('../utils/get-pathname-dev-server-start')
+const getLogMsg = require('../libs/get-log-msg')
 const log = require('../libs/log')
 // const terminate = require('../utils/terminate')
 
@@ -196,11 +197,14 @@ const run = async () => {
         const {
             silent = false
         } = options
+
         await removeTempProjectConfig()
         await removeTempBuild(dist)
+
         if (Array.isArray(processes) && processes.length) {
             if (waitingSpinner) waitingSpinner.stop()
             await sleep(300)
+            // 清屏
             if (!silent) process.stdout.write('\x1B[2J\x1B[0f')
             if (!silent) console.log('\n\n\n' + chalk.redBright('!! Please wait for killing processes !!') + '\n\n')
             for (let process of processes) {
@@ -230,8 +234,8 @@ const run = async () => {
             }
         } else {
             removeAllExitListeners()
-            // 清空 log
-            process.stdout.write('\x1B[2J\x1B[0f')
+            // 清屏
+            // process.stdout.write('\x1B[2J\x1B[0f')
             console.log('Press CTRL+C again to exit.')
 
             // 发送信息
@@ -270,7 +274,7 @@ const run = async () => {
     //
     // ========================================================================
     if (dll && process.env.WEBPACK_BUILD_STAGE !== 'server') {
-        const msg = 'Generating DLLs'
+        const msg = getLogMsg(false, 'dev', __('dev.build_dll'))
         const waiting = spinner(msg + '...')
 
         // DLL 打包
@@ -324,6 +328,7 @@ const run = async () => {
             // process.exit(exitCode)
         })
 
+        // SPA 开发模式
         if (process.env.WEBPACK_BUILD_TYPE === 'spa') {
             // 等待 filenameBuilding 文件删除
             let flagCreated = false
@@ -336,7 +341,7 @@ const run = async () => {
                     }
                     if (!fs.existsSync(fileFlagBuilding)) return resolve()
                     wait()
-                }, 500)
+                }, 1000)
                 wait()
             })
 

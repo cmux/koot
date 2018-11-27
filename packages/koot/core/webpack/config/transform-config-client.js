@@ -37,11 +37,11 @@ module.exports = async (kootBuildConfig = {}) => {
         dist,
         inject,
         defaultPublicDirName, defaultPublicPathname,
-        afterBuild = () => { },
         staticAssets,
         analyze = false,
         webpackHmr = {},
-        [keyConfigBuildDll]: createDll = false
+        [keyConfigBuildDll]: createDll = false,
+        webpackCompilerHook = {},
     } = kootBuildConfig
 
     const defaultClientEntry = path.resolve(
@@ -145,7 +145,7 @@ module.exports = async (kootBuildConfig = {}) => {
             )
             if (ENV === 'dev') {
                 result.plugins.push(
-                    new DevModePlugin({ after: afterBuild })
+                    new DevModePlugin(webpackCompilerHook)
                 )
                 result.plugins.push(
                     new webpack.NamedModulesPlugin()

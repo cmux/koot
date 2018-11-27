@@ -200,10 +200,6 @@ module.exports = async (kootBuildConfig = {}) => {
             await afterServerProd(data)
         }
 
-        if (ENV === 'dev') {
-            await buildingComplete()
-        }
-
         await removeBuildFlagFiles(dist)
 
         log('callback', 'build', `callback: ` + chalk.green('afterBuild'))
@@ -296,7 +292,10 @@ module.exports = async (kootBuildConfig = {}) => {
     //
     // ========================================================================
     const data = await createWebpackConfig(Object.assign(kootBuildConfig, {
-        afterBuild: after
+        webpackCompilerHook: {
+            afterEmit: () => buildingComplete(),
+            done: after
+        }
     })).catch(err => {
         console.error('生成打包配置时发生错误! \n', err)
     })
