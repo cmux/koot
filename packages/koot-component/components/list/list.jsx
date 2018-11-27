@@ -39,6 +39,7 @@ class List extends Component {
 
     propsHandler = ( config ) => {
         const nextConfig = Object.assign({}, config);
+        this.autoScrollHandler(nextConfig);
         this.defaultPropsHandler(nextConfig);
 
         delete nextConfig.type;
@@ -50,6 +51,35 @@ class List extends Component {
         return nextConfig;
     }
 
+    autoScrollHandler = ( config ) => {
+        const { columns } = config;
+        if( columns && columns.length && !config.scroll){
+            let count = 0;
+            let countWidth = 0;
+            columns.forEach(item => {
+                if( item && item.width ){
+                    count++;
+                    countWidth += parseInt(item.width)
+                }
+            })
+            if( count === columns.length && countWidth ){
+                config.scroll = {
+                    x: countWidth
+                }
+            }else{
+                config.scroll = {
+                    x: true,
+                }
+                // config.style = {
+                //     whiteSpace: 'nowrap'
+                // }
+            }
+        }
+    }
+
+    /**
+     * 
+     */
     defaultPropsHandler = ( config ) => {
         const pagination = {
             size: "small",
