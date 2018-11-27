@@ -32,6 +32,7 @@ const validateDist = require('./config/validate-dist')
 
 const afterServerProd = require('./lifecyle/after-server-prod')
 const cleanAndWriteLogFiles = require('koot-webpack/libs/write-log-and-clean-old-files')
+const removeBuildFlagFiles = require('koot-webpack/libs/remove-build-flag-files')
 
 const createPWAsw = require('../pwa/create')
 
@@ -111,6 +112,9 @@ module.exports = async (kootBuildConfig = {}) => {
     //
     // ========================================================================
 
+    /** @type {Boolean} 标记正在打包 */
+    let building = true
+
     /** @type {Number} 流程开始时间戳 */
     const timestampStart = Date.now()
 
@@ -153,6 +157,8 @@ module.exports = async (kootBuildConfig = {}) => {
 
     /** @type {Function} @async 流程回调: webpack 执行前 */
     const before = async () => {
+        building = true
+
         const dist = getDistPath()
 
         // 开发模式
@@ -161,26 +167,21 @@ module.exports = async (kootBuildConfig = {}) => {
             fs.ensureFileSync(path.resolve(dist, `./server/index.js`))
         }
 
-        log('callback', 'build', `callback: ` + chalk.green('beforeBuild'))
-
-        // 清除遗留文件
-        const filesToRemove = [
-            filenameBuilding,
-            filenameBuildFail,
-        ]
-        for (let filename of filesToRemove) {
-            const file = path.resolve(dist, filename)
-            if (fs.existsSync(file))
-                await fs.remove(file)
-        }
+        await removeBuildFlagFiles(dist, true)
 
         // 创建空文件标记
-        fs.ensureFileSync(path.resolve(dist, filenameBuilding))
+        if (!createDll)
+            fs.ensureFileSync(path.resolve(dist, filenameBuilding))
+        // console.log(`\n\n\n ${path.resolve(dist, filenameBuilding)} \n\n\n`)
+        // console.log('\n\ncreateDll', createDll)
         // console.log(path.resolve(dist, filenameBuilding))
         // console.log(fs.existsSync(path.resolve(dist, filenameBuilding)))
+
+        log('callback', 'build', `callback: ` + chalk.green('beforeBuild'))
         // 创建 DLL 模式下不执行传入的生命周期方法
-        if (!createDll && typeof beforeBuild === 'function')
+        if (!createDll && typeof beforeBuild === 'function') {
             await beforeBuild(data)
+        }
     }
 
     /** @type {Function} @async 流程回调: webpack 执行后 */
@@ -199,19 +200,13 @@ module.exports = async (kootBuildConfig = {}) => {
             await afterServerProd(data)
         }
 
-        // 清除遗留文件
-        const filesToRemove = [
-            filenameBuilding,
-            filenameBuildFail
-        ]
-        for (let filename of filesToRemove) {
-            const file = path.resolve(dist, filename)
-            if (fs.existsSync(file))
-                await fs.remove(file)
+        if (ENV === 'dev') {
+            await buildingComplete()
         }
 
-        log('callback', 'build', `callback: ` + chalk.green('afterBuild'))
+        await removeBuildFlagFiles(dist)
 
+        log('callback', 'build', `callback: ` + chalk.green('afterBuild'))
         // 创建 DLL 模式下不执行传入的生命周期方法
         if (!createDll && typeof afterBuild === 'function')
             await afterBuild(data)
@@ -348,7 +343,9 @@ module.exports = async (kootBuildConfig = {}) => {
     const spinnerBuilding = (!kootTest && !quietMode)
         ? spinner(chalk.yellowBright('[koot/build] ') + __('build.building'))
         : undefined
+    /** Webpack 单次执行完成 */
     const buildingComplete = () => {
+        building = false
         if (spinnerBuilding) {
             if (result.hasError()) {
                 spinnerBuilding.fail()
@@ -386,7 +383,6 @@ module.exports = async (kootBuildConfig = {}) => {
         const fileBuilding = path.resolve(data.dist, filenameBuilding)
         if (fs.existsSync(fileBuilding))
             fs.removeSync(fileBuilding)
-
         // 返回结果对象
         return result
     }
@@ -462,8 +458,15 @@ module.exports = async (kootBuildConfig = {}) => {
         server.use(require('webpack-hot-middleware')(compiler))
         server.listen(port, '0.0.0.0', async (err) => {
             if (err) console.error(err)
-            buildingComplete()
-            // await after()
+        })
+
+        // 等待 building 标记为 false
+        await new Promise(resolve => {
+            const wait = () => setTimeout(() => {
+                if (building === false) return resolve()
+                return wait()
+            }, 500)
+            wait()
         })
 
         return result

@@ -118,7 +118,7 @@ const run = async () => {
     if (dest) buildConfig.dist = validateConfigDist(dest)
 
     // 如果通过 koot-start 命令启动...
-    if (fromOtherCommand) {
+    if (fromCommandStart) {
         // 非报错 log 不打出
         buildConfig[keyConfigQuiet] = true
     }
@@ -174,6 +174,7 @@ const after = async (config = {}) => {
 
     // 移除标记文件
     const fileBuilding = path.resolve(dist, filenameBuilding)
+
     if (fs.existsSync(fileBuilding))
         await fs.remove(fileBuilding)
 }

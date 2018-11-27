@@ -77,10 +77,9 @@ class DevModePlugin {
                 setTimeout(() => {
                     after()
 
-                    if (TYPE === 'spa') {
-                        console.log(`http://localhost:${getPort()}/`)
+                    if (!TYPE === 'spa') {
+                        console.log('\n')
                     }
-                    console.log('\n')
                 })
 
             // if (TYPE === 'spa') {

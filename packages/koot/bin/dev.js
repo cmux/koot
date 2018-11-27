@@ -12,7 +12,7 @@ const contentWaiting = require('../defaults/content-waiting')
 const {
     keyFileProjectConfigTemp,
     filenameWebpackDevServerPortTemp,
-    // filenameBuilding,
+    filenameBuilding,
     // filenameDll, filenameDllManifest,
 } = require('../defaults/before-build')
 
@@ -33,6 +33,7 @@ const getChunkmapPath = require('../utils/get-chunkmap-path')
 const initNodeEnv = require('../utils/init-node-env')
 const getCwd = require('../utils/get-cwd')
 const getPathnameDevServerStart = require('../utils/get-pathname-dev-server-start')
+const log = require('../libs/log')
 // const terminate = require('../utils/terminate')
 
 const kootBuildVendorDll = require('../core/webpack/build-vendor-dll')
@@ -322,8 +323,31 @@ const run = async () => {
             // console.trace('exit in', exitCode)
             // process.exit(exitCode)
         })
-        if (open && process.env.WEBPACK_BUILD_TYPE === 'spa')
-            openBrowserPage()
+
+        if (process.env.WEBPACK_BUILD_TYPE === 'spa') {
+            // 等待 filenameBuilding 文件删除
+            let flagCreated = false
+            const fileFlagBuilding = path.resolve(dist, filenameBuilding)
+            await new Promise(resolve => {
+                const wait = () => setTimeout(() => {
+                    if (!flagCreated) {
+                        flagCreated = fs.existsSync(fileFlagBuilding)
+                        return wait()
+                    }
+                    if (!fs.existsSync(fileFlagBuilding)) return resolve()
+                    wait()
+                }, 500)
+                wait()
+            })
+
+            console.log('')
+            log('success', 'dev', __('dev.spa_success'))
+            console.log('           @ ' + chalk.green(`http://localhost:${process.env.SERVER_PORT}/`))
+            console.log('')
+
+            if (open) openBrowserPage()
+        }
+
         return
     }
 

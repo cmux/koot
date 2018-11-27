@@ -13,6 +13,7 @@
         "spa_i18n_disabled_temporarily": "i18n support is disabled for SPA project that will be re-enabled in the future"
     },
     "dev": {
-        "missing_stage": "Please set STAGE.\n${indent}> ${example}"
+        "missing_stage": "Please set STAGE.\n${indent}> ${example}",
+        "spa_success": "SPA dev server launched!"
     }
 }
