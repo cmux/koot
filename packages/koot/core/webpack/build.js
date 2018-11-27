@@ -32,7 +32,7 @@ const validateDist = require('./config/validate-dist')
 
 const afterServerProd = require('./lifecyle/after-server-prod')
 const cleanAndWriteLogFiles = require('koot-webpack/libs/write-log-and-clean-old-files')
-const removeBuildFlagFiles = require('koot-webpack/libs/remove-build-flag-files')
+const removeBuildFlagFiles = require('../../libs/remove-build-flag-files')
 
 const createPWAsw = require('../pwa/create')
 
