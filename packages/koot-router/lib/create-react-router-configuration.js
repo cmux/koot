@@ -4,6 +4,9 @@
  * @param {*} obj 
  */
 const isExtendsReactComponent = ( obj ) => {
+    if( !obj ){
+        return false;
+    }
     // return Object.getPrototypeOf(obj) === React.Component;
     if( obj.prototype.isReactComponent ){
         return true;
