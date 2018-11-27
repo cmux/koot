@@ -15,6 +15,9 @@
   - minor
     - `webpack` -> _4.26.1_
   - patch
+    - `mini-css-extract-plugin` -> _0.4.5_
+    - `terminate` -> _2.1.2_
+    - `yargs` -> _12.0.5_
 
 ## 0.7.3
 **2018-11-22**
