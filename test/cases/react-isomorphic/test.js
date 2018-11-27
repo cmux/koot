@@ -11,12 +11,13 @@ const execSync = require('child_process').exec
 const exec = util.promisify(require('child_process').exec)
 const puppeteer = require('puppeteer')
 const doTerminate = require('terminate')
+const chalk = require('chalk')
 
 //
 
 const { changeLocaleQueryKey } = require('../../../packages/koot/defaults/defines')
 const removeTempProjectConfig = require('../../../packages/koot/libs/remove-temp-project-config')
-// const sleep = require('../../utils/sleep')
+const sleep = require('../../../packages/koot/utils/sleep')
 
 //
 
@@ -38,8 +39,15 @@ const headless = true
 
 //
 
-const addCommand = async (name, command, dir) => {
-    const pathPackage = path.resolve(dir, 'package.json')
+/**
+ * 向 package.json 里添加 npm 命令
+ * @async
+ * @param {String} name 
+ * @param {String} command 
+ * @param {String} cwd 
+ */
+const addCommand = async (name, command, cwd) => {
+    const pathPackage = path.resolve(cwd, 'package.json')
     const p = await fs.readJson(pathPackage)
     // if (!p.scripts[name])
     p.scripts[name] = command
@@ -47,12 +55,26 @@ const addCommand = async (name, command, dir) => {
         spaces: 4
     })
 }
+
+/**
+ * 终止进程
+ * @async
+ * @param {*} pid 
+ */
 const terminate = async (pid) => new Promise((resolve, reject) => {
     doTerminate(pid, err => {
         if (err) return reject(err)
         resolve()
     })
 })
+
+/**
+ * 通过检查子进程的输出/日志/log，等待、分析并返回端口号
+ * @async
+ * @param {Process} child 
+ * @param {RegExp} regex 
+ * @returns {Number} port
+ */
 const waitForPort = async (child, regex = /port.*\[32m([0-9]+)/) => await new Promise(resolve => {
     let port
 
@@ -77,7 +99,13 @@ const waitForPort = async (child, regex = /port.*\[32m([0-9]+)/) => await new Pr
         }
     })
 })
-const testPage = async (port) => {
+
+/**
+ * 测试项目
+ * @async
+ * @param {Number} port 
+ */
+const doTest = async (port) => {
     const browser = await puppeteer.launch({
         headless
     })
@@ -107,48 +135,82 @@ const testPage = async (port) => {
     }
 
     // 测试: 利用强制切换语种 URL 访问时，语种应正确
-    const testLocaleIdByQuery = async (localeId) => {
-        await page.goto(`${url}?${changeLocaleQueryKey}=${localeId}`, {
-            waitUntil: 'networkidle0'
-        })
-        const theLocaleId = await page.evaluate(() => document.querySelector('meta[name="koot-locale-id"]').getAttribute('content'))
-        expect(theLocaleId).toBe(localeId)
-    }
-    await testLocaleIdByQuery('zh')
-    await testLocaleIdByQuery('en')
-
-    // 测试: 到其他语种的链接
-    const testLinksToOtherLang = async (urlAppend) => {
-        await page.goto(`${url}${urlAppend}`, {
-            waitUntil: 'networkidle0'
-        })
-
-        const localeId = await page.evaluate(() => document.querySelector('meta[name="koot-locale-id"]').getAttribute('content'))
-        const linksToOtherLang = await page.$$eval(`link[rel="alternate"][hreflang][href]:not([hreflang="${localeId}"])`, els => (
-            Array.from(els).map(el => ({
-                lang: el.getAttribute('hreflang'),
-                href: el.getAttribute('href')
-            }))
-        ))
-        expect(Array.isArray(linksToOtherLang)).toBe(true)
-        expect(linksToOtherLang.length).toBeGreaterThan(0)
-
-        for (let { lang, href } of linksToOtherLang) {
-            await page.goto(href, {
+    {
+        const testLocaleIdByQuery = async (localeId) => {
+            await page.goto(`${url}?${changeLocaleQueryKey}=${localeId}`, {
                 waitUntil: 'networkidle0'
             })
-            const localeId = await page.evaluate(() => document.querySelector('meta[name="koot-locale-id"]').getAttribute('content'))
-            expect(lang).toBe(localeId)
+            const theLocaleId = await page.evaluate(() => document.querySelector('meta[name="koot-locale-id"]').getAttribute('content'))
+            expect(theLocaleId).toBe(localeId)
         }
+        await testLocaleIdByQuery('zh')
+        await testLocaleIdByQuery('en')
     }
-    await testLinksToOtherLang('')
-    await testLinksToOtherLang(`?${changeLocaleQueryKey}=zh`)
-    await testLinksToOtherLang(`?${changeLocaleQueryKey}=zh-tw`)
-    await testLinksToOtherLang('?test=a')
-    await testLinksToOtherLang(`?test=a&${changeLocaleQueryKey}=zh`)
-    await testLinksToOtherLang(`?test=a&${changeLocaleQueryKey}=zh-tw`)
+
+    // 测试: 到其他语种的链接
+    {
+        const testLinksToOtherLang = async (urlAppend) => {
+            await page.goto(`${url}${urlAppend}`, {
+                waitUntil: 'networkidle0'
+            })
+
+            const localeId = await page.evaluate(() => document.querySelector('meta[name="koot-locale-id"]').getAttribute('content'))
+            const linksToOtherLang = await page.$$eval(`link[rel="alternate"][hreflang][href]:not([hreflang="${localeId}"])`, els => (
+                Array.from(els).map(el => ({
+                    lang: el.getAttribute('hreflang'),
+                    href: el.getAttribute('href')
+                }))
+            ))
+            expect(Array.isArray(linksToOtherLang)).toBe(true)
+            expect(linksToOtherLang.length).toBeGreaterThan(0)
+
+            for (let { lang, href } of linksToOtherLang) {
+                await page.goto(href, {
+                    waitUntil: 'networkidle0'
+                })
+                const localeId = await page.evaluate(() => document.querySelector('meta[name="koot-locale-id"]').getAttribute('content'))
+                expect(lang).toBe(localeId)
+            }
+        }
+        await testLinksToOtherLang('')
+        await testLinksToOtherLang(`?${changeLocaleQueryKey}=zh`)
+        await testLinksToOtherLang(`?${changeLocaleQueryKey}=zh-tw`)
+        await testLinksToOtherLang('?test=a')
+        await testLinksToOtherLang(`?test=a&${changeLocaleQueryKey}=zh`)
+        await testLinksToOtherLang(`?test=a&${changeLocaleQueryKey}=zh-tw`)
+    }
+
+    // TODO: 测试: 静态文件访问
+
+    // TODO: 测试: 所有 Webpack 结果资源的访问
 
     await browser.close()
+}
+
+/**
+ * 测试项目开始前
+ * @async
+ * @param {String} cwd 
+ */
+const beforeTest = async (cwd) => {
+    // 重置
+    await exec(`pm2 kill`)
+    await removeTempProjectConfig(cwd)
+}
+
+/**
+ * 测试项目结束后
+ * @async
+ * @param {String} cwd 
+ * @param {String} title 
+ */
+const afterTest = async (cwd, title) => {
+    await sleep(2 * 1000)
+    await exec(`pm2 kill`)
+    // 移除临时项目配置文件
+    await removeTempProjectConfig(cwd)
+
+    console.log(chalk.green('√ ') + title)
 }
 
 //
@@ -159,9 +221,10 @@ describe('测试: React 同构项目', async () => {
         name,
         dir,
     } of projectsToUse) {
-
         describe(`项目: ${name}`, async () => {
             test(`[Production] 使用 koot-build 命令进行打包`, async () => {
+                await beforeTest(dir)
+
                 const commandName = `${commandTestBuild}-isomorphic-build`
                 const command = `koot-build --env prod --koot-test`
                 await addCommand(commandName, command, dir)
@@ -177,8 +240,12 @@ describe('测试: React 同构项目', async () => {
 
                 expect(typeof stderr).toBe('string')
                 expect(stderr).toBe('')
+
+                await afterTest(dir, '[Production] 使用 koot-build 命令进行打包')
             })
             test(`[Production] 使用 koot-start (--no-build) 命令启动服务器并访问`, async () => {
+                await beforeTest(dir)
+
                 const commandName = `${commandTestBuild}-isomorphic-start-server`
                 const command = `koot-start --no-build --koot-test`
                 await addCommand(commandName, command, dir)
@@ -212,11 +279,15 @@ describe('测试: React 同构项目', async () => {
                 // })
                 expect(errors.length).toBe(0)
 
-                await testPage(port)
+                await doTest(port)
                 await terminate(child.pid)
+
+                await afterTest(dir, '[Production] 使用 koot-start (--no-build) 命令启动服务器并访问')
             })
             if (fullTest) {
                 test(`[Production] 使用 koot-start (--no-build) 命令启动服务器并访问 (自定义端口号)`, async () => {
+                    await beforeTest(dir)
+
                     const port = '8316'
                     const commandName = `${commandTestBuild}-isomorphic-start-server-custom-port`
                     const command = `koot-start --no-build --port ${port} --koot-test`
@@ -252,10 +323,14 @@ describe('测试: React 同构项目', async () => {
                     // })
                     expect(errors.length).toBe(0)
 
-                    await testPage(port)
+                    await doTest(port)
                     await terminate(child.pid)
+
+                    await afterTest(dir, '[Production] 使用 koot-start (--no-build) 命令启动服务器并访问 (自定义端口号)')
                 })
                 test(`[Production] 使用打包后的执行文件启动服务器并访问`, async () => {
+                    await beforeTest(dir)
+
                     const cwd = path.resolve(dir, 'dist')
                     const child = execSync(
                         `node ${path.resolve(cwd, 'index.js')}`,
@@ -276,10 +351,14 @@ describe('测试: React 同构项目', async () => {
                     // })
                     expect(errors.length).toBe(0)
 
-                    await testPage(port)
+                    await doTest(port)
                     await terminate(child.pid)
+
+                    await afterTest(dir, '[Production] 使用打包后的执行文件启动服务器并访问')
                 })
                 test(`[Development] 启动开发模式并访问`, async () => {
+                    await beforeTest(dir)
+
                     // const port = '8316'
                     const commandName = `${commandTestBuild}-isomorphic-dev`
                     const command = `koot-dev --no-open --koot-test`
@@ -305,13 +384,13 @@ describe('测试: React 同构项目', async () => {
                     // })
                     expect(errors.length).toBe(0)
 
-                    await testPage(port)
+                    await doTest(port)
                     await terminate(child.pid)
+
+                    await afterTest(dir, '[Development] 启动开发模式并访问')
                 })
             }
 
-            // 移除临时项目配置文件
-            await removeTempProjectConfig(dir)
         })
     }
 })
