@@ -31,7 +31,7 @@ const validateWebpackDevServerPort = require('./config/validate-webpack-dev-serv
 const validateDist = require('./config/validate-dist')
 
 const afterServerProd = require('./lifecyle/after-server-prod')
-const cleanAndWriteLogFiles = require('./lifecyle/before/clean-and-write-log-files')
+const cleanAndWriteLogFiles = require('koot-webpack/libs/write-log-and-clean-old-files')
 
 const createPWAsw = require('../pwa/create')
 

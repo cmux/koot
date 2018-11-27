@@ -6,7 +6,7 @@ const { ConcatSource } = require("webpack-sources")
 
 const getPort = require('../libs/require-koot')('utils/get-port')
 const { filenameDll } = require('../libs/require-koot')('defaults/before-build')
-const isHotUpdate = require('../libs/compilation-is-hot-update')
+const isHotUpdate = require('../libs/is-compilation-hot-update-only')
 
 // let opened = false
 
