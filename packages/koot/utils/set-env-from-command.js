@@ -9,9 +9,10 @@ module.exports = ({
     config,
     type,
     port
-}) => {
+}, quiet = false) => {
     let modified = false
     const log = (key, value) => {
+        if (quiet) return
         console.log(
             chalk.green('√ ')
             + chalk.yellowBright('[koot] ')

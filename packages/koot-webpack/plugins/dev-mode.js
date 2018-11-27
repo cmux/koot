@@ -4,9 +4,9 @@ const path = require('path')
 
 const { ConcatSource } = require("webpack-sources")
 
-const getPort = require('../libs/require-koot')('utils/get-port')
+// const getPort = require('../libs/require-koot')('utils/get-port')
 const { filenameDll } = require('../libs/require-koot')('defaults/before-build')
-const isHotUpdate = require('../libs/compilation-is-hot-update')
+const isHotUpdate = require('../libs/is-compilation-hot-update-only')
 
 // let opened = false
 
@@ -15,15 +15,19 @@ const isHotUpdate = require('../libs/compilation-is-hot-update')
  */
 class DevModePlugin {
     constructor({
-        after,
-        dist
+        dist,
+        afterEmit, done,
     }) {
-        this.after = after
         this.dist = dist
+        this.afterEmit = afterEmit
+        this.done = done
     }
 
     apply(compiler) {
-        const after = this.after
+        const {
+            afterEmit, done
+        } = this
+
         const TYPE = process.env.WEBPACK_BUILD_TYPE
         const ENV = process.env.WEBPACK_BUILD_ENV
         const STAGE = process.env.WEBPACK_BUILD_STAGE
@@ -33,6 +37,7 @@ class DevModePlugin {
         // afterEmit - 检查是否为热更新
         compiler.hooks.afterEmit.tapAsync.bind(compiler.hooks.afterEmit, 'GenerateChunkmap')(async (compilation, callback) => {
             hotUpdate = isHotUpdate(compilation)
+            if (typeof afterEmit === 'function') afterEmit()
             callback()
         })
 
@@ -73,15 +78,14 @@ class DevModePlugin {
             if (hotUpdate)
                 return callback()
 
-            if (typeof after === 'function')
+            if (typeof done === 'function') {
+                done()
                 setTimeout(() => {
-                    after()
-
-                    if (TYPE === 'spa') {
-                        console.log(`http://localhost:${getPort()}/`)
+                    if (!TYPE === 'spa') {
+                        console.log('\n')
                     }
-                    console.log('\n')
                 })
+            }
 
             // if (TYPE === 'spa') {
             //     if (!opened) opn(`http://localhost:${getPort()}/`)

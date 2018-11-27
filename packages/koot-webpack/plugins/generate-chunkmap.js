@@ -1,5 +1,5 @@
 const writeChunkmap = require('../libs/require-koot')('utils/write-chunkmap')
-const isHotUpdate = require('../libs/compilation-is-hot-update')
+const isHotUpdate = require('../libs/is-compilation-hot-update-only')
 
 /**
  * Webpack 插件 - 生成 chunkmap 并写入到文件

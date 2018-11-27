@@ -37,11 +37,11 @@ module.exports = async (kootBuildConfig = {}) => {
         dist,
         inject,
         defaultPublicDirName, defaultPublicPathname,
-        afterBuild = () => { },
         staticAssets,
         analyze = false,
         webpackHmr = {},
-        [keyConfigBuildDll]: createDll = false
+        [keyConfigBuildDll]: createDll = false,
+        webpackCompilerHook = {},
     } = kootBuildConfig
 
     const defaultClientEntry = path.resolve(
@@ -145,7 +145,7 @@ module.exports = async (kootBuildConfig = {}) => {
             )
             if (ENV === 'dev') {
                 result.plugins.push(
-                    new DevModePlugin({ after: afterBuild })
+                    new DevModePlugin(webpackCompilerHook)
                 )
                 result.plugins.push(
                     new webpack.NamedModulesPlugin()
@@ -171,11 +171,11 @@ module.exports = async (kootBuildConfig = {}) => {
                     )
                 }
 
-                if (ENV !== 'dev' && typeof staticAssets === 'string' && !index)
+                if ((ENV !== 'dev' || TYPE === 'spa') && typeof staticAssets === 'string' && !index)
                     result.plugins.push(new CopyWebpackPlugin([
                         {
                             from: staticAssets,
-                            to: path.relative(result.output.path, pathPublic)
+                            to: TYPE === 'spa' ? undefined : path.relative(result.output.path, pathPublic)
                         }
                     ]))
             }

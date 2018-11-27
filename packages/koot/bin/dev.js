@@ -20,6 +20,7 @@ const checkFileUpdate = require('../libs/check-file-change')
 const removeTempBuild = require('../libs/remove-temp-build')
 const removeTempProjectConfig = require('../libs/remove-temp-project-config')
 const validateConfig = require('../libs/validate-config')
+const validateConfigDist = require('../libs/validate-config-dist')
 
 const __ = require('../utils/translate')
 const sleep = require('../utils/sleep')
@@ -32,6 +33,8 @@ const getChunkmapPath = require('../utils/get-chunkmap-path')
 const initNodeEnv = require('../utils/init-node-env')
 const getCwd = require('../utils/get-cwd')
 const getPathnameDevServerStart = require('../utils/get-pathname-dev-server-start')
+const getLogMsg = require('../libs/get-log-msg')
+const log = require('../libs/log')
 // const terminate = require('../utils/terminate')
 
 const kootBuildVendorDll = require('../core/webpack/build-vendor-dll')
@@ -110,6 +113,7 @@ const run = async () => {
         + (typeof config === 'string' ? ` --config ${config}` : '')
         + (typeof type === 'string' ? ` --type ${type}` : '')
         + (kootTest ? ` --koot-test` : '')
+        + ' --koot-dev'
 
 
 
@@ -130,7 +134,7 @@ const run = async () => {
     const buildConfig = await validateConfig()
 
     // 如果在命令中设置了 dest，强制修改配置中的 dist
-    if (dest) buildConfig.dist = dest
+    if (dest) buildConfig.dist = validateConfigDist(dest)
 
     const {
         dist,
@@ -193,11 +197,14 @@ const run = async () => {
         const {
             silent = false
         } = options
+
         await removeTempProjectConfig()
         await removeTempBuild(dist)
+
         if (Array.isArray(processes) && processes.length) {
             if (waitingSpinner) waitingSpinner.stop()
             await sleep(300)
+            // 清屏
             if (!silent) process.stdout.write('\x1B[2J\x1B[0f')
             if (!silent) console.log('\n\n\n' + chalk.redBright('!! Please wait for killing processes !!') + '\n\n')
             for (let process of processes) {
@@ -227,8 +234,8 @@ const run = async () => {
             }
         } else {
             removeAllExitListeners()
-            // 清空 log
-            process.stdout.write('\x1B[2J\x1B[0f')
+            // 清屏
+            // process.stdout.write('\x1B[2J\x1B[0f')
             console.log('Press CTRL+C again to exit.')
 
             // 发送信息
@@ -267,7 +274,7 @@ const run = async () => {
     //
     // ========================================================================
     if (dll && process.env.WEBPACK_BUILD_STAGE !== 'server') {
-        const msg = 'Generating DLLs'
+        const msg = getLogMsg(false, 'dev', __('dev.build_dll'))
         const waiting = spinner(msg + '...')
 
         // DLL 打包
@@ -320,8 +327,32 @@ const run = async () => {
             // console.trace('exit in', exitCode)
             // process.exit(exitCode)
         })
-        if (open && process.env.WEBPACK_BUILD_TYPE === 'spa')
-            openBrowserPage()
+
+        // SPA 开发模式
+        if (process.env.WEBPACK_BUILD_TYPE === 'spa') {
+            // 等待 filenameBuilding 文件删除
+            let flagCreated = false
+            const fileFlagBuilding = path.resolve(dist, filenameBuilding)
+            await new Promise(resolve => {
+                const wait = () => setTimeout(() => {
+                    if (!flagCreated) {
+                        flagCreated = fs.existsSync(fileFlagBuilding)
+                        return wait()
+                    }
+                    if (!fs.existsSync(fileFlagBuilding)) return resolve()
+                    wait()
+                }, 1000)
+                wait()
+            })
+
+            console.log('')
+            log('success', 'dev', __('dev.spa_success'))
+            console.log('           @ ' + chalk.green(`http://localhost:${process.env.SERVER_PORT}/`))
+            console.log('')
+
+            if (open) openBrowserPage()
+        }
+
         return
     }
 
