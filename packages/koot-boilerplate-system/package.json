@@ -1,0 +1,20 @@
+{
+    "name": "koot-boilerplate-system",
+    "private": true,
+    "version": "0.7.4-alpha.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "zrainma (zrainma@sina.com)",
+    "license": "ISC",
+    "peerDependencies": {
+        "antd": ">=3.0.0",
+        "koot": ">=0.7"
+    },
+    "dependencies": {
+        "antd": "^3.10.8",
+        "koot": "^0.7.4-alpha.0"
+    }
+}

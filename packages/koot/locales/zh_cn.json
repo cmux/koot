@@ -10,7 +10,8 @@
         "building_locale": "Webpack 打包中 (语种 ${locale})……",
         "spa_template_emitted": "SPA HTML 页面文件已输出至 ${file}",
         "spa_template_not_found": "SPA 模板文件未找到",
-        "complete": "打包完成！(${time})"
+        "complete": "打包完成！(${time})",
+        "spa_i18n_disabled_temporarily": "SPA 项目当前暂无多语言支持，日后会重新启用"
     },
     "dev": {
         "missing_stage": "请设置场景。\n${indent}> ${example}"

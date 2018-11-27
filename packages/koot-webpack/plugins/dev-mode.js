@@ -1,6 +1,6 @@
 const fs = require('fs-extra')
 const path = require('path')
-const opn = require('opn')
+// const opn = require('opn')
 
 const { ConcatSource } = require("webpack-sources")
 
@@ -8,7 +8,7 @@ const getPort = require('../libs/require-koot')('utils/get-port')
 const { filenameDll } = require('../libs/require-koot')('defaults/before-build')
 const isHotUpdate = require('../libs/compilation-is-hot-update')
 
-let opened = false
+// let opened = false
 
 /**
  * Webpack 插件 - 开发模式扩展
@@ -76,13 +76,17 @@ class DevModePlugin {
             if (typeof after === 'function')
                 setTimeout(() => {
                     after()
+
+                    if (TYPE === 'spa') {
+                        console.log(`http://localhost:${getPort()}/`)
+                    }
                     console.log('\n')
                 })
 
-            if (TYPE === 'spa') {
-                if (!opened) opn(`http://localhost:${getPort()}/`)
-                opened = true
-            }
+            // if (TYPE === 'spa') {
+            //     if (!opened) opn(`http://localhost:${getPort()}/`)
+            //     opened = true
+            // }
 
             callback()
         })

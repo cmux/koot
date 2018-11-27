@@ -131,25 +131,39 @@ export default (options = {}) => (WrappedComponent) => {
      * @returns {Array} infos.metas
      */
     const doPageinfo = (store, props) => {
+        const defaultPageInfo = {
+            title: '',
+            metas: []
+        }
+
         if (typeof pageinfo !== 'function')
-            return { ...defaultPageInfo }
+            return defaultPageInfo
 
         const state = store.getState()
 
         let infos = pageinfo(state, props)
         if (typeof infos !== 'object')
-            infos = { ...defaultPageInfo }
+            infos = defaultPageInfo
 
         const {
             title = defaultPageInfo.title,
             metas = defaultPageInfo.metas
         } = infos
 
-        if (state.localeId)
-            metas.push({
-                name: 'koot-locale-id',
-                content: state.localeId
-            })
+        if (state.localeId) {
+            if (!metas.some(meta => {
+                if (meta.name === 'koot-locale-id') {
+                    meta.content = state.localeId
+                    return true
+                }
+                return false
+            })) {
+                metas.push({
+                    name: 'koot-locale-id',
+                    content: state.localeId
+                })
+            }
+        }
 
         return {
             title,

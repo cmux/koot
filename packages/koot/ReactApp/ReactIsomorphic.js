@@ -24,6 +24,7 @@ import componentExtender from '../React/component-extender'
 import pageinfo from '../React/pageinfo'
 import { parseHtmlForStyles } from '../React/styles'
 import validateInject from '../React/validate-inject'
+import isNeedInjectCritical from '../React/inject/is-need-inject-critical'
 
 const getChunkmap = require('../utils/get-chunkmap')
 const getSWPathname = require('../utils/get-sw-pathname')
@@ -230,18 +231,6 @@ export default class ReactIsomorphic {
 
                 // global.koaCtxOrigin = ctx.origin
 
-                // 开发模式: 将 content('critical.js') 转为 pathname()
-                if (__DEV__)
-                    template = template
-                        // .replace(
-                        //     /<style(.*?)><%(.*?)content\(['"]critical\.css['"]\)(.*?)%><\/style>/,
-                        //     `<link id="__koot-critical-styles" media="all" rel="stylesheet" href="<%$2pathname('critical.css')$3%>" />`
-                        // )
-                        .replace(
-                            /<script(.*?)><%(.*?)content\(['"]critical\.js['"]\)(.*?)%><\/script>/,
-                            `<script$1 src="<%$2pathname('critical.js')$3%>"></script>`
-                        )
-
                 /** @type {Object} 实时 (本次访问请求) 注入 */
                 const injectRealtime = validateInject({
                     injectCache: thisInjectOnceCache,
@@ -253,10 +242,7 @@ export default class ReactIsomorphic {
                     reactHtml,
                     stylesHtml,
                     reduxHtml: htmlTool.getReduxScript(store),
-                    needInjectCritical: {
-                        styles: !/(content|pathname)\(['"]critical\.css['"]\)/.test(template),
-                        scripts: !/(content|pathname)\(['"]critical\.js['"]\)/.test(template),
-                    },
+                    needInjectCritical: isNeedInjectCritical(template),
                 })
 
                 // i18n 启用时: 添加其他语种页面跳转信息的 meta 标签
@@ -283,7 +269,11 @@ export default class ReactIsomorphic {
                 }
 
                 // 渲染模板
-                let html = renderTemplate(template, Object.assign(injectRealtime, injectOnce, inject), store)
+                let html = renderTemplate({
+                    template,
+                    inject: Object.assign(injectRealtime, injectOnce, inject),
+                    store
+                })
 
                 // 开发模式:
                 if (__DEV__) {

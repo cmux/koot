@@ -32,11 +32,20 @@ export default (funcGetPageInfo) => (WrappedComponent) => {
             metas = []
         } = infos
 
-        if (state.localeId)
-            metas.push({
-                name: 'koot-locale-id',
-                content: state.localeId
-            })
+        if (state.localeId) {
+            if (!metas.some(meta => {
+                if (meta.name === 'koot-locale-id') {
+                    meta.content = state.localeId
+                    return true
+                }
+                return false
+            })) {
+                metas.push({
+                    name: 'koot-locale-id',
+                    content: state.localeId
+                })
+            }
+        }
 
         return {
             title,

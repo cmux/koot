@@ -12,16 +12,18 @@ const getDistPath = require('./get-dist-path')
 const getChunkmap = (localeId, getFullResult = false) => {
     if (localeId === true) return getChunkmap(getFullResult || undefined, true)
 
-    if (typeof localeId === 'undefined') {
+    const isI18nEnabled = JSON.parse(process.env.KOOT_I18N) === false ? false : true
+
+    if (isI18nEnabled && typeof localeId === 'undefined') {
         try {
             localeId = require('../i18n').localeId
         } catch (e) { }
     }
 
-    const i18nType = JSON.parse(process.env.KOOT_I18N)
+    const i18nType = isI18nEnabled && JSON.parse(process.env.KOOT_I18N)
         ? JSON.parse(process.env.KOOT_I18N_TYPE)
         : undefined
-    const isI18nDefault = (i18nType === 'default')
+    const isI18nDefault = (isI18nEnabled && i18nType === 'default')
 
     let chunkmap
     if (typeof global.chunkmap === 'object') chunkmap = global.chunkmap
@@ -40,7 +42,7 @@ const getChunkmap = (localeId, getFullResult = false) => {
     if (typeof chunkmap === 'object') {
         // let chunkmap = fs.readJsonSync(pathChunckmap)
         if (getFullResult) return chunkmap || {}
-        if (isI18nDefault) chunkmap = chunkmap[`.${localeId}`] || {}
+        if (isI18nEnabled && isI18nDefault) chunkmap = chunkmap[`.${localeId}`] || {}
     }
 
     return chunkmap || {}

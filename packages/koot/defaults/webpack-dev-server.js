@@ -5,8 +5,8 @@ module.exports = {
 
     hmrOptions: {
         multiStep: true,
-        // fullBuildTimeout: 0.5 * 1000,
-        requestTimeout: 1000
+        fullBuildTimeout: process.env.WEBPACK_BUILD_TYPE === 'spa' ? 500 : undefined,
+        requestTimeout: process.env.WEBPACK_BUILD_TYPE === 'spa' ? undefined : 1000
     },
 
 }

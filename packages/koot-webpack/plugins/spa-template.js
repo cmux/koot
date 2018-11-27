@@ -2,19 +2,26 @@
 
 const fs = require('fs-extra')
 const path = require('path')
-const ejs = require('ejs')
+// const ejs = require('ejs')
 const chalk = require('chalk')
 
-const writeChunkmap = require('../../../utils/write-chunkmap')
-const getAppType = require('../../../utils/get-app-type')
-const __ = require('../../../utils/translate')
-const getDistPath = require('../../../utils/get-dist-path')
-const getCwd = require('../../../utils/get-cwd')
+const writeChunkmap = require('../libs/require-koot')('utils/write-chunkmap')
+const getAppType = require('../libs/require-koot')('utils/get-app-type')
+const __ = require('../libs/require-koot')('utils/translate')
+const getDistPath = require('../libs/require-koot')('utils/get-dist-path')
+const getCwd = require('../libs/require-koot')('utils/get-cwd')
+const getChunkmap = require('../libs/require-koot')('utils/get-chunkmap')
 
+/**
+ * Webpack 插件 - 生成 SPA 主页面文件
+ * @class SpaTemplatePlugin
+ * @classdesc Webpack 插件 - 生成 SPA 主页面文件
+ * @property {String} localeId
+ */
 class SpaTemplatePlugin {
     constructor(settings = {}) {
         this.localeId = settings.localeId
-        this.inject = settings.inject
+        this.inject = settings.inject || {}
     }
 
     apply(compiler) {
@@ -72,40 +79,53 @@ class SpaTemplatePlugin {
             )
         }
 
-        // hook: 文件吐出
+        // hook: 在文件吐出时修改模板文件代码
         const hookStep = process.env.WEBPACK_BUILD_ENV === 'prod' ? 'afterEmit' : 'emit'
         compiler.hooks[hookStep].tapAsync.bind(compiler.hooks[hookStep], 'SpaTemplatePlugin')(async (compilation, callback) => {
             const appType = await getAppType()
 
             // 获取并写入 chunkmap
-            const chunkmap = await writeChunkmap(compilation.getStats())
+            await writeChunkmap(compilation.getStats())
+            const {
+                ".files": filemap,
+                ".entrypoints": entrypoints,
+            } = getChunkmap(localeId)
 
             // 如果环境变量中未找到模板结果，报错并返回
             if (typeof process.env.KOOT_HTML_TEMPLATE !== 'string') {
                 fail = __('build.spa_template_not_found')
                 return callback()
             }
-
-            // 处理环境变量中的模板字符串
             const template = process.env.KOOT_HTML_TEMPLATE
-            const injectObject = require(`../../../${appType}/inject`)({
-                localeId, inject,
-                chunkmap,
-                compilation,
-            })
-            try {
-                for (let key in injectObject) {
-                    if (typeof injectObject[key] === 'function')
-                        injectObject[key] = injectObject[key](template)
+
+            const renderTemplate = (() => {
+                switch (appType) {
+                    case 'ReactSPA': {
+                        return require('../libs/require-koot')(`React/render-template`)
+                    }
                 }
-            } catch (e) {
-                console.log(e)
-            }
-            const html = ejs.render(
-                template, {
-                    inject: injectObject,
-                }, {}
-            )
+                return () => ''
+            })()
+            const defaultInject = (() => {
+                switch (appType) {
+                    case 'ReactSPA': {
+                        return require('../libs/require-koot')(`ReactSPA/inject`)({
+                            filemap,
+                            entrypoints,
+                            localeId,
+                            needInjectCritical: require('../libs/require-koot')(`React/inject/is-need-inject-critical`)(template)
+                        })
+                    }
+                }
+                return {}
+            })()
+            // console.log(Object.assign({}, defaultInject, inject))
+
+            const html = renderTemplate({
+                template,
+                inject: Object.assign({}, defaultInject, inject),
+                compilation
+            })
 
             // 写入 Webpack 文件流
             if (compilation.fileDependencies.add) {

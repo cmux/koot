@@ -5,6 +5,7 @@ const isUrl = require('is-url')
 const getFilePath = require('./get-client-file-path')
 const generateFilemap = require('./generate-filemap-from-compilation')
 const getDistPath = require('./get-dist-path')
+const getPort = require('./get-port')
 
 /**
  * 读取目标客户端打包结果文件的内容
@@ -18,10 +19,13 @@ const readClientFile = (filename, localeId, compilation, isPathname = false) => 
     // 如果第一个参数为 true，表示标记为 pathname
     if (filename === true) return readClientFile(localeId, compilation || undefined, isPathname || undefined, true)
 
-    // 如果提供了 webpack compilation 数据，直接从其中查询对应文件的最终内容并返回
+    // 如果提供了 webpack compilation 数据，尝试从其中查询对应文件的最终内容并返回
     if (typeof compilation === 'object') {
         const filemap = generateFilemap(compilation)
         if (typeof filemap === 'object') {
+            // console.log('\n' + filename)
+            // console.log(`typeof filemap["${filename}"]`, typeof filemap[filename])
+            // console.log(`typeof compilation.assets["${filemap[filename]}"]`, typeof compilation.assets[filemap[filename]])
             // for (let key in compilation) {
             //     console.log(key)
             // }
@@ -29,13 +33,15 @@ const readClientFile = (filename, localeId, compilation, isPathname = false) => 
             if (typeof filemap[filename] === 'string' &&
                 typeof compilation.assets[filemap[filename]] !== 'undefined'
             ) {
-                const obj = compilation.assets[filemap[filename]]
+                const asset = compilation.assets[filemap[filename]]
                 // console.log(filename, filemap[filename])
-                // if (!obj._value) {
-                //     console.log(obj)
+                // if (!asset._value) {
+                //     console.log(asset)
                 // }
-                if (typeof obj._value !== 'undefined') return obj._value
-                if (typeof obj._cachedSource !== 'undefined') return obj._cachedSource
+                // console.log('typeof asset.source', typeof asset.source)
+                if (typeof asset.source === 'function') return asset.source()
+                if (typeof asset._value !== 'undefined') return asset._value
+                if (typeof asset._cachedSource !== 'undefined') return asset._cachedSource
                 // return '123'
             }
         }
@@ -50,6 +56,12 @@ const readClientFile = (filename, localeId, compilation, isPathname = false) => 
         } else {
             return `<!-- The pathname for file '${filename}' is a URL. Rendering file content from URL can only be done in DEV mode. -->`
         }
+    }
+
+    if (process.env.WEBPACK_BUILD_TYPE === 'spa' && process.env.WEBPACK_BUILD_ENV === 'dev') {
+        return `<!-- http://localhost:${getPort()}${pathname} -->`
+        // const syncRequest = require('sync-request')
+        // return syncRequest('GET', `http://localhost:${getPort()}${pathname}`, {}).getBody()
     }
 
     return fs.readFileSync(
