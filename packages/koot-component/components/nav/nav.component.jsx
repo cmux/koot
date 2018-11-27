@@ -95,7 +95,6 @@ const renderMenuList = ( _baseUrl, _routeList ) => {
                     return '';
                 }
             }
-            console.info('routeItem.children', routeItem.children, isNeedShow( routeItem.children ))
             if( 
                 routeItem.children && 
                 routeItem.children.length > 0 &&
@@ -114,7 +113,6 @@ const renderMenuList = ( _baseUrl, _routeList ) => {
                     </SubMenu>
                 )
             }else{
-                console.info('renderItem', routeItem)
                 return (
                     <Item
                         key={key}
@@ -148,7 +146,6 @@ class Nav extends Component {
 
     render() {
         const { className, routeList, baseUrl,  } = this.props;
-        console.info('routeList', routeList)
         const { openKeys, selectKeys } = this.state;
         const { openChangeHandler, selectChangeHandler } = this;
         const menuNodeList = routeList && routeList.length > 0 && renderMenuList(baseUrl, routeList);
