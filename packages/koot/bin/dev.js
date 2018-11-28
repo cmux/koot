@@ -477,7 +477,7 @@ const run = async () => {
             `  `
             + chalk.yellowBright('[koot/build] ')
             + __('build.build_start', {
-                type: chalk.cyanBright(appType),
+                type: chalk.cyanBright(__(`appType.${appType}`)),
                 stage: chalk.green('client'),
                 env: chalk.green('dev'),
             })
@@ -505,7 +505,7 @@ const run = async () => {
             chalk.green('√ ')
             + chalk.yellowBright('[koot/build] ')
             + __('build.build_complete', {
-                type: chalk.cyanBright(appType),
+                type: chalk.cyanBright(__(`appType.${appType}`)),
                 stage: chalk.green('client'),
                 env: chalk.green('dev'),
             })
@@ -528,7 +528,7 @@ const run = async () => {
             `  `
             + chalk.yellowBright('[koot/build] ')
             + __('build.build_start', {
-                type: chalk.cyanBright(appType),
+                type: chalk.cyanBright(__(`appType.${appType}`)),
                 stage: chalk.green('server'),
                 env: chalk.green('dev'),
             })
@@ -550,7 +550,7 @@ const run = async () => {
             chalk.green('√ ')
             + chalk.yellowBright('[koot/build] ')
             + __('build.build_complete', {
-                type: chalk.cyanBright(appType),
+                type: chalk.cyanBright(__(`appType.${appType}`)),
                 stage: chalk.green('server'),
                 env: chalk.green('dev'),
             })

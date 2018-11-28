@@ -156,11 +156,14 @@ module.exports = async (kootBuildConfig = {}) => {
     }
 
     // log: 打包流程正式开始
-    log('build', __('build.build_start', {
-        type: chalk.cyanBright(appType),
-        stage: chalk.green(STAGE),
-        env: chalk.green(ENV),
-    }))
+    log('build', __(
+        TYPE === 'spa' ? 'build.build_start_no_stage' : 'build.build_start',
+        {
+            type: chalk.cyanBright(__(`appType.${appType}`)),
+            stage: chalk.green(STAGE),
+            env: chalk.green(ENV),
+        }
+    ))
 
     /** @type {Function} @async 流程回调: webpack 执行前 */
     const before = async () => {
@@ -215,11 +218,14 @@ module.exports = async (kootBuildConfig = {}) => {
             await afterBuild(data)
 
         // 标记完成
-        log('success', 'build', __('build.build_complete', {
-            type: chalk.cyanBright(appType),
-            stage: chalk.green(STAGE),
-            env: chalk.green(ENV),
-        }))
+        log('success', 'build', __(
+            TYPE === 'spa' ? 'build.build_complete_no_stage' : 'build.build_complete',
+            {
+                type: chalk.cyanBright(__(`appType.${appType}`)),
+                stage: chalk.green(STAGE),
+                env: chalk.green(ENV),
+            }
+        ))
 
         // await sleep(20 * 1000)
         // console.log(`  > start: ${timestampStart}`)

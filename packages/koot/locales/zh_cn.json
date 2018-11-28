@@ -1,10 +1,16 @@
 {
     "file_not_found": "文件未找到：${file}",
     "missing_option": "请提供 ${option} 选项。\n${indent}> ${example}",
+    "appType": {
+        "ReactApp": "React 同构",
+        "ReactSPA": "React SPA"
+    },
     "build": {
         "config_type_error": "错误：打包配置文件（${file}）需输出 ${type}",
         "build_start": "开始打包：${type} [STAGE ${stage} | ENV ${env}]",
+        "build_start_no_stage": "开始打包：${type} [ENV ${env}]",
         "build_complete": "打包完成：${type} [STAGE ${stage} | ENV ${env}]",
+        "build_complete_no_stage": "打包完成：${type} [ENV ${env}]",
         "building": "Webpack 打包中……",
         "building_locale": "Webpack 打包中 (语种 ${locale})……",
         "spa_template_emitted": "SPA HTML 页面文件已输出至 ${file}",

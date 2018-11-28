@@ -19,6 +19,7 @@ import { CHANGE_LANGUAGE, TELL_CLIENT_URL, SYNC_COOKIE } from '../action-types'
 import kootClient from '../client/run'
 import ReactIsomorphic from '../ReactIsomorphic'
 const getDistPath = require('../../utils/get-dist-path')
+const getDirDistPublic = require('../../libs/get-dir-dist-public')
 
 import middlewareRouterDev from './middlewares/router-dev'
 
@@ -177,7 +178,7 @@ export default async (app, {
 
     /* 静态目录,用于外界访问打包好的静态文件js、css等 */
     app.use(convert(koaStatic(
-        path.resolve(getDistPath(), './public'),
+        getDirDistPublic(getDistPath()),
         {
             maxage: 0,
             hidden: true,

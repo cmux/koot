@@ -1,8 +1,8 @@
 // 此文件可或者 koa 中间件，所有 app 都会用到
 // 扩展时候需考虑普适性
 
-const path = require('path')
 const getDistPath = require('../utils/get-dist-path')
+const getDirDistPublic = require('../libs/get-dir-dist-public')
 
 module.exports = (server) => {
     
@@ -10,8 +10,7 @@ module.exports = (server) => {
 
     const koaStatic = require('koa-static')
     const convert = require('koa-convert')
-    // const rootPath = getCwd() + '/dist/public'
-    const rootPath = path.resolve(getDistPath(), './public')
+    const rootPath = getDirDistPublic(getDistPath())
     const option = {
         maxage: 0,
         hidden: true,
