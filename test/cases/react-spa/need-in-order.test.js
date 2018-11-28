@@ -113,7 +113,10 @@ describe('测试: React SPA 项目', async () => {
 
                 if (exist) {
                     const dom = new JSDOM(fs.readFileSync(fileIndexHtml))
-                    console.log(dom.window.document.querySelector('title').textContent)
+                    const config = require(path.resolve(dir, 'koot.config.js'))
+                    expect(
+                        dom.window.document.querySelector('title').textContent
+                    ).toBe(config.name)
                 }
             })
 
