@@ -53,9 +53,17 @@ const isNeedShow = ( childrenList ) => {
 }
 
 const renderMenuItemContent = ( routeItem ) => {
-    let abbreviation;
+    let abbreviation, icon;
+    
     if( routeItem.meta && !routeItem.meta.icon ){
         abbreviation = getMenuItemAbbreviation(routeItem.meta.name);
+    }
+    if( routeItem.meta && routeItem.meta.icon ){
+        if( typeof routeItem.meta.icon === 'function' ){
+            icon = routeItem.meta.icon()
+        }else{
+            icon = (<Icon type={routeItem.meta.icon} theme="outlined" />)
+        }
     }
     return (
         <div className="nav-menuitem-content">
@@ -67,16 +75,16 @@ const renderMenuItemContent = ( routeItem ) => {
             </span>
             {
                 routeItem.children && isNeedShow(routeItem.children)
-                ?   <span className="nav-icon-arrow">
+                    ?   <span className="nav-icon-arrow">
                         <Icon type="left" theme="outlined" />
                     </span>
-                :   ''
+                    :   ''
             }
             <span className="nav-icon-thumbnail">
                 {
                     routeItem.meta && routeItem.meta.icon
-                    ?   <Icon type={routeItem.meta.icon} theme="outlined" />
-                    :   abbreviation
+                        ?   icon
+                        :   abbreviation
                 }
             </span>
         </div>

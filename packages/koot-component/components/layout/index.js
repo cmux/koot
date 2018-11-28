@@ -8,6 +8,8 @@ import SiderSwitch from './sider/sider-switch.jsx';
 
 import Content from './content/content.jsx';
 
+import ContentInner from './content/content-inner.jsx';
+
 import Header from './header/header.jsx';
 
 import Footer from './footer/footer.jsx';
@@ -21,5 +23,6 @@ Layout.Content = Content;
 Layout.Header = Header;
 Layout.Footer = Footer;
 Layout.SiderFooter = SiderFooter;
+Layout.ContentInner = ContentInner;
 
 export default Layout;
