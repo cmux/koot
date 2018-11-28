@@ -2,7 +2,13 @@ const fs = require('fs-extra')
 const getPathnameProjectConfigFile = require('./get-pathname-project-config-file')
 
 /**
- * 从 koot.js 中读取对应配置
+ * 从项目配置中读取对应配置项的内容
+ * 
+ * 项目配置：在 0.6 之前为 koot.js，0.6 之后为自动生成的临时配置文件
+ *   - 使用临时配置文件是为了兼容 0.6 之前的行为
+ *   - TODO: 在未来可能会抛弃独立配置文件行为，界时该方法会改写
+ * 
+ * @async
  * @param {String} key 
  * @returns {*}
  */

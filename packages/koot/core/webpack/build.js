@@ -20,6 +20,7 @@ const __ = require('../../utils/translate')
 const spinner = require('../../utils/spinner')
 const getDistPath = require('../../utils/get-dist-path')
 const getAppType = require('../../utils/get-app-type')
+const readBaseConfig = require('../../utils/read-base-config')
 // const getCwd = require('../../utils/get-cwd')
 // const sleep = require('../../utils/sleep')
 
@@ -127,7 +128,7 @@ module.exports = async (kootBuildConfig = {}) => {
         [keyConfigBuildDll]: createDll = false,
     } = kootBuildConfig
 
-    // 确定项目类型
+    /** @type {String} 项目类型 */
     const appType = await getAppType()
 
     // 抽取环境变量

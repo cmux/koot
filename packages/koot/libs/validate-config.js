@@ -15,8 +15,17 @@ const {
 } = require('../defaults/before-build')
 
 /**
- * 根据 koot.config.js 生成 koot.js 和构建配置对象
- * @returns {Object} 构建配置对象
+ * 根据 koot.config.js 生成 koot.js 和打包配置对象
+ * 
+ * 如果项目采用 0.6 之后的配置方式 (使用 koot.config.js，其中有全部配置项)，以下内容会写入环境变量
+ *   - KOOT_PROJECT_CONFIG_PATHNAME - 项目配置文件 (临时文件)
+ * 
+ * 项目配置：在 0.6 之前为 koot.js，0.6 之后为自动生成的临时配置文件
+ *   - 使用临时配置文件是为了兼容 0.6 之前的行为
+ *   - TODO: 在未来可能会抛弃独立配置文件行为，界时该方法会改写
+ * 
+ * @async
+ * @returns {Object} 打包配置对象
  */
 module.exports = async (projectDir = getCwd()) => {
 
