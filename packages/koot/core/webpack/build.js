@@ -110,6 +110,8 @@ module.exports = async (kootBuildConfig = {}) => {
     // ========================================================================
     //
     // 先期准备
+    // - 确定、抽取配置
+    // - 更新环境变量
     //
     // ========================================================================
 
@@ -130,6 +132,10 @@ module.exports = async (kootBuildConfig = {}) => {
 
     /** @type {String} 项目类型 */
     const appType = await getAppType()
+
+    /** @type {String} 项目名 */
+    const appName = await readBaseConfig('name')
+    process.env.KOOT_PROJECT_NAME = appName
 
     // 抽取环境变量
     const {
