@@ -28,11 +28,26 @@
     </a>
 </p> 
 
-## Docs
+## 快速使用
 
-**[View the docs here](https://koot.js.org)**
+1. 安装命令行工具
 
-## Packages
+```bash
+> sudo npm i -g koot-cli
+```
 
-This repository is a monorepo that we manage using [Lerna](https://github.com/lerna/lerna). That means that we actually publish [several packages](/packages) to npm from the same codebase, including:
+2. 初始化项目
 
+```bash
+> koot
+```
+
+3. 运行开发模式
+
+```bash
+> cd [项目名] && npm run dev
+```
+
+## 文档
+
+**[查阅文档](https://koot.js.org)**
