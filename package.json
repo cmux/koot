@@ -3,6 +3,7 @@
     "description": "All modules and packages for Koot.js",
     "scripts": {
         "doc-server": "docsify serve docs",
+        "bootstrap": "lerna bootstrap --hoist",
         "lerna": "lerna-wizard",
         "lerna:bootstrap": "lerna bootstrap --hoist",
         "lerna:publish": "lerna publish",
