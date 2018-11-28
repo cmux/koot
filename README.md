@@ -51,3 +51,9 @@
 ## 文档
 
 **[查阅文档](https://koot.js.org)**
+
+## 开源许可
+
+Koot.js 使用 _Apache 2.0_ 开源许可证
+
+[![License](https://img.shields.io/badge/License-Apache%202.0-yellowgreen.svg)](https://opensource.org/licenses/Apache-2.0)
