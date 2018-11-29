@@ -11,6 +11,7 @@ const transformConfigLast = require('./transform-config-last')
 const transformOutputPublicpath = require('./transform-output-publicpath')
 
 const getCwd = require('../../../utils/get-cwd')
+const getDirDistPublic = require('../../../libs/get-dir-dist-public')
 
 /**
  * Webpack 配置处理 - 服务器端配置
@@ -90,7 +91,7 @@ module.exports = async (kootBuildConfig = {}) => {
             result.plugins.push(new CopyWebpackPlugin([
                 {
                     from: staticAssets,
-                    to: path.relative(result.output.path, path.resolve(dist, `public`))
+                    to: path.relative(result.output.path, getDirDistPublic(dist))
                 }
             ]))
 

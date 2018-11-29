@@ -42,6 +42,9 @@ module.exports = () => {
         // Koot 打包配置文件路径 (./koot.build.js)。默认不存在。如果存在则默认使用
         // KOOT_BUILD_CONFIG_PATHNAME: ...,
 
+        // 项目名。默认会在进行 Webpack 打包开始前，从项目配置中抽取并写入到环境变量
+        // KOOT_PROJECT_NAME: ...,
+
         // 项目类型。默认不存在。如果存在则默认使用
         // KOOT_PROJECT_TYPE: ...,
 

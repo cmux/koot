@@ -11,6 +11,7 @@ const __ = require('../libs/require-koot')('utils/translate')
 const getDistPath = require('../libs/require-koot')('utils/get-dist-path')
 const getCwd = require('../libs/require-koot')('utils/get-cwd')
 const getChunkmap = require('../libs/require-koot')('utils/get-chunkmap')
+const getDirDistPublic = require('../libs/require-koot')('libs/get-dir-dist-public')
 
 /**
  * Webpack 插件 - 生成 SPA 主页面文件
@@ -143,7 +144,7 @@ class SpaTemplatePlugin {
 
             // 生产环境：写入文件
             if (process.env.WEBPACK_BUILD_ENV === 'prod') {
-                const pathname = path.resolve(getDistPath(), 'public/', filename)
+                const pathname = path.resolve(getDirDistPublic(getDistPath()), filename)
                 await fs.ensureFile(pathname)
                 await fs.writeFile(
                     pathname,
@@ -160,6 +161,7 @@ class SpaTemplatePlugin {
             // 生产环境：报告文件写入完成
             if (process.env.WEBPACK_BUILD_ENV === 'prod') {
                 setTimeout(() => {
+                    console.log('')
                     if (fail) {
                         setTimeout(() => {
                             console.log(

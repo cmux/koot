@@ -22,6 +22,7 @@ const transformOutputPublicpath = require('./transform-output-publicpath')
 
 const getCwd = require('../../../utils/get-cwd')
 const getWDSport = require('../../../utils/get-webpack-dev-server-port')
+const getDirDistPublic = require('../../../libs/get-dir-dist-public')
 
 /**
  * Webpack 配置处理 - 客户端配置
@@ -44,14 +45,13 @@ module.exports = async (kootBuildConfig = {}) => {
         webpackCompilerHook = {},
     } = kootBuildConfig
 
+    /** @type {String} 默认入口文件 */
     const defaultClientEntry = path.resolve(
         __dirname,
         '../../../',
         appType,
         './client'
     )
-
-    const pathPublic = path.resolve(dist, `public`)
 
     let index = 0
     const handleSingleConfig = async (localeId, localesObj) => {
@@ -62,8 +62,13 @@ module.exports = async (kootBuildConfig = {}) => {
             WEBPACK_DEV_SERVER_PORT: clientDevServerPort,
         } = process.env
 
+        /** @type {Boolean} 是否为多语言分包模式 */
         const isSeperateLocale = localeId && typeof localesObj === 'object'
 
+        /** @type {String} 打包结果基础目录 (最终的打包目录是该目录下的 defaultPublicDirName 目录) */
+        const pathPublic = getDirDistPublic(dist)
+
+        /** @type {Object} 默认配置 */
         const configTargetDefault = await createTargetDefaultConfig({
             pathRun: getCwd(),
             clientDevServerPort,
@@ -175,7 +180,8 @@ module.exports = async (kootBuildConfig = {}) => {
                     result.plugins.push(new CopyWebpackPlugin([
                         {
                             from: staticAssets,
-                            to: TYPE === 'spa' ? undefined : path.relative(result.output.path, pathPublic)
+                            to: TYPE === 'spa' && ENV === 'dev' ? undefined : path.relative(result.output.path, pathPublic)
+                            // to: path.relative(result.output.path, pathPublic)
                         }
                     ]))
             }

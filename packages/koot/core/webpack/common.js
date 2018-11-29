@@ -89,6 +89,7 @@ const plugins = (env, stage, defines = {}) => {
     }
 
     const envs = [
+        'KOOT_PROJECT_NAME',
         'KOOT_DIST_DIR',
         'KOOT_I18N',
         'KOOT_I18N_TYPE',

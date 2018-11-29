@@ -1,10 +1,16 @@
 {
     "file_not_found": "File not found: ${file}",
     "missing_option": "Please provide option ${option}.\n${indent}> ${example}",
+    "appType": {
+        "ReactApp": "React Isomorphic",
+        "ReactSPA": "React SPA"
+    },
     "build": {
         "config_type_error": "Error: build config file (${file}) must export ${type}",
         "build_start": "Start building: ${type} [STAGE ${stage} | ENV ${env}]",
+        "build_start_no_stage": "Start building: ${type} [ENV ${env}]",
         "build_complete": "Building complete: ${type} [STAGE ${stage} | ENV ${env}]",
+        "build_complete_no_stage": "Building complete: ${type} [ENV ${env}]",
         "building": "Webpack building...",
         "building_locale": "Webpack building (locale ${locale})...",
         "spa_template_emitted": "SPA HTML file emitted to ${file}",

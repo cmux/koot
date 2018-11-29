@@ -32,7 +32,8 @@
         "koot-buildtest-isomorphic-build": "koot-build --env prod --koot-test",
         "koot-buildtest-isomorphic-start-server": "koot-start --no-build --koot-test",
         "koot-buildtest-isomorphic-start-server-custom-port": "koot-start --no-build --port 8316 --koot-test",
-        "koot-buildtest-isomorphic-dev": "koot-dev --no-open --koot-test"
+        "koot-buildtest-isomorphic-dev": "koot-dev --no-open --koot-test",
+        "koot-buildtest-spa-build": "koot-build --type react-spa --dest E:\\Projects\\koot\\0.7\\test\\projects\\standard\\dist-spa-test --koot-test"
     },
     "dependencies": {
         "koot": "file:../../../packages/koot",
@@ -94,7 +95,7 @@
         "koa-response-time": "2.0.0",
         "koa-router": "7.4.0",
         "koa-static": "3.0.0",
-        "koot-webpack": "^0.7.4-alpha.0",
+        "koot-webpack": "^0.7.4-alpha.1",
         "less": "3.8.1",
         "less-loader": "4.1.0",
         "md5": "2.2.1",

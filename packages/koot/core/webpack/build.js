@@ -20,6 +20,7 @@ const __ = require('../../utils/translate')
 const spinner = require('../../utils/spinner')
 const getDistPath = require('../../utils/get-dist-path')
 const getAppType = require('../../utils/get-app-type')
+const readBaseConfig = require('../../utils/read-base-config')
 // const getCwd = require('../../utils/get-cwd')
 // const sleep = require('../../utils/sleep')
 
@@ -109,6 +110,8 @@ module.exports = async (kootBuildConfig = {}) => {
     // ========================================================================
     //
     // 先期准备
+    // - 确定、抽取配置
+    // - 更新环境变量
     //
     // ========================================================================
 
@@ -127,8 +130,12 @@ module.exports = async (kootBuildConfig = {}) => {
         [keyConfigBuildDll]: createDll = false,
     } = kootBuildConfig
 
-    // 确定项目类型
+    /** @type {String} 项目类型 */
     const appType = await getAppType()
+
+    /** @type {String} 项目名 */
+    const appName = await readBaseConfig('name')
+    process.env.KOOT_PROJECT_NAME = appName
 
     // 抽取环境变量
     const {
@@ -149,11 +156,14 @@ module.exports = async (kootBuildConfig = {}) => {
     }
 
     // log: 打包流程正式开始
-    log('build', __('build.build_start', {
-        type: chalk.cyanBright(appType),
-        stage: chalk.green(STAGE),
-        env: chalk.green(ENV),
-    }))
+    log('build', __(
+        TYPE === 'spa' ? 'build.build_start_no_stage' : 'build.build_start',
+        {
+            type: chalk.cyanBright(__(`appType.${appType}`)),
+            stage: chalk.green(STAGE),
+            env: chalk.green(ENV),
+        }
+    ))
 
     /** @type {Function} @async 流程回调: webpack 执行前 */
     const before = async () => {
@@ -208,11 +218,14 @@ module.exports = async (kootBuildConfig = {}) => {
             await afterBuild(data)
 
         // 标记完成
-        log('success', 'build', __('build.build_complete', {
-            type: chalk.cyanBright(appType),
-            stage: chalk.green(STAGE),
-            env: chalk.green(ENV),
-        }))
+        log('success', 'build', __(
+            TYPE === 'spa' ? 'build.build_complete_no_stage' : 'build.build_complete',
+            {
+                type: chalk.cyanBright(__(`appType.${appType}`)),
+                stage: chalk.green(STAGE),
+                env: chalk.green(ENV),
+            }
+        ))
 
         // await sleep(20 * 1000)
         // console.log(`  > start: ${timestampStart}`)

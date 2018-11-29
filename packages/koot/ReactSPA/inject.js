@@ -14,7 +14,7 @@ module.exports = (options = {}) => {
         filemap,
         entrypoints,
 
-        title: 'TEST',
+        title: process.env.KOOT_PROJECT_NAME,
         metas: '',
         reactHtml: '<!-- REACT ROOT -->',
         stylesHtml: '',

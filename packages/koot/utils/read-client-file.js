@@ -6,6 +6,7 @@ const getFilePath = require('./get-client-file-path')
 const generateFilemap = require('./generate-filemap-from-compilation')
 const getDistPath = require('./get-dist-path')
 const getPort = require('./get-port')
+const getDirDistPublic = require('../libs/get-dir-dist-public')
 
 /**
  * 读取目标客户端打包结果文件的内容
@@ -66,8 +67,7 @@ const readClientFile = (filename, localeId, compilation, isPathname = false) => 
 
     return fs.readFileSync(
         path.resolve(
-            getDistPath(),
-            'public/',
+            getDirDistPublic(getDistPath()),
             getFilePath(filename, localeId, isPathname).replace(/^\//, '')
         ),
         'utf-8'
