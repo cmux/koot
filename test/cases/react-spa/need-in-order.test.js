@@ -120,8 +120,6 @@ describe('测试: React SPA 项目', async () => {
                 }
             })
 
-            // TODO: <title> 标签的内容为 koot.config.js 的 name 项
-
             if (fs.existsSync(dist))
                 fs.removeSync(dist)
 
