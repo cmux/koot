@@ -14,7 +14,7 @@ let stateShowed = false
         }
         return {}
     },
-    styles: require('./app.less')
+    styles: require('./app.component.less')
 })
 class App extends React.Component {
     componentDidMount() {

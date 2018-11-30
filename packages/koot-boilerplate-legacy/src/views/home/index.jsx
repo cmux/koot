@@ -9,7 +9,7 @@ export default extend({
             { 'page-name': 'home' },
         ]
     }),
-    styles: require('./styles.less'),
+    styles: require('./styles.component.less'),
 })(
     ({
         className

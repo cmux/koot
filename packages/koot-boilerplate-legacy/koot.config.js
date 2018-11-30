@@ -186,12 +186,9 @@ module.exports = {
      */
     css: {
         fileBasename: {
-            normal: /\.g/,
-            component: /^((?!\.g\.).)*/,
+            normal: /^((?!\.(component|module)\.).)*/,
+            component: /\.(component|module)/,
         },
-        extract: [
-            /critical\.g\.less$/,
-        ]
     },
 
     /** @type {(Number|Object|String)} 服务器运行端口 */

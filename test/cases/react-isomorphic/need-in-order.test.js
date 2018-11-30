@@ -184,6 +184,8 @@ const doTest = async (port) => {
 
     // TODO: 测试: 所有 Webpack 结果资源的访问
 
+    // TODO: 测试: 有 extract.all.[*].css
+
     await browser.close()
 }
 

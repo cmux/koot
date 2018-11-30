@@ -99,10 +99,5 @@ module.exports = async (kootConfig = {}) => {
     //
     // ========================================================================
 
-
-    console.log({
-        data,
-        'process.env.SERVER_PORT': process.env.SERVER_PORT
-    })
     return data
 }

@@ -120,6 +120,8 @@ describe('测试: React SPA 项目', async () => {
                 }
             })
 
+            // TODO: 测试: 有 extract.all.[*].css
+
             if (fs.existsSync(dist))
                 fs.removeSync(dist)
 

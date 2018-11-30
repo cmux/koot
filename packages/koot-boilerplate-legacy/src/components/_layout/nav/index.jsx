@@ -36,5 +36,5 @@ const Nav = props => {
 }
 
 export default extend({
-    styles: require('./styles.less')
+    styles: require('./styles.component.less')
 })(Nav)

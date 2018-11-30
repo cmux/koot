@@ -6,6 +6,13 @@ import {
     resetServerTimestamp
 } from '@store/infos/actions'
 
+/**
+ * 检查组件数据是否已经准备/读取完毕
+ * @param {Object} props 
+ * @returns {Boolean}
+ */
+const checkData = (props) => !!props.serverTimestamp
+
 @extend({
     connect: (state) => ({
         localeId: state.localeId,
@@ -18,26 +25,29 @@ import {
             { 'page-name': 'extend' },
         ]
     }),
-    styles: require('./styles.less'),
-    data: {
-        fetch: (state, renderProps, dispatch) => (
-            new Promise(resolve => {
-                dispatch(updateServerTimestamp())
-                setTimeout(() => resolve(), 200)
-            })
-        ),
-        check: (state, renderProps) => {
-            // console.log(renderProps, state)
-            return !!renderProps.serverTimestamp
-        }
-    },
+    styles: require('./styles.component.less'),
 
-    // data: (state, renderProps, dispatch) => (
-    //     new Promise(resolve => {
-    //         dispatch(updateServerTimestamp())
-    //         setTimeout(() => resolve(), 200)
-    //     })
-    // )
+    // data: {
+    //     fetch: (state, renderProps, dispatch) => {
+    //         return new Promise(resolve => {
+    //             dispatch(updateServerTimestamp())
+    //             setTimeout(() => resolve(), 200)
+    //         })
+    //     },
+    //     check: (state, renderProps) => {
+    //         // console.log(renderProps, state)
+    //         return !!renderProps.serverTimestamp
+    //     }
+    // },
+
+    data: (state, renderProps, dispatch) => {
+        if (checkData(renderProps))
+            return true
+        return new Promise(resolve => {
+            dispatch(updateServerTimestamp())
+            setTimeout(() => resolve(), 200)
+        })
+    }
 })
 class PageExtend extends React.Component {
     reset = false
@@ -57,7 +67,7 @@ class PageExtend extends React.Component {
     }
 
     render() {
-        if (!this.props.loaded)
+        if (!checkData(this.props))
             return <div>LOADING...</div>
 
         return (

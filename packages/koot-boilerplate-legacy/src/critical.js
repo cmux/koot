@@ -1,3 +1,5 @@
+require('./critical.less')
+
 // Critical 过程
 const doCricital = () => {
 
@@ -5,9 +7,6 @@ const doCricital = () => {
     if (__DEV__) console.log('🚨 Initializing: critical process...')
 
     self.isCriticalInit = true
-
-    // 加载最优先CSS
-    require('./critical.g.less')
 
     // App 初始化失败
     self.onInitError = () => {
