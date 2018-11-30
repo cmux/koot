@@ -6,9 +6,6 @@ import Main from './_layout/main'
 
 let stateShowed = false
 
-require('./app.g.less')
-require('./app.2.g.less')
-
 @extend({
     connect: state => {
         if (__CLIENT__ && __DEV__ && !stateShowed) {

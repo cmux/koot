@@ -1,8 +1,6 @@
 import React from 'react'
 import { extend } from 'koot'
 
-require('./test.g.less')
-
 export default extend({
     pageinfo: (/*state, renderProps*/) => ({
         title: __('title'),
