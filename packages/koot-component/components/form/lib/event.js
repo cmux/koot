@@ -5,10 +5,9 @@
  * @param {Object} configItem 
  */
 export const onSubmitHandler = ( configItem ) => {
-    console.info('event.js - onSubmitHandler')
-    const { __rootProps } = configItem;
+    const { __root, __rootProps } = configItem;
     const { onSubmit } = __rootProps;
-    const formData = __rootProps.form.getFieldsValue();
+    const formData = __root.fieldStore.getFieldValues();
     onSubmit && onSubmit(formData);
 }
 
@@ -18,9 +17,8 @@ export const onSubmitHandler = ( configItem ) => {
  * @param {Object} configItem 
  */
 export const onChangeHandler = ( configItem ) => {
-    console.info('event.js - onChangeHandler')
-    const { __rootProps } = configItem;
+    const { __root, __rootProps } = configItem;
     const { onChange } = __rootProps;
-    const formData = __rootProps.form.getFieldsValue();
+    const formData = __root.fieldStore.getFieldValues();
     onChange && onChange(formData);
 }
