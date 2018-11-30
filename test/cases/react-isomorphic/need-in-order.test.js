@@ -101,6 +101,16 @@ const waitForPort = async (child, regex = /port.*\[32m([0-9]+)/) => await new Pr
 })
 
 /**
+ * 从配置文件中分析服务器端口号
+ * @param {String} dir 
+ * @returns {number} port
+ */
+const getPortFromConfig = async (dir) => {
+    const config = require(path.resolve(dir, 'koot.config.js'))
+    return require('../../../packages/koot/utils/get-port')(config.port)
+}
+
+/**
  * 测试项目
  * @async
  * @param {Number} port 
@@ -269,7 +279,9 @@ describe('测试: React 同构项目', async () => {
                 // child.stdout.pipe(process.stdout)
                 // child.stderr.pipe(process.stderr)
                 // console.log('===============')
-                const port = await waitForPort(child)
+
+                await waitForPort(child)
+                const port = await getPortFromConfig(dir)
                 child.stderr.on('data', err => {
                     errors.push(err)
                 })
@@ -342,7 +354,8 @@ describe('测试: React 同构项目', async () => {
                     )
                     const errors = []
 
-                    const port = await waitForPort(child)
+                    await waitForPort(child)
+                    const port = await getPortFromConfig(dir)
                     child.stderr.on('data', err => {
                         errors.push(err)
                     })

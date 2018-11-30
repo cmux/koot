@@ -12,6 +12,7 @@ module.exports = (port, env = process.env.WEBPACK_BUILD_ENV) => {
         : process.env.SERVER_PORT
 
     if (typeof port === 'object') {
+        if (!env) env = 'prod'
         if (typeof port[env] !== 'undefined')
             return port[env]
         return defaultPort
