@@ -8,6 +8,7 @@ const doCricital = () => {
 
     // 加载最优先CSS
     require('./critical.g.less')
+    require('./critical.test.g.less')
 
     // App 初始化失败
     self.onInitError = () => {

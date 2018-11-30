@@ -7,6 +7,7 @@ const KootI18nPlugin = require('../plugins/i18n')
 const DevModePlugin = require('koot-webpack/plugins/dev-mode')
 const SpaTemplatePlugin = require('koot-webpack/plugins/spa-template')
 const GenerateChunkmapPlugin = require('koot-webpack/plugins/generate-chunkmap')
+const CreateGeneralCssBundlePlugin = require('koot-webpack/plugins/create-general-css-bundle')
 
 const { keyConfigBuildDll, keyConfigOutputPathShouldBe } = require('../../../defaults/before-build')
 const { hmrOptions } = require('../../../defaults/webpack-dev-server')
@@ -171,6 +172,11 @@ module.exports = async (kootBuildConfig = {}) => {
                 } else {
                     result.plugins.push(
                         await new GenerateChunkmapPlugin({
+                            localeId: isSeperateLocale ? localeId : undefined,
+                        })
+                    )
+                    result.plugins.push(
+                        await new CreateGeneralCssBundlePlugin({
                             localeId: isSeperateLocale ? localeId : undefined,
                         })
                     )

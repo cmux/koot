@@ -24,7 +24,8 @@ const factoryConfig = async (/*{
             __SPA__: true,
         }),
         new MiniCssExtractPlugin({
-            filename: "[name].[chunkhash].css",
+            // filename: "[name].[chunkhash].css",
+            filename: "extract.[id].[chunkhash].css",
             // chunkFilename: "[id].css"
         }),
     ],

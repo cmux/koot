@@ -7,7 +7,7 @@ const chalk = require('chalk')
 const webpack = require('webpack')
 const WebpackDevServer = require('webpack-dev-server')
 
-const resetCssLoader = require('./loaders/css/reset')
+const resetCssLoader = require('koot-webpack/loaders/css/reset')
 
 const {
     filenameWebpackDevServerPortTemp, keyFileProjectConfigTemp,
