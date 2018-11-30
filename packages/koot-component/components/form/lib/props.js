@@ -84,7 +84,7 @@ const textAreaHandler = (props) => {
  * @param {Object} configItem 
  */
 export const getConfigItemProps = (configItem = {}) => {
-    const { __rootProps, type } = configItem;
+    const { type } = configItem;
 
     let props = Object.assign({}, configItem);
 
@@ -98,10 +98,10 @@ export const getConfigItemProps = (configItem = {}) => {
     delete props.defaultValue
     delete props.__parent
     delete props.__rootProps
+    delete props.__root
     
     if( typeof configItem.disabled === 'function' ) {
-        const formData = __rootProps.form.getFieldsValue();
-        props.disabled = configItem.disabled(formData || {});
+        props.disabled = configItem.disabled();
     }
 
     // 根据类型处理

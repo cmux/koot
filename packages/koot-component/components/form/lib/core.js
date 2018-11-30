@@ -98,6 +98,7 @@ export const renderChildrenHandler = (configItem = {}) => {
         childrenItem.key = key;
         childrenItem.__parent = configItem;
         childrenItem.__rootProps = configItem.__rootProps;
+        childrenItem.__root = configItem.__root;
         // childrenItem.__refs = configItem.__refs;
         return renderTransfer(childrenItem);
     })

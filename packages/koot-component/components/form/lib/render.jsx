@@ -24,7 +24,6 @@ const RadioGroup = Radio.Group;
 const Option = Select.Option;
 const { MonthPicker, RangePicker, WeekPicker } = DatePicker;
 
-
 /**
  * antd Form.getFieldDecorator 包装模版函数
  * 
@@ -32,10 +31,10 @@ const { MonthPicker, RangePicker, WeekPicker } = DatePicker;
  * @param {*} reactDom 
  */
 const antdFieldDecorator = ( configItem, reactDom ) => {
-    const { defaultValue, __rootProps } = configItem;
-    const { getFieldDecorator } = __rootProps.form;
+    const { defaultValue, __root } = configItem;
+    // const { getFieldDecorator } = __rootProps.form;
     const name = getName(configItem);  
-    const finalComponent = getFieldDecorator(
+    const finalComponent = __root.fieldDecorator(
         name,
         {
             // ... props
@@ -119,8 +118,6 @@ export const renderColHandler = (configItem = {}) => {
         </Col>
     )
 }
-
-
 
 /**
  * 渲染 antd Input 组件
