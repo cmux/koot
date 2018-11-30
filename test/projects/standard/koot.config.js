@@ -189,8 +189,8 @@ module.exports = {
     // i18n: false,
     i18n: [
         ['zh', './src/locales/zh.json'],
-        // ['zh-tw', './src/locales/zh-tw.json'],
-        // ['en', './src/locales/en.json'],
+        ['zh-tw', './src/locales/zh-tw.json'],
+        ['en', './src/locales/en.json'],
     ],
     // i18n: {
     //     type: 'redux', // 仅影响 client-prod 环境

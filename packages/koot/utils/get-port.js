@@ -1,4 +1,4 @@
-require('./init-node-env')()
+// require('./init-node-env')()
 
 /**
  * 获取当前环境的服务器端口号
