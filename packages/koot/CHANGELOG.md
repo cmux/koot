@@ -15,7 +15,7 @@
     - 组件 CSS 规则
       - 所有的组件 CSS 必须通过 `extend` 高阶组件的 `styles` 选项调用
       - 这些 CSS 文件必须有一个名为 `.component` 或 `.[name]__component` 的 className
-        - 这个 className 会被更换为 hash 结果，如 `.a85c6k` 或 `.nav__bjj15a`
+        - 该 className 会被更换为 hash 结果，如 `.a85c6k` 或 `.nav__bjj15a`
       - `props.className` 会传入到对应的组件，其值为与上述结果对应的 hash 后的 className
 
 ## 0.7.4
