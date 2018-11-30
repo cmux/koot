@@ -6,6 +6,7 @@ module.exports = (options = {}) => {
         filemap,
         entrypoints,
         needInjectCritical,
+        compilation,
     } = options
 
     return validateInject({
@@ -13,6 +14,7 @@ module.exports = (options = {}) => {
 
         filemap,
         entrypoints,
+        compilation,
 
         title: process.env.KOOT_PROJECT_NAME,
         metas: '',

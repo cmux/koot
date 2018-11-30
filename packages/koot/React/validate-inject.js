@@ -26,6 +26,7 @@ module.exports = (options = {}) => {
 
         filemap = {},
         entrypoints = {},
+        compilation,
 
         localeId,
 
@@ -46,7 +47,14 @@ module.exports = (options = {}) => {
         htmlLang: injectHtmlLang(localeId),
         title,
         metas: injectMetas(metaHtml),
-        styles: injectStyles(needInjectCritical.styles, injectCache, filemap, stylesHtml),
+        styles: injectStyles({
+            needInjectCritical: needInjectCritical.styles,
+            injectCache,
+            filemap,
+            stylesHtml,
+            localeId,
+            compilation,
+        }),
 
         react: reactHtml,
 

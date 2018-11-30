@@ -162,6 +162,12 @@ module.exports = async (kootBuildConfig = {}) => {
             }
 
             if (!createDll) {
+                result.plugins.push(
+                    await new CreateGeneralCssBundlePlugin({
+                        localeId: isSeperateLocale ? localeId : undefined,
+                    })
+                )
+
                 if (TYPE === 'spa') {
                     result.plugins.push(
                         new SpaTemplatePlugin({
@@ -172,11 +178,6 @@ module.exports = async (kootBuildConfig = {}) => {
                 } else {
                     result.plugins.push(
                         await new GenerateChunkmapPlugin({
-                            localeId: isSeperateLocale ? localeId : undefined,
-                        })
-                    )
-                    result.plugins.push(
-                        await new CreateGeneralCssBundlePlugin({
                             localeId: isSeperateLocale ? localeId : undefined,
                         })
                     )

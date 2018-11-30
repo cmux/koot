@@ -38,12 +38,15 @@ module.exports = (needInjectCritical, injectCache, entrypoints, reduxHtml) => {
         // console.log('entrypoints', entrypoints)
         defaultEntrypoints.forEach(key => {
             if (Array.isArray(entrypoints[key])) {
-                r += entrypoints[key].map(file => {
-                    // console.log(file)
-                    // if (isDev)
-                    // return `<script type="text/javascript" src="${getClientFilePath(true, file)}" defer></script>`
-                    return `<script type="text/javascript" src="${getClientFilePath(true, file)}" defer></script>`
-                }).join('')
+                r += entrypoints[key]
+                    .filter(file => /\.(js|jsx|mjs|ejs)$/.test(file))
+                    .map(file => {
+                        // console.log(file)
+                        // if (isDev)
+                        // return `<script type="text/javascript" src="${getClientFilePath(true, file)}" defer></script>`
+                        return `<script type="text/javascript" src="${getClientFilePath(true, file)}" defer></script>`
+                    })
+                    .join('')
             }
         })
 

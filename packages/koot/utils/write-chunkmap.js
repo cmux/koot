@@ -43,7 +43,11 @@ const log = (obj, spaceCount = 1, deep = 2) => {
  * @param {*} localeId 
  * @returns {Object} 打包文件对应表 (chunkmap)
  */
-module.exports = async (stats, localeId) => {
+module.exports = async (compilation, localeId) => {
+    if (typeof compilation !== 'object') return {}
+
+    const stats = compilation.getStats()
+
     const chunkmap = {}
     const entryChunks = {}
 
@@ -75,7 +79,7 @@ module.exports = async (stats, localeId) => {
     }
 
     // 生成文件对照表
-    chunkmap['.files'] = generateFilemap(stats, dirRelative)
+    chunkmap['.files'] = generateFilemap(compilation, dirRelative)
 
     // 生成所有入口和代码片段所输出的文件的对照表
     for (let id in stats.compilation.chunks) {

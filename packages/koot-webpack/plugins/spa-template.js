@@ -86,7 +86,7 @@ class SpaTemplatePlugin {
             const appType = await getAppType()
 
             // 获取并写入 chunkmap
-            await writeChunkmap(compilation.getStats())
+            await writeChunkmap(compilation)
             const {
                 ".files": filemap,
                 ".entrypoints": entrypoints,
@@ -112,6 +112,7 @@ class SpaTemplatePlugin {
                     case 'ReactSPA': {
                         return require('../libs/require-koot')(`ReactSPA/inject`)({
                             filemap,
+                            compilation,
                             entrypoints,
                             localeId,
                             needInjectCritical: require('../libs/require-koot')(`React/inject/is-need-inject-critical`)(template)
