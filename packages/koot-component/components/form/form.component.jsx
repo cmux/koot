@@ -41,8 +41,6 @@ class FormComponent extends Component {
             __rootProps: props
         })
 
-        // const fieldValueObject = this.getFieldsValueObject(nextConfig);
-        // this.oldFormData = formData;
         return renderTransfer(nextConfig);
     }
 
@@ -64,25 +62,25 @@ class FormComponent extends Component {
         return true;
     }
 
-    getFieldsValueObject = (configObject) => {
-        let result = {}
-        if (configObject &&
-            'name' in configObject &&
-            'value' in configObject
-        ) {
-            result[configObject.name] = configObject.defaultValue
-        }
-        if (configObject.children && configObject.children.length > 0) {
-            const len = configObject.children.length;
-            const list = configObject.children;
-            for (let index = 0; index < len; index++) {
-                const element = list[index];
-                const childrenResult = this.getFieldsValueObject(element);
-                result = Object.assign({}, result, childrenResult)
-            }
-        }
-        return result;
-    }
+    // getFieldsValueObject = (configObject) => {
+    //     let result = {}
+    //     if (configObject &&
+    //         'name' in configObject &&
+    //         'value' in configObject
+    //     ) {
+    //         result[configObject.name] = configObject.defaultValue
+    //     }
+    //     if (configObject.children && configObject.children.length > 0) {
+    //         const len = configObject.children.length;
+    //         const list = configObject.children;
+    //         for (let index = 0; index < len; index++) {
+    //             const element = list[index];
+    //             const childrenResult = this.getFieldsValueObject(element);
+    //             result = Object.assign({}, result, childrenResult)
+    //         }
+    //     }
+    //     return result;
+    // }
 
     fieldDecorator = (name, fieldOption) => {
         const inputProps = this.getDecoratorProps(name, fieldOption);
@@ -102,7 +100,6 @@ class FormComponent extends Component {
         }
         const {
             trigger,
-            validateTrigger = trigger,
             valuePropName
         } = fieldOption;
         const inputProps = {
