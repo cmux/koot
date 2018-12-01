@@ -17,6 +17,9 @@
       - 这些 CSS 文件必须有一个名为 `.component` 或 `.[name]__component` 的 className
         - 该 className 会被更换为 hash 结果，如 `.a85c6k` 或 `.nav__bjj15a`
       - `props.className` 会传入到对应的组件，其值为与上述结果对应的 hash 后的 className
+- React
+  - 高阶组件 `extend()`
+    - `connect` 现在支持传入 Array
 
 ## 0.7.4
 **2018-11-29**

@@ -313,6 +313,8 @@ export default (options = {}) => (WrappedComponent) => {
         KootComponent = connect(() => ({}))(KootComponent)
     } else if (typeof _connect === 'function') {
         KootComponent = connect(_connect)(KootComponent)
+    } else if (Array.isArray(_connect)) {
+        KootComponent = connect(..._connect)(KootComponent)
     }
 
     return KootComponent
