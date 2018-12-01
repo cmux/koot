@@ -8,6 +8,7 @@
         "lerna:bootstrap": "lerna bootstrap --hoist",
         "lerna:publish": "lerna publish",
         "lerna:version": "lerna version",
+        "lerna:version:only-core": "lerna version --ignore-changes packages/koot-component/** packages/koot-redux/** packages/koot-router/**",
         "pretest": "node ./test/pre-test.js",
         "test": "jest \"^((?!need-in-order).)*\\.js$\" && npm run test:react",
         "test:factoryconfig": "jest ./test/cases/actory-config/test.js",
