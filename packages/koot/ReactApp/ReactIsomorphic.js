@@ -184,6 +184,13 @@ export default class ReactIsomorphic {
 
                 // 把同构时候服务端预处理数据补充到html中(根据页面逻辑动态修改html内容)
                 const htmlTool = await ServerRenderHtmlExtend({ store, renderProps, ctx })
+                const koot = {
+                    store,
+                    history,
+                    localeId
+                }
+
+                const localeId = store.getState().localeId
 
                 // 把react部分渲染出html片段，并插入到html中
                 // TODO: 变量提升相关
@@ -196,8 +203,6 @@ export default class ReactIsomorphic {
                         {...renderProps}
                     />
                 ))
-
-                const localeId = store.getState().localeId
                 // console.log({
                 //     store,
                 //     state: store.getState(),

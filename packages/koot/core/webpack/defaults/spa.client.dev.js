@@ -13,8 +13,8 @@ const factoryConfig = async ({
     output: {
         // -_-_-_-_-_- is trying to fix a pm2 bug that will currupt [name] value
         // check enter.js for the fix
-        filename: (localeId ? localeId : '') + `.entry.-_-_-_-_-_-[name]-_-_-_-_-_-.js`,
-        chunkFilename: (localeId ? localeId : '') + `.chunk.-_-_-_-_-_-[name]-_-_-_-_-_-.js`,
+        filename: (localeId ? localeId : '') + `.entry.-_-_-_-_-_-[chunkhash]-_-_-_-_-_-.js`,
+        chunkFilename: (localeId ? localeId : '') + `.chunk.-_-_-_-_-_-[chunkhash]-_-_-_-_-_-.js`,
         path: '/',
         publicPath: `/`
     },
@@ -28,7 +28,7 @@ const factoryConfig = async ({
         }),
         new MiniCssExtractPlugin({
             // filename: (localeId ? localeId : '') + ".[name].css",
-            filename: (localeId ? localeId : '') + ".extract.[id].[name].css",
+            filename: (localeId ? localeId : '') + ".extract.[id].[chunkhash].css",
             // chunkFilename: "[id].css"
         }),
     ],
