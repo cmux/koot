@@ -519,9 +519,9 @@ export const renderSubmitButtonHandler = (configItem = {}) => {
  * @param {Object} configItem 
  */
 export const renderTextHandler = (configItem = {}) => {
-    const { label, key } = configItem;
+    const props = getConfigItemProps(configItem);
     return (
-        <span key={key}>{label}</span>
+        <span {...props}>{props.label}</span>
     )
 }
 
