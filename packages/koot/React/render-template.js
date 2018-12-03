@@ -15,10 +15,13 @@ const getClientFilePath = require('../utils/get-client-file-path')
 module.exports = ({
     template = DEFAULT_TEMPLATE,
     inject = {},
-    state = {},
+    store, state,
     compilation,
 }) => {
-    if (typeof state === 'object' && typeof state.getState === 'function')
+
+    if (typeof state !== 'object' && typeof store === 'object' && typeof store.getState === 'function')
+        state = store.getState()
+    else if (typeof state === 'object' && typeof state.getState === 'function')
         state = state.getState()
 
     try {

@@ -184,6 +184,10 @@ const doTest = async (port) => {
 
     // TODO: 测试: 所有 Webpack 结果资源的访问
 
+    // TODO: 测试: inject 的函数用法
+
+    // TODO: 测试: extend connect 的 Array 用法
+
     await browser.close()
 }
 

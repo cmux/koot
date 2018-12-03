@@ -63,7 +63,7 @@ export default class ReactIsomorphic {
         */
 
         const {
-            onServerRender,
+            beforeRouterMatch, afterStoreUpdate,
             inject,
             configStore, store: _store,
             routes,
@@ -157,8 +157,8 @@ export default class ReactIsomorphic {
                 const history = syncHistoryWithStore(memoryHistory, store)
 
                 // 补充服务端提供的信息数据到store中
-                if (typeof onServerRender === 'function') {
-                    await onServerRender({ ctx, store })
+                if (typeof beforeRouterMatch === 'function') {
+                    await beforeRouterMatch({ ctx, store })
                 }
 
                 // 根据router计算出渲染页面需要的数据，并把渲染需要的数据补充到store中
@@ -184,6 +184,10 @@ export default class ReactIsomorphic {
 
                 // 把同构时候服务端预处理数据补充到html中(根据页面逻辑动态修改html内容)
                 const htmlTool = await ServerRenderHtmlExtend({ store, renderProps, ctx })
+
+                if (typeof afterStoreUpdate === 'function') {
+                    await afterStoreUpdate({ ctx, store })
+                }
 
                 // 把react部分渲染出html片段，并插入到html中
                 // TODO: 变量提升相关

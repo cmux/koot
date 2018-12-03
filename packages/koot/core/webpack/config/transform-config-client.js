@@ -111,6 +111,11 @@ module.exports = async (kootBuildConfig = {}) => {
             if (analyze) {
                 result.output.filename = 'entry-[id].[name].js'
                 result.output.chunkFilename = 'chunck-[id].[name].js'
+            } else {
+                if (!result.output.filename)
+                    result.output.filename = 'entry.[chunkhash].js'
+                if (!result.output.chunkFilename)
+                    result.output.chunkFilename = 'chunk.[chunkhash].js'
             }
 
             // [开发模式]
