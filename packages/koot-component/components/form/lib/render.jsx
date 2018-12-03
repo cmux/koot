@@ -1,17 +1,5 @@
 import React from 'react';
-import { 
-    Form, 
-    Row,
-    Col,
-    Input, 
-    Button,
-    TimePicker,
-    DatePicker,
-    Select,
-    Switch,
-    Checkbox,
-    Radio
-} from 'antd';
+import { Form, Row, Col, Input, Button, TimePicker, DatePicker, Select, Switch, Checkbox, Radio} from 'antd';
 import { renderChildrenHandler, isNeedWrapFormItem, getKey, getName } from './core.js';
 import { getConfigItemProps } from './props.js';
 import { onSubmitHandler } from './event.js';
@@ -550,8 +538,6 @@ export const renderCustomizeHandler = (configItem = {}) => {
         CustomizeComponent
     )
 }
-
-
 
 /**
  * @description 最终结构渲染处理

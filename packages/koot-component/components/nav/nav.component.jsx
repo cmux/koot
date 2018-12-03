@@ -94,7 +94,7 @@ const renderMenuItemContent = ( routeItem ) => {
 const renderMenuList = ( _baseUrl, _routeList ) => {
     cache.abbreviationList = [];
     return (
-        _routeList.map((routeItem, routeIndex) => {
+        _routeList.map((routeItem) => {
             const currentUrl = `${_baseUrl}${routeItem.path}`;
             const key = `${currentUrl}`;
             if( routeItem.meta ){

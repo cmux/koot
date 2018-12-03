@@ -1,5 +1,7 @@
 import * as Renders from './render.jsx';
 
+import * as HigherOrderRenders from './higher-order-render';
+
 import * as Types from './constants.js';
 
 /**
@@ -44,6 +46,19 @@ export const renderTransfer = (configItem = {}) => {
             return Renders.renderInputGroupHandler(configItem);
         case Types.PASSWORD:
             return Renders.renderPasswordHandler(configItem);
+        case Types.SELECT:
+            return Renders.renderSelectHandler(configItem);
+        case Types.SWITCH:
+            return Renders.renderSwitchHandler(configItem);
+        case Types.CHECK_BOX:
+            return Renders.renderCheckboxHandler(configItem);
+        case Types.RADIO:
+            return Renders.renderRadioHandler(configItem);
+        case Types.UPLOAD:
+            return Renders.renderUploadHandler(configItem);
+        case Types.BUTTON:
+            return Renders.renderButtonHandler(configItem);
+        
         // 日期组件部分
         case Types.DATE_PICKER:
             return Renders.renderDatePickerHandler(configItem);
@@ -59,27 +74,17 @@ export const renderTransfer = (configItem = {}) => {
             return Renders.renderDateRangePicker(configItem);
         case Types.DATE_TIME_RANGE_PICKER:
             return Renders.renderDateTimeRangePicker(configItem);
-            
-        case Types.SELECT:
-            return Renders.renderSelectHandler(configItem);
-        case Types.SWITCH:
-            return Renders.renderSwitchHandler(configItem);
-        case Types.CHECK_BOX:
-            return Renders.renderCheckboxHandler(configItem);
-        case Types.RADIO:
-            return Renders.renderRadioHandler(configItem);
-        case Types.UPLOAD:
-            return Renders.renderUploadHandler(configItem);
-        case Types.BUTTON:
-            return Renders.renderButtonHandler(configItem);
-        case Types.SUBMIT:
-            return Renders.renderSubmitButtonHandler(configItem);
-        
         // 自定义扩展组件部分
         case Types.TEXT:
             return Renders.renderTextHandler(configItem);
         case Types.CUSTOMIZE:
             return Renders.renderCustomizeHandler(configItem);
+        case Types.SUBMIT:
+            return Renders.renderSubmitButtonHandler(configItem);
+
+        // 高阶扩展部分
+        case Types.SEARCH_FILTER_FORM:
+            return HigherOrderRenders.renderSearchFilterFormHandler(configItem);
         default:
             return '';
     }

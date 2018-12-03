@@ -19,7 +19,7 @@ class FormComponent extends Component {
 
     constructor(props) {
         super(props);
-        this.fieldStore = CreateFieldStore({}); 
+        this.fieldStore = CreateFieldStore(); 
         this.cacheDecoratorOnChangeBindFn = {};
     }
 
@@ -29,10 +29,15 @@ class FormComponent extends Component {
         const formFieldValues = this.fieldStore.getFieldValues();
         const oldFormFieldValues = this.fieldStore.getOldFieldValues();
         const formData = Object.keys(formFieldValues).length === 0 ? undefined : formFieldValues;
-
+        const oldFormData = Object.keys(oldFormFieldValues).length === 0 ? formData : oldFormFieldValues;
+        
         let nextConfig;
         if (typeof config === 'function') {
-            nextConfig = config(formData, oldFormFieldValues);
+            nextConfig = config(formData, oldFormData);
+            if( typeof formData === 'undefined' ){
+                const initData = this.getFieldsValueObject(nextConfig);
+                this.fieldStore.setFields(initData);
+            }
         } else {
             nextConfig = config;
         }
@@ -62,25 +67,25 @@ class FormComponent extends Component {
         return true;
     }
 
-    // getFieldsValueObject = (configObject) => {
-    //     let result = {}
-    //     if (configObject &&
-    //         'name' in configObject &&
-    //         'value' in configObject
-    //     ) {
-    //         result[configObject.name] = configObject.defaultValue
-    //     }
-    //     if (configObject.children && configObject.children.length > 0) {
-    //         const len = configObject.children.length;
-    //         const list = configObject.children;
-    //         for (let index = 0; index < len; index++) {
-    //             const element = list[index];
-    //             const childrenResult = this.getFieldsValueObject(element);
-    //             result = Object.assign({}, result, childrenResult)
-    //         }
-    //     }
-    //     return result;
-    // }
+    getFieldsValueObject = (configObject) => {
+        let result = {}
+        if (configObject &&
+            'name' in configObject &&
+            'value' in configObject
+        ) {
+            result[configObject.name] = configObject.value
+        }
+        if (configObject.children && configObject.children.length > 0) {
+            const len = configObject.children.length;
+            const list = configObject.children;
+            for (let index = 0; index < len; index++) {
+                const element = list[index];
+                const childrenResult = this.getFieldsValueObject(element);
+                result = Object.assign({}, result, childrenResult)
+            }
+        }
+        return result;
+    }
 
     fieldDecorator = (name, fieldOption) => {
         const inputProps = this.getDecoratorProps(name, fieldOption);
@@ -102,18 +107,38 @@ class FormComponent extends Component {
             trigger,
             valuePropName
         } = fieldOption;
+
+        // if( name && typeof this.fieldStore.getFieldValue(name) === 'undefined' ){
+        //     .info('name', name, fieldOption[valuePropName])
+        //     // 初始化 store 内的值
+        //     this.fieldStore.setFields({
+        //         [name]: fieldOption[valuePropName]
+        //     });
+        // }
+        
         const inputProps = {
-            [valuePropName]: this.fieldStore.getFieldValue(name)
+            [valuePropName]: userFieldOption[valuePropName] || this.fieldStore.getFieldValue(name)
         };
+
         if (trigger) {
             const fn = this.getCacheDecoratorOnChangeBindFn(name, trigger, this.decoratorOnChangeHandler);
             inputProps[trigger] = fn;
         }
+
         return inputProps
     }
 
+    getValueFromEvent(e) {
+        // To support custom element
+        if (!e || !e.target) {
+            return e;
+        }
+        const { target } = e;
+        return target.type === 'checkbox' ? target.checked : target.value;
+    }
+
     decoratorOnChangeHandler = (name, actionName, event) => {
-        const value = event.target.value;
+        const value = this.getValueFromEvent(event);
         this.setFields({
             [name]: value
         })

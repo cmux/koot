@@ -1,6 +1,7 @@
 class FileStore {
+
     constructor(fileds){
-        this.fileds = fileds;
+        this.fileds = fileds ||{};
         this.oldFileds = {}
     }
     

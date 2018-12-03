@@ -62,7 +62,9 @@ export const EMAIL = 'email';
 
 export const PHONE_NUMBER = 'phoneNumber';
 
+// 高阶自定义渲染
+export const SEARCH_FILTER_FORM = 'searchFilterForm';
 
 // other
 
-export const LAYOUT_TYPES = [FORM, FORM_ITEM, ROW, COL];
+export const LAYOUT_TYPES = [ FORM, FORM_ITEM, ROW, COL, SEARCH_FILTER_FORM ];
