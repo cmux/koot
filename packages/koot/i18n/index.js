@@ -14,8 +14,6 @@ export let localeId = null
 export const setLocaleId = newLlocalId => {
     if (typeof newLlocalId === 'undefined' || newLlocalId === null)
         return
-    if (__DEV__ && __SERVER__)
-        console.log(`\n  \x1b[93m[koot/i18n]\x1b[0m setLocaleId -> \x1b[32m${newLlocalId}\x1b[0m\n`)
     localeId = newLlocalId
     kootSetLocaleId(localeId)
     return localeId

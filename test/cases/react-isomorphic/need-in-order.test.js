@@ -196,6 +196,10 @@ const doTest = async (port) => {
 
     // TODO: 测试: 有 extract.all.[*].css
 
+    // TODO: 测试: inject 的函数用法
+
+    // TODO: 测试: extend connect 的 Array 用法
+
     await browser.close()
 }
 

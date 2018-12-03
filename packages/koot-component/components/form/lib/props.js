@@ -96,6 +96,7 @@ export const getConfigItemProps = (configItem = {}) => {
     delete props.render
     delete props.initialValue
     delete props.defaultValue
+    delete props.value
     delete props.__parent
     delete props.__rootProps
     delete props.__root

@@ -31,14 +31,14 @@ const { MonthPicker, RangePicker, WeekPicker } = DatePicker;
  * @param {*} reactDom 
  */
 const antdFieldDecorator = ( configItem, reactDom ) => {
-    const { defaultValue, __root } = configItem;
+    const { value, __root } = configItem;
     // const { getFieldDecorator } = __rootProps.form;
     const name = getName(configItem);  
     const finalComponent = __root.fieldDecorator(
         name,
         {
             // ... props
-            initialValue: defaultValue
+            value: value
         }
     )(reactDom)
     return finalRenderHandler(configItem, finalComponent);

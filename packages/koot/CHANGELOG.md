@@ -17,9 +17,17 @@
       - 这些 CSS 文件必须有一个名为 `.component` 或 `.[name]__component` 的 className
         - 该 className 会被更换为 hash 结果，如 `.a85c6k` 或 `.nav__bjj15a`
       - `props.className` 会传入到对应的组件，其值为与上述结果对应的 hash 后的 className
+
+## 0.7.5
+**2018-12-03**
 - React
   - 高阶组件 `extend()`
     - `connect` 现在支持传入 Array
+- React同构 (`ReactApp`)
+  - 确保服务器的 `onRender` 生命周期仅响应可用的请求，同时确保此时的数据为最新可用的数据
+- 错误修正
+  - 修复某些情况下，模板注入 (`inject`) 使用的 `state` 失效的问题
+  - 修复某些情况下，Webpack 打包因出错挂起的问题
 
 ## 0.7.4
 **2018-11-29**
