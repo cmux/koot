@@ -230,10 +230,8 @@ export default async (app, {
 
         renderCache,
 
-        onServerRender: async (obj) => {
-            if (__DEV__) console.log(' ')
-
-            let { ctx, store } = obj
+        beforeRouterMatch: async (o = {}) => {
+            let { ctx, store } = o
 
             // 告诉前端，当前的url是啥
             store.dispatch({ type: TELL_CLIENT_URL, data: ctx.origin })
@@ -284,21 +282,28 @@ export default async (app, {
                 if (__DEV__) doI18nRegister()
 
                 store.dispatch({ type: CHANGE_LANGUAGE, data: lang })
-                i18nOnServerRender(obj)
+                i18nOnServerRender(o)
             }
-
-            if (__DEV__)
+        },
+        afterStoreUpdate: async (o) => {
+            if (__DEV__) {
+                console.log(' ')
                 console.log(
-                    `\n\n`
-                    + `\x1b[36m⚑\x1b[0m `
+                    `  `
+                    + `\x1b[93m[koot/i18n]\x1b[0m `
+                    + `setLocaleId -> \x1b[32m${o.store.getState().localeId}\x1b[0m\n`
+                )
+                console.log(
+                    `\x1b[36m⚑\x1b[0m `
                     + `\x1b[93m[koot/server]\x1b[0m `
                     + `callback: \x1b[32m${'onRender'}\x1b[0m`
                     + `({ ctx, store })`
                     + `\n`
                 )
+            }
 
             if (typeof onRender === 'function')
-                await onRender(obj)
+                await onRender(o)
         }
     })
 

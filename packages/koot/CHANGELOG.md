@@ -3,6 +3,8 @@
 - React
   - 高阶组件 `extend()`
     - `connect` 现在支持传入 Array
+- React同构 (`ReactApp`)
+  - 确保服务器的 `onRender` 生命周期仅响应可用的请求，同时确保此时的数据为最新可用的数据
 - 错误修正
   - 修复某些情况下，模板注入 (`inject`) 使用的 `state` 失效的问题
   - 修复某些情况下，Webpack 打包因出错挂起的问题
