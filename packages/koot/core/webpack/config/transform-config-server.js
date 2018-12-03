@@ -68,6 +68,10 @@ module.exports = async (kootBuildConfig = {}) => {
         result.output.path = path.resolve(dist, './server')
     if (!result.output.publicPath)
         result.output.publicPath = defaultPublicPathname
+    if (!result.output.filename)
+        result.output.filename = 'entry.[chunkhash].js'
+    if (!result.output.chunkFilename)
+        result.output.chunkFilename = 'chunk.[chunkhash].js'
 
     result.output.publicPath = transformOutputPublicpath(result.output.publicPath)
 

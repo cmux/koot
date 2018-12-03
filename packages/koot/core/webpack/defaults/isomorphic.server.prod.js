@@ -17,7 +17,7 @@ const factoryConfig = async ({
         watch: false,
         output: {
             filename: 'index.js',
-            chunkFilename: 'chunk.[name].[chunkhash].js',
+            chunkFilename: 'chunk.[chunkhash].js',
             path: `${pathRun}/${common.outputPath}/server`,
             // publicPath: `/[need_set_in_app:__webpack_public_path__]/`,
             // publicPath: `/`,

@@ -177,6 +177,9 @@ export default async (app, {
     }
 
     /* 静态目录,用于外界访问打包好的静态文件js、css等 */
+    if (__DEV__) {
+        app.use(middlewareRouterDev)
+    }
     app.use(convert(koaStatic(
         getDirDistPublic(getDistPath()),
         {
@@ -302,7 +305,6 @@ export default async (app, {
     app.use(isomorphic)
 
     if (__DEV__) {
-        app.use(middlewareRouterDev)
         console.log(
             `\n\n`
             + `\x1b[36m⚑\x1b[0m `
