@@ -57,7 +57,6 @@ function respondFromCacheThenNetwork(event) {
 }
 
 function shouldHandleFetch(event) {
-    console.log(event.request)
     return (
         event.request.method.toLowerCase() === 'get'
         && (event.request.url.indexOf(location.origin) > -1)
