@@ -1,6 +1,6 @@
 {
     "name": "koot",
-    "version": "0.6.9",
+    "version": "0.6.10",
     "description": "Koot.js - React isomorphic framework created by CMUX",
     "main": "index.js",
     "sideEffects": false,
@@ -12,6 +12,7 @@
     },
     "scripts": {
         "doc-server": "docsify serve docs",
+        "publish": "npm publish --tag lts",
         "eslint": "eslint \"!(node_modules|logs|dist|dist*)/**/*.+(js|jsx)\"",
         "pretest": "node ./test/pre-test.js",
         "test": "jest",
