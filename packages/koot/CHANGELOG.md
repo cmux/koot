@@ -1,5 +1,9 @@
 ## 0.7.5
 **2018-12-03**
+- 核心
+  - PWA
+    - `service-worker` 默认行为
+      - 现在初始缓存仅有 `.js` 文件
 - React
   - 高阶组件 `extend()`
     - `connect` 现在支持传入 Array

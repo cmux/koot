@@ -70,7 +70,7 @@ const create = async (settings = {}, i18n) => {
         ignores = [],
         pathnameSW = pathname,
     }) => {
-        const files = ['/']
+        const files = []
         const outputFile = (() => {
             let _pathname = pathnameSW
             if (_pathname.substr(0, 1) === '/')
