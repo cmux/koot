@@ -99,6 +99,7 @@ export default async (app, {
         before,
         after,
         renderCache,
+        proxyRequestOrigin = {},
     } = server
     const onRender = server.render || server.onRender
 
@@ -304,7 +305,9 @@ export default async (app, {
 
             if (typeof onRender === 'function')
                 await onRender(o)
-        }
+        },
+
+        proxyRequestOrigin: __DEV__ ? {} : proxyRequestOrigin,
     })
 
     app.use(isomorphic)

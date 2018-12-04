@@ -18,7 +18,7 @@
         - 该 className 会被更换为 hash 结果，如 `.a85c6k` 或 `.nav__bjj15a`
       - `props.className` 会传入到对应的组件，其值为与上述结果对应的 hash 后的 className
 - React SPA
-  - 确保
+  - 对于传入自定 `store` 对象或生成方法的项目，确保生成 `store` 使用的 `history` 对象为浏览器所用对象
 - 更新依赖包
   - minor
     - `less` -> _3.9.0_
@@ -26,11 +26,21 @@
     - `inquirer` -> _6.2.1_
     - `portfinder` -> _1.0.20_
 
+## 0.7.6
+**2018-12-04**
+- 核心
+  - 配置项
+    - **新** `server.proxyRequestOrigin` - 若本 Node.js 服务器是通过其他代理服务器请求的（如 nginx 反向代理），可用这个配置对象声明原请求的信息。详情请参见文档的 [配置](https://koot.js.org/#/config) 章节
+  - PWA
+    - `service-worker` 默认行为调整，现在初始时仅会对 `.js` 文件进行缓存
+- 错误修正
+  - 修复某些情况下，同构服务器启动端口不正确的问题
+
 ## 0.7.5
 **2018-12-03**
 - React
   - 高阶组件 `extend()`
-    - `connect` 现在支持传入 Array
+    - `connect` 现在支持传入 Array，以对应 `react-redux` 的 `connect()` 的多参数情形
 - React同构 (`ReactApp`)
   - 确保服务器的 `onRender` 生命周期仅响应可用的请求，同时确保此时的数据为最新可用的数据
 - 错误修正
