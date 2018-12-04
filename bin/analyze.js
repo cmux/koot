@@ -6,6 +6,7 @@ const program = require('commander')
 // const __ = require('../utils/translate')
 const readBuildConfigFile = require('../utils/read-build-config-file')
 const setEnvFromCommand = require('../utils/set-env-from-command')
+const initNodeEnv = require('../utils/init-node-env')
 
 const kootBuild = require('../core/webpack/enter')
 
@@ -29,6 +30,8 @@ const run = async () => {
         config,
         type,
     } = program
+
+    initNodeEnv()
     // console.log(program)
 
     setEnvFromCommand({
