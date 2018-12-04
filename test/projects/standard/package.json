@@ -33,7 +33,7 @@
         "koot-buildtest-isomorphic-start-server": "koot-start --no-build --koot-test",
         "koot-buildtest-isomorphic-start-server-custom-port": "koot-start --no-build --port 8316 --koot-test",
         "koot-buildtest-isomorphic-dev": "koot-dev --no-open --koot-test",
-        "koot-buildtest-spa-build": "koot-build --type react-spa --dest E:\\Projects\\koot\\experiment-css-auto-extract\\test\\projects\\standard\\dist-spa-test --koot-test"
+        "koot-buildtest-spa-build": "koot-build --type react-spa --dest E:\\Projects\\koot\\0.8\\test\\projects\\standard\\dist-spa-test --koot-test"
     },
     "dependencies": {
         "koot": "file:../../../packages/koot",
