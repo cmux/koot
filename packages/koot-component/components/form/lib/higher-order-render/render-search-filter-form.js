@@ -17,10 +17,10 @@ const colWrapper = (list) => {
     })
 }
 
-const rowWrapper = (list) => {
+const rowWrapper = (list, gutter) => {
     return [{
         type: 'row',
-        gutter: 24,
+        gutter: gutter || 24,
         children: [
             ...list
         ]
@@ -31,9 +31,12 @@ const formItemWrapper = ( list ) => {
     return list.map(item => {
         if( Array.isArray(item) ){
             const firstItem = item[0];
-            const { formLabel } = firstItem || {};
+            const { formLabel, gutter } = firstItem || {};
             formLabel && delete firstItem.formLabel
-            const nextList = colWrapper(item);
+            let nextList = colWrapper(item);
+            if( gutter ){
+                nextList = rowWrapper(nextList, gutter);
+            }
             return {
                 type: 'formItem',
                 label: formLabel ||'',
