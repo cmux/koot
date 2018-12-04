@@ -1,4 +1,4 @@
-require('./init-node-env')()
+// require('./init-node-env')()
 
 /**
  * 获取当前环境的服务器端口号
@@ -12,6 +12,7 @@ module.exports = (port, env = process.env.WEBPACK_BUILD_ENV) => {
         : process.env.SERVER_PORT
 
     if (typeof port === 'object') {
+        if (!env) env = 'prod'
         if (typeof port[env] !== 'undefined')
             return port[env]
         return defaultPort

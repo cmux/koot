@@ -15,6 +15,7 @@ const getAppType = require('../utils/get-app-type')
 const validateConfig = require('../libs/validate-config')
 const validateConfigDist = require('../libs/validate-config-dist')
 const spinner = require('../utils/spinner')
+const initNodeEnv = require('../utils/init-node-env')
 
 const kootBuild = require('../core/webpack/enter')
 
@@ -52,6 +53,8 @@ const run = async () => {
         kootDev = false,
         kootTest = false,
     } = program
+
+    initNodeEnv()
     // console.log(program)
 
     /** @type {Boolean} 是否为通过 koot-start 命令启动 */

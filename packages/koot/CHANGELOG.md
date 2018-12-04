@@ -1,8 +1,18 @@
+## 0.7.6
+**2018-12-04**
+- 核心
+  - 配置项
+    - **新** `server.proxyRequestOrigin` - 若本 Node.js 服务器是通过其他代理服务器请求的（如 nginx 反向代理），可用这个配置对象声明原请求的信息。详情请参见文档的 [配置](https://koot.js.org/#/config) 章节
+  - PWA
+    - `service-worker` 默认行为调整，现在初始时仅会对 `.js` 文件进行缓存
+- 错误修正
+  - 修复某些情况下，同构服务器启动端口不正确的问题
+
 ## 0.7.5
 **2018-12-03**
 - React
   - 高阶组件 `extend()`
-    - `connect` 现在支持传入 Array
+    - `connect` 现在支持传入 Array，以对应 `react-redux` 的 `connect()` 的多参数情形
 - React同构 (`ReactApp`)
   - 确保服务器的 `onRender` 生命周期仅响应可用的请求，同时确保此时的数据为最新可用的数据
 - 错误修正

@@ -68,6 +68,7 @@ export default class ReactIsomorphic {
             configStore, store: _store,
             routes,
             renderCache: optionRenderCache,
+            proxyRequestOrigin = {},
         } = options
         let {
             template
@@ -255,19 +256,23 @@ export default class ReactIsomorphic {
                     // console.log('localeIds', localeIds)
                     // console.log('ctx.query', ctx.query)
                     // console.log('ctx.querystring', ctx.querystring)
+                    let { href } = ctx
+                    if (typeof proxyRequestOrigin.protocol === 'string') {
+                        href = href.replace(/^http:\/\//, `${proxyRequestOrigin.protocol}://`)
+                    }
                     injectRealtime.metas += localeIds
                         .map(l => {
-                            const href = (typeof ctx.query[changeLocaleQueryKey] === 'string')
-                                ? ctx.href.replace(
+                            const thisHref = (typeof ctx.query[changeLocaleQueryKey] === 'string')
+                                ? href.replace(
                                     new RegExp(`${changeLocaleQueryKey}=[a-zA-Z-_]+`),
                                     `${changeLocaleQueryKey}=${l}`
                                 )
-                                : ctx.href + (ctx.querystring ? `&` : (
-                                    ctx.href.substr(ctx.href.length - 1) === '?'
+                                : href + (ctx.querystring ? `&` : (
+                                    href.substr(href.length - 1) === '?'
                                         ? ''
                                         : `?`
                                 )) + `${changeLocaleQueryKey}=${l}`
-                            return `<link rel="alternate" hreflang="${l}" href="${href}" />`
+                            return `<link rel="alternate" hreflang="${l}" href="${thisHref}" />`
                         })
                         .join('')
                 }
