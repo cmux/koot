@@ -4,6 +4,7 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 const getAppType = require('../../../utils/get-app-type')
 const getPort = require('../../../utils/get-port')
 const getChunkmapPathname = require('../../../utils/get-chunkmap-path')
+const initNodeEnv = require('../../../utils/init-node-env')
 
 // Transformers
 const transformDist = require('./transform-dist')
@@ -23,6 +24,8 @@ const defaults = require('../../../defaults/build-config')
  * @returns {Object} 生成的完整 Webpack 配置对象
  */
 module.exports = async (kootConfig = {}) => {
+    initNodeEnv()
+
     // 确定环境变量
     const {
         WEBPACK_BUILD_TYPE: TYPE,

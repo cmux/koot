@@ -28,10 +28,6 @@ import clientUpdatePageInfo from './client-update-page-info'
 
 // 是否已挂载了组件
 let everMounted = false
-const defaultPageInfo = {
-    title: '',
-    metas: []
-}
 
 /**
  * 获取数据
@@ -270,6 +266,8 @@ export default (options = {}) => (WrappedComponent) => {
         KootComponent = connect(() => ({}))(KootComponent)
     } else if (typeof _connect === 'function') {
         KootComponent = connect(_connect)(KootComponent)
+    } else if (Array.isArray(_connect)) {
+        KootComponent = connect(..._connect)(KootComponent)
     }
 
     return KootComponent
