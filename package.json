@@ -12,6 +12,7 @@
     },
     "scripts": {
         "doc-server": "docsify serve docs",
+        "publish": "npm publish --tag lts-0.5",
         "eslint": "eslint \"!(node_modules|logs|dist|dist*)/**/*.+(js|jsx)\"",
         "pretest": "node ./test/pre-test.js",
         "test": "jest",
