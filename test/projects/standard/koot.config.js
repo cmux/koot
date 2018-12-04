@@ -97,7 +97,7 @@ module.exports = {
             maxAge: 10 * 1000,
         },
         proxyRequestOrigin: {
-            protocol: 'koot',
+            // protocol: 'koot',
         },
         // reducers: './server/reducers',
         inject: './server/inject',
