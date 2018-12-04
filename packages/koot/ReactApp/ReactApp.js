@@ -1,6 +1,7 @@
 import React from 'react'
 import { hydrate } from 'react-dom'
-import { browserHistory, match } from 'react-router'
+import browserHistory from 'react-router/lib/browserHistory'
+import match from 'react-router/lib/match'
 import { syncHistoryWithStore } from 'react-router-redux'
 import { createStore, applyMiddleware, compose } from 'redux'
 // let render = (() => {

@@ -1,5 +1,5 @@
 // import thunk from 'redux-thunk'
-// import { browserHistory } from 'react-router'
+// import browserHistory from 'react-router/lib/browserHistory'
 // import { routerMiddleware } from 'react-router-redux'
 
 //

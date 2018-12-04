@@ -1,4 +1,3 @@
-import { browserHistory } from 'react-router'
 import { routerReducer, routerMiddleware } from 'react-router-redux'
 import thunk from 'redux-thunk'
 import {
@@ -10,6 +9,12 @@ import {
     reducerLocaleId as i18nReducerLocaleId,
     reducerLocales as i18nReducerLocales,
 } from '../i18n/redux'
+const getHistory = () => {
+    if (__SPA__) {
+        return require('react-router/lib/hashHistory')
+    }
+    return require('react-router/lib/browserHistory')
+}
 
 //
 
@@ -44,5 +49,5 @@ if (__CLIENT__) initialState = window.__REDUX_STATE__
  */
 export const middlewares = [
     thunk,
-    routerMiddleware(browserHistory),
+    routerMiddleware(getHistory()),
 ]

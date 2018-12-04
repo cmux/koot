@@ -2,12 +2,13 @@
 
 const React = require('react')
 import ReactDOM from 'react-dom'
-import {
-    // Router,
-    hashHistory,
-    // browserHistory,
-    // createMemoryHistory,
-} from 'react-router'
+// import {
+//     // Router,
+//     hashHistory,
+//     // browserHistory,
+//     // createMemoryHistory,
+// } from 'react-router'
+import hashHistory from 'react-router/lib/hashHistory'
 import { syncHistoryWithStore/*, routerReducer*/ } from 'react-router-redux'
 // import { Provider } from 'react-redux'
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
