@@ -65,3 +65,32 @@ redux.syncCookie = 'token' // 单参数
 redux.syncCookie = ['token', 'sid'] // 支持多参数
 redux.syncCookie = false // 不同步cookie
 ```
+
+### `server`
+
+_仅针对同构项目_
+
+服务器相关配置
+
+- _Object_ `server.koaStatic` (可选)
+<br>**暂不可用** Koot.js 使用 KOA 作为 Node.js 服务器程序，同时使用 `koa-static` 中间件处理静态文件请求。使用对象可对 `koa-static` 进行配置。
+- _Object_ `server.renderCache` (可选)
+<br>**仅生产模式** 同构 HTML 结果缓存设置。
+  - _Number_ `server.renderCache.maxAge`
+<br>同构渲染缓存最大存在时间 (单位: ms)。默认值：1000
+  - _Number_ `server.renderCache.maxCount`
+<br>同构渲染缓存最多缓存的结果的数量（基于 URL）。默认值：50
+- _Object_ `server.proxyRequestOrigin` (可选)
+<br>**仅生产模式** 若本 Node.js 服务器是通过其他代理服务器请求的（如 nginx 反向代理），可用这个配置对象声明原请求的信息
+  - _String_ `server.proxyRequestOrigin.protocol`
+<br>协议名
+- _Pathname:Object_ `server.reducers` (可选)
+<br>服务器端专用 Reducer，与 `combineReducers` 参数相同。会整合到 `redux.combineReducers` 中
+- _Pathname:Object_ `server.inject` (可选)
+<br>模板注入内容
+- _Pathname:Function_ `server.before` (可选)
+<br>回调：在服务器启动前
+- _Pathname:Function_ `server.after` (可选)
+<br>回调：在服务器启动完成
+- _Pathname:Function_ `server.onRender` (可选)
+<br>回调：在页面渲染时

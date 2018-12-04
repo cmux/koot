@@ -76,11 +76,13 @@ module.exports = {
      * @property {Number} [renderCache.maxCount=50] - 同构渲染缓存最多缓存的 URL 的数量
      * @property {cacheGet} [renderCache.get] - 自定义缓存检查与吐出方法。存在时, maxAge 和 maxCount 设置将被忽略
      * @property {cacheSet} [renderCache.set] - 自定义缓存存储方法。存在时, maxAge 和 maxCount 设置将被忽略
-     * @property {Pathname} [reducers] - 服务器端专用 Reducer，与 combineReducers 参数语法相同。会整合到 redux.combineReducers 中
-     * @property {Pathname} [inject] - 注入内容
-     * @property {Pathname} [before] - 回调：在服务器启动前
-     * @property {Pathname} [after] - 回调：在服务器启动完成
-     * @property {Pathname} [onRender] - 回调：在页面渲染时
+     * @property {Object} [proxyRequestOrigin] - （仅生产模式）若本 Node.js 服务器是通过其他代理服务器请求的（如 nginx 反向代理），可用这个配置对象声明原请求的信息
+     * @property {String} [proxyRequestOrigin.protocol] - 协议名
+     * @property {Pathname:Object} [reducers] - 服务器端专用 Reducer，与 combineReducers 参数语法相同。会整合到 redux.combineReducers 中
+     * @property {Pathname:Object} [inject] - 注入内容
+     * @property {Pathname:Function} [before] - 回调：在服务器启动前
+     * @property {Pathname:Function} [after] - 回调：在服务器启动完成
+     * @property {Pathname:Function} [onRender] - 回调：在页面渲染时
      */
     server: {
         koaStatic: {
@@ -93,6 +95,9 @@ module.exports = {
         },
         renderCache: {
             maxAge: 10 * 1000,
+        },
+        proxyRequestOrigin: {
+            protocol: 'koot',
         },
         // reducers: './server/reducers',
         inject: './server/inject',
