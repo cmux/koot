@@ -61,7 +61,7 @@ const beforeTest = async (cpd) => {
  * @param {String} dist 
  * @param {String} title 
  */
-const afterTest = async (cpd, title) => {
+const afterTest = async (cpd/*, title*/) => {
     await sleep(2 * 1000)
     await removeTempProjectConfig(cpd)
 
