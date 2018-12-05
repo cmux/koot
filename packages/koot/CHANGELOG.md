@@ -19,9 +19,20 @@
       - `props.className` 会传入到对应的组件，其值为与上述结果对应的 hash 后的 className
 - React SPA
   - 对于传入自定 `store` 对象或生成方法的项目，确保生成 `store` 使用的 `history` 对象为浏览器所用对象
+- 移除依赖包
+  - `progress`
 - 更新依赖包
   - minor
+    - `@babel/core` -> _7.2.0_
+    - `@babel/plugin-proposal-class-properties` -> _7.2.1_
+    - `@babel/plugin-proposal-decorators` -> _7.2.0_
+    - `@babel/plugin-proposal-object-rest-spread` -> _7.2.0_
+    - `@babel/plugin-syntax-dynamic-import` -> _7.2.0_
+    - `@babel/plugin-transform-runtime` -> _7.2.0_
+    - `@babel/preset-env` -> _7.2.0_
+    - `autoprefixer` -> _9.4.2_
     - `less` -> _3.9.0_
+    - `webpack` -> _4.27.0_
   - patch
     - `inquirer` -> _6.2.1_
     - `portfinder` -> _1.0.20_
