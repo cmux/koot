@@ -1,4 +1,5 @@
 const factoryConfig = require('./_factory')
+const path = require('path')
 
 module.exports = (async () => {
     const defaults = await factoryConfig()
@@ -28,6 +29,8 @@ module.exports = (async () => {
         },
 
         output: {
+            // path: path.resolve(__dirname, '../../dist/public/aaa'),
+            // publicPath: "/aaa/",
             filename: `core.[chunkhash].js`,
             chunkFilename: `chunk.[chunkhash].js`,
         },
