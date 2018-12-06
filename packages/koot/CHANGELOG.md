@@ -19,9 +19,22 @@
       - `props.className` 会传入到对应的组件，其值为与上述结果对应的 hash 后的 className
 - React SPA
   - 对于传入自定 `store` 对象或生成方法的项目，确保生成 `store` 使用的 `history` 对象为浏览器所用对象
+  - 移除 `AppContainer` 逻辑的相关文件
 - 移除依赖包
+  - `koa-compose`
+  - `koa-compress`
+  - `koa-helmet`
+  - `koa-html-minifier`
+  - `koa-json`
+  - `koa-multer`
+  - `koa-onerror`
+  - `koa-response-time`
   - `progress`
 - 更新依赖包
+  - major
+    - `koa-body` -> _4.0.4_
+    - `koa-mount` -> _4.0.0_
+    - `koa-static` -> _5.0.0_
   - minor
     - `@babel/core` -> _7.2.0_
     - `@babel/plugin-proposal-class-properties` -> _7.2.1_
@@ -31,8 +44,9 @@
     - `@babel/plugin-transform-runtime` -> _7.2.0_
     - `@babel/preset-env` -> _7.2.0_
     - `autoprefixer` -> _9.4.2_
+    - `koa` -> _2.6.2_
     - `less` -> _3.9.0_
-    - `webpack` -> _4.27.0_
+    - `webpack` -> _4.27.1_
   - patch
     - `inquirer` -> _6.2.1_
     - `portfinder` -> _1.0.20_
