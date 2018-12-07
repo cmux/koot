@@ -1,6 +1,5 @@
 // const path = require('path')
 const fs = require('fs-extra')
-import cookie from 'cookie'
 
 //
 
@@ -11,7 +10,8 @@ import convert from 'koa-convert'
 
 import i18nRegister from '../../i18n/register/isomorphic.server'
 import i18nOnServerRender from '../../i18n/onServerRender'
-import { changeLocaleQueryKey } from '../../defaults/defines'
+import i18nUseRouterRedirect from '../../i18n/server/use-router-redirect'
+import i18nGetLangFromCtx from '../../i18n/server/get-lang-from-ctx'
 
 //
 
@@ -234,6 +234,10 @@ export default async (app, {
         beforeRouterMatch: async (o = {}) => {
             let { ctx, store } = o
 
+            // 如果 i18n URL 使用 router 方式同时判定需要跳转，此时进行处理
+            if (i18nUseRouterRedirect(ctx))
+                return
+
             // 告诉前端，当前的url是啥
             store.dispatch({ type: TELL_CLIENT_URL, data: ctx.origin })
 
@@ -259,30 +263,8 @@ export default async (app, {
             }
 
             if (i18n) {
-                let lang = (() => {
-
-                    // 先查看URL参数是否有语音设置
-                    let lang = ctx.query[changeLocaleQueryKey]
-
-                    // 如果没有，检查cookie
-                    const cookies = cookie.parse(ctx.request.header.cookie || '')
-                    if (!lang && cookies[process.env.KOOT_I18N_COOKIE_KEY] && cookies[process.env.KOOT_I18N_COOKIE_KEY] !== 'null')
-                        lang = cookies[process.env.KOOT_I18N_COOKIE_KEY]
-
-                    // 如果没有，再看header里是否有语言设置
-                    if (!lang)
-                        lang = ctx.header['accept-language']
-
-                    // 如没有，再用默认
-                    if (!lang)
-                        lang = 'en'
-
-                    return lang
-                })()
-
                 if (__DEV__) doI18nRegister()
-
-                store.dispatch({ type: CHANGE_LANGUAGE, data: lang })
+                store.dispatch({ type: CHANGE_LANGUAGE, data: i18nGetLangFromCtx(ctx) })
                 i18nOnServerRender(o)
             }
         },

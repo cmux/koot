@@ -7,6 +7,7 @@
 import { ReactApp } from '../index'
 import { actionUpdate } from '../../React/realtime-location'
 import i18nRegister from '../../i18n/register/isomorphic.client'
+import i18nValidateRoutes from '../../i18n/validte-routes'
 import { reducers, middlewares } from '../../React/redux'
 
 //
@@ -85,7 +86,7 @@ export default ({
     // 2018/10/20 
     // add by mazhenyu(@zrainma@sina.com)
     // 去掉默认外部的根结构，前端传入已处理
-    reactApp.react.router.use(router)
+    reactApp.react.router.use(i18nValidateRoutes(router))
 
 
 
