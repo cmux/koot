@@ -234,8 +234,10 @@ export default async (app, {
             let { ctx, store, localeId } = o
 
             // 如果 i18n URL 使用 router 方式同时判定需要跳转，此时进行处理
-            if (i18nUseRouterRedirect(ctx))
-                return
+            const needRedirect = i18nUseRouterRedirect(ctx)
+            if (needRedirect) {
+                return needRedirect
+            }
 
             // 告诉前端，当前的url是啥
             store.dispatch({ type: TELL_CLIENT_URL, data: ctx.origin })

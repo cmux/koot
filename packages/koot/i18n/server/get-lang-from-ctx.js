@@ -1,6 +1,7 @@
 import cookie from 'cookie'
 import { changeLocaleQueryKey } from '../../defaults/defines'
 import getLocaleIds from '../get-locale-ids'
+import parseLocaleId from '../parse-locale-id'
 
 /**
  * 根据 KOA Context 获取语种ID
@@ -31,8 +32,14 @@ const getLangFromCtx = (ctx) => {
         return cookies[process.env.KOOT_I18N_COOKIE_KEY]
 
     // 如果上一步没有结果，从请求 headers 中获取
-    if (ctx.header['accept-language'])
-        return ctx.header['accept-language']
+    if (ctx.header['accept-language']) {
+        // const acceptLanguage = ctx.header['accept-language']
+        // const acceptLanguages = acceptLanguage.split(',').map(str => str.split(';')[0])
+        // console.log('acceptLanguage', acceptLanguage)
+        // console.log('acceptLanguages', acceptLanguages)
+        // console.log('locale', parseLocaleId(acceptLanguage))
+        return parseLocaleId(ctx.header['accept-language'])
+    }
 
     // 如果上一步没有结果，返回项目默认语种
     return localeIds[0]

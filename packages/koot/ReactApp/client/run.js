@@ -172,7 +172,6 @@ export default ({
                         `callback: after`,
                         appData
                     )
-                    console.log('current state', appData.store.getState())
                 }
                 if (typeof after === 'function') after(appData)
             })

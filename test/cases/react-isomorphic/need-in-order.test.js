@@ -198,6 +198,8 @@ const doTest = async (port) => {
 
     // TODO: 测试: extend connect 的 Array 用法
 
+    // TODO: 测试: i18n.use = 'router'
+
     await browser.close()
 }
 

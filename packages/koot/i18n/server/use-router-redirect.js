@@ -34,8 +34,7 @@ const useRouterRedirect = (ctx) => {
                 .replace(new RegExp(`^${ctx.path}`), pathname)
 
         // console.log('newpath', newpath)
-        ctx.redirect(newpath)
-        return true
+        return ctx.redirect(newpath)
     }
 
     return false
