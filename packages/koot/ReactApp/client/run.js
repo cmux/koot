@@ -166,12 +166,14 @@ export default ({
             })
         )
             .then((appData) => {
-                if (__DEV__)
+                if (__DEV__) {
                     console.log(
                         `🚩 [koot/client] ` +
                         `callback: after`,
                         appData
                     )
+                    console.log('current state', appData.store.getState())
+                }
                 if (typeof after === 'function') after(appData)
             })
     }

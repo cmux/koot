@@ -18,13 +18,15 @@ const generateHtmlRedirectMetas = ({ ctx, proxyRequestOrigin, localeId }) => {
         href = href.replace(/^http:\/\//, `${proxyRequestOrigin.protocol}://`)
     }
 
-    return getLocaleIds()
+    const isUseRouter = process.env.KOOT_I18N_URL_USE === 'router'
+
+    let html = getLocaleIds()
         .filter(thisLocaleId => thisLocaleId !== localeId)
         .map(l => {
 
             let thisHref = ''
 
-            if (process.env.KOOT_I18N_URL_USE === 'router') {
+            if (isUseRouter) {
                 thisHref = ctx.origin
                     + ctx.href
                         .replace(new RegExp(`^${ctx.origin}`), '')
@@ -47,6 +49,12 @@ const generateHtmlRedirectMetas = ({ ctx, proxyRequestOrigin, localeId }) => {
             return `<link rel="alternate" hreflang="${l}" href="${thisHref}" />`
         })
         .join('')
+
+    if (isUseRouter) {
+        html += `<base href="/${localeId}">`
+    }
+
+    return html
 }
 
 export default generateHtmlRedirectMetas

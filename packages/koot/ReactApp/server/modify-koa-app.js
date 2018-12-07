@@ -11,7 +11,6 @@ import convert from 'koa-convert'
 import i18nRegister from '../../i18n/register/isomorphic.server'
 import i18nOnServerRender from '../../i18n/onServerRender'
 import i18nUseRouterRedirect from '../../i18n/server/use-router-redirect'
-import i18nGetLangFromCtx from '../../i18n/server/get-lang-from-ctx'
 
 //
 
@@ -232,7 +231,7 @@ export default async (app, {
         renderCache,
 
         beforeRouterMatch: async (o = {}) => {
-            let { ctx, store } = o
+            let { ctx, store, localeId } = o
 
             // 如果 i18n URL 使用 router 方式同时判定需要跳转，此时进行处理
             if (i18nUseRouterRedirect(ctx))
@@ -264,7 +263,7 @@ export default async (app, {
 
             if (i18n) {
                 if (__DEV__) doI18nRegister()
-                store.dispatch({ type: CHANGE_LANGUAGE, data: i18nGetLangFromCtx(ctx) })
+                store.dispatch({ type: CHANGE_LANGUAGE, data: localeId })
                 i18nOnServerRender(o)
             }
         },
