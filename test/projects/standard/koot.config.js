@@ -202,7 +202,7 @@ module.exports = {
     // ],
     i18n: {
         // type: 'redux', // 仅影响 client-prod 环境
-        use: 'router',
+        // use: 'router',
         locales: [
             ['zh', './src/locales/zh.json'],
             ['zh-tw', './src/locales/zh-tw.json'],

@@ -2,6 +2,7 @@ import {
     setLocaleId,
     setLocales
 } from '../index'
+import setCookie from '../set-cookie'
 
 /**
  * 初始化
@@ -31,20 +32,5 @@ export default ({
 
     setLocaleId(localeId)
     setLocales(localeId, locales)
-
-    if (localeId && typeof document !== 'undefined' && typeof document.cookie !== 'undefined') {
-        const Cookies = require('js-cookie')
-        const cookieOptions = {
-            expires: 365
-        }
-        if (typeof process.env.KOOT_I18N_COOKIE_DOMAIN === 'string' &&
-            process.env.KOOT_I18N_COOKIE_DOMAIN) {
-            cookieOptions.domain = process.env.KOOT_I18N_COOKIE_DOMAIN
-        }
-        Cookies.set(
-            process.env.KOOT_I18N_COOKIE_KEY,
-            localeId,
-            cookieOptions
-        )
-    }
+    setCookie(localeId)
 }
