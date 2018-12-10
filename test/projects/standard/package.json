@@ -33,7 +33,8 @@
         "koot-buildtest-isomorphic-start-server": "koot-start --no-build --koot-test",
         "koot-buildtest-isomorphic-start-server-custom-port": "koot-start --no-build --port 8316 --koot-test",
         "koot-buildtest-isomorphic-dev": "koot-dev --no-open --koot-test",
-        "koot-buildtest-spa-build": "koot-build --type react-spa --dest E:\\Projects\\koot\\0.7\\test\\projects\\standard\\dist-spa-test --koot-test"
+        "koot-buildtest-spa-build": "koot-build --type react-spa --dest E:\\Projects\\koot\\0.7\\test\\projects\\standard\\dist-spa-test --koot-test",
+        "koot-buildtest-isomorphic-start-i18n-use-router": "koot-start --koot-test --config koot.config.i18n-use-router.js"
     },
     "dependencies": {
         "koot": "file:../../../packages/koot",

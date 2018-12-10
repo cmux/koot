@@ -21,10 +21,10 @@ const getLangFromCtx = (ctx) => {
         if (pathname.substr(0, 1) === '/') pathname = pathname.substr(1)
         pathname = pathname.split('/')
         if (localeIds.includes(pathname[0]))
-            return setLocale(pathname[0], ctx)
+            return pathname[0]
     } else {
         if (ctx.query[changeLocaleQueryKey])
-            return setLocale(ctx.query[changeLocaleQueryKey], ctx)
+            return ctx.query[changeLocaleQueryKey]
     }
 
     // 如果上一步没有结果，从 COOKIE 中获取

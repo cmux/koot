@@ -33,16 +33,24 @@ const generateHtmlRedirectMetas = ({ ctx, proxyRequestOrigin, localeId }) => {
                         .replace(new RegExp(`^${localeId}`), l)
                         .replace(new RegExp(`^/${localeId}`), '/' + l)
             } else {
-                thisHref = (typeof ctx.query[changeLocaleQueryKey] === 'string')
-                    ? href.replace(
-                        new RegExp(`${changeLocaleQueryKey}=[a-zA-Z-_]+`),
-                        `${changeLocaleQueryKey}=${l}`
-                    )
-                    : href + (ctx.querystring ? `&` : (
+                thisHref = (() => {
+                    if (ctx.query[changeLocaleQueryKey] === '') {
+                        return href.replace(
+                            new RegExp(`${changeLocaleQueryKey}=`),
+                            `${changeLocaleQueryKey}=${l}`
+                        )
+                    }
+                    if (typeof ctx.query[changeLocaleQueryKey] === 'string')
+                        return href.replace(
+                            new RegExp(`${changeLocaleQueryKey}=[a-zA-Z-_]+`),
+                            `${changeLocaleQueryKey}=${l}`
+                        )
+                    return href + (ctx.querystring ? `&` : (
                         href.substr(href.length - 1) === '?'
                             ? ''
                             : `?`
                     )) + `${changeLocaleQueryKey}=${l}`
+                })()
             }
 
             if (__DEV__) thisHref = thisHref.replace('://localhost', '://127.0.0.1')

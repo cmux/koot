@@ -35,7 +35,7 @@ const projectsToUse = projects.filter(project => (
 /** @type {Boolean} 是否进行完整测试。如果为否，仅测试一次打包结果 */
 const fullTest = true
 const commandTestBuild = 'koot-buildtest'
-const headless = true
+const headless = false
 
 //
 
@@ -114,17 +114,22 @@ const getPortFromConfig = async (dir) => {
  * 测试项目
  * @async
  * @param {Number} port 
+ * @param {Object} settings
+ * @param {Object} [settings.i18nUseRouter=false] 多语言使用路由模式
  */
-const doTest = async (port) => {
+const doTest = async (port, settings = {}) => {
     const browser = await puppeteer.launch({
         headless
     })
     const page = await browser.newPage()
-    const url = isNaN(port) ? port : `http://127.0.0.1:${port}`
+    const origin = isNaN(port) ? port : `http://127.0.0.1:${port}`
+    const {
+        i18nUseRouter = false
+    } = settings
 
     // 测试: 同构结果
     {
-        const res = await page.goto(url, {
+        const res = await page.goto(origin, {
             waitUntil: 'networkidle0'
         }).catch()
         const pageContent = await page.content()
@@ -142,12 +147,21 @@ const doTest = async (port) => {
 
         // 测试: <script> 标签之间不应有 ,
         expect(/<\/script>,<script/g.test(pageContent)).toBe(false)
+
+        if (i18nUseRouter) {
+            // 页面是否已跳转
+            const pageUrl = await page.url()
+            expect((new RegExp(`^${origin}/.+`)).test(pageUrl)).toBe(true)
+        }
     }
 
     // 测试: 利用强制切换语种 URL 访问时，语种应正确
     {
         const testLocaleIdByQuery = async (localeId) => {
-            await page.goto(`${url}?${changeLocaleQueryKey}=${localeId}`, {
+            const gotoUrl = i18nUseRouter
+                ? `${origin}/${localeId}`
+                : `${origin}?${changeLocaleQueryKey}=${localeId}`
+            await page.goto(gotoUrl, {
                 waitUntil: 'networkidle0'
             })
             const theLocaleId = await page.evaluate(() => document.querySelector('meta[name="koot-locale-id"]').getAttribute('content'))
@@ -159,8 +173,11 @@ const doTest = async (port) => {
 
     // 测试: 到其他语种的链接
     {
-        const testLinksToOtherLang = async (urlAppend) => {
-            await page.goto(`${url}${urlAppend}`, {
+        const testLinksToOtherLang = async (toLocaleId = '', urlAppend = '') => {
+            const gotoUrl = i18nUseRouter
+                ? `${origin}/${toLocaleId}${urlAppend}`
+                : `${origin}${urlAppend}${urlAppend.includes('?') ? '&' : '?'}${changeLocaleQueryKey}=${toLocaleId}`
+            await page.goto(gotoUrl, {
                 waitUntil: 'networkidle0'
             })
 
@@ -171,6 +188,14 @@ const doTest = async (port) => {
                     href: el.getAttribute('href')
                 }))
             ))
+            const linksToSameLang = await page.$$eval(`link[rel="alternate"][hreflang="${localeId}"][href]`, els => (
+                Array.from(els).map(el => ({
+                    lang: el.getAttribute('hreflang'),
+                    href: el.getAttribute('href')
+                }))
+            ))
+
+            expect(linksToSameLang.length).toBe(0)
             expect(Array.isArray(linksToOtherLang)).toBe(true)
             expect(linksToOtherLang.length).toBeGreaterThan(0)
 
@@ -182,12 +207,12 @@ const doTest = async (port) => {
                 expect(lang).toBe(localeId)
             }
         }
-        await testLinksToOtherLang('')
-        await testLinksToOtherLang(`?${changeLocaleQueryKey}=zh`)
-        await testLinksToOtherLang(`?${changeLocaleQueryKey}=zh-tw`)
-        await testLinksToOtherLang('?test=a')
-        await testLinksToOtherLang(`?test=a&${changeLocaleQueryKey}=zh`)
-        await testLinksToOtherLang(`?test=a&${changeLocaleQueryKey}=zh-tw`)
+        await testLinksToOtherLang()
+        await testLinksToOtherLang(`zh`)
+        await testLinksToOtherLang(`zh-tw`)
+        await testLinksToOtherLang('', '?test=a')
+        await testLinksToOtherLang('zh', '?test=a')
+        await testLinksToOtherLang('zh-tw', '?test=a')
     }
 
     // TODO: 测试: 静态文件访问
@@ -197,8 +222,6 @@ const doTest = async (port) => {
     // TODO: 测试: inject 的函数用法
 
     // TODO: 测试: extend connect 的 Array 用法
-
-    // TODO: 测试: i18n.use = 'router'
 
     await browser.close()
 }
@@ -406,6 +429,36 @@ describe('测试: React 同构项目', async () => {
                     await terminate(child.pid)
 
                     await afterTest(dir, '[Development] 启动开发模式并访问')
+                })
+                test(`[Production] 打包并运行生产模式 (i18n.use="router")`, async () => {
+                    await beforeTest(dir)
+    
+                    const commandName = `${commandTestBuild}-isomorphic-start-i18n-use-router`
+                    const command = `koot-start --koot-test --config koot.config.i18n-use-router.js`
+                    await addCommand(commandName, command, dir)
+    
+                    const child = execSync(
+                        `npm run ${commandName}`,
+                        {
+                            cwd: dir,
+                        },
+                    )
+                    const errors = []
+    
+                    await waitForPort(child)
+                    const port = await getPortFromConfig(dir)
+                    child.stderr.on('data', err => {
+                        errors.push(err)
+                    })
+    
+                    expect(errors.length).toBe(0)
+    
+                    await doTest(port, {
+                        i18nUseRouter: true
+                    })
+                    await terminate(child.pid)
+    
+                    await afterTest(dir, '[Production] 打包并运行生产模式 (i18n.use="router")')
                 })
             }
 

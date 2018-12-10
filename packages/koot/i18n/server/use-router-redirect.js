@@ -1,5 +1,6 @@
 import getLocaleIds from '../get-locale-ids'
 import getLangFromCtx from './get-lang-from-ctx'
+import setCookie from '../set-cookie'
 
 /**
  * URL 使用 router 方式时，在同构中间件流程的匹配 react 路由之前，检查是否需要跳转
@@ -19,12 +20,12 @@ const useRouterRedirect = (ctx) => {
     pathname = pathname.split('/')
 
     if (!getLocaleIds().includes(pathname[0])) {
-        const lang = getLangFromCtx(ctx)
+        const localeId = getLangFromCtx(ctx)
 
         // console.log('lang', lang)
         // console.log('pathname', pathname)
 
-        pathname.unshift(lang)
+        pathname.unshift(localeId)
         pathname = '/' + pathname.join('/')
 
         // 生成跳转后的地址
@@ -34,6 +35,7 @@ const useRouterRedirect = (ctx) => {
                 .replace(new RegExp(`^${ctx.path}`), pathname)
 
         // console.log('newpath', newpath)
+        setCookie(localeId, ctx)
         return ctx.redirect(newpath)
     }
 

@@ -18,7 +18,9 @@ const sleep = require('../utils/sleep')
 // const readBuildConfigFile = require('../utils/read-build-config-file')
 const spinner = require('../utils/spinner')
 const setEnvFromCommand = require('../utils/set-env-from-command')
+const getAppType = require('../utils/get-app-type')
 const validateConfig = require('../libs/validate-config')
+const validateConfigDist = require('../libs/validate-config-dist')
 const __ = require('../utils/translate')
 // const getCwd = require('../utils/get-cwd')
 
@@ -27,6 +29,7 @@ program
     .usage('[options]')
     .option('--no-build', 'Don\'t build')
     // .option('--pm2', 'Start with pm2')
+    .option('--dest <destination-path>', 'Set destination directory')
     .option('--config <config-file-path>', 'Set config file')
     .option('--type <project-type>', 'Set project type')
     .option('--port <port>', 'Set server port')
@@ -41,6 +44,7 @@ const run = async () => {
 
     const {
         build,
+        dest,
         config,
         type,
         port,
@@ -55,12 +59,17 @@ const run = async () => {
         config, type, port
     })
 
+    process.env.KOOT_TEST_MODE = JSON.stringify(kootTest)
+
     // 读取构建配置
+    const buildConfig = await validateConfig()
+    await getAppType()
+    if (dest) buildConfig.dist = validateConfigDist(dest)
     const {
         dist,
         // server,
         [keyFileProjectConfigTemp]: filenameProjectConfigTemp,
-    } = await validateConfig()
+    } = buildConfig
 
     const afterBuild = async () => {
         // 删除过程中创建的临时文件
@@ -75,8 +84,16 @@ const run = async () => {
     if (build) {
         const building = spinner(chalk.yellowBright('[koot/build] ') + __('build.building'))
         const fileBuildFail = path.resolve(dist, filenameBuildFail)
+
+        /** @type {String} build 命令的附加参数 */
+        const buildCmdArgs = '--env prod'
+            + (typeof dest === 'string' ? ` --dest ${dest}` : '')
+            + (typeof config === 'string' ? ` --config ${config}` : '')
+            + (typeof type === 'string' ? ` --type ${type}` : '')
+            + (kootTest ? ` --koot-test` : '')
+
         const { stderr } = await exec(
-            `koot-build`, {
+            `koot-build ${buildCmdArgs}`, {
                 env: {
                     KOOT_COMMAND_START: JSON.stringify(true)
                 }

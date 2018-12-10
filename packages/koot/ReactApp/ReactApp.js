@@ -216,6 +216,19 @@ export default class ReactApp {
 
 }
 
+
+/**
+ * History Enhancer: use basename
+ * 
+ * Original useBasename enhancer from history also override all read methods
+ * `getCurrentLocation` `listenBefore` `listen`
+ * But as Diablohu tested, when read methods overrided, if the route matched used async method to get component, would fail
+ * that rendering blank page and no route match event fired
+ * So we only overrid write methods here. And modify the first level path in routes object to `:localeId`
+ * 
+ * @param {Function} createHistory
+ * @returns {Object} History
+ */
 const kootUseBasename = (createHistory) =>
     (options = {}) => {
         const history = createHistory(options)
@@ -255,12 +268,6 @@ const kootUseBasename = (createHistory) =>
                 pathname
             }
         }
-
-        // Original useBasename from history also override all read methods
-        // `getCurrentLocation` `listenBefore` `listen`
-        // But as Diablohu tested, when read methods overrided, if the route matched used async method to get component, would fail
-        // that rendering blank page and no route match event fired
-        // So we only overrid write methods here. And modify the first level path in routes object to `:localeId`
 
         // Override all write methods with basename-aware versions.
         const push = (location) =>
