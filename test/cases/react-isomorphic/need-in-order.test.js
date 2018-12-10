@@ -35,7 +35,7 @@ const projectsToUse = projects.filter(project => (
 /** @type {Boolean} 是否进行完整测试。如果为否，仅测试一次打包结果 */
 const fullTest = true
 const commandTestBuild = 'koot-buildtest'
-const headless = false
+const headless = true
 
 //
 
@@ -433,7 +433,7 @@ describe('测试: React 同构项目', async () => {
                 test(`[Production] 打包并运行生产模式 (i18n.use="router")`, async () => {
                     await beforeTest(dir)
     
-                    const commandName = `${commandTestBuild}-isomorphic-start-i18n-use-router`
+                    const commandName = `${commandTestBuild}-isomorphic-start-i18n_use_router`
                     const command = `koot-start --koot-test --config koot.config.i18n-use-router.js`
                     await addCommand(commandName, command, dir)
     
@@ -459,6 +459,41 @@ describe('测试: React 同构项目', async () => {
                     await terminate(child.pid)
     
                     await afterTest(dir, '[Production] 打包并运行生产模式 (i18n.use="router")')
+                })
+                test(`[Development] 启动开发模式并访问 (i18n.use="router")`, async () => {
+                    await beforeTest(dir)
+
+                    // const port = '8316'
+                    const commandName = `${commandTestBuild}-isomorphic-dev-i18n_use_router`
+                    const command = `koot-dev --no-open --koot-test --config koot.config.i18n-use-router.js`
+                    await addCommand(commandName, command, dir)
+
+                    const child = execSync(
+                        `npm run ${commandName}`,
+                        {
+                            cwd: dir,
+                            stdio: ['pipe', 'pipe', 'pipe', 'ipc']
+                        },
+                    )
+                    const errors = []
+
+                    const port = await waitForPort(child, / on.*http:.*:([0-9]+)/)
+                    child.stderr.on('data', err => {
+                        errors.push(err)
+                    })
+
+                    // console.log({
+                    //     port,
+                    //     errors,
+                    // })
+                    expect(errors.length).toBe(0)
+
+                    await doTest(port, {
+                        i18nUseRouter: true
+                    })
+                    await terminate(child.pid)
+
+                    await afterTest(dir, '[Development] 启动开发模式并访问')
                 })
             }
 
