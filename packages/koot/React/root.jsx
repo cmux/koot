@@ -4,28 +4,46 @@ import Router from 'react-router/lib/Router'
 
 import { StyleMapContext } from './styles'
 
-export default ({
-    store,
-    history,
-    routes,
-    ...props
-}) => {
+// export default ({
+//     store,
+//     history,
+//     routes,
+//     ...props
+// }) => {
 
-    // console.log({
-    //     history, routes, ...props
-    // })
+//     // console.log({
+//     //     history, routes, ...props
+//     // })
 
-    return (
-        <StyleMapContext.Provider value={{}}>
-            <Provider store={store} >
-                <Router history={history} {...props} >
-                    {routes}
-                </Router>
-            </Provider>
-        </StyleMapContext.Provider>
-    )
+//     return (
+//         <StyleMapContext.Provider value={{}}>
+//             <Provider store={store} >
+//                 <Router history={history} {...props} >
+//                     {routes}
+//                 </Router>
+//             </Provider>
+//         </StyleMapContext.Provider>
+//     )
 
+// }
+
+class Root extends React.Component {
+    componentDidCatch(err, info) {
+        console.error('!! Error caught at Koot\'s Root component !!', err, info)
+    }
+    render() {
+        return (
+            <StyleMapContext.Provider value={{}}>
+                <Provider store={this.props.store} >
+                    <Router history={this.props.history} {...this.props} >
+                        {this.props.routes}
+                    </Router>
+                </Provider>
+            </StyleMapContext.Provider>
+        )
+    }
 }
+export default Root
 
 // let e = Root
 

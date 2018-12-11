@@ -17,6 +17,8 @@
       - 这些 CSS 文件必须有一个名为 `.component` 或 `.[name]__component` 的 className
         - 该 className 会被更换为 hash 结果，如 `.a85c6k` 或 `.nav__bjj15a`
       - `props.className` 会传入到对应的组件，其值为与上述结果对应的 hash 后的 className
+- React
+  - 根层组件添加 `componentDidCatch` 生命周期方法，以保障 React 输出渲染结果
 - React SPA
   - 对于传入自定 `store` 对象或生成方法的项目，确保生成 `store` 使用的 `history` 对象为浏览器所用对象
   - 移除 `AppContainer` 逻辑的相关文件
