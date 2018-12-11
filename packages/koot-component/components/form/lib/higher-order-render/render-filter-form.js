@@ -73,11 +73,11 @@ const searchFilterLayoutWrapper = (config, list) => {
  * 
  * @param {Obejct} config 
  */
-const renderSearchFilterFormHandler = ( config = {} ) => {
+const renderFilterFormHandler = ( config = {} ) => {
     const waitHandlList = config.children;
     const resultConfig = searchFilterLayoutWrapper(config, waitHandlList);
     
     return renderFormHandler(resultConfig);
 }
 
-export default renderSearchFilterFormHandler;
+export default renderFilterFormHandler;

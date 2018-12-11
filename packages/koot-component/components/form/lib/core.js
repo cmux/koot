@@ -83,8 +83,8 @@ export const renderTransfer = (configItem = {}) => {
             return Renders.renderSubmitButtonHandler(configItem);
 
         // 高阶扩展部分
-        case Types.SEARCH_FILTER_FORM:
-            return HigherOrderRenders.renderSearchFilterFormHandler(configItem);
+        case Types.FILTER_FORM:
+            return HigherOrderRenders.renderFilterFormHandler(configItem);
         default:
             return '';
     }

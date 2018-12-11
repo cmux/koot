@@ -2,7 +2,18 @@ class FileStore {
 
     constructor(fileds){
         this.fileds = fileds ||{};
+
         this.oldFileds = {}
+
+        this.fieldMeta = {}
+    }
+
+    setFieldMeta(name, fieldMeta) {
+        this.fieldMeta[name] = Object.assign({}, this.fieldMeta[name], fieldMeta);
+    }
+
+    getFieldMeta(name){
+        return this.fieldMeta[name];
     }
     
     setFields( fileds ) {

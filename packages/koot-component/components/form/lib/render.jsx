@@ -11,16 +11,34 @@ const CheckboxGroup = Checkbox.Group;
 const RadioGroup = Radio.Group;
 const Option = Select.Option;
 const { MonthPicker, RangePicker, WeekPicker } = DatePicker;
+import moment from 'moment';
+
+const dateValueHandler = ( configItem ) => {
+    const { value } = configItem;
+    if( value ){
+        let nextValue;
+        if( Array.isArray(value) ){
+            nextValue = value.map(item => {
+                return item && moment(item)
+            })
+        }else{
+            nextValue = value && moment(value)
+        }
+        const nextConfigItem = Object.assign({}, configItem);
+        nextConfigItem.value = nextValue;
+        return nextConfigItem;
+    }
+    return configItem;
+}
 
 /**
- * antd Form.getFieldDecorator 包装模版函数
+ * getFieldDecorator 包装模版函数
  * 
  * @param {*} configItem 
  * @param {*} reactDom 
  */
-const antdFieldDecorator = ( configItem, reactDom ) => {
+const fieldDecorator = ( configItem, reactDom ) => {
     const { value, __root } = configItem;
-    // const { getFieldDecorator } = __rootProps.form;
     const name = getName(configItem);  
     const finalComponent = __root.fieldDecorator(
         name,
@@ -39,9 +57,11 @@ const antdFieldDecorator = ( configItem, reactDom ) => {
  */
 export const renderFormHandler = (configItem = {}) => {
     const props = getConfigItemProps(configItem);
+    const className = configItem.type && configItem.type.toString().replace(/([A-Z])/g,"-$1").toLowerCase();
     return (
         <Form
             {...props}
+            className={className}
         >
             {
                 renderChildrenHandler(configItem)
@@ -114,7 +134,7 @@ export const renderColHandler = (configItem = {}) => {
  */
 export const renderInputHandler = (configItem = {}) => {
     const props = getConfigItemProps(configItem);
-    return antdFieldDecorator(
+    return fieldDecorator(
         configItem, 
         (
             <Input 
@@ -132,7 +152,7 @@ export const renderInputHandler = (configItem = {}) => {
  */
 export const renderTextAreaHandler  = (configItem = {}) => {
     const props = getConfigItemProps(configItem);
-    return antdFieldDecorator(
+    return fieldDecorator(
         configItem, 
         (
             <TextArea 
@@ -150,7 +170,7 @@ export const renderTextAreaHandler  = (configItem = {}) => {
  */
 export const renderPasswordHandler = (configItem = {}) => {
     const props = getConfigItemProps(configItem);
-    return antdFieldDecorator(
+    return fieldDecorator(
         configItem, 
         (
             <Input 
@@ -202,9 +222,10 @@ export const renderButtonHandler = (configItem = {}) => {
  * @param {Object} configItem 
  */
 export const renderTimePickerHandler = (configItem = {}) => {
-    const props = getConfigItemProps(configItem);
-    return antdFieldDecorator(
-        configItem,
+    const nextConfigItem = dateValueHandler(configItem);
+    const props = getConfigItemProps(nextConfigItem);
+    return fieldDecorator(
+        nextConfigItem,
         (
             <TimePicker 
                 {...props}
@@ -220,13 +241,14 @@ export const renderTimePickerHandler = (configItem = {}) => {
  * @param {Object} configItem 
  */
 export const renderDatePickerHandler = (configItem = {}) => {
-    const props = getConfigItemProps(configItem);
+    const nextConfigItem = dateValueHandler(configItem);
+    const props = getConfigItemProps(nextConfigItem);
     // props 处理
     props.getCalendarContainer = ( triggerNode ) => {
         return triggerNode;
     };
-    return antdFieldDecorator(
-        configItem, 
+    return fieldDecorator(
+        nextConfigItem, 
         (
             <DatePicker
                 {...props}
@@ -243,15 +265,16 @@ export const renderDatePickerHandler = (configItem = {}) => {
  * @param {Object} configItem 
  */
 export const renderDateTimePickerHandler = (configItem) => {
-    const props = getConfigItemProps(configItem);
+    const nextConfigItem = dateValueHandler(configItem);
+    const props = getConfigItemProps(nextConfigItem);
     // props 处理
     props.getCalendarContainer = ( triggerNode ) => {
         return triggerNode;
     };
     props.format = props.format || "YYYY-MM-DD HH:mm:ss";
     props.showTime = props.showTime || true;
-    return antdFieldDecorator(
-        configItem, 
+    return fieldDecorator(
+        nextConfigItem, 
         (
             <DatePicker
                 {...props}
@@ -267,13 +290,14 @@ export const renderDateTimePickerHandler = (configItem) => {
  * @param {Object} configItem 
  */
 export const renderMonthPickerHandler = (configItem = {}) => {
-    const props = getConfigItemProps(configItem);
+    const nextConfigItem = dateValueHandler(configItem);
+    const props = getConfigItemProps(nextConfigItem);
     // props 处理
     props.getCalendarContainer = ( triggerNode ) => {
         return triggerNode;
     };
-    return antdFieldDecorator(
-        configItem, 
+    return fieldDecorator(
+        nextConfigItem, 
         (
             <MonthPicker
                 {...props}
@@ -289,13 +313,14 @@ export const renderMonthPickerHandler = (configItem = {}) => {
  * @param {Object} configItem 
  */
 export const renderWeekPickerHandler = (configItem = {}) => {
-    const props = getConfigItemProps(configItem);
+    const nextConfigItem = dateValueHandler(configItem);
+    const props = getConfigItemProps(nextConfigItem);
     // props 处理
     props.getCalendarContainer = ( triggerNode ) => {
         return triggerNode;
     };
-    return antdFieldDecorator(
-        configItem, 
+    return fieldDecorator(
+        nextConfigItem, 
         (
             <WeekPicker
                 {...props}
@@ -311,13 +336,15 @@ export const renderWeekPickerHandler = (configItem = {}) => {
  * @param {Object} configItem 
  */
 export const renderDateRangePicker = (configItem = {}) => {
-    const props = getConfigItemProps(configItem);
+    const nextConfigItem = dateValueHandler(configItem);
+    console.info('nextConfigItem', nextConfigItem)
+    const props = getConfigItemProps(nextConfigItem);
     // props 处理
     props.getCalendarContainer = ( triggerNode ) => {
         return triggerNode;
     };
-    return antdFieldDecorator(
-        configItem, 
+    return fieldDecorator(
+        nextConfigItem, 
         (
             <RangePicker
                 {...props}
@@ -333,15 +360,16 @@ export const renderDateRangePicker = (configItem = {}) => {
  * @param {Object} configItem 
  */
 export const renderDateTimeRangePicker = (configItem = {}) => {
-    const props = getConfigItemProps(configItem);
+    const nextConfigItem = dateValueHandler(configItem);
+    const props = getConfigItemProps(nextConfigItem);
     // props 处理
     props.getCalendarContainer = ( triggerNode ) => {
         return triggerNode;
     };
     props.format = props.format || "YYYY-MM-DD HH:mm:ss";
     props.showTime = props.showTime || true;
-    return antdFieldDecorator(
-        configItem, 
+    return fieldDecorator(
+        nextConfigItem, 
         (
             <RangePicker
                 {...props}
@@ -359,7 +387,7 @@ export const renderDateTimeRangePicker = (configItem = {}) => {
 export const renderSelectHandler = (configItem = {}) => {
     const { data } = configItem;
     const props = getConfigItemProps(configItem);
-    return antdFieldDecorator(
+    return fieldDecorator(
         configItem, 
         (
             <Select
@@ -392,7 +420,7 @@ export const renderSelectHandler = (configItem = {}) => {
  */
 export const renderSwitchHandler = (configItem = {}) => {
     const props = getConfigItemProps(configItem);
-    return antdFieldDecorator(
+    return fieldDecorator(
         configItem, 
         (
             <Switch
@@ -445,7 +473,7 @@ export const renderCheckboxHandler = (configItem = {}) => {
             )
         }
     }
-    return antdFieldDecorator(
+    return fieldDecorator(
         configItem, 
         (
             buildDom()
@@ -462,7 +490,7 @@ export const renderRadioHandler = (configItem = {}) => {
     const { data } = configItem;
     const props = getConfigItemProps(configItem);
     props.options = data || [];
-    return antdFieldDecorator(
+    return fieldDecorator(
         configItem, 
         (
            
@@ -481,7 +509,7 @@ export const renderRadioHandler = (configItem = {}) => {
  */
 export const renderUploadHandler = (configItem = {}) => {
     const props = getConfigItemProps(configItem);
-    return antdFieldDecorator(
+    return fieldDecorator(
         configItem, 
         (
            
@@ -533,7 +561,7 @@ export const renderTextHandler = (configItem = {}) => {
 export const renderCustomizeHandler = (configItem = {}) => {
     const props = getConfigItemProps(configItem);
     const CustomizeComponent = configItem.render && configItem.render(props);
-    return antdFieldDecorator(
+    return fieldDecorator(
         configItem, 
         CustomizeComponent
     )

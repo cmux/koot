@@ -63,8 +63,8 @@ export const EMAIL = 'email';
 export const PHONE_NUMBER = 'phoneNumber';
 
 // 高阶自定义渲染
-export const SEARCH_FILTER_FORM = 'searchFilterForm';
+export const FILTER_FORM = 'filterForm';
 
 // other
 
-export const LAYOUT_TYPES = [ FORM, FORM_ITEM, ROW, COL, SEARCH_FILTER_FORM ];
+export const LAYOUT_TYPES = [ FORM, FORM_ITEM, ROW, COL, FILTER_FORM ];

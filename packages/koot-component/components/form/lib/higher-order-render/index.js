@@ -1,1 +1,1 @@
-export { default as renderSearchFilterFormHandler } from './render-search-filter-form.js';
+export { default as renderFilterFormHandler } from './render-filter-form.js';
