@@ -42,6 +42,7 @@ module.exports = async (i18n) => {
         let locales
         let cookieKey
         let domain
+        let use
 
         if (Array.isArray(i18n)) {
             locales = [...i18n]
@@ -51,6 +52,7 @@ module.exports = async (i18n) => {
             locales = [...i18n.locales || []]
             cookieKey = i18n.cookieKey || cookieKey
             domain = i18n.domain || domain || undefined
+            use = i18n.use || 'query'
         }
 
         if (ENV === 'dev') type = 'redux'
@@ -69,6 +71,7 @@ module.exports = async (i18n) => {
         process.env.KOOT_I18N_LOCALES = JSON.stringify(locales)
         if (cookieKey) process.env.KOOT_I18N_COOKIE_KEY = cookieKey
         if (domain) process.env.KOOT_I18N_COOKIE_DOMAIN = domain
+        process.env.KOOT_I18N_URL_USE = use
 
         i18n = {
             type,

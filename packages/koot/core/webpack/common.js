@@ -96,6 +96,7 @@ const plugins = (env, stage, defines = {}) => {
         "KOOT_I18N_LOCALES",
         "KOOT_I18N_COOKIE_KEY",
         "KOOT_I18N_COOKIE_DOMAIN",
+        "KOOT_I18N_URL_USE",
         "KOOT_HTML_TEMPLATE",
         "KOOT_PWA_AUTO_REGISTER",
         "KOOT_PWA_PATHNAME",

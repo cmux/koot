@@ -33,7 +33,10 @@
         "koot-buildtest-isomorphic-start-server": "koot-start --no-build --koot-test",
         "koot-buildtest-isomorphic-start-server-custom-port": "koot-start --no-build --port 8316 --koot-test",
         "koot-buildtest-isomorphic-dev": "koot-dev --no-open --koot-test",
-        "koot-buildtest-spa-build": "koot-build --type react-spa --dest E:\\Projects\\koot\\0.7\\test\\projects\\standard\\dist-spa-test --koot-test"
+        "koot-buildtest-spa-build": "koot-build --type react-spa --dest E:\\Projects\\koot\\0.7\\test\\projects\\standard\\dist-spa-test --koot-test",
+        "koot-buildtest-isomorphic-start-i18n-use-router": "koot-start --koot-test --config koot.config.i18n-use-router.js",
+        "koot-buildtest-isomorphic-start-i18n_use_router": "koot-start --koot-test --config koot.config.i18n-use-router.js",
+        "koot-buildtest-isomorphic-dev-i18n_use_router": "koot-dev --no-open --koot-test --config koot.config.i18n-use-router.js"
     },
     "dependencies": {
         "koot": "file:../../../packages/koot",
@@ -114,7 +117,7 @@
         "react-dom": "16.6.3",
         "react-hot-loader": "4.4.0-1",
         "react-redux": "5.1.1",
-        "react-router": "3.2.0",
+        "react-router": "3.2.1",
         "react-router-redux": "4.0.8",
         "redux": "4.0.1",
         "redux-thunk": "2.3.0",

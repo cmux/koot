@@ -58,6 +58,8 @@ module.exports = () => {
         KOOT_I18N_COOKIE_KEY: 'spLocaleId',
         // i18n cookie 影响的域名
         // KOOT_I18N_COOKIE_DOMAIN: '',
+        // i18n URL 使用方式
+        KOOT_I18N_URL_USE: 'query',
 
         // HTML模板内容
         // KOOT_HTML_TEMPLATE: '',

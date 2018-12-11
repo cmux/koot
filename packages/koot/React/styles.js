@@ -77,6 +77,16 @@ const idDivStylesContainer = '__KOOT_ISOMORPHIC_STYLES_CONTAINER__'
  */
 export const parseHtmlForStyles = (html) => {
     const matches = html.match(new RegExp(`<div id="${idDivStylesContainer}">(.+)</div>`, 'm'))
+    if (
+        !matches ||
+        typeof matches !== 'object' ||
+        typeof matches.index === 'undefined' ||
+        typeof matches[1] === 'undefined'
+    )
+        return {
+            html,
+            htmlStyles: ''
+        }
     return {
         html: html.substr(0, matches.index),
         htmlStyles: matches[1]
