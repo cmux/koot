@@ -1,5 +1,7 @@
 # CSS 使用
 
+**注** 本文所述内容仅适用于 0.8 及以上版本（当前仍在开发中）
+
 ### 全局 CSS & 组件 CSS
 
 Koot.js 规定，存在有 2 种 CSS 文件：全局 CSS (Global CSS) 和组件 CSS (Module CSS)
