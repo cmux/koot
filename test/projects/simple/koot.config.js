@@ -158,7 +158,7 @@ module.exports = {
         internalLoaders: {
             'less-loader': {
                 modifyVars: {
-                    'base-font-size': '12px'
+                    // 'base-font-size': '12px'
                 },
                 aaa: 'bbb'
             }
