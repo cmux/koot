@@ -206,6 +206,9 @@ const validateBuildConfig = (config = {}) => {
         applyWebpackConfig('dll', 'webpackDll')
         applyWebpackConfig('hmr', 'webpackHmr')
         applyWebpackConfig('compilerHook', 'webpackCompilerHook')
+        Object.keys(config.webpack).forEach(key => {
+            applyWebpackConfig(key, 'webpack' + key.substr(0, 1).toUpperCase() + key.substr(1))
+        })
         delete config.webpack
     }
 

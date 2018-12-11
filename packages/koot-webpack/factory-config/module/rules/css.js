@@ -2,10 +2,10 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 
 /**
  * Loader 规则 - CSS
- * @param {Object} options
+ * @param {Object} remainingKootBuildConfig
  * @returns {Array} rules
  */
-module.exports = (options = {}) => {
+module.exports = (remainingKootBuildConfig = {}) => {
     const env = process.env.WEBPACK_BUILD_ENV
     const stage = process.env.WEBPACK_BUILD_STAGE
     const regExpKootModules = /koot-component/
@@ -13,7 +13,8 @@ module.exports = (options = {}) => {
     const {
         aliases = {},
         css = {},
-    } = options
+        webpackInternalLoaders: internalLoaders = {}
+    } = remainingKootBuildConfig
 
     /** @type {Array} rules */
     const rules = []
@@ -33,6 +34,10 @@ module.exports = (options = {}) => {
     ) ? true : false
 
     // 各 Loader 的规则
+    const {
+        'less-loader': lessLoaderConfig = {},
+        'sass-loader': sassLoaderConfig = {},
+    } = internalLoaders
     const useSpCssLoader = {
         loader: require.resolve('../../../loaders/css'),
         options: {
@@ -50,10 +55,16 @@ module.exports = (options = {}) => {
     const useLessLoader = {
         loader: "less-loader",
         options: {
-            javascriptEnabled: true
+            javascriptEnabled: true,
+            ...lessLoaderConfig
         }
     }
-    const useSassLoader = "sass-loader"
+    const useSassLoader = {
+        loader: "sass-loader",
+        options: {
+            ...sassLoaderConfig
+        }
+    }
     const useLastLoaderForNormal = (() => {
         if (stage !== 'client')
             return ''

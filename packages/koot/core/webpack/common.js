@@ -4,7 +4,7 @@ const webpack = require('webpack')
 // const ExtractTextPlugin = require("extract-text-webpack-plugin")
 // const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 
-const createModuleRules = require('./config/create/module-rules')
+const createModuleRules = require('koot-webpack/factory-config/module/rules')
 const defaultDefines = require('../../defaults/defines.js')
 const { keyConfigBuildDll } = require('../../defaults/before-build')
 const getPathnameProjectConfigFile = require('../../utils/get-pathname-project-config-file')
@@ -22,6 +22,7 @@ const factory = async ({
     defines = {},
     css = {},
     [keyConfigBuildDll]: createDll = false,
+    ...remainingKootBuildConfig
 }) => {
 
     // const useSpCssLoader = {
@@ -39,7 +40,8 @@ const factory = async ({
                 aliases,
                 defines,
                 css,
-                createDll
+                createDll,
+                ...remainingKootBuildConfig
             })
         },
         resolve: {

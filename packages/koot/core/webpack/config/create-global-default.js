@@ -1,4 +1,3 @@
-const { keyConfigBuildDll } = require('../../../defaults/before-build')
 const common = require('../common')
 
 /**
@@ -10,16 +9,11 @@ const common = require('../common')
  * @param {Object} [options.css]
  * @returns {Object} 通用配置对象
  */
-module.exports = async (options = {}) => {
+module.exports = async (kootBuildConfig = {}) => {
     const {
         WEBPACK_BUILD_ENV: ENV,
         WEBPACK_BUILD_STAGE: STAGE,
     } = process.env
-    const {
-        aliases,
-        defines,
-        css,
-    } = options
 
     return await common.factory({
         env: ENV,
@@ -27,10 +21,6 @@ module.exports = async (options = {}) => {
 
         spa: false,
 
-        aliases,
-        defines,
-        css,
-
-        [keyConfigBuildDll]: options[keyConfigBuildDll]
+        ...kootBuildConfig
     })
 }

@@ -40,7 +40,7 @@ module.exports = async (kootConfig = {}) => {
     const defaultPublicPathname = (TYPE === 'spa' ? '' : '/') + `${defaultPublicDirName}/`
 
     // 抽取配置
-    const data = Object.assign({}, defaults, kootConfig, {
+    const kootBuildConfig = Object.assign({}, defaults, kootConfig, {
         appType: await getAppType(),
         webpackConfig: {},
         defaultPublicDirName,
@@ -48,10 +48,10 @@ module.exports = async (kootConfig = {}) => {
     })
     const {
         analyze = false
-    } = data
+    } = kootBuildConfig
 
-    data.portServer = getPort(data.port)
-    process.env.SERVER_PORT = data.portServer
+    kootBuildConfig.portServer = getPort(kootBuildConfig.port)
+    process.env.SERVER_PORT = kootBuildConfig.portServer
 
     // ========================================================================
     //
@@ -59,14 +59,16 @@ module.exports = async (kootConfig = {}) => {
     //
     // ========================================================================
 
-    data.dist = await transformDist(data.dist)
-    data.i18n = await transformI18n(data.i18n)
-    data.pwa = await transformPWA(data.pwa)
-    data.template = await transformTemplate(data.template)
-    data.pathnameChunkmap = await getChunkmapPathname()
+    kootBuildConfig.dist = await transformDist(kootBuildConfig.dist)
+    kootBuildConfig.i18n = await transformI18n(kootBuildConfig.i18n)
+    kootBuildConfig.pwa = await transformPWA(kootBuildConfig.pwa)
+    kootBuildConfig.template = await transformTemplate(kootBuildConfig.template)
+    kootBuildConfig.pathnameChunkmap = await getChunkmapPathname()
 
-    if (typeof data.config === 'function') data.config = await data.config()
-    if (typeof data.config !== 'object') data.config = {}
+    if (typeof kootBuildConfig.config === 'function')
+        kootBuildConfig.config = await kootBuildConfig.config()
+    if (typeof kootBuildConfig.config !== 'object')
+        kootBuildConfig.config = {}
 
     // ========================================================================
     //
@@ -75,9 +77,9 @@ module.exports = async (kootConfig = {}) => {
     // ========================================================================
 
     if (STAGE === 'client')
-        data.webpackConfig = await transformConfigClient(data)
+        kootBuildConfig.webpackConfig = await transformConfigClient(kootBuildConfig)
     if (STAGE === 'server')
-        data.webpackConfig = await transformConfigServer(data)
+        kootBuildConfig.webpackConfig = await transformConfigServer(kootBuildConfig)
 
     // ========================================================================
     //
@@ -86,9 +88,9 @@ module.exports = async (kootConfig = {}) => {
     // ========================================================================
 
     if (analyze) {
-        if (Array.isArray(data.webpackConfig))
-            data.webpackConfig = data.webpackConfig[0]
-        data.webpackConfig.plugins.push(
+        if (Array.isArray(kootBuildConfig.webpackConfig))
+            kootBuildConfig.webpackConfig = kootBuildConfig.webpackConfig[0]
+        kootBuildConfig.webpackConfig.plugins.push(
             new BundleAnalyzerPlugin({
                 analyzerPort: process.env.SERVER_PORT,
                 defaultSizes: 'gzip'
@@ -102,5 +104,5 @@ module.exports = async (kootConfig = {}) => {
     //
     // ========================================================================
 
-    return data
+    return kootBuildConfig
 }
