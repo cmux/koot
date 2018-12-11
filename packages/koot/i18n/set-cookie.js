@@ -26,14 +26,15 @@ module.exports = (localeId, ctx) => {
     }
 
     if (__SERVER__) {
+        // TODO: set cookie on server
         // console.log('ctx.host', ctx.host)
         // console.log('ctx.hostname', ctx.hostname)
         // console.log(process.env.KOOT_I18N_COOKIE_KEY, localeId, { domain: ctx.hostname, ...options })
-        ctx.cookies.set(process.env.KOOT_I18N_COOKIE_KEY, localeId, {
-            domain: ctx.hostname,
-            maxAge: maxDate * 24 * 60 * 60 * 1000,
-            signed: false,
-            ...options
-        })
+        // ctx.cookies.set(process.env.KOOT_I18N_COOKIE_KEY, localeId, {
+        //     domain: ctx.hostname,
+        //     maxAge: maxDate * 24 * 60 * 60 * 1000,
+        //     signed: false,
+        //     ...options
+        // })
     }
 }
