@@ -1,14 +1,24 @@
-* [开始使用](/?id=开始使用)
-* [指南](/guide)
-* [项目结构](/folders)
-* [NPM 命令](/task)
-* [可修改的环境变量](/env)
-* [配置](/config)
-* [生命周期](/life-cycle)
-* [i18n/多语言](/i18n)
-* [HTML 模板](/template)
-* [React 相关](/react)
-  * [组件扩展 (extend)](/react-extend)
-  * [热更新](/react-hmr)
-  * [组件同构属性对象](/react-render-props)
-* [相关](/other)
+- **上手**
+  - [开始使用](/?id=开始使用)
+  - [模板项目结构](/boilerplate)
+  - [技术术语](/glossary)
+  - [FAQ/疑难解答](/faq)
+  - 　
+
+- **使用 & API文档**
+  - [项目配置](/config)
+  - [NPM 命令](/task)
+  - [HTML 模板](/template)
+  - [生命周期](/life-cycle)
+  - [i18n/多语言](/i18n)
+  - [可修改的环境变量](/env)
+  - [React 相关](/react)
+    - [组件扩展 (extend)](/react-extend)
+    - [热更新](/react-hmr)
+    - [组件同构属性对象](/react-render-props)
+  - [PWA](/pwa)
+  - 　
+
+- **开发建议**
+  - [多环境打包](/bundles)
+  - [发布 & 上线](/deploy)
