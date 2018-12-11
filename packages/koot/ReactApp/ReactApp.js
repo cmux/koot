@@ -171,7 +171,8 @@ export default class ReactApp {
 
         // 
 
-        const routes = this.react.router.get()[0]
+        // const routes = this.react.router.get()[0]
+        const routes = this.react.router.get()
         // delete routes.path
 
         // 用 react-router-redux 增强 history
