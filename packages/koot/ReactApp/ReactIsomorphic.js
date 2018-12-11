@@ -1,10 +1,12 @@
 import React from 'react'
 import HTMLTool from './HTMLTool'
 import { renderToString } from 'react-dom/server'
-import { createMemoryHistory, match } from 'react-router'
 import { syncHistoryWithStore } from 'react-router-redux'
+import useRouterHistory from 'react-router/lib/useRouterHistory'
+import match from 'react-router/lib/match'
+import createMemoryHistory from 'history/lib/createMemoryHistory'
 
-import { changeLocaleQueryKey } from '../defaults/defines'
+// import { changeLocaleQueryKey } from '../defaults/defines'
 import { publicPathPrefix } from '../defaults/webpack-dev-server'
 
 import {
@@ -16,6 +18,8 @@ import {
 // import { localeId } from '../i18n'
 import RenderCache from './render-cache'
 import RootIsomorphic from './root-isomorphic'
+import i18nGenerateHtmlRedirectMetas from '../i18n/server/generate-html-redirect-metas'
+import i18nGetLangFromCtx from '../i18n/server/get-lang-from-ctx'
 
 import onRequestGetStore from './server/on-request/get-store'
 
@@ -96,10 +100,10 @@ export default class ReactIsomorphic {
 
         /** @type {Boolean} i18n 是否启用 */
         const i18nEnabled = JSON.parse(process.env.KOOT_I18N)
-        /** @type {Array} i18n 配置数组 */
-        const i18nLocales = i18nEnabled
-            ? JSON.parse(process.env.KOOT_I18N_LOCALES)
-            : []
+        // /** @type {Array} i18n 配置数组 */
+        // const i18nLocales = i18nEnabled
+        //     ? JSON.parse(process.env.KOOT_I18N_LOCALES)
+        //     : []
         /** @type {String|undefined} i18n 类型 */
         const i18nType = i18nEnabled
             ? JSON.parse(process.env.KOOT_I18N_TYPE)
@@ -153,13 +157,22 @@ export default class ReactIsomorphic {
                 //     console.log('server', 'Server rendering...')
                 // }
 
+                const localeId = i18nGetLangFromCtx(ctx)
                 const store = onRequestGetStore(_store || configStore)
-                const memoryHistory = createMemoryHistory(url)
+                // const memoryHistory = createMemoryHistory(url)
+                const historyConfig = { basename: '/' }
+                if (JSON.parse(process.env.KOOT_I18N) &&
+                    process.env.KOOT_I18N_URL_USE === 'router' &&
+                    localeId
+                ) {
+                    historyConfig.basename = `/${localeId}`
+                }
+                const memoryHistory = useRouterHistory(() => createMemoryHistory(url))(historyConfig)
                 const history = syncHistoryWithStore(memoryHistory, store)
 
                 // 补充服务端提供的信息数据到store中
                 if (typeof beforeRouterMatch === 'function') {
-                    await beforeRouterMatch({ ctx, store })
+                    await beforeRouterMatch({ ctx, store, localeId })
                 }
 
                 // 根据router计算出渲染页面需要的数据，并把渲染需要的数据补充到store中
@@ -191,8 +204,6 @@ export default class ReactIsomorphic {
                 //     localeId
                 // }
 
-                const localeId = store.getState().localeId
-
                 if (typeof afterStoreUpdate === 'function') {
                     await afterStoreUpdate({ ctx, store })
                 }
@@ -208,6 +219,7 @@ export default class ReactIsomorphic {
                         {...renderProps}
                     />
                 ))
+
                 // console.log({
                 //     store,
                 //     state: store.getState(),
@@ -257,29 +269,9 @@ export default class ReactIsomorphic {
 
                 // i18n 启用时: 添加其他语种页面跳转信息的 meta 标签
                 if (i18nEnabled) {
-                    const localeIds = i18nLocales.map(arr => arr[0])
-                    // console.log('localeIds', localeIds)
-                    // console.log('ctx.query', ctx.query)
-                    // console.log('ctx.querystring', ctx.querystring)
-                    let { href } = ctx
-                    if (typeof proxyRequestOrigin.protocol === 'string') {
-                        href = href.replace(/^http:\/\//, `${proxyRequestOrigin.protocol}://`)
-                    }
-                    injectRealtime.metas += localeIds
-                        .map(l => {
-                            const thisHref = (typeof ctx.query[changeLocaleQueryKey] === 'string')
-                                ? href.replace(
-                                    new RegExp(`${changeLocaleQueryKey}=[a-zA-Z-_]+`),
-                                    `${changeLocaleQueryKey}=${l}`
-                                )
-                                : href + (ctx.querystring ? `&` : (
-                                    href.substr(href.length - 1) === '?'
-                                        ? ''
-                                        : `?`
-                                )) + `${changeLocaleQueryKey}=${l}`
-                            return `<link rel="alternate" hreflang="${l}" href="${thisHref}" />`
-                        })
-                        .join('')
+                    injectRealtime.metas += i18nGenerateHtmlRedirectMetas({
+                        ctx, proxyRequestOrigin, localeId
+                    })
                 }
 
                 // 渲染模板

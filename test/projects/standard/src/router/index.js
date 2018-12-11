@@ -18,6 +18,7 @@ export default {
         const children = [{
             path: 'static',
             name: 'Page: Static Assets',
+            // component: require('@views/static').default,
             getComponent: (nextState, cb) => {
                 require.ensure([], (require) => {
                     if (routeCheck(nextState)) cb(null, require('@views/static').default)

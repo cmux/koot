@@ -1,9 +1,13 @@
 import React from 'react'
 import { hydrate } from 'react-dom'
-import browserHistory from 'react-router/lib/browserHistory'
-import match from 'react-router/lib/match'
+// import browserHistory from 'react-router/lib/browserHistory'
+// import match from 'react-router/lib/match'
 import { syncHistoryWithStore } from 'react-router-redux'
 import { createStore, applyMiddleware, compose } from 'redux'
+// import browserHistory from 'react-router/lib/browserHistory'
+// import match from 'react-router/lib/match'
+import createBrowserHistory from 'history/lib/createBrowserHistory'
+import { parsePath } from 'history/lib/PathUtils'
 // let render = (() => {
 //     if (__DEV__) {
 //         const { render } = require('react-dom')
@@ -128,16 +132,35 @@ export default class ReactApp {
      */
     run(settings = {}) {
 
-        let options = Object.assign({}, settings)
+        const options = Object.assign({}, settings)
+        const initialState = window.__REDUX_STATE__ || {}
 
         if (typeof this.store === 'undefined') {
             // __REDUX_STATE__ 是与服务端约定好的存储redux数据对象 (在浏览器端的 html 里存在)
             this.createConfigureStoreFactory()
-            this.store = this.configureStore(window.__REDUX_STATE__)
+            this.store = this.configureStore(initialState)
         }
 
         // react-router
-        browserHistory.listen(location => {
+        const historyConfig = { basename: '/' }
+        if (JSON.parse(process.env.KOOT_I18N) &&
+            process.env.KOOT_I18N_URL_USE === 'router' &&
+            initialState.localeId
+        ) {
+            historyConfig.basename = `/${initialState.localeId}`
+        }
+        // const browserHistory = useRouterHistory(createBrowserHistory)(historyConfig)
+        // const theHistory = useBasename(() => browserHistory)(historyConfig)
+        // const theHistory = createBrowserHistory(historyConfig)
+        // const theHistory = useRouterHistory(createBrowserHistory)(historyConfig)
+        // const theHistory = CreateHistoryEnhancer((...args) => {
+        //     console.log(...args)
+        //     return browserHistory
+        // })()
+        const theHistory = kootUseBasename(createBrowserHistory)(historyConfig)
+        theHistory.listen(location => {
+            // console.log('pathname', location.pathname) // /hello/world
+            // console.log('basename', location.basename) // /base
             // TODO:
             /*store.dispatch(realtimeLocationUpdate(location))
             if (typeof options.browserHistoryOnUpdate === 'function') 
@@ -148,10 +171,11 @@ export default class ReactApp {
 
         // 
 
-        const routes = this.react.router.get()
+        const routes = this.react.router.get()[0]
+        // delete routes.path
 
         // 用 react-router-redux 增强 history
-        const history = syncHistoryWithStore(browserHistory, this.store)
+        const history = syncHistoryWithStore(theHistory, this.store)
 
         // 扩展 router 属性
         let ext = this.__reactRouterExt
@@ -161,21 +185,29 @@ export default class ReactApp {
         setStore(this.store)
         setHistory(history)
 
-        match({ history, routes }, (err/*, redirectLocation, renderProps*/) => {
-            if (err) {
-                console.log(err.stack)
-            }
-            hydrate(
-                <Root
-                    store={this.store}
-                    history={history}
-                    routes={routes}
-                    {...ext}
-                />,
-                document.getElementById(root)
-            )
-        })
+        // console.log('historyConfig', historyConfig)
+        // console.log('history', theHistory, history)
+        // console.log('routes', routes)
 
+        // match({ history, routes }, (err, ...args) => {
+        //     console.log({ err, ...args })
+        //     if (err) {
+        //         console.log(err.stack)
+        //     }
+        // })
+        hydrate(
+            <Root
+                store={this.store}
+                history={history}
+                routes={routes}
+                // onError={(...args) => console.log('route onError', ...args)}
+                // onUpdate={(...args) => console.log('route onUpdate', ...args)}
+                {...ext}
+            />,
+            document.getElementById(root)
+        )
+
+        // window.HISTORY = history
         // store = this.store
 
         return {
@@ -185,3 +217,82 @@ export default class ReactApp {
     }
 
 }
+
+
+/**
+ * History Enhancer: use basename
+ * 
+ * Original useBasename enhancer from history also override all read methods
+ * `getCurrentLocation` `listenBefore` `listen`
+ * But as Diablohu tested, when read methods overrided, if the route matched used async method to get component, would fail
+ * that rendering blank page and no route match event fired
+ * So we only overrid write methods here. And modify the first level path in routes object to `:localeId`
+ * 
+ * @param {Function} createHistory
+ * @returns {Object} History
+ */
+const kootUseBasename = (createHistory) =>
+    (options = {}) => {
+        const history = createHistory(options)
+        const { basename } = options
+
+        const addBasename = (location) => {
+            if (!location)
+                return location
+
+            if (basename && location.basename == null) {
+                if (location.pathname.toLowerCase().indexOf(basename.toLowerCase()) === 0) {
+                    location.pathname = location.pathname.substring(basename.length)
+                    location.basename = basename
+
+                    if (location.pathname === '')
+                        location.pathname = '/'
+                } else {
+                    location.basename = ''
+                }
+            }
+
+            return location
+        }
+
+        const prependBasename = (location) => {
+            if (!basename)
+                return location
+
+            const object = typeof location === 'string' ? parsePath(location) : location
+            const pname = object.pathname
+            const normalizedBasename = basename.slice(-1) === '/' ? basename : `${basename}/`
+            const normalizedPathname = pname.charAt(0) === '/' ? pname.slice(1) : pname
+            const pathname = normalizedBasename + normalizedPathname
+
+            return {
+                ...object,
+                pathname
+            }
+        }
+
+        // Override all write methods with basename-aware versions.
+        const push = (location) =>
+            history.push(prependBasename(location))
+
+        const replace = (location) =>
+            history.replace(prependBasename(location))
+
+        const createPath = (location) =>
+            history.createPath(prependBasename(location))
+
+        const createHref = (location) =>
+            history.createHref(prependBasename(location))
+
+        const createLocation = (location, ...args) =>
+            addBasename(history.createLocation(prependBasename(location), ...args))
+
+        return {
+            ...history,
+            push,
+            replace,
+            createPath,
+            createHref,
+            createLocation
+        }
+    }

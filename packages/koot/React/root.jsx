@@ -11,6 +11,10 @@ export default ({
     ...props
 }) => {
 
+    // console.log({
+    //     history, routes, ...props
+    // })
+
     return (
         <StyleMapContext.Provider value={{}}>
             <Provider store={store} >
