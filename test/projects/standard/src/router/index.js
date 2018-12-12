@@ -29,6 +29,7 @@ export default {
             children.push({
                 path: 'extend',
                 name: 'Page: Component Extender',
+                // component: require('@views/extend').default,
                 getComponent: (nextState, cb) => {
                     require.ensure([], (require) => {
                         if (routeCheck(nextState)) cb(null, require('@views/extend').default)

@@ -5,9 +5,10 @@ const webpack = require('webpack')
 // const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 
 const createModuleRules = require('koot-webpack/factory-config/module/rules')
-const defaultDefines = require('../../defaults/defines.js')
+const defaultDefines = require('../../defaults/defines')
 const { keyConfigBuildDll } = require('../../defaults/before-build')
 const getPathnameProjectConfigFile = require('../../utils/get-pathname-project-config-file')
+const readBaseConfig = require('../../utils/read-base-config')
 
 // 打包结果目录
 const outputPath = 'dist'
@@ -52,20 +53,20 @@ const factory = async ({
             ],
             extensions: ['.js', '.jsx', '.json', '.css', '.less', '.sass', '.scss']
         },
-        plugins: plugins(env, stage, defines)
+        plugins: await plugins(env, stage, defines, remainingKootBuildConfig)
     }
 }
 
 
 // 执行顺序, 先 -> 后
-const plugins = (env, stage, defines = {}) => {
-    const defaults = {}
+const plugins = async (env, stage, defines = {}/*, remainingKootBuildConfig = {}*/) => {
+    const _defaultDefines = {}
     Object.keys(defaultDefines).forEach(key => {
-        defaults[key] = JSON.stringify(defaultDefines[key])
+        _defaultDefines[key] = JSON.stringify(defaultDefines[key])
     })
 
-    let g = Object.assign(
-        defaults,
+    const thisDefines = Object.assign(
+        _defaultDefines,
         {
             __CLIENT__: stage == 'client',
             __SERVER__: stage == 'server',
@@ -82,6 +83,11 @@ const plugins = (env, stage, defines = {}) => {
         },
         defines
     )
+
+    for (let key in thisDefines) {
+        if (typeof thisDefines[key] === 'function')
+            thisDefines[key] = thisDefines[key]()
+    }
 
     if (env == 'prod') {
         process.env.NODE_ENV = 'production'
@@ -112,13 +118,19 @@ const plugins = (env, stage, defines = {}) => {
         typeof process.env[key] !== 'undefined'
     ))
 
-    for (let key in g) {
-        if (typeof g[key] === 'function')
-            g[key] = g[key]()
-    }
+    const historyType = await (async () => {
+        if (stage === 'server')
+            return 'memoryHistory'
+
+        const {
+            historyType = process.env.WEBPACK_BUILD_TYPE === 'spa' ? 'hash' : 'browser'
+        } = await readBaseConfig('client')
+        const type = historyType.replace(/history$/i, '')
+        return `${type}History`
+    })()
 
     return [
-        new webpack.DefinePlugin(g),
+        new webpack.DefinePlugin(thisDefines),
         new webpack.EnvironmentPlugin(envsToDefine),
         // new webpack.ContextReplacementPlugin(
         //     /^__KOOT_PROJECT_CONFIG_PATHNAME__$/,
@@ -133,7 +145,15 @@ const plugins = (env, stage, defines = {}) => {
         new webpack.NormalModuleReplacementPlugin(
             /^__KOOT_PROJECT_CONFIG_PATHNAME__$/,
             getPathnameProjectConfigFile()
-        )
+        ),
+        new webpack.NormalModuleReplacementPlugin(
+            /^__KOOT_CLIENT_REQUIRE_CREATE_HISTORY__$/,
+            `history/lib/create${historyType.substr(0, 1).toUpperCase() + historyType.substr(1)}`
+        ),
+        new webpack.NormalModuleReplacementPlugin(
+            /^__KOOT_CLIENT_REQUIRE_HISTORY__$/,
+            `react-router/lib/${historyType}`
+        ),
     ]
 }
 

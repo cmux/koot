@@ -1,4 +1,4 @@
-# Webpack 配置
+# Webpack
 
 ### Chunkmap (Chunk 对照表)
 

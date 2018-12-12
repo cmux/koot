@@ -30,6 +30,9 @@ class App extends React.Component {
         // You can also log the error to an error reporting service
         // logErrorToMyService(error, info);
     }
+    componentDidUpdate() {
+        // console.log(this.props)
+    }
     render = () => (
         <React.StrictMode>
             <div id="app" className={this.props.className}>

@@ -53,14 +53,14 @@ module.exports = {
     /**
      * @type {Object} 客户端/浏览器端相关配置
      * @namespace
-     * @property {String} [history=(browser|hash)] - 路由历史类型，支持 'browser' 'hash' 'memory'。同构时默认为 'browser'，其他情况默认为 'hash'
+     * @property {String} [historyType=(browser|hash)] - 客户端中路由 (`router`) 所用的历史对象 (`history`) 类型
      * @property {Pathname} [before] - 回调函数：在 React 初始化前
      * @property {Pathname} [after] - 回调函数：在 React 初始化完成后
      * @property {Pathname} [onRouterUpdate] - 回调函数：在路由发生改变时
      * @property {Pathname} [onHistoryUpdate] - 回调函数：在浏览器历史发生改变时时
      */
     client: {
-        history: 'browser',
+        // historyType: 'hash',
         before: './src/services/lifecycle/before',
         after: './src/services/lifecycle/after',
         onRouterUpdate: './src/services/lifecycle/on-router-update',

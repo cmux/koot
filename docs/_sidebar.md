@@ -7,7 +7,7 @@
 
 - **使用 & API文档**
   - [项目配置](/config)
-  - [Webpack 配置](/webpack)
+  - [Webpack](/webpack)
   - [NPM 命令](/task)
   - [HTML 模板](/template)
   - [生命周期](/life-cycle)

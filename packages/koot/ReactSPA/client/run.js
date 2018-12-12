@@ -8,7 +8,8 @@ import ReactDOM from 'react-dom'
 //     // browserHistory,
 //     // createMemoryHistory,
 // } from 'react-router'
-import hashHistory from 'react-router/lib/hashHistory'
+// import hashHistory from 'react-router/lib/hashHistory'
+import history from "../../React/history"
 import { syncHistoryWithStore/*, routerReducer*/ } from 'react-router-redux'
 // import { Provider } from 'react-redux'
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
@@ -132,9 +133,10 @@ export default ({
         else
             router = {}
     }
+    const thisHistory = syncHistoryWithStore(history, store)
     const routerConfig = {
         // history: syncHistoryWithStore(memoryHistory, store),
-        history: syncHistoryWithStore(hashHistory, store),
+        history: thisHistory,
         routes: router,
         onUpdate: (...args) => {
             if (__DEV__ && logCountRouterUpdate < 2) {
@@ -152,12 +154,12 @@ export default ({
     }
     if (typeof routerConfig.routes.path === 'undefined')
         routerConfig.routes.path = '/'
-    const history = hashHistory
+    // const history = hashHistory
     // if (__CLIENT__) self.routerHistory = memoryHistory
     // if (__CLIENT__) self.routerHistory = hashHistory
 
     // memoryHistory.listen(location => {
-    hashHistory.listen(location => {
+    thisHistory.listen(location => {
         // if (__DEV__) {
         //     console.log('🌏 browserHistory update', location)
         // }
@@ -186,7 +188,7 @@ export default ({
     // ============================================================================
 
     setStore(store)
-    setHistory(history)
+    setHistory(thisHistory)
 
 
 
@@ -239,6 +241,7 @@ export default ({
             // console.log('routerConfig', routerConfig)
 
             const { history, routes, ...ext } = routerConfig
+            // console.log(routes)
 
             ReactDOM.render(
                 <Root

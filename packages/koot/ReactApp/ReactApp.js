@@ -1,13 +1,10 @@
 import React from 'react'
 import { hydrate } from 'react-dom'
-// import browserHistory from 'react-router/lib/browserHistory'
-// import match from 'react-router/lib/match'
 import { syncHistoryWithStore } from 'react-router-redux'
 import { createStore, applyMiddleware, compose } from 'redux'
-// import browserHistory from 'react-router/lib/browserHistory'
 // import match from 'react-router/lib/match'
-import createBrowserHistory from 'history/lib/createBrowserHistory'
-import { parsePath } from 'history/lib/PathUtils'
+// import createHistory from "__KOOT_CLIENT_REQUIRE_CREATE_HISTORY__"
+import history from '../React/history'
 // let render = (() => {
 //     if (__DEV__) {
 //         const { render } = require('react-dom')
@@ -142,23 +139,7 @@ export default class ReactApp {
         }
 
         // react-router
-        const historyConfig = { basename: '/' }
-        if (JSON.parse(process.env.KOOT_I18N) &&
-            process.env.KOOT_I18N_URL_USE === 'router' &&
-            initialState.localeId
-        ) {
-            historyConfig.basename = `/${initialState.localeId}`
-        }
-        // const browserHistory = useRouterHistory(createBrowserHistory)(historyConfig)
-        // const theHistory = useBasename(() => browserHistory)(historyConfig)
-        // const theHistory = createBrowserHistory(historyConfig)
-        // const theHistory = useRouterHistory(createBrowserHistory)(historyConfig)
-        // const theHistory = CreateHistoryEnhancer((...args) => {
-        //     console.log(...args)
-        //     return browserHistory
-        // })()
-        const theHistory = kootUseBasename(createBrowserHistory)(historyConfig)
-        theHistory.listen(location => {
+        history.listen(location => {
             // console.log('pathname', location.pathname) // /hello/world
             // console.log('basename', location.basename) // /base
             // TODO:
@@ -172,11 +153,16 @@ export default class ReactApp {
         // 
 
         // const routes = this.react.router.get()[0]
-        const routes = this.react.router.get()
+        const routes = (() => {
+            const r = this.react.router.get()
+            if (Array.isArray(r) && r.length === 1)
+                return r[0]
+            return r
+        })()
         // delete routes.path
 
         // 用 react-router-redux 增强 history
-        const history = syncHistoryWithStore(theHistory, this.store)
+        const thisHistory = syncHistoryWithStore(history, this.store)
 
         // 扩展 router 属性
         let ext = this.__reactRouterExt
@@ -184,22 +170,22 @@ export default class ReactApp {
 
         // 设置常量
         setStore(this.store)
-        setHistory(history)
+        setHistory(thisHistory)
 
         // console.log('historyConfig', historyConfig)
-        // console.log('history', theHistory, history)
-        // console.log('routes', routes)
+        console.log('history', thisHistory)
+        console.log('routes', routes)
 
-        // match({ history, routes }, (err, ...args) => {
-        //     console.log({ err, ...args })
-        //     if (err) {
-        //         console.log(err.stack)
-        //     }
-        // })
+        require('react-router/lib/match')({ history, routes }, (err, ...args) => {
+            console.log({ err, ...args })
+            if (err) {
+                console.log(err.stack)
+            }
+        })
         hydrate(
             <Root
                 store={this.store}
-                history={history}
+                history={thisHistory}
                 routes={routes}
                 // onError={(...args) => console.log('route onError', ...args)}
                 // onUpdate={(...args) => console.log('route onUpdate', ...args)}
@@ -218,82 +204,3 @@ export default class ReactApp {
     }
 
 }
-
-
-/**
- * History Enhancer: use basename
- * 
- * Original useBasename enhancer from history also override all read methods
- * `getCurrentLocation` `listenBefore` `listen`
- * But as Diablohu tested, when read methods overrided, if the route matched used async method to get component, would fail
- * that rendering blank page and no route match event fired
- * So we only overrid write methods here. And modify the first level path in routes object to `:localeId`
- * 
- * @param {Function} createHistory
- * @returns {Object} History
- */
-const kootUseBasename = (createHistory) =>
-    (options = {}) => {
-        const history = createHistory(options)
-        const { basename } = options
-
-        const addBasename = (location) => {
-            if (!location)
-                return location
-
-            if (basename && location.basename == null) {
-                if (location.pathname.toLowerCase().indexOf(basename.toLowerCase()) === 0) {
-                    location.pathname = location.pathname.substring(basename.length)
-                    location.basename = basename
-
-                    if (location.pathname === '')
-                        location.pathname = '/'
-                } else {
-                    location.basename = ''
-                }
-            }
-
-            return location
-        }
-
-        const prependBasename = (location) => {
-            if (!basename)
-                return location
-
-            const object = typeof location === 'string' ? parsePath(location) : location
-            const pname = object.pathname
-            const normalizedBasename = basename.slice(-1) === '/' ? basename : `${basename}/`
-            const normalizedPathname = pname.charAt(0) === '/' ? pname.slice(1) : pname
-            const pathname = normalizedBasename + normalizedPathname
-
-            return {
-                ...object,
-                pathname
-            }
-        }
-
-        // Override all write methods with basename-aware versions.
-        const push = (location) =>
-            history.push(prependBasename(location))
-
-        const replace = (location) =>
-            history.replace(prependBasename(location))
-
-        const createPath = (location) =>
-            history.createPath(prependBasename(location))
-
-        const createHref = (location) =>
-            history.createHref(prependBasename(location))
-
-        const createLocation = (location, ...args) =>
-            addBasename(history.createLocation(prependBasename(location), ...args))
-
-        return {
-            ...history,
-            push,
-            replace,
-            createPath,
-            createHref,
-            createLocation
-        }
-    }

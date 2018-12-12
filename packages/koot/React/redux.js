@@ -9,12 +9,14 @@ import {
     reducerLocaleId as i18nReducerLocaleId,
     reducerLocales as i18nReducerLocales,
 } from '../i18n/redux'
-const getHistory = () => {
-    if (__SPA__) {
-        return require('react-router/lib/hashHistory')
-    }
-    return require('react-router/lib/browserHistory')
-}
+// import history from "__KOOT_CLIENT_REQUIRE_HISTORY__"
+import history from "./history"
+// const getHistory = () => {
+//     if (__SPA__) {
+//         return require('react-router/lib/hashHistory')
+//     }
+//     return require('react-router/lib/browserHistory')
+// }
 
 //
 
@@ -49,5 +51,5 @@ if (__CLIENT__) initialState = window.__REDUX_STATE__
  */
 export const middlewares = [
     thunk,
-    routerMiddleware(getHistory()),
+    routerMiddleware(history),
 ]

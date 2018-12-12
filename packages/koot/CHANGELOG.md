@@ -18,6 +18,7 @@
         - 该 className 会被更换为 hash 结果，如 `.a85c6k` 或 `.nav__bjj15a`
       - `props.className` 会传入到对应的组件，其值为与上述结果对应的 hash 后的 className
   - 配置项
+    - **新** `client.browserType` - 客户端中路由 (`router`) 所用的历史对象 (`history`) 类型。详情请参见文档的 [配置/客户端](https://koot.js.org/#/config?id=客户端浏览器端) 章节
     - **新** `webpack.internalLoadersOptions` - 用以扩展几乎无法修改的内置 `loader` 所用的设置。详情请参见文档的 [配置/Webpack](https://koot.js.org/#/config?id=Webpack) 章节
 - React
   - 根层组件添加 `componentDidCatch` 生命周期方法，以保障 React 输出渲染结果

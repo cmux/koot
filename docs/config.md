@@ -115,6 +115,22 @@ module.exports = {
 
 _**Object**_ `client`
 
+- _String_ `client.historyType`
+<br>客户端中路由 (`router`) 所用的历史对象 (`history`) 类型。目前支持：
+  - `browser` _browserHistory_ (同构模式默认使用)
+  - `hash` _hashHistory_ (SPA 模式默认使用)
+
+```javascript
+// 默认配置
+module.exports = {
+    // ...
+    client: {
+        historyType: undefined
+    },
+    // ...
+}
+```
+
 ### 服务器端
 
 _**Object**_ `server` _仅针对同构项目_
