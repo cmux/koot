@@ -67,7 +67,7 @@ export default class ReactIsomorphic {
         */
 
         const {
-            beforeRouterMatch, afterStoreUpdate,
+            beforeRouterMatch, beforeDataToStore, afterDataToStore,
             inject,
             configStore, store: _store,
             routes,
@@ -193,14 +193,18 @@ export default class ReactIsomorphic {
                 setStore(store)
                 setHistory(history)
 
+                if (typeof beforeDataToStore === 'function') {
+                    await beforeDataToStore({ ctx, store })
+                }
+
                 // 把同构时候服务端预处理数据补充到store中
                 await ServerRenderDataToStore({ store, renderProps, ctx })
 
                 // 把同构时候服务端预处理数据补充到html中(根据页面逻辑动态修改html内容)
                 const htmlTool = await ServerRenderHtmlExtend({ store, renderProps, ctx })
 
-                if (typeof afterStoreUpdate === 'function') {
-                    await afterStoreUpdate({ ctx, store })
+                if (typeof afterDataToStore === 'function') {
+                    await afterDataToStore({ ctx, store })
                 }
 
                 // 把react部分渲染出html片段，并插入到html中
