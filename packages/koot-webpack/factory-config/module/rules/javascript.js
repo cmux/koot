@@ -3,13 +3,13 @@
  * @param {Object} options
  * @returns {Array} rules
  */
-module.exports = (options = {}) => {
+module.exports = (kootBuildConfig = {}) => {
     const env = process.env.WEBPACK_BUILD_ENV
     const stage = process.env.WEBPACK_BUILD_STAGE
 
     const {
         createDll = false,
-    } = options
+    } = kootBuildConfig
 
     /** @type {Array} rules */
     const rules = []

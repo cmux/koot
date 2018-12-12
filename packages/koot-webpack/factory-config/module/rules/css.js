@@ -2,10 +2,10 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 
 /**
  * Loader 规则 - CSS
- * @param {Object} remainingKootBuildConfig
+ * @param {Object} kootBuildConfig
  * @returns {Array} rules
  */
-module.exports = (remainingKootBuildConfig = {}) => {
+module.exports = (kootBuildConfig = {}) => {
     const env = process.env.WEBPACK_BUILD_ENV
     const stage = process.env.WEBPACK_BUILD_STAGE
     const regExpKootModules = /koot-component/
@@ -13,8 +13,8 @@ module.exports = (remainingKootBuildConfig = {}) => {
     const {
         aliases = {},
         css = {},
-        webpackInternalLoaders: internalLoaders = {}
-    } = remainingKootBuildConfig
+        webpackInternalLoadersOptions: internalLoadersOptions = {}
+    } = kootBuildConfig
 
     /** @type {Array} rules */
     const rules = []
@@ -37,7 +37,7 @@ module.exports = (remainingKootBuildConfig = {}) => {
     const {
         'less-loader': lessLoaderConfig = {},
         'sass-loader': sassLoaderConfig = {},
-    } = internalLoaders
+    } = internalLoadersOptions
     const useSpCssLoader = {
         loader: require.resolve('../../../loaders/css'),
         options: {

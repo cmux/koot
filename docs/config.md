@@ -84,8 +84,8 @@ _**Object**_ `webpack`
 <br>**仅开发模式**
 <br>插件 `webpack.HotModuleReplacementPlugin` 的配置对象。
 <br>如果遭遇在开发模式下在保存文件后 `webpack` 不断无限的刷新打包的问题，请配置该项为 `{ multiStep: false }`
-- _Object_ `webpack.internalLoaders`
-<br>配置内置提供的不可更改的 `loader` 所用的设置，目前支持配置：
+- _Object_ `webpack.internalLoadersOptions`
+<br>用以扩展几乎无法修改的 `loader` 所用的设置，目前支持：
   - `less-loader`
   - `sass-loader`
 
@@ -105,7 +105,7 @@ module.exports = {
             'koot',
         ],
         hmr: {},
-        internalLoaders: {}
+        internalLoadersOptions: {}
     },
     // ...
 }

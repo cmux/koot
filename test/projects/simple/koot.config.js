@@ -155,10 +155,10 @@ module.exports = {
             'react-router-redux',
             'koot',
         ],
-        internalLoaders: {
+        internalLoadersOptions: {
             'less-loader': {
                 modifyVars: {
-                    // 'base-font-size': '12px'
+                    'base-font-size': '40px'
                 },
                 aaa: 'bbb'
             }

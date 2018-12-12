@@ -142,6 +142,14 @@ module.exports = {
         defines: {
             __QA__: JSON.stringify(false),
         },
+        internalLoadersOptions: {
+            'less-loader': {
+                modifyVars: {
+                    'base-font-size': '40px'
+                },
+                aaa: 'bbb'
+            }
+        }
     },
 
     /** 
