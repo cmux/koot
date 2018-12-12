@@ -1,3 +1,9 @@
+## 0.7.9
+**2018-12-12**
+- 核心
+  - 配置项
+    - **新** `server.onRender.beforeDataToStore` 和 `server.onRender.afterDataToStore` - 允许对服务器渲染时的生命周期方法进行更详细的设定。详情请参见文档的 [配置/服务器端](https://koot.js.org/#/config?id=服务器端) 章节
+
 ## 0.7.8
 **2018-12-11**
 - 错误修正
