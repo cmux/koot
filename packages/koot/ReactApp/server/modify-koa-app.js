@@ -211,6 +211,14 @@ export default async (app, {
     // ============================================================================
     reactApp.isomorphic = new ReactIsomorphic()
 
+    let beforeDataToStore, afterDataToStore
+    if (typeof onRender === 'object') {
+        beforeDataToStore = onRender.beforeDataToStore || undefined
+        afterDataToStore = onRender.afterDataToStore || undefined
+    } else if (typeof onRender === 'function') {
+        afterDataToStore = onRender
+    }
+
     const isomorphic = reactApp.isomorphic.createKoaMiddleware({
         reactApp,
 
@@ -269,7 +277,7 @@ export default async (app, {
                 i18nOnServerRender(o)
             }
         },
-        afterStoreUpdate: async (o) => {
+        beforeDataToStore: async (o) => {
             if (__DEV__) {
                 console.log(' ')
                 console.log(
@@ -280,14 +288,28 @@ export default async (app, {
                 console.log(
                     `\x1b[36m⚑\x1b[0m `
                     + `\x1b[93m[koot/server]\x1b[0m `
-                    + `callback: \x1b[32m${'onRender'}\x1b[0m`
+                    + `callback: \x1b[32m${'onRender.beforeDataToStore'}\x1b[0m`
                     + `({ ctx, store })`
                     + `\n`
                 )
             }
 
-            if (typeof onRender === 'function')
-                await onRender(o)
+            if (typeof beforeDataToStore === 'function')
+                await beforeDataToStore(o)
+        },
+        afterDataToStore: async (o) => {
+            if (__DEV__) {
+                console.log(
+                    `\x1b[36m⚑\x1b[0m `
+                    + `\x1b[93m[koot/server]\x1b[0m `
+                    + `callback: \x1b[32m${'onRender.afterDataToStore'}\x1b[0m`
+                    + `({ ctx, store })`
+                    + `\n`
+                )
+            }
+
+            if (typeof afterDataToStore === 'function')
+                await afterDataToStore(o)
         },
 
         proxyRequestOrigin: __DEV__ ? {} : proxyRequestOrigin,

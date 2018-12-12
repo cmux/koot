@@ -160,6 +160,12 @@ _**Object**_ `server` _仅针对同构项目_
 <br>回调：在服务器启动完成
 - _Pathname:Function_ `server.onRender`
 <br>回调：在页面渲染时
+- _Object_ `server.onRender`
+<br>回调：在页面渲染时 (细节设定)
+  - _Pathname:Function_ `server.onRender.beforeDataToStore`
+  <br>在服务器同步数据到 store 之前
+  - _Pathname:Function_ `server.onRender.afterDataToStore`
+  <br>在服务器同步数据到 store 之后
 
 ```javascript
 // 默认配置
