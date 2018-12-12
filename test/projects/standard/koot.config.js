@@ -242,10 +242,17 @@ module.exports = {
     },
 
     /** 
-     * webpack-dev-server 配置，仅在开发环境(ENV:dev)下生效
      * @type {Object}
+     * 开发模式设置
+     * 除了提到的选项，其他所有选项均会扩展 webpack-dev-server 的设置
      */
-    devServer: {},
+    devServer: {
+        // quiet: true,
+        // overlay: {
+        //     warnings: true,
+        //     errors: true
+        // }
+    },
 
     /** 
      * @type {String}

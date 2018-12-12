@@ -316,7 +316,7 @@ module.exports = async (kootBuildConfig = {}) => {
         webpackConfig,
         pwa,
         i18n,
-        devServer,
+        devServer = {},
         pathnameChunkmap,
     } = data
 
@@ -434,6 +434,12 @@ module.exports = async (kootBuildConfig = {}) => {
         // await sleep(20 * 1000)
         await beforeEachBuild()
         const compiler = webpack(webpackConfig)
+        const {
+            before,
+            headers = {},
+            // port,
+            ...extendDevServerOptions
+        } = devServer
         const devServerConfig = Object.assign({
             quiet: false,
             stats: { colors: true },
@@ -444,7 +450,8 @@ module.exports = async (kootBuildConfig = {}) => {
             contentBase: './',
             publicPath: TYPE === 'spa' ? '/' : '/dist/',
             headers: {
-                'Access-Control-Allow-Origin': '*'
+                'Access-Control-Allow-Origin': '*',
+                ...headers
             },
             open: TYPE === 'spa',
             watchOptions: {
@@ -460,9 +467,14 @@ module.exports = async (kootBuildConfig = {}) => {
                 if (appType === 'ReactSPA') {
                     require('../../ReactSPA/dev-server/extend')(app)
                 }
+                if (typeof before === 'function')
+                    return before(app)
             }
-        }, devServer)
+        }, extendDevServerOptions)
         const port = TYPE === 'spa' ? process.env.SERVER_PORT : process.env.WEBPACK_DEV_SERVER_PORT
+
+        console.log('\n\ndevServer')
+        console.log(devServerConfig)
 
         // more config
         // http://webpack.github.io/docs/webpack-dev-server.html
