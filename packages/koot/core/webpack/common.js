@@ -124,7 +124,7 @@ const plugins = async (env, stage, defines = {}/*, remainingKootBuildConfig = {}
 
         const {
             historyType = process.env.WEBPACK_BUILD_TYPE === 'spa' ? 'hash' : 'browser'
-        } = await readBaseConfig('client')
+        } = (await readBaseConfig('client') || {})
         const type = historyType.replace(/history$/i, '')
         return `${type}History`
     })()
