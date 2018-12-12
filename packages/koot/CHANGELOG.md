@@ -56,6 +56,12 @@
     - `inquirer` -> _6.2.1_
     - `portfinder` -> _1.0.20_
 
+## 0.7.10
+**2018-12-12**
+- 核心
+  - 配置项
+    - 现在会处理 `server.onRender.beforeDataToStore` 或 `server.onRender.afterDataToStore` 配置为 `Pathname` 类型的情况
+
 ## 0.7.9
 **2018-12-12**
 - 核心

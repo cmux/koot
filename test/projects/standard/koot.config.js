@@ -105,8 +105,8 @@ module.exports = {
         after: './server/lifecycle/after',
         // onRender: './server/lifecycle/on-render',
         onRender: {
-            beforeDataToStore: './server/lifecycle/on-render-render-data-to-store',
-            afterDataToStore: './server/lifecycle/on-render-render-data-to-store',
+            beforeDataToStore: './server/lifecycle/on-render-before-data-to-store',
+            afterDataToStore: './server/lifecycle/on-render-after-data-to-store',
         },
     },
 

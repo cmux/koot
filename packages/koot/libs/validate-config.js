@@ -140,6 +140,8 @@ module.exports = async (projectDir = getCwd()) => {
             'server.before',
             'server.after',
             'server.onRender',
+            'server.onRender.beforeDataToStore',
+            'server.onRender.afterDataToStore',
             'inject',
         ])
 
