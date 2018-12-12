@@ -331,7 +331,6 @@ describe('测试: React 同构项目', async () => {
 
                 await afterTest(dir, '[Production] 使用 koot-start (--no-build) 命令启动服务器并访问')
             })
-            return
             if (fullTest) {
                 test(`[Production] 使用 koot-start (--no-build) 命令启动服务器并访问 (自定义端口号)`, async () => {
                     await beforeTest(dir)
