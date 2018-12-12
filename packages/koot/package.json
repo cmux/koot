@@ -1,6 +1,6 @@
 {
     "name": "koot",
-    "version": "0.8.0-alpha.3",
+    "version": "0.8.0-alpha.4",
     "description": "Koot.js - React isomorphic framework created by CMUX",
     "main": "index.js",
     "sideEffects": false,
@@ -88,7 +88,7 @@
         "koa-proxies": "0.8.1",
         "koa-router": "7.4.0",
         "koa-static": "5.0.0",
-        "koot-webpack": "^0.8.0-alpha.3",
+        "koot-webpack": "^0.8.0-alpha.4",
         "less": "3.9.0",
         "less-loader": "4.1.0",
         "md5": "2.2.1",
