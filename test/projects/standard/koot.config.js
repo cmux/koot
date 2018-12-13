@@ -266,6 +266,13 @@ module.exports = {
         //     warnings: true,
         //     errors: true
         // }
+        // historyApiFallback: false,
+        proxy: {
+            '/root': {
+                target: 'http://localhost:8083/',
+                pathRewrite: { '^/root': '' }
+            }
+        }
     },
 
     /** 

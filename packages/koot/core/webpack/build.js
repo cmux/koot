@@ -499,8 +499,10 @@ module.exports = async (kootBuildConfig = {}) => {
             wait()
         })
 
-        logEmptyLine()
-        log('success', 'dev', `webpack-dev-server @ http://localhost:${port}`)
+        if (TYPE !== 'spa') {
+            logEmptyLine()
+            log('success', 'dev', `webpack-dev-server @ http://localhost:${port}`)
+        }
 
         return result
     }
