@@ -154,6 +154,10 @@ module.exports = async (kootBuildConfig = {}) => {
         if (quietMode) return
         return _log(...args)
     }
+    const logEmptyLine = () => {
+        if (quietMode) return
+        return console.log('')
+    }
 
     // log: 打包流程正式开始
     log('build', __(
@@ -473,15 +477,17 @@ module.exports = async (kootBuildConfig = {}) => {
         }, extendDevServerOptions)
         const port = TYPE === 'spa' ? process.env.SERVER_PORT : process.env.WEBPACK_DEV_SERVER_PORT
 
-        console.log('\n\ndevServer')
-        console.log(devServerConfig)
+        // console.log('\n\ndevServer')
+        // console.log(devServerConfig)
 
         // more config
         // http://webpack.github.io/docs/webpack-dev-server.html
         const server = await new WebpackDevServer(compiler, devServerConfig)
         server.use(require('webpack-hot-middleware')(compiler))
+
         server.listen(port, '0.0.0.0', async (err) => {
             if (err) console.error(err)
+            // console.log('===========')
         })
 
         // 等待 building 标记为 false
@@ -492,6 +498,9 @@ module.exports = async (kootBuildConfig = {}) => {
             }, 500)
             wait()
         })
+
+        logEmptyLine()
+        log('success', 'dev', `webpack-dev-server @ http://localhost:${port}`)
 
         return result
     }
