@@ -93,11 +93,15 @@ const history = (() => {
             ) {
                 historyConfig.basename = `/${initialState.localeId}`
                 historyClient = kootUseBasename(createHistory)(historyConfig)
+            } else {
+                // historyClient = require("__KOOT_CLIENT_REQUIRE_HISTORY__")
+                historyClient = createHistory()
             }
-            // historyClient = require("__KOOT_CLIENT_REQUIRE_HISTORY__")
-            historyClient = createHistory()
+            // console.log({
+            //     historyConfig,
+            //     historyClient
+            // })
         }
-        // console.log('historyClient', historyClient)
         return historyClient
     }
 

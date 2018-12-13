@@ -146,6 +146,16 @@ module.exports = {
         defines: {
             __QA__: JSON.stringify(false),
         },
+        dll: [
+            'react',
+            'react-dom',
+            'redux',
+            'redux-thunk',
+            'react-redux',
+            'react-router',
+            'react-router-redux',
+            // 'koot',
+        ],
         internalLoadersOptions: {
             'less-loader': {
                 modifyVars: {

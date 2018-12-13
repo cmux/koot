@@ -131,6 +131,7 @@ export default class ReactApp {
 
         const options = Object.assign({}, settings)
         const initialState = window.__REDUX_STATE__ || {}
+        // const history = require('../React/history').default
 
         if (typeof this.store === 'undefined') {
             // __REDUX_STATE__ 是与服务端约定好的存储redux数据对象 (在浏览器端的 html 里存在)
@@ -173,15 +174,15 @@ export default class ReactApp {
         setHistory(thisHistory)
 
         // console.log('historyConfig', historyConfig)
-        console.log('history', thisHistory)
-        console.log('routes', routes)
+        // console.log('history', thisHistory)
+        // console.log('routes', routes)
 
-        require('react-router/lib/match')({ history, routes }, (err, ...args) => {
-            console.log({ err, ...args })
-            if (err) {
-                console.log(err.stack)
-            }
-        })
+        // require('react-router/lib/match')({ history, routes }, (err, ...args) => {
+        //     console.log({ err, ...args })
+        //     if (err) {
+        //         console.log(err.stack)
+        //     }
+        // })
         hydrate(
             <Root
                 store={this.store}
