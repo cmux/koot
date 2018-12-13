@@ -267,12 +267,12 @@ module.exports = {
         //     errors: true
         // }
         // historyApiFallback: false,
-        proxy: {
-            '/root': {
-                target: 'http://localhost:8083/',
-                pathRewrite: { '^/root': '' }
-            }
-        }
+        // proxy: {
+        //     '/root': {
+        //         target: 'http://localhost:8083/',
+        //         pathRewrite: { '^/root': '' }
+        //     }
+        // }
     },
 
     /** 

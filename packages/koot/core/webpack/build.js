@@ -665,6 +665,12 @@ module.exports = async (kootBuildConfig = {}) => {
         await beforeEachBuild()
         await new Promise((resolve, reject) => {
             webpack(webpackConfig, async (err, stats) => {
+                if (err && !stats) {
+                    buildingComplete()
+                    reject(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`)
+                    return buildingError(err)
+                }
+
                 const info = stats.toJson()
 
                 if (stats.hasWarnings()) {
