@@ -1,104 +1,114 @@
-// 初始化环境变量
-// require('../../utils/init-node-env')()
-
-// 处理 es6\es7
-// require('babel-core/register')
-// require('babel-polyfill')
-
-// 前后端同构使用统一的 fetch 数据方式
 require('isomorphic-fetch')
 
-// 告诉配置文件，当前运行环境不是webpack
-// /config/apps/ 这里的server属性用到的
-global.NOT_WEBPACK_RUN = true
-
-// 
-
+const Koa = require('koa')
 const fs = require('fs-extra')
+// const debug = require('debug')('Koot/Server')
 
-import KoaApp from './class-koa-app'
-import modifyKoaApp from './modify-koa-app'
-import validatePort from './validate-port'
+import * as kootConfig from '__KOOT_PROJECT_CONFIG_PATHNAME__'
 
-import getFreePort from '../../libs/get-free-port'
 import getPathnameDevServerStart from '../../utils/get-pathname-dev-server-start'
 
-import {
-    name,
-    // dir,
-    template,
-    router,
-    redux,
-    // store,
-    client,
-    server
-} from '__KOOT_PROJECT_CONFIG_PATHNAME__'
-// } from '../../../../koot'
+import errorMsg from '../../libs/error-msg'
 
-const {
-    cookieKeys,
-} = server
+import validatePort from './validate/port'
+import validateTemplate from './validate/template'
+import validateReduxConfig from '../../React/validate/redux-config'
+import validateRouterConfig from '../../React/validate/router-config'
+
+import middlewareIsomorphic from './middlewares/isomorphic'
+
 
 //
 
-const run = async () => {
+
+/**
+ * 启动同构服务器 (KOA)
+ * @async
+ */
+const startKootIsomorphicServer = async () => {
+
+    console.log(`\r\n  \x1b[93m[koot/server]\x1b[0m initializing...`)
+
+    const {
+        server: serverConfig = {},
+    } = kootConfig
+    const {
+        cookieKeys
+    } = serverConfig
+
+    // 检查一些配置项
+
+    // 决定服务器启动端口
+    // 如果端口不可用，取消启动流程
+    /** @type {Number} 服务器启动端口 */
     const port = await validatePort()
-    if (!port) return
+    if (!port) throw new Error(errorMsg('VALIDATE_PORT', 'unavailable'))
 
-    if (__DEV__) {
-        // 在随机端口启用服务器
-        const portFree = await getFreePort(port)
-        process.env.SERVER_PORT = portFree
-        process.env.SERVER_PORT_DEV_MAIN = port
-    }
+    // 决定模板内容 (String)
+    const template = await validateTemplate(kootConfig.template)
 
-    // console.log('process.env.SERVER_PORT', process.env.SERVER_PORT)
-    // console.log('__SERVER_PORT__', __SERVER_PORT__)
-    // console.log('port', port)
+    // 决定 Redux 配置
+    const reduxConfig = await validateReduxConfig(kootConfig.redux)
 
-    // const serverConfig = require('../config/system')
-    const koaApp = new KoaApp()
-    const app = koaApp.instance()
+    // 决定路由配置
+    const routerConfig = await validateRouterConfig(kootConfig.router)
 
-    /* 公用的koa配置 */
-    app.keys = cookieKeys || 'koot';
+    // 语言包写入内存
 
-    await modifyKoaApp(app, {
-        name,
-        // dir,
+    // 创建渲染缓存 Map
+
+    // 生命周期: 服务器启动前
+
+    // 创建 Koa 实例 (app)
+    /** @type {Koa} Koa 服务器实例 */
+    const app = new Koa()
+
+    // [开发模式] 挂载中间件: 主服务器代理
+
+    // 挂载中间件: 静态资源访问
+
+    // 挂载中间件: 同构服务器
+    app.use(middlewareIsomorphic({
         template,
-        router,
-        redux,
-        // store,
-        client,
-        server
+        reduxConfig,
+        routerConfig,
+    }))
+
+    // 启动服务器
+    await new Promise(resolve => {
+        if (__DEV__) {
+            app.listen(process.env.SERVER_PORT)
+            // 修改 flag 文件
+            setTimeout(() => {
+                console.log(`\x1b[32m√\x1b[0m ` + `\x1b[93m[koot/server]\x1b[0m started on \x1b[32m${'http://localhost:' + port}\x1b[0m`)
+                fs.writeJsonSync(
+                    getPathnameDevServerStart(),
+                    {
+                        port: process.env.SERVER_PORT_DEV_MAIN,
+                        portServer: process.env.SERVER_PORT
+                    }
+                )
+                console.log(' ')
+                return resolve()
+            })
+        } else {
+            app.listen(port)
+            setTimeout(() => {
+                console.log(`\x1b[32m√\x1b[0m ` + `\x1b[93m[koot/server]\x1b[0m listening port \x1b[32m${port}\x1b[0m`)
+                console.log(' ')
+                return resolve()
+            })
+        }
     }).catch(err => {
-        console.trace(err)
+        if (err instanceof Error)
+            err.message = `KOA_APP_LAUNCH:${err.message}`
+        throw err
     })
 
-    if (__DEV__) {
-        // 开发模式
-        koaApp.run(process.env.SERVER_PORT)
-        // 标记必要信息
-        setTimeout(() => {
-            console.log(`\x1b[32m√\x1b[0m ` + `\x1b[93m[koot/server]\x1b[0m started on \x1b[32m${'http://localhost:' + port}\x1b[0m`)
-            fs.writeJsonSync(
-                getPathnameDevServerStart(),
-                {
-                    port: process.env.SERVER_PORT_DEV_MAIN,
-                    portServer: process.env.SERVER_PORT
-                }
-            )
-            console.log(' ')
-        })
-    } else {
-        koaApp.run(port)
-        setTimeout(() => {
-            console.log(`\x1b[32m√\x1b[0m ` + `\x1b[93m[koot/server]\x1b[0m listening port \x1b[32m${port}\x1b[0m`)
-            console.log(' ')
-        })
-    }
+    // 生命周期: 服务器启动完成
 
 }
 
-run().catch(err => console.trace(err))
+startKootIsomorphicServer().catch(err => {
+    console.error(err)
+})

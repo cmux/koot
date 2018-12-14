@@ -40,12 +40,7 @@ module.exports = async (kootBuildConfig = {}) => {
         '@babel/register',
         '@babel/polyfill',
         path.resolve(__dirname, '../../../defaults/server-stage-0.js'),
-        path.resolve(
-            __dirname,
-            '../../../',
-            appType,
-            './server'
-        )
+        path.resolve(__dirname, '../../../', appType, './server')
     ]
     if (ENV === 'dev') defaultServerEntry.push('webpack/hot/poll?1000')
 
