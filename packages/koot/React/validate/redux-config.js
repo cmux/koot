@@ -8,7 +8,7 @@ import { reducers as defaultReducers, initialState, middlewares } from '../redux
  * @param {Object} kootConfigRedux Koot 配置项: `redux`
  * @returns {Object} reduxConfig
  */
-export default async (kootConfigRedux = {}) => {
+const validateReduxConfig = async (kootConfigRedux = {}) => {
 
     const reduxConfig = {}
 
@@ -29,3 +29,5 @@ export default async (kootConfigRedux = {}) => {
     return reduxConfig
 
 }
+
+export default validateReduxConfig

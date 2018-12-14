@@ -1,10 +1,12 @@
 import React from 'react'
 import { renderToString } from 'react-dom/server'
 
+import validateI18n from '../validate/i18n'
+
 /**
  * KOA 中间件: 同构
  */
-export default (options = {}) => {
+const middlewareIsomorphic = (options = {}) => {
 
     const {
         template,
@@ -16,6 +18,8 @@ export default (options = {}) => {
 
     return async (ctx, next) => {
         try {
+
+            await validateI18n()
 
             let routeMatched = true
 
@@ -36,3 +40,5 @@ export default (options = {}) => {
         }
     }
 }
+
+export default middlewareIsomorphic

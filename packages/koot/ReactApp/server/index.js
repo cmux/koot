@@ -14,6 +14,7 @@ import validatePort from './validate/port'
 import validateTemplate from './validate/template'
 import validateReduxConfig from '../../React/validate/redux-config'
 import validateRouterConfig from '../../React/validate/router-config'
+import validateI18n from './validate/i18n'
 
 import middlewareIsomorphic from './middlewares/isomorphic'
 
@@ -54,6 +55,7 @@ const startKootIsomorphicServer = async () => {
     const routerConfig = await validateRouterConfig(kootConfig.router)
 
     // 语言包写入内存
+    await validateI18n()
 
     // 创建渲染缓存 Map
 
@@ -101,7 +103,7 @@ const startKootIsomorphicServer = async () => {
         }
     }).catch(err => {
         if (err instanceof Error)
-            err.message = `KOA_APP_LAUNCH:${err.message}`
+            err.message = errorMsg('KOA_APP_LAUNCH', err.message)
         throw err
     })
 

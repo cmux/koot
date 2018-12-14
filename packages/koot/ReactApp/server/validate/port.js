@@ -7,20 +7,10 @@ const getPathnameDevServerStart = require('../../../utils/get-pathname-dev-serve
 const getFreePort = require('../../../libs/get-free-port')
 
 /**
- * 验证服务器启动端口
- * 
- * 依次检查以下变量/常量，当发现可用值时进入下一步
- *     `__SERVER_PORT__`
- *     process.env.SERVER_PORT
- * 
- * 检查设定好的端口号是否可用
- * 如果可用，直接返回结果
- * 如果不可用，提示下一步操作
- * 
  * @async
  * @returns {Number|Boolean} 如果最终没有结果，返回 false，否则返回可用的端口数
  */
-const validatePort = async () => {
+const doValidatePort = async () => {
 
     // [开发模式] 如果 flag 文件中写有端口，直接使用该端口
     if (__DEV__) {
@@ -137,8 +127,8 @@ const logPortTaken = (port) => {
  * @async
  * @returns {Number|Boolean} 如果最终没有结果，返回 false，否则返回可用的端口数
  */
-export default async () => {
-    const port = await validatePort()
+const validatePort = async () => {
+    const port = await doValidatePort()
     if (!port) return false
     if (__DEV__) {
         // 开发模式：在随机端口启用服务器
@@ -148,3 +138,5 @@ export default async () => {
     }
     return port
 }
+
+export default validatePort

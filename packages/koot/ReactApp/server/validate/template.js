@@ -9,7 +9,7 @@ import errorMsg from '../../../libs/error-msg'
  * @param {String} template Koot 配置项: `template`
  * @returns {String}
  */
-export default async (template) => {
+const validateTemplate = async (template) => {
     if (typeof process.env.KOOT_HTML_TEMPLATE === 'string')
         template = process.env.KOOT_HTML_TEMPLATE
 
@@ -28,3 +28,5 @@ export default async (template) => {
 
     return template
 }
+
+export default validateTemplate

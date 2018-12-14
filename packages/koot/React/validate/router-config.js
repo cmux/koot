@@ -8,7 +8,7 @@ import i18nValidateRoutes from '../../i18n/validte-routes'
  * @param {Object} kootConfigRouter Koot 配置项: `router`
  * @returns {Object} routerConfig
  */
-export default async (kootConfigRouter) => {
+const validateRouterConfig = async (kootConfigRouter) => {
 
     if (typeof kootConfigRouter !== 'object')
         throw new Error(errorMsg('VALIDATE_ROUTER_CONFIG', 'no router config or router object invalid'))
@@ -31,6 +31,7 @@ export default async (kootConfigRouter) => {
     return i18nValidateRoutes(routes)
 
 }
+export default validateRouterConfig
 
 /**
  * 处理默认路由
