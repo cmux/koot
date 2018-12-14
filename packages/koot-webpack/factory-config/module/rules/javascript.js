@@ -17,7 +17,7 @@ module.exports = (kootBuildConfig = {}) => {
     /** @type {Array} JS 基础规则 */
     const useJS = [
         {
-            loader: 'babel-loader',
+            loader: require.resolve('../../../loaders/babel'),
             options: {
                 cacheDirectory: true,
             }
@@ -32,7 +32,7 @@ module.exports = (kootBuildConfig = {}) => {
 
     if (!createDll && env === 'dev' && stage === 'client') {
         rules.push({
-            test: /\.js$/,
+            test: /\.(js|mjs)$/,
             use: useJS
         })
         rules.push({
@@ -44,7 +44,7 @@ module.exports = (kootBuildConfig = {}) => {
         })
     } else {
         rules.push({
-            test: /\.(js|jsx)$/,
+            test: /\.(js|mjs|jsx)$/,
             use: useJS
         })
     }
