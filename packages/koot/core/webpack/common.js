@@ -51,7 +51,7 @@ const factory = async ({
                 '__modules',
                 'node_modules'
             ],
-            extensions: ['.js', '.jsx', '.json', '.css', '.less', '.sass', '.scss']
+            extensions: ['.js', '.jsx', '.mjs', '.json', '.css', '.less', '.sass', '.scss']
         },
         plugins: await plugins(env, stage, defines, remainingKootBuildConfig)
     }
@@ -166,7 +166,7 @@ const resolve = Object.assign({
         // Apps: path.resolve(appPath, './apps'),
         // "@app": path.resolve(appPath, './apps/app')
     },
-    extensions: ['.js', '.jsx', '.json', '.css', '.less', '.sass', '.scss']
+    extensions: ['.js', '.jsx', '.mjs', '.json', '.css', '.less', '.sass', '.scss']
 })
 
 
