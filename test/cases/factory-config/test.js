@@ -1,3 +1,5 @@
+jest.setTimeout(10 * 60 * 1000) // 10 min
+
 const fs = require('fs-extra')
 // const path = require('path')
 const isValidPath = require('is-valid-path')
