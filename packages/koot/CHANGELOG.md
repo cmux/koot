@@ -37,28 +37,30 @@
   - `progress`
 - 更新依赖包
   - major
-    - `css-loader` -> _1.0.0_
+    - `css-loader` -> _2.0.1_
     - `koa-body` -> _4.0.4_
     - `koa-mount` -> _4.0.0_
     - `koa-static` -> _5.0.0_
     - `react-redux` -> _6.0.0_
   - minor
-    - `@babel/core` -> _7.2.0_
+    - `@babel/core` -> _7.2.2_
     - `@babel/plugin-proposal-class-properties` -> _7.2.1_
-    - `@babel/plugin-proposal-decorators` -> _7.2.0_
+    - `@babel/plugin-proposal-decorators` -> _7.2.2_
     - `@babel/plugin-proposal-object-rest-spread` -> _7.2.0_
     - `@babel/plugin-syntax-dynamic-import` -> _7.2.0_
     - `@babel/plugin-transform-runtime` -> _7.2.0_
     - `@babel/preset-env` -> _7.2.0_
-    - `autoprefixer` -> _9.4.2_
+    - `autoprefixer` -> _9.4.3_
     - `koa` -> _2.6.2_
     - `less` -> _3.9.0_
     - `mini-css-extract-plugin` -> _0.5.0_
+    - `react-hot-loader` -> _4.6.0_
     - `webpack` -> _4.27.1_
   - patch
     - `inquirer` -> _6.2.1_
     - `pm2` -> _3.2.3_
     - `portfinder` -> _1.0.20_
+    - `postcss` -> _7.0.7_
 
 ## 0.7.11
 **2018-12-17**
