@@ -23,8 +23,15 @@ const getLangFromCtx = (ctx) => {
         if (localeIds.includes(pathname[0]))
             return pathname[0]
     } else {
-        if (ctx.query[changeLocaleQueryKey])
-            return ctx.query[changeLocaleQueryKey]
+        if (ctx.query[changeLocaleQueryKey]) {
+            if (localeIds.includes(ctx.query[changeLocaleQueryKey]))
+                return ctx.query[changeLocaleQueryKey]
+            ctx.redirect(ctx.url
+                .replace(new RegExp(`(\\?|&)${changeLocaleQueryKey}=(.+)$`), '')
+                .replace(new RegExp(`(\\?|&)${changeLocaleQueryKey}=(.+)&`), '')
+            )
+            return localeIds[0]
+        }
     }
 
     // 如果上一步没有结果，从 COOKIE 中获取
@@ -32,7 +39,7 @@ const getLangFromCtx = (ctx) => {
     // if (cookies[process.env.KOOT_I18N_COOKIE_KEY] && cookies[process.env.KOOT_I18N_COOKIE_KEY] !== 'null')
     //     return cookies[process.env.KOOT_I18N_COOKIE_KEY]
     const cookieValue = ctx.cookies.get(process.env.KOOT_I18N_COOKIE_KEY)
-    if (cookieValue) {
+    if (cookieValue && localeIds.includes(cookieValue)) {
         return cookieValue
     }
 
