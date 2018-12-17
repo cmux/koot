@@ -29,10 +29,10 @@ import clientUpdatePageInfo from './client-update-page-info'
 
 // 是否已挂载了组件
 let everMounted = false
-const defaultPageInfo = {
-    title: '',
-    metas: []
-}
+// const defaultPageInfo = {
+//     title: '',
+//     metas: []
+// }
 
 /**
  * 获取数据
@@ -174,13 +174,12 @@ export default (options = {}) => (WrappedComponent) => {
     // 装饰组件
 
     class KootReactComponent extends React.Component {
-        static onServerRenderHtmlExtend = ({ htmlTool, store, renderProps = {} }) => {
+        static onServerRenderHtmlExtend = ({ store, renderProps = {} }) => {
             const {
                 title,
                 metas
             } = doPageinfo(store, getRenderPropsFromServerProps(renderProps))
-            htmlTool.title = title
-            htmlTool.metas = metas
+            return { title, metas }
         }
 
         static onServerRenderStoreExtend({ store, renderProps }) {

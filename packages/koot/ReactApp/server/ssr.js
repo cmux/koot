@@ -1,0 +1,4 @@
+console.log({
+    Store,
+    History
+})

@@ -1,3 +1,4 @@
+const fs = require('fs-extra')
 const path = require('path')
 const DefaultWebpackConfig = require('webpack-config').default
 
@@ -40,7 +41,6 @@ module.exports = async (kootBuildConfig = {}) => {
         '@babel/register',
         '@babel/polyfill',
         path.resolve(__dirname, '../../../defaults/server-stage-0.js'),
-        path.resolve(__dirname, '../../../', appType, './server')
     ]
     if (ENV === 'dev') defaultServerEntry.push('webpack/hot/poll?1000')
 
@@ -108,7 +108,20 @@ module.exports = async (kootBuildConfig = {}) => {
         }
     }
 
-    result.entry = defaultServerEntry
+    result.entry = {
+        'index': [
+            ...defaultServerEntry,
+            path.resolve(__dirname, '../../../', appType, './server')
+        ]
+    }
+    const fileSSR = path.resolve(__dirname, '../../../', appType, './server/ssr.js')
+    if (fs.existsSync(fileSSR)) {
+        result.entry.ssr = [
+            ...defaultServerEntry,
+            fileSSR
+        ]
+    } else {
+    }
 
     return await transformConfigLast(result, kootBuildConfig)
 

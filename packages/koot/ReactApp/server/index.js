@@ -6,10 +6,18 @@ const fs = require('fs-extra')
 
 import * as kootConfig from '__KOOT_PROJECT_CONFIG_PATHNAME__'
 
+import {
+    setExtender,
+    setPageinfo,
+} from '../../'
+
 import getPathnameDevServerStart from '../../utils/get-pathname-dev-server-start'
 
 import errorMsg from '../../libs/error-msg'
 import log from '../../libs/log'
+
+import componentExtender from '../../React/component-extender'
+import pageinfo from '../../React/pageinfo'
 
 import validatePort from './validate/port'
 import validateTemplate from './validate/template'
@@ -54,7 +62,9 @@ const startKootIsomorphicServer = async () => {
         })
     }
 
-    // 检查一些配置项
+    // 设置全局常量
+    setExtender(componentExtender)
+    setPageinfo(pageinfo)
 
     // 决定服务器启动端口
     // 如果端口不可用，取消启动流程

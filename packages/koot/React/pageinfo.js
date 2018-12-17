@@ -57,10 +57,12 @@ export default (funcGetPageInfo) => (WrappedComponent) => {
         // static contextTypes = {
         //     store: PropTypes.object
         // }
-        static onServerRenderHtmlExtend = ({ htmlTool, store, renderProps = {} }) => {
+        static onServerRenderHtmlExtend = ({ store, renderProps = {} }) => {
             const infos = getInfo(store, renderProps)
-            htmlTool.title = infos.title
-            htmlTool.metas = infos.metas
+            return{
+                title: infos.title,
+                metas: infos.metas
+            }
         }
 
         updateInfo() {

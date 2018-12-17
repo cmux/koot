@@ -10,6 +10,9 @@ import isI18nEnabled from '../../../../i18n/is-enabled'
 
 import validateStore from './validate-store'
 import beforeRouterMatch from './lifecycle/before-router-match'
+import beforeDataToStore from './lifecycle/before-data-to-store'
+import afterDataToStore from './lifecycle/after-data-to-store'
+import executeComponentsLifecycle from './execute-components-lifecycle'
 
 /**
  * KOA 中间件: 同构
@@ -39,8 +42,8 @@ const middlewareIsomorphic = (options = {}) => {
         proxyRequestOrigin = {},
 
         beforeRouterMatch: renderBeforeRouterMatch,
-        beforeDataToStore,
-        afterDataToStore
+        beforeDataToStore: renderBeforeDataToStore,
+        afterDataToStore: renderAfterDataToStore
     } = options
 
     // console.log(options)
@@ -54,6 +57,8 @@ const middlewareIsomorphic = (options = {}) => {
 
             /** @type {String} 本次请求的语种ID */
             const localeId = i18nGetLangFromCtx(ctx)
+
+            // TODO: 如果存在缓存匹配，直接返回缓存结果
 
             /** @type {Object} Redux store */
             const Store = validateStore(reduxConfig)
@@ -103,21 +108,35 @@ const middlewareIsomorphic = (options = {}) => {
                 return await next()
 
             // 渲染生命周期: beforeDataToStore
+            await beforeDataToStore({
+                store: Store,
+                ctx,
+                localeId,
+                callback: renderBeforeDataToStore
+            })
 
             // 执行所有匹配到的组件的自定义的静态生命周期
+            const {
+                title, metaHtml, reduxHtml
+            } = await executeComponentsLifecycle({ store: Store, renderProps, ctx })
 
             // 渲染生命周期: afterDataToStore
+            await afterDataToStore({
+                store: Store,
+                ctx,
+                callback: renderAfterDataToStore
+            })
 
-            // React SSR
+            // TODO: React SSR
+            console.log({
+                title, metaHtml, reduxHtml
+            })
 
             // 渲染 EJS 模板
 
+            // TODO: 结果写入缓存
+
             // 吐出结果
-
-            let routeMatched = true
-
-            if (!routeMatched)
-                return await next()
 
             const reactHtmlString = '1'
             const html = renderToString(
@@ -127,10 +146,12 @@ const middlewareIsomorphic = (options = {}) => {
             ctx.body = html
 
         } catch (err) {
+
             require('debug')('SYSTEM:isomorphic:error')('Server-Render Error Occures: %O', err.stack)
             ctx.status = 500
             ctx.body = err.message
             ctx.app.emit('error', err, ctx)
+
         }
     }
 }

@@ -41,10 +41,12 @@ const check = props => {
     data: (state, renderProps, dispatch) => {
         if (check(renderProps))
             return true
-        return new Promise(resolve => {
-            dispatch(updateServerTimestamp())
-            setTimeout(() => resolve(), 200)
-        })
+        return Promise.all([
+            dispatch(updateServerTimestamp()),
+            new Promise(resolve => {
+                setTimeout(() => resolve(), 200)
+            })
+        ])
     }
 })
 class PageExtend extends React.Component {
