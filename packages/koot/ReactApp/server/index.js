@@ -9,14 +9,18 @@ import * as kootConfig from '__KOOT_PROJECT_CONFIG_PATHNAME__'
 import getPathnameDevServerStart from '../../utils/get-pathname-dev-server-start'
 
 import errorMsg from '../../libs/error-msg'
+import log from '../../libs/log'
 
 import validatePort from './validate/port'
 import validateTemplate from './validate/template'
 import validateReduxConfig from '../../React/validate/redux-config'
 import validateRouterConfig from '../../React/validate/router-config'
 import validateI18n from './validate/i18n'
+import createRenderCacheMap from './validate/create-render-cache-map'
 
+import middlewareRouterDev from './middlewares/router-dev'
 import middlewareIsomorphic from './middlewares/isomorphic'
+import middlewareStatic from './middlewares/static'
 
 
 //
@@ -30,12 +34,25 @@ const startKootIsomorphicServer = async () => {
 
     console.log(`\r\n  \x1b[93m[koot/server]\x1b[0m initializing...`)
 
+    // 处理配置
     const {
         server: serverConfig = {},
     } = kootConfig
     const {
-        cookieKeys
+        renderCache: renderCacheConfig = {},
+        before: serverBefore,
+        after: serverAfter,
+        inject: templateInject,
+        proxyRequestOrigin = {},
     } = serverConfig
+    const lifecycle = {}
+    if (typeof serverConfig.onRender === 'function') {
+        lifecycle.afterDataToStore = serverConfig.onRender
+    } else if (typeof serverConfig.onRender === 'object') {
+        Object.keys(serverConfig.onRender).forEach(key => {
+            lifecycle[key] = serverConfig.onRender[key]
+        })
+    }
 
     // 检查一些配置项
 
@@ -58,23 +75,49 @@ const startKootIsomorphicServer = async () => {
     await validateI18n()
 
     // 创建渲染缓存 Map
-
-    // 生命周期: 服务器启动前
+    const renderCacheMap = await createRenderCacheMap(renderCacheConfig)
 
     // 创建 Koa 实例 (app)
     /** @type {Koa} Koa 服务器实例 */
     const app = new Koa()
 
+    // 生命周期: 服务器启动前
+    if (__DEV__) log('callback', 'server', `callback: \x1b[32m${'before'}\x1b[0m(app)`)
+    if (typeof serverBefore === 'function')
+        await serverBefore(app)
+
     // [开发模式] 挂载中间件: 主服务器代理
+    if (__DEV__) app.use(middlewareRouterDev)
 
     // 挂载中间件: 静态资源访问
+    app.use(middlewareStatic(
+        (() => {
+            if (typeof serverConfig.koaStatic === 'object')
+                return serverConfig.koaStatic
+            if (typeof serverConfig.static === 'object')
+                return serverConfig.static
+            return {}
+        })()
+    ))
 
     // 挂载中间件: 同构服务器
     app.use(middlewareIsomorphic({
         template,
         reduxConfig,
         routerConfig,
+        renderCacheMap,
+        templateInject,
+        proxyRequestOrigin,
+        ...lifecycle
     }))
+
+    // 生命周期: 服务器即将启动
+    if (__DEV__) log('callback', 'server', `callback: \x1b[32m${'after'}\x1b[0m(app)`)
+    if (typeof serverAfter === 'function')
+        await serverAfter(app)
+
+    // 初始化完成，准备启动服务器
+    log(' ', 'server', `init \x1b[32m${'OK'}\x1b[0m!`)
 
     // 启动服务器
     await new Promise(resolve => {
@@ -106,8 +149,6 @@ const startKootIsomorphicServer = async () => {
             err.message = errorMsg('KOA_APP_LAUNCH', err.message)
         throw err
     })
-
-    // 生命周期: 服务器启动完成
 
 }
 

@@ -1,6 +1,7 @@
 // import history from "__KOOT_CLIENT_REQUIRE_HISTORY__"
 import createHistory from "__KOOT_CLIENT_REQUIRE_CREATE_HISTORY__"
 import { parsePath } from 'history/lib/PathUtils'
+import isI18nEnabled from '../i18n/is-enabled'
 
 /**
  * History Enhancer: use basename
@@ -87,7 +88,7 @@ const history = (() => {
         if (!historyClient) {
             const initialState = window.__REDUX_STATE__ || {}
             const historyConfig = { basename: '/' }
-            if (JSON.parse(process.env.KOOT_I18N) &&
+            if (isI18nEnabled() &&
                 process.env.KOOT_I18N_URL_USE === 'router' &&
                 initialState.localeId
             ) {

@@ -1,6 +1,7 @@
 const fs = require('fs-extra')
 
 import i18nRegister from '../../../i18n/register/isomorphic.server'
+import isI18nEnabled from '../../../i18n/is-enabled'
 
 /**
  * 验证 i18n 相关信息
@@ -16,7 +17,7 @@ import i18nRegister from '../../../i18n/register/isomorphic.server'
  * @returns {void}
  */
 const validateI18n = async () => {
-    if (!JSON.parse(process.env.KOOT_I18N))
+    if (!isI18nEnabled())
         return
 
     /** @type {Object} 完整语言包配置 */

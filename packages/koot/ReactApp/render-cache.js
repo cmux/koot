@@ -12,6 +12,8 @@
  * @param {String} html 
  */
 
+const defaults = require('../defaults/render-cache')
+
 /**
  * @class React 同构渲染缓存，基于 URL (开发模式: 禁用缓存)
  */
@@ -26,8 +28,8 @@ class KootReactRenderCache {
      */
     constructor(options = {}) {
         const {
-            maxAge = 5 * 1000,
-            maxCount = 50,
+            maxAge = defaults.maxAge,
+            maxCount = defaults.maxCount,
         } = options
 
         this.list = new Map()

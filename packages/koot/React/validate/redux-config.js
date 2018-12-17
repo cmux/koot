@@ -10,7 +10,12 @@ import { reducers as defaultReducers, initialState, middlewares } from '../redux
  */
 const validateReduxConfig = async (kootConfigRedux = {}) => {
 
-    const reduxConfig = {}
+    const {
+        syncCookie
+    } = kootConfigRedux
+    const reduxConfig = {
+        syncCookie
+    }
 
     if (typeof kootConfigRedux.store === 'undefined') {
         const { combineReducers: theReducers = {} } = kootConfigRedux

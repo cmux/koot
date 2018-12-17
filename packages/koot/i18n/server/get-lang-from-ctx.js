@@ -3,6 +3,7 @@ import { changeLocaleQueryKey } from '../../defaults/defines'
 import getLocaleIds from '../get-locale-ids'
 import parseLocaleId from '../parse-locale-id'
 import setCookie from '../set-cookie'
+import isI18nEnabled from '../is-enabled'
 
 /**
  * 根据 KOA Context 获取语种ID
@@ -10,7 +11,7 @@ import setCookie from '../set-cookie'
  * @returns {String} 匹配到的或当前项目默认语种ID
  */
 const getLangFromCtx = (ctx) => {
-    if (!JSON.parse(process.env.KOOT_I18N))
+    if (!isI18nEnabled())
         return ''
 
     const localeIds = getLocaleIds()

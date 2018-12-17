@@ -48,6 +48,7 @@ module.exports = {
     redux: {
         // combineReducers: './src/store/reducers',
         store: './src/store/create',
+        syncCookie: true,
     },
 
     /**

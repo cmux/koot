@@ -6,7 +6,7 @@ import i18nValidateRoutes from '../../i18n/validte-routes'
  * 
  * @async
  * @param {Object} kootConfigRouter Koot 配置项: `router`
- * @returns {Object} routerConfig
+ * @returns {Object} 路由配置对象，可直接供 `react-router` 使用
  */
 const validateRouterConfig = async (kootConfigRouter) => {
 

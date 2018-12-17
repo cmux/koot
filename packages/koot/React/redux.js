@@ -9,6 +9,7 @@ import {
     reducerLocaleId as i18nReducerLocaleId,
     reducerLocales as i18nReducerLocales,
 } from '../i18n/redux'
+import isI18nEnabled from '../i18n/is-enabled'
 // import history from "__KOOT_CLIENT_REQUIRE_HISTORY__"
 import history from "./history"
 // const getHistory = () => {
@@ -31,7 +32,7 @@ export const reducers = {
     // 对应服务器生成的store
     [SERVER_REDUCER_NAME]: serverReducer,
 }
-if (JSON.parse(process.env.KOOT_I18N) || false) {
+if (isI18nEnabled()) {
     reducers.localeId = i18nReducerLocaleId
     reducers.locales = i18nReducerLocales
 }
