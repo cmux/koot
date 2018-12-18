@@ -198,7 +198,7 @@ class Nav extends Component {
         let result = []
         routes.forEach((route, index) => {
             if( index > 0 ){
-                tempUrl = tempUrl + `/${route.path}`;
+                tempUrl = tempUrl + `/${route.path || ''}`;
                 result.push(tempUrl);
             }
         })
