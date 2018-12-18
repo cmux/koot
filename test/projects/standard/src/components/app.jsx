@@ -6,6 +6,8 @@ import Main from './_layout/main'
 
 let stateShowed = false
 
+console.log('App Store', typeof Store === 'undefined' ? undefined : Store)
+
 @extend({
     connect: state => {
         if (__CLIENT__ && __DEV__ && !stateShowed) {

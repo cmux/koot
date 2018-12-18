@@ -3,6 +3,7 @@ import useRouterHistory from 'react-router/lib/useRouterHistory'
 import createMemoryHistory from 'history/lib/createMemoryHistory'
 import { syncHistoryWithStore } from 'react-router-redux'
 
+import { CHANGE_LANGUAGE } from '../../../action-types'
 import { publicPathPrefix } from '../../../../defaults/webpack-dev-server'
 
 import getChunkmap from '../../../../utils/get-chunkmap'
@@ -11,6 +12,7 @@ import getSWPathname from '../../../../utils/get-sw-pathname'
 import i18nGetLangFromCtx from '../../../../i18n/server/get-lang-from-ctx'
 import isI18nEnabled from '../../../../i18n/is-enabled'
 import i18nGenerateHtmlRedirectMetas from '../../../../i18n/server/generate-html-redirect-metas'
+import i18nOnServerRender from '../../../../i18n/onServerRender'
 
 import { parseHtmlForStyles } from '../../../../React/styles'
 import validateInject from '../../../../React/validate-inject'
@@ -18,6 +20,7 @@ import isNeedInjectCritical from '../../../../React/inject/is-need-inject-critic
 import renderTemplate from '../../../../React/render-template'
 
 import validateStore from './validate-store'
+import validateI18n from '../../validate/i18n'
 import beforeRouterMatch from './lifecycle/before-router-match'
 import beforeDataToStore from './lifecycle/before-data-to-store'
 import afterDataToStore from './lifecycle/after-data-to-store'
@@ -188,6 +191,11 @@ const middlewareIsomorphic = (options = {}) => {
                 ctx,
                 callback: renderAfterDataToStore
             })
+            if (localeId) {
+                if (__DEV__) await validateI18n()
+                Store.dispatch({ type: CHANGE_LANGUAGE, data: localeId })
+                i18nOnServerRender({ store: Store })
+            }
 
             // React SSR
             const ssrHtml = ssr({

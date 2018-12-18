@@ -67,6 +67,7 @@ class PageExtend extends React.Component {
         if (!check(this.props))
             return <div>LOADING...</div>
 
+        console.log('PageExtend Store', typeof Store === 'undefined' ? undefined : Store)
         return (
             <div className={this.props.className}>
                 <h2>{__('pages.extend.isomorphic')}</h2>

@@ -102,29 +102,29 @@ module.exports = async (kootBuildConfig = {}) => {
     }
 
     // entry
-    {
-        result.entry = {
-            'index': [
-                '@babel/register',
-                '@babel/polyfill',
-                path.resolve(__dirname, '../../../defaults/server-stage-0.js'),
-                path.resolve(__dirname, '../../../', appType, './server')
-            ]
-        }
-        const fileSSR = path.resolve(__dirname, '../../../', appType, './server/ssr.js')
-        if (fs.existsSync(fileSSR)) {
-            result.entry.ssr = [fileSSR]
-        }
-        if (ENV === 'dev') {
-            Object.keys(result.entry).forEach(key => {
-                result.entry[key].push('webpack/hot/poll?1000')
-            })
-        }
+    const entires = {
+        'index': [
+            '@babel/register',
+            '@babel/polyfill',
+            path.resolve(__dirname, '../../../defaults/server-stage-0.js'),
+            path.resolve(__dirname, '../../../', appType, './server')
+        ]
+    }
+    const fileSSR = path.resolve(__dirname, '../../../', appType, './server/ssr.js')
+    if (fs.existsSync(fileSSR)) {
+        entires.ssr = [fileSSR]
+    }
+    if (ENV === 'dev') {
+        Object.keys(entires).forEach(key => {
+            entires[key].push('webpack/hot/poll?1000')
+        })
     }
 
     // 覆盖 optimization
     {
         result.optimization = {
+            splitChunks: false,
+            removeAvailableModules: false,
             removeEmptyChunks: false,
             mergeDuplicateChunks: false,
             occurrenceOrder: false,
@@ -132,7 +132,14 @@ module.exports = async (kootBuildConfig = {}) => {
         }
     }
 
-    return await transformConfigLast(result, kootBuildConfig)
+    const theResult = await transformConfigLast(result, kootBuildConfig)
+
+    return Object.keys(entires).map(entryName => ({
+        ...theResult,
+        entry: {
+            [entryName]: entires[entryName]
+        }
+    }))
 
     // return result
 }
