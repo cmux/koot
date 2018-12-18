@@ -42,10 +42,8 @@ const getStyleMap = (passedMap) => {
     if (__CLIENT__)
         return passedMap
     if (typeof __KOOT_SSR__ === 'object') {
-        console.log('111111', __KOOT_SSR__)
         return __KOOT_SSR__.styleMap
     }
-    console.log('222222')
     return passedMap
 }
 
@@ -71,7 +69,6 @@ export const append = (passedMap = {}, style) => {
         styleMap[style.wrapper].count++
     }
 
-    console.log({ styleMap })
     if (__CLIENT__) {
         checkAndWriteIntoHead(styleMap)
     }

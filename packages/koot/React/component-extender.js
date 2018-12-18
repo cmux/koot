@@ -224,7 +224,7 @@ export default (options = {}) => (WrappedComponent) => {
 
             if (hasStyles) {
                 this.kootClassNames = styles.map(obj => obj.wrapper)
-                console.log(typeof __KOOT_SSR__ === 'object' ? '111' : '000')
+                console.log(typeof Store === 'object' ? Store : '000')
                 appendStyle(context, styles)
                 // console.log('----------')
                 // console.log('styles', styles)

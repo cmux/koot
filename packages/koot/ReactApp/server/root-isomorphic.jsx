@@ -10,13 +10,16 @@ import { idDivStylesContainer, StyleMapContext } from '../../React/styles'
 
 const Root = ({
     store, ...props
-}) =>
-    <StyleMapContext.Provider value={{}}>
-        <Provider store={store} >
-            <RouterContext {...props} />
-        </Provider>
-        <StylesContainer />
-    </StyleMapContext.Provider>
+}) => {
+    return (
+        <StyleMapContext.Provider value={{}}>
+            <Provider store={store} >
+                <RouterContext {...props} />
+            </Provider>
+            <StylesContainer />
+        </StyleMapContext.Provider>
+    )
+}
 
 export default Root
 
