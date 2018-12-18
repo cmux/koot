@@ -35,14 +35,17 @@ class App extends React.Component {
     componentDidUpdate() {
         // console.log(this.props)
     }
-    render = () => (
-        <React.StrictMode>
-            <div id="app" className={this.props.className}>
-                <Nav />
-                <Main children={this.props.children} />
-            </div>
-        </React.StrictMode>
-    )
+    render() {
+        console.log('App render Store', typeof Store === 'undefined' ? undefined : Store)
+        return (
+            <React.StrictMode>
+                <div id="app" className={this.props.className}>
+                    <Nav />
+                    <Main children={this.props.children} />
+                </div>
+            </React.StrictMode>
+        )
+    }
 }
 
 export default App

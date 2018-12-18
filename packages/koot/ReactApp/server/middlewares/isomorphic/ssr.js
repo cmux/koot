@@ -30,6 +30,7 @@ const ssr = ({
     console.log('\n')
     console.log(chalk.cyanBright('SSR'))
     eval(__KOOT_SSR_FILE_CONTENT__)
+    console.log(chalk.cyanBright('SSR end'))
     console.log('\n')
     console.log(__KOOT_SSR__)
 

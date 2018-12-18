@@ -51,6 +51,8 @@ const ssr = async () => {
     /** @type {Boolean} i18n 是否启用 */
     const i18nEnabled = isI18nEnabled()
 
+    console.log('global.kootSSR', global.kootSSR)
+
     // 处理配置
     if (typeof global.kootSSR === 'undefined') {
         global.kootSSR = {}
