@@ -8,7 +8,7 @@ const isExtendsReactComponent = ( obj ) => {
         return false;
     }
     // return Object.getPrototypeOf(obj) === React.Component;
-    if( obj.prototype.isReactComponent ){
+    if( obj.prototype && obj.prototype.isReactComponent ){
         return true;
     }
     if( typeof obj === 'function' && obj.length === 1 ){
