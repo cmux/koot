@@ -4,6 +4,7 @@ import { renderChildrenHandler, isNeedWrapFormItem, getKey, getName } from './co
 import { getConfigItemProps } from './props.js';
 import { onSubmitHandler } from './event.js';
 import Upload from './componnets/upload.component.jsx';
+import moment from 'moment';
 const FormItem = Form.Item;
 const InputGroup = Input.Group;
 const TextArea = Input.TextArea;
@@ -11,7 +12,6 @@ const CheckboxGroup = Checkbox.Group;
 const RadioGroup = Radio.Group;
 const Option = Select.Option;
 const { MonthPicker, RangePicker, WeekPicker } = DatePicker;
-import moment from 'moment';
 
 const dateValueHandler = ( configItem ) => {
     const { value } = configItem;
@@ -57,11 +57,13 @@ const fieldDecorator = ( configItem, reactDom ) => {
  */
 export const renderFormHandler = (configItem = {}) => {
     const props = getConfigItemProps(configItem);
-    const className = configItem.type && configItem.type.toString().replace(/([A-Z])/g,"-$1").toLowerCase();
+    const className = configItem.type && 'kc-' + configItem.type.toString().replace(/([A-Z])/g,"-$1").toLowerCase();
+    const { __rootProps } = configItem;
+    const nextClasses = __rootProps.className + ' ' +  className;
     return (
         <Form
             {...props}
-            className={className}
+            className={nextClasses}
         >
             {
                 renderChildrenHandler(configItem)
@@ -337,7 +339,6 @@ export const renderWeekPickerHandler = (configItem = {}) => {
  */
 export const renderDateRangePicker = (configItem = {}) => {
     const nextConfigItem = dateValueHandler(configItem);
-    console.info('nextConfigItem', nextConfigItem)
     const props = getConfigItemProps(nextConfigItem);
     // props 处理
     props.getCalendarContainer = ( triggerNode ) => {

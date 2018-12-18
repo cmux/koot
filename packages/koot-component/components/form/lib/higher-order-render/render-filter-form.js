@@ -58,7 +58,7 @@ const formItemWrapper = ( list ) => {
     })
 }
 
-const searchFilterLayoutWrapper = (config, list) => {
+const filterLayoutWrapper = (config, list) => {
     const nextFormItemList = formItemWrapper(list);
     const nextColList = colWrapper(nextFormItemList);
     const nextRowList = rowWrapper(nextColList);
@@ -75,7 +75,7 @@ const searchFilterLayoutWrapper = (config, list) => {
  */
 const renderFilterFormHandler = ( config = {} ) => {
     const waitHandlList = config.children;
-    const resultConfig = searchFilterLayoutWrapper(config, waitHandlList);
+    const resultConfig = filterLayoutWrapper(config, waitHandlList);
     
     return renderFormHandler(resultConfig);
 }

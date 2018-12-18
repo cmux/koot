@@ -5,7 +5,7 @@
  * @return {[type]}       [description]
  */
 export const isObject = ( data ) => {
-	return Object.prototype.toString.call(data) === '[object Object]';
+    return Object.prototype.toString.call(data) === '[object Object]';
 }
 
 /**
@@ -15,7 +15,7 @@ export const isObject = ( data ) => {
  * @return {[type]}       [description]
  */
 export const isString = ( data ) => {
-	return Object.prototype.toString.call(data) === '[object String]';
+    return Object.prototype.toString.call(data) === '[object String]';
 }
 
 /**
@@ -25,5 +25,5 @@ export const isString = ( data ) => {
  * @return {[type]}      [description]
  */
 export const isFunction = ( data ) => {
-	return Object.prototype.toString.call(data) === '[object Function]';
+    return Object.prototype.toString.call(data) === '[object Function]';
 }

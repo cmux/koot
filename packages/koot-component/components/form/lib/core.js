@@ -1,7 +1,5 @@
 import * as Renders from './render.jsx';
-
 import * as HigherOrderRenders from './higher-order-render';
-
 import * as Types from './constants.js';
 
 /**
@@ -24,7 +22,6 @@ const assertName = (name) => {
  */
 export const renderTransfer = (configItem = {}) => {
     const { type } = configItem;
-    // const layoutTypes = ['form', 'formItem', 'row', 'col'];
     switch( type ){
 
         // form 布局组件部分

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Table } from 'antd';
 import { separatorFormat, ellipsisStyleFormat } from './format.js';
+import { isObject } from 'util';
 
 class List extends Component {
 
@@ -36,11 +37,13 @@ class List extends Component {
             const style = this.styleFormatter(item);
             const orignRender = item.render;
             item.render = (text, record, index) => {
-                const value = this.valueFormatter(text, item);
+                let value = this.valueFormatter(text, item);
+                // dataIndex 不存在时 text === record
+                value = isObject(value) ? '' : value;
                 return (
                     <div style={style}>
                         {
-                            orignRender 
+                            orignRender && typeof orignRender === 'function'
                                 ? orignRender(value, record, index)
                                 : value
                         }
