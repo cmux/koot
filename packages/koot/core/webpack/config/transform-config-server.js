@@ -37,13 +37,6 @@ module.exports = async (kootBuildConfig = {}) => {
         WEBPACK_DEV_SERVER_PORT: clientDevServerPort,
     } = process.env
 
-    const defaultServerEntry = [
-        '@babel/register',
-        '@babel/polyfill',
-        path.resolve(__dirname, '../../../defaults/server-stage-0.js'),
-    ]
-    if (ENV === 'dev') defaultServerEntry.push('webpack/hot/poll?1000')
-
     const configTargetDefault = await createTargetDefaultConfig({
         pathRun: getCwd(),
         clientDevServerPort,
@@ -108,19 +101,35 @@ module.exports = async (kootBuildConfig = {}) => {
         }
     }
 
-    result.entry = {
-        'index': [
-            ...defaultServerEntry,
-            path.resolve(__dirname, '../../../', appType, './server')
-        ]
+    // entry
+    {
+        result.entry = {
+            'index': [
+                '@babel/register',
+                '@babel/polyfill',
+                path.resolve(__dirname, '../../../defaults/server-stage-0.js'),
+                path.resolve(__dirname, '../../../', appType, './server')
+            ]
+        }
+        const fileSSR = path.resolve(__dirname, '../../../', appType, './server/ssr.js')
+        if (fs.existsSync(fileSSR)) {
+            result.entry.ssr = [fileSSR]
+        }
+        if (ENV === 'dev') {
+            Object.keys(result.entry).forEach(key => {
+                result.entry[key].push('webpack/hot/poll?1000')
+            })
+        }
     }
-    const fileSSR = path.resolve(__dirname, '../../../', appType, './server/ssr.js')
-    if (fs.existsSync(fileSSR)) {
-        result.entry.ssr = [
-            ...defaultServerEntry,
-            fileSSR
-        ]
-    } else {
+
+    // 覆盖 optimization
+    {
+        result.optimization = {
+            removeEmptyChunks: false,
+            mergeDuplicateChunks: false,
+            occurrenceOrder: false,
+            concatenateModules: false,
+        }
     }
 
     return await transformConfigLast(result, kootBuildConfig)

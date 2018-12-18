@@ -1,6 +1,6 @@
 import { CHANGE_LANGUAGE, TELL_CLIENT_URL, SYNC_COOKIE } from '../../../../action-types'
 import i18nUseRouterRedirect from '../../../../../i18n/server/use-router-redirect'
-import isI18nEnabled from '../../../../../i18n/is-enabled'
+// import isI18nEnabled from '../../../../../i18n/is-enabled'
 import i18nOnServerRender from '../../../../../i18n/onServerRender'
 import validateI18n from '../../../validate/i18n'
 import log from '../../../../../libs/log'
@@ -47,7 +47,8 @@ const beforeRouterMatch = async ({
         store.dispatch({ type: SYNC_COOKIE, data })
     }
 
-    if (isI18nEnabled()) {
+    // if (isI18nEnabled()) {
+    if (localeId) {
         if (__DEV__) await validateI18n()
         store.dispatch({ type: CHANGE_LANGUAGE, data: localeId })
         i18nOnServerRender({ store })

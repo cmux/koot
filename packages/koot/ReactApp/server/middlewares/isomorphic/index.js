@@ -1,18 +1,28 @@
-import React from 'react'
-import { renderToString } from 'react-dom/server'
 import match from 'react-router/lib/match'
 import useRouterHistory from 'react-router/lib/useRouterHistory'
 import createMemoryHistory from 'history/lib/createMemoryHistory'
 import { syncHistoryWithStore } from 'react-router-redux'
 
+import { publicPathPrefix } from '../../../../defaults/webpack-dev-server'
+
+import getChunkmap from '../../../../utils/get-chunkmap'
+import getSWPathname from '../../../../utils/get-sw-pathname'
+
 import i18nGetLangFromCtx from '../../../../i18n/server/get-lang-from-ctx'
 import isI18nEnabled from '../../../../i18n/is-enabled'
+import i18nGenerateHtmlRedirectMetas from '../../../../i18n/server/generate-html-redirect-metas'
+
+import { parseHtmlForStyles } from '../../../../React/styles'
+import validateInject from '../../../../React/validate-inject'
+import isNeedInjectCritical from '../../../../React/inject/is-need-inject-critical'
+import renderTemplate from '../../../../React/render-template'
 
 import validateStore from './validate-store'
 import beforeRouterMatch from './lifecycle/before-router-match'
 import beforeDataToStore from './lifecycle/before-data-to-store'
 import afterDataToStore from './lifecycle/after-data-to-store'
 import executeComponentsLifecycle from './execute-components-lifecycle'
+import ssr from './ssr'
 
 /**
  * KOA 中间件: 同构
@@ -46,7 +56,46 @@ const middlewareIsomorphic = (options = {}) => {
         afterDataToStore: renderAfterDataToStore
     } = options
 
-    // console.log(options)
+    /**
+     * @type {Map}
+     * 注入内容缓存
+     * 则第一级为语种ID或 `` (空字符串)
+     */
+    const templateInjectCache = new Map()
+
+    /** @type {Object} chunkmap */
+    const chunkmap = getChunkmap(true)
+    /** @type {Map} webpack 的入口，从 chunkmap 中抽取 */
+    const entrypoints = new Map()
+    /** @type {Map} 文件名与实际结果的文件名的对应表，从 chunkmap 中抽取 */
+    const filemap = new Map()
+
+    /** @type {Boolean} i18n 是否启用 */
+    const i18nEnabled = isI18nEnabled()
+    /** @type {String} i18n 类型 */
+    const i18nType = i18nEnabled
+        ? JSON.parse(process.env.KOOT_I18N_TYPE)
+        : undefined
+    /** @type {Boolean} i18n 类型是否是默认 (分包) 形式 */
+    const i18nTypeIsDefault = (i18nType === 'default')
+
+    // 针对 i18n 分包形式的项目，静态注入按语言缓存
+    if (i18nTypeIsDefault) {
+        for (let l in chunkmap) {
+            const thisLocaleId = l.substr(0, 1) === '.' ? l.substr(1) : l
+            entrypoints.set(thisLocaleId, chunkmap[l]['.entrypoints'])
+            filemap.set(thisLocaleId, chunkmap[l]['.files'])
+            templateInjectCache.set(thisLocaleId, {
+                pathnameSW: getSWPathname(thisLocaleId)
+            })
+        }
+    } else {
+        entrypoints.set('', chunkmap['.entrypoints'])
+        filemap.set('', chunkmap['.files'])
+        templateInjectCache.set('', {
+            pathnameSW: getSWPathname()
+        })
+    }
 
     return async (ctx, next) => {
 
@@ -56,16 +105,29 @@ const middlewareIsomorphic = (options = {}) => {
         try {
 
             /** @type {String} 本次请求的语种ID */
-            const localeId = i18nGetLangFromCtx(ctx)
+            const localeId = i18nGetLangFromCtx(ctx) || ''
 
-            // TODO: 如果存在缓存匹配，直接返回缓存结果
+            // 如果存在缓存匹配，直接返回缓存结果
+            const thisRenderCache = renderCacheMap.get(localeId)
+            const cached = thisRenderCache.get(url)
+            if (!__DEV__ && cached !== false) {
+                ctx.body = cached
+                return
+            }
+
+            /** @type {Object} 本次请求的 (当前语言的) 注入内容缓存 */
+            const thisTemplateInjectCache = templateInjectCache.get(localeId)
+            /** @type {Object} 本次请求的 (当前语言的) 入口表 */
+            const thisEntrypoints = entrypoints.get(localeId)
+            /** @type {Object} 本次请求的 (当前语言的) 文件名对应表 */
+            const thisFilemap = filemap.get(localeId)
 
             /** @type {Object} Redux store */
             const Store = validateStore(reduxConfig)
 
             // 生成 History
             const historyConfig = { basename: '/' }
-            if (isI18nEnabled() &&
+            if (i18nEnabled &&
                 process.env.KOOT_I18N_URL_USE === 'router' &&
                 localeId
             ) {
@@ -127,22 +189,70 @@ const middlewareIsomorphic = (options = {}) => {
                 callback: renderAfterDataToStore
             })
 
-            // TODO: React SSR
+            // React SSR
+            const ssrHtml = ssr({
+                Store,
+                History,
+                renderProps
+            })
+            const {
+                html: reactHtml,
+                htmlStyles: stylesHtml
+            } = parseHtmlForStyles(ssrHtml)
             console.log({
-                title, metaHtml, reduxHtml
+                ssrHtml,
+                reactHtml,
+                stylesHtml,
             })
 
             // 渲染 EJS 模板
+            const inject = validateInject({
+                injectCache: thisTemplateInjectCache,
+                filemap: thisFilemap,
+                entrypoints: thisEntrypoints,
+                localeId,
+                title,
+                metaHtml,
+                reactHtml,
+                stylesHtml,
+                reduxHtml,
+                needInjectCritical: isNeedInjectCritical(template),
+            })
+            // i18n 启用时: 添加其他语种页面跳转信息的 meta 标签
+            if (i18nEnabled) {
+                inject.metas += i18nGenerateHtmlRedirectMetas({
+                    ctx, proxyRequestOrigin, localeId
+                })
+            }
+            let html = renderTemplate({
+                template,
+                inject: Object.assign({
+                    ...inject,
+                    ...templateInject
+                }),
+                store: Store
+            })
 
-            // TODO: 结果写入缓存
+            // 结果写入缓存
+            if (__DEV__) {
+                // 将结果中指向 webpack-dev-server 的 URL 转换为指向本服务器的代理地址
+                // 替换 localhost 为 origin，以允许外部请求访问
+                delete thisTemplateInjectCache.styles
+                delete thisTemplateInjectCache.scriptsInBody
+                // delete thisTemplateInjectCache.pathnameSW
+
+                const origin = ctx.origin.split('://')[1]
+                // origin = origin.split(':')[0]
+                html = html.replace(
+                    /:\/\/localhost:([0-9]+)/mg,
+                    `://${origin}/${publicPathPrefix}`
+                )
+            } else {
+                // HTML 结果暂存入缓存
+                thisRenderCache.set(url, html)
+            }
 
             // 吐出结果
-
-            const reactHtmlString = '1'
-            const html = renderToString(
-                <div>123</div>
-            )
-
             ctx.body = html
 
         } catch (err) {

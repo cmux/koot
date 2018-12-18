@@ -20,6 +20,8 @@
   - 配置项
     - **新** `client.browserType` - 客户端中路由 (`router`) 所用的历史对象 (`history`) 类型。详情请参见文档的 [配置/客户端](https://koot.js.org/#/config?id=客户端浏览器端) 章节
     - **新** `webpack.internalLoadersOptions` - 用以扩展几乎无法修改的内置 `loader` 所用的设置。详情请参见文档的 [配置/Webpack](https://koot.js.org/#/config?id=Webpack) 章节
+  - Webpack 打包
+    - 现在每种打包模式仅保留最近 2 次打包的日志文件 (`/logs/webpack-config/` 目录下)
 - React
   - 根层组件添加 `componentDidCatch` 生命周期方法，以保障 React 输出渲染结果
 - React SPA
