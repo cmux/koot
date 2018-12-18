@@ -1,10 +1,10 @@
 const fs = require('fs-extra')
 const path = require('path')
 
-import getDistPath from '../../../../utils/get-dist-path'
+import { default as __KOOT_GET_DIST_PATH__ } from '../../../../utils/get-dist-path'
 
 /** @type {String} ssr.js 文件内容 */
-let SSR
+let __KOOT_SSR_FILE_CONTENT__
 
 /**
  * 执行服务器端渲染 (Server-Side Rendering)
@@ -12,18 +12,28 @@ let SSR
 const ssr = ({
     Store, History, renderProps: __KOOT_SSR_ROOT_RENDER_PROPS__
 }) => {
-    if (!SSR) {
-        const fileSSR = path.resolve(getDistPath(), 'server/ssr.js')
+    if (!__KOOT_SSR_FILE_CONTENT__) {
+        const fileSSR = path.resolve(__KOOT_GET_DIST_PATH__(), 'server/ssr.js')
         if (fs.existsSync(fileSSR)) {
-            SSR = fs.readFileSync(fileSSR, 'utf-8')
+            __KOOT_SSR_FILE_CONTENT__ = fs.readFileSync(fileSSR, 'utf-8')
         } else {
             throw new Error('No `/server/ssr.js` found. Maybe there\'s an error while building. Please retry `koot-build`')
         }
     }
+
     const __KOOT_SSR__ = {
-        result: ''
+        result: '',
+        styleMap: {}
     }
-    eval(SSR)
+
+    console.log('\n')
+    console.log('\n')
+    console.log('SSR')
+    eval(__KOOT_SSR_FILE_CONTENT__)
+    console.log('\n')
+    console.log('\n')
+    console.log(__KOOT_SSR__)
+
     return __KOOT_SSR__.result
 }
 

@@ -1,6 +1,17 @@
+/* global
+    __KOOT_SSR__:false
+*/
+
 import React from 'react'
 
-export const StyleMapContext = React.createContext({})
+/**
+ * 生成 StyleMapContext
+ */
+export const createStyleMapContext = () => {
+    return React.createContext({})
+}
+
+export let StyleMapContext = createStyleMapContext()
 
 /**
  * 将样式表写入到 head 标签内
@@ -27,12 +38,25 @@ export const checkAndWriteIntoHead = (styleMap = {}) => {
     })
 }
 
+const getStyleMap = (passedMap) => {
+    if (__CLIENT__)
+        return passedMap
+    if (typeof __KOOT_SSR__ === 'object') {
+        console.log('111111', __KOOT_SSR__)
+        return __KOOT_SSR__.styleMap
+    }
+    console.log('222222')
+    return passedMap
+}
+
 /**
  * 追加样式
  * @param {Object} styleMap 
  * @param {Object|Array} style 
  */
-export const append = (styleMap = {}, style) => {
+export const append = (passedMap = {}, style) => {
+    const styleMap = getStyleMap(passedMap)
+
     if (Array.isArray(style))
         return style.forEach(theStyle => append(styleMap, theStyle))
 
@@ -47,6 +71,7 @@ export const append = (styleMap = {}, style) => {
         styleMap[style.wrapper].count++
     }
 
+    console.log({ styleMap })
     if (__CLIENT__) {
         checkAndWriteIntoHead(styleMap)
     }
@@ -57,7 +82,9 @@ export const append = (styleMap = {}, style) => {
  * @param {Object} styleMap 
  * @param {*} style 
  */
-export const remove = (styleMap = {}, style) => {
+export const remove = (passedMap = {}, style) => {
+    const styleMap = getStyleMap(passedMap)
+
     if (Array.isArray(style))
         return style.forEach(theStyle => remove(theStyle))
 
@@ -68,7 +95,7 @@ export const remove = (styleMap = {}, style) => {
     }
 }
 
-const idDivStylesContainer = '__KOOT_ISOMORPHIC_STYLES_CONTAINER__'
+export const idDivStylesContainer = '__KOOT_ISOMORPHIC_STYLES_CONTAINER__'
 
 /**
  * 分析 HTML 代码，解析已有样式表，将其从 HTML 代码中移除，并返回可以直接写入到 head 标签内的样式表代码
@@ -76,7 +103,7 @@ const idDivStylesContainer = '__KOOT_ISOMORPHIC_STYLES_CONTAINER__'
  * @returns {String} htmlStyles
  */
 export const parseHtmlForStyles = (html) => {
-    const matches = html.match(new RegExp(`<div id="${idDivStylesContainer}">(.+)</div>`, 'm'))
+    const matches = html.match(new RegExp(`<div id="${idDivStylesContainer}">(.*?)</div>`, 'm'))
     if (
         !matches ||
         typeof matches !== 'object' ||
