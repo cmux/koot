@@ -1,5 +1,6 @@
 const fs = require('fs-extra')
 const path = require('path')
+const chalk = require('chalk')
 
 import { default as __KOOT_GET_DIST_PATH__ } from '../../../../utils/get-dist-path'
 
@@ -27,10 +28,8 @@ const ssr = ({
     }
 
     console.log('\n')
-    console.log('\n')
-    console.log('SSR')
+    console.log(chalk.cyanBright('SSR'))
     eval(__KOOT_SSR_FILE_CONTENT__)
-    console.log('\n')
     console.log('\n')
     console.log(__KOOT_SSR__)
 
