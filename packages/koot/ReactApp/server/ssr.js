@@ -50,8 +50,6 @@ const ssr = async () => {
     /** @type {Boolean} i18n 是否启用 */
     const i18nEnabled = Boolean(LocaleId)
 
-    await initConfig(ssrConfig, i18nEnabled)
-
     const {
         lifecycle,
         templateInject,
@@ -65,7 +63,7 @@ const ssr = async () => {
         templateInjectCache,
         entrypoints,
         filemap,
-    } = ssrConfig
+    } = await initConfig(ssrConfig, i18nEnabled)
 
     // 如果存在缓存匹配，直接返回缓存结果
     const thisRenderCache = renderCacheMap.get(LocaleId)
@@ -285,11 +283,9 @@ const initConfig = async (ssrConfig, i18nEnabled) => {
     const i18nType = i18nEnabled
         ? JSON.parse(process.env.KOOT_I18N_TYPE)
         : undefined
-    /** @type {Boolean} i18n 类型是否是默认 (分包) 形式 */
-    const i18nTypeIsDefault = (i18nType === 'default')
 
     // 针对 i18n 分包形式的项目，静态注入按语言缓存
-    if (i18nTypeIsDefault) {
+    if (i18nType === 'default') {
         for (let l in ssrConfig.chunkmap) {
             const thisLocaleId = l.substr(0, 1) === '.' ? l.substr(1) : l
             ssrConfig.entrypoints.set(thisLocaleId, ssrConfig.chunkmap[l]['.entrypoints'])
@@ -305,6 +301,9 @@ const initConfig = async (ssrConfig, i18nEnabled) => {
             pathnameSW: getSWPathname()
         })
     }
+
+    // 标记完成
+    ssrConfig._init = true
 
     return ssrConfig
 }
