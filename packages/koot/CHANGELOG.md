@@ -1,6 +1,12 @@
 ## 0.8.0
 **????-??-??**
-- 核心
+- **重大改动**
+  - 从 `koot` 主包中抽取 `store` 和 `history` 的方法现在失效
+    - 例: `import { store } from 'koot'` (该方法现在失效)
+  - 新增全局对象: `Store` 和 `History`
+    - 注意第一个字母大写
+    - 作用范围: 所有 React 组件代码和其引用的代码
+  - 重写 React 同构服务器逻辑，除了上述调整，原则上对已有项目不会造成其他影响
   - 调整 CSS 打包、使用规则
     - 现在明确只存在 2 种 CSS 文件：全局 CSS 和组件 CSS
     - koot 配置文件 (默认为 `/koot.config.js`) 中的 `css.fileBasename` 为这 2 种 CSS 文件的不包含扩展名的基本文件名正则规则的设置。以下是默认设置: 
@@ -17,10 +23,14 @@
       - 这些 CSS 文件必须有一个名为 `.component` 或 `.[name]__component` 的 className
         - 该 className 会被更换为 hash 结果，如 `.a85c6k` 或 `.nav__bjj15a`
       - `props.className` 会传入到对应的组件，其值为与上述结果对应的 hash 后的 className
+- 核心
   - 配置项
     - **新** `client.browserType` - 客户端中路由 (`router`) 所用的历史对象 (`history`) 类型。详情请参见文档的 [配置/客户端](https://koot.js.org/#/config?id=客户端浏览器端) 章节
     - **新** `webpack.internalLoadersOptions` - 用以扩展几乎无法修改的内置 `loader` 所用的设置。详情请参见文档的 [配置/Webpack](https://koot.js.org/#/config?id=Webpack) 章节
+    - **新** `server.onRender.beforeDataToStore` 和 `server.onRender.afterDataToStore` - 允许更详细的使用服务器端渲染生命周期。详情请参见文档的 [配置/Webpack](https://koot.js.org/#/config?id=Webpack) 章节
   - Webpack 打包
+    - 现在每次打包不再会在项目根目录下生成临时文件
+      - 这些文件现在移至 `/logs/tmp/` 目录下
     - 现在每种打包模式仅保留最近 2 次打包的日志文件 (`/logs/webpack-config/` 目录下)
 - React
   - 根层组件添加 `componentDidCatch` 生命周期方法，以保障 React 输出渲染结果

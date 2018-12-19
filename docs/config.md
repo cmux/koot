@@ -208,7 +208,10 @@ module.exports = {
         inject: './server/inject',
         before: './server/lifecycle/before',
         after: './server/lifecycle/after',
-        onRender: './server/lifecycle/on-render'
+        onRender: {
+            beforeDataToStore: './server/lifecycle/on-render-before-data-to-store',
+            afterDataToStore: './server/lifecycle/on-render-after-data-to-store'
+        }
     },
     // ...
 }
