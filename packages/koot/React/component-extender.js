@@ -1,3 +1,5 @@
+/* global Store:false */
+
 // TODO: All-in-one decorator for react component
 // https://github.com/cmux/koot/issues/8
 
@@ -10,7 +12,7 @@ import hoistStatics from 'hoist-non-react-statics'
 
 //
 
-import { store } from '../index.js'
+// import { store } from '../index.js'
 
 //
 
@@ -59,7 +61,7 @@ let everMounted = false
  * @returns {Object}
  */
 
-console.log((typeof Store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' Store in [HOC] extend')
+// console.log((typeof Store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' Store in [HOC] extend')
 /**
  * 高阶组件/组件装饰器：组件扩展
  * @param {Object} options 选项
@@ -73,7 +75,7 @@ console.log((typeof Store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x
  */
 export default (options = {}) => (WrappedComponent) => {
 
-    console.log((typeof Store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' Store in [HOC] extend run')
+    // console.log((typeof Store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' Store in [HOC] extend run')
 
     const {
         connect: _connect = false,
@@ -83,6 +85,7 @@ export default (options = {}) => (WrappedComponent) => {
             check: dataCheck,
         } = {},
         styles: _styles,
+        // ttt
         // hot: _hot = true,
     } = options
 
@@ -98,6 +101,7 @@ export default (options = {}) => (WrappedComponent) => {
         Array.isArray(styles) &&
         styles.length > 0
     )
+    // console.log({ ttt, hasStyles, styles })
 
     // 同构数据相关
 
@@ -205,7 +209,7 @@ export default (options = {}) => (WrappedComponent) => {
             const {
                 title,
                 metas
-            } = doPageinfo(store, getRenderPropsFromComponentProps(this.props))
+            } = doPageinfo(Store, getRenderPropsFromComponentProps(this.props))
             clientUpdatePageInfo(title, metas)
         }
 
@@ -213,7 +217,7 @@ export default (options = {}) => (WrappedComponent) => {
 
         state = {
             loaded: typeof dataCheck === 'function'
-                ? dataCheck(store.getState(), getRenderPropsFromComponentProps(this.props))
+                ? dataCheck(Store.getState(), getRenderPropsFromComponentProps(this.props))
                 : undefined
             ,
         }
@@ -248,7 +252,7 @@ export default (options = {}) => (WrappedComponent) => {
             this.mounted = true
 
             if (!this.state.loaded && typeof dataFetch !== 'undefined') {
-                doFetchData(store, getRenderPropsFromComponentProps(this.props))
+                doFetchData(Store, getRenderPropsFromComponentProps(this.props))
                     .then(() => {
                         if (!this.mounted) return
                         this.setState({

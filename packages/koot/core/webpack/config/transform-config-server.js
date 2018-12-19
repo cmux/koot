@@ -1,5 +1,6 @@
 const fs = require('fs-extra')
 const path = require('path')
+const webpack = require('webpack')
 const DefaultWebpackConfig = require('webpack-config').default
 
 const CopyWebpackPlugin = require('copy-webpack-plugin')
@@ -67,6 +68,11 @@ module.exports = async (kootBuildConfig = {}) => {
         new KootI18nPlugin({
             stage: STAGE,
             functionName: i18n ? i18n.expr : undefined,
+        })
+    )
+    result.plugins.unshift(
+        new webpack.optimize.LimitChunkCountPlugin({
+            maxChunks: 1
         })
     )
 

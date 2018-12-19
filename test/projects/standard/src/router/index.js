@@ -1,7 +1,7 @@
 import routeCheck from 'koot/React/route-check'
 import Root from '@components/app'
 
-console.log((typeof Store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' Store in [routes]')
+// console.log((typeof Store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' Store in [routes]')
 
 export default {
 

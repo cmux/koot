@@ -6,7 +6,10 @@ const Koa = require('koa')
 const fs = require('fs-extra')
 // const debug = require('debug')('Koot/Server')
 
-import { server as serverConfig } from '__KOOT_PROJECT_CONFIG_SERVER_PATHNAME__'
+import {
+    server as serverConfig,
+    redux as reduxConfigRaw
+} from '__KOOT_PROJECT_CONFIG_SERVER_PATHNAME__'
 
 import getPathnameDevServerStart from '../../utils/get-pathname-dev-server-start'
 
@@ -14,6 +17,7 @@ import errorMsg from '../../libs/error-msg'
 import log from '../../libs/log'
 
 import validatePort from './validate/port'
+import validateReduxConfig from '../../React/validate/redux-config'
 
 import middlewareRouterDev from './middlewares/router-dev'
 import middlewareIsomorphic from './middlewares/isomorphic'
@@ -41,6 +45,9 @@ const startKootIsomorphicServer = async () => {
     const port = await validatePort()
     if (!port) throw new Error(errorMsg('VALIDATE_PORT', 'unavailable'))
 
+    // 确定 Redux 相关配置
+    const reduxConfig = await validateReduxConfig(reduxConfigRaw)
+
     // 创建 Koa 实例 (app)
     /** @type {Koa} Koa 服务器实例 */
     const app = new Koa()
@@ -65,7 +72,9 @@ const startKootIsomorphicServer = async () => {
     ))
 
     // 挂载中间件: 同构服务器
-    app.use(middlewareIsomorphic())
+    app.use(middlewareIsomorphic({
+        reduxConfig
+    }))
 
     // 生命周期: 服务器即将启动
     if (__DEV__) log('callback', 'server', `callback: \x1b[32m${'after'}\x1b[0m(app)`)

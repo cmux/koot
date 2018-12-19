@@ -158,6 +158,20 @@ const plugins = async (env, stage, defines = {}/*, remainingKootBuildConfig = {}
             /^__KOOT_CLIENT_REQUIRE_HISTORY__$/,
             `react-router/lib/${historyType}`
         ),
+        new webpack.NormalModuleReplacementPlugin(
+            /^__KOOT_HOC_EXTEND__$/,
+            (() => {
+                if (/^React/.test(process.env.KOOT_PROJECT_TYPE))
+                    return path.resolve(__dirname, '../../React/component-extender.js')
+            })()
+        ),
+        new webpack.NormalModuleReplacementPlugin(
+            /^__KOOT_HOC_PAGEINFO__$/,
+            (() => {
+                if (/^React/.test(process.env.KOOT_PROJECT_TYPE))
+                    return path.resolve(__dirname, '../../React/pageinfo.js')
+            })()
+        ),
     ]
 }
 

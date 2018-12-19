@@ -6,12 +6,14 @@ import {
     resetServerTimestamp
 } from '@store/infos/actions'
 
-console.log((typeof Store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' Store in [PageExtend]')
+// console.log((typeof Store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' Store in [PageExtend]')
 const check = props => {
     if (props.serverTimestamp)
         return true
 }
 
+
+// console.log('PageExtend extend', extend)
 @extend({
     connect: (state) => ({
         localeId: state.localeId,
@@ -48,7 +50,9 @@ const check = props => {
                 setTimeout(() => resolve(), 200)
             })
         ])
-    }
+    },
+
+    // ttt: 'PageExtend'
 })
 class PageExtend extends React.Component {
     reset = false
@@ -68,7 +72,7 @@ class PageExtend extends React.Component {
         if (!check(this.props))
             return <div>LOADING...</div>
 
-        console.log((typeof Store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' Store in [PageExtend] render')
+        // console.log((typeof Store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' Store in [PageExtend] render')
         return (
             <div className={this.props.className}>
                 <h2>{__('pages.extend.isomorphic')}</h2>

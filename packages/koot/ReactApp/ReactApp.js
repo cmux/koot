@@ -23,15 +23,15 @@ import ReactRouter from './ReactRouter'
 
 //
 
-import {
-    setStore,
-    setHistory,
-    setExtender,
-    setPageinfo,
-    // setFetchdata,
-} from '../'
-import componentExtender from '../React/component-extender'
-import pageinfo from '../React/pageinfo'
+// import {
+//     setStore,
+//     setHistory,
+//     setExtender,
+//     setPageinfo,
+//     setFetchdata,
+// } from '../'
+// import componentExtender from '../React/component-extender'
+// import pageinfo from '../React/pageinfo'
 // import fetchdata from '../React/fetchdata'
 import Root from '../React/root.jsx'
 
@@ -44,8 +44,8 @@ const DEFAULT_ROOT_DOM_ID = 'root'
 export let store
 
 // 设置常量
-setExtender(componentExtender)
-setPageinfo(pageinfo)
+// setExtender(componentExtender)
+// setPageinfo(pageinfo)
 // setFetchdata(fetchdata)
 
 export default class ReactApp {
@@ -170,8 +170,10 @@ export default class ReactApp {
         let root = this.rootDom
 
         // 设置常量
-        setStore(this.store)
-        setHistory(thisHistory)
+        // setStore(this.store)
+        window.Store = this.store
+        // setHistory(thisHistory)
+        window.History = thisHistory
 
         // console.log('historyConfig', historyConfig)
         // console.log('history', thisHistory)

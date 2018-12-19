@@ -8,7 +8,7 @@ import getPort from 'koot/utils/get-port'
 const apiBase = `http://127.0.0.1:${getPort()}`
 
 export const updateServerTimestamp = () => dispatch => {
-    console.log((typeof Store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' Store in [action] updateServerTimestamp')
+    // console.log((typeof Store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' Store in [action] updateServerTimestamp')
     return axios({
         url: `${apiBase}/api/json-test`,
         method: 'GET'

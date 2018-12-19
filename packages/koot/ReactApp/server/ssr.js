@@ -1,23 +1,24 @@
 /* global
-    Store:true,
-    History:true,
+    Store:false,
+    History:false,
+    LocaleId:false,
     __KOOT_SSR__:false
 */
+
+// import { setExtender, setPageinfo } from '../../'
+// import hocExtend from '../../React/component-extender'
+// import hocPageinfo from '../../React/pageinfo'
+
+// // 设置全局常量
+// setExtender(hocExtend)
+// setPageinfo(hocPageinfo)
 
 import React from 'react'
 import { renderToString } from 'react-dom/server'
 import RootIsomorphic from './root-isomorphic'
 import match from 'react-router/lib/match'
-import useRouterHistory from 'react-router/lib/useRouterHistory'
-import createMemoryHistory from 'history/lib/createMemoryHistory'
-import { syncHistoryWithStore } from 'react-router-redux'
 
 import * as kootConfig from '__KOOT_PROJECT_CONFIG_PATHNAME__'
-
-import {
-    setExtender,
-    setPageinfo,
-} from '../../'
 
 import { publicPathPrefix } from '../../defaults/webpack-dev-server'
 
@@ -26,9 +27,6 @@ import getSWPathname from '../../utils/get-sw-pathname'
 import { CHANGE_LANGUAGE } from '../action-types'
 
 
-import hocExtend from '../../React/component-extender'
-import hocPageinfo from '../../React/pageinfo'
-import validateReduxConfig from '../../React/validate/redux-config'
 import validateRouterConfig from '../../React/validate/router-config'
 import validateInject from '../../React/validate-inject'
 import isNeedInjectCritical from '../../React/inject/is-need-inject-critical'
@@ -36,7 +34,6 @@ import renderTemplate from '../../React/render-template'
 
 import validateTemplate from './validate/template'
 import validateI18n from './validate/i18n'
-import validateStore from './middlewares/isomorphic/validate-store'
 import createRenderCacheMap from './validate/create-render-cache-map'
 
 import beforeRouterMatch from './middlewares/isomorphic/lifecycle/before-router-match'
@@ -44,9 +41,7 @@ import beforeDataToStore from './middlewares/isomorphic/lifecycle/before-data-to
 import afterDataToStore from './middlewares/isomorphic/lifecycle/after-data-to-store'
 import executeComponentsLifecycle from './middlewares/isomorphic/execute-components-lifecycle'
 
-import isI18nEnabled from '../../i18n/is-enabled'
 import i18nOnServerRender from '../../i18n/onServerRender'
-import i18nGetLangFromCtx from '../../i18n/server/get-lang-from-ctx'
 import i18nGenerateHtmlRedirectMetas from '../../i18n/server/generate-html-redirect-metas'
 
 const ssr = async () => {
@@ -54,22 +49,17 @@ const ssr = async () => {
     const {
         ctx,
         ssrConfig,
+        styleMap,
 
         // setExtender, hocExtend,
         // setPageinfo, hocPageinfo,
     } = __KOOT_SSR__
 
-    // 设置全局常量
-    setExtender(hocExtend)
-    setPageinfo(hocPageinfo)
-
     /** @type {String} 本次请求的 URL */
     const url = ctx.path + ctx.search
 
-    console.log('url', url)
-
     /** @type {Boolean} i18n 是否启用 */
-    const i18nEnabled = isI18nEnabled()
+    const i18nEnabled = Boolean(LocaleId)
 
     await initConfig(ssrConfig, i18nEnabled)
 
@@ -79,7 +69,7 @@ const ssr = async () => {
         proxyRequestOrigin,
 
         template,
-        reduxConfig,
+        syncCookie,
         routerConfig: routes,
         renderCacheMap,
 
@@ -88,11 +78,8 @@ const ssr = async () => {
         filemap,
     } = ssrConfig
 
-    /** @type {String} 本次请求的语种ID */
-    const localeId = i18nGetLangFromCtx(ctx) || ''
-
     // 如果存在缓存匹配，直接返回缓存结果
-    const thisRenderCache = renderCacheMap.get(localeId)
+    const thisRenderCache = renderCacheMap.get(LocaleId)
     const cached = thisRenderCache.get(url)
     if (!__DEV__ && cached !== false) {
         ctx.body = cached
@@ -103,38 +90,22 @@ const ssr = async () => {
     }
 
     /** @type {Object} 本次请求的 (当前语言的) 注入内容缓存 */
-    const thisTemplateInjectCache = templateInjectCache.get(localeId)
+    const thisTemplateInjectCache = templateInjectCache.get(LocaleId)
     /** @type {Object} 本次请求的 (当前语言的) 入口表 */
-    const thisEntrypoints = entrypoints.get(localeId)
+    const thisEntrypoints = entrypoints.get(LocaleId)
     /** @type {Object} 本次请求的 (当前语言的) 文件名对应表 */
-    const thisFilemap = filemap.get(localeId)
-
-    /** @type {Object} Redux store */
-    Store = validateStore(reduxConfig)
-    console.log('\x1b[36m⚑\x1b[0m' + ' Store created')
-
-    // 生成 History
-    const historyConfig = { basename: '/' }
-    if (i18nEnabled &&
-        process.env.KOOT_I18N_URL_USE === 'router' &&
-        localeId
-    ) {
-        historyConfig.basename = `/${localeId}`
-    }
-    const memoryHistory = useRouterHistory(() => createMemoryHistory(url))(historyConfig)
-    /** @type {Object} 已生成的 History 实例 */
-    History = syncHistoryWithStore(memoryHistory, Store)
+    const thisFilemap = filemap.get(LocaleId)
 
     // 渲染生命周期: beforeRouterMatch
     await beforeRouterMatch({
         store: Store,
         ctx,
-        syncCookie: reduxConfig.syncCookie,
+        syncCookie,
         callback: lifecycle.beforeRouterMatch
     })
-    if (localeId) {
+    if (LocaleId) {
         if (__DEV__) await validateI18n()
-        Store.dispatch({ type: CHANGE_LANGUAGE, data: localeId })
+        Store.dispatch({ type: CHANGE_LANGUAGE, data: LocaleId })
         i18nOnServerRender({ store: Store })
     }
 
@@ -175,7 +146,7 @@ const ssr = async () => {
     await beforeDataToStore({
         store: Store,
         ctx,
-        localeId,
+        LocaleId: LocaleId,
         callback: lifecycle.beforeDataToStore
     })
 
@@ -183,7 +154,6 @@ const ssr = async () => {
     const {
         title, metaHtml, reduxHtml
     } = await executeComponentsLifecycle({ store: Store, renderProps, ctx })
-    console.log({ title, metaHtml, reduxHtml })
 
     // 渲染生命周期: afterDataToStore
     await afterDataToStore({
@@ -193,30 +163,37 @@ const ssr = async () => {
     })
 
     // SSR
-    const html = renderToString(
+    const reactHtml = renderToString(
         <RootIsomorphic
             store={Store}
             {...renderProps}
         />
     )
+    const stylesHtml = Object.keys(styleMap)
+        .filter(id => typeof styleMap[id].css === 'string')
+        .map(id => `<style id="${id}">${styleMap[id].css}</style>`)
+        .join('')
+    // console.log('result styleMap', styleMap)
 
     // 渲染 EJS 模板
     const inject = validateInject({
         injectCache: thisTemplateInjectCache,
         filemap: thisFilemap,
         entrypoints: thisEntrypoints,
-        localeId,
+        localeId: LocaleId,
         title,
         metaHtml,
-        reactHtml: html,
-        stylesHtml: '',
+        reactHtml,
+        stylesHtml,
         reduxHtml,
         needInjectCritical: isNeedInjectCritical(template),
     })
     // i18n 启用时: 添加其他语种页面跳转信息的 meta 标签
-    if (localeId) {
+    if (LocaleId) {
         inject.metas += i18nGenerateHtmlRedirectMetas({
-            ctx, proxyRequestOrigin, localeId
+            ctx,
+            proxyRequestOrigin,
+            localeId: LocaleId
         })
     }
     let body = renderTemplate({
@@ -266,7 +243,7 @@ const initConfig = async (ssrConfig, i18nEnabled) => {
         return ssrConfig
 
     if (typeof i18nEnabled === 'undefined')
-        i18nEnabled = isI18nEnabled()
+        i18nEnabled = Boolean(LocaleId)
 
     const {
         server: serverConfig = {},
@@ -287,9 +264,6 @@ const initConfig = async (ssrConfig, i18nEnabled) => {
 
     // 决定模板内容 (String)
     ssrConfig.template = await validateTemplate(kootConfig.template)
-
-    // 决定 Redux 配置
-    ssrConfig.reduxConfig = await validateReduxConfig(kootConfig.redux)
 
     // 决定路由配置
     ssrConfig.routerConfig = await validateRouterConfig(kootConfig.router)

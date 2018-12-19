@@ -42,15 +42,14 @@ export const setLocaleId = o => localeId = o
  * 通用的高阶组件/方法的装饰器
  * @type {Function}
  */
-export let extend = () => (WrappedComponent) => WrappedComponent
-export const setExtender = o => {
-    console.log((typeof Store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' Store in [koot/] setExtender')
-    extend = o
-}
+export { default as extend } from "__KOOT_HOC_EXTEND__"
+// export extend = () => (WrappedComponent) => WrappedComponent
+// export const setExtender = o => extend = o
 
 /**
  * 设置页面信息的高阶组件/方法
  * @type {Function}
  */
-export let pageinfo = () => (WrappedComponent) => WrappedComponent
-export const setPageinfo = o => pageinfo = o
+export { default as pageinfo } from "__KOOT_HOC_PAGEINFO__"
+// export let pageinfo = () => (WrappedComponent) => WrappedComponent
+// export const setPageinfo = o => pageinfo = o

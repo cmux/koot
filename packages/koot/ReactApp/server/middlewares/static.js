@@ -21,7 +21,7 @@ const koaStaticDefaults = {
 const staticMiddleware = (koaStaticConfig = {}) => {
     const dir = getDirDistPublic(getDistPath())
     const config = Object.assign({}, koaStaticDefaults, koaStaticConfig)
-    console.log('koa-statc', { dir, config })
+    // console.log('koa-statc', { dir, config })
     return convert(koaStatic(dir, config))
 }
 
