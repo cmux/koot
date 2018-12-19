@@ -12,7 +12,7 @@
  * @param {String} html 
  */
 
-const defaults = require('../defaults/render-cache')
+const defaults = require('../../defaults/render-cache')
 
 /**
  * @class React 同构渲染缓存，基于 URL (开发模式: 禁用缓存)

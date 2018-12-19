@@ -25,17 +25,17 @@ const validateI18n = async () => {
     /** @type {String} 多语言类型 */
     const type = JSON.parse(process.env.KOOT_I18N_TYPE) || false
 
-    const localeIds = []
+    // const localeIds = []
     const locales = {}
     localesFull.forEach(arr => {
         const [localeId, localeObj] = arr
-        localeIds.push(localeId)
+        // localeIds.push(localeId)
         locales[localeId] = localeObj
     })
 
     // 服务器端注册多语言
     i18nRegister({
-        localeIds,
+        // localeIds,
         locales,
         type,
     })

@@ -1,13 +1,8 @@
-// import React from 'react'
-import { setLocaleId as kootSetLocaleId } from '../'
-
 export const I18N_INIT = '@@KOOT@@I18N_INIT'
 export const I18N_SET_LOCALES = '@@KOOT@@I18N_SET_LOCALES'
 
-// 当前项目可用的语言包代码，与语言包文件名精确匹配
-// 注：无论何种环境，在使用任何函数前，需要使用 register() 函数定义/初始化该 Array
-export let availableLocales = []
-export const setAvailableLocales = arr => availableLocales = arr
+// 当前项目可用的语种ID，与语言包文件名精确匹配
+export let availableLocaleIds = require('./get-locale-ids')()
 
 // 当前语言包名代码，与语言包文件名精确匹配
 export let localeId = null
@@ -15,7 +10,6 @@ export const setLocaleId = newLlocalId => {
     if (typeof newLlocalId === 'undefined' || newLlocalId === null)
         return
     localeId = newLlocalId
-    kootSetLocaleId(localeId)
     return localeId
 }
 

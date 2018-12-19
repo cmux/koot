@@ -3,7 +3,6 @@
  * @returns {Promise}
  */
 export default () => {
-    console.log('Store', Store)
     // console.log('⚓ Client initialing...')
     return true
 }

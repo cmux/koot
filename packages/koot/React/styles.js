@@ -92,47 +92,47 @@ export const remove = (passedMap = {}, style) => {
     }
 }
 
-export const idDivStylesContainer = '__KOOT_ISOMORPHIC_STYLES_CONTAINER__'
+// export const idDivStylesContainer = '__KOOT_ISOMORPHIC_STYLES_CONTAINER__'
 
-/**
- * 分析 HTML 代码，解析已有样式表，将其从 HTML 代码中移除，并返回可以直接写入到 head 标签内的样式表代码
- * @param {String} html 
- * @returns {String} htmlStyles
- */
-export const parseHtmlForStyles = (html) => {
-    const matches = html.match(new RegExp(`<div id="${idDivStylesContainer}">(.*?)</div>`, 'm'))
-    if (
-        !matches ||
-        typeof matches !== 'object' ||
-        typeof matches.index === 'undefined' ||
-        typeof matches[1] === 'undefined'
-    )
-        return {
-            html,
-            htmlStyles: ''
-        }
-    return {
-        html: html.substr(0, matches.index),
-        htmlStyles: matches[1]
-    }
-}
+// /**
+//  * 分析 HTML 代码，解析已有样式表，将其从 HTML 代码中移除，并返回可以直接写入到 head 标签内的样式表代码
+//  * @param {String} html 
+//  * @returns {String} htmlStyles
+//  */
+// export const parseHtmlForStyles = (html) => {
+//     const matches = html.match(new RegExp(`<div id="${idDivStylesContainer}">(.*?)</div>`, 'm'))
+//     if (
+//         !matches ||
+//         typeof matches !== 'object' ||
+//         typeof matches.index === 'undefined' ||
+//         typeof matches[1] === 'undefined'
+//     )
+//         return {
+//             html,
+//             htmlStyles: ''
+//         }
+//     return {
+//         html: html.substr(0, matches.index),
+//         htmlStyles: matches[1]
+//     }
+// }
 
-/**
- * React 组件: 样式表内容容器
- */
-export class StylesContainer extends React.Component {
-    static contextType = StyleMapContext
-    render() {
-        return (
-            <div
-                id={idDivStylesContainer}
-                dangerouslySetInnerHTML={{
-                    __html: Object.keys(this.context)
-                        .filter(id => !!this.context[id].css)
-                        .map(id => `<style id="${id}">${this.context[id].css}</style>`)
-                        .join('')
-                }}
-            />
-        )
-    }
-}
+// /**
+//  * React 组件: 样式表内容容器
+//  */
+// export class StylesContainer extends React.Component {
+//     static contextType = StyleMapContext
+//     render() {
+//         return (
+//             <div
+//                 id={idDivStylesContainer}
+//                 dangerouslySetInnerHTML={{
+//                     __html: Object.keys(this.context)
+//                         .filter(id => !!this.context[id].css)
+//                         .map(id => `<style id="${id}">${this.context[id].css}</style>`)
+//                         .join('')
+//                 }}
+//             />
+//         )
+//     }
+// }

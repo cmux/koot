@@ -1,5 +1,6 @@
 import { changeLocaleQueryKey } from '../../defaults/defines'
-import getLocaleIds from '../get-locale-ids'
+import { availableLocaleIds } from '../index'
+// import getLocaleIds from '../get-locale-ids'
 import isI18nEnabled from '../../i18n/is-enabled'
 
 /**
@@ -21,7 +22,7 @@ const generateHtmlRedirectMetas = ({ ctx, proxyRequestOrigin, localeId }) => {
 
     const isUseRouter = process.env.KOOT_I18N_URL_USE === 'router'
 
-    let html = getLocaleIds()
+    let html = availableLocaleIds//getLocaleIds()
         .filter(thisLocaleId => thisLocaleId !== localeId)
         .map(l => {
 

@@ -1,6 +1,4 @@
 import {
-    availableLocales,
-    setAvailableLocales,
     setLocales,
 } from '../index'
 
@@ -11,12 +9,9 @@ import {
  * @param {Object} locales locales 处理后的值
  */
 export default ({
-    localeIds,
+    // localeIds,
     locales,
 }) => {
     if (!__SERVER__) return
-    if (!__DEV__ && availableLocales.length) return
-
-    setAvailableLocales(localeIds)
     for (let key in locales) setLocales(key, locales[key])
 }

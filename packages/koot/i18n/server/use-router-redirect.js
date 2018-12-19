@@ -1,4 +1,5 @@
-import getLocaleIds from '../get-locale-ids'
+import { availableLocaleIds } from '../'
+// import getLocaleIds from '../get-locale-ids'
 import getLangFromCtx from './get-lang-from-ctx'
 import setCookie from '../set-cookie'
 import isI18nEnabled from '../is-enabled'
@@ -20,7 +21,7 @@ const useRouterRedirect = (ctx) => {
     if (pathname.substr(0, 1) === '/') pathname = pathname.substr(1)
     pathname = pathname.split('/')
 
-    if (!getLocaleIds().includes(pathname[0])) {
+    if (!availableLocaleIds.includes(pathname[0])) {
         const localeId = getLangFromCtx(ctx)
 
         // console.log('lang', lang)

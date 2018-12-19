@@ -1,7 +1,9 @@
+/* global Store:false */
+
 import React from 'react'
 // import PropTypes from 'prop-types'
 // import { store } from 'koot/ReactApp'
-import { store/*, localeId*/ } from '../'
+// import { store/*, localeId*/ } from '../'
 import hoistStatics from 'hoist-non-react-statics'
 
 let currentMetaTags
@@ -68,7 +70,7 @@ export default (funcGetPageInfo) => (WrappedComponent) => {
         updateInfo() {
             if (__SERVER__) return
 
-            const infos = getInfo(store, this.props)
+            const infos = getInfo(Store, this.props)
 
             // 替换页面标题
             document.title = infos.title

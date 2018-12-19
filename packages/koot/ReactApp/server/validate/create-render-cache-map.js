@@ -1,6 +1,7 @@
-import RenderCache from '../../render-cache'
-import getLocaleIds from '../../../i18n/get-locale-ids'
-import isI18nEnabled from '../../../i18n/is-enabled'
+import RenderCache from '../render-cache'
+import { availableLocaleIds } from '../../../i18n'
+// import getLocaleIds from '../../../i18n/get-locale-ids'
+// import isI18nEnabled from '../../../i18n/is-enabled'
 
 /**
  * 创建服务器渲染缓存存储空间
@@ -14,8 +15,8 @@ import isI18nEnabled from '../../../i18n/is-enabled'
 const createRenderCacheMap = async (renderCacheConfig = {}) => {
     const renderCache = new Map()
 
-    if (isI18nEnabled()) {
-        getLocaleIds().forEach(localeId => {
+    if (availableLocaleIds.length) {
+        availableLocaleIds.forEach(localeId => {
             renderCache.set(localeId, new RenderCache(renderCacheConfig))
         })
     } else {

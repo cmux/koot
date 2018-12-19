@@ -1,6 +1,6 @@
 import {
     I18N_INIT,
-    setAvailableLocales,
+    // setAvailableLocales,
     localeId,
     setLocaleId,
     setLocales,
@@ -18,7 +18,7 @@ import {
  */
 export default (arg) => {
     if (Array.isArray(arg)) {
-        setAvailableLocales(arg)
+        // setAvailableLocales(arg)
         setLocaleId(parseLocaleId())
 
         return {
