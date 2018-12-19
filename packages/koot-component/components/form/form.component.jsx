@@ -116,6 +116,8 @@ class FormComponent extends Component {
             inputProps[trigger] = fn;
         }
 
+        inputProps['key'] = fieldOption.key || fieldOption.name
+
         return inputProps
     }
 
