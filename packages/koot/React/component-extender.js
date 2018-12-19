@@ -8,11 +8,6 @@ import { connect } from 'react-redux'
 // import { hot } from 'react-hot-loader'
 // import PropTypes from 'prop-types'
 import hoistStatics from 'hoist-non-react-statics'
-// import { ImportStyle } from 'sp-css-import'
-
-//
-
-// import { store } from '../index.js'
 
 //
 

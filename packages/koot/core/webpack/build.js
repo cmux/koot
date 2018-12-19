@@ -10,8 +10,9 @@ const WebpackDevServer = require('webpack-dev-server')
 const resetCssLoader = require('koot-webpack/loaders/css/reset')
 
 const {
-    filenameWebpackDevServerPortTemp, keyFileProjectConfigTemp,
-    dirConfigTemp,
+    filenameWebpackDevServerPortTemp,
+    // keyFileProjectConfigTemp,
+    // dirConfigTemp,
     keyConfigBuildDll,
     keyConfigQuiet,
     filenameBuilding, filenameBuildFail,
@@ -22,11 +23,12 @@ const spinner = require('../../utils/spinner')
 const getDistPath = require('../../utils/get-dist-path')
 const getAppType = require('../../utils/get-app-type')
 const readBaseConfig = require('../../utils/read-base-config')
-const getCwd = require('../../utils/get-cwd')
+// const getCwd = require('../../utils/get-cwd')
 // const sleep = require('../../utils/sleep')
 
 const _log = require('../../libs/log')
 const elapse = require('../../libs/elapse.js')
+const emptyTempConfigDir = require('../../libs/empty-temp-config-dir')
 
 const createWebpackConfig = require('./config/create')
 const validateWebpackDevServerPort = require('./config/validate-webpack-dev-server-port')
@@ -378,12 +380,13 @@ module.exports = async (kootBuildConfig = {}) => {
      */
     const buildingError = (err) => {
         // 移除过程中创建的临时文件
-        if (data[keyFileProjectConfigTemp]) {
-            const pathnameTemp = path.resolve(data.dist, data[keyFileProjectConfigTemp])
-            if (fs.existsSync(pathnameTemp))
-                fs.removeSync(pathnameTemp)
-            fs.emptyDirSync(path.resolve(getCwd(), dirConfigTemp))
-        }
+        emptyTempConfigDir()
+        // if (data[keyFileProjectConfigTemp]) {
+        //     const pathnameTemp = path.resolve(data.dist, data[keyFileProjectConfigTemp])
+        //     if (fs.existsSync(pathnameTemp))
+        //         fs.removeSync(pathnameTemp)
+        //     fs.emptyDirSync(path.resolve(getCwd(), dirConfigTemp))
+        // }
 
         // 将错误添加入结果对象
         result.addError(err)

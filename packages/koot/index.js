@@ -4,8 +4,8 @@
  * Redux Store
  * @type {Object}
  */
-export let store
-export const setStore = o => store = o
+// export let store
+// export const setStore = o => store = o
 
 /**
  * 手动创建 Redux Store 时需要的相关对象
@@ -28,8 +28,8 @@ export { reduxForCreateStore }
  * History 对象
  * @type {Object}
  */
-export let history
-export const setHistory = o => history = o
+// export let history
+// export const setHistory = o => history = o
 
 /**
  * [仅当多语言开启时存在] 当前语种ID

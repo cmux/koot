@@ -4,7 +4,6 @@ require('isomorphic-fetch')
 
 const Koa = require('koa')
 const fs = require('fs-extra')
-// const debug = require('debug')('Koot/Server')
 
 import {
     server as serverConfig,

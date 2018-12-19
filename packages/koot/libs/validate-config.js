@@ -129,8 +129,14 @@ module.exports = async (projectDir = getCwd()) => {
         const validateProjectConfig = (keys) => {
             keys.forEach(key => {
                 if (eval(`typeof projectConfig.${key} === 'string'`)) {
-                    const pathname = validatePathname(eval(`projectConfig.${key}`), projectDir).replace(/\\/g, '\\\\')
-                    eval(`projectConfig.${key} = \`require('${pathname}').default\``)
+                    const value = eval(`projectConfig.${key}`)
+                    const pathname = path.isAbsolute(value)
+                        ? value
+                        : validatePathname(value, projectDir).replace(/\\/g, '\\\\')
+                    const result = path.isAbsolute(pathname)
+                        ? pathname
+                        : ('../../../' + pathname.replace(/^\.\//, ''))
+                    eval(`projectConfig.${key} = \`require('${result}').default\``)
                 }
             })
         }
@@ -180,7 +186,7 @@ module.exports = async (projectDir = getCwd()) => {
         // console.log(temp)
 
         // 写入项目配置文件 (临时)
-        const pathTemp = path.resolve(projectDir, filenameProjectConfigTemp.replace(/\*/g, Date.now()))
+        const pathTemp = path.resolve(dirConfigTemp, filenameProjectConfigTemp.replace(/\*/g, Date.now()))
         process.env.KOOT_PROJECT_CONFIG_PATHNAME = pathTemp
         await fs.writeFile(pathTemp, temp, 'utf-8')
 

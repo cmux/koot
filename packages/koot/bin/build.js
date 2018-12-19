@@ -5,7 +5,7 @@ const path = require('path')
 const program = require('commander')
 const chalk = require('chalk')
 
-const { keyFileProjectConfigTemp, dirConfigTemp, keyConfigQuiet, filenameBuilding } = require('../defaults/before-build')
+const { keyConfigQuiet, filenameBuilding } = require('../defaults/before-build')
 
 const __ = require('../utils/translate')
 // const readBuildConfigFile = require('../utils/read-build-config-file')
@@ -16,7 +16,8 @@ const validateConfig = require('../libs/validate-config')
 const validateConfigDist = require('../libs/validate-config-dist')
 const spinner = require('../utils/spinner')
 const initNodeEnv = require('../utils/init-node-env')
-const getCwd = require('../utils/get-cwd')
+// const getCwd = require('../utils/get-cwd')
+const emptyTempConfigDir = require('../libs/empty-temp-config-dir')
 
 const kootBuild = require('../core/webpack/enter')
 
@@ -168,13 +169,15 @@ const after = async (config = {}) => {
 
     const {
         dist,
-        [keyFileProjectConfigTemp]: fileProjectConfigTemp
+        // [keyFileProjectConfigTemp]: fileProjectConfigTemp
     } = config
 
     // 移除临时配置文件
-    if (ENV === 'prod' && fileProjectConfigTemp) {
-        await fs.remove(fileProjectConfigTemp)
-        await fs.emptyDir(path.resolve(getCwd(), dirConfigTemp))
+    // const dirConfigTemp = path.resolve(getCwd(), _dirConfigTemp)
+    if (ENV === 'prod'/* && fs.existsSync(dirConfigTemp)*/) {
+        emptyTempConfigDir()
+        // await fs.remove(fileProjectConfigTemp)
+        // await fs.emptyDir(dirConfigTemp)
     }
 
     // 移除标记文件

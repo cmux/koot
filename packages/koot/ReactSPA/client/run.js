@@ -2,36 +2,14 @@
 
 const React = require('react')
 import ReactDOM from 'react-dom'
-// import {
-//     // Router,
-//     hashHistory,
-//     // browserHistory,
-//     // createMemoryHistory,
-// } from 'react-router'
-// import hashHistory from 'react-router/lib/hashHistory'
 import history from "../../React/history"
-import { syncHistoryWithStore/*, routerReducer*/ } from 'react-router-redux'
-// import { Provider } from 'react-redux'
+import { syncHistoryWithStore } from 'react-router-redux'
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
 import thunk from 'redux-thunk'
 
 //
 
-import {
-    setStore,
-    setHistory,
-    setExtender,
-    setPageinfo,
-    // setFetchdata,
-} from '../../'
-import componentExtender from '../../React/component-extender'
-import pageinfo from '../../React/pageinfo'
-// import fetchdata from '../../React/fetchdata'
-import {
-    // reducer as realtimeLocationReducer,
-    // REALTIME_LOCATION_REDUCER_NAME,
-    actionUpdate,
-} from '../../React/realtime-location'
+import { actionUpdate } from '../../React/realtime-location'
 import Root from '../../React/root.jsx'
 import { reducers } from '../../React/redux'
 // import {
@@ -45,12 +23,8 @@ import { reducers } from '../../React/redux'
 // 设置常量 & 变量
 // ============================================================================
 
-// const ROUTER_REDUCDER_NAME = 'routing'
 let logCountRouterUpdate = 0
 let logCountHistoryUpdate = 0
-setExtender(componentExtender)
-setPageinfo(pageinfo)
-// setFetchdata(fetchdata)
 
 
 
@@ -187,8 +161,8 @@ export default ({
     // 设置常量
     // ============================================================================
 
-    setStore(store)
-    setHistory(thisHistory)
+    window.Store = store
+    window.History = thisHistory
 
 
 

@@ -2,18 +2,7 @@ import React from 'react'
 import { hydrate } from 'react-dom'
 import { syncHistoryWithStore } from 'react-router-redux'
 import { createStore, applyMiddleware, compose } from 'redux'
-// import match from 'react-router/lib/match'
-// import createHistory from "__KOOT_CLIENT_REQUIRE_CREATE_HISTORY__"
 import history from '../React/history'
-// let render = (() => {
-//     if (__DEV__) {
-//         const { render } = require('react-dom')
-//         return render
-//     } else {
-//         const { hydrate } = require('react-dom')
-//         return hydrate
-//     }
-// })()
 
 //
 
@@ -23,19 +12,9 @@ import ReactRouter from './ReactRouter'
 
 //
 
-// import {
-//     setStore,
-//     setHistory,
-//     setExtender,
-//     setPageinfo,
-//     setFetchdata,
-// } from '../'
-// import componentExtender from '../React/component-extender'
-// import pageinfo from '../React/pageinfo'
-// import fetchdata from '../React/fetchdata'
 import Root from '../React/root.jsx'
 
-// import ACTION_TYPE from './action-types'
+//
 
 // 默认根 DOM 结点 ID
 const DEFAULT_ROOT_DOM_ID = 'root'
@@ -170,9 +149,7 @@ export default class ReactApp {
         let root = this.rootDom
 
         // 设置常量
-        // setStore(this.store)
         window.Store = this.store
-        // setHistory(thisHistory)
         window.History = thisHistory
 
         // console.log('historyConfig', historyConfig)

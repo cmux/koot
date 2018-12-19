@@ -10,14 +10,14 @@ const getCwd = require('../utils/get-cwd')
  */
 module.exports = (str, cwd = '.') => {
 
+    if (isExist(str))
+        return str
+
     {
         const p = path.resolve(cwd, str)
         if (isExist(p))
             return p
     }
-
-    if (isExist(str))
-        return str
 
     {
         const p = path.resolve(process.cwd(), str)
@@ -52,6 +52,6 @@ const isExist = (pathname) => {
 
     if (fs.existsSync(pathname + '.jsx'))
         return true
-    
+
     return false
 }

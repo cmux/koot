@@ -5,14 +5,6 @@
     __KOOT_SSR__:false
 */
 
-// import { setExtender, setPageinfo } from '../../'
-// import hocExtend from '../../React/component-extender'
-// import hocPageinfo from '../../React/pageinfo'
-
-// // 设置全局常量
-// setExtender(hocExtend)
-// setPageinfo(hocPageinfo)
-
 import React from 'react'
 import { renderToString } from 'react-dom/server'
 import RootIsomorphic from './root-isomorphic'
@@ -50,9 +42,6 @@ const ssr = async () => {
         ctx,
         ssrConfig,
         styleMap,
-
-        // setExtender, hocExtend,
-        // setPageinfo, hocPageinfo,
     } = __KOOT_SSR__
 
     /** @type {String} 本次请求的 URL */
@@ -128,7 +117,6 @@ const ssr = async () => {
         __KOOT_SSR__.__RESULT__ = {
             redirect: redirectLocation.pathname + redirectLocation.search
         }
-        // return ctx.redirect(redirectLocation.pathname + redirectLocation.search)
         return
     }
 
@@ -138,7 +126,6 @@ const ssr = async () => {
         __KOOT_SSR__.__RESULT__ = {
             next: true
         }
-        // return await next()
         return
     }
 
@@ -188,14 +175,16 @@ const ssr = async () => {
         reduxHtml,
         needInjectCritical: isNeedInjectCritical(template),
     })
-    // i18n 启用时: 添加其他语种页面跳转信息的 meta 标签
     if (LocaleId) {
+        // i18n 启用时: 添加其他语种页面跳转信息的 meta 标签
         inject.metas += i18nGenerateHtmlRedirectMetas({
             ctx,
             proxyRequestOrigin,
             localeId: LocaleId
         })
     }
+
+    /** @type {String} HTML 结果 */
     let body = renderTemplate({
         template,
         inject: Object.assign({

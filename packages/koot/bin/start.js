@@ -11,8 +11,8 @@ const chalk = require('chalk')
 // const opn = require('opn')
 
 const {
-    keyFileProjectConfigTemp,
-    dirConfigTemp,
+    // keyFileProjectConfigTemp,
+    // dirConfigTemp,
     filenameBuildFail,
 } = require('../defaults/before-build')
 const sleep = require('../utils/sleep')
@@ -23,7 +23,8 @@ const getAppType = require('../utils/get-app-type')
 const validateConfig = require('../libs/validate-config')
 const validateConfigDist = require('../libs/validate-config-dist')
 const __ = require('../utils/translate')
-const getCwd = require('../utils/get-cwd')
+// const getCwd = require('../utils/get-cwd')
+const emptyTempConfigDir = require('../libs/empty-temp-config-dir')
 
 program
     .version(require('../package').version, '-v, --version')
@@ -69,17 +70,18 @@ const run = async () => {
     const {
         dist,
         // server,
-        [keyFileProjectConfigTemp]: filenameProjectConfigTemp,
+        // [keyFileProjectConfigTemp]: filenameProjectConfigTemp,
     } = buildConfig
 
     const afterBuild = async () => {
         // 删除过程中创建的临时文件
-        if (filenameProjectConfigTemp) {
-            const fileProjectConfigTemp = path.resolve(dist, filenameProjectConfigTemp)
-            if (fs.existsSync(fileProjectConfigTemp))
-                await fs.remove(filenameProjectConfigTemp)
-            await fs.emptyDir(path.resolve(getCwd(), dirConfigTemp))
-        }
+        emptyTempConfigDir()
+        // if (filenameProjectConfigTemp) {
+        //     const fileProjectConfigTemp = path.resolve(dist, filenameProjectConfigTemp)
+        //     if (fs.existsSync(fileProjectConfigTemp))
+        //         await fs.remove(filenameProjectConfigTemp)
+        //     await fs.emptyDir(path.resolve(getCwd(), dirConfigTemp))
+        // }
     }
 
     // 打包
