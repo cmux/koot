@@ -1,0 +1,22 @@
+{
+    "title": "Koot.js boilerplage",
+    "pages": {
+        "home": {
+            "title": "Welcome"
+        },
+        "extend": {
+            "title": "Component Extend",
+            "description": "Summary information for Koot.js Component Extend.",
+            "isomorphic": "Isomorphic",
+            "isomorphic_content": "When visit this page directly or hit refresh, the value above will be fetched and rendered on server. When visit through other pages, the value above will be fetched and rendered on the client browser."
+        },
+        "static": {
+            "title": "Static Assets",
+            "description": "Summary information for Koot.js Static Assets usage.",
+            "method_require": "Method: require()",
+            "method_require_content": "Use require() to include asset file. The file name will be hashed.",
+            "method_static": "Method: static folder",
+            "method_static_content": "Put asset file in static assets folder defined in koot.build.js"
+        }
+    }
+}
