@@ -4,7 +4,10 @@
 module.exports = {
     // 处理项目配置相关
     keyFileProjectConfigTemp: '__FILE_PROJECT_CONFIG_TEMP__',
+    keyFileProjectConfigServerTemp: '__FILE_PROJECT_CONFIG_SERVER_TEMP__',
+    dirConfigTemp: 'logs/tmp/config',
     filenameProjectConfigTemp: '.koot.config.tmp.*.js',
+    filenameProjectConfigServerTemp: 'server.*.js',
     propertiesToExtract: [
         ['name', ''],
         ['type', 'react'],

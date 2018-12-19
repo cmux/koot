@@ -11,7 +11,6 @@ import { idDivStylesContainer, StyleMapContext } from '../../React/styles'
 const Root = ({
     store, ...props
 }) => {
-    console.log('Root render Store', typeof Store === 'undefined' ? undefined : Store)
     return (
         <StyleMapContext.Provider value={{}}>
             <Provider store={store} >

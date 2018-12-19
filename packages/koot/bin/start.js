@@ -12,6 +12,7 @@ const chalk = require('chalk')
 
 const {
     keyFileProjectConfigTemp,
+    dirConfigTemp,
     filenameBuildFail,
 } = require('../defaults/before-build')
 const sleep = require('../utils/sleep')
@@ -22,7 +23,7 @@ const getAppType = require('../utils/get-app-type')
 const validateConfig = require('../libs/validate-config')
 const validateConfigDist = require('../libs/validate-config-dist')
 const __ = require('../utils/translate')
-// const getCwd = require('../utils/get-cwd')
+const getCwd = require('../utils/get-cwd')
 
 program
     .version(require('../package').version, '-v, --version')
@@ -77,6 +78,7 @@ const run = async () => {
             const fileProjectConfigTemp = path.resolve(dist, filenameProjectConfigTemp)
             if (fs.existsSync(fileProjectConfigTemp))
                 await fs.remove(filenameProjectConfigTemp)
+            await fs.emptyDir(path.resolve(getCwd(), dirConfigTemp))
         }
     }
 

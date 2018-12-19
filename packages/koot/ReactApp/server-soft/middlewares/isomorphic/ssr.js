@@ -1,5 +1,6 @@
 const fs = require('fs-extra')
 const path = require('path')
+const chalk = require('chalk')
 
 import { default as __KOOT_GET_DIST_PATH__ } from '../../../../utils/get-dist-path'
 
@@ -9,9 +10,9 @@ let __KOOT_SSR_FILE_CONTENT__
 /**
  * 执行服务器端渲染 (Server-Side Rendering)
  */
-const ssr = async ({
-    ...__KOOT_SSR__
-}) => new Promise(async resolve => {
+const ssr = ({
+    Store, History, renderProps: __KOOT_SSR_ROOT_RENDER_PROPS__
+}) => {
     if (!__KOOT_SSR_FILE_CONTENT__) {
         const fileSSR = path.resolve(__KOOT_GET_DIST_PATH__(), 'server/ssr.js')
         if (fs.existsSync(fileSSR)) {
@@ -21,21 +22,19 @@ const ssr = async ({
         }
     }
 
-    // __KOOT_SSR__.result = ''
-    // __KOOT_SSR__.styleMap = {}
-    let Store, History
+    const __KOOT_SSR__ = {
+        result: '',
+        styleMap: {}
+    }
 
-    console.log('SSR')
-    await eval(__KOOT_SSR_FILE_CONTENT__)
+    console.log('\n')
+    console.log(chalk.cyanBright('SSR'))
+    eval(__KOOT_SSR_FILE_CONTENT__)
+    console.log(chalk.cyanBright('SSR end'))
+    console.log('\n')
+    console.log(__KOOT_SSR__)
 
-    const set = () => setTimeout(() => {
-        if (!__KOOT_SSR__.__RESULT__)
-            return set()
-        // console.log(__KOOT_SSR__)
-        resolve(__KOOT_SSR__.__RESULT__)
-    }, 10)
-
-    set()
-})
+    return __KOOT_SSR__.result
+}
 
 export default ssr

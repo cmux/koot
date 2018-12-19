@@ -6,7 +6,7 @@ import Main from './_layout/main'
 
 let stateShowed = false
 
-console.log('App Store', typeof Store === 'undefined' ? undefined : Store)
+console.log((typeof Store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' Store in [App]')
 
 @extend({
     connect: state => {
@@ -36,7 +36,7 @@ class App extends React.Component {
         // console.log(this.props)
     }
     render() {
-        console.log('App render Store', typeof Store === 'undefined' ? undefined : Store)
+        console.log((typeof Store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' Store in [App] render')
         return (
             <React.StrictMode>
                 <div id="app" className={this.props.className}>

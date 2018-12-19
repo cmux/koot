@@ -147,6 +147,10 @@ const plugins = async (env, stage, defines = {}/*, remainingKootBuildConfig = {}
             getPathnameProjectConfigFile()
         ),
         new webpack.NormalModuleReplacementPlugin(
+            /^__KOOT_PROJECT_CONFIG_SERVER_PATHNAME__$/,
+            getPathnameProjectConfigFile(true)
+        ),
+        new webpack.NormalModuleReplacementPlugin(
             /^__KOOT_CLIENT_REQUIRE_CREATE_HISTORY__$/,
             `history/lib/create${historyType.substr(0, 1).toUpperCase() + historyType.substr(1)}`
         ),

@@ -6,6 +6,7 @@ import {
     resetServerTimestamp
 } from '@store/infos/actions'
 
+console.log((typeof Store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' Store in [PageExtend]')
 const check = props => {
     if (props.serverTimestamp)
         return true
@@ -67,7 +68,7 @@ class PageExtend extends React.Component {
         if (!check(this.props))
             return <div>LOADING...</div>
 
-        console.log('PageExtend Store', typeof Store === 'undefined' ? undefined : Store)
+        console.log((typeof Store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' Store in [PageExtend] render')
         return (
             <div className={this.props.className}>
                 <h2>{__('pages.extend.isomorphic')}</h2>

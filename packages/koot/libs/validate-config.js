@@ -9,8 +9,11 @@ const readBuildConfigFile = require('../utils/read-build-config-file')
 // const getPathnameBuildConfigFile = require('../utils/get-pathname-build-config-file')
 const {
     keyFileProjectConfigTemp,
+    keyFileProjectConfigServerTemp,
     filenameProjectConfigTemp,
+    filenameProjectConfigServerTemp,
     propertiesToExtract: _propertiesToExtract,
+    dirConfigTemp: _dirConfigTemp,
     typesSPA,
 } = require('../defaults/before-build')
 
@@ -62,6 +65,9 @@ module.exports = async (projectDir = getCwd()) => {
 
     if (isFullConfig) {
 
+        const dirConfigTemp = path.resolve(projectDir, _dirConfigTemp)
+        await fs.ensureDir(dirConfigTemp)
+
         /** @type {Boolean} 当前项目是否是 SPA */
         const isSPA = typesSPA.includes(fullConfig.type)
 
@@ -103,7 +109,8 @@ module.exports = async (projectDir = getCwd()) => {
         if (isCustomProjectConfig) {
             return {
                 ...validateBuildConfig(buildConfig),
-                [keyFileProjectConfigTemp]: process.env.KOOT_PROJECT_CONFIG_PATHNAME
+                [keyFileProjectConfigTemp]: process.env.KOOT_PROJECT_CONFIG_PATHNAME,
+                [keyFileProjectConfigServerTemp]: process.env.KOOT_PROJECT_CONFIG_SERVER_PATHNAME
             }
         }
 
@@ -147,15 +154,28 @@ module.exports = async (projectDir = getCwd()) => {
 
         // console.log(projectConfig)
         // 生成项目配置文件内容
+        let tempServer = []
+        const propertiesServer = [
+            'redux',
+            'server'
+        ]
         const temp = propertiesToExtract.map(([key]) => {
+            let result = ''
             if (key === 'server') {
                 if (isSPA) return ''
-                return `export const ${key} = __SERVER__ ? ${JSON.stringify(projectConfig[key])} : {};`
+                result = `export const ${key} = __SERVER__ ? ${JSON.stringify(projectConfig[key])} : {};`
+            } else {
+                result = `export const ${key} = ${JSON.stringify(projectConfig[key])};`
             }
-            return `export const ${key} = ${JSON.stringify(projectConfig[key])};`
+            if (propertiesServer.includes(key)) {
+                tempServer.push(result)
+            }
+            return result
         })
             .join('\n')
             .replace(/"require\((.+?)\).default"/g, `require($1).default`)
+
+        tempServer = tempServer.join('\n').replace(/"require\((.+?)\).default"/g, `require($1).default`)
 
         // console.log(temp)
 
@@ -164,9 +184,14 @@ module.exports = async (projectDir = getCwd()) => {
         process.env.KOOT_PROJECT_CONFIG_PATHNAME = pathTemp
         await fs.writeFile(pathTemp, temp, 'utf-8')
 
+        const pathTempServer = path.resolve(dirConfigTemp, filenameProjectConfigServerTemp.replace(/\*/g, Date.now()))
+        process.env.KOOT_PROJECT_CONFIG_SERVER_PATHNAME = pathTempServer
+        await fs.writeFile(pathTempServer, tempServer, 'utf-8')
+
         return {
             ...validateBuildConfig(buildConfig),
-            [keyFileProjectConfigTemp]: pathTemp
+            [keyFileProjectConfigTemp]: pathTemp,
+            [keyFileProjectConfigServerTemp]: pathTempServer
         }
 
     } else {

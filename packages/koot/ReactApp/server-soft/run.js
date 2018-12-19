@@ -6,7 +6,7 @@ const Koa = require('koa')
 const fs = require('fs-extra')
 // const debug = require('debug')('Koot/Server')
 
-import { server as serverConfig } from '__KOOT_PROJECT_CONFIG_PATHNAME__'
+import * as kootConfig from '__KOOT_PROJECT_CONFIG_PATHNAME__'
 
 import {
     setExtender,
@@ -22,6 +22,11 @@ import componentExtender from '../../React/component-extender'
 import pageinfo from '../../React/pageinfo'
 
 import validatePort from './validate/port'
+import validateTemplate from './validate/template'
+import validateReduxConfig from '../../React/validate/redux-config'
+import validateRouterConfig from '../../React/validate/router-config'
+import validateI18n from './validate/i18n'
+import createRenderCacheMap from './validate/create-render-cache-map'
 
 import middlewareRouterDev from './middlewares/router-dev'
 import middlewareIsomorphic from './middlewares/isomorphic'
@@ -38,10 +43,26 @@ import middlewareStatic from './middlewares/static'
 const startKootIsomorphicServer = async () => {
 
     console.log(`\r\n  \x1b[93m[koot/server]\x1b[0m initializing...`)
+
+    // 处理配置
     const {
+        server: serverConfig = {},
+    } = kootConfig
+    const {
+        renderCache: renderCacheConfig = {},
         before: serverBefore,
         after: serverAfter,
+        inject: templateInject,
+        proxyRequestOrigin = {},
     } = serverConfig
+    const lifecycle = {}
+    if (typeof serverConfig.onRender === 'function') {
+        lifecycle.afterDataToStore = serverConfig.onRender
+    } else if (typeof serverConfig.onRender === 'object') {
+        Object.keys(serverConfig.onRender).forEach(key => {
+            lifecycle[key] = serverConfig.onRender[key]
+        })
+    }
 
     // 设置全局常量
     setExtender(componentExtender)
@@ -52,6 +73,21 @@ const startKootIsomorphicServer = async () => {
     /** @type {Number} 服务器启动端口 */
     const port = await validatePort()
     if (!port) throw new Error(errorMsg('VALIDATE_PORT', 'unavailable'))
+
+    // 决定模板内容 (String)
+    const template = await validateTemplate(kootConfig.template)
+
+    // 决定 Redux 配置
+    const reduxConfig = await validateReduxConfig(kootConfig.redux)
+
+    // 决定路由配置
+    const routerConfig = await validateRouterConfig(kootConfig.router)
+
+    // 语言包写入内存
+    await validateI18n()
+
+    // 创建渲染缓存 Map
+    const renderCacheMap = await createRenderCacheMap(renderCacheConfig)
 
     // 创建 Koa 实例 (app)
     /** @type {Koa} Koa 服务器实例 */
@@ -77,7 +113,15 @@ const startKootIsomorphicServer = async () => {
     ))
 
     // 挂载中间件: 同构服务器
-    app.use(middlewareIsomorphic())
+    app.use(middlewareIsomorphic({
+        template,
+        reduxConfig,
+        routerConfig,
+        renderCacheMap,
+        templateInject,
+        proxyRequestOrigin,
+        ...lifecycle
+    }))
 
     // 生命周期: 服务器即将启动
     if (__DEV__) log('callback', 'server', `callback: \x1b[32m${'after'}\x1b[0m(app)`)

@@ -43,7 +43,10 @@ export const setLocaleId = o => localeId = o
  * @type {Function}
  */
 export let extend = () => (WrappedComponent) => WrappedComponent
-export const setExtender = o => extend = o
+export const setExtender = o => {
+    console.log((typeof Store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' Store in [koot/] setExtender')
+    extend = o
+}
 
 /**
  * 设置页面信息的高阶组件/方法

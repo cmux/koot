@@ -19,13 +19,10 @@ const koaStaticDefaults = {
  * @return {Function}
  */
 const staticMiddleware = (koaStaticConfig = {}) => {
-    return convert(koaStatic(
-        getDirDistPublic(getDistPath()),
-        {
-            ...koaStaticDefaults,
-            ...koaStaticConfig
-        }
-    ))
+    const dir = getDirDistPublic(getDistPath())
+    const config = Object.assign({}, koaStaticDefaults, koaStaticConfig)
+    console.log('koa-statc', { dir, config })
+    return convert(koaStatic(dir, config))
 }
 
 export default staticMiddleware

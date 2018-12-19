@@ -59,6 +59,7 @@ let everMounted = false
  * @returns {Object}
  */
 
+console.log((typeof Store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' Store in [HOC] extend')
 /**
  * 高阶组件/组件装饰器：组件扩展
  * @param {Object} options 选项
@@ -71,6 +72,8 @@ let everMounted = false
  * @returns {Function} 封装好的 React 组件
  */
 export default (options = {}) => (WrappedComponent) => {
+
+    console.log((typeof Store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' Store in [HOC] extend run')
 
     const {
         connect: _connect = false,

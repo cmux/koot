@@ -11,6 +11,7 @@ const resetCssLoader = require('koot-webpack/loaders/css/reset')
 
 const {
     filenameWebpackDevServerPortTemp, keyFileProjectConfigTemp,
+    dirConfigTemp,
     keyConfigBuildDll,
     keyConfigQuiet,
     filenameBuilding, filenameBuildFail,
@@ -21,7 +22,7 @@ const spinner = require('../../utils/spinner')
 const getDistPath = require('../../utils/get-dist-path')
 const getAppType = require('../../utils/get-app-type')
 const readBaseConfig = require('../../utils/read-base-config')
-// const getCwd = require('../../utils/get-cwd')
+const getCwd = require('../../utils/get-cwd')
 // const sleep = require('../../utils/sleep')
 
 const _log = require('../../libs/log')
@@ -381,6 +382,7 @@ module.exports = async (kootBuildConfig = {}) => {
             const pathnameTemp = path.resolve(data.dist, data[keyFileProjectConfigTemp])
             if (fs.existsSync(pathnameTemp))
                 fs.removeSync(pathnameTemp)
+            fs.emptyDirSync(path.resolve(getCwd(), dirConfigTemp))
         }
 
         // 将错误添加入结果对象
