@@ -1,6 +1,6 @@
 {
   "name": "koot-router",
-  "version": "1.0.3",
+  "version": "1.0.5",
   "description": "以纯 json 的格式定义路由",
   "author": "zrain <zrainma@sina.com>",
   "homepage": "https://github.com/cmux/koot#readme",

@@ -71,12 +71,13 @@ class ReduxModule {
      */
     getDataByPath( obj, path ){
         let result = Object.assign({}, obj);
-        path.forEach(p => {
+        for (let index = 0; index < path.length; index++) {
+            const p = path[index];
             result = result[p]
             if( !result ){
                 return null;
             }
-        })
+        }
         return result;
     }
 
@@ -89,7 +90,8 @@ class ReduxModule {
     setDataByPath( obj, path, value ){
         let result = Object.assign({}, obj);
         let reference = result;
-        path.forEach((p, index) => {
+        for (let index = 0; index < path.length; index++) {
+            const p = path[index];
             if( index === (path.length - 1)){
                 reference[p] = value;
             }else{
@@ -98,7 +100,7 @@ class ReduxModule {
             if( !reference ){
                 return null;
             }
-        })
+        }
         return result;
     }
 

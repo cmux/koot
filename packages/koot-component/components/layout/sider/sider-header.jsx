@@ -14,9 +14,11 @@ class SiderHeader extends Component {
     render() {
         return (
             <div className={this.props.className}>
-                {
-                    this.props.children
-                }
+                <div className="sider-header-inner">
+                    {
+                        this.props.children
+                    }
+                </div>
             </div>
         );
     }

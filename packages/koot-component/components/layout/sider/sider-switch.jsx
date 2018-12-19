@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
+import { connect } from 'mini-store';
 
 @KootExtend({
     styles: require('./sider-switch.module.less'),
 })
+@connect((state) => ({
+    collapsed: state.collapsed,
+}))
 class SiderSwitch extends Component {
 
     static propTypes = {
@@ -13,14 +16,6 @@ class SiderSwitch extends Component {
         onChange: PropTypes.func,
         dispatch: PropTypes.func,
         collapsed: PropTypes.bool,
-    }
-
-    constructor() {
-        super();
-    }
-
-    componentDidMount() {
-        // console.info('SiderSwitch.componentDidMount',this.props)
     }
 
     render() {
@@ -47,14 +42,10 @@ class SiderSwitch extends Component {
     }
 
     siderSwitchClickHandler = () => {
-        this.props.dispatch(ActionTypes.TOGGLE_COLLAPSED)
+        this.props.store.setState({
+            collapsed: !this.props.collapsed
+        })
     }
 }
 
-const mapStateToProps = state => {
-    return {
-        collapsed: state.SiderModule.collapsed
-    }
-}
-
-export default connect(mapStateToProps)(SiderSwitch);
+export default SiderSwitch;
