@@ -6,13 +6,20 @@ const getClientFilePath = require('../../utils/get-client-file-path')
 
 /**
  * 注入: JavaScript 代码
- * @param {Boolean} needInjectCritical
- * @param {Object} injectCache
- * @param {Object} entrypoints
- * @param {String} reduxHtml
+ * @param {Object} options
+ * @param {Boolean} [options.needInjectCritical]
+ * @param {Object} [options.injectCache]
+ * @param {Object} [options.entrypoints]
+ * @param {String} [options.reduxHtml]
  * @returns {String}
  */
-module.exports = (needInjectCritical, injectCache, entrypoints, reduxHtml) => {
+module.exports = ({
+    needInjectCritical,
+    injectCache,
+    entrypoints,
+    reduxHtml,
+    serverState = {}
+}) => {
 
     const ENV = process.env.WEBPACK_BUILD_ENV
     const isDev = Boolean(ENV === 'dev' || (typeof __DEV__ !== 'undefined' && __DEV__))
@@ -71,7 +78,10 @@ module.exports = (needInjectCritical, injectCache, entrypoints, reduxHtml) => {
         injectCache.scriptsInBody = r
     }
 
-    return `<script type="text/javascript">${reduxHtml ? reduxHtml : `window.__REDUX_STATE__ = {}`}</script>`
+    return `<script type="text/javascript">`
+        + (reduxHtml ? reduxHtml : `window.__REDUX_STATE__ = {};`)
+        + (`window.LocaleId = "${serverState.localeId || ''}"`)
+        + `</script>`
         + `${injectCache.scriptsInBody}`
 
 }

@@ -1,11 +1,15 @@
 import React from 'react'
-import { store, history, extend } from 'koot'
+import { store, history, localeId, extend } from 'koot'
+console.log('[App]', {
+    store,
+    history,
+    localeId
+})
 
 import Nav from './_layout/nav'
 import Main from './_layout/main'
 
 let stateShowed = false
-
 // console.log((typeof Store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' Store in [App]')
 
 @extend({

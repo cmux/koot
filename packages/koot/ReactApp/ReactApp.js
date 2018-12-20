@@ -151,6 +151,7 @@ export default class ReactApp {
         // 设置常量
         window.Store = this.store
         window.History = thisHistory
+        // window.LocaleId = this.store.getState().localeId
 
         // console.log('historyConfig', historyConfig)
         // console.log('history', thisHistory)

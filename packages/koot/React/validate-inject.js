@@ -35,6 +35,7 @@ module.exports = (options = {}) => {
         reactHtml,
         stylesHtml,
         reduxHtml,
+        serverState,
 
         needInjectCritical = {
             styles: false,
@@ -58,7 +59,13 @@ module.exports = (options = {}) => {
 
         react: reactHtml,
 
-        scripts: injectScripts(needInjectCritical.scripts, injectCache, entrypoints, reduxHtml),
+        scripts: injectScripts({
+            needInjectCritical: needInjectCritical.scripts,
+            injectCache,
+            entrypoints,
+            reduxHtml,
+            serverState
+        }),
 
     }
 }

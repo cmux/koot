@@ -38,11 +38,7 @@ import i18nGenerateHtmlRedirectMetas from '../../i18n/server/generate-html-redir
 
 const ssr = async () => {
 
-    const {
-        ctx,
-        ssrConfig,
-        styleMap,
-    } = __KOOT_SSR__
+    const { ctx, styleMap, ...ssrConfig } = __KOOT_SSR__
 
     /** @type {String} 本次请求的 URL */
     const url = ctx.path + ctx.search
@@ -159,6 +155,9 @@ const ssr = async () => {
         .map(id => `<style id="${id}">${styleMap[id].css}</style>`)
         .join('')
     // console.log('result styleMap', styleMap)
+    const serverState = {
+        localeId: LocaleId,
+    }
 
     // 渲染 EJS 模板
     const inject = validateInject({
@@ -171,6 +170,7 @@ const ssr = async () => {
         reactHtml,
         stylesHtml,
         reduxHtml,
+        serverState,
         needInjectCritical: isNeedInjectCritical(template),
     })
     if (LocaleId) {

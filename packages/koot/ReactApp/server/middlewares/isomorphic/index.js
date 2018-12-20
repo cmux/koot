@@ -22,9 +22,6 @@ const middlewareIsomorphic = (options = {}) => {
     const {
         reduxConfig
     } = options
-    const ssrConfig = {
-        syncCookie: reduxConfig.syncCookie
-    }
 
     return async (ctx, next) => {
 
@@ -55,8 +52,9 @@ const middlewareIsomorphic = (options = {}) => {
             // eval SSR
             const result = await ssr({
                 ctx,
-                ssrConfig,
                 Store, History, LocaleId,
+                syncCookie: reduxConfig.syncCookie,
+                styleMap: {}
             })
 
             if (result.body) {

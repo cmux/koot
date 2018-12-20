@@ -25,8 +25,7 @@ const ssr = async ({
         }
     }
 
-    __KOOT_SSR__.result = false
-    __KOOT_SSR__.styleMap = {}
+    // __KOOT_SSR__.result = false
 
     // console.log('\n' + chalk.cyanBright('eval SSR'))
     await eval(__KOOT_SSR_FILE_CONTENT__)
