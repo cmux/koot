@@ -22,7 +22,8 @@ const middlewareIsomorphic = (options = {}) => {
 
     const {
         reduxConfig,
-        renderCacheMap
+        renderCacheMap,
+        locales
     } = options
     const ssrConfig = {}
 
@@ -78,7 +79,7 @@ const middlewareIsomorphic = (options = {}) => {
             const result = await ssr({
                 ctx,
 
-                Store, History, LocaleId,
+                Store, History, LocaleId, locales,
 
                 ssrConfig, styleMap, renderCacheMap,
                 syncCookie: reduxConfig.syncCookie

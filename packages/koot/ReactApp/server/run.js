@@ -18,6 +18,7 @@ import log from '../../libs/log'
 import validatePort from './validate/port'
 import createRenderCacheMap from './validate/create-render-cache-map'
 import validateReduxConfig from '../../React/validate/redux-config'
+import validateI18n from './validate/i18n'
 
 import middlewareRouterDev from './middlewares/router-dev'
 import middlewareIsomorphic from './middlewares/isomorphic'
@@ -52,6 +53,9 @@ const startKootIsomorphicServer = async () => {
     // 渲染缓存
     const renderCacheMap = await createRenderCacheMap(renderCacheConfig)
 
+    // 语言包写入内存
+    const locales = await validateI18n()
+
     // 创建 Koa 实例 (app)
     /** @type {Koa} Koa 服务器实例 */
     const app = new Koa()
@@ -78,7 +82,8 @@ const startKootIsomorphicServer = async () => {
     // 挂载中间件: 同构服务器
     app.use(middlewareIsomorphic({
         reduxConfig,
-        renderCacheMap
+        renderCacheMap,
+        locales,
     }))
 
     // 生命周期: 服务器即将启动

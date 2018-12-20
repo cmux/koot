@@ -22,8 +22,8 @@ const validateI18n = async () => {
 
     /** @type {Object} 完整语言包配置 */
     const localesFull = getLocalesFull()
-    /** @type {String} 多语言类型 */
-    const type = JSON.parse(process.env.KOOT_I18N_TYPE) || false
+    // /** @type {String} 多语言类型 */
+    // const type = JSON.parse(process.env.KOOT_I18N_TYPE) || false
 
     // const localeIds = []
     const locales = {}
@@ -37,8 +37,10 @@ const validateI18n = async () => {
     i18nRegister({
         // localeIds,
         locales,
-        type,
+        // type,
     })
+
+    return locales
 }
 
 export default validateI18n

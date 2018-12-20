@@ -80,7 +80,7 @@ const ssr = async () => {
         callback: lifecycle.beforeRouterMatch
     })
     if (LocaleId) {
-        if (__DEV__) await validateI18n()
+        if (__DEV__) __KOOT_SSR_.locales = await validateI18n()
         Store.dispatch({ type: CHANGE_LANGUAGE, data: LocaleId })
         i18nOnServerRender({ store: Store })
     }
@@ -253,7 +253,7 @@ const initConfig = async (i18nEnabled) => {
     __KOOT_SSR__.ssrConfig.routerConfig = await validateRouterConfig(kootConfig.router)
 
     // 语言包写入内存
-    await validateI18n()
+    // await validateI18n()
 
     // 创建渲染缓存 Map
     // __KOOT_SSR__.ssrConfig.renderCacheMap = await createRenderCacheMap(renderCacheConfig)
