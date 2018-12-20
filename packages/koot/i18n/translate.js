@@ -1,8 +1,6 @@
 import { localeId } from '../'
 import locales from './locales'
 
-console.log('__')
-
 /**
  * 翻译文本
  * 语言包中源文本中的 ${replaceKey} 表示此处需要替换，replaceKey 就是传入的 obj 中对应的值
@@ -58,13 +56,6 @@ const translate = (...args) => {
         str = (l && typeof l[key] !== 'undefined') ? l[key] : undefined
     }
     // const localeId = _self.curLocaleId
-
-    console.log('__', {
-        key,
-        localeId, LocaleId,
-        'in __KOOT_SSR__': __KOOT_SSR__.LocaleId,
-        'in store': Store.getState().localeId
-    })
 
     if (typeof str === 'undefined') {
         try {

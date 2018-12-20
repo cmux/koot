@@ -4,9 +4,9 @@ import { extend } from 'koot'
 import Link from '@components/link'
 
 const Nav = props => {
-    console.log('Nav render', {
-        'in __KOOT_SSR__': __KOOT_SSR__.LocaleId
-    });
+    // console.log('Nav render', {
+    //     'in __KOOT_SSR__': __KOOT_SSR__.LocaleId
+    // });
     const items = [
         {
             title: __SPA__ ? '首页' : __('pages.home.title'),

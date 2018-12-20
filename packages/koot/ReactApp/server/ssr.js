@@ -38,11 +38,6 @@ import i18nGenerateHtmlRedirectMetas from '../../i18n/server/generate-html-redir
 const ssr = async () => {
 
     const { ctx, styleMap, ssrConfig } = __KOOT_SSR__
-    console.log('eval started', {
-        __TEST_NUMBER__,
-        LocaleId,
-        'is __KOOT_SSR__': __KOOT_SSR__.LocaleId
-    })
 
     /** @type {String} 本次请求的 URL */
     const url = ctx.path + ctx.search
@@ -94,9 +89,6 @@ const ssr = async () => {
     const {
         redirectLocation, renderProps
     } = await new Promise((resolve, reject) => {
-        console.log('match', {
-            'in __KOOT_SSR__': __KOOT_SSR__.LocaleId
-        })
         match({
             history: History,
             routes,
@@ -233,8 +225,6 @@ const initConfig = async (i18nEnabled) => {
 
     if (__KOOT_SSR__.ssrConfig._init)
         return __KOOT_SSR__.ssrConfig
-    
-    console.log(' !! INIT !! ')
 
     if (typeof i18nEnabled === 'undefined')
         i18nEnabled = Boolean(LocaleId)

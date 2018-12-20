@@ -14,9 +14,9 @@ if (__DEV__)
 //         LocaleId
 //     })
 
-console.log('App 000', {
-    'in __KOOT_SSR__': __KOOT_SSR__.LocaleId
-});
+// console.log('App 000', {
+//     'in __KOOT_SSR__': __KOOT_SSR__.LocaleId
+// });
 import Nav from './_layout/nav'
 import Main from './_layout/main'
 
@@ -52,9 +52,9 @@ class App extends React.Component {
         // console.log(this.props)
     }
     render() {
-        console.log('App render', {
-            'in __KOOT_SSR__': __KOOT_SSR__.LocaleId
-        });
+        // console.log('App render', {
+        //     'in __KOOT_SSR__': __KOOT_SSR__.LocaleId
+        // });
         // console.log((typeof Store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' Store in [App] render')
         return (
             <React.StrictMode>

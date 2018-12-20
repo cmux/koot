@@ -45,12 +45,12 @@ const middlewareIsomorphic = (options = {}) => {
         try {
 
             // console.log('request url', url)
-            console.log('\nSSR middleware start')
+            // console.log('\nSSR middleware start')
 
             /** @type {String} 本次请求的语种ID */
             const LocaleId = i18nGetLangFromCtx(ctx) || ''
             // setLocaleId(LocaleId)
-            console.log(`LocaleId -> ${LocaleId}`)
+            // console.log(`LocaleId -> ${LocaleId}`)
 
             // 如果存在缓存匹配，直接返回缓存结果
             const thisRenderCache = renderCacheMap.get(LocaleId)
@@ -84,10 +84,10 @@ const middlewareIsomorphic = (options = {}) => {
                 syncCookie: reduxConfig.syncCookie
             })
 
-            console.log('eval finished', {
-                'localeId in store': Store.getState().localeId
-            })
-            console.log('\n\n\n')
+            // console.log('eval finished', {
+            //     'localeId in store': Store.getState().localeId
+            // })
+            // console.log('\n\n\n')
 
             if (result.body) {
                 // HTML 结果暂存入缓存

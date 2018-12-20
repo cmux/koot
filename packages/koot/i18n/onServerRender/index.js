@@ -15,7 +15,5 @@ export default ({
     if (JSON.parse(process.env.KOOT_I18N_TYPE) === 'redux')
         store.dispatch(actionLocales(store.getState()))
 
-    console.log('dispatched i18n related action')
-
     // console.log(2)
 }

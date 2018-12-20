@@ -1,6 +1,6 @@
-console.log('router/index.js', {
-    'in __KOOT_SSR__': __KOOT_SSR__.LocaleId
-});
+// console.log('router/index.js', {
+//     'in __KOOT_SSR__': __KOOT_SSR__.LocaleId
+// });
 
 import routeCheck from 'koot/React/route-check'
 import Root from '@components/app'

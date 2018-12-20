@@ -11,16 +11,14 @@ import RouterContext from 'react-router/lib/RouterContext'
 const Root = ({
     store, ...props
 }) => {
-    console.log('Root', {
-        'in __KOOT_SSR__': __KOOT_SSR__.LocaleId
-    })
+    // console.log('Root', {
+    //     'in __KOOT_SSR__': __KOOT_SSR__.LocaleId
+    // })
     // console.log('Root render Store', typeof Store === 'undefined' ? undefined : Store)
     return (
         // <StyleMapContext.Provider value={{}}>
         <Provider store={store} >
-            <Test>
-                <RouterContext {...props} />
-            </Test>
+            <RouterContext {...props} />
         </Provider>
         // <StylesContainer />
         // </StyleMapContext.Provider>
@@ -28,13 +26,6 @@ const Root = ({
 }
 
 export default Root
-
-const Test = ({ children }) => {
-    console.log('Test', {
-        'in __KOOT_SSR__': __KOOT_SSR__.LocaleId
-    })
-    return children
-}
 
 /**
  * React 组件: 样式表内容容器
