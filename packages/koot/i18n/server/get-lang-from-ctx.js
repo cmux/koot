@@ -1,7 +1,6 @@
 // import cookie from 'cookie'
 import { changeLocaleQueryKey } from '../../defaults/defines'
-import { availableLocaleIds } from '../'
-// import getLocaleIds from '../get-locale-ids'
+import availableLocaleIds from '../locale-ids'
 import parseLocaleId from '../parse-locale-id'
 import setCookie from '../set-cookie'
 import isI18nEnabled from '../is-enabled'

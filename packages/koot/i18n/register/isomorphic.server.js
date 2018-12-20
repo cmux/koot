@@ -1,6 +1,4 @@
-import {
-    setLocales,
-} from '../index'
+import { setLocales } from '../locales'
 
 /**
  * 初始化

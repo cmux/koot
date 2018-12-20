@@ -16,6 +16,7 @@ import errorMsg from '../../libs/error-msg'
 import log from '../../libs/log'
 
 import validatePort from './validate/port'
+import createRenderCacheMap from './validate/create-render-cache-map'
 import validateReduxConfig from '../../React/validate/redux-config'
 
 import middlewareRouterDev from './middlewares/router-dev'
@@ -36,6 +37,7 @@ const startKootIsomorphicServer = async () => {
     const {
         before: serverBefore,
         after: serverAfter,
+        renderCacheConfig,
     } = serverConfig
 
     // 决定服务器启动端口
@@ -46,6 +48,9 @@ const startKootIsomorphicServer = async () => {
 
     // 确定 Redux 相关配置
     const reduxConfig = await validateReduxConfig(reduxConfigRaw)
+
+    // 渲染缓存
+    const renderCacheMap = await createRenderCacheMap(renderCacheConfig)
 
     // 创建 Koa 实例 (app)
     /** @type {Koa} Koa 服务器实例 */
@@ -72,7 +77,8 @@ const startKootIsomorphicServer = async () => {
 
     // 挂载中间件: 同构服务器
     app.use(middlewareIsomorphic({
-        reduxConfig
+        reduxConfig,
+        renderCacheMap
     }))
 
     // 生命周期: 服务器即将启动

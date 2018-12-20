@@ -2,12 +2,8 @@ import parseLanguageList from '../parse-language-list'
 import getLanguagelistFromState from '../get-language-list-from-state'
 import parseLocaleId from '../parse-locale-id'
 
-import {
-    I18N_INIT, I18N_SET_LOCALES,
-    locales,
-    // localeId, locales,
-    setLocaleId
-} from '../index'
+import locales from '../locales'
+import { I18N_INIT, I18N_SET_LOCALES } from '../action-types'
 
 /**
  * Redux reducer: 初始化 localeId
@@ -57,7 +53,7 @@ export const actionInit = (state) => {
         ), state.localeId)
         : state.localeId
 
-    setLocaleId(localeId)
+    // setLocaleId(localeId)
 
     return {
         type: I18N_INIT,

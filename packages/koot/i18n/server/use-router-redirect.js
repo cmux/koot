@@ -1,5 +1,4 @@
-import { availableLocaleIds } from '../'
-// import getLocaleIds from '../get-locale-ids'
+import availableLocaleIds from '../locale-ids'
 import getLangFromCtx from './get-lang-from-ctx'
 import setCookie from '../set-cookie'
 import isI18nEnabled from '../is-enabled'

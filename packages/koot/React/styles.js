@@ -1,7 +1,3 @@
-/* global
-    __KOOT_SSR__:false
-*/
-
 import React from 'react'
 
 /**
@@ -38,22 +34,23 @@ export const checkAndWriteIntoHead = (styleMap = {}) => {
     })
 }
 
-const getStyleMap = (passedMap) => {
-    if (__CLIENT__)
-        return passedMap
-    if (typeof __KOOT_SSR__ === 'object') {
-        return __KOOT_SSR__.styleMap
-    }
-    return passedMap
-}
+// const getStyleMap = (passedMap) => {
+//     if (__CLIENT__)
+//         return passedMap
+//     if (typeof __KOOT_SSR__ === 'object') {
+//         // console.log({ LocaleId })
+//         return __KOOT_SSR__.styleMap.get(LocaleId)
+//     }
+//     return passedMap
+// }
 
 /**
  * 追加样式
  * @param {Object} styleMap 
  * @param {Object|Array} style 
  */
-export const append = (passedMap = {}, style) => {
-    const styleMap = getStyleMap(passedMap)
+export const append = (styleMap = {}, style) => {
+    // const styleMap = getStyleMap(passedMap)
 
     if (Array.isArray(style))
         return style.forEach(theStyle => append(styleMap, theStyle))
@@ -79,8 +76,8 @@ export const append = (passedMap = {}, style) => {
  * @param {Object} styleMap 
  * @param {*} style 
  */
-export const remove = (passedMap = {}, style) => {
-    const styleMap = getStyleMap(passedMap)
+export const remove = (styleMap = {}, style) => {
+    // const styleMap = getStyleMap(passedMap)
 
     if (Array.isArray(style))
         return style.forEach(theStyle => remove(theStyle))

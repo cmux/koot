@@ -1,6 +1,5 @@
 import RenderCache from '../render-cache'
-import { availableLocaleIds } from '../../../i18n'
-// import getLocaleIds from '../../../i18n/get-locale-ids'
+import availableLocaleIds from '../../../i18n/locale-ids'
 // import isI18nEnabled from '../../../i18n/is-enabled'
 
 /**

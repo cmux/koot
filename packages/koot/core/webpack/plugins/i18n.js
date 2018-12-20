@@ -61,7 +61,7 @@ class I18nPlugin {
                     parser.hooks.call
                         .for(functionName)
                         .tap("I18nPlugin", function (expr) {
-                            const request = [].concat(['koot/i18n', 'default'])
+                            const request = [].concat(['koot/i18n/translate', 'default'])
                             // const nameIdentifier = tempFunctionName
                             let expression = `require(${JSON.stringify(request[0])})`
                             if (request.length > 1) {

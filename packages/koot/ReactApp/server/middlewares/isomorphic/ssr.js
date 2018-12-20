@@ -10,12 +10,7 @@ let __KOOT_SSR_FILE_CONTENT__
 /**
  * 执行服务器端渲染 (Server-Side Rendering)
  */
-const ssr = async ({
-    Store,
-    History,
-    LocaleId,
-    ...__KOOT_SSR__
-}) => new Promise(async resolve => {
+const ssr = async (__KOOT_SSR_O__) => new Promise(async resolve => {
     if (!__KOOT_SSR_FILE_CONTENT__) {
         const fileSSR = path.resolve(__KOOT_GET_DIST_PATH__(), 'server/ssr.js')
         if (fs.existsSync(fileSSR)) {
@@ -25,20 +20,38 @@ const ssr = async ({
         }
     }
 
-    // __KOOT_SSR__.result = false
+    (async (__KOOT_SSR__) => {
+        // __KOOT_SSR__.result = false
+        // let __KOOT_SSR__ = __KOOT_SSR_O__
+        let __TEST_NUMBER__ = 0
+        const {
+            Store,
+            History,
+            LocaleId,
+        } = __KOOT_SSR__
+        __KOOT_SSR__.logged = false
 
-    // console.log('\n' + chalk.cyanBright('eval SSR'))
-    await eval(__KOOT_SSR_FILE_CONTENT__)
+        __TEST_NUMBER__++
 
-    const set = () => setTimeout(() => {
-        if (!__KOOT_SSR__.__RESULT__)
-            return set()
-        // console.log(__KOOT_SSR__)
-        // console.log(chalk.cyanBright('eval SSR end') + '\n')
-        resolve(__KOOT_SSR__.__RESULT__)
-    }, 10)
+        console.log('before eval', {
+            __TEST_NUMBER__, LocaleId, logged: __KOOT_SSR__.logged,
+            'in __KOOT_SSR__': __KOOT_SSR__.LocaleId
+        })
 
-    set()
+        // console.log('\n' + chalk.cyanBright('eval SSR'))
+        await eval(__KOOT_SSR_FILE_CONTENT__)
+
+        const set = () => setTimeout(() => {
+            if (!__KOOT_SSR__.__RESULT__)
+                return set()
+            // console.log(__KOOT_SSR__)
+            // console.log(chalk.cyanBright('eval SSR end') + '\n')
+            resolve(__KOOT_SSR__.__RESULT__)
+        }, 10)
+
+        set()
+    })(__KOOT_SSR_O__)
+
 })
 
 export default ssr

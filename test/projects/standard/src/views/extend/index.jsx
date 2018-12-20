@@ -1,10 +1,17 @@
 import React from 'react'
-import { extend } from 'koot'
+import { extend, localeId } from 'koot'
 
 import {
     updateServerTimestamp,
     resetServerTimestamp
 } from '@store/infos/actions'
+// if (__SERVER__)
+//     console.log('[PageExtend]', {
+//         // store,
+//         // history,
+//         localeId,
+//         LocaleId
+//     })
 
 // console.log((typeof Store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' Store in [PageExtend]')
 const check = props => {
@@ -47,12 +54,12 @@ const check = props => {
         return Promise.all([
             dispatch(updateServerTimestamp()),
             new Promise(resolve => {
-                setTimeout(() => resolve(), 200)
+                setTimeout(() => resolve(), 100)
             })
         ])
     },
 
-    // ttt: 'PageExtend'
+    name: 'PageExtend'
 })
 class PageExtend extends React.Component {
     reset = false
@@ -75,6 +82,8 @@ class PageExtend extends React.Component {
         // console.log((typeof Store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' Store in [PageExtend] render')
         return (
             <div className={this.props.className}>
+                <h2>props.localeId</h2>
+                <p>{this.props.localeId}</p>
                 <h2>{__('pages.extend.isomorphic')}</h2>
                 <p className="timestamp">Server Time: <strong>{(new Date(this.props.serverTimestamp)).toISOString()}</strong></p>
                 <p>{__('pages.extend.isomorphic_content')}</p>

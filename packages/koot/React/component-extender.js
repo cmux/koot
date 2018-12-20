@@ -1,4 +1,4 @@
-/* global Store:false */
+/* global Store:false, __KOOT_SSR__:false */
 
 // TODO: All-in-one decorator for react component
 // https://github.com/cmux/koot/issues/8
@@ -69,7 +69,6 @@ let everMounted = false
  * @returns {Function} 封装好的 React 组件
  */
 export default (options = {}) => (WrappedComponent) => {
-
     // console.log((typeof Store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' Store in [HOC] extend run')
 
     const {
@@ -82,7 +81,10 @@ export default (options = {}) => (WrappedComponent) => {
         styles: _styles,
         // ttt
         // hot: _hot = true,
+        name
     } = options
+
+    // console.log('extend hoc run', { name, LocaleId })
 
     // 样式相关
 
@@ -226,7 +228,7 @@ export default (options = {}) => (WrappedComponent) => {
 
             if (hasStyles) {
                 this.kootClassNames = styles.map(obj => obj.wrapper)
-                appendStyle(context, styles)
+                appendStyle(this.getStyleMap(context), styles)
                 // console.log('----------')
                 // console.log('styles', styles)
                 // console.log('theStyles', theStyles)
@@ -234,6 +236,22 @@ export default (options = {}) => (WrappedComponent) => {
                 // console.log('----------')
             }
         }
+
+        /**
+         * 获取 styleMap
+         * - 服务器端: 返回全局常量中的对照表
+         * - 客户端: 直接返回传入的 context
+         * @param {Object} context 
+         */
+        getStyleMap(context) {
+            // console.log('extend', { LocaleId })
+            if (typeof __KOOT_SSR__ === 'object') {
+                return __KOOT_SSR__.styleMap
+            }
+            return context
+        }
+
+        //
 
         componentDidUpdate(prevProps) {
             if (typeof prevProps.location === 'object' &&
@@ -266,7 +284,7 @@ export default (options = {}) => (WrappedComponent) => {
         componentWillUnmount() {
             this.mounted = false
             if (hasStyles) {
-                removeStyle(this.context, styles)
+                removeStyle(this.getStyleMap(this.context), styles)
             }
         }
 

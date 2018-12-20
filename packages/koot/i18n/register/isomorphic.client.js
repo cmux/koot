@@ -1,7 +1,4 @@
-import {
-    setLocaleId,
-    setLocales
-} from '../index'
+import { setLocales } from '../locales'
 import setCookie from '../set-cookie'
 
 /**
@@ -30,7 +27,7 @@ export default ({
     if (typeof localeId === 'undefined' || typeof locales === 'undefined')
         return
 
-    setLocaleId(localeId)
+    // setLocaleId(localeId)
     setLocales(localeId, locales)
     setCookie(localeId)
 }

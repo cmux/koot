@@ -1,11 +1,22 @@
 import React from 'react'
 import { store, history, localeId, extend } from 'koot'
-console.log('[App]', {
-    store,
-    history,
-    localeId
-})
+if (__DEV__)
+    console.log('[App]', {
+        store,
+        history,
+        localeId
+    })
+// if (__SERVER__)
+//     console.log('[App]', {
+//         // store,
+//         // history,
+//         localeId,
+//         LocaleId
+//     })
 
+console.log('App 000', {
+    'in __KOOT_SSR__': __KOOT_SSR__.LocaleId
+});
 import Nav from './_layout/nav'
 import Main from './_layout/main'
 
@@ -20,7 +31,8 @@ let stateShowed = false
         }
         return {}
     },
-    styles: require('./app.less')
+    styles: require('./app.less'),
+    name: 'App'
 })
 class App extends React.Component {
     componentDidMount() {
@@ -40,6 +52,9 @@ class App extends React.Component {
         // console.log(this.props)
     }
     render() {
+        console.log('App render', {
+            'in __KOOT_SSR__': __KOOT_SSR__.LocaleId
+        });
         // console.log((typeof Store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' Store in [App] render')
         return (
             <React.StrictMode>

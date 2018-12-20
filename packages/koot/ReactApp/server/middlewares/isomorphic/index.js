@@ -7,6 +7,7 @@ import i18nGetLangFromCtx from '../../../../i18n/server/get-lang-from-ctx'
 import validateStore from './validate-store'
 import ssr from './ssr'
 
+
 /**
  * KOA 中间件: 同构
  * @param {Object} options
@@ -20,8 +21,21 @@ import ssr from './ssr'
 const middlewareIsomorphic = (options = {}) => {
 
     const {
-        reduxConfig
+        reduxConfig,
+        renderCacheMap
     } = options
+    const ssrConfig = {}
+
+    // const localeIds = getLocaleIds()
+    // const styleMap = new Map()
+    // if (localeIds.length) {
+    //     localeIds.forEach(localeId => {
+    //         styleMap.set(localeId, {})
+    //     })
+    // } else {
+    //     styleMap.set('', {})
+    // }
+    const styleMap = {}
 
     return async (ctx, next) => {
 
@@ -31,9 +45,20 @@ const middlewareIsomorphic = (options = {}) => {
         try {
 
             // console.log('request url', url)
+            console.log('\nSSR middleware start')
 
             /** @type {String} 本次请求的语种ID */
             const LocaleId = i18nGetLangFromCtx(ctx) || ''
+            // setLocaleId(LocaleId)
+            console.log(`LocaleId -> ${LocaleId}`)
+
+            // 如果存在缓存匹配，直接返回缓存结果
+            const thisRenderCache = renderCacheMap.get(LocaleId)
+            const cached = thisRenderCache.get(url)
+            if (!__DEV__ && cached !== false) {
+                ctx.body = cached
+                return
+            }
 
             // 生成/清理 Store
             // console.log('\x1b[36m⚑\x1b[0m' + ' Store created')
@@ -52,12 +77,21 @@ const middlewareIsomorphic = (options = {}) => {
             // eval SSR
             const result = await ssr({
                 ctx,
+
                 Store, History, LocaleId,
-                syncCookie: reduxConfig.syncCookie,
-                styleMap: {}
+
+                ssrConfig, styleMap, renderCacheMap,
+                syncCookie: reduxConfig.syncCookie
             })
 
+            console.log('eval finished', {
+                'localeId in store': Store.getState().localeId
+            })
+            console.log('\n\n\n')
+
             if (result.body) {
+                // HTML 结果暂存入缓存
+                thisRenderCache.set(url, result.body)
                 ctx.body = result.body
                 return
             }

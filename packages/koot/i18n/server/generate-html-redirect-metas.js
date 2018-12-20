@@ -1,6 +1,5 @@
 import { changeLocaleQueryKey } from '../../defaults/defines'
-import { availableLocaleIds } from '../index'
-// import getLocaleIds from '../get-locale-ids'
+import availableLocaleIds from '../locale-ids'
 import isI18nEnabled from '../../i18n/is-enabled'
 
 /**

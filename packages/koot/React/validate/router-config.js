@@ -27,8 +27,9 @@ const validateRouterConfig = async (kootConfigRouter) => {
     }
 
     handleIndexRoute(routes)
+    i18nValidateRoutes(routes)
 
-    return i18nValidateRoutes(routes)
+    return routes
 
 }
 export default validateRouterConfig

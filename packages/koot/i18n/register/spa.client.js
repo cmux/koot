@@ -1,14 +1,7 @@
-import {
-    I18N_INIT,
-    // setAvailableLocales,
-    localeId,
-    setLocaleId,
-    setLocales,
-    parseLocaleId,
-} from '../index'
-import {
-    actionLocales,
-} from '../redux'
+import { localeId } from '../../'
+import { setLocales } from '../locales'
+import { I18N_INIT } from '../action-types'
+import { actionLocales } from '../redux'
 
 
 /**
@@ -19,7 +12,7 @@ import {
 export default (arg) => {
     if (Array.isArray(arg)) {
         // setAvailableLocales(arg)
-        setLocaleId(parseLocaleId())
+        // setLocaleId(parseLocaleId())
 
         return {
             type: I18N_INIT,

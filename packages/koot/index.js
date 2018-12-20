@@ -26,11 +26,11 @@ export { default as pageinfo } from "__KOOT_HOC_PAGEINFO__"
 // 其他全局变量
 export const localeId = (() => {
     if (__CLIENT__)
-        return window.LocaleId
+        return window.LocaleId || ''
     if (__SERVER__) {
         if (typeof LocaleId === 'undefined')
             return ''
-        return LocaleId
+        return LocaleId || ''
     }
 })()
 export const store = (() => {

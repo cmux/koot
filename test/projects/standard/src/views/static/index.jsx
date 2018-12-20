@@ -10,6 +10,7 @@ export default extend({
         ]
     }),
     styles: require('./styles.less'),
+    name: 'PageStatic'
 })(
     ({
         className

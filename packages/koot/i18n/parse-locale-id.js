@@ -1,8 +1,6 @@
 import parseLanguageList from './parse-language-list'
 
-import {
-    availableLocaleIds,
-} from './index'
+import availableLocaleIds from './locale-ids'
 
 /**
  * 检查单项，如果和availableLocales内的项目有匹配，返回匹配，否则返回null
