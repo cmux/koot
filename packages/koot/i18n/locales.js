@@ -1,22 +1,36 @@
-/* global __KOOT_SSR__:false */
+/* global __KOOT_SSR__:false, __KOOT_SSR_STATE__:false */
 
-import { localeId } from '../'
-
-// 存储文本，按语言包名，如 locales.en、locales['zh-cn']
-export const locales = (() => {
+/**
+ * 根据当前环境，返回语言包对象的引用
+ * - 客户端: 当前语种的语言包对象 (仅当多语言类型为 `redux` 时)
+ * - 服务器端: 所有语种语言包合集对象
+ * @returns {Object}
+ */
+const getLocalesObject = () => {
     if (__SERVER__) {
         if (typeof __KOOT_SSR__ === 'object')
-            return __KOOT_SSR__.locales || {}
+            return __KOOT_SSR__.locales
     }
-    return {}
-})()
-export const setLocales = (locale = localeId, obj) => {
-    if (__SERVER__) {
-        if (typeof __KOOT_SSR__ === 'object')
-            return
+    if (__CLIENT__) {
+        if (typeof __KOOT_SSR_STATE__ === 'object') {
+            return __KOOT_SSR_STATE__.locales
+        }
     }
-    // console.log('set', locale, obj)
-    locales[locale] = obj
+    return false
+}
+
+/**
+ * @type {Object}
+ * 语言包对象
+ * - 客户端: 当前语种的语言包对象 (仅当多语言类型为 `redux` 时)
+ * - 服务器端: 所有语种语言包合集对象
+ */
+export const locales = (() => getLocalesObject() || {})()
+
+export const setLocales = (newLocales = {}) => {
+    const obj = getLocalesObject()
+    if (obj) Object.assign(obj, newLocales)
+    return locales
 }
 
 export default locales

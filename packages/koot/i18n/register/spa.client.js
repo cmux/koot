@@ -1,5 +1,4 @@
 import { localeId } from '../../'
-import { setLocales } from '../locales'
 import { I18N_INIT } from '../action-types'
 import { actionLocales } from '../redux'
 
@@ -19,7 +18,6 @@ export default (arg) => {
             localeId: '' + localeId
         }
     } else if (typeof arg === 'object') {
-        setLocales(localeId, arg)
         return actionLocales()
     }
 }

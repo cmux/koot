@@ -39,6 +39,8 @@ const startKootIsomorphicServer = async () => {
         before: serverBefore,
         after: serverAfter,
         renderCacheConfig,
+        proxyRequestOrigin,
+        inject: templateInject,
     } = serverConfig
 
     // 决定服务器启动端口
@@ -84,6 +86,8 @@ const startKootIsomorphicServer = async () => {
         reduxConfig,
         renderCacheMap,
         locales,
+        proxyRequestOrigin,
+        templateInject,
     }))
 
     // 生命周期: 服务器即将启动

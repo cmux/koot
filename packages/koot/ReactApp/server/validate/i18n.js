@@ -1,7 +1,7 @@
 const fs = require('fs-extra')
 
-import i18nRegister from '../../../i18n/register/isomorphic.server'
 import isI18nEnabled from '../../../i18n/is-enabled'
+import { setLocales } from '../../../i18n/locales'
 
 /**
  * 验证 i18n 相关信息
@@ -34,11 +34,7 @@ const validateI18n = async () => {
     })
 
     // 服务器端注册多语言
-    i18nRegister({
-        // localeIds,
-        locales,
-        // type,
-    })
+    setLocales({ locales })
 
     return locales
 }

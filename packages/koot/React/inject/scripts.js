@@ -18,7 +18,7 @@ module.exports = ({
     injectCache,
     entrypoints,
     reduxHtml,
-    serverState = {}
+    SSRState = {}
 }) => {
 
     const ENV = process.env.WEBPACK_BUILD_ENV
@@ -80,7 +80,8 @@ module.exports = ({
 
     return `<script type="text/javascript">`
         + (reduxHtml ? reduxHtml : `window.__REDUX_STATE__ = {};`)
-        + (`window.LocaleId = "${serverState.localeId || ''}"`)
+        + `window.LocaleId = "${SSRState.localeId || ''}";`
+        + `window.__KOOT_SSR_STATE__ = ${JSON.stringify(SSRState)};`
         + `</script>`
         + `${injectCache.scriptsInBody}`
 

@@ -2,7 +2,11 @@ import useRouterHistory from 'react-router/lib/useRouterHistory'
 import createMemoryHistory from 'history/lib/createMemoryHistory'
 import { syncHistoryWithStore } from 'react-router-redux'
 
+import getChunkmap from '../../../../utils/get-chunkmap'
+import getSWPathname from '../../../../utils/get-sw-pathname'
+
 import i18nGetLangFromCtx from '../../../../i18n/server/get-lang-from-ctx'
+import i18nEnabled from '../../../../i18n/is-enabled'
 
 import validateStore from './validate-store'
 import ssr from './ssr'
@@ -23,12 +27,13 @@ const middlewareIsomorphic = (options = {}) => {
     const {
         reduxConfig,
         renderCacheMap,
-        locales
+        locales,
+        proxyRequestOrigin = {},
+        templateInject = {}
     } = options
     const ssrConfig = {}
 
     // const localeIds = getLocaleIds()
-    // const styleMap = new Map()
     // if (localeIds.length) {
     //     localeIds.forEach(localeId => {
     //         styleMap.set(localeId, {})
@@ -36,7 +41,48 @@ const middlewareIsomorphic = (options = {}) => {
     // } else {
     //     styleMap.set('', {})
     // }
-    const styleMap = {}
+    // const styleMap = {}
+
+    /**
+     * @type {Map}
+     * 注入内容缓存
+     * 则第一级为语种ID或 `` (空字符串)
+     */
+    const templateInjectCache = new Map()
+
+    /** @type {Object} chunkmap */
+    const chunkmap = getChunkmap(true)
+    /** @type {Map} webpack 的入口，从 chunkmap 中抽取 */
+    const entrypoints = new Map()
+    /** @type {Map} 文件名与实际结果的文件名的对应表，从 chunkmap 中抽取 */
+    const filemap = new Map()
+    /** @type {Map} 样式表 */
+    // const styleMap = new Map()
+
+    /** @type {String} i18n 类型 */
+    const i18nType = i18nEnabled
+        ? JSON.parse(process.env.KOOT_I18N_TYPE)
+        : undefined
+
+    // 针对 i18n 分包形式的项目，静态注入按语言缓存
+    if (i18nType === 'default') {
+        for (let l in chunkmap) {
+            const thisLocaleId = l.substr(0, 1) === '.' ? l.substr(1) : l
+            entrypoints.set(thisLocaleId, chunkmap[l]['.entrypoints'])
+            filemap.set(thisLocaleId, chunkmap[l]['.files'])
+            templateInjectCache.set(thisLocaleId, {
+                pathnameSW: getSWPathname(thisLocaleId)
+            })
+            // styleMap.set(thisLocaleId, {})
+        }
+    } else {
+        entrypoints.set('', chunkmap['.entrypoints'])
+        filemap.set('', chunkmap['.files'])
+        templateInjectCache.set('', {
+            pathnameSW: getSWPathname()
+        })
+        // styleMap.set('', {})
+    }
 
     return async (ctx, next) => {
 
@@ -61,6 +107,16 @@ const middlewareIsomorphic = (options = {}) => {
                 return
             }
 
+            /** @type {Object} 本次请求的 (当前语言的) 注入内容缓存 */
+            const thisTemplateInjectCache = templateInjectCache.get(i18nType === 'default' ? LocaleId : '')
+            /** @type {Object} 本次请求的 (当前语言的) 入口表 */
+            const thisEntrypoints = entrypoints.get(i18nType === 'default' ? LocaleId : '')
+            /** @type {Object} 本次请求的 (当前语言的) 文件名对应表 */
+            const thisFilemap = filemap.get(i18nType === 'default' ? LocaleId : '')
+            /** @type {Object} 本次请求的 (当前语言的) CSS 对照表 */
+            const styleMap = {}
+            // const thisStyleMap = styleMap.get(i18nType === 'default' ? LocaleId : '')
+
             // 生成/清理 Store
             // console.log('\x1b[36m⚑\x1b[0m' + ' Store created')
             const Store = validateStore(reduxConfig)
@@ -81,8 +137,13 @@ const middlewareIsomorphic = (options = {}) => {
 
                 Store, History, LocaleId, locales,
 
-                ssrConfig, styleMap, renderCacheMap,
-                syncCookie: reduxConfig.syncCookie
+                ssrConfig,
+
+                syncCookie: reduxConfig.syncCookie,
+                proxyRequestOrigin, templateInject,
+
+                thisTemplateInjectCache, thisEntrypoints, thisFilemap, //thisStyleMap,
+                styleMap,
             })
 
             // console.log('eval finished', {

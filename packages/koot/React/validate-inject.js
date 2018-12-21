@@ -15,6 +15,7 @@ const injectScripts = require('./inject/scripts')
  * @param {String} [reactHtml] 已处理完毕的 React 同构结果 HTML 代码
  * @param {String} [stylesHtml] 已处理完毕的样式结果 HTML 代码
  * @param {String} [reduxHtml] 已处理完毕的 redux store 结果 HTML 代码
+ * @param {Object} [SSRState] SSR 状态对象
  * @param {Object} [needInjectCritical] 是否需要自动注入 critical 内容
  * @param {Boolean} [needInjectCritical.styles=false]
  * @param {Boolean} [needInjectCritical.scripts=false]
@@ -35,7 +36,7 @@ module.exports = (options = {}) => {
         reactHtml,
         stylesHtml,
         reduxHtml,
-        serverState,
+        SSRState,
 
         needInjectCritical = {
             styles: false,
@@ -64,7 +65,7 @@ module.exports = (options = {}) => {
             injectCache,
             entrypoints,
             reduxHtml,
-            serverState
+            SSRState
         }),
 
     }

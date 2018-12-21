@@ -1,6 +1,14 @@
 import { localeId } from '../'
 import locales from './locales'
 
+const l = (() => {
+    if (__SERVER__)
+        return locales[localeId]
+    if (JSON.parse(process.env.KOOT_I18N_TYPE) === 'redux')
+        return locales
+    return false
+})()
+
 /**
  * 翻译文本
  * 语言包中源文本中的 ${replaceKey} 表示此处需要替换，replaceKey 就是传入的 obj 中对应的值
@@ -16,9 +24,6 @@ const translate = (...args) => {
     let str
     let options = {}
     const keys = []
-    const l = JSON.parse(process.env.KOOT_I18N_TYPE) === 'redux' || __SERVER__
-        ? locales[localeId]
-        : undefined
 
     args.forEach((value, index) => {
         if (index == args.length - 1 && typeof value === 'object' && !Array.isArray(value)) {
@@ -47,8 +52,10 @@ const translate = (...args) => {
         }
     }
 
-    // console.log(localeId)
-    // console.log(keys, length, key, l)
+    if (__CLIENT__) {
+        // console.log(localeId)
+        console.log(localeId, keys, length, key, l)
+    }
 
     if (typeof l === 'undefined') {
         str = key

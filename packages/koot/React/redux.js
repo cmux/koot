@@ -7,7 +7,7 @@ import {
 import { SERVER_REDUCER_NAME, serverReducer } from '../ReactApp/server/redux'
 import {
     reducerLocaleId as i18nReducerLocaleId,
-    reducerLocales as i18nReducerLocales,
+    // reducerLocales as i18nReducerLocales,
 } from '../i18n/redux'
 import isI18nEnabled from '../i18n/is-enabled'
 // import history from "__KOOT_CLIENT_REQUIRE_HISTORY__"
@@ -34,7 +34,7 @@ export const reducers = {
 }
 if (isI18nEnabled()) {
     reducers.localeId = i18nReducerLocaleId
-    reducers.locales = i18nReducerLocales
+    // reducers.locales = i18nReducerLocales
 }
 
 //

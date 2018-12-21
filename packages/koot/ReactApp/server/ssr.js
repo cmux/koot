@@ -14,8 +14,8 @@ import * as kootConfig from '__KOOT_PROJECT_CONFIG_PATHNAME__'
 
 import { publicPathPrefix } from '../../defaults/webpack-dev-server'
 
-import getChunkmap from '../../utils/get-chunkmap'
-import getSWPathname from '../../utils/get-sw-pathname'
+// import getChunkmap from '../../utils/get-chunkmap'
+// import getSWPathname from '../../utils/get-sw-pathname'
 import { CHANGE_LANGUAGE } from '../action-types'
 
 import validateRouterConfig from '../../React/validate/router-config'
@@ -34,43 +34,41 @@ import executeComponentsLifecycle from './middlewares/isomorphic/execute-compone
 
 import i18nOnServerRender from '../../i18n/onServerRender'
 import i18nGenerateHtmlRedirectMetas from '../../i18n/server/generate-html-redirect-metas'
+import i18nGetSSRState from '../../i18n/server/get-ssr-state'
 
 const ssr = async () => {
-
-    const { ctx, styleMap, ssrConfig } = __KOOT_SSR__
-
-    /** @type {String} 本次请求的 URL */
-    const url = ctx.path + ctx.search
 
     /** @type {Boolean} i18n 是否启用 */
     const i18nEnabled = Boolean(LocaleId)
 
     await initConfig(i18nEnabled)
+
     const {
-        lifecycle,
+        ctx,
+        ssrConfig,
+        thisTemplateInjectCache, thisEntrypoints, thisFilemap, //thisStyleMap,
+        styleMap,
         templateInject,
         proxyRequestOrigin,
+    } = __KOOT_SSR__
+
+    /** @type {String} 本次请求的 URL */
+    const url = ctx.path + ctx.search
+
+    const {
+        lifecycle,
+        // templateInject,
+        // proxyRequestOrigin,
 
         template,
         syncCookie,
         routerConfig: routes,
         // renderCacheMap,
 
-        templateInjectCache,
-        entrypoints,
-        filemap,
+        // templateInjectCache,
+        // entrypoints,
+        // filemap,
     } = ssrConfig
-
-    // setLocaleId(LocaleId)
-
-    /** @type {Object} 本次请求的 (当前语言的) 注入内容缓存 */
-    const thisTemplateInjectCache = templateInjectCache.get(LocaleId)
-    /** @type {Object} 本次请求的 (当前语言的) 入口表 */
-    const thisEntrypoints = entrypoints.get(LocaleId)
-    /** @type {Object} 本次请求的 (当前语言的) 文件名对应表 */
-    const thisFilemap = filemap.get(LocaleId)
-    // /** @type {Object} 本次请求的 (当前语言的) CSS 对照表 */
-    // const thisStyleMap = styleMap.get(LocaleId)
 
     // 渲染生命周期: beforeRouterMatch
     await beforeRouterMatch({
@@ -80,7 +78,7 @@ const ssr = async () => {
         callback: lifecycle.beforeRouterMatch
     })
     if (LocaleId) {
-        if (__DEV__) __KOOT_SSR_.locales = await validateI18n()
+        if (__DEV__) await validateI18n()
         Store.dispatch({ type: CHANGE_LANGUAGE, data: LocaleId })
         i18nOnServerRender({ store: Store })
     }
@@ -143,6 +141,14 @@ const ssr = async () => {
             {...renderProps}
         />
     )
+    // console.log({
+    //     // __KOOT_SSR__,
+    //     // thisTemplateInjectCache,
+    //     // thisEntrypoints, thisFilemap,
+    //     thisStyleMap,
+    //     // templateInject,
+    //     // proxyRequestOrigin,
+    // })
     // const stylesHtml = Object.keys(thisStyleMap)
     //     .filter(id => typeof thisStyleMap[id].css === 'string')
     //     .map(id => `<style id="${id}">${thisStyleMap[id].css}</style>`)
@@ -152,9 +158,6 @@ const ssr = async () => {
         .map(id => `<style id="${id}">${styleMap[id].css}</style>`)
         .join('')
     // console.log('result thisStyleMap', thisStyleMap)
-    const serverState = {
-        localeId: LocaleId,
-    }
 
     // 渲染 EJS 模板
     const inject = validateInject({
@@ -167,7 +170,9 @@ const ssr = async () => {
         reactHtml,
         stylesHtml,
         reduxHtml,
-        serverState,
+        SSRState: {
+            ...i18nGetSSRState()
+        },
         needInjectCritical: isNeedInjectCritical(template),
     })
     if (LocaleId) {
@@ -193,8 +198,8 @@ const ssr = async () => {
     if (__DEV__) {
         // 将结果中指向 webpack-dev-server 的 URL 转换为指向本服务器的代理地址
         // 替换 localhost 为 origin，以允许外部请求访问
-        delete templateInjectCache.styles
-        delete templateInjectCache.scriptsInBody
+        delete thisTemplateInjectCache.styles
+        delete thisTemplateInjectCache.scriptsInBody
         // delete thisTemplateInjectCache.pathnameSW
 
         const origin = ctx.origin.split('://')[1]
@@ -220,9 +225,10 @@ const initConfig = async (i18nEnabled) => {
     if (!__KOOT_SSR__.ssrConfig)
         return {}
 
-    // 决定路由配置
+    // 决定路由配置 (每次请求需重新生成)
     __KOOT_SSR__.ssrConfig.routerConfig = await validateRouterConfig(kootConfig.router)
 
+    // 如果其他内容已初始化，直接返回结果
     if (__KOOT_SSR__.ssrConfig._init)
         return __KOOT_SSR__.ssrConfig
 
@@ -232,11 +238,11 @@ const initConfig = async (i18nEnabled) => {
     const {
         server: serverConfig = {},
     } = kootConfig
-    const {
-        // renderCache: renderCacheConfig = {},
-        inject: templateInject,
-        proxyRequestOrigin = {},
-    } = serverConfig
+    // const {
+    //     // renderCache: renderCacheConfig = {},
+    //     inject: templateInject,
+    //     proxyRequestOrigin = {},
+    // } = serverConfig
     __KOOT_SSR__.ssrConfig.lifecycle = {}
     if (typeof serverConfig.onRender === 'function') {
         __KOOT_SSR__.ssrConfig.lifecycle.afterDataToStore = serverConfig.onRender
@@ -250,7 +256,7 @@ const initConfig = async (i18nEnabled) => {
     __KOOT_SSR__.ssrConfig.template = await validateTemplate(kootConfig.template)
 
     // 决定路由配置
-    __KOOT_SSR__.ssrConfig.routerConfig = await validateRouterConfig(kootConfig.router)
+    // __KOOT_SSR__.ssrConfig.routerConfig = await validateRouterConfig(kootConfig.router)
 
     // 语言包写入内存
     // await validateI18n()
@@ -259,45 +265,8 @@ const initConfig = async (i18nEnabled) => {
     // __KOOT_SSR__.ssrConfig.renderCacheMap = await createRenderCacheMap(renderCacheConfig)
 
     // 其他选项
-    __KOOT_SSR__.ssrConfig.templateInject = templateInject
-    __KOOT_SSR__.ssrConfig.proxyRequestOrigin = proxyRequestOrigin
-
-    /**
-     * @type {Map}
-     * 注入内容缓存
-     * 则第一级为语种ID或 `` (空字符串)
-     */
-    __KOOT_SSR__.ssrConfig.templateInjectCache = new Map()
-
-    /** @type {Object} chunkmap */
-    __KOOT_SSR__.ssrConfig.chunkmap = getChunkmap(true)
-    /** @type {Map} webpack 的入口，从 chunkmap 中抽取 */
-    __KOOT_SSR__.ssrConfig.entrypoints = new Map()
-    /** @type {Map} 文件名与实际结果的文件名的对应表，从 chunkmap 中抽取 */
-    __KOOT_SSR__.ssrConfig.filemap = new Map()
-
-    /** @type {String} i18n 类型 */
-    const i18nType = i18nEnabled
-        ? JSON.parse(process.env.KOOT_I18N_TYPE)
-        : undefined
-
-    // 针对 i18n 分包形式的项目，静态注入按语言缓存
-    if (i18nType === 'default') {
-        for (let l in __KOOT_SSR__.ssrConfig.chunkmap) {
-            const thisLocaleId = l.substr(0, 1) === '.' ? l.substr(1) : l
-            __KOOT_SSR__.ssrConfig.entrypoints.set(thisLocaleId, __KOOT_SSR__.ssrConfig.chunkmap[l]['.entrypoints'])
-            __KOOT_SSR__.ssrConfig.filemap.set(thisLocaleId, __KOOT_SSR__.ssrConfig.chunkmap[l]['.files'])
-            __KOOT_SSR__.ssrConfig.templateInjectCache.set(thisLocaleId, {
-                pathnameSW: getSWPathname(thisLocaleId)
-            })
-        }
-    } else {
-        __KOOT_SSR__.ssrConfig.entrypoints.set('', __KOOT_SSR__.ssrConfig.chunkmap['.entrypoints'])
-        __KOOT_SSR__.ssrConfig.filemap.set('', __KOOT_SSR__.ssrConfig.chunkmap['.files'])
-        __KOOT_SSR__.ssrConfig.templateInjectCache.set('', {
-            pathnameSW: getSWPathname()
-        })
-    }
+    // __KOOT_SSR__.ssrConfig.templateInject = templateInject
+    // __KOOT_SSR__.ssrConfig.proxyRequestOrigin = proxyRequestOrigin
 
     // 标记完成
     __KOOT_SSR__.ssrConfig._init = true
