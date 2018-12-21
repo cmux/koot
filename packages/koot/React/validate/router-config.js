@@ -4,11 +4,10 @@ import i18nValidateRoutes from '../../i18n/validte-routes'
 /**
  * 验证 `react-router` 配置
  * 
- * @async
  * @param {Object} kootConfigRouter Koot 配置项: `router`
  * @returns {Object} 路由配置对象，可直接供 `react-router` 使用
  */
-const validateRouterConfig = async (kootConfigRouter) => {
+const validateRouterConfig = (kootConfigRouter) => {
 
     if (typeof kootConfigRouter !== 'object')
         throw new Error(errorMsg('VALIDATE_ROUTER_CONFIG', 'no router config or router object invalid'))

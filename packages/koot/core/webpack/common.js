@@ -78,8 +78,6 @@ const plugins = async (env, stage, defines = {}/*, remainingKootBuildConfig = {}
             // 将 SERVER_PORT 赋值
             // 服务器启动时，会优先选取当前环境变量中的 SERVER_PORT，如果没有，会选择 __SERVER_PORT__
             __SERVER_PORT__: JSON.stringify(process.env.SERVER_PORT),
-
-            // __KOOT_PROJECT_CONFIG_PATHNAME__: getPathnameProjectConfigFile(),
         },
         defines
     )
@@ -132,22 +130,12 @@ const plugins = async (env, stage, defines = {}/*, remainingKootBuildConfig = {}
     return [
         new webpack.DefinePlugin(thisDefines),
         new webpack.EnvironmentPlugin(envsToDefine),
-        // new webpack.ContextReplacementPlugin(
-        //     /^__KOOT_PROJECT_CONFIG_PATHNAME__$/,
-        //     (context) => {
-        //         const a = Object.assign(context, {
-        //             regExp: /^\.\/\w+/,
-        //             request: getPathnameProjectConfigFile()
-        //         })
-        //         console.log(a)
-        //     }
-        // ),
         new webpack.NormalModuleReplacementPlugin(
-            /^__KOOT_PROJECT_CONFIG_PATHNAME__$/,
+            /^__KOOT_PROJECT_CONFIG_FULL_PATHNAME__$/,
             getPathnameProjectConfigFile()
         ),
         new webpack.NormalModuleReplacementPlugin(
-            /^__KOOT_PROJECT_CONFIG_SERVER_PATHNAME__$/,
+            /^__KOOT_PROJECT_CONFIG_PORTION_PATHNAME__$/,
             getPathnameProjectConfigFile(true)
         ),
         new webpack.NormalModuleReplacementPlugin(

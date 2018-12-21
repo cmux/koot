@@ -48,7 +48,7 @@ module.exports = (options = {}) => {
 
         htmlLang: injectHtmlLang(localeId),
         title,
-        metas: injectMetas(metaHtml),
+        metas: injectMetas({ metaHtml, localeId, compilation }),
         styles: injectStyles({
             needInjectCritical: needInjectCritical.styles,
             injectCache,

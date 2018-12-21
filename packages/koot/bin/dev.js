@@ -10,8 +10,8 @@ const opn = require('opn')
 
 const contentWaiting = require('../defaults/content-waiting')
 const {
-    keyFileProjectConfigTemp,
-    keyFileProjectConfigServerTemp,
+    keyFileProjectConfigTempFull,
+    keyFileProjectConfigTempPortion,
     filenameWebpackDevServerPortTemp,
     filenameBuilding,
     // filenameDll, filenameDllManifest,
@@ -140,8 +140,8 @@ const run = async () => {
     const {
         dist,
         port: configPort,
-        [keyFileProjectConfigTemp]: fileProjectConfigTemp,
-        [keyFileProjectConfigServerTemp]: fileProjectConfigServerTemp
+        [keyFileProjectConfigTempFull]: fileProjectConfigTempFull,
+        [keyFileProjectConfigTempPortion]: fileProjectConfigTempPortion
     } = buildConfig
     const appType = await getAppType()
     const cwd = getCwd()
@@ -160,10 +160,10 @@ const run = async () => {
     await removeTempBuild(dist)
 
     // 如果有临时项目配置文件，更改环境变量
-    if (fileProjectConfigTemp)
-        process.env.KOOT_PROJECT_CONFIG_PATHNAME = fileProjectConfigTemp
-    if (fileProjectConfigServerTemp)
-        process.env.KOOT_PROJECT_CONFIG_SERVER_PATHNAME = fileProjectConfigServerTemp
+    if (fileProjectConfigTempFull)
+        process.env.KOOT_PROJECT_CONFIG_FULL_PATHNAME = fileProjectConfigTempFull
+    if (fileProjectConfigTempPortion)
+        process.env.KOOT_PROJECT_CONFIG_PORTION_PATHNAME = fileProjectConfigTempPortion
 
     // 如果为 SPA，强制设置 STAGE
     if (process.env.WEBPACK_BUILD_TYPE === 'spa') {

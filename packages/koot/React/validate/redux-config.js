@@ -4,11 +4,10 @@ import { reducers as defaultReducers, initialState, middlewares } from '../redux
 /**
  * 验证 Redux 配置
  * 
- * @async
  * @param {Object} kootConfigRedux Koot 配置项: `redux`
  * @returns {Object} reduxConfig
  */
-const validateReduxConfig = async (kootConfigRedux = {}) => {
+const validateReduxConfig = (kootConfigRedux = {}) => {
 
     const {
         syncCookie

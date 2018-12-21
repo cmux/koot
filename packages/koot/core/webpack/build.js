@@ -11,8 +11,6 @@ const resetCssLoader = require('koot-webpack/loaders/css/reset')
 
 const {
     filenameWebpackDevServerPortTemp,
-    // keyFileProjectConfigTemp,
-    // dirConfigTemp,
     keyConfigBuildDll,
     keyConfigQuiet,
     filenameBuilding, filenameBuildFail,
@@ -381,12 +379,6 @@ module.exports = async (kootBuildConfig = {}) => {
     const buildingError = (err) => {
         // 移除过程中创建的临时文件
         emptyTempConfigDir()
-        // if (data[keyFileProjectConfigTemp]) {
-        //     const pathnameTemp = path.resolve(data.dist, data[keyFileProjectConfigTemp])
-        //     if (fs.existsSync(pathnameTemp))
-        //         fs.removeSync(pathnameTemp)
-        //     fs.emptyDirSync(path.resolve(getCwd(), dirConfigTemp))
-        // }
 
         // 将错误添加入结果对象
         result.addError(err)

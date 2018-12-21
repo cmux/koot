@@ -1,6 +1,6 @@
 import React from 'react'
 import { store, history, localeId, extend } from 'koot'
-if (__DEV__)
+if (__CLIENT__)
     console.log('[App]', {
         store,
         history,
@@ -41,6 +41,12 @@ class App extends React.Component {
         // console.log(this.props)
     }
     render() {
+        if (__CLIENT__)
+            console.log('[App] render', {
+                store,
+                history,
+                localeId
+            })
         // console.log('App render', {
         //     'in __KOOT_SSR__': __KOOT_SSR__.LocaleId
         // });

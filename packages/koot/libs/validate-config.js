@@ -8,10 +8,10 @@ const getCwd = require('../utils/get-cwd')
 const readBuildConfigFile = require('../utils/read-build-config-file')
 // const getPathnameBuildConfigFile = require('../utils/get-pathname-build-config-file')
 const {
-    keyFileProjectConfigTemp,
-    keyFileProjectConfigServerTemp,
-    filenameProjectConfigTemp,
-    filenameProjectConfigServerTemp,
+    keyFileProjectConfigTempFull,
+    keyFileProjectConfigTempPortion,
+    filenameProjectConfigTempFull,
+    filenameProjectConfigTempPortion,
     propertiesToExtract: _propertiesToExtract,
     dirConfigTemp: _dirConfigTemp,
     typesSPA,
@@ -21,7 +21,7 @@ const {
  * 根据 koot.config.js 生成 koot.js 和打包配置对象
  * 
  * 如果项目采用 0.6 之后的配置方式 (使用 koot.config.js，其中有全部配置项)，以下内容会写入环境变量
- *   - KOOT_PROJECT_CONFIG_PATHNAME - 项目配置文件 (临时文件)
+ *   - KOOT_PROJECT_CONFIG_FULL_PATHNAME - 项目配置文件 (临时文件)
  * 
  * 项目配置：在 0.6 之前为 koot.js，0.6 之后为自动生成的临时配置文件
  *   - 使用临时配置文件是为了兼容 0.6 之前的行为
@@ -49,7 +49,7 @@ module.exports = async (projectDir = getCwd()) => {
     const fullConfig = { ...require(fileFullConfig) }
 
     /** @type {Boolean} 是否定制了项目配置文件路径名 */
-    const isCustomProjectConfig = typeof process.env.KOOT_PROJECT_CONFIG_PATHNAME === 'string'
+    const isCustomProjectConfig = typeof process.env.KOOT_PROJECT_CONFIG_FULL_PATHNAME === 'string'
 
     /** @type {Array} 需要抽取到项目配置中的项 */
     const propertiesToExtract = [..._propertiesToExtract]
@@ -109,8 +109,8 @@ module.exports = async (projectDir = getCwd()) => {
         if (isCustomProjectConfig) {
             return {
                 ...validateBuildConfig(buildConfig),
-                [keyFileProjectConfigTemp]: process.env.KOOT_PROJECT_CONFIG_PATHNAME,
-                [keyFileProjectConfigServerTemp]: process.env.KOOT_PROJECT_CONFIG_SERVER_PATHNAME
+                [keyFileProjectConfigTempFull]: process.env.KOOT_PROJECT_CONFIG_FULL_PATHNAME,
+                [keyFileProjectConfigTempPortion]: process.env.KOOT_PROJECT_CONFIG_PORTION_PATHNAME
             }
         }
 
@@ -160,12 +160,12 @@ module.exports = async (projectDir = getCwd()) => {
 
         // console.log(projectConfig)
         // 生成项目配置文件内容
-        let tempServer = []
-        const propertiesServer = [
+        let tempPortion = []
+        const propertiesPortion = [
             'redux',
             'server'
         ]
-        const temp = propertiesToExtract.map(([key]) => {
+        const tempFull = propertiesToExtract.map(([key]) => {
             let result = ''
             if (key === 'server') {
                 if (isSPA) return ''
@@ -173,31 +173,31 @@ module.exports = async (projectDir = getCwd()) => {
             } else {
                 result = `export const ${key} = ${JSON.stringify(projectConfig[key])};`
             }
-            if (propertiesServer.includes(key)) {
-                tempServer.push(result)
+            if (propertiesPortion.includes(key)) {
+                tempPortion.push(result)
             }
             return result
         })
             .join('\n')
             .replace(/"require\((.+?)\).default"/g, `require($1).default`)
 
-        tempServer = tempServer.join('\n').replace(/"require\((.+?)\).default"/g, `require($1).default`)
+        tempPortion = tempPortion.join('\n').replace(/"require\((.+?)\).default"/g, `require($1).default`)
 
-        // console.log(temp)
+        // console.log(tempFull)
 
         // 写入项目配置文件 (临时)
-        const pathTemp = path.resolve(dirConfigTemp, filenameProjectConfigTemp.replace(/\*/g, Date.now()))
-        process.env.KOOT_PROJECT_CONFIG_PATHNAME = pathTemp
-        await fs.writeFile(pathTemp, temp, 'utf-8')
+        const pathFull = path.resolve(dirConfigTemp, filenameProjectConfigTempFull.replace(/\*/g, Date.now()))
+        process.env.KOOT_PROJECT_CONFIG_FULL_PATHNAME = pathFull
+        await fs.writeFile(pathFull, tempFull, 'utf-8')
 
-        const pathTempServer = path.resolve(dirConfigTemp, filenameProjectConfigServerTemp.replace(/\*/g, Date.now()))
-        process.env.KOOT_PROJECT_CONFIG_SERVER_PATHNAME = pathTempServer
-        await fs.writeFile(pathTempServer, tempServer, 'utf-8')
+        const pathPortion = path.resolve(dirConfigTemp, filenameProjectConfigTempPortion.replace(/\*/g, Date.now()))
+        process.env.KOOT_PROJECT_CONFIG_PORTION_PATHNAME = pathPortion
+        await fs.writeFile(pathPortion, tempPortion, 'utf-8')
 
         return {
             ...validateBuildConfig(buildConfig),
-            [keyFileProjectConfigTemp]: pathTemp,
-            [keyFileProjectConfigServerTemp]: pathTempServer
+            [keyFileProjectConfigTempFull]: pathFull,
+            [keyFileProjectConfigTempPortion]: pathPortion
         }
 
     } else {

@@ -8,7 +8,7 @@ const fs = require('fs-extra')
 import {
     server as serverConfig,
     redux as reduxConfigRaw
-} from '__KOOT_PROJECT_CONFIG_SERVER_PATHNAME__'
+} from '__KOOT_PROJECT_CONFIG_PORTION_PATHNAME__'
 
 import getPathnameDevServerStart from '../../utils/get-pathname-dev-server-start'
 

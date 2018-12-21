@@ -5,17 +5,16 @@ import setCookie from '../set-cookie'
 /**
  * 初始化
  * 
- * @param {string} [args.localeId] 当前语言ID。如过未提供，会尝试从初始 redux store 中查询
+ * @param {Object} options
+ * @param {string} [options.localeId] 当前语言ID。如过未提供，会尝试从初始 redux store 中查询
  */
-export default ({
-    localeId
-}) => {
+export default (o = {}) => {
     if (!__CLIENT__) return
+    let {
+        localeId
+    } = o
 
-    if (typeof localeId === 'undefined' &&
-        typeof __REDUX_STATE__ === 'object' &&
-        typeof __REDUX_STATE__.localeId !== 'undefined'
-    ) {
+    if (typeof localeId === 'undefined') {
         if (
             typeof window.LocaleId !== 'undefined'
         )

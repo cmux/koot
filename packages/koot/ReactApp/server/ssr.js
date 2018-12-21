@@ -10,7 +10,7 @@ import { renderToString } from 'react-dom/server'
 import RootIsomorphic from './root-isomorphic'
 import match from 'react-router/lib/match'
 
-import * as kootConfig from '__KOOT_PROJECT_CONFIG_PATHNAME__'
+import * as kootConfig from '__KOOT_PROJECT_CONFIG_FULL_PATHNAME__'
 
 import { publicPathPrefix } from '../../defaults/webpack-dev-server'
 

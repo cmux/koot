@@ -1,3 +1,4 @@
+const fs = require('fs-extra')
 const path = require('path')
 const webpack = require('webpack')
 const DefaultWebpackConfig = require('webpack-config').default
@@ -9,7 +10,7 @@ const SpaTemplatePlugin = require('koot-webpack/plugins/spa-template')
 const GenerateChunkmapPlugin = require('koot-webpack/plugins/generate-chunkmap')
 const CreateGeneralCssBundlePlugin = require('koot-webpack/plugins/create-general-css-bundle')
 
-const { keyConfigBuildDll, keyConfigOutputPathShouldBe } = require('../../../defaults/before-build')
+const { keyConfigBuildDll, keyConfigOutputPathShouldBe, chunkNameClientRunFirst } = require('../../../defaults/before-build')
 const { hmrOptions } = require('../../../defaults/webpack-dev-server')
 
 // const {
@@ -142,6 +143,15 @@ module.exports = async (kootBuildConfig = {}) => {
                     result.entry[key].unshift(`webpack-dev-server/client?http://localhost:${getWDSport()}/sockjs-node/`)
                 }
                 // result.entry[entryClientHMR] = `webpack-dev-server/client?http://localhost:${getWDSport()}/sockjs-node/`
+            }
+            const fileRunFirst = path.resolve(
+                __dirname,
+                '../../../',
+                appType,
+                './client/run-first.js'
+            )
+            if (fs.existsSync(fileRunFirst)) {
+                result.entry[chunkNameClientRunFirst] = [fileRunFirst]
             }
         }
 

@@ -8,7 +8,6 @@ const chalk = require('chalk')
 const { keyConfigQuiet, filenameBuilding } = require('../defaults/before-build')
 
 const __ = require('../utils/translate')
-// const readBuildConfigFile = require('../utils/read-build-config-file')
 const sleep = require('../utils/sleep')
 const setEnvFromCommand = require('../utils/set-env-from-command')
 const getAppType = require('../utils/get-app-type')
@@ -16,7 +15,6 @@ const validateConfig = require('../libs/validate-config')
 const validateConfigDist = require('../libs/validate-config-dist')
 const spinner = require('../utils/spinner')
 const initNodeEnv = require('../utils/init-node-env')
-// const getCwd = require('../utils/get-cwd')
 const emptyTempConfigDir = require('../libs/empty-temp-config-dir')
 
 const kootBuild = require('../core/webpack/enter')
@@ -80,34 +78,6 @@ const run = async () => {
         return false
     })()
 
-    // TODO: 
-
-    // console.log(stage, env)
-
-    // if (!stage) {
-    //     console.log(
-    //         chalk.redBright('× ')
-    //         + __('build.missing_option', {
-    //             option: chalk.yellowBright('stage'),
-    //             example: 'koot-build ' + chalk.green('--stage client') + ' --env prod',
-    //             indent: '  '
-    //         })
-    //     )
-    //     return
-    // }
-
-    // if (!env) {
-    //     console.log(
-    //         chalk.redBright('× ')
-    //         + __('build.missing_option', {
-    //             option: chalk.yellowBright('env'),
-    //             example: 'koot-build ' + chalk.green('--env prod'),
-    //             indent: '  '
-    //         })
-    //     )
-    //     return
-    // }
-
     // 在所有操作执行之前定义环境变量
     process.env.WEBPACK_BUILD_STAGE = stage || 'client'
     process.env.WEBPACK_BUILD_ENV = env
@@ -115,10 +85,6 @@ const run = async () => {
     // 读取构建配置
     const buildConfig = await validateConfig()
     await getAppType()
-    // const buildConfig = await readBuildConfigFile()
-    // const {
-    //     server: hasServer
-    // } = buildConfig
 
     if (dest) buildConfig.dist = validateConfigDist(dest)
 
@@ -167,18 +133,10 @@ const run = async () => {
 const after = async (config = {}) => {
     const ENV = process.env.WEBPACK_BUILD_ENV
 
-    const {
-        dist,
-        // [keyFileProjectConfigTemp]: fileProjectConfigTemp
-    } = config
+    const { dist } = config
 
     // 移除临时配置文件
-    // const dirConfigTemp = path.resolve(getCwd(), _dirConfigTemp)
-    if (ENV === 'prod'/* && fs.existsSync(dirConfigTemp)*/) {
-        emptyTempConfigDir()
-        // await fs.remove(fileProjectConfigTemp)
-        // await fs.emptyDir(dirConfigTemp)
-    }
+    if (ENV === 'prod') emptyTempConfigDir()
 
     // 移除标记文件
     const fileBuilding = path.resolve(dist, filenameBuilding)

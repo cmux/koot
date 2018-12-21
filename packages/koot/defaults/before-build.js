@@ -3,11 +3,11 @@
  */
 module.exports = {
     // 处理项目配置相关
-    keyFileProjectConfigTemp: '__FILE_PROJECT_CONFIG_TEMP__',
-    keyFileProjectConfigServerTemp: '__FILE_PROJECT_CONFIG_SERVER_TEMP__',
+    keyFileProjectConfigTempFull: '__FILE_PROJECT_CONFIG_TEMP_FULL__',
+    keyFileProjectConfigTempPortion: '__FILE_PROJECT_CONFIG_TEMP_PORTION__',
     dirConfigTemp: 'logs/tmp/config',
-    filenameProjectConfigTemp: '.koot.config.tmp.*.js',
-    filenameProjectConfigServerTemp: 'server.*.js',
+    filenameProjectConfigTempFull: 'full.*.js',
+    filenameProjectConfigTempPortion: 'portion.*.js',
     propertiesToExtract: [
         ['name', ''],
         ['type', 'react'],
@@ -33,6 +33,7 @@ module.exports = {
 
     // 自定义 chunk
     chunkNameExtractCss: '__KOOT__EXTRACT__CSS__',
+    chunkNameClientRunFirst: '__KOOT__CLIENT__RUN__FIRST__',
 
     // [开发模式] 临时文件名
     filenameWebpackDevServerPortTemp: '.dev_webpack-dev-server_port',

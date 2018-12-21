@@ -11,8 +11,6 @@ const chalk = require('chalk')
 // const opn = require('opn')
 
 const {
-    // keyFileProjectConfigTemp,
-    // dirConfigTemp,
     filenameBuildFail,
 } = require('../defaults/before-build')
 const sleep = require('../utils/sleep')
@@ -67,21 +65,11 @@ const run = async () => {
     const buildConfig = await validateConfig()
     await getAppType()
     if (dest) buildConfig.dist = validateConfigDist(dest)
-    const {
-        dist,
-        // server,
-        // [keyFileProjectConfigTemp]: filenameProjectConfigTemp,
-    } = buildConfig
+    const { dist } = buildConfig
 
     const afterBuild = async () => {
         // 删除过程中创建的临时文件
         emptyTempConfigDir()
-        // if (filenameProjectConfigTemp) {
-        //     const fileProjectConfigTemp = path.resolve(dist, filenameProjectConfigTemp)
-        //     if (fs.existsSync(fileProjectConfigTemp))
-        //         await fs.remove(filenameProjectConfigTemp)
-        //     await fs.emptyDir(path.resolve(getCwd(), dirConfigTemp))
-        // }
     }
 
     // 打包
