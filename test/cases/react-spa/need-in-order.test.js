@@ -77,7 +77,8 @@ describe('测试: React SPA 项目', async () => {
 
         describe(`项目: ${name}`, async () => {
 
-            const dist = path.resolve(dir, 'dist-spa-test')
+            const distDirName = 'dist-spa-test'
+            const dist = path.resolve(dir, distDirName)
             const fileIndexHtml = path.resolve(dist, 'index.html')
 
             if (fs.existsSync(dist))
@@ -89,7 +90,7 @@ describe('测试: React SPA 项目', async () => {
                 await beforeTest(dir)
 
                 const commandName = `${commandTestBuild}-spa-build`
-                const command = `koot-build --type react-spa --dest ${dist} --koot-test`
+                const command = `koot-build --type react-spa --dest ${distDirName} --koot-test`
                 await addCommand(commandName, command, dir)
 
                 // console.log(commandName)

@@ -94,7 +94,7 @@ const plugins = async (env, stage, defines = {}/*, remainingKootBuildConfig = {}
         // }
     }
 
-    const envs = [
+    const envsToDefine = [
         'KOOT_PROJECT_NAME',
         'KOOT_DIST_DIR',
         'KOOT_I18N',
@@ -112,9 +112,6 @@ const plugins = async (env, stage, defines = {}/*, remainingKootBuildConfig = {}
         "WEBPACK_DEV_SERVER_PORT",
         // "WEBPACK_SERVER_PUBLIC_PATH",
     ]
-    const envsToDefine = envs.filter(key => (
-        typeof process.env[key] !== 'undefined'
-    ))
 
     const historyType = await (async () => {
         if (stage === 'server')
@@ -127,38 +124,37 @@ const plugins = async (env, stage, defines = {}/*, remainingKootBuildConfig = {}
         return `${type}History`
     })()
 
-    return [
-        new webpack.DefinePlugin(thisDefines),
-        new webpack.EnvironmentPlugin(envsToDefine),
-        new webpack.NormalModuleReplacementPlugin(
-            /^__KOOT_PROJECT_CONFIG_FULL_PATHNAME__$/,
-            getPathnameProjectConfigFile()
-        ),
-        new webpack.NormalModuleReplacementPlugin(
-            /^__KOOT_PROJECT_CONFIG_PORTION_PATHNAME__$/,
-            getPathnameProjectConfigFile(true)
-        ),
-        new webpack.NormalModuleReplacementPlugin(
+    const moduleReplacements = [
+        [/^__KOOT_PROJECT_CONFIG_FULL_PATHNAME__$/, getPathnameProjectConfigFile()],
+        [/^__KOOT_PROJECT_CONFIG_PORTION_PATHNAME__$/, getPathnameProjectConfigFile(true)],
+        [
             /^__KOOT_CLIENT_REQUIRE_CREATE_HISTORY__$/,
             `history/lib/create${historyType.substr(0, 1).toUpperCase() + historyType.substr(1)}`
-        ),
-        new webpack.NormalModuleReplacementPlugin(
-            /^__KOOT_CLIENT_REQUIRE_HISTORY__$/,
-            `react-router/lib/${historyType}`
-        ),
-        new webpack.NormalModuleReplacementPlugin(
+        ],
+        [/^__KOOT_CLIENT_REQUIRE_HISTORY__$/, `react-router/lib/${historyType}`],
+        [
             /^__KOOT_HOC_EXTEND__$/,
             (() => {
                 if (/^React/.test(process.env.KOOT_PROJECT_TYPE))
                     return path.resolve(__dirname, '../../React/component-extender.js')
             })()
-        ),
-        new webpack.NormalModuleReplacementPlugin(
+        ],
+        [
             /^__KOOT_HOC_PAGEINFO__$/,
             (() => {
                 if (/^React/.test(process.env.KOOT_PROJECT_TYPE))
                     return path.resolve(__dirname, '../../React/pageinfo.js')
             })()
+        ],
+    ]
+
+    return [
+        new webpack.DefinePlugin(thisDefines),
+        new webpack.EnvironmentPlugin(envsToDefine.filter(key => (
+            typeof process.env[key] !== 'undefined'
+        ))),
+        ...moduleReplacements.map(([regex, value]) =>
+            new webpack.NormalModuleReplacementPlugin(regex, value)
         ),
     ]
 }

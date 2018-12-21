@@ -8,7 +8,7 @@
         "lerna:bootstrap": "lerna bootstrap --hoist",
         "lerna:publish": "lerna publish",
         "lerna:publish:only-core": "lerna publish --ignore-changes \"packages/!(koot|koot-webpack)/**\"",
-        "lerna:publish:only-core:next": "lerna publish --ignore-changes \"packages/!(koot|koot-webpack)/**\" --npm-tag next",
+        "publish:only-core:next": "lerna publish --ignore-changes \"packages/!(koot|koot-webpack)/**\" --npm-tag next",
         "lerna:version": "lerna version",
         "lerna:version:only-core": "lerna version --ignore-changes \"packages/!(koot|koot-webpack)/**\"",
         "pretest": "node ./test/pre-test.js",
