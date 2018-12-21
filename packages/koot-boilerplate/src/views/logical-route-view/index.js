@@ -1,0 +1,1 @@
+export { default } from './logical-route-view.jsx';

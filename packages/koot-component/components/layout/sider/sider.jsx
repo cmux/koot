@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
+import { Provider, create } from 'mini-store';
 
 @KootExtend({
     styles: require('./sider.module.less'),
 })
-
 class Sider extends Component {
 
     static propTypes = {
@@ -14,8 +13,18 @@ class Sider extends Component {
         collapsed: PropTypes.bool, 
     }
 
+    constructor(props) {
+        super(props)
+
+        this.store = create({
+            collapsed: false,
+        })
+    }
+
     render() {
-        const { className, collapsed } = this.props;
+        const { className } = this.props;
+        const state = this.store.getState();
+        const { collapsed } = state;
         const classes = classNames([
             className,
             'sider-wrapper',
@@ -24,21 +33,23 @@ class Sider extends Component {
             }
         ]);
         return (
-            <div className={classes}>
-                <div className="sider-inner">
-                    {
-                        this.props.children
-                    }
+            <Provider store={this.store}>
+                <div className={classes}>
+                    <div className="sider-inner">
+                        {
+                            this.props.children
+                        }
+                    </div>
                 </div>
-            </div>
+            </Provider>
         );
     }
-}
 
-const mapStateToProps = state => {
-    return {
-        collapsed: state.SiderModule.collapsed
+    componentDidMount() {
+        this.store.subscribe(() => {
+            this.forceUpdate();
+        }) 
     }
 }
 
-export default connect(mapStateToProps)(Sider);
+export default Sider;

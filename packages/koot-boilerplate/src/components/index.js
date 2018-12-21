@@ -1,0 +1,1 @@
+export { default as SomeComponent } from './some-component';

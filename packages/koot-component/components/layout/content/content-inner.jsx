@@ -94,6 +94,7 @@ class Content extends Component {
                 if(!window.requestAnimationFrame){
                     this.timeId = setTimeout(() => {
                         this.autoHideHeader();
+                        this.timeId && clearTimeout(this.timeId);
                     }, 250);
                 }else{
                     requestAnimationFrame(this.autoHideHeader.bind(this))
