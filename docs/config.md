@@ -41,7 +41,7 @@ module.exports = {
 
 // redux.syncCookie 可用配置
 redux.syncCookie = false // 不同步 cookie (默认值)
-redux.syncCookie = true // 同步所有 cookie
+redux.syncCookie = true // 同步所有 cookie，包括 cookie 原始字符串 (`__`)
 redux.syncCookie = 'token' // 单参数
 redux.syncCookie = ['token', 'sid'] // 支持多参数
 ```

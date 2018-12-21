@@ -26,6 +26,7 @@
     - **新** `client.browserType` - 客户端中路由 (`router`) 所用的历史对象 (`history`) 类型。详情请参见文档的 [配置/客户端](https://koot.js.org/#/config?id=客户端浏览器端) 章节
     - **新** `webpack.internalLoadersOptions` - 用以扩展几乎无法修改的内置 `loader` 所用的设置。详情请参见文档的 [配置/Webpack](https://koot.js.org/#/config?id=Webpack) 章节
     - **新** `server.onRender.beforeDataToStore` 和 `server.onRender.afterDataToStore` - 允许更详细的使用服务器端渲染生命周期。详情请参见文档的 [配置/Webpack](https://koot.js.org/#/config?id=Webpack) 章节
+    - `redux.syncCookie` 现支持传入 `true`: 同步所有 cookie，包括 cookie 原始字符串 (以 `__` 为名称)
   - Webpack 打包
     - 现在打包时不再会在项目根目录下生成临时文件
       - 这些文件现在移至 `/logs/tmp/` 目录下
