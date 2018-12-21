@@ -57,7 +57,8 @@
         "jest": "23.6.0",
         "puppeteer": "1.11.0",
         "jsdom": "13.1.0",
-        "fs-extra": "7.0.1"
+        "fs-extra": "7.0.1",
+        "is-valid-path": "0.1.1"
     },
     "dependencies": {
         "docsify-cli": "4.3.0"

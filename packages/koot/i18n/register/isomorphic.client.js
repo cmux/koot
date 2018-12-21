@@ -1,5 +1,6 @@
 /* global __KOOT_SSR_STATE__:false */
 
+import { I18N_INIT } from '../action-types'
 import setCookie from '../set-cookie'
 
 /**
@@ -33,6 +34,13 @@ export default (o = {}) => {
 
     if (typeof localeId === 'undefined')
         return
+
+    if (typeof window.Store === 'object' && window.Store.dispatch) {
+        window.Store.dispatch({
+            type: I18N_INIT,
+            localeId: '' + localeId
+        })
+    }
 
     setCookie(localeId)
 }

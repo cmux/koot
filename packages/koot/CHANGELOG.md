@@ -27,7 +27,7 @@
     - **新** `webpack.internalLoadersOptions` - 用以扩展几乎无法修改的内置 `loader` 所用的设置。详情请参见文档的 [配置/Webpack](https://koot.js.org/#/config?id=Webpack) 章节
     - **新** `server.onRender.beforeDataToStore` 和 `server.onRender.afterDataToStore` - 允许更详细的使用服务器端渲染生命周期。详情请参见文档的 [配置/Webpack](https://koot.js.org/#/config?id=Webpack) 章节
   - Webpack 打包
-    - 现在每次打包不再会在项目根目录下生成临时文件
+    - 现在打包时不再会在项目根目录下生成临时文件
       - 这些文件现在移至 `/logs/tmp/` 目录下
     - 现在每种打包模式仅保留最近 2 次打包的日志文件 (`/logs/webpack-config/` 目录下)
 - React

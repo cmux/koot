@@ -50,6 +50,7 @@ const ssr = async () => {
         styleMap,
         templateInject,
         proxyRequestOrigin,
+        ssrComplete,
     } = __KOOT_SSR__
 
     /** @type {String} 本次请求的 URL */
@@ -99,18 +100,18 @@ const ssr = async () => {
 
     // 如果需要重定向，派发 ctx.redirect / 302
     if (redirectLocation) {
-        __KOOT_SSR__.__RESULT__ = {
+        ssrComplete({
             redirect: redirectLocation.pathname + redirectLocation.search
-        }
+        })
         return
     }
 
     // 如果没有匹配，终止本中间件流程，执行其他中间件
     // 表示 react 不应处理该请求
     if (!renderProps) {
-        __KOOT_SSR__.__RESULT__ = {
+        ssrComplete({
             next: true
-        }
+        })
         return
     }
 
@@ -212,9 +213,9 @@ const ssr = async () => {
     }
 
     // React SSR
-    __KOOT_SSR__.__RESULT__ = {
+    ssrComplete({
         body
-    }
+    })
 }
 
 /**
@@ -276,9 +277,9 @@ const initConfig = async (i18nEnabled) => {
 }
 
 ssr().catch(err => {
-    __KOOT_SSR__.__RESULT__ = {
+    __KOOT_SSR__.ssrComplete({
         error: err
-    }
+    })
 })
 
 export default ssr

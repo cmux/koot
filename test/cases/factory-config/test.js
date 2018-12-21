@@ -8,8 +8,8 @@ const createConfig = require('../../../packages/koot/core/webpack/config/create'
 const validateConfig = require('../../../packages/koot/libs/validate-config')
 
 const {
-    keyFileProjectConfigTemp,
-    // filenameProjectConfigTemp,
+    keyFileProjectConfigTempFull,
+    // filenameProjectConfigTempFull,
     // propertiesToExtract,
 } = require('../../../packages/koot/defaults/before-build')
 
@@ -40,7 +40,7 @@ describe('测试: 生成 Webpack 配置', async () => {
             for (let env of envs) {
                 test(`${name} [${stage} | ${env}] 配置可用`, async () => {
                     const {
-                        [keyFileProjectConfigTemp]: fileProjectConfig,
+                        [keyFileProjectConfigTempFull]: fileProjectConfig,
                         ...buildConfig
                     } = await validateConfig(dir)
 
@@ -55,7 +55,7 @@ describe('测试: 生成 Webpack 配置', async () => {
                     process.env.WEBPACK_BUILD_STAGE = stage
                     process.env.WEBPACK_BUILD_ENV = env
                     process.env.KOOT_CWD = dir
-                    process.env.KOOT_PROJECT_CONFIG_PATHNAME = fileProjectConfig
+                    process.env.KOOT_PROJECT_CONFIG_FULL_PATHNAME = fileProjectConfig
                     // process.env.KOOT_BUILD_CONFIG_PATHNAME = fileBuildConfig
 
                     // const config = await createConfig(require(fileBuildConfig))
@@ -79,7 +79,18 @@ describe('测试: 生成 Webpack 配置', async () => {
                     expect(typeof beforeBuild).toBe('function')
                     expect(typeof afterBuild).toBe('function')
 
-                    if (stage === 'client' && typeof i18n === 'object' && i18n.type === 'default' && Array.isArray(i18n.locales) && i18n.locales.length > 1) {
+                    const configIsArray = () => {
+                        if (stage === 'server')
+                            return true
+                        return (
+                            typeof i18n === 'object' &&
+                            i18n.type === 'default' &&
+                            Array.isArray(i18n.locales) &&
+                            i18n.locales.length > 1
+                        )
+                    }
+
+                    if (configIsArray()) {
                         expect(Array.isArray(webpackConfig)).toBe(true)
                         for (let thisConfig of webpackConfig) {
                             expect(typeof thisConfig).toBe('object')
@@ -94,8 +105,12 @@ describe('测试: 生成 Webpack 配置', async () => {
                             expect(typeof output).toBe('object')
                             expect(typeof output.path).toBe('string')
                             if (typeof entry === 'object') {
-                                expect(('client' in entry)).toBe(true)
-                                expect(typeof entry.client).toBe('string')
+                                if (stage === 'client') {
+                                    expect(('client' in entry)).toBe(true)
+                                    expect(typeof entry.client).toBe('string')
+                                } else if (stage === 'server') {
+                                    expect(('index' in entry) || ('ssr' in entry)).toBe(true)
+                                }
                             }
                             expect(Array.isArray(plugins)).toBe(true)
                             expect(plugins.some(p => p === null)).toBe(false)
@@ -131,7 +146,7 @@ describe('测试: 生成 Webpack 配置', async () => {
                     }
 
                     delete process.env.KOOT_CWD
-                    // delete process.env.KOOT_PROJECT_CONFIG_PATHNAME
+                    // delete process.env.KOOT_PROJECT_CONFIG_FULL_PATHNAME
                     delete process.env.KOOT_BUILD_CONFIG_PATHNAME
 
                     if (fileProjectConfig)

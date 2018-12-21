@@ -21,11 +21,11 @@ const ssr = async (__KOOT_SSR__) => new Promise(async resolve => {
     }
 
     // __KOOT_SSR__.result = false
-    const {
-        Store,
-        History,
-        LocaleId,
-    } = __KOOT_SSR__
+    // const {
+    //     Store,
+    //     History,
+    //     LocaleId,
+    // } = __KOOT_SSR__
 
     // console.log('before eval', {
     //     LocaleId, logged: __KOOT_SSR__.logged,
@@ -33,17 +33,26 @@ const ssr = async (__KOOT_SSR__) => new Promise(async resolve => {
     // })
 
     // console.log('\n' + chalk.cyanBright('eval SSR'))
-    await eval(__KOOT_SSR_FILE_CONTENT__)
+    // await eval(__KOOT_SSR_FILE_CONTENT__)
 
-    const set = () => setTimeout(() => {
-        if (!__KOOT_SSR__.__RESULT__)
-            return set()
-        // console.log(__KOOT_SSR__)
-        // console.log(chalk.cyanBright('eval SSR end') + '\n')
-        resolve(__KOOT_SSR__.__RESULT__)
-    }, 10)
+    __KOOT_SSR__.ssrComplete = (result) => resolve(result)
 
-    set()
+    const {
+        Store,
+        History,
+        LocaleId,
+    } = __KOOT_SSR__
+    eval(__KOOT_SSR_FILE_CONTENT__)
+
+    // const set = () => setTimeout(() => {
+    //     if (!__KOOT_SSR__.__RESULT__)
+    //         return set()
+    //     // console.log(__KOOT_SSR__)
+    //     // console.log(chalk.cyanBright('eval SSR end') + '\n')
+    //     resolve(__KOOT_SSR__.__RESULT__)
+    // }, 5)
+
+    // set()
 
 })
 
