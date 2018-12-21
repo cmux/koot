@@ -52,10 +52,10 @@ const translate = (...args) => {
         }
     }
 
-    if (__CLIENT__) {
-        // console.log(localeId)
-        console.log(localeId, keys, length, key, l)
-    }
+    // if (__CLIENT__) {
+    //     // console.log(localeId)
+    //     console.log(localeId, keys, length, key, l)
+    // }
 
     if (typeof l === 'undefined') {
         str = key

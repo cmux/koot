@@ -2,7 +2,7 @@ const fs = require('fs-extra')
 const path = require('path')
 const webpack = require('webpack')
 const DefaultWebpackConfig = require('webpack-config').default
-const WatchExternalFilesPlugin = require('webpack-watch-files-plugin')
+// const ExtraWatchWebpackPlugin = require('extra-watch-webpack-plugin').default
 
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const KootI18nPlugin = require('../plugins/i18n')
@@ -107,11 +107,14 @@ module.exports = async (kootBuildConfig = {}) => {
     const fileSSR = path.resolve(__dirname, '../../../', appType, './server/ssr.js')
     if (fs.existsSync(fileSSR)) {
         otherEntries.ssr = [fileSSR]
-        result.plugins.push(
-            new WatchExternalFilesPlugin({
-                files: [fileSSR]
-            })
-        )
+        // result.plugins.push(
+        //     new ExtraWatchWebpackPlugin({
+        //         files: [
+        //             fileSSR,
+        //             fileSSR.replace(/\.js$/, '.hot-update.js')
+        //         ]
+        //     })
+        // )
     }
     if (ENV === 'dev') {
         Object.keys(otherEntries).forEach(key => {
@@ -138,6 +141,10 @@ module.exports = async (kootBuildConfig = {}) => {
             ...configFinal,
             entry: {
                 index: entryIndex
+            },
+            output: {
+                ...configFinal.output,
+                filename: 'index.js'
             }
         }
     ]
@@ -146,6 +153,10 @@ module.exports = async (kootBuildConfig = {}) => {
             ...configFinal,
             entry: {
                 [entryName]: otherEntries[entryName]
+            },
+            output: {
+                ...configFinal.output,
+                filename: `${entryName}.js`
             }
         })
     });

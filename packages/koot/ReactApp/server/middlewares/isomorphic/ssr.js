@@ -11,7 +11,7 @@ let __KOOT_SSR_FILE_CONTENT__
  * 执行服务器端渲染 (Server-Side Rendering)
  */
 const ssr = async (__KOOT_SSR__) => new Promise(async resolve => {
-    if (!__KOOT_SSR_FILE_CONTENT__) {
+    if (__DEV__ || !__KOOT_SSR_FILE_CONTENT__) {
         const fileSSR = path.resolve(__KOOT_GET_DIST_PATH__(), 'server/ssr.js')
         if (fs.existsSync(fileSSR)) {
             __KOOT_SSR_FILE_CONTENT__ = fs.readFileSync(fileSSR, 'utf-8')

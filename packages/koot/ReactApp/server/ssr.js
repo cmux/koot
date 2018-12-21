@@ -119,6 +119,7 @@ const ssr = async () => {
         store: Store,
         ctx,
         LocaleId: LocaleId,
+        localeId: LocaleId,
         callback: lifecycle.beforeDataToStore
     })
 
