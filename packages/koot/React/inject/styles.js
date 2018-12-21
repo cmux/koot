@@ -1,8 +1,4 @@
-const fs = require('fs-extra')
-const path = require('path')
-
-const { filenameDll, chunkNameExtractCss } = require('../../defaults/before-build')
-const { dll } = require('../../defaults/dev-request-uri')
+const { chunkNameExtractCss } = require('../../defaults/before-build')
 const readClientFile = require('../../utils/read-client-file')
 const getClientFilePath = require('../../utils/get-client-file-path')
 
@@ -34,7 +30,7 @@ module.exports = ({
     //     injectCache.styles += getCritical()
     // }
 
-    return getDevExtra() + injectCache.styles + stylesHtml
+    return injectCache.styles + stylesHtml
 
 }
 
@@ -52,18 +48,4 @@ const getExtracted = (localeId, compilation) => {
         return `<link id="__koot-extracted-styles" media="all" rel="stylesheet" href="${getClientFilePath(filename, localeId)}" />`
 
     return `<style id="__koot-extracted-styles" type="text/css">${readClientFile(filename, localeId, compilation)}</style>`
-}
-
-/**
- * [开发模式] 额外内容
- */
-const getDevExtra = () => {
-    if (process.env.WEBPACK_BUILD_ENV !== 'dev') return ''
-
-    // 判断是否存在 dll 文件，如果存在，在此引入
-    const fileDll = path.resolve(process.env.KOOT_DIST_DIR, filenameDll)
-    if (fs.existsSync(fileDll))
-        return `<script type="text/javascript" src="${dll}"></script>`
-
-    return ''
 }
