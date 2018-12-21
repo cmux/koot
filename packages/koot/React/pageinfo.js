@@ -2,7 +2,6 @@
 
 import React from 'react'
 // import PropTypes from 'prop-types'
-// import { store } from 'koot/ReactApp'
 // import { store/*, localeId*/ } from '../'
 import hoistStatics from 'hoist-non-react-statics'
 

@@ -53,7 +53,6 @@
     - `koa-body` -> _4.0.4_
     - `koa-mount` -> _4.0.0_
     - `koa-static` -> _5.0.0_
-    - `react-redux` -> _6.0.0_
   - minor
     - `@babel/core` -> _7.2.2_
     - `@babel/plugin-proposal-class-properties` -> _7.2.3_

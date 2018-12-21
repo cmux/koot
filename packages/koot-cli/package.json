@@ -53,7 +53,7 @@
         "fs-extra": "7.0.1",
         "gitignore-globs": "0.1.1",
         "glob-promise": "3.4.0",
-        "inquirer": "6.2.0",
+        "inquirer": "6.2.1",
         "isbinaryfile": "3.0.3",
         "latest-version": "4.0.0",
         "npm-email": "3.0.0",

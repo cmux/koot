@@ -8,7 +8,7 @@ import getSWPathname from '../../../../utils/get-sw-pathname'
 import i18nGetLangFromCtx from '../../../../i18n/server/get-lang-from-ctx'
 import i18nEnabled from '../../../../i18n/is-enabled'
 
-import validateStore from './validate-store'
+import initStore from './init-store'
 import ssr from './ssr'
 
 
@@ -119,7 +119,7 @@ const middlewareIsomorphic = (options = {}) => {
 
             // 生成/清理 Store
             // console.log('\x1b[36m⚑\x1b[0m' + ' Store created')
-            const Store = validateStore(reduxConfig)
+            const Store = initStore(reduxConfig)
 
             // 生成 History
             const historyConfig = {

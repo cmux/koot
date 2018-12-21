@@ -1,5 +1,5 @@
 /**
- * 获取 redux store 对象
+ * 通过 redux 配置，初始化并获取 redux store 对象
  *  
  * - 若提供产生 store 的方法 (`factoryStore`): 生成 store
  * - 若提供自生成的 store (`store`): 尝试清空 state 并触发一次所有 reducer 的初始化
@@ -11,7 +11,7 @@
  * @param {Object} [reduxConfig.store] Redux Store 对象
  * @returns {Object} store
  */
-const validateStore = (reduxConfig = {}) => {
+const initStore = (reduxConfig = {}) => {
 
     const { store, factoryStore } = reduxConfig
 
@@ -40,7 +40,7 @@ const validateStore = (reduxConfig = {}) => {
     return {}
 }
 
-export default validateStore
+export default initStore
 
 /** @type {Array} 需要保留（不需要进行删除操作）的 redux store state 项名 */
 const keysToPreserve = [

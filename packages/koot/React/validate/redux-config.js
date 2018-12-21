@@ -21,9 +21,8 @@ const validateReduxConfig = (kootConfigRedux = {}) => {
         Object.keys(defaultReducers).forEach(reducerName => {
             theReducers[reducerName] = defaultReducers[reducerName]
         })
-        reduxConfig.factoryStore = () => {
+        reduxConfig.factoryStore = () =>
             createStore(combineReducers(theReducers), initialState, applyMiddleware(...middlewares))
-        }
     } else if (typeof kootConfigRedux.store === 'function') {
         reduxConfig.factoryStore = kootConfigRedux.store
     } else if (typeof kootConfigRedux.store === 'object') {
