@@ -85,18 +85,6 @@ module.exports = async (kootBuildConfig = {}) => {
                 }))
             ))
 
-        if (typeof staticAssets === 'string')
-            result.plugins.push(new CopyWebpackPlugin([
-                {
-                    from: staticAssets,
-                    to: path.relative(result.output.path, getDirDistPublic(dist))
-                }
-            ]))
-
-        result.plugins.push(
-            new DevModePlugin({ dist })
-        )
-
         result.watchOptions = {
             ignored: [
                 // /node_modules/,
@@ -107,22 +95,21 @@ module.exports = async (kootBuildConfig = {}) => {
         }
     }
 
-    // entry
-    const entires = {
-        'index': [
-            '@babel/register',
-            '@babel/polyfill',
-            path.resolve(__dirname, '../../../defaults/server-stage-0.js'),
-            path.resolve(__dirname, '../../../', appType, './server')
-        ]
-    }
+    // entry / 入口
+    const entryIndex = [
+        '@babel/register',
+        '@babel/polyfill',
+        path.resolve(__dirname, '../../../defaults/server-stage-0.js'),
+        path.resolve(__dirname, '../../../', appType, './server')
+    ]
+    const otherEntries = {}
     const fileSSR = path.resolve(__dirname, '../../../', appType, './server/ssr.js')
     if (fs.existsSync(fileSSR)) {
-        entires.ssr = [fileSSR]
+        otherEntries.ssr = [fileSSR]
     }
     if (ENV === 'dev') {
-        Object.keys(entires).forEach(key => {
-            entires[key].push('webpack/hot/poll?1000')
+        Object.keys(otherEntries).forEach(key => {
+            otherEntries[key].push('webpack/hot/poll?1000')
         })
     }
 
@@ -138,14 +125,41 @@ module.exports = async (kootBuildConfig = {}) => {
         }
     }
 
-    const theResult = await transformConfigLast(result, kootBuildConfig)
+    const configFinal = await transformConfigLast(result, kootBuildConfig)
 
-    return Object.keys(entires).map(entryName => ({
-        ...theResult,
-        entry: {
-            [entryName]: entires[entryName]
+    const configsFull = [
+        {
+            ...configFinal,
+            entry: {
+                index: entryIndex
+            }
         }
-    }))
+    ]
+    Object.keys(otherEntries).forEach(entryName => {
+        configsFull.push({
+            ...configFinal,
+            entry: {
+                [entryName]: otherEntries[entryName]
+            }
+        })
+    });
 
-    // return result
+    // 对最后一个配置进行加工
+    ((config) => {
+        if (ENV === 'dev') {
+            if (typeof staticAssets === 'string')
+                config.plugins.push(new CopyWebpackPlugin([
+                    {
+                        from: staticAssets,
+                        to: path.relative(config.output.path, getDirDistPublic(dist))
+                    }
+                ]))
+
+            config.plugins.push(
+                new DevModePlugin({ dist })
+            )
+        }
+    })(configsFull[configsFull.length - 1])
+
+    return configsFull
 }
