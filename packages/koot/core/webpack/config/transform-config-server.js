@@ -2,6 +2,7 @@ const fs = require('fs-extra')
 const path = require('path')
 const webpack = require('webpack')
 const DefaultWebpackConfig = require('webpack-config').default
+const WatchExternalFilesPlugin = require('webpack-watch-files-plugin')
 
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const KootI18nPlugin = require('../plugins/i18n')
@@ -106,6 +107,11 @@ module.exports = async (kootBuildConfig = {}) => {
     const fileSSR = path.resolve(__dirname, '../../../', appType, './server/ssr.js')
     if (fs.existsSync(fileSSR)) {
         otherEntries.ssr = [fileSSR]
+        result.plugins.push(
+            new WatchExternalFilesPlugin({
+                files: [fileSSR]
+            })
+        )
     }
     if (ENV === 'dev') {
         Object.keys(otherEntries).forEach(key => {
