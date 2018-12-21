@@ -1,6 +1,8 @@
-import { localeId as LocaleId } from '../../index'
-const Store = window.Store
-const History = window.History
+import {
+    localeId as LocaleId,
+    store as Store,
+    history as History
+} from '../../index'
 
 
 // ----------------------------------------------------------------------------
