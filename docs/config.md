@@ -159,7 +159,7 @@ _**Object**_ `server` _仅针对同构项目_
 - _Pathname:Function_ `server.after`
 <br>回调：在服务器启动完成
 - _Pathname:Function_ `server.onRender`
-<br>回调：在页面渲染时
+<br>回调：在页面渲染时 (同步数据到 store 之前)
 - _Object_ `server.onRender`
 <br>回调：在页面渲染时 (细节设定)
   - _Pathname:Function_ `server.onRender.beforeDataToStore`

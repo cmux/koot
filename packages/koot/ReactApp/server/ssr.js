@@ -73,8 +73,8 @@ const ssr = async () => {
 
     // 渲染生命周期: beforeRouterMatch
     await beforeRouterMatch({
-        store: Store,
         ctx,
+        store: Store,
         syncCookie,
         callback: lifecycle.beforeRouterMatch
     })
@@ -117,9 +117,8 @@ const ssr = async () => {
 
     // 渲染生命周期: beforeDataToStore
     await beforeDataToStore({
-        store: Store,
         ctx,
-        LocaleId: LocaleId,
+        store: Store,
         localeId: LocaleId,
         callback: lifecycle.beforeDataToStore
     })
@@ -131,8 +130,9 @@ const ssr = async () => {
 
     // 渲染生命周期: afterDataToStore
     await afterDataToStore({
-        store: Store,
         ctx,
+        store: Store,
+        localeId: LocaleId,
         callback: lifecycle.afterDataToStore
     })
 
@@ -247,7 +247,7 @@ const initConfig = async (i18nEnabled) => {
     // } = serverConfig
     __KOOT_SSR__.ssrConfig.lifecycle = {}
     if (typeof serverConfig.onRender === 'function') {
-        __KOOT_SSR__.ssrConfig.lifecycle.afterDataToStore = serverConfig.onRender
+        __KOOT_SSR__.ssrConfig.lifecycle.beforeDataToStore = serverConfig.onRender
     } else if (typeof serverConfig.onRender === 'object') {
         Object.keys(serverConfig.onRender).forEach(key => {
             __KOOT_SSR__.ssrConfig.lifecycle[key] = serverConfig.onRender[key]

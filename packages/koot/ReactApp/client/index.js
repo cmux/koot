@@ -33,7 +33,7 @@ let logCountHistoryUpdate = 0
  * @returns {Boolean}
  */
 const isPromise = (v) => {
-    return (typeof v === 'object' && typeof v.before === 'function')
+    return (typeof v === 'object' && typeof v.then === 'function')
 }
 
 /**
