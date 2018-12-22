@@ -94,16 +94,26 @@ module.exports = async (projectDir = getCwd()) => {
         }
 
         // 项目配置
-        const projectConfig = {}
+        const projectConfigFull = {}
+        const projectConfigPortion = {}
+        const propertiesPortion = [
+            'redux',
+            'server'
+        ]
 
         // 将打包配置从完整配置中分离
         const buildConfig = propertiesToExtract.reduce((configRemains, curr) => {
             // console.log(configRemains)
             const [key, defaultValue] = curr
-            projectConfig[key] = configRemains[key] || defaultValue
+            const value = configRemains[key] || defaultValue
+            projectConfigFull[key] = typeof value === 'object' ? { ...value } : value
+            if (propertiesPortion.includes(key))
+                projectConfigPortion[key] = typeof value === 'object' ? { ...value } : value
             delete configRemains[key]
             return configRemains
         }, fullConfig)
+
+        delete projectConfigPortion.server.onRender
 
         // 如果定制了配置文件路径，直接返回结果
         if (isCustomProjectConfig) {
@@ -126,18 +136,24 @@ module.exports = async (projectDir = getCwd()) => {
         // } = require(fileFullConfig)
 
         // 转换项目配置: 将路径转为 require()
-        const validateProjectConfig = (keys) => {
-            keys.forEach(key => {
-                if (eval(`typeof projectConfig.${key} === 'string'`)) {
-                    const value = eval(`projectConfig.${key}`)
+        const evalValue = (objectName, key) => {
+            try {
+                if (eval(`typeof ${objectName}.${key} === 'string'`)) {
+                    const value = eval(`${objectName}.${key}`)
                     const pathname = path.isAbsolute(value)
                         ? value
                         : validatePathname(value, projectDir).replace(/\\/g, '\\\\')
                     const result = path.isAbsolute(pathname)
                         ? pathname
                         : ('../../../' + pathname.replace(/^\.\//, ''))
-                    eval(`projectConfig.${key} = \`require('${result}').default\``)
+                    eval(`${objectName}.${key} = \`require('${result}').default\``)
                 }
+            } catch (e) { }
+        }
+        const validateProjectConfig = (keys) => {
+            keys.forEach(key => {
+                evalValue('projectConfigFull', key)
+                evalValue('projectConfigPortion', key)
             })
         }
         validateProjectConfig([
@@ -158,30 +174,33 @@ module.exports = async (projectDir = getCwd()) => {
             'inject',
         ])
 
-        // console.log(projectConfig)
+        // console.log(projectConfigFull)
         // 生成项目配置文件内容
-        let tempPortion = []
-        const propertiesPortion = [
-            'redux',
-            'server'
-        ]
         const tempFull = propertiesToExtract.map(([key]) => {
             let result = ''
             if (key === 'server') {
                 if (isSPA) return ''
-                result = `export const ${key} = __SERVER__ ? ${JSON.stringify(projectConfig[key])} : {};`
+                result = `export const ${key} = __SERVER__ ? ${JSON.stringify(projectConfigFull[key])} : {};`
             } else {
-                result = `export const ${key} = ${JSON.stringify(projectConfig[key])};`
-            }
-            if (propertiesPortion.includes(key)) {
-                tempPortion.push(result)
+                result = `export const ${key} = ${JSON.stringify(projectConfigFull[key])};`
             }
             return result
         })
             .join('\n')
             .replace(/"require\((.+?)\).default"/g, `require($1).default`)
 
-        tempPortion = tempPortion.join('\n').replace(/"require\((.+?)\).default"/g, `require($1).default`)
+        const tempPortion = propertiesPortion.map((key) => {
+            let result = ''
+            if (key === 'server') {
+                if (isSPA) return ''
+                result = `export const ${key} = __SERVER__ ? ${JSON.stringify(projectConfigPortion[key])} : {};`
+            } else {
+                result = `export const ${key} = ${JSON.stringify(projectConfigPortion[key])};`
+            }
+            return result
+        })
+            .join('\n')
+            .replace(/"require\((.+?)\).default"/g, `require($1).default`)
 
         // console.log(tempFull)
 
