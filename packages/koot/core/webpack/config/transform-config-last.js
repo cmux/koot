@@ -33,12 +33,13 @@ const transform = async (config, kootBuildConfig = {}) => {
             'react-redux',
             'react-router',
             'react-router-redux',
-            'koot',
+            // 'koot',
         ]
         const result = Array.isArray(config) ? { ...config[0] } : { ...config }
         delete result.watch
         delete result.watchOptions
 
+        // 如果自行添加了 koot，排除
         const library = (!Array.isArray(webpackDll) || !webpackDll.length) ? defaults : webpackDll
         if (library.includes('koot'))
             library.splice(library.indexOf('koot'), 1)
