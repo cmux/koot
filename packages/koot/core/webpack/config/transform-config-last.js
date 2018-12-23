@@ -58,13 +58,20 @@ const transform = async (config, kootBuildConfig = {}) => {
     }
 
     // 数组情况，拆分每项分别处理
-    if (Array.isArray(config))
-        return config.map(thisConfig => transform(thisConfig))
+    if (Array.isArray(config)) {
+        const r = []
+        for (const thisConfig of config) {
+            r.push(await transform(thisConfig, kootBuildConfig))
+        }
+        return r
+    }
 
     // copy this
-    config = Object.assign({}, config)
 
-    return validate(config, kootBuildConfig)
+    return validate(
+        Object.assign({}, config),
+        kootBuildConfig
+    )
 }
 
 /**
@@ -81,6 +88,8 @@ const validate = (config, kootBuildConfig) => {
         }
     }
 
+    // console.log('')
+    // console.log('kootBuildConfig', kootBuildConfig)
     validatePlugins(config, kootBuildConfig)
     validateModuleRules(config, kootBuildConfig)
 

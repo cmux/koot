@@ -134,28 +134,27 @@ module.exports = async (kootBuildConfig = {}) => {
         }
     }
 
-    const configFinal = await transformConfigLast(result, kootBuildConfig)
-
+    // 拆分
     const configsFull = [
         {
-            ...configFinal,
+            ...result,
             entry: {
                 index: entryIndex
             },
             output: {
-                ...configFinal.output,
+                ...result.output,
                 filename: 'index.js'
             }
         }
     ]
     Object.keys(otherEntries).forEach(entryName => {
         configsFull.push({
-            ...configFinal,
+            ...result,
             entry: {
                 [entryName]: otherEntries[entryName]
             },
             output: {
-                ...configFinal.output,
+                ...result.output,
                 filename: `${entryName}.js`
             }
         })
@@ -178,5 +177,9 @@ module.exports = async (kootBuildConfig = {}) => {
         }
     })(configsFull[configsFull.length - 1])
 
-    return configsFull
+
+    //
+
+
+    return await transformConfigLast(configsFull, kootBuildConfig)
 }
