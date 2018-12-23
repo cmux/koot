@@ -38,9 +38,14 @@ const transform = async (config, kootBuildConfig = {}) => {
         const result = Array.isArray(config) ? { ...config[0] } : { ...config }
         delete result.watch
         delete result.watchOptions
+
+        const library = (!Array.isArray(webpackDll) || !webpackDll.length) ? defaults : webpackDll
+        if (library.includes('koot'))
+            library.splice(library.indexOf('koot'), 1)
         result.entry = {
-            library: (!Array.isArray(webpackDll) || !webpackDll.length) ? defaults : webpackDll
+            library
         }
+
         // console.log('result.entry.library', result.entry.library)
         result.output = {
             filename: filenameDll,
