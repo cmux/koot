@@ -42,8 +42,10 @@ if (isI18nEnabled()) {
 /**
  * @type {Object}
  */
-export let initialState = {}
-if (__CLIENT__) initialState = window.__REDUX_STATE__
+export const initialState = (() => {
+    if (__CLIENT__) return window.__REDUX_STATE__
+    if (__SERVER__) return {}
+})()
 
 //
 

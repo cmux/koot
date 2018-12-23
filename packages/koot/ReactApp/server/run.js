@@ -6,6 +6,7 @@ const Koa = require('koa')
 const fs = require('fs-extra')
 
 import {
+    template as templateConfig,
     server as serverConfig,
     redux as reduxConfigRaw
 } from '__KOOT_PROJECT_CONFIG_PORTION_PATHNAME__'
@@ -19,6 +20,7 @@ import validatePort from './validate/port'
 import createRenderCacheMap from './validate/create-render-cache-map'
 import validateReduxConfig from '../../React/validate/redux-config'
 import validateI18n from './validate/i18n'
+import validateTemplate from './validate/template'
 
 import middlewareRouterDev from './middlewares/router-dev'
 import middlewareIsomorphic from './middlewares/isomorphic'
@@ -51,6 +53,9 @@ const startKootIsomorphicServer = async () => {
 
     // 确定 Redux 相关配置
     const reduxConfig = await validateReduxConfig(reduxConfigRaw)
+
+    // 确定模板内容
+    const template = await validateTemplate(templateConfig)
 
     // 渲染缓存
     const renderCacheMap = await createRenderCacheMap(renderCacheConfig)
@@ -87,6 +92,7 @@ const startKootIsomorphicServer = async () => {
         renderCacheMap,
         locales,
         proxyRequestOrigin,
+        template,
         templateInject,
     }))
 

@@ -29,9 +29,10 @@ const middlewareIsomorphic = (options = {}) => {
         renderCacheMap,
         locales,
         proxyRequestOrigin = {},
+        template,
         templateInject = {}
     } = options
-    const ssrConfig = {}
+    // const ssrConfig = {}
 
     // const localeIds = getLocaleIds()
     // if (localeIds.length) {
@@ -137,10 +138,11 @@ const middlewareIsomorphic = (options = {}) => {
 
                 Store, History, LocaleId, locales,
 
-                ssrConfig,
+                // ssrConfig,
 
                 syncCookie: reduxConfig.syncCookie,
                 proxyRequestOrigin, templateInject,
+                template,
 
                 thisTemplateInjectCache, thisEntrypoints, thisFilemap, //thisStyleMap,
                 styleMap,

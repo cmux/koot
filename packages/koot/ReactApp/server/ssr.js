@@ -14,8 +14,6 @@ import * as kootConfig from '__KOOT_PROJECT_CONFIG_FULL_PATHNAME__'
 
 import { publicPathPrefix } from '../../defaults/webpack-dev-server'
 
-// import getChunkmap from '../../utils/get-chunkmap'
-// import getSWPathname from '../../utils/get-sw-pathname'
 import { CHANGE_LANGUAGE } from '../action-types'
 
 import validateRouterConfig from '../../React/validate/router-config'
@@ -23,9 +21,7 @@ import validateInject from '../../React/validate-inject'
 import isNeedInjectCritical from '../../React/inject/is-need-inject-critical'
 import renderTemplate from '../../React/render-template'
 
-import validateTemplate from './validate/template'
 import validateI18n from './validate/i18n'
-// import createRenderCacheMap from './validate/create-render-cache-map'
 
 import beforeRouterMatch from './middlewares/isomorphic/lifecycle/before-router-match'
 import beforeDataToStore from './middlewares/isomorphic/lifecycle/before-data-to-store'
@@ -41,15 +37,14 @@ const ssr = async () => {
     /** @type {Boolean} i18n 是否启用 */
     const i18nEnabled = Boolean(LocaleId)
 
-    await initConfig(i18nEnabled)
-
     const {
         ctx,
-        ssrConfig,
         thisTemplateInjectCache, thisEntrypoints, thisFilemap, //thisStyleMap,
         styleMap,
+        template,
         templateInject,
         proxyRequestOrigin,
+        syncCookie,
         ssrComplete,
     } = __KOOT_SSR__
 
@@ -58,18 +53,8 @@ const ssr = async () => {
 
     const {
         lifecycle,
-        // templateInject,
-        // proxyRequestOrigin,
-
-        template,
-        syncCookie,
         routerConfig: routes,
-        // renderCacheMap,
-
-        // templateInjectCache,
-        // entrypoints,
-        // filemap,
-    } = ssrConfig
+    } = await initConfig(i18nEnabled)
 
     // 渲染生命周期: beforeRouterMatch
     await beforeRouterMatch({
@@ -224,56 +209,28 @@ const ssr = async () => {
  */
 const initConfig = async (i18nEnabled) => {
 
-    if (!__KOOT_SSR__.ssrConfig)
-        return {}
+    const {
+        server: serverConfig = {},
+    } = kootConfig
+
+    const config = {}
 
     // 决定路由配置 (每次请求需重新生成)
-    __KOOT_SSR__.ssrConfig.routerConfig = await validateRouterConfig(kootConfig.router)
-
-    // 如果其他内容已初始化，直接返回结果
-    if (__KOOT_SSR__.ssrConfig._init)
-        return __KOOT_SSR__.ssrConfig
+    config.routerConfig = await validateRouterConfig(kootConfig.router)
 
     if (typeof i18nEnabled === 'undefined')
         i18nEnabled = Boolean(LocaleId)
 
-    const {
-        server: serverConfig = {},
-    } = kootConfig
-    // const {
-    //     // renderCache: renderCacheConfig = {},
-    //     inject: templateInject,
-    //     proxyRequestOrigin = {},
-    // } = serverConfig
-    __KOOT_SSR__.ssrConfig.lifecycle = {}
+    config.lifecycle = {}
     if (typeof serverConfig.onRender === 'function') {
-        __KOOT_SSR__.ssrConfig.lifecycle.beforeDataToStore = serverConfig.onRender
+        config.lifecycle.beforeDataToStore = serverConfig.onRender
     } else if (typeof serverConfig.onRender === 'object') {
         Object.keys(serverConfig.onRender).forEach(key => {
-            __KOOT_SSR__.ssrConfig.lifecycle[key] = serverConfig.onRender[key]
+            config.lifecycle[key] = serverConfig.onRender[key]
         })
     }
 
-    // 决定模板内容 (String)
-    __KOOT_SSR__.ssrConfig.template = await validateTemplate(kootConfig.template)
-
-    // 决定路由配置
-    // __KOOT_SSR__.ssrConfig.routerConfig = await validateRouterConfig(kootConfig.router)
-
-    // 语言包写入内存
-    // await validateI18n()
-
-    // 创建渲染缓存 Map
-    // __KOOT_SSR__.ssrConfig.renderCacheMap = await createRenderCacheMap(renderCacheConfig)
-
-    // 其他选项
-    // __KOOT_SSR__.ssrConfig.templateInject = templateInject
-    // __KOOT_SSR__.ssrConfig.proxyRequestOrigin = proxyRequestOrigin
-
-    // 标记完成
-    __KOOT_SSR__.ssrConfig._init = true
-
-    return __KOOT_SSR__.ssrConfig
+    return config
 }
 
 ssr().catch(err => {

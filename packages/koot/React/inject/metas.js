@@ -1,10 +1,8 @@
 const fs = require('fs-extra')
 const path = require('path')
 
-const { filenameDll, chunkNameClientRunFirst } = require('../../defaults/before-build')
+const { filenameDll } = require('../../defaults/before-build')
 const { dll } = require('../../defaults/dev-request-uri')
-const readClientFile = require('../../utils/read-client-file')
-const getClientFilePath = require('../../utils/get-client-file-path')
 
 /**
  * 注入: meta 标签 HTML 代码
@@ -14,9 +12,9 @@ const getClientFilePath = require('../../utils/get-client-file-path')
  * @param {Object} [options.compilation]
  * @returns {String}
  */
-module.exports = ({ metaHtml = '', localeId, compilation }) => {
+module.exports = ({ metaHtml = '' }) => {
 
-    let r = getDevExtra() + getClientRunFirstJS(localeId, compilation)
+    let r = getDevExtra()
 
     if (typeof __KOOT_INJECT_METAS_START__ === 'undefined') {
         const {
@@ -29,21 +27,6 @@ module.exports = ({ metaHtml = '', localeId, compilation }) => {
     }
 
     return r
-}
-
-/**
- * 客户端预先执行 JS 的代码
- * @param {*} localeId 
- * @param {*} compilation 
- * @returns {String}
- */
-const getClientRunFirstJS = (localeId, compilation) => {
-    const filename = `${chunkNameClientRunFirst}.js`
-
-    if (process.env.WEBPACK_BUILD_ENV === 'dev')
-        return `<script type="text/javascript" src="${getClientFilePath(filename, localeId)}"></script>`
-
-    return `<script type="text/javascript">${readClientFile(filename, localeId, compilation)}</script>`
 }
 
 /**

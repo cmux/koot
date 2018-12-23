@@ -64,8 +64,10 @@ module.exports = (options = {}) => {
             needInjectCritical: needInjectCritical.scripts,
             injectCache,
             entrypoints,
+            localeId,
             reduxHtml,
-            SSRState
+            SSRState,
+            compilation
         }),
 
     }

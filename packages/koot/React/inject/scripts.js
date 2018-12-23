@@ -1,5 +1,6 @@
 const path = require('path')
 
+const { chunkNameClientRunFirst } = require('../../defaults/before-build')
 const defaultEntrypoints = require('../../defaults/entrypoints')
 const readClientFile = require('../../utils/read-client-file')
 const getClientFilePath = require('../../utils/get-client-file-path')
@@ -10,15 +11,20 @@ const getClientFilePath = require('../../utils/get-client-file-path')
  * @param {Boolean} [options.needInjectCritical]
  * @param {Object} [options.injectCache]
  * @param {Object} [options.entrypoints]
+ * @param {String} [options.localeId]
  * @param {String} [options.reduxHtml]
+ * @param {Object} [options.compilation]
+ * @param {Object} [options.SSRState]
  * @returns {String}
  */
 module.exports = ({
     needInjectCritical,
     injectCache,
     entrypoints,
+    localeId,
     reduxHtml,
-    SSRState = {}
+    SSRState = {},
+    compilation,
 }) => {
 
     const ENV = process.env.WEBPACK_BUILD_ENV
@@ -83,6 +89,22 @@ module.exports = ({
         + `window.LocaleId = "${SSRState.localeId || ''}";`
         + `window.__KOOT_SSR_STATE__ = ${JSON.stringify(SSRState)};`
         + `</script>`
+        + getClientRunFirstJS(localeId, compilation)
         + `${injectCache.scriptsInBody}`
 
+}
+
+/**
+ * 客户端预先执行 JS 的代码
+ * @param {*} localeId 
+ * @param {*} compilation 
+ * @returns {String}
+ */
+const getClientRunFirstJS = (localeId, compilation) => {
+    const filename = `${chunkNameClientRunFirst}.js`
+
+    if (process.env.WEBPACK_BUILD_ENV === 'dev')
+        return `<script type="text/javascript" src="${getClientFilePath(filename, localeId)}"></script>`
+
+    return `<script type="text/javascript">${readClientFile(filename, localeId, compilation)}</script>`
 }

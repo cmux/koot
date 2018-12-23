@@ -97,6 +97,7 @@ module.exports = async (projectDir = getCwd()) => {
         const projectConfigFull = {}
         const projectConfigPortion = {}
         const propertiesPortion = [
+            'template',
             'redux',
             'server'
         ]
