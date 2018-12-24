@@ -8,6 +8,7 @@ const spinner = require('../../packages/koot/utils/spinner')
 const getProjects = require('./get')
 
 const kootDirRelative = '../../packages/koot'
+const kootWebpackDirRelative = '../../packages/koot-webpack'
 
 /**
  * 初始化所有测试项目
@@ -46,12 +47,15 @@ const initProject = async (name) => {
         if (typeof pkg.dependencies !== 'object')
             pkg.dependencies = {}
         pkg.dependencies.koot = `file:../${kootDirRelative}`
+        pkg.dependencies['koot-webpack'] = `file:../${kootWebpackDirRelative}`
 
         // 清空 devDependencies
         // delete pkg.devDependencies
 
         // 将 koot 的所有依赖替换入目标项目的 dev-dependencies
         pkg.devDependencies = pkgKoot.dependencies
+        delete pkg.devDependencies.koot
+        delete pkg.devDependencies['koot-webpack']
 
         // 添加命令
         const commands = [

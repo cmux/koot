@@ -274,8 +274,8 @@ export default (options = {}) => (WrappedComponent) => {
                     })
             }
 
+            this.clientUpdatePageInfo()
             if (everMounted) {
-                this.clientUpdatePageInfo()
             } else {
                 everMounted = true
             }

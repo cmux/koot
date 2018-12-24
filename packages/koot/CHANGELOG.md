@@ -5,6 +5,7 @@
     - 注意第一个字母大写
     - 作用范围: 所有 React 组件代码和其引用的代码
   - 重写 React 同构服务器逻辑，原则上对已有项目不会造成影响
+  - 移除了 `sp-css-import` 依赖包，如果项目中有用到 `@ImportStyle()` 的写法，请修改为新式的 `@extend()` 写法
   - 调整 CSS 打包、使用规则
     - 现在明确只存在 2 种 CSS 文件：全局 CSS 和组件 CSS
     - koot 配置文件 (默认为 `/koot.config.js`) 中的 `css.fileBasename` 为这 2 种 CSS 文件的不包含扩展名的基本文件名正则规则的设置。以下是默认设置: 
@@ -46,11 +47,12 @@
   - `koa-onerror`
   - `koa-response-time`
   - `progress`
+  - `sp-css-import`
 - 更新依赖包
   - major
-    - `css-loader` -> _2.0.1_
+    - `css-loader` -> _2.0.2_
     - `file-loader` -> _3.0.1_
-    - `koa-body` -> _4.0.4_
+    - `koa-body` -> _4.0.6_
     - `koa-mount` -> _4.0.0_
     - `koa-static` -> _5.0.0_
   - minor
@@ -60,7 +62,7 @@
     - `@babel/plugin-proposal-object-rest-spread` -> _7.2.0_
     - `@babel/plugin-syntax-dynamic-import` -> _7.2.0_
     - `@babel/plugin-transform-runtime` -> _7.2.0_
-    - `@babel/polyfill` -> _7.2.3_
+    - `@babel/polyfill` -> _7.2.5_
     - `@babel/preset-env` -> _7.2.3_
     - `autoprefixer` -> _9.4.3_
     - `koa` -> _2.6.2_
@@ -69,12 +71,14 @@
     - `react` -> _16.7.0_
     - `react-dom` -> _16.7.0_
     - `react-hot-loader` -> _4.6.3_
-    - `webpack` -> _4.28.1_
+    - `webpack` -> _4.28.2_
   - patch
+    - `debug` -> _4.1.1_
     - `inquirer` -> _6.2.1_
     - `pm2` -> _3.2.4_
     - `portfinder` -> _1.0.20_
     - `postcss` -> _7.0.7_
+    - `webpack-dev-server` -> _3.1.13_
 
 ## 0.7.11
 **2018-12-17**
