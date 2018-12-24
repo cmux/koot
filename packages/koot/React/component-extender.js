@@ -18,7 +18,7 @@ import {
 import {
     append as appendStyle,
     remove as removeStyle,
-    StyleMapContext,
+    // StyleMapContext,
 } from './styles'
 import clientUpdatePageInfo from './client-update-page-info'
 
@@ -30,6 +30,7 @@ let everMounted = false
 //     title: '',
 //     metas: []
 // }
+const styleMap = {}
 
 /**
  * 获取数据
@@ -81,7 +82,7 @@ export default (options = {}) => (WrappedComponent) => {
         styles: _styles,
         // ttt
         // hot: _hot = true,
-        name
+        // name
     } = options
 
     // console.log('extend hoc run', { name, LocaleId })
@@ -195,7 +196,7 @@ export default (options = {}) => (WrappedComponent) => {
 
         //
 
-        static contextType = StyleMapContext
+        // static contextType = StyleMapContext
 
         //
 
@@ -223,12 +224,12 @@ export default (options = {}) => (WrappedComponent) => {
 
         //
 
-        constructor(props, context) {
-            super(props, context)
+        constructor(props/*, context*/) {
+            super(props/*, context*/)
 
             if (hasStyles) {
                 this.kootClassNames = styles.map(obj => obj.wrapper)
-                appendStyle(this.getStyleMap(context), styles)
+                appendStyle(this.getStyleMap(/*context*/), styles)
                 // console.log('----------')
                 // console.log('styles', styles)
                 // console.log('theStyles', theStyles)
@@ -240,15 +241,15 @@ export default (options = {}) => (WrappedComponent) => {
         /**
          * 获取 styleMap
          * - 服务器端: 返回全局常量中的对照表
-         * - 客户端: 直接返回传入的 context
-         * @param {Object} context 
+         * - 客户端: 直接返回本文件内的 styleMap
          */
-        getStyleMap(context) {
+        getStyleMap(/*context*/) {
             // console.log('extend', { LocaleId })
             if (typeof __KOOT_SSR__ === 'object') {
                 return __KOOT_SSR__.styleMap
             }
-            return context
+            return styleMap
+            // return context
         }
 
         //
@@ -284,7 +285,7 @@ export default (options = {}) => (WrappedComponent) => {
         componentWillUnmount() {
             this.mounted = false
             if (hasStyles) {
-                removeStyle(this.getStyleMap(this.context), styles)
+                removeStyle(this.getStyleMap(/*this.context*/), styles)
             }
         }
 

@@ -1,13 +1,13 @@
-import React from 'react'
+// import React from 'react'
 
 /**
  * 生成 StyleMapContext
  */
-export const createStyleMapContext = () => {
-    return React.createContext({})
-}
+// export const createStyleMapContext = () => {
+//     return React.createContext({})
+// }
 
-export let StyleMapContext = createStyleMapContext()
+// export let StyleMapContext = createStyleMapContext()
 
 /**
  * 将样式表写入到 head 标签内
