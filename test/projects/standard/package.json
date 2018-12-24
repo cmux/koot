@@ -43,7 +43,8 @@
         "normalize.css": "8.0.0",
         "cssnano": "4.1.7",
         "svg-url-loader": "2.3.2",
-        "axios": "0.18.0"
+        "axios": "0.18.0",
+        "koot-webpack": "file:../../../packages/koot-webpack"
     },
     "devDependencies": {
         "@babel/core": "7.1.6",
@@ -98,7 +99,6 @@
         "koa-response-time": "2.0.0",
         "koa-router": "7.4.0",
         "koa-static": "3.0.0",
-        "koot-webpack": "^0.7.4",
         "less": "3.8.1",
         "less-loader": "4.1.0",
         "md5": "2.2.1",
