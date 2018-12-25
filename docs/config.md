@@ -26,7 +26,7 @@ module.exports = {
 
 ---
 
-## 基本信息
+## 项目信息
 
 ### name
 
@@ -52,6 +52,13 @@ module.exports = {
 }
 ```
 
+### dist
+
+- 类型: `Pathname`
+- 默认值: `./dist`
+
+打包结果路径。
+
 ### template
 
 - 类型: `Pathname`
@@ -60,16 +67,12 @@ module.exports = {
 
 HTML 模板文件路径。目前仅支持 `.ejs` 文件。有关模板的使用请查阅 [HTML 模板](/template)。
 
-### dist
+### templateInject
 
-- 类型: `Pathname`
-- 默认值: `./dist`
+- 类型: `Pathname:Object`
+- 默认值: _无_
 
-打包结果路径。
-
----
-
-## 路由 & History
+自定义 HTML 模板替换内容。请查阅 [HTML 模板](/template)。
 
 ### routes
 
@@ -89,25 +92,24 @@ HTML 模板文件路径。目前仅支持 `.ejs` 文件。有关模板的使用�
 
 项目所用的 `history` 组件的类型。可省略 `History` 字段，如 `browserHistory` 和 `browser` 等效。
 
----
-
-## Redux & store
-
 ### store
 
-- 类型: `Pathname:Function` 或 `Pathname:Object`
+- 类型: `Pathname:Function`
 - 默认值: _无_
-- **该选项和 `reducers` 必须提供其中一项**。如果同时提供，优先使用该选项，忽略 `reducers`
 
-生成 Redux store 的方法函数，或 store 对象，推荐选用前者。
+生成 Redux store 的方法函数。
 
 ```javascript
-// /koot.config.js
+/****************************
+ * 文件: /koot.config.js
+ ***************************/
 module.exports = {
     store: './src/store'
 }
 
-// /src/store.js
+/****************************
+ * 文件: /src/store.js
+ ***************************/
 const { createStore, combineReducers, applyMiddleware } = require('redux')
 // Koot.js 提供的生成 Redux store 所需要的相关内容
 const {
@@ -126,38 +128,52 @@ module.exports = () => createStore(
 )
 ```
 
-### reducers
-
-- 类型: `Pathname:Object`
-- 默认值: _无_
-- **该选项和 `store` 必须提供其中一项**。如果同时提供，忽略该选项，使用 `store`
-
-项目使用的 reducer，Koot 核心代码会将其应用到 `combineReducers` 中。
-
 ### cookiesToStore
 
-- 类型: `Boolean` 或 `String[]`
+- 类型: `Boolean` `String` 或 `String[]`
 - 默认值: `true`
 - **仅针对**: 同构项目类型
 
-将 cookie 写入到 Redux store 中的 `state.server.cookie` 对象内。
+将 cookie 写入到 Redux store 中的 `state.server.cookie`。
 
 ```javascript
 module.exports = {
-    // 写入所有的 cookie 到 store 中。同时提供名为 `__` 的项，内容为 cookie 的原始字符串
+    // 将所有 cookie 写入到到 store 中
+    // `state.server.cookie` 为 cookie 原始字符串
     cookiesToStore: true,
+
+    // 将所有 cookie 写入到到 store 中
+    // `state.server.cookie` 为对象，key/value 对应 cookie 的每一项
+    cookiesToStore: 'all',
 
     // 不启用该功能
     cookiesToStore: false,
 
     // 仅将名为 `userToken` 的 cookie 写入到 store 中
+    // `state.server.cookie` 为对象，key/value 对应 cookie 的每一项
     cookiesToStore: ['userToken'],
 }
 ```
 
+### i18n
+
+### pwa
+
+### aliases
+
+### defines
+
+### staticCopyFrom
+
 ---
 
-## Webpack & 打包
+## Webpack 相关
+
+### webpackConfig
+
+### webpackBefore
+
+### webpackAfter
 
 ### moduleCssFilesTest
 
@@ -165,11 +181,45 @@ module.exports = {
 
 ---
 
+## 客户端生命周期
+
+### before
+
+### after
+
+### onRouterUpdate
+
+### onHistoryUpdate
+
+---
+
+## 服务器端设置 & 生命周期
+
+### port
+
+### renderCache
+
+### proxyRequestOrigin
+
+### koaStatic
+
+### serverBefore
+
+### serverAfter
+
+### serverOnRender
+
+---
+
 ## 开发模式
+
+### devPort
 
 ### devDLL
 
 ### devHMR
+
+### devServer
 
 ---
 

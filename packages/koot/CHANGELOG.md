@@ -4,12 +4,10 @@
   - 重写 React 同构服务器逻辑，原则上对已有项目不会造成影响
     - 现在可以放心的从 `koot` 中引用 `store` `history` 和 `localeId` 了
   - 移除了 `sp-css-import` 依赖包，如果项目中有用到 `@ImportStyle()` 的写法，请修改为新式的 `@extend()` 写法
+  - 移除 `pageinfo()` 高阶组件，请修改为新式的 `@extend()` 写法
   - 调整 CSS 打包、使用规则
     - 现在明确只存在 2 种 CSS 文件：全局 CSS 和组件 CSS
-    - koot 配置文件 (默认为 `/koot.config.js`) 中的 `css.fileBasename` 为这 2 种 CSS 文件的不包含扩展名的基本文件名正则规则的设置。以下是默认设置: 
-      - `css.fileBasename.normal = /^((?!\.(component|module)\.).)*/`
-      - `css.fileBasename.component = /\.(component|module)/`
-      - 默认规则解释：以 `.component.css` 或 `.module.css` (扩展名可为 `css` `less` `sass` 等) 为结尾的文件会当作组件 CSS，其他文件会被当做全局 CSS
+    - 可通过配置文件对文件名规则进行配置。详情请参见文档的 [配置/客户端](https://koot.js.org/#/config?id=webpack-amp-打包)
     - 全局 CSS 规则
       - 所有全局 CSS 文件会根据所属的 Webpack 入口，被抽出为对应的独立的 CSS 文件 (打包结果中的 `extract.[hash].css`)
       - 所有这些 CSS 文件结果也会被整合到一个统一的 CSS 文件中 (打包结果中的 `extract.all.[hash].css`)
@@ -20,11 +18,10 @@
       - 这些 CSS 文件必须有一个名为 `.component` 或 `.[name]__component` 的 className
         - 该 className 会被更换为 hash 结果，如 `.a85c6k` 或 `.nav__bjj15a`
       - `props.className` 会传入到对应的组件，其值为与上述结果对应的 hash 后的 className
-  - 移除 `pageinfo()` 高阶组件
 - 核心
   - 配置项
-    - **新** `client.browserType` - 客户端中路由 (`router`) 所用的历史对象 (`history`) 类型。详情请参见文档的 [配置/客户端](https://koot.js.org/#/config?id=客户端浏览器端) 章节
-    - **新** `webpack.internalLoadersOptions` - 用以扩展几乎无法修改的内置 `loader` 所用的设置。详情请参见文档的 [配置/Webpack](https://koot.js.org/#/config?id=Webpack) 章节
+    - **新** `browserType` - 项目所用的 `history` 组件的类型。详情请参见文档的 [配置/路由 & History](https://koot.js.org/#/config?id=historytype) 章节
+    - **新** `internalLoaderOptions` - 用以扩展几乎无法修改的内置 `loader` 所用的设置。详情请参见文档的 [配置/Webpack](https://koot.js.org/#/config?id=internalloaderoptions) 章节
     - **新** `server.onRender.beforeDataToStore` 和 `server.onRender.afterDataToStore` - 允许更详细的使用服务器端渲染生命周期。详情请参见文档的 [配置/Webpack](https://koot.js.org/#/config?id=Webpack) 章节
     - `redux.syncCookie` 现支持传入 `true`: 同步所有 cookie，包括 cookie 原始字符串 (以 `__` 为名称)
   - Webpack 打包

@@ -20,29 +20,37 @@ const beforeRouterMatch = async ({
     // redux.syncCookie = ['token', 'sid'] | 'token' | false
     if (syncCookie) {
         let cookies = syncCookie
-        const data = {}
 
-        // 结构统一
-        if (typeof cookies === 'string')
-            cookies = [cookies]
-
-        if (Array.isArray(cookies)) {
-            // 获取需要的cookie值
-            cookies.forEach(c => {
-                data[c] = ctx.cookies.get(c)
+        if (cookies === true) {
+            store.dispatch({
+                type: SYNC_COOKIE,
+                data: ctx.headers.cookie || ''
             })
-        } else if (cookies === true) {
-            data.__ = ctx.headers.cookie || ''
-            data.__.split(';').forEach(str => {
-                const crumbs = str.split('=')
-                if (crumbs.length > 1) {
-                    data[crumbs[0].trim()] = crumbs[1].trim()
+        } else {
+            const data = {}
+            if (cookies === 'all') {
+                const theCookies = ctx.headers.cookie || ''
+                theCookies.split(';').forEach(str => {
+                    const crumbs = str.split('=')
+                    if (crumbs.length > 1) {
+                        data[crumbs[0].trim()] = crumbs[1].trim()
+                    }
+                })
+            } else {
+                if (typeof cookies === 'string')
+                    cookies = [cookies]
+    
+                if (Array.isArray(cookies)) {
+                    // 获取需要的cookie值
+                    cookies.forEach(c => {
+                        data[c] = ctx.cookies.get(c)
+                    })
                 }
-            })
+            }
+    
+            // 同步到state中
+            store.dispatch({ type: SYNC_COOKIE, data })
         }
-
-        // 同步到state中
-        store.dispatch({ type: SYNC_COOKIE, data })
     }
 
     if (__DEV__) log('callback', 'server', 'beforeRouterMatch')

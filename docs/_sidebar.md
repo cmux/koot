@@ -5,7 +5,7 @@
   - [FAQ/疑难解答](/faq)
   - 　
 
-- **使用 & API文档**
+- **API 文档**
   - [项目配置](/config)
   - [Webpack](/webpack)
   - [NPM 命令](/task)
