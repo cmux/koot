@@ -1,7 +1,6 @@
-/* global Store:false, __KOOT_SSR__:false */
+/* global __KOOT_SSR__:false */
 
-// TODO: All-in-one decorator for react component
-// https://github.com/cmux/koot/issues/8
+import { store } from '../'
 
 import React from 'react'
 import { connect } from 'react-redux'
@@ -57,7 +56,7 @@ const styleMap = {}
  * @returns {Object}
  */
 
-// console.log((typeof Store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' Store in [HOC] extend')
+// console.log((typeof store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' store in [HOC] extend')
 /**
  * 高阶组件/组件装饰器：组件扩展
  * @param {Object} options 选项
@@ -70,7 +69,7 @@ const styleMap = {}
  * @returns {Function} 封装好的 React 组件
  */
 export default (options = {}) => (WrappedComponent) => {
-    // console.log((typeof Store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' Store in [HOC] extend run')
+    // console.log((typeof store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' store in [HOC] extend run')
 
     const {
         connect: _connect = false,
@@ -207,7 +206,7 @@ export default (options = {}) => (WrappedComponent) => {
             const {
                 title,
                 metas
-            } = doPageinfo(Store, getRenderPropsFromComponentProps(this.props))
+            } = doPageinfo(store, getRenderPropsFromComponentProps(this.props))
             clientUpdatePageInfo(title, metas)
         }
 
@@ -215,7 +214,7 @@ export default (options = {}) => (WrappedComponent) => {
 
         state = {
             loaded: typeof dataCheck === 'function'
-                ? dataCheck(Store.getState(), getRenderPropsFromComponentProps(this.props))
+                ? dataCheck(store.getState(), getRenderPropsFromComponentProps(this.props))
                 : undefined
             ,
         }
@@ -266,7 +265,7 @@ export default (options = {}) => (WrappedComponent) => {
             this.mounted = true
 
             if (!this.state.loaded && typeof dataFetch !== 'undefined') {
-                doFetchData(Store, getRenderPropsFromComponentProps(this.props))
+                doFetchData(store, getRenderPropsFromComponentProps(this.props))
                     .then(() => {
                         if (!this.mounted) return
                         this.setState({

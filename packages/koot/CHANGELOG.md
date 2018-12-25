@@ -1,10 +1,8 @@
 ## 0.8.0
 **????-??-??**
 - **重大改动**
-  - 新增全局对象: `Store`、`History` 和 `LocaleId`
-    - 注意第一个字母大写
-    - 作用范围: 所有 React 组件代码和其引用的代码
   - 重写 React 同构服务器逻辑，原则上对已有项目不会造成影响
+    - 现在可以放心的从 `koot` 中引用 `store` `history` 和 `localeId` 了
   - 移除了 `sp-css-import` 依赖包，如果项目中有用到 `@ImportStyle()` 的写法，请修改为新式的 `@extend()` 写法
   - 调整 CSS 打包、使用规则
     - 现在明确只存在 2 种 CSS 文件：全局 CSS 和组件 CSS
@@ -22,6 +20,7 @@
       - 这些 CSS 文件必须有一个名为 `.component` 或 `.[name]__component` 的 className
         - 该 className 会被更换为 hash 结果，如 `.a85c6k` 或 `.nav__bjj15a`
       - `props.className` 会传入到对应的组件，其值为与上述结果对应的 hash 后的 className
+  - 移除 `pageinfo()` 高阶组件
 - 核心
   - 配置项
     - **新** `client.browserType` - 客户端中路由 (`router`) 所用的历史对象 (`history`) 类型。详情请参见文档的 [配置/客户端](https://koot.js.org/#/config?id=客户端浏览器端) 章节

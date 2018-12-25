@@ -1,7 +1,7 @@
 /* global
-    Store:false,
-    History:false,
-    LocaleId:false,
+    __KOOT_STORE__:false,
+    __KOOT_HISTORY__:false,
+    __KOOT_LOCALEID__:false,
     __KOOT_SSR__:false
 */
 
@@ -33,7 +33,7 @@ import i18nGetSSRState from '../../i18n/server/get-ssr-state'
 const ssr = async () => {
 
     /** @type {Boolean} i18n 是否启用 */
-    const i18nEnabled = Boolean(LocaleId)
+    const i18nEnabled = Boolean(__KOOT_LOCALEID__)
 
     const {
         ctx,
@@ -57,13 +57,13 @@ const ssr = async () => {
     // 渲染生命周期: beforeRouterMatch
     await beforeRouterMatch({
         ctx,
-        store: Store,
+        store: __KOOT_STORE__,
         syncCookie,
         callback: lifecycle.beforeRouterMatch
     })
-    if (LocaleId) {
-        Store.dispatch({ type: CHANGE_LANGUAGE, data: LocaleId })
-        i18nOnServerRender({ store: Store })
+    if (__KOOT_LOCALEID__) {
+        __KOOT_STORE__.dispatch({ type: CHANGE_LANGUAGE, data: __KOOT_LOCALEID__ })
+        i18nOnServerRender({ store: __KOOT_STORE__ })
     }
 
     // 进行路由匹配
@@ -71,7 +71,7 @@ const ssr = async () => {
         redirectLocation, renderProps
     } = await new Promise((resolve, reject) => {
         match({
-            history: History,
+            history: __KOOT_HISTORY__,
             routes,
             location: url,
         }, (error, redirectLocation, renderProps) => {
@@ -100,28 +100,28 @@ const ssr = async () => {
     // 渲染生命周期: beforeDataToStore
     await beforeDataToStore({
         ctx,
-        store: Store,
-        localeId: LocaleId,
+        store: __KOOT_STORE__,
+        localeId: __KOOT_LOCALEID__,
         callback: lifecycle.beforeDataToStore
     })
 
     // 执行所有匹配到的组件的自定义的静态生命周期
     const {
         title, metaHtml, reduxHtml
-    } = await executeComponentsLifecycle({ store: Store, renderProps, ctx })
+    } = await executeComponentsLifecycle({ store: __KOOT_STORE__, renderProps, ctx })
 
     // 渲染生命周期: afterDataToStore
     await afterDataToStore({
         ctx,
-        store: Store,
-        localeId: LocaleId,
+        store: __KOOT_STORE__,
+        localeId: __KOOT_LOCALEID__,
         callback: lifecycle.afterDataToStore
     })
 
     // SSR
     const reactHtml = renderToString(
         <RootIsomorphic
-            store={Store}
+            store={__KOOT_STORE__}
             {...renderProps}
         />
     )
@@ -148,7 +148,7 @@ const ssr = async () => {
         injectCache: thisTemplateInjectCache,
         filemap: thisFilemap,
         entrypoints: thisEntrypoints,
-        localeId: LocaleId,
+        localeId: __KOOT_LOCALEID__,
         title,
         metaHtml,
         reactHtml,
@@ -159,12 +159,12 @@ const ssr = async () => {
         },
         needInjectCritical: isNeedInjectCritical(template),
     })
-    if (LocaleId) {
+    if (__KOOT_LOCALEID__) {
         // i18n 启用时: 添加其他语种页面跳转信息的 meta 标签
         inject.metas += i18nGenerateHtmlRedirectMetas({
             ctx,
             proxyRequestOrigin,
-            localeId: LocaleId
+            localeId: __KOOT_LOCALEID__
         })
     }
 
@@ -175,7 +175,7 @@ const ssr = async () => {
             ...inject,
             ...templateInject
         }),
-        store: Store
+        store: __KOOT_STORE__
     })
 
     // 结果写入缓存
@@ -216,7 +216,7 @@ const initConfig = async (i18nEnabled) => {
     config.routerConfig = await validateRouterConfig(kootConfig.router)
 
     if (typeof i18nEnabled === 'undefined')
-        i18nEnabled = Boolean(LocaleId)
+        i18nEnabled = Boolean(__KOOT_LOCALEID__)
 
     config.lifecycle = {}
     if (typeof serverConfig.onRender === 'function') {
@@ -234,6 +234,7 @@ ssr().catch(err => {
     __KOOT_SSR__.ssrComplete({
         error: err
     })
+    throw err
 })
 
 export default ssr

@@ -139,13 +139,13 @@ const plugins = async (env, stage, defines = {}/*, remainingKootBuildConfig = {}
                     return path.resolve(__dirname, '../../React/component-extender.js')
             })()
         ],
-        [
-            /^__KOOT_HOC_PAGEINFO__$/,
-            (() => {
-                if (/^React/.test(process.env.KOOT_PROJECT_TYPE))
-                    return path.resolve(__dirname, '../../React/pageinfo.js')
-            })()
-        ],
+        // [
+        //     /^__KOOT_HOC_PAGEINFO__$/,
+        //     (() => {
+        //         if (/^React/.test(process.env.KOOT_PROJECT_TYPE))
+        //             return path.resolve(__dirname, '../../React/pageinfo.js')
+        //     })()
+        // ],
     ]
 
     return [

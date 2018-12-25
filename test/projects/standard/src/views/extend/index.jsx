@@ -1,17 +1,10 @@
 import React from 'react'
-import { extend, localeId } from 'koot'
+import { extend } from 'koot'
 
 import {
     updateServerTimestamp,
     resetServerTimestamp
 } from '@store/infos/actions'
-if (__SERVER__)
-    console.log('[PageExtend]', {
-        // store,
-        // history,
-        localeId,
-        LocaleId
-    })
 
 // console.log((typeof Store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' Store in [PageExtend]')
 const check = props => {

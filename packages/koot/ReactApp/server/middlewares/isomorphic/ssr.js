@@ -38,11 +38,18 @@ const ssr = async (__KOOT_SSR__) => new Promise(async resolve => {
     __KOOT_SSR__.ssrComplete = (result) => resolve(result)
 
     const {
-        Store,
-        History,
-        LocaleId,
+        Store: __KOOT_STORE__,
+        History: __KOOT_HISTORY__,
+        LocaleId: __KOOT_LOCALEID__,
     } = __KOOT_SSR__
-    eval(__KOOT_SSR_FILE_CONTENT__)
+    try {
+        eval(__KOOT_SSR_FILE_CONTENT__)
+    } catch (err) {
+        console.error(err)
+        resolve({
+            error: err
+        })
+    }
 
     // const set = () => setTimeout(() => {
     //     if (!__KOOT_SSR__.__RESULT__)

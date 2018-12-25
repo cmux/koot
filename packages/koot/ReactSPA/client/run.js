@@ -4,8 +4,6 @@ const React = require('react')
 import ReactDOM from 'react-dom'
 import history from "../../React/history"
 import { syncHistoryWithStore } from 'react-router-redux'
-import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
-import thunk from 'redux-thunk'
 
 //
 
@@ -16,7 +14,6 @@ import {
 } from '../../index'
 import { actionUpdate } from '../../React/realtime-location'
 import Root from '../../React/root.jsx'
-import { reducers } from '../../React/redux'
 import validateRouterConfig from '../../React/validate/router-config'
 // import {
 //     reducerLocaleId as i18nReducerLocaleId,

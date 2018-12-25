@@ -1,7 +1,7 @@
 import * as portionConfig from '__KOOT_PROJECT_CONFIG_PORTION_PATHNAME__'
 
 import validateReduxConfig from '../../React/validate/redux-config'
-window.Store = ((reduxConfig = {}) => {
+window.__KOOT_STORE__ = ((reduxConfig = {}) => {
     if (typeof reduxConfig.factoryStore === 'function')
         return reduxConfig.factoryStore()
     if (typeof reduxConfig.store === 'object')
@@ -10,4 +10,4 @@ window.Store = ((reduxConfig = {}) => {
 })(validateReduxConfig(portionConfig.redux))
 
 import History from '../../React/history'
-window.History = History
+window.__KOOT_HISTORY__ = History

@@ -1,50 +1,179 @@
 # 项目配置
 
-项目根目录中的 `/koot.config.js` 为 koot 项目总配置文件。
+项目根目录中的 `/koot.config.js` 为 koot 项目总配置文件，所有的 koot.js 项目必须提供该配置文件。
 
-如无特殊说明，所有配置均为可选配置项。
+该文件需要输出 _**Object**_。下面列出的配置项均为该 Object 内的元素。
 
-### 基本信息
+如无特殊说明，所有项目均为**可选项**。
 
-_**String**_ `name` 项目名称。以下场景会使用该值作为默认值
-- SPA 的主 HTML 页面的标题
+**特殊类型**
 
-_**String**_ `type` 项目类型。目前支持以下类型
-- `react` - React 同构
-- `react-spa` - React SPA
+`Pathname` 类型表示到对应文件的路径名，支持绝对路径和相对路径，相对路径必须以 `.` 开头。
 
-_**Pathname**_ `template` HTML 模板文件路径。目前仅支持 `.ejs` 文件。有关模板的使用请查阅 [HTML 模板](/template)
+`Pathname:[type]` 类型表示到对应文件的路径名，对应的文件必须是 `.js` `.jsx` 或 `.mjs` 文件，同时输出对应类型的结果。
 
-_**Pathname**_ `dist` 打包结果路径
-
-### 路由
-
-_**Object**_ `router`
-
-### Redux
-
-_**Object**_ `redux`
-
-- _String_|_Array_|_Boolean_ `redux.syncCookie`
-<br>允许服务器端在同构时将 `cookie` 中对应的项同步到 redux state 的 `server.cookie` 中
+**简单配置示例**
 
 ```javascript
-// 默认配置
+// /koot.config.js
 module.exports = {
-    // ...
-    redux: {
-        // ...
-        syncCookie: false
-    },
-    // ...
+    name: "Test Subject A-87",
+    template: "./src/template.ejs",
+    routes: "./src/routes",
+    store: "./src/store"
+};
+```
+
+---
+
+## 基本信息
+
+### name
+
+- 类型: `String`
+- 默认值: `package.json` 中的 `name` 属性
+
+项目名称。页面的默认标题会使用该值。
+
+### type
+
+- 类型: `String`
+- 默认值: `react`
+
+项目类型。
+
+```javascript
+module.exports = {
+    // React 同构
+    type: 'react',
+
+    // React SPA
+    type: 'react-spa'
+}
+```
+
+### template
+
+- 类型: `Pathname`
+- 默认值: _无_
+- **必填**
+
+HTML 模板文件路径。目前仅支持 `.ejs` 文件。有关模板的使用请查阅 [HTML 模板](/template)。
+
+### dist
+
+- 类型: `Pathname`
+- 默认值: `./dist`
+
+打包结果路径。
+
+---
+
+## 路由 & History
+
+### routes
+
+- 类型: `Pathname:Object`
+- 默认值: _无_
+- **必填**
+
+路由配置，供 `react-router` 使用。Koot.js 目前使用的 `react-router` 版本为 _**v3**_。
+
+有关路由配置的编写请查阅 [react-router v3 官方文档/Route Configuration](https://github.com/ReactTraining/react-router/blob/v3/docs/guides/RouteConfiguration.md)。
+
+### historyType
+
+- 类型: `String`
+- 默认值: `browserHistory` (同构) / `hashHistory` (SPA)
+- **仅针对**: 客户端
+
+项目所用的 `history` 组件的类型。可省略 `History` 字段，如 `browserHistory` 和 `browser` 等效。
+
+---
+
+## Redux & store
+
+### store
+
+- 类型: `Pathname:Function` 或 `Pathname:Object`
+- 默认值: _无_
+- **该选项和 `reducers` 必须提供其中一项**。如果同时提供，优先使用该选项，忽略 `reducers`
+
+生成 Redux store 的方法函数，或 store 对象，推荐选用前者。
+
+```javascript
+// /koot.config.js
+module.exports = {
+    store: './src/store'
 }
 
-// redux.syncCookie 可用配置
-redux.syncCookie = false // 不同步 cookie (默认值)
-redux.syncCookie = true // 同步所有 cookie，包括 cookie 原始字符串 (`__`)
-redux.syncCookie = 'token' // 单参数
-redux.syncCookie = ['token', 'sid'] // 支持多参数
+// /src/store.js
+const { createStore, combineReducers, applyMiddleware } = require('redux')
+// Koot.js 提供的生成 Redux store 所需要的相关内容
+const {
+    reducers: kootDefaultReducers, initialState, middlewares
+} = require('koot').reduxForCreateStore
+// 项目使用的 reducer
+const projectReducers = require('./reducers.js')
+
+module.exports = () => createStore(
+    combineReducers({
+        ...kootDefaultReducers,
+        ...projectReducers
+    }),
+    initialState,
+    applyMiddleware(...middlewares)
+)
 ```
+
+### reducers
+
+- 类型: `Pathname:Object`
+- 默认值: _无_
+- **该选项和 `store` 必须提供其中一项**。如果同时提供，忽略该选项，使用 `store`
+
+项目使用的 reducer，Koot 核心代码会将其应用到 `combineReducers` 中。
+
+### cookiesToStore
+
+- 类型: `Boolean` 或 `String[]`
+- 默认值: `true`
+- **仅针对**: 同构项目类型
+
+将 cookie 写入到 Redux store 中的 `state.server.cookie` 对象内。
+
+```javascript
+module.exports = {
+    // 写入所有的 cookie 到 store 中。同时提供名为 `__` 的项，内容为 cookie 的原始字符串
+    cookiesToStore: true,
+
+    // 不启用该功能
+    cookiesToStore: false,
+
+    // 仅将名为 `userToken` 的 cookie 写入到 store 中
+    cookiesToStore: ['userToken'],
+}
+```
+
+---
+
+## Webpack & 打包
+
+### moduleCssFilesTest
+
+### internalLoaderOptions
+
+---
+
+## 开发模式
+
+### devDLL
+
+### devHMR
+
+---
+
+## 其他
 
 ### CSS 打包
 

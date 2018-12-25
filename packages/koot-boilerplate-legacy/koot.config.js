@@ -1,22 +1,9 @@
-/** @module kootConfig */
-
 /**
- * 路径名，可为相对路径或绝对路径。由于部分代码使用了 import/export 的写法，node.js 无法直接识别，需要 webpack/babel 进行编译，故在部分环境下使用该写法代替 require()。
- * @typedef {String} Pathname
- */
-
-/**
- * @callback cacheGet
- * 缓存检查与吐出方法
- * @param {String} url
- * @return {Boolean|String} 对该 URL 不使用缓存时返回 false，使用时返回缓存结果 String
- */
-
-/**
- * @callback cacheSet
- * 缓存存储方法
- * @param {String} url 
- * @param {String} html 
+ * @module kootConfig
+ * 
+ * Koot.js 项目配置
+ * 
+ * 配置文档请查阅: [https://koot.js.org/#/config]
  */
 
 const fs = require('fs-extra')
@@ -24,33 +11,16 @@ const path = require('path')
 
 module.exports = {
 
-    /** @type {String} 项目名称 */
-    name: 'Koot Boilerplate',
-
-    /**
-     * @type {String} 项目类型
-     * @default react 默认为 React 同构项目
-     */
+    name: 'Koot Boilerplate (Legacy)',
     type: 'react',
-
-    /** @type {Pathname} HTML 模板 */
     template: './src/template.ejs',
+    dist: './dist',
 
-    /** @type {Pathname} React 路由 */
-    router: './src/router',
+    routes: './src/router',
+    historyType: 'hash',
 
-    /**
-     * @type {Object} Redux 配置
-     * @namespace
-     * @property {Pathname} [combineReducers] reducer，与 combineReducers 参数语法相同
-     * @property {Pathname} [store] 使用自创建的 store，而非 koot 创建的 store。如果提供，会忽略 combineReducers 属性。详细使用方法请参阅 [文档](https://koot.js.org/react/create-store)
-     * @property {String[]} [syncCookie] 服务器端同构时把 `cookie` 中对应的项同步到 redux state 的 `server.cookie` 中
-     */
-    redux: {
-        combineReducers: './src/store/reducers',
-        // store: './src/store',
-        syncCookie: [],
-    },
+    store: './src/store/create',
+    cookiesToStore: true,
 
     /**
      * @type {Object} 客户端/浏览器端相关配置
@@ -62,7 +32,6 @@ module.exports = {
      * @property {Pathname} [onHistoryUpdate] - 回调函数：在浏览器历史发生改变时时
      */
     client: {
-        history: 'browser',
         before: './src/services/lifecycle/before',
         after: './src/services/lifecycle/after',
         onRouterUpdate: './src/services/lifecycle/on-router-update',
@@ -107,13 +76,6 @@ module.exports = {
         after: './server/lifecycle/after',
         onRender: './server/lifecycle/on-render',
     },
-
-    /** 
-     * @type {String} 打包目标目录
-     * 默认会在该目录下建立 public 和 server 目录，分别对应 web 服务器和服务器执行代码
-     * 注：如果为相对路径，请确保第一个字符为 '.'
-     */
-    dist: './dist/',
 
     /** 
      * @type {Object} Webpack 相关配置

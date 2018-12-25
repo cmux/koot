@@ -10,7 +10,7 @@ import { reducers as defaultReducers, initialState, middlewares } from '../redux
 const validateReduxConfig = (kootConfigRedux = {}) => {
 
     const {
-        syncCookie
+        syncCookie = true
     } = kootConfigRedux
     const reduxConfig = {
         syncCookie

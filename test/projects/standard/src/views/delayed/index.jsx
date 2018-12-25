@@ -23,7 +23,6 @@ export default extend({
             <ul>
                 <li><em>props.localeId:</em> {localeId}</li>
                 <li><em>{"import { localeId } from 'koot': "}</em> {localeId}</li>
-                <li><em>LocaleId:</em> {LocaleId}</li>
             </ul>
         </div>
 )

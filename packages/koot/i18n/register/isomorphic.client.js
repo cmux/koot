@@ -1,5 +1,6 @@
 /* global __KOOT_SSR_STATE__:false */
 
+import { store, localeId as LocaleId } from '../../'
 import { I18N_INIT } from '../action-types'
 import setCookie from '../set-cookie'
 
@@ -16,10 +17,8 @@ export default (o = {}) => {
     } = o
 
     if (typeof localeId === 'undefined') {
-        if (
-            typeof window.LocaleId !== 'undefined'
-        )
-            localeId = window.LocaleId
+        if (typeof LocaleId !== 'undefined')
+            localeId = LocaleId
         else if (
             typeof __KOOT_SSR_STATE__ === 'object' &&
             typeof __KOOT_SSR_STATE__.localeId !== 'undefined'
@@ -35,8 +34,8 @@ export default (o = {}) => {
     if (typeof localeId === 'undefined')
         return
 
-    if (typeof window.Store === 'object' && window.Store.dispatch) {
-        window.Store.dispatch({
+    if (typeof store === 'object' && store.dispatch) {
+        store.dispatch({
             type: I18N_INIT,
             localeId: '' + localeId
         })

@@ -1,12 +1,5 @@
 import React from 'react'
-import { extend, localeId } from 'koot'
-if (__SERVER__)
-    console.log('[PageHome]', {
-        // store,
-        // history,
-        localeId,
-        LocaleId
-    })
+import { extend } from 'koot'
 
 export default extend({
     connect: state => ({

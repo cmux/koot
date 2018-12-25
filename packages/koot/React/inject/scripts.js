@@ -86,7 +86,7 @@ module.exports = ({
 
     return `<script type="text/javascript">`
         + (reduxHtml ? reduxHtml : `window.__REDUX_STATE__ = {};`)
-        + `window.LocaleId = "${SSRState.localeId || ''}";`
+        + `window.__KOOT_LOCALEID__ = "${SSRState.localeId || ''}";`
         + `window.__KOOT_SSR_STATE__ = ${JSON.stringify(SSRState)};`
         + `</script>`
         + getClientRunFirstJS(localeId, compilation)

@@ -1,7 +1,7 @@
 /* global
-    Store:false,
-    History:false,
-    LocaleId:false,
+    __KOOT_STORE__:false,
+    __KOOT_HISTORY__:false,
+    __KOOT_LOCALEID__:false,
 */
 
 /**
@@ -17,37 +17,31 @@ export { reduxForCreateStore }
  */
 export { default as extend } from "__KOOT_HOC_EXTEND__"
 
-/**
- * 设置页面信息的高阶组件/方法
- * @type {Function}
- */
-export { default as pageinfo } from "__KOOT_HOC_PAGEINFO__"
-
 // 其他全局变量
 export const localeId = (() => {
     if (__CLIENT__)
-        return window.LocaleId || ''
+        return window.__KOOT_LOCALEID__ || ''
     if (__SERVER__) {
-        if (typeof LocaleId === 'undefined')
+        if (typeof __KOOT_LOCALEID__ === 'undefined')
             return ''
-        return LocaleId || ''
+        return __KOOT_LOCALEID__ || ''
     }
 })()
 export const store = (() => {
     if (__CLIENT__)
-        return window.Store
+        return window.__KOOT_STORE__
     if (__SERVER__) {
-        if (typeof Store === 'undefined')
+        if (typeof __KOOT_STORE__ === 'undefined')
             return ''
-        return Store
+        return __KOOT_STORE__
     }
 })()
 export const history = (() => {
     if (__CLIENT__)
-        return window.History
+        return window.__KOOT_HISTORY__
     if (__SERVER__) {
-        if (typeof History === 'undefined')
+        if (typeof __KOOT_HISTORY__ === 'undefined')
             return ''
-        return History
+        return __KOOT_HISTORY__
     }
 })()
