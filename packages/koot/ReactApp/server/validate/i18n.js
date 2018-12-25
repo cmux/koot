@@ -24,7 +24,6 @@ const validateI18n = async () => {
     const localesFull = getLocalesFull()
     // /** @type {String} 多语言类型 */
     // const type = JSON.parse(process.env.KOOT_I18N_TYPE) || false
-
     // const localeIds = []
     const locales = {}
     localesFull.forEach(arr => {

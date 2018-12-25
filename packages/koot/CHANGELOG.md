@@ -78,7 +78,7 @@
     - `pm2` -> _3.2.4_
     - `portfinder` -> _1.0.20_
     - `postcss` -> _7.0.7_
-    - `webpack-dev-server` -> _3.1.13_
+    - `webpack-dev-server` -> _3.1.14_
 
 ## 0.7.12
 **2018-12-24**

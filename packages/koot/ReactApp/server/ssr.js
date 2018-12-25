@@ -21,8 +21,6 @@ import validateInject from '../../React/validate-inject'
 import isNeedInjectCritical from '../../React/inject/is-need-inject-critical'
 import renderTemplate from '../../React/render-template'
 
-import validateI18n from './validate/i18n'
-
 import beforeRouterMatch from './middlewares/isomorphic/lifecycle/before-router-match'
 import beforeDataToStore from './middlewares/isomorphic/lifecycle/before-data-to-store'
 import afterDataToStore from './middlewares/isomorphic/lifecycle/after-data-to-store'
@@ -64,7 +62,6 @@ const ssr = async () => {
         callback: lifecycle.beforeRouterMatch
     })
     if (LocaleId) {
-        if (__DEV__) await validateI18n()
         Store.dispatch({ type: CHANGE_LANGUAGE, data: LocaleId })
         i18nOnServerRender({ store: Store })
     }

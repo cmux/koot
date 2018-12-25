@@ -15,6 +15,10 @@ const Nav = props => {
         {
             title: __SPA__ ? '静态资源' : __('pages.static.title'),
             to: '/static'
+        },
+        {
+            title: __SPA__ ? '延迟渲染' : __('pages.delayed.title'),
+            to: '/delayed'
         }
     ]
     if (!__SPA__)

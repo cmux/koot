@@ -9,6 +9,7 @@ import i18nGetLangFromCtx from '../../../../i18n/server/get-lang-from-ctx'
 import i18nEnabled from '../../../../i18n/is-enabled'
 
 import initStore from './init-store'
+import validateI18n from '../../validate/i18n'
 import ssr from './ssr'
 
 
@@ -133,10 +134,12 @@ const middlewareIsomorphic = (options = {}) => {
             const History = syncHistoryWithStore(memoryHistory, Store)
 
             // eval SSR
+            // [开发模式] 每次请求都重新验证一次语言包，以确保语言包的更新
             const result = await ssr({
                 ctx,
 
-                Store, History, LocaleId, locales,
+                Store, History, LocaleId,
+                locales: __DEV__ ? await validateI18n() : locales,
 
                 // ssrConfig,
 

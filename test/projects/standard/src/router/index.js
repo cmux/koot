@@ -21,16 +21,27 @@ export default {
     },
 
     childRoutes: (() => {
-        const children = [{
-            path: 'static',
-            name: 'Page: Static Assets',
-            // component: require('@views/static').default,
-            getComponent: (nextState, cb) => {
-                require.ensure([], (require) => {
-                    if (routeCheck(nextState)) cb(null, require('@views/static').default)
-                }, 'Page: Static Assets')
+        const children = [
+            {
+                path: 'static',
+                name: 'Page: Static Assets',
+                // component: require('@views/static').default,
+                getComponent: (nextState, cb) => {
+                    require.ensure([], (require) => {
+                        if (routeCheck(nextState)) cb(null, require('@views/static').default)
+                    }, 'Page: Static Assets')
+                }
+            },
+            {
+                path: 'delayed',
+                name: 'Page: Delayed Rendering',
+                getComponent: (nextState, cb) => {
+                    require.ensure([], (require) => {
+                        if (routeCheck(nextState)) cb(null, require('@views/delayed').default)
+                    }, 'Page: Delayed Rendering')
+                }
             }
-        }]
+        ]
         if (!__SPA__) {
             children.push({
                 path: 'extend',

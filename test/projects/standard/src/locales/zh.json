@@ -17,6 +17,10 @@
             "method_require_content": "使用 require() 引用静态文件。文件名将会被自动 Hash 化。",
             "method_static": "静态资源文件夹方法",
             "method_static_content": "将静态文件放入静态资源文件夹中，该路径可在 koot.build.js 中设置。"
+        },
+        "delayed": {
+            "title": "延迟渲染",
+            "description": "人为的将渲染过程推迟。"
         }
     }
 }
