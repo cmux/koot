@@ -56,6 +56,74 @@ const styleMap = {}
  * @returns {Object}
  */
 
+/** 
+ * 获取同构数据的执行方法
+ * @param {Object} store
+ * @param {Object} props renderProps
+ * @returns {Promise}
+ */
+const doFetchData = (store, renderProps, dataFetch) => {
+    const result = dataFetch(store.getState(), renderProps, store.dispatch)
+    // if (result === true) {
+    //     isDataPreloaded = true
+    //     return new Promise(resolve => resolve())
+    // }
+    if (Array.isArray(result))
+        return Promise.all(result)
+    if (result instanceof Promise)
+        return result
+    return new Promise(resolve => resolve(result))
+}
+
+/** 
+ * 更新页面信息
+ * @param {Object} store
+ * @param {Object} props renderProps
+ * @returns {Object} infos
+ * @returns {String} infos.title
+ * @returns {Array} infos.metas
+ */
+const doPageinfo = (store, props, pageinfo) => {
+    const defaultPageInfo = {
+        title: '',
+        metas: []
+    }
+
+    if (typeof pageinfo !== 'function')
+        return defaultPageInfo
+
+    const state = store.getState()
+
+    let infos = pageinfo(state, props)
+    if (typeof infos !== 'object')
+        infos = defaultPageInfo
+
+    const {
+        title = defaultPageInfo.title,
+        metas = defaultPageInfo.metas
+    } = infos
+
+    if (state.localeId) {
+        if (!metas.some(meta => {
+            if (meta.name === 'koot-locale-id') {
+                meta.content = state.localeId
+                return true
+            }
+            return false
+        })) {
+            metas.push({
+                name: 'koot-locale-id',
+                content: state.localeId
+            })
+        }
+    }
+
+    return {
+        title,
+        metas
+    }
+}
+
 // console.log((typeof store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' store in [HOC] extend')
 /**
  * 高阶组件/组件装饰器：组件扩展
@@ -110,71 +178,6 @@ export default (options = {}) => (WrappedComponent) => {
         ? options.data
         : (typeof _dataFetch === 'function' || Array.isArray(_dataFetch) ? _dataFetch : undefined)
 
-    /** @type {Function} 获取同构数据的执行方法 */
-    const doFetchData = (store, renderProps) => {
-        const result = dataFetch(store.getState(), renderProps, store.dispatch)
-        // if (result === true) {
-        //     isDataPreloaded = true
-        //     return new Promise(resolve => resolve())
-        // }
-        if (Array.isArray(result))
-            return Promise.all(result)
-        if (result instanceof Promise)
-            return result
-        return new Promise(resolve => resolve(result))
-    }
-
-    // 页面信息相关
-
-    /** 
-     * 更新页面信息
-     * @param {Object} store
-     * @param {Object} props renderProps
-     * @returns {Object} infos
-     * @returns {String} infos.title
-     * @returns {Array} infos.metas
-     */
-    const doPageinfo = (store, props) => {
-        const defaultPageInfo = {
-            title: '',
-            metas: []
-        }
-
-        if (typeof pageinfo !== 'function')
-            return defaultPageInfo
-
-        const state = store.getState()
-
-        let infos = pageinfo(state, props)
-        if (typeof infos !== 'object')
-            infos = defaultPageInfo
-
-        const {
-            title = defaultPageInfo.title,
-            metas = defaultPageInfo.metas
-        } = infos
-
-        if (state.localeId) {
-            if (!metas.some(meta => {
-                if (meta.name === 'koot-locale-id') {
-                    meta.content = state.localeId
-                    return true
-                }
-                return false
-            })) {
-                metas.push({
-                    name: 'koot-locale-id',
-                    content: state.localeId
-                })
-            }
-        }
-
-        return {
-            title,
-            metas
-        }
-    }
-
     // 装饰组件
 
     class KootReactComponent extends React.Component {
@@ -182,7 +185,7 @@ export default (options = {}) => (WrappedComponent) => {
             const {
                 title,
                 metas
-            } = doPageinfo(store, getRenderPropsFromServerProps(renderProps))
+            } = doPageinfo(store, getRenderPropsFromServerProps(renderProps), pageinfo)
             return { title, metas }
         }
 
@@ -190,7 +193,7 @@ export default (options = {}) => (WrappedComponent) => {
             if (typeof dataFetch === 'undefined')
                 return new Promise(resolve => resolve())
             // console.log('onServerRenderStoreExtend')
-            return doFetchData(store, getRenderPropsFromServerProps(renderProps))
+            return doFetchData(store, getRenderPropsFromServerProps(renderProps), dataFetch)
         }
 
         //
@@ -206,7 +209,7 @@ export default (options = {}) => (WrappedComponent) => {
             const {
                 title,
                 metas
-            } = doPageinfo(store, getRenderPropsFromComponentProps(this.props))
+            } = doPageinfo(store, getRenderPropsFromComponentProps(this.props), pageinfo)
             clientUpdatePageInfo(title, metas)
         }
 
@@ -265,7 +268,7 @@ export default (options = {}) => (WrappedComponent) => {
             this.mounted = true
 
             if (!this.state.loaded && typeof dataFetch !== 'undefined') {
-                doFetchData(store, getRenderPropsFromComponentProps(this.props))
+                doFetchData(store, getRenderPropsFromComponentProps(this.props), dataFetch)
                     .then(() => {
                         if (!this.mounted) return
                         this.setState({
