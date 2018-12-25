@@ -32,9 +32,9 @@ const projectsToUse = projects.filter(project => (
     project.name === 'standard'
 ))
 
+const commandTestBuild = 'koot-buildtest'
 /** @type {Boolean} 是否进行完整测试。如果为否，仅测试一次打包结果 */
 const fullTest = true
-const commandTestBuild = 'koot-buildtest'
 const headless = true
 
 //
@@ -127,6 +127,12 @@ const doTest = async (port, settings = {}) => {
         i18nUseRouter = false
     } = settings
 
+    const getLocaleId = async (page) => {
+        return await page.evaluate(() =>
+            document.querySelector('meta[name="koot-locale-id"]').getAttribute('content')
+        )
+    }
+
     // 测试: 同构结果
     {
         const res = await page.goto(origin, {
@@ -168,7 +174,7 @@ const doTest = async (port, settings = {}) => {
             await page.goto(gotoUrl, {
                 waitUntil: 'networkidle0'
             })
-            const theLocaleId = await page.evaluate(() => document.querySelector('meta[name="koot-locale-id"]').getAttribute('content'))
+            const theLocaleId = await getLocaleId(page)
             expect(theLocaleId).toBe(localeId)
         }
         await testLocaleIdByQuery('zh')
@@ -217,6 +223,37 @@ const doTest = async (port, settings = {}) => {
         await testLinksToOtherLang('', '?test=a')
         await testLinksToOtherLang('zh', '?test=a')
         await testLinksToOtherLang('zh-tw', '?test=a')
+    }
+
+    // 测试: 并发请求 state 是否正确
+    {
+        await Promise.all([
+            new Promise(async resolve => {
+                const pageDelayed = await browser.newPage()
+                const localeIdDelayed = 'en'
+                const gotoUrlDelayed = i18nUseRouter
+                    ? `${origin}/${localeIdDelayed}/delayed`
+                    : `${origin}/delayed?${changeLocaleQueryKey}=${localeIdDelayed}`
+                await pageDelayed.goto(gotoUrlDelayed, {
+                    waitUntil: 'networkidle0'
+                })
+                const theLocaleId = await getLocaleId(pageDelayed)
+                expect(theLocaleId).toBe(localeIdDelayed)
+                resolve()
+            }),
+            new Promise(async resolve => {
+                const localeId = 'zh'
+                const gotoUrl = i18nUseRouter
+                    ? `${origin}/${localeId}`
+                    : `${origin}?${changeLocaleQueryKey}=${localeId}`
+                await page.goto(gotoUrl, {
+                    waitUntil: 'networkidle0'
+                })
+                const theLocaleId = await getLocaleId(page)
+                expect(theLocaleId).toBe(localeId)
+                resolve()
+            })
+        ])
     }
 
     // TODO: 测试: 静态文件访问
@@ -439,11 +476,11 @@ describe('测试: React 同构项目', async () => {
                 })
                 test(`[Production] 打包并运行生产模式 (i18n.use="router")`, async () => {
                     await beforeTest(dir)
-    
+
                     const commandName = `${commandTestBuild}-isomorphic-start-i18n_use_router`
                     const command = `koot-start --koot-test --config koot.config.i18n-use-router.js`
                     await addCommand(commandName, command, dir)
-    
+
                     const child = execSync(
                         `npm run ${commandName}`,
                         {
@@ -451,20 +488,20 @@ describe('测试: React 同构项目', async () => {
                         },
                     )
                     const errors = []
-    
+
                     await waitForPort(child)
                     const port = await getPortFromConfig(dir)
                     child.stderr.on('data', err => {
                         errors.push(err)
                     })
-    
+
                     expect(errors.length).toBe(0)
-    
+
                     await doTest(port, {
                         i18nUseRouter: true
                     })
                     await terminate(child.pid)
-    
+
                     await afterTest(dir, '[Production] 打包并运行生产模式 (i18n.use="router")')
                 })
                 test(`[Development] 启动开发模式并访问 (i18n.use="router")`, async () => {
