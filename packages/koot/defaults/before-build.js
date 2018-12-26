@@ -12,12 +12,17 @@ module.exports = {
         ['name', ''],
         ['type', 'react'],
         ['template', ''],
-        ['router', ''],
-        ['redux', {}],
+        ['templateInject', ''],
+        ['routes', ''],
+        ['historyType', ''],
+        ['store', ''],
+        ['cookiesToStore', ''],
         ['client', {}],
         ['server', {}]
     ],
     typesSPA: [
+        'spa',
+        'reactspa',
         'react-spa'
     ],
 

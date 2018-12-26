@@ -5,6 +5,11 @@ const validateConfig = require('../../../packages/koot/libs/validate-config')
 
 const samplesDir = path.resolve(__dirname, 'samples')
 const samples = fs.readdirSync(samplesDir)
+    .filter(filename => {
+        const file = path.resolve(samplesDir, filename)
+        const lstat = fs.lstatSync(file)
+        return !lstat.isDirectory()
+    })
     .map(filename => ({
         name: path.parse(filename).name,
         file: path.resolve(samplesDir, filename),
@@ -30,8 +35,8 @@ const validateSample = async (sample) => {
     debug.enable(name)
     log('')
 
-    if (name !== 'full-0.7')
-        return log('not 0.7. exit')
+    // if (name !== 'full-0.7')
+    //     return log('not 0.7. exit')
 
     const resultDir = path.resolve(samplesDir, name)
     await fs.ensureDir(resultDir)

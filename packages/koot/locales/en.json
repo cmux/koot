@@ -5,6 +5,12 @@
         "ReactApp": "React Isomorphic",
         "ReactSPA": "React SPA"
     },
+    "validateConfig": {
+        "error": {
+            "config_file_not_found": "Configuration file not found!",
+            "config_file_old": "Old version of configuration file is not supported!"
+        }
+    },
     "build": {
         "config_type_error": "Error: build config file (${file}) must export ${type}",
         "build_start": "Start building: ${type} [STAGE ${stage} | ENV ${env}]",
