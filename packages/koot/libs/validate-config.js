@@ -20,24 +20,35 @@ const {
 /**
  * 根据 koot.config.js 生成 koot.js 和打包配置对象
  * 
- * 如果项目采用 0.6 之后的配置方式 (使用 koot.config.js，其中有全部配置项)，以下内容会写入环境变量
- *   - KOOT_PROJECT_CONFIG_FULL_PATHNAME - 项目配置文件 (临时文件)
+ * **以下内容写入环境变量**
+ * - `KOOT_PROJECT_CONFIG_FULL_PATHNAME` 项目配置文件路径，包含所有需要引用的内容 (临时使用)
+ * - `KOOT_PROJECT_CONFIG_PORTION_PATHNAME` 项目配置文件路径，包含部分需要引用的内容 (临时使用)
  * 
- * 项目配置：在 0.6 之前为 koot.js，0.6 之后为自动生成的临时配置文件
- *   - 使用临时配置文件是为了兼容 0.6 之前的行为
- *   - TODO: 在未来可能会抛弃独立配置文件行为，界时该方法会改写
+ * **兼容情况** * 
+ * - _0.8_: 当前版本
+ * - _0.6_: 完全兼容
+ * - _更早期_: 已放弃兼容
  * 
  * @async
+ * @param {String} [projectDir] 项目根目录
+ * @param {Object} [options={}]
+ * @param {String} [options.configFilename=koot.config.js] 配置文件文件名
+ * @param {String} [options.tmpDir] 存放临时文件的目录
  * @returns {Object} 打包配置对象
  */
-module.exports = async (projectDir = getCwd()) => {
+module.exports = async (projectDir = getCwd(), options = {}) => {
+
+    const {
+        configFilename = 'koot.config.js',
+        tmpDir
+    } = options
 
     // const ENV = process.env.WEBPACK_BUILD_ENV
 
     /** @type {String} 完整配置文件路径名 */
     let fileFullConfig = typeof process.env.KOOT_BUILD_CONFIG_PATHNAME === 'string'
         ? process.env.KOOT_BUILD_CONFIG_PATHNAME
-        : path.resolve(projectDir, 'koot.config.js')
+        : path.resolve(projectDir, configFilename)
 
     // 如果完整配置文件不存在，转为旧模式 (koot.js + koot.build.js)
     if (!fs.existsSync(fileFullConfig)) {
@@ -65,7 +76,7 @@ module.exports = async (projectDir = getCwd()) => {
 
     if (isFullConfig) {
 
-        const dirConfigTemp = path.resolve(projectDir, _dirConfigTemp)
+        const dirConfigTemp = tmpDir || path.resolve(projectDir, _dirConfigTemp)
         await fs.ensureDir(dirConfigTemp)
 
         /** @type {Boolean} 当前项目是否是 SPA */

@@ -11,6 +11,10 @@ const path = require('path')
 
 module.exports = {
 
+    /**************************************************************************
+     * 项目信息
+     *************************************************************************/
+
     name: 'Koot Boilerplate (Legacy)',
     type: 'react',
     dist: './dist',
@@ -28,24 +32,8 @@ module.exports = {
         ['zh', './src/locales/zh.json'],
         ['en', './src/locales/en.json'],
     ],
-    // i18n: {
-    //     type: 'redux', // 仅影响 client-prod 环境
-    //     locales: [
-    //         ['zh', './src/locales/zh.json'],
-    //         ['en', './src/locales/en.json'],
-    //     ]
-    // },
 
-    pwa: {
-        // auto: true,
-        // pathname: '/service-worker.js',
-        // template: path.resolve('./src/sw-template.js'),
-        // initialCache: '/**/*',
-        // initialCacheAppend: [// real urls],
-        initialCacheIgonre: [
-            '/dev-*',
-        ]
-    },
+    pwa: true,
 
     aliases: {
         '@src': path.resolve('./src'),
@@ -65,6 +53,124 @@ module.exports = {
     },
 
     staticCopyFrom: path.resolve(__dirname, './public'),
+
+
+
+
+
+
+
+
+
+
+    /**************************************************************************
+     * Webpack 相关
+     *************************************************************************/
+
+    webpackConfig: async () => {
+        const ENV = process.env.WEBPACK_BUILD_ENV
+        if (ENV === 'dev') return await require('./config/webpack/dev')
+        if (ENV === 'prod') return await require('./config/webpack/prod')
+        return {}
+    },
+    webpackBefore: async (/* kootConfig */) => {
+        console.log('\n\n💢 webpackBefore')
+        if (process.env.WEBPACK_BUILD_STAGE === 'client') {
+            const dist = process.env.KOOT_DIST_DIR
+            await fs.remove(path.resolve(dist, 'public'))
+            await fs.remove(path.resolve(dist, 'server'))
+        }
+        return
+    },
+    webpackAfter: async () => {
+        console.log('\n\n💢 webpackAfter')
+        return
+    },
+    moduleCssFilenameTest: /\.(component|module)/,
+    internalLoaderOptions: {
+        'less-loader': {
+            modifyVars: {
+                'color-background': '#faa'
+            },
+        }
+    },
+
+
+
+
+
+
+
+
+
+
+    /**************************************************************************
+     * 客户端生命周期
+     *************************************************************************/
+
+    before: './src/services/lifecycle/before',
+    after: './src/services/lifecycle/after',
+    onRouterUpdate: './src/services/lifecycle/on-router-update',
+    onHistoryUpdate: './src/services/lifecycle/on-history-update',
+
+
+
+
+
+
+
+
+
+
+    /**************************************************************************
+     * 服务器端设置 & 生命周期
+     *************************************************************************/
+
+    port: 8080,
+    renderCache: {
+        maxAge: 10 * 1000,
+    },
+    proxyRequestOrigin: {
+        protocol: 'koot',
+    },
+    koaStatic: {
+        maxage: 0,
+        hidden: true,
+        index: 'test.photo.jpg',
+        defer: false,
+        gzip: true,
+        extensions: false
+    },
+    serverBefore: './server/lifecycle/before',
+    serverAfter: './server/lifecycle/after',
+    serverOnRender: './server/lifecycle/on-render',
+
+
+
+
+
+
+
+
+
+
+    /**************************************************************************
+     * 开发模式
+     *************************************************************************/
+
+    devPort: 3080,
+    devDLL: [
+        'react',
+        'react-dom',
+        'redux',
+        'redux-thunk',
+        'react-redux',
+        'react-router',
+        'react-router-redux',
+        'koot',
+    ],
+    devHMR: {},
+    devServer: {},
 
 
 
@@ -99,12 +205,12 @@ module.exports = {
      * @property {Pathname} [onRouterUpdate] - 回调函数：在路由发生改变时
      * @property {Pathname} [onHistoryUpdate] - 回调函数：在浏览器历史发生改变时时
      */
-    client: {
-        before: './src/services/lifecycle/before',
-        after: './src/services/lifecycle/after',
-        onRouterUpdate: './src/services/lifecycle/on-router-update',
-        onHistoryUpdate: './src/services/lifecycle/on-history-update',
-    },
+    // client: {
+    //     before: './src/services/lifecycle/before',
+    //     after: './src/services/lifecycle/after',
+    //     onRouterUpdate: './src/services/lifecycle/on-router-update',
+    //     onHistoryUpdate: './src/services/lifecycle/on-history-update',
+    // },
 
     /** 
      * @type {(Object)} 服务器端端相关配置
@@ -123,27 +229,27 @@ module.exports = {
      * @property {Pathname:Function} [after] - 回调：在服务器启动完成
      * @property {Pathname:Function} [onRender] - 回调：在页面渲染时
      */
-    server: {
-        koaStatic: {
-            maxage: 0,
-            hidden: true,
-            index: 'index.html',
-            defer: false,
-            gzip: true,
-            extensions: false
-        },
-        renderCache: {
-            maxAge: 10 * 1000,
-        },
-        proxyRequestOrigin: {
-            // protocol: 'https',
-        },
-        // reducers: './server/reducers',
-        inject: './server/inject',
-        before: './server/lifecycle/before',
-        after: './server/lifecycle/after',
-        onRender: './server/lifecycle/on-render',
-    },
+    // server: {
+    //     koaStatic: {
+    //         maxage: 0,
+    //         hidden: true,
+    //         index: 'index.html',
+    //         defer: false,
+    //         gzip: true,
+    //         extensions: false
+    //     },
+    //     renderCache: {
+    //         maxAge: 10 * 1000,
+    //     },
+    //     proxyRequestOrigin: {
+    //         // protocol: 'https',
+    //     },
+    //     // reducers: './server/reducers',
+    //     inject: './server/inject',
+    //     before: './server/lifecycle/before',
+    //     after: './server/lifecycle/after',
+    //     onRender: './server/lifecycle/on-render',
+    // },
 
     /** 
      * @type {Object} Webpack 相关配置
@@ -154,35 +260,18 @@ module.exports = {
      * @property {Object} defines 扩展 webpack.DefinePlugin 的内容
      * @property {String[]} dll [仅开发模式] 供 webpack.DllPlugin 使用。webpack 的监控不会处理这些库/library，以期提高开发模式的打包更新速度
      */
-    webpack: {
-        config: async () => {
-            const ENV = process.env.WEBPACK_BUILD_ENV
-            if (ENV === 'dev') return await require('./config/webpack/dev')
-            if (ENV === 'prod') return await require('./config/webpack/prod')
-            return {}
-        },
-        beforeBuild: async (/*args*/) => {
-            if (process.env.WEBPACK_BUILD_STAGE === 'client') {
-                const dist = process.env.KOOT_DIST_DIR
-                await fs.remove(path.resolve(dist, 'public'))
-                await fs.remove(path.resolve(dist, 'server'))
-            }
-            return
-        },
-        afterBuild: async () => {
-            return
-        },
-        dll: [
-            'react',
-            'react-dom',
-            'redux',
-            'redux-thunk',
-            'react-redux',
-            'react-router',
-            'react-router-redux',
-            'koot',
-        ]
-    },
+    // webpack: {
+    //     dll: [
+    //         'react',
+    //         'react-dom',
+    //         'redux',
+    //         'redux-thunk',
+    //         'react-redux',
+    //         'react-router',
+    //         'react-router-redux',
+    //         'koot',
+    //     ]
+    // },
 
     /** 
      * @type {Object}
@@ -203,19 +292,19 @@ module.exports = {
      * @property {RegExp} fileBasename.component 组件 CSS 文件，在打包时会被 koot 定制的 css-loader 处理
      * @property {Array} extract 这些文件在打包时会拆成独立文件
      */
-    css: {
-        fileBasename: {
-            normal: /^((?!\.(component|module)\.).)*/,
-            component: /\.(component|module)/,
-        },
-    },
+    // css: {
+    //     fileBasename: {
+    //         normal: /^((?!\.(component|module)\.).)*/,
+    //         component: /\.(component|module)/,
+    //     },
+    // },
 
     /** @type {(Number|Object|String)} 服务器运行端口 */
     // port: 3080,
-    port: {
-        dev: 3081,
-        prod: 8081,
-    },
+    // port: {
+    //     dev: 3081,
+    //     prod: 8081,
+    // },
 
     /** @type {(Boolean|Array[]|Object)} 多语言配置 */
     // i18n: false,
@@ -240,7 +329,7 @@ module.exports = {
      * webpack-dev-server 配置，仅在开发环境(ENV:dev)下生效
      * @type {Object}
      */
-    devServer: {},
+    // devServer: {},
 
     /** 
      * @type {String}

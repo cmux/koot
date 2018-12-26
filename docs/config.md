@@ -167,20 +167,6 @@ module.exports = {
 
 ---
 
-## Webpack 相关
-
-### webpackConfig
-
-### webpackBefore
-
-### webpackAfter
-
-### moduleCssFilesTest
-
-### internalLoaderOptions
-
----
-
 ## 客户端生命周期
 
 ### before
@@ -197,6 +183,11 @@ module.exports = {
 
 ### port
 
+- 类型: `Number`
+- 默认值: `8080`
+
+服务器启动端口号。
+
 ### renderCache
 
 ### proxyRequestOrigin
@@ -211,13 +202,33 @@ module.exports = {
 
 ---
 
-## 开发模式
+## Webpack 相关
+
+### webpackConfig
+
+### webpackBefore
+
+### webpackAfter
+
+### moduleCssFilenameTest
+
+### internalLoaderOptions
+
+---
+
+## 开发环境
 
 ### devPort
 
-### devDLL
+- 类型: `Number`
+- 默认值: 配置项 `port`
+- **仅针对**: 开发环境
 
-### devHMR
+开发模式端口号。
+
+### devDll
+
+### devHmr
 
 ### devServer
 
