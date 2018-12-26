@@ -13,14 +13,82 @@ module.exports = {
 
     name: 'Koot Boilerplate (Legacy)',
     type: 'react',
-    template: './src/template.ejs',
     dist: './dist',
+
+    template: './src/template.ejs',
+    templateInject: './server/inject',
 
     routes: './src/router',
     historyType: 'hash',
 
     store: './src/store/create',
-    cookiesToStore: true,
+    cookiesToStore: 'all',
+
+    i18n: [
+        ['zh', './src/locales/zh.json'],
+        ['en', './src/locales/en.json'],
+    ],
+    // i18n: {
+    //     type: 'redux', // 仅影响 client-prod 环境
+    //     locales: [
+    //         ['zh', './src/locales/zh.json'],
+    //         ['en', './src/locales/en.json'],
+    //     ]
+    // },
+
+    pwa: {
+        // auto: true,
+        // pathname: '/service-worker.js',
+        // template: path.resolve('./src/sw-template.js'),
+        // initialCache: '/**/*',
+        // initialCacheAppend: [// real urls],
+        initialCacheIgonre: [
+            '/dev-*',
+        ]
+    },
+
+    aliases: {
+        '@src': path.resolve('./src'),
+        '@assets': path.resolve('./src/assets'),
+        '@components': path.resolve('./src/components'),
+        '@constants': path.resolve('./src/constants'),
+        '@services': path.resolve('./src/services'),
+        '@store': path.resolve('./src/store'),
+        '@views': path.resolve('./src/views'),
+        '@server': path.resolve('./server'),
+        "~base.less": path.resolve('./src/constants/less/base.less'),
+        "~Assets": path.resolve('./src/assets'),
+        "~/": path.resolve('./src')
+    },
+    defines: {
+        __QA__: JSON.stringify(false),
+    },
+
+    staticCopyFrom: path.resolve(__dirname, './public'),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * @type {Object} 客户端/浏览器端相关配置
@@ -104,9 +172,6 @@ module.exports = {
         afterBuild: async () => {
             return
         },
-        defines: {
-            __QA__: JSON.stringify(false),
-        },
         dll: [
             'react',
             'react-dom',
@@ -129,19 +194,6 @@ module.exports = {
      * 
      * 建议使用绝对路径
      */
-    aliases: {
-        '@src': path.resolve('./src'),
-        '@assets': path.resolve('./src/assets'),
-        '@components': path.resolve('./src/components'),
-        '@constants': path.resolve('./src/constants'),
-        '@services': path.resolve('./src/services'),
-        '@store': path.resolve('./src/store'),
-        '@views': path.resolve('./src/views'),
-        '@server': path.resolve('./server'),
-        "~base.less": path.resolve('./src/constants/less/base.less'),
-        "~Assets": path.resolve('./src/assets'),
-        "~/": path.resolve('./src')
-    },
 
     /**
      * @type {Object} CSS 打包相关设置
@@ -167,17 +219,6 @@ module.exports = {
 
     /** @type {(Boolean|Array[]|Object)} 多语言配置 */
     // i18n: false,
-    i18n: [
-        ['zh', './src/locales/zh.json'],
-        ['en', './src/locales/en.json'],
-    ],
-    // i18n: {
-    //     type: 'redux', // 仅影响 client-prod 环境
-    //     locales: [
-    //         ['zh', './src/locales/zh.json'],
-    //         ['en', './src/locales/en.json'],
-    //     ]
-    // },
 
     /** 
      * @type {(Object|boolean)}
@@ -194,16 +235,6 @@ module.exports = {
      */
     // pwa: true, // 默认值
     // pwa: false,
-    pwa: {
-        // auto: true,
-        // pathname: '/service-worker.js',
-        // template: path.resolve('./src/sw-template.js'),
-        // initialCache: '/**/*',
-        // initialCacheAppend: [// real urls],
-        initialCacheIgonre: [
-            '/dev-*',
-        ]
-    },
 
     /** 
      * webpack-dev-server 配置，仅在开发环境(ENV:dev)下生效
@@ -215,6 +246,5 @@ module.exports = {
      * @type {String}
      * 静态资源文件存放路径，打包时会自动复制该目录下的所有文件到打包目录下，方便直接使用
      */
-    staticAssets: path.resolve(__dirname, './public'),
 
 }

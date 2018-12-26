@@ -46,7 +46,7 @@
   - `sp-css-import`
 - 更新依赖包
   - major
-    - `css-loader` -> _2.0.2_
+    - `css-loader` -> _2.1.0_
     - `file-loader` -> _3.0.1_
     - `koa-body` -> _4.0.6_
     - `koa-mount` -> _4.0.0_
