@@ -18,7 +18,7 @@
         "test:react:isomorphic": "jest ./test/cases/react-isomorphic",
         "test:react:spa": "jest ./test/cases/react-spa",
         "test:libs:validate-pathname": "jest ./test/cases/libs/validate-pathname",
-        "test:libs:validate-config": "jest ./test/cases/libs/validate-config",
+        "test:libs:validate-config": "jest ./test/cases/.+/validate-config",
         "eslint:koot": "eslint \"packages/koot/!(node_modules|logs|dist|dist*|test)/**/*.+(js|jsx)\""
     },
     "repository": {

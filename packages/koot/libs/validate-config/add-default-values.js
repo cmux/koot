@@ -24,7 +24,7 @@ module.exports = async (projectDir, config) => {
     }
 
     if (!config.webpackConfig) {
-        config.webpackConfig = (() => {
+        config.webpackConfig = () => {
             if (process.env.WEBPACK_BUILD_ENV === 'dev')
                 return {}
             return {
@@ -51,6 +51,6 @@ module.exports = async (projectDir, config) => {
                     }
                 }
             }
-        })()
+        }
     }
 }

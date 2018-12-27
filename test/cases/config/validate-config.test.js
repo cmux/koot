@@ -27,7 +27,11 @@ const run = async () => {
     }
 }
 const validateSample = async (sample) => {
-    console.log('')
+    // console.log('')
+
+    // 重置环境变量
+    delete process.env.KOOT_PROJECT_CONFIG_FULL_PATHNAME
+    delete process.env.KOOT_PROJECT_CONFIG_PORTION_PATHNAME
 
     const { name, file, filename } = sample
 
@@ -47,16 +51,54 @@ const validateSample = async (sample) => {
         tmpDir: resultDir
     })
 
-    log(kootConfig)
+    // log(kootConfig)
 
     // await fs.remove(resultDir)
 }
-run()
+// run()
 
 
 // ============================================================================
 
-return
+// return
 
 describe('测试: 验证配置 (生成临时的核心代码引用文件，返回其他配置对象)', async () => {
+    for (const { name, file, filename } of samples) {
+
+        test(`类型: ${name}`, async () => {
+
+            const resultDir = path.resolve(samplesDir, name)
+            await fs.ensureDir(resultDir)
+            await fs.emptyDir(resultDir)
+
+            let err
+            let kootConfig
+            try {
+                kootConfig = await validateConfig(samplesDir, {
+                    configFilename: filename,
+                    tmpDir: resultDir
+                })
+            } catch (e) {
+                err = e
+            }
+
+            expect(typeof err).toBe('undefined')
+
+            expect(typeof kootConfig).toBe('object')
+            expect(typeof kootConfig.template).toBe('string')
+            expect(typeof kootConfig.routes).toBe('string')
+            expect(typeof kootConfig.store).toBe('string')
+            expect(typeof kootConfig.type).toBe('string')
+            expect(typeof kootConfig.dist).toBe('string')
+            expect(typeof kootConfig.cookiesToStore !== 'undefined').toBe(true)
+            expect(typeof kootConfig.i18n !== 'undefined').toBe(true)
+            expect(typeof kootConfig.pwa !== 'undefined').toBe(true)
+            expect(typeof kootConfig.aliases === 'object' && !Array.isArray(kootConfig.aliases)).toBe(true)
+            expect(typeof kootConfig.defines === 'object' && !Array.isArray(kootConfig.defines)).toBe(true)
+            expect(typeof kootConfig.port).toBe('number')
+            expect(kootConfig.moduleCssFilenameTest).toBeInstanceOf(RegExp)
+            expect(typeof kootConfig.devPort).toBe('number')
+            expect(typeof kootConfig.webpackConfig).toBe('function')
+        })
+    }
 })

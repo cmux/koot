@@ -1,82 +1,133 @@
+const path = require('path')
 const { typesSPA } = require('../../defaults/before-build')
+const validatePathname = require('../../libs/validate-pathname')
 
 /**
  * 从配置中抽取代码中引用的配置文件 (这些文件将存放到临时目录中)
  * @async
+ * @param {String} projectDir
  * @param {Object} config
  * @returns {Object}
  */
-module.exports = async (config) => {
-    // 代码中引用的配置文件
-    const tmpConfig = {
-        name: config.name || '',
-        type: config.type,
-        template: config.template,
-        router: config.routes,
-        redux: (() => {
-            const redux = {}
+module.exports = async (projectDir, config) => {
 
-            if (config.store) redux.store = config.store
-            else if (config.reducers) redux.combineReducers = config.reducers
+    /** @type {Object} 引用配置的配置对象 */
+    const tmpConfig = (() => {
+        const obj = {
+            name: config.name || '',
+            type: config.type,
+            template: config.template,
+            router: config.routes,
+            redux: (() => {
+                const redux = {}
 
-            if (config.cookiesToStore) redux.syncCookie = config.cookiesToStore
+                if (config.store) redux.store = config.store
+                else if (config.reducers) redux.combineReducers = config.reducers
 
-            return redux
-        })(),
-        client: (() => {
-            const client = {}
-            if (config.historyType) client.historyType = config.historyType
-            if (config.before) client.before = config.before
-            if (config.after) client.after = config.after
-            if (config.onRouterUpdate) client.onRouterUpdate = config.onRouterUpdate
-            if (config.onHistoryUpdate) client.onHistoryUpdate = config.onHistoryUpdate
-            return client
-        })()
-    }
-    const tmpConfigPortion = {
-        template: tmpConfig.template,
-        redux: tmpConfig.redux
-    }
+                if (config.cookiesToStore) redux.syncCookie = config.cookiesToStore
 
-    if (typesSPA.includes(config.type)) {
-        if (config.templateInject) tmpConfig.inject = config.templateInject
-    }
-    if (process.env.WEBPACK_BUILD_STAGE === 'server') {
-        tmpConfig.server = (() => {
-            const server = {}
-            if (config.koaStatic) server.koaStatic = config.koaStatic
-            if (config.renderCache) server.renderCache = config.renderCache
-            if (config.proxyRequestOrigin) server.proxyRequestOrigin = config.proxyRequestOrigin
-            if (config.templateInject) server.inject = config.templateInject
-            if (config.serverBefore) server.before = config.serverBefore
-            if (config.serverAfter) server.after = config.serverAfter
-            if (config.serverOnRender) server.onRender = config.serverOnRender
-            return server
-        })()
-        tmpConfigPortion.server = tmpConfig.server
-    }
+                return redux
+            })(),
+            client: (() => {
+                const client = {}
+                if (config.historyType) client.historyType = config.historyType
+                if (config.before) client.before = config.before
+                if (config.after) client.after = config.after
+                if (config.onRouterUpdate) client.onRouterUpdate = config.onRouterUpdate
+                if (config.onHistoryUpdate) client.onHistoryUpdate = config.onHistoryUpdate
+                return client
+            })()
+        }
 
-    const optionsNeedImport = [
-        'router',
-        'redux.combineReducers',
-        'redux.store',
-        'client.before',
-        'client.after',
-        'client.onRouterUpdate',
-        'client.onHistoryUpdate',
-        'server.reducers',
-        'server.inject',
-        'server.before',
-        'server.after',
-        'server.onRender',
-        'server.onRender.beforeDataToStore',
-        'server.onRender.afterDataToStore',
-        'inject',
+        // SPA
+        if (typesSPA.includes(config.type)) {
+            if (config.templateInject) obj.inject = config.templateInject
+        } else {
+            obj.server = (() => {
+                const server = {}
+                if (config.koaStatic) server.koaStatic = config.koaStatic
+                if (config.renderCache) server.renderCache = config.renderCache
+                if (config.proxyRequestOrigin) server.proxyRequestOrigin = config.proxyRequestOrigin
+                if (config.templateInject) server.inject = config.templateInject
+                if (config.serverBefore) server.before = config.serverBefore
+                if (config.serverAfter) server.after = config.serverAfter
+                if (config.serverOnRender) server.onRender = config.serverOnRender
+                return server
+            })()
+        }
+
+        // 将所有 Pathname 字符串转为 require()
+        const optionsNeedImport = [
+            'router',
+            'redux.combineReducers',
+            'redux.store',
+            'client.before',
+            'client.after',
+            'client.onRouterUpdate',
+            'client.onHistoryUpdate',
+            'server.reducers',
+            'server.inject',
+            'server.before',
+            'server.after',
+            'server.onRender',
+            'server.onRender.beforeDataToStore',
+            'server.onRender.afterDataToStore',
+            'inject',
+        ]
+        optionsNeedImport.forEach(key => {
+            try {
+                if (eval(`typeof obj.${key} === 'string' && obj.${key}`)) {
+                    const value = eval(`obj.${key}`)
+                    const pathname = path.isAbsolute(value)
+                        ? value
+                        : validatePathname(value, projectDir).replace(/\\/g, '\\\\')
+                    const result = path.isAbsolute(pathname)
+                        ? pathname
+                        : ('../../../' + pathname.replace(/^\.\//, ''))
+                    eval(`obj.${key} = \`require('${result}').default\``)
+                }
+            } catch (e) { }
+        })
+
+        return obj
+    })()
+
+    /** @type {String[]} 引用配置 (部分) 需要的配置项 */
+    const propertiesPortion = [
+        'template',
+        'redux',
+        'server'
     ]
 
-    Object.keys(config).forEach(key => {
-
+    /** @type {Object} 引用配置 (部分) 的配置对象 */
+    const tmpConfigPortion = {}
+    propertiesPortion.forEach(key => {
+        if (typeof tmpConfig[key] === 'object')
+            tmpConfigPortion[key] = { ...tmpConfig[key] }
+        else if (tmpConfig[key])
+            tmpConfigPortion[key] = tmpConfig[key]
     })
+    if (typeof tmpConfigPortion.server === 'object')
+        delete tmpConfigPortion.server.onRender
 
-    return { tmpConfig, tmpConfigPortion }
+    /**
+     * 将对象结果转为字符串
+     * @param {Object} config 
+     * @returns {String}
+     */
+    const transform = (config) => {
+        return Object.keys(config)
+            .map(key => {
+                if (key === 'server')
+                    return `export const ${key} = __SERVER__ ? ${JSON.stringify(config[key])} : {};`
+                return `export const ${key} = ${JSON.stringify(config[key])};`
+            })
+            .join('\n')
+            .replace(/"require\((.+?)\).default"/g, `require($1).default`)
+    }
+
+    return {
+        tmpConfig: '// 核心代码中引用的配置文件\n\n' + transform(tmpConfig),
+        tmpConfigPortion: '// 核心代码中引用的配置文件 (部分)\n\n' + transform(tmpConfigPortion)
+    }
 }

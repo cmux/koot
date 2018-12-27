@@ -4,18 +4,18 @@ module.exports = {
     cookiesToStore: true,
     i18n: false,
     pwa: true,
-    aliases: [],
-    defines: [],
+    aliases: {},
+    defines: {},
 
-    before: () => { },
-    after: () => { },
-    onRouterUpdate: () => { },
-    onHistoryUpdate: () => { },
+    // before: '',
+    // after: '',
+    // onRouterUpdate: '',
+    // onHistoryUpdate: '',
 
     port: 8080,
-    serverBefore: () => { },
-    serverAfter: () => { },
-    serverOnRender: () => { },
+    // serverBefore: '',
+    // serverAfter: '',
+    // serverOnRender: '',
 
     moduleCssFilenameTest: /\.(component|module)/,
 
