@@ -247,8 +247,11 @@ export default (options = {}) => (WrappedComponent) => {
          */
         getStyleMap(/*context*/) {
             // console.log('extend', { LocaleId })
-            if (typeof __KOOT_SSR__ === 'object') {
-                return __KOOT_SSR__.styleMap
+            if (__SERVER__) {
+                if (__DEV__)
+                    return global.__KOOT_SSR__.styleMap
+                if (typeof __KOOT_SSR__ === 'object')
+                    return __KOOT_SSR__.styleMap
             }
             return styleMap
             // return context

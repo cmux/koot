@@ -8,7 +8,9 @@
  */
 const getLocalesObject = () => {
     if (__SERVER__) {
-        if (typeof __KOOT_SSR__ === 'object')
+        if (__DEV__ && typeof global.__KOOT_SSR__ === 'object')
+            return global.__KOOT_SSR__.locales
+        else if (typeof __KOOT_SSR__ === 'object')
             return __KOOT_SSR__.locales
     }
     if (__CLIENT__) {

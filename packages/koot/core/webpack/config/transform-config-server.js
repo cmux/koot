@@ -105,7 +105,7 @@ module.exports = async (kootBuildConfig = {}) => {
     ]
     const otherEntries = {}
     const fileSSR = path.resolve(__dirname, '../../../', appType, './server/ssr.js')
-    if (fs.existsSync(fileSSR)) {
+    if (ENV === 'dev' && fs.existsSync(fileSSR)) {
         otherEntries.ssr = [fileSSR]
         // result.plugins.push(
         //     new ExtraWatchWebpackPlugin({

@@ -44,7 +44,21 @@ const ssr = async (__KOOT_SSR__) => new Promise(async resolve => {
         LocaleId: __KOOT_LOCALEID__,
     } = __KOOT_SSR__
 
-    // if (__DEV__) {
+    if (__DEV__) {
+        global.__KOOT_STORE__ = __KOOT_STORE__
+        global.__KOOT_HISTORY__ = __KOOT_HISTORY__
+        global.__KOOT_LOCALEID__ = __KOOT_LOCALEID__
+        global.__KOOT_SSR__ = __KOOT_SSR__
+        await require('../../ssr').default()
+    } else {
+        try {
+            eval(__KOOT_SSR_FILE_CONTENT__)
+        } catch (err) {
+            resolve({
+                error: err
+            })
+        }
+    }
     //     const sandbox = {
     //         __KOOT_STORE__,
     //         __KOOT_HISTORY__,
@@ -55,13 +69,6 @@ const ssr = async (__KOOT_SSR__) => new Promise(async resolve => {
     //     // vm.runInThisContext(__KOOT_SSR_FILE_CONTENT__, sandbox)(require)
     //     vm.runInThisContext(__KOOT_SSR_FILE_CONTENT__)(require)
     // } else {
-    try {
-        eval(__KOOT_SSR_FILE_CONTENT__)
-    } catch (err) {
-        resolve({
-            error: err
-        })
-    }
     // }
 
     // const set = () => setTimeout(() => {

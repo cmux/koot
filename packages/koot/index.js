@@ -22,6 +22,8 @@ export const localeId = (() => {
     if (__CLIENT__)
         return window.__KOOT_LOCALEID__ || ''
     if (__SERVER__) {
+        if (__DEV__)
+            return global.__KOOT_LOCALEID__
         if (typeof __KOOT_LOCALEID__ === 'undefined')
             return ''
         return __KOOT_LOCALEID__ || ''
@@ -31,6 +33,8 @@ export const store = (() => {
     if (__CLIENT__)
         return window.__KOOT_STORE__
     if (__SERVER__) {
+        if (__DEV__)
+            return global.__KOOT_STORE__
         if (typeof __KOOT_STORE__ === 'undefined')
             return ''
         return __KOOT_STORE__
@@ -40,6 +44,8 @@ export const history = (() => {
     if (__CLIENT__)
         return window.__KOOT_HISTORY__
     if (__SERVER__) {
+        if (__DEV__)
+            return global.__KOOT_HISTORY__
         if (typeof __KOOT_HISTORY__ === 'undefined')
             return ''
         return __KOOT_HISTORY__
