@@ -23,7 +23,6 @@ module.exports = {
     templateInject: './server/inject',
 
     routes: './src/router',
-    historyType: 'hash',
 
     store: './src/store/create',
     cookiesToStore: 'all',
@@ -90,7 +89,7 @@ module.exports = {
     internalLoaderOptions: {
         'less-loader': {
             modifyVars: {
-                'color-background': '#faa'
+                'color-background': '#dfd'
             },
         }
     },

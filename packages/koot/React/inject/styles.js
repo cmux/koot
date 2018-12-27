@@ -47,5 +47,9 @@ const getExtracted = (localeId, compilation) => {
     if (process.env.WEBPACK_BUILD_ENV === 'dev' && process.env.WEBPACK_BUILD_TYPE !== 'spa')
         return `<link id="__koot-extracted-styles" media="all" rel="stylesheet" href="${getClientFilePath(filename, localeId)}" />`
 
-    return `<style id="__koot-extracted-styles" type="text/css">${readClientFile(filename, localeId, compilation)}</style>`
+    const content = readClientFile(filename, localeId, compilation)
+    // 如果内容大于 50k
+    if (content.length > 50 * 1000)
+        return `<link id="__koot-extracted-styles" media="all" rel="stylesheet" href="${getClientFilePath(filename, localeId)}" />`
+    return `<style id="__koot-extracted-styles" type="text/css">${content}</style>`
 }

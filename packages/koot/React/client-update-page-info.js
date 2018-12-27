@@ -3,6 +3,8 @@ let currentMetaTags
 // meta 标签区域结尾的 HTML 注释代码
 let nodeCommentEnd
 
+let inited = false
+
 /**
  * (浏览器环境) 更新页面信息
  * @param {String} title
@@ -10,6 +12,10 @@ let nodeCommentEnd
  */
 export default (title, metas = []) => {
     if (__SERVER__) return
+    if (!inited) {
+        inited = true
+        return
+    }
 
     // 替换页面标题
     document.title = title
