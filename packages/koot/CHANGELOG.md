@@ -67,6 +67,7 @@
     - `koa` -> _2.6.2_
     - `less` -> _3.9.0_
     - `mini-css-extract-plugin` -> _0.5.0_
+    - `os-locale` -> _3.1.0_
     - `react` -> _16.7.0_
     - `react-dom` -> _16.7.0_
     - `react-hot-loader` -> _4.6.3_
