@@ -37,7 +37,13 @@ module.exports = async (kootConfig = {}) => {
     } = process.env
 
     const defaultPublicDirName = 'includes'
-    const defaultPublicPathname = (TYPE === 'spa' ? '' : '/') + `${defaultPublicDirName}/`
+    const defaultPublicPathname = (() => {
+        if (TYPE === 'spa' && /^browser/.test(process.env.KOOT_HISTORY_TYPE))
+            return `/${defaultPublicDirName}/`
+        if (TYPE === 'spa')
+            return `${defaultPublicDirName}/`
+        return `/${defaultPublicDirName}/`
+    })()
 
     // 抽取配置
     const kootBuildConfig = Object.assign({}, defaults, kootConfig, {

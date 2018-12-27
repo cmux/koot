@@ -15,7 +15,7 @@ const log = require('../../libs/log')
 const __ = require('../../utils/translate')
 
 /**
- * 根据 koot.config.js 生成 koot.js 和打包配置对象
+ * 根据 koot.config.js 生成 koot.js 和打包配置对象，并将必要信息写入环境变量
  * 
  * 根据以下优先级查找配置文件
  * 1. `process.env.KOOT_BUILD_CONFIG_PATHNAME`

@@ -113,16 +113,7 @@ const plugins = async (env, stage, defines = {}/*, remainingKootBuildConfig = {}
         // "WEBPACK_SERVER_PUBLIC_PATH",
     ]
 
-    const historyType = await (async () => {
-        if (stage === 'server')
-            return 'memoryHistory'
-
-        const {
-            historyType = process.env.WEBPACK_BUILD_TYPE === 'spa' ? 'hash' : 'browser'
-        } = (await readBaseConfig('client') || {})
-        const type = historyType.replace(/history$/i, '')
-        return `${type}History`
-    })()
+    const historyType = process.env.KOOT_HISTORY_TYPE
 
     const moduleReplacements = [
         [/^__KOOT_PROJECT_CONFIG_FULL_PATHNAME__$/, getPathnameProjectConfigFile()],

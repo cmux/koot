@@ -55,6 +55,9 @@ module.exports = () => {
         // 项目类型。默认不存在。如果存在则默认使用
         // KOOT_PROJECT_TYPE: ...,
 
+        // history 类型
+        // KOOT_HISTORY_TYPE: ...,
+
         // 总开关：i18n/多语言相关处理
         KOOT_I18N: JSON.stringify(false),
         // i18n处理方式

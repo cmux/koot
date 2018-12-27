@@ -61,7 +61,7 @@ module.exports = {
      * @property {Pathname} [onHistoryUpdate] - 回调函数：在浏览器历史发生改变时时
      */
     client: {
-        // historyType: 'hash',
+        historyType: 'browser',
         before: './src/services/lifecycle/before',
         after: './src/services/lifecycle/after',
         onRouterUpdate: './src/services/lifecycle/on-router-update',

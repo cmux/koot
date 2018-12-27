@@ -27,6 +27,7 @@ const readBaseConfig = require('../../utils/read-base-config')
 const _log = require('../../libs/log')
 const elapse = require('../../libs/elapse.js')
 const emptyTempConfigDir = require('../../libs/empty-temp-config-dir')
+const getHistoryTypeFromConfig = require('../../libs/get-history-type-from-config')
 
 const createWebpackConfig = require('./config/create')
 const validateWebpackDevServerPort = require('./config/validate-webpack-dev-server-port')
@@ -294,6 +295,9 @@ module.exports = async (kootConfig = {}) => {
             }
         }
     }
+
+    // 确定 history 类型
+    process.env.KOOT_HISTORY_TYPE = await getHistoryTypeFromConfig(kootConfig)
 
 
 
