@@ -14,7 +14,8 @@
 module.exports = async (config) => {
 
     if (typeof config.port === 'string' || typeof config.port === 'number') {
-        config.devPort = config.port
+        if (!config.devPort)
+            config.devPort = config.port
     } else if (typeof config.port === 'object') {
         config.devPort = config.port.dev
         config.port = config.port.prod

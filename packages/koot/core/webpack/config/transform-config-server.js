@@ -98,9 +98,9 @@ module.exports = async (kootBuildConfig = {}) => {
 
     // entry / 入口
     const entryIndex = [
-        '@babel/register',
+        // '@babel/register',
         '@babel/polyfill',
-        path.resolve(__dirname, '../../../defaults/server-stage-0.js'),
+        // path.resolve(__dirname, '../../../defaults/server-stage-0.js'),
         path.resolve(__dirname, '../../../', appType, './server')
     ]
     const otherEntries = {}

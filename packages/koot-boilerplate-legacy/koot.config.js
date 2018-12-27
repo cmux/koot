@@ -166,7 +166,6 @@ module.exports = {
         'react-redux',
         'react-router',
         'react-router-redux',
-        'koot',
     ],
     devHMR: {},
     devServer: {},

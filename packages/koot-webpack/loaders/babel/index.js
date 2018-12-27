@@ -26,23 +26,24 @@ module.exports = require("babel-loader").custom(babel => {
 
             const { presets, plugins, ...options } = cfg.options
 
-            const newPresets = presets.map(preset => {
-                if (typeof preset.file === 'object' &&
-                    /^@babel\/preset-env$/.test(preset.file.request)
-                ) {
-                    if (!preset.options)
-                        preset.options = {}
-                    if (process.env.WEBPACK_BUILD_STAGE === 'server') {
-                        preset.options.modules = 'auto'
-                        // preset.options.targets = {
-                        //     node: "8"
-                        // }
-                        // console.log(preset.options)
-                    }
-                    return preset
-                }
-                return preset
-            })
+            const newPresets = [...presets]
+            // .filter(preset => {
+            //     if (typeof preset.file === 'object' &&
+            //         /^@babel\/preset-env$/.test(preset.file.request) &&
+            //         process.env.WEBPACK_BUILD_STAGE === 'server'
+            //     ) return false
+            //     return true
+            // })
+            // .map(preset => {
+            //     if (typeof preset.file === 'object' &&
+            //         /^@babel\/preset-env$/.test(preset.file.request)
+            //     ) {
+            //         if (!preset.options)
+            //             preset.options = {}
+            //         return preset
+            //     }
+            //     return preset
+            // })
 
             /** @type {Boolean} 已有的 plugin 中是否存在 `react-hot-loader/babel` */
             let hasRHL = false
@@ -76,6 +77,13 @@ module.exports = require("babel-loader").custom(babel => {
             //         return plugin.file.request
             //     })
             // })
+            // console.log(
+            //     {
+            //         ...options,
+            //         presets: newPresets,
+            //         plugins: newPlugins,
+            //     }
+            // )
             // console.log('')
 
             return {

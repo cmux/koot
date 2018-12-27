@@ -1,7 +1,7 @@
 import React from 'react'
 import { extend } from 'koot'
 
-export default extend({
+const PageStatic = extend({
     pageinfo: (/*state, renderProps*/) => ({
         title: `${__('pages.static.title')} - ${__('title')}`,
         metas: [
@@ -27,3 +27,4 @@ export default extend({
             </div>
         </div>
 )
+export default PageStatic

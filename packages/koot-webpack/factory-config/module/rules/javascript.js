@@ -28,6 +28,23 @@ module.exports = (kootBuildConfig = {}) => {
     if (env === 'dev') {
         // 不进行压缩
         useJS[0].options.compact = false
+        // if (stage === 'server') {
+        //     useJS[0].options.presets = [
+        //         // ["@babel/preset-env", {
+        //         //     "targets": {
+        //         //         "node": "current"
+        //         //     }
+        //         // }],
+        //         "@babel/preset-react",
+        //         "@babel/preset-flow"
+        //     ]
+        //     useJS[0].options.plugins = [
+        //         "@babel/plugin-transform-regenerator",
+        //         ["@babel/plugin-proposal-decorators", { "legacy": true }],
+        //         "@babel/plugin-proposal-class-properties",
+        //         "@babel/plugin-syntax-dynamic-import",
+        //     ]
+        // }
     }
 
     if (!createDll && env === 'dev' && stage === 'client') {
@@ -39,7 +56,7 @@ module.exports = (kootBuildConfig = {}) => {
             test: /\.jsx$/,
             use: [
                 ...useJS,
-                require.resolve('../../../loaders/react-hot'),
+                // require.resolve('../../../loaders/react-hot'),
             ]
         })
     } else {
