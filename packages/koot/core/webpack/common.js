@@ -113,16 +113,9 @@ const plugins = async (env, stage, defines = {}/*, remainingKootBuildConfig = {}
         // "WEBPACK_SERVER_PUBLIC_PATH",
     ]
 
-    const historyType = process.env.KOOT_HISTORY_TYPE
-
     const moduleReplacements = [
         [/^__KOOT_PROJECT_CONFIG_FULL_PATHNAME__$/, getPathnameProjectConfigFile()],
         [/^__KOOT_PROJECT_CONFIG_PORTION_PATHNAME__$/, getPathnameProjectConfigFile(true)],
-        [
-            /^__KOOT_CLIENT_REQUIRE_CREATE_HISTORY__$/,
-            `history/lib/create${historyType.substr(0, 1).toUpperCase() + historyType.substr(1)}`
-        ],
-        [/^__KOOT_CLIENT_REQUIRE_HISTORY__$/, `react-router/lib/${historyType}`],
         [
             /^__KOOT_HOC_EXTEND__$/,
             (() => {
@@ -138,6 +131,18 @@ const plugins = async (env, stage, defines = {}/*, remainingKootBuildConfig = {}
         //     })()
         // ],
     ]
+
+    const historyType = process.env.KOOT_HISTORY_TYPE
+    if (historyType) {
+        moduleReplacements.push([
+            /^__KOOT_CLIENT_REQUIRE_CREATE_HISTORY__$/,
+            `history/lib/create${historyType.substr(0, 1).toUpperCase() + historyType.substr(1)}`
+        ])
+        moduleReplacements.push([
+            /^__KOOT_CLIENT_REQUIRE_HISTORY__$/,
+            `react-router/lib/${historyType}`
+        ])
+    }
 
     return [
         new webpack.DefinePlugin(thisDefines),
