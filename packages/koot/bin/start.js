@@ -62,10 +62,10 @@ const run = async () => {
     process.env.KOOT_TEST_MODE = JSON.stringify(kootTest)
 
     // 读取构建配置
-    const buildConfig = await validateConfig()
+    const kootConfig = await validateConfig()
     await getAppType()
-    if (dest) buildConfig.dist = validateConfigDist(dest)
-    const { dist } = buildConfig
+    if (dest) kootConfig.dist = validateConfigDist(dest)
+    const { dist } = kootConfig
 
     const afterBuild = async () => {
         // 删除过程中创建的临时文件

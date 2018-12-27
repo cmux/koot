@@ -234,6 +234,7 @@ ssr().catch(err => {
     __KOOT_SSR__.ssrComplete({
         error: err
     })
+    console.error(err)
     throw err
 })
 

@@ -57,11 +57,11 @@ process.env.DO_WEBPACK = false
 /**
  * Webpack 打包
  * @async
- * @param {Object} kootBuildConfig
- * @param {Boolean} [kootBuildConfig.analyze=false] 是否为打包分析（analyze）模式
+ * @param {Object} kootConfig
+ * @param {Boolean} [kootConfig.analyze=false] 是否为打包分析（analyze）模式
  * @returns {Object}
  */
-module.exports = async (kootBuildConfig = {}) => {
+module.exports = async (kootConfig = {}) => {
 
     /**
      * @type {Object} 打包完成后返回的结果对象
@@ -124,12 +124,12 @@ module.exports = async (kootBuildConfig = {}) => {
 
     // 抽取配置
     let {
-        beforeBuild,
-        afterBuild,
+        webpackBefore: beforeBuild,
+        webpackAfter: afterBuild,
         analyze = false,
         [keyConfigQuiet]: quietMode = false,
         [keyConfigBuildDll]: createDll = false,
-    } = kootBuildConfig
+    } = kootConfig
 
     /** @type {String} 项目类型 */
     const appType = await getAppType()
@@ -269,7 +269,7 @@ module.exports = async (kootBuildConfig = {}) => {
             process.env.WEBPACK_DEV_SERVER_PORT = process.env.SERVER_PORT
         } else {
             // 尝试读取记录端口号的临时文件
-            const dist = await validateDist(kootBuildConfig.dist)
+            const dist = await validateDist(kootConfig.dist)
             const pathnameTemp = path.resolve(dist, filenameWebpackDevServerPortTemp)
             const getExistResult = async () => {
                 if (fs.existsSync(pathnameTemp)) {
@@ -284,7 +284,7 @@ module.exports = async (kootBuildConfig = {}) => {
                 process.env.WEBPACK_DEV_SERVER_PORT = existResult
             } else {
                 // 如果上述临时文件不存在，从配置中解析结果
-                process.env.WEBPACK_DEV_SERVER_PORT = await validateWebpackDevServerPort(kootBuildConfig.port)
+                process.env.WEBPACK_DEV_SERVER_PORT = await validateWebpackDevServerPort(kootConfig.devPort)
                 // 将 webpack-dev-server 端口写入临时文件
                 await fs.writeFile(
                     pathnameTemp,
@@ -309,7 +309,7 @@ module.exports = async (kootBuildConfig = {}) => {
     // 创建对应当前环境的 Webpack 配置
     //
     // ========================================================================
-    const data = await createWebpackConfig(Object.assign(kootBuildConfig, {
+    const data = await createWebpackConfig(Object.assign(kootConfig, {
         webpackCompilerHook: {
             afterEmit: () => buildingComplete(),
             done: after
@@ -325,7 +325,7 @@ module.exports = async (kootBuildConfig = {}) => {
         pathnameChunkmap,
     } = data
 
-    if (TYPE === 'spa' && typeof !!kootBuildConfig.i18n) {
+    if (TYPE === 'spa' && typeof !!kootConfig.i18n) {
         log('error', 'build', chalk.redBright(__('build.spa_i18n_disabled_temporarily')))
     } else if (typeof i18n === 'object') {
         if (STAGE === 'client') {

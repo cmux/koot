@@ -17,7 +17,7 @@ const transform = async (config, kootBuildConfig = {}) => {
     const {
         [keyConfigBuildDll]: createDll = false,
         dist,
-        webpackDll = [],
+        devDll: webpackDll = [],
     } = kootBuildConfig
     const {
         WEBPACK_BUILD_STAGE: STAGE,

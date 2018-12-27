@@ -82,39 +82,36 @@ const run = async () => {
     process.env.WEBPACK_BUILD_STAGE = stage || 'client'
     process.env.WEBPACK_BUILD_ENV = env
 
-    // 读取构建配置
-    const buildConfig = await validateConfig()
+    // 生成配置
+    const kootConfig = await validateConfig()
     await getAppType()
-
-    if (dest) buildConfig.dist = validateConfigDist(dest)
+    if (dest) kootConfig.dist = validateConfigDist(dest)
 
     // 如果通过 koot-start 命令启动...
     if (fromCommandStart) {
-        // 非报错 log 不打出
-        buildConfig[keyConfigQuiet] = true
+        // 安静模式: 非报错 log 不打出
+        kootConfig[keyConfigQuiet] = true
     }
 
-    // 如果提供了 stage，仅针对 stage 执行打包
-    // SPA: 仅打包 client
+    // 如果提供了 stage，仅针对该 stage 执行打包
+    // SPA: 强制仅打包 client
     if (process.env.WEBPACK_BUILD_TYPE === 'spa' || stage) {
         // if (stage === 'server' && !hasServer) {
         //     console.log(chalk.redBright('× '))
         // }
-        await kootBuild(buildConfig)
-        await after(buildConfig)
+        await kootBuild(kootConfig)
+        await after(kootConfig)
         if (!fromCommandStart) console.log(' ')
         return
     }
 
     // 如过没有提供 stage，自动相继打包 client 和 server
-    await kootBuild({ ...buildConfig })
+    await kootBuild({ ...kootConfig })
     await sleep(100)
-
-    // if (!hasServer) return
 
     if (!fromCommandStart) console.log('\n' + ''.padEnd(60, '=') + '\n')
     process.env.WEBPACK_BUILD_STAGE = 'server'
-    await kootBuild({ ...buildConfig })
+    await kootBuild({ ...kootConfig })
     await sleep(100)
 
     if (!fromCommandStart) console.log('\n' + ''.padEnd(60, '=') + '\n')
@@ -126,8 +123,10 @@ const run = async () => {
         })
     )
 
-    await after(buildConfig)
+    await after(kootConfig)
     if (!fromCommandStart) console.log(' ')
+
+    // 结束
 }
 
 const after = async (config = {}) => {

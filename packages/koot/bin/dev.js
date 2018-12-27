@@ -58,16 +58,16 @@ program
 
 /**
  * 进入开发环境
- * ****************************************************************************
- * 同构 (isomorphic)
- * 以 PM2 进程方式顺序执行以下流程
- *      1. 启动 webpack-dev-server (STAGE: client)
- *      2. 启动 webpack (watch mode) (STAGE: server)
- *      3. 运行 /server/index.js
- * ****************************************************************************
- * 单页面应用 (SPA)
- * 强制设置 STAGE 为 client，并启动 webpack-dev-server
- * ****************************************************************************
+ * ---
+ * **同构 (isomorphic)**
+ * 1. 启动 PM2 进程: `webpack-dev-server` (STAGE: client)
+ * 2. 启动 PM2 进程: `webpack` (watch mode) (STAGE: server)
+ * 3. 启动 PM2 进程: `[打包结果]/server/index.js`
+ * 4. 启动 PM2 进程: `ReactApp/server/index-dev.js`
+ * ---
+ * **单页面应用 (SPA)**
+ * - 强制设置 STAGE 为 client，并启动 webpack-dev-server
+ * 
  */
 const run = async () => {
 
@@ -132,17 +132,18 @@ const run = async () => {
     // ========================================================================
 
     // 验证、读取项目配置信息
-    const buildConfig = await validateConfig()
+    const kootConfig = await validateConfig()
 
     // 如果在命令中设置了 dest，强制修改配置中的 dist
-    if (dest) buildConfig.dist = validateConfigDist(dest)
+    if (dest) kootConfig.dist = validateConfigDist(dest)
 
     const {
         dist,
-        port: configPort,
+        // port: configPort,
+        devPort,
         [keyFileProjectConfigTempFull]: fileProjectConfigTempFull,
         [keyFileProjectConfigTempPortion]: fileProjectConfigTempPortion
-    } = buildConfig
+    } = kootConfig
     const appType = await getAppType()
     const cwd = getCwd()
     const packageInfo = await fs.readJson(path.resolve(cwd, 'package.json'))
@@ -172,8 +173,9 @@ const run = async () => {
     }
 
     // 如果配置中存在 port，修改环境变量
-    if (typeof port === 'undefined' && typeof configPort !== 'undefined')
-        process.env.SERVER_PORT = getPort(configPort, 'dev')
+    // if (typeof port === 'undefined' && typeof configPort !== 'undefined')
+    //     process.env.SERVER_PORT = getPort(configPort, 'dev')
+    process.env.SERVER_PORT = devPort
 
 
 
@@ -283,15 +285,15 @@ const run = async () => {
         // DLL 打包
         if (stage) {
             process.env.WEBPACK_BUILD_STAGE = stage
-            await kootBuildVendorDll(buildConfig)
+            await kootBuildVendorDll(kootConfig)
         } else {
             const stageCurrent = process.env.WEBPACK_BUILD_STAGE
 
             process.env.WEBPACK_BUILD_STAGE = 'client'
-            await kootBuildVendorDll(buildConfig)
+            await kootBuildVendorDll(kootConfig)
             await sleep(500)
             process.env.WEBPACK_BUILD_STAGE = 'server'
-            await kootBuildVendorDll(buildConfig)
+            await kootBuildVendorDll(kootConfig)
 
             process.env.WEBPACK_BUILD_STAGE = stageCurrent
         }

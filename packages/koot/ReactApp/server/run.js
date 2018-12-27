@@ -40,7 +40,7 @@ const startKootIsomorphicServer = async () => {
     const {
         before: serverBefore,
         after: serverAfter,
-        renderCacheConfig,
+        renderCache: renderCacheConfig,
         proxyRequestOrigin,
         inject: templateInject,
     } = serverConfig

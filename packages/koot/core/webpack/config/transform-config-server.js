@@ -24,12 +24,12 @@ const getDirDistPublic = require('../../../libs/get-dir-dist-public')
  */
 module.exports = async (kootBuildConfig = {}) => {
     const {
-        config = {},
+        webpackConfig: config = {},
         appType,
         dist,
         defaultPublicPathname,
         i18n,
-        staticAssets,
+        staticCopyFrom: staticAssets,
     } = kootBuildConfig
 
     const {

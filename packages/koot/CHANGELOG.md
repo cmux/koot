@@ -6,6 +6,8 @@
     - 现在可以放心的从 `koot` 中引用 `store` `history` 和 `localeId` 了
   - 移除了 `sp-css-import` 依赖包，请修改为新式的 `@extend()` 写法
   - 移除了 `pageinfo()` 高阶组件，请修改为新式的 `@extend()` 写法
+  - 调整了项目配置方案，原则上对已有项目不会造成影响
+    - 0.6版本之前的配置文件现已不再支持
   - 调整 CSS 打包、使用规则
     - 现在明确只存在 2 种 CSS 文件：全局 CSS 和组件 CSS
     - 可通过配置文件对文件名规则进行配置。详情请参见文档的 [配置/客户端](https://koot.js.org/#/config?id=webpack-amp-打包)

@@ -12,20 +12,12 @@ module.exports = (kootBuildConfig = {}) => {
 
     const {
         aliases = {},
-        css = {},
-        webpackInternalLoadersOptions: internalLoadersOptions = {}
+        moduleCssFilenameTest = /\.(component|module)/,
+        internalLoaderOptions = {}
     } = kootBuildConfig
 
     /** @type {Array} rules */
     const rules = []
-
-    const {
-        fileBasename: cssTest = {},
-    } = css
-    const {
-        normal: cssTestNormal = /^((?!\.(component|module)\.).)*/,
-        component: cssTestComponent = /\.(component|module)/,
-    } = cssTest
 
     /** @type {Boolean} 是否允许抽取 CSS */
     const extractCssAllowed = (
@@ -37,7 +29,7 @@ module.exports = (kootBuildConfig = {}) => {
     const {
         'less-loader': lessLoaderConfig = {},
         'sass-loader': sassLoaderConfig = {},
-    } = internalLoadersOptions
+    } = internalLoaderOptions
     const useSpCssLoader = {
         loader: require.resolve('../../../loaders/css'),
         options: {
@@ -74,9 +66,9 @@ module.exports = (kootBuildConfig = {}) => {
     })()
 
     /** @type {Object} 标准 CSS 文件名规则表 */
-    const testNormal = validateCssFilenameTest(cssTestNormal)
+    // const testNormal = validateCssFilenameTest(cssTestNormal)
     /** @type {Object} 组件 CSS 文件名规则表 */
-    const testComponent = validateCssFilenameTest(cssTestComponent, 'component')
+    const testComponent = validateCssFilenameTest(moduleCssFilenameTest, 'component')
 
     const rulesCSS = []
     const rulesLESS = []
@@ -153,7 +145,7 @@ module.exports = (kootBuildConfig = {}) => {
                     ...rule
                 })
             }
-        } else {
+        } else if (test) {
             if (/\.less$/.test(test)) {
                 use.splice(use.length - 1, 0, useLessLoader)
                 rulesLESS.push({
@@ -175,6 +167,18 @@ module.exports = (kootBuildConfig = {}) => {
                     ...rule
                 })
             }
+        } else {
+            {
+                const useThis = [...use]
+                useThis.splice(useThis.length - 1, 0, useLessLoader)
+                rulesLESS.push({ use: useThis, ...rule })
+            }
+            {
+                const useThis = [...use]
+                useThis.splice(useThis.length - 1, 0, useSassLoader)
+                rulesSASS.push({ use: useThis, ...rule })
+            }
+            rulesCSS.push({ use, ...rule })
         }
     }
 
@@ -202,12 +206,12 @@ module.exports = (kootBuildConfig = {}) => {
 
     // CSS: normal
     validateCssRule({
-        tests: {
-            css: testNormal.css,
-            less: testNormal.less,
-            sass: testNormal.sass,
-        },
-        exclude: [regExpKootModules],
+        // tests: {
+        //     css: testNormal.css,
+        //     less: testNormal.less,
+        //     sass: testNormal.sass,
+        // },
+        exclude: [/node_modules/, regExpKootModules],
         type: 'normal'
     })
 

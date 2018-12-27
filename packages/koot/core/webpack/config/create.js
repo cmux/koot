@@ -2,7 +2,7 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 
 // Libs & Utilities
 const getAppType = require('../../../utils/get-app-type')
-const getPort = require('../../../utils/get-port')
+// const getPort = require('../../../utils/get-port')
 const getChunkmapPathname = require('../../../utils/get-chunkmap-path')
 const initNodeEnv = require('../../../utils/init-node-env')
 
@@ -42,7 +42,6 @@ module.exports = async (kootConfig = {}) => {
     // 抽取配置
     const kootBuildConfig = Object.assign({}, defaults, kootConfig, {
         appType: await getAppType(),
-        webpackConfig: {},
         defaultPublicDirName,
         defaultPublicPathname,
     })
@@ -50,8 +49,13 @@ module.exports = async (kootConfig = {}) => {
         analyze = false
     } = kootBuildConfig
 
-    kootBuildConfig.portServer = getPort(kootBuildConfig.port)
-    process.env.SERVER_PORT = kootBuildConfig.portServer
+    // kootBuildConfig.portServer = getPort(kootBuildConfig.port)
+    if (process.env.WEBPACK_BUILD_ENV === 'dev' && kootBuildConfig.devPort) {
+        process.env.SERVER_PORT = kootBuildConfig.devPort
+    } else if (process.env.WEBPACK_BUILD_ENV !== 'dev' && kootBuildConfig.port) {
+        process.env.SERVER_PORT = kootBuildConfig.port
+    }
+    // process.env.SERVER_PORT = kootBuildConfig.portServer
 
     // ========================================================================
     //
@@ -65,10 +69,10 @@ module.exports = async (kootConfig = {}) => {
     kootBuildConfig.template = await transformTemplate(kootBuildConfig.template)
     kootBuildConfig.pathnameChunkmap = await getChunkmapPathname()
 
-    if (typeof kootBuildConfig.config === 'function')
-        kootBuildConfig.config = await kootBuildConfig.config()
-    if (typeof kootBuildConfig.config !== 'object')
-        kootBuildConfig.config = {}
+    if (typeof kootBuildConfig.webpackConfig === 'function')
+        kootBuildConfig.webpackConfig = await kootBuildConfig.webpackConfig()
+    if (typeof kootBuildConfig.webpackConfig !== 'object')
+        kootBuildConfig.webpackConfig = {}
 
     // ========================================================================
     //
@@ -76,27 +80,33 @@ module.exports = async (kootConfig = {}) => {
     //
     // ========================================================================
 
-    if (STAGE === 'client')
-        kootBuildConfig.webpackConfig = await transformConfigClient(kootBuildConfig)
-    if (STAGE === 'server')
-        kootBuildConfig.webpackConfig = await transformConfigServer(kootBuildConfig)
+    const webpackConfig = await (async () => {
+        let config
+        if (STAGE === 'client')
+            config = await transformConfigClient(kootBuildConfig)
+        if (STAGE === 'server')
+            config = await transformConfigServer(kootBuildConfig)
 
-    // ========================================================================
-    //
-    // 模式: analyze
-    //
-    // ========================================================================
+        // ========================================================================
+        //
+        // 模式: analyze
+        //
+        // ========================================================================
 
-    if (analyze) {
-        if (Array.isArray(kootBuildConfig.webpackConfig))
-            kootBuildConfig.webpackConfig = kootBuildConfig.webpackConfig[0]
-        kootBuildConfig.webpackConfig.plugins.push(
-            new BundleAnalyzerPlugin({
-                analyzerPort: process.env.SERVER_PORT,
-                defaultSizes: 'gzip'
-            })
-        )
-    }
+        if (analyze) {
+            if (Array.isArray(config))
+                config = config[0]
+            config.plugins.push(
+                new BundleAnalyzerPlugin({
+                    analyzerPort: process.env.SERVER_PORT,
+                    defaultSizes: 'gzip'
+                })
+            )
+        }
+
+        return config
+    })()
+    kootBuildConfig.webpackConfig = webpackConfig
 
     // ========================================================================
     //

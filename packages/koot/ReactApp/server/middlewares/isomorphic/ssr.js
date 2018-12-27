@@ -45,7 +45,6 @@ const ssr = async (__KOOT_SSR__) => new Promise(async resolve => {
     try {
         eval(__KOOT_SSR_FILE_CONTENT__)
     } catch (err) {
-        console.error(err)
         resolve({
             error: err
         })
