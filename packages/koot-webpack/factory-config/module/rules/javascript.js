@@ -11,60 +11,37 @@ module.exports = (kootBuildConfig = {}) => {
         createDll = false,
     } = kootBuildConfig
 
-    /** @type {Array} rules */
-    const rules = []
-
-    /** @type {Array} JS 基础规则 */
-    const useJS = [
-        {
-            loader: require.resolve('../../../loaders/babel'),
-            options: {
-                cacheDirectory: true,
-            }
+    const useBabelLoader = (options = {}) => {
+        if (typeof options.cacheDirectory === 'undefined')
+            options.cacheDirectory = true
+        if (process.env.WEBPACK_BUILD_ENV === 'dev') {
+            options.compact = false
+            if (createDll)
+                options.__createDll = true
         }
-    ]
-
-    // 开发模式
-    if (env === 'dev') {
-        // 不进行压缩
-        useJS[0].options.compact = false
-        // if (stage === 'server') {
-        //     useJS[0].options.presets = [
-        //         // ["@babel/preset-env", {
-        //         //     "targets": {
-        //         //         "node": "current"
-        //         //     }
-        //         // }],
-        //         "@babel/preset-react",
-        //         "@babel/preset-flow"
-        //     ]
-        //     useJS[0].options.plugins = [
-        //         "@babel/plugin-transform-regenerator",
-        //         ["@babel/plugin-proposal-decorators", { "legacy": true }],
-        //         "@babel/plugin-proposal-class-properties",
-        //         "@babel/plugin-syntax-dynamic-import",
-        //     ]
-        // }
+        return {
+            loader: require.resolve('../../../loaders/babel'),
+            options
+        }
     }
 
     if (!createDll && env === 'dev' && stage === 'client') {
-        rules.push({
+        return [{
             test: /\.(js|mjs)$/,
-            use: useJS
-        })
-        rules.push({
+            use: useBabelLoader()
+        }, {
             test: /\.jsx$/,
             use: [
-                ...useJS,
-                // require.resolve('../../../loaders/react-hot'),
+                useBabelLoader({
+                    __react: true
+                }),
+                require.resolve('../../../loaders/react-hot')
             ]
-        })
-    } else {
-        rules.push({
-            test: /\.(js|mjs|jsx)$/,
-            use: useJS
-        })
+        }]
     }
 
-    return rules
+    return [{
+        test: /\.(js|mjs|jsx)$/,
+        use: useBabelLoader()
+    }]
 }

@@ -4,14 +4,17 @@ module.exports = require("babel-loader").custom(babel => {
     //         visitor: {},
     //     };
     // }
+    const customOptions = {}
 
     return {
         // Passed the loader options.
-        customOptions({ /*opt1, opt2,*/ ...loader }) {
+        customOptions({ __createDll, __react, ...loader }) {
+            Object.assign(customOptions, {
+                __createDll,
+                __react
+            })
+            // Pull out any custom options that the loader might have.
             return {
-                // Pull out any custom options that the loader might have.
-                custom: { /*opt1, opt2*/ },
-
                 // Pass the options back with the two custom options removed.
                 loader,
             };
@@ -24,9 +27,17 @@ module.exports = require("babel-loader").custom(babel => {
             //     return cfg.options;
             // }
 
-            const { presets, plugins, ...options } = cfg.options
+            const {
+                __createDll, __react
+            } = customOptions
+            const {
+                // presets,
+                plugins,
+                ...options
+            } = cfg.options
+            // console.log({ options })
 
-            const newPresets = [...presets]
+            // const newPresets = [...presets]
             // .filter(preset => {
             //     if (typeof preset.file === 'object' &&
             //         /^@babel\/preset-env$/.test(preset.file.request) &&
@@ -47,20 +58,27 @@ module.exports = require("babel-loader").custom(babel => {
 
             /** @type {Boolean} 已有的 plugin 中是否存在 `react-hot-loader/babel` */
             let hasRHL = false
-            const newPlugins = plugins.filter(plugin => {
-                if (typeof plugin.file === 'object' &&
-                    /react-hot-loader(\/|\\)babel/.test(plugin.file.request)
-                ) {
-                    hasRHL = true
-                    // 非开发模式下不应存在 RHL
-                    if (process.env.WEBPACK_BUILD_ENV !== 'dev') {
-                        return false
+            const newPlugins = plugins
+                .filter(plugin => {
+                    if (typeof plugin.file === 'object' &&
+                        /react-hot-loader(\/|\\)babel/.test(plugin.file.request)
+                    ) {
+                        hasRHL = true
+
+                        // 非开发模式下不应存在 RHL
+                        // create DLL 模式下不应存在 RHL
+                        // 非 react 不应存在 RHL
+                        if (__createDll || !__react || process.env.WEBPACK_BUILD_ENV !== 'dev') {
+                            return false
+                        }
                     }
-                }
-                // console.log(plugin.file.request)
-                return true
-            })
+                    // console.log(plugin.file.request)
+                    return true
+                })
+
             if (!hasRHL &&
+                !__createDll &&
+                __react &&
                 process.env.WEBPACK_BUILD_ENV === 'dev'
             ) {
                 newPlugins.push(require('react-hot-loader/babel'))
@@ -73,9 +91,12 @@ module.exports = require("babel-loader").custom(babel => {
             //     console.log('file', preset.file)
             // })
             // console.log({
-            //     'plugin[].file': newPlugins.map(plugin => {
-            //         return plugin.file.request
-            //     })
+            //     'plugin[].file': newPlugins
+            //         // .filter(plugin => !!plugin.file)
+            //         .map(plugin => {
+            //             return plugin
+            //             // return plugin.file
+            //         })
             // })
             // console.log(
             //     {
@@ -88,7 +109,8 @@ module.exports = require("babel-loader").custom(babel => {
 
             return {
                 ...options,
-                presets: newPresets,
+                // presets: presets,
+                // presets: newPresets,
                 plugins: newPlugins,
             };
         },

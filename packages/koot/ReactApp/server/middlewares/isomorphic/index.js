@@ -135,7 +135,7 @@ const middlewareIsomorphic = (options = {}) => {
 
             // eval SSR
             // [开发模式] 每次请求都重新验证一次语言包，以确保语言包的更新
-            const result = await ssr({
+            const SSRoptions = {
                 ctx,
 
                 Store, History, LocaleId,
@@ -149,7 +149,14 @@ const middlewareIsomorphic = (options = {}) => {
 
                 thisTemplateInjectCache, thisEntrypoints, thisFilemap, //thisStyleMap,
                 styleMap,
-            })
+            }
+            if (__DEV__) {
+                global.__KOOT_STORE__ = Store
+                global.__KOOT_HISTORY__ = History
+                global.__KOOT_LOCALEID__ = LocaleId
+                global.__KOOT_SSR__ = SSRoptions
+            }
+            const result = await ssr(SSRoptions)
 
             // console.log('eval finished', {
             //     'localeId in store': Store.getState().localeId

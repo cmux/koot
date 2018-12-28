@@ -39,6 +39,13 @@ const ssr = async (options = {}) => {
         SSR = __DEV__ ? global.__KOOT_SSR__ : __KOOT_SSR__
     } = options
 
+    // console.log({
+    //     LocaleId,
+    //     Store,
+    //     History,
+    //     SSR
+    // })
+
     /** @type {Boolean} i18n 是否启用 */
     const i18nEnabled = Boolean(LocaleId)
 

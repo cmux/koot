@@ -33,7 +33,7 @@ const validateI18n = async () => {
     })
 
     // 服务器端注册多语言
-    setLocales({ locales })
+    setLocales(locales)
 
     return locales
 }

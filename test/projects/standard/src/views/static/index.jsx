@@ -15,6 +15,7 @@ export default extend({
     ({
         className
     }) => {
+        // console.log(A)
         return (
             <div className={className}>
                 <div className="block">

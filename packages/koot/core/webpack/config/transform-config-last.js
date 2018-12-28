@@ -181,19 +181,19 @@ const validateModuleRules = (config) => {
 
     // 删除重复对象
     function removeDuplicateObject(list) {
-        let map = {}
-        list = (() => {
-            return list.map((rule) => {
-                let key = JSON.stringify(rule)
-                key = key.toLowerCase().replace(/ /g, '')
-                if (map[key])
-                    rule = undefined
-                else
-                    map[key] = 1
-                return rule
-            })
-        })()
-        return list.filter(rule => rule != undefined)
+        // let map = {}
+        // list = (() => {
+        //     return list.map((rule) => {
+        //         let key = JSON.stringify(rule)
+        //         key = key.toLowerCase().replace(/ /g, '')
+        //         if (map[key])
+        //             rule = undefined
+        //         else
+        //             map[key] = 1
+        //         return rule
+        //     })
+        // })()
+        return list.filter(rule => !!rule)
     }
 }
 

@@ -1,9 +1,12 @@
 import { localeId } from '../'
 import locales from './locales'
 
-const l = (() => {
-    if (__SERVER__)
+export let l = (() => {
+    if (__SERVER__) {
+        if (__DEV__) return global.__KOOT_SSR__.locales[localeId]
+        // console.log({ locales })
         return locales[localeId]
+    }
     if (JSON.parse(process.env.KOOT_I18N_TYPE) === 'redux')
         return locales
     return false
@@ -24,6 +27,8 @@ const translate = (...args) => {
     let str
     let options = {}
     const keys = []
+
+    if (__SERVER__ && __DEV__) l = locales[global.__KOOT_LOCALEID__]
 
     args.forEach((value, index) => {
         if (index == args.length - 1 && typeof value === 'object' && !Array.isArray(value)) {

@@ -12,7 +12,13 @@ let __KOOT_SSR_FILE_CONTENT__
  * 执行服务器端渲染 (Server-Side Rendering)
  */
 const ssr = async (__KOOT_SSR__) => new Promise(async resolve => {
-    if (__DEV__ || !__KOOT_SSR_FILE_CONTENT__) {
+    __KOOT_SSR__.ssrComplete = (result) => resolve(result)
+
+    if (__DEV__) {
+        return await require('../../ssr').default()
+    }
+
+    if (!__KOOT_SSR_FILE_CONTENT__) {
         const fileSSR = path.resolve(__KOOT_GET_DIST_PATH__(), 'server/ssr.js')
         if (fs.existsSync(fileSSR)) {
             __KOOT_SSR_FILE_CONTENT__ = fs.readFileSync(fileSSR, 'utf-8')
@@ -36,7 +42,6 @@ const ssr = async (__KOOT_SSR__) => new Promise(async resolve => {
     // console.log('\n' + chalk.cyanBright('eval SSR'))
     // await eval(__KOOT_SSR_FILE_CONTENT__)
 
-    __KOOT_SSR__.ssrComplete = (result) => resolve(result)
 
     const {
         Store: __KOOT_STORE__,
@@ -44,42 +49,13 @@ const ssr = async (__KOOT_SSR__) => new Promise(async resolve => {
         LocaleId: __KOOT_LOCALEID__,
     } = __KOOT_SSR__
 
-    if (__DEV__) {
-        global.__KOOT_STORE__ = __KOOT_STORE__
-        global.__KOOT_HISTORY__ = __KOOT_HISTORY__
-        global.__KOOT_LOCALEID__ = __KOOT_LOCALEID__
-        global.__KOOT_SSR__ = __KOOT_SSR__
-        await require('../../ssr').default()
-    } else {
-        try {
-            eval(__KOOT_SSR_FILE_CONTENT__)
-        } catch (err) {
-            resolve({
-                error: err
-            })
-        }
+    try {
+        eval(__KOOT_SSR_FILE_CONTENT__)
+    } catch (err) {
+        resolve({
+            error: err
+        })
     }
-    //     const sandbox = {
-    //         __KOOT_STORE__,
-    //         __KOOT_HISTORY__,
-    //         __KOOT_LOCALEID__,
-    //         __KOOT_SSR__,
-    //     }
-    //     vm.createContext(sandbox)
-    //     // vm.runInThisContext(__KOOT_SSR_FILE_CONTENT__, sandbox)(require)
-    //     vm.runInThisContext(__KOOT_SSR_FILE_CONTENT__)(require)
-    // } else {
-    // }
-
-    // const set = () => setTimeout(() => {
-    //     if (!__KOOT_SSR__.__RESULT__)
-    //         return set()
-    //     // console.log(__KOOT_SSR__)
-    //     // console.log(chalk.cyanBright('eval SSR end') + '\n')
-    //     resolve(__KOOT_SSR__.__RESULT__)
-    // }, 5)
-
-    // set()
 
 })
 

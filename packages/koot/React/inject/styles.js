@@ -24,6 +24,16 @@ module.exports = ({
 
     if (typeof injectCache.styles === 'undefined') {
         injectCache.styles = getExtracted(localeId, compilation)
+
+        if (__DEV__) {
+            injectCache.styles += `<style id="__koot-react-hot-loader-error-overlay">`
+            + `.react-hot-loader-error-overlay div {`
+            + `    z-index: 99999;`
+            + `    font-size: 14px;`
+            + `    line-height: 1.5em;`
+            + `}`
+            + `</style>`
+        }
     }
 
     // if (needInjectCritical && typeof filemap['critical.css'] === 'string') {

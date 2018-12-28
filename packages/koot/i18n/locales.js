@@ -1,4 +1,5 @@
 /* global __KOOT_SSR__:false, __KOOT_SSR_STATE__:false */
+const __devLocales = {}
 
 /**
  * 根据当前环境，返回语言包对象的引用
@@ -8,9 +9,9 @@
  */
 const getLocalesObject = () => {
     if (__SERVER__) {
-        if (__DEV__ && typeof global.__KOOT_SSR__ === 'object')
-            return global.__KOOT_SSR__.locales
-        else if (typeof __KOOT_SSR__ === 'object')
+        if (__DEV__) {
+            return __devLocales
+        } else if (typeof __KOOT_SSR__ === 'object')
             return __KOOT_SSR__.locales
     }
     if (__CLIENT__) {
@@ -30,8 +31,9 @@ const getLocalesObject = () => {
 export const locales = (() => getLocalesObject() || {})()
 
 export const setLocales = (newLocales = {}) => {
-    const obj = getLocalesObject()
-    if (obj) Object.assign(obj, newLocales)
+    // const obj = getLocalesObject()
+    if (locales) Object.assign(locales, newLocales)
+    // console.log({ newLocales, obj, locales, 'global.__KOOT_SSR__': global.__KOOT_SSR__ })
     return locales
 }
 

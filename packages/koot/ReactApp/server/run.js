@@ -1,3 +1,6 @@
+
+if (__DEV__) global.__KOOT_SSR__ = {}
+
 // require('@babel/register')
 // require('@babel/polyfill')
 require('isomorphic-fetch')
@@ -61,7 +64,7 @@ const startKootIsomorphicServer = async () => {
     const renderCacheMap = await createRenderCacheMap(renderCacheConfig)
 
     // 语言包写入内存
-    const locales = await validateI18n()
+    const locales = !__DEV__ ? await validateI18n() : {}
 
     // 创建 Koa 实例 (app)
     /** @type {Koa} Koa 服务器实例 */
