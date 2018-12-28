@@ -38,7 +38,9 @@
         "koot-buildtest-isomorphic-dev": "koot-dev --no-open --koot-test",
         "koot-buildtest-spa-build": "koot-build --type react-spa --dest dist-spa-test --koot-test",
         "koot-buildtest-isomorphic-start-i18n_use_router": "koot-start --koot-test --config koot.config.i18n-use-router.js",
-        "koot-buildtest-isomorphic-dev-i18n_use_router": "koot-dev --no-open --koot-test --config koot.config.i18n-use-router.js"
+        "koot-buildtest-isomorphic-dev-i18n_use_router": "koot-dev --no-open --koot-test --config koot.config.i18n-use-router.js",
+        "koot-buildtest-isomorphic-start-config_old_0.6": "koot-start --koot-test --config koot.config.old-0.6.js",
+        "koot-buildtest-isomorphic-dev-config_old_0.6": "koot-dev --no-open --koot-test --config koot.config.old-0.6.js"
     },
     "dependencies": {
         "koot": "file:../../../packages/koot",

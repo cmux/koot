@@ -70,7 +70,7 @@ const executeComponentLifecycle = async ({ store, renderProps, ctx }) => {
         if (Array.isArray(thisMetas))
             result.metaHtml = thisMetas.map((meta) => (
                 '<meta'
-                + Object.keys(meta).map(key => ` ${key}="${meta[key]}"`)
+                + Object.keys(meta).map(key => ` ${key}="${meta[key]}"`).join('')
                 + '>'
             )).join('')
     }
