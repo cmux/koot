@@ -14,8 +14,9 @@ const generateHtmlRedirectMetas = ({ ctx, proxyRequestOrigin, localeId }) => {
     if (!isI18nEnabled())
         return ''
 
-    let { href } = ctx
+    let { href, origin } = ctx
     if (typeof proxyRequestOrigin.protocol === 'string') {
+        origin = origin.replace(/^http:\/\//, `${proxyRequestOrigin.protocol}://`)
         href = href.replace(/^http:\/\//, `${proxyRequestOrigin.protocol}://`)
     }
 
@@ -28,9 +29,9 @@ const generateHtmlRedirectMetas = ({ ctx, proxyRequestOrigin, localeId }) => {
             let thisHref = ''
 
             if (isUseRouter) {
-                thisHref = ctx.origin
-                    + ctx.href
-                        .replace(new RegExp(`^${ctx.origin}`), '')
+                thisHref = origin
+                    + href
+                        .replace(new RegExp(`^${origin}`), '')
                         .replace(new RegExp(`^${localeId}`), l)
                         .replace(new RegExp(`^/${localeId}`), '/' + l)
             } else {
