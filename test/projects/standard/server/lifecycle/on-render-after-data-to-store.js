@@ -1,6 +1,6 @@
 export default async ({ ctx }) => {
     if (__DEV__) {
-        console.log('server lifecycle: onRenderAfterDataToStore')
+        console.log('\nserver lifecycle: onRenderAfterDataToStore\n')
     }
     if (/^\/delayed(\/|$)/.test(ctx.path)) {
         await new Promise(resolve =>
