@@ -14,6 +14,7 @@
     "license": "Apache-2.0",
     "scripts": {
         "start": "koot-start",
+        "start:0.8:full": "koot-start --config koot.config.0.8-full.js",
         "start:server": "koot-start --no-build",
         "build": "koot-build",
         "build:client": "koot-build -c",
@@ -21,6 +22,7 @@
         "build:spa": "koot-build --type spa --dest dist-spa",
         "build:spa:use-config-file": "koot-build --config koot.config.spa.js",
         "dev": "koot-dev",
+        "dev:0.8:full": "koot-dev --config koot.config.0.8-full.js",
         "dev:client": "koot-dev -c",
         "dev:server": "koot-dev -s",
         "dev:global-pm2": "koot-dev -g",

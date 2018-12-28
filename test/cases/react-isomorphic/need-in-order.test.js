@@ -124,7 +124,8 @@ const doTest = async (port, settings = {}) => {
     const page = await browser.newPage()
     const origin = isNaN(port) ? port : `http://127.0.0.1:${port}`
     const {
-        i18nUseRouter = false
+        i18nUseRouter = false,
+        isDev = false
     } = settings
 
     const getLocaleId = async (page) => {
@@ -226,7 +227,7 @@ const doTest = async (port, settings = {}) => {
     }
 
     // 测试: 并发请求 state 是否正确
-    {
+    if (!isDev) {
         await Promise.all([
             new Promise(async resolve => {
                 const pageDelayed = await browser.newPage()
@@ -469,7 +470,9 @@ describe('测试: React 同构项目', async () => {
                     // })
                     expect(errors.length).toBe(0)
 
-                    await doTest(port)
+                    await doTest(port, {
+                        isDev: true
+                    })
                     await terminate(child.pid)
 
                     await afterTest(dir, '[Development] 启动开发模式并访问')
@@ -533,7 +536,8 @@ describe('测试: React 同构项目', async () => {
                     expect(errors.length).toBe(0)
 
                     await doTest(port, {
-                        i18nUseRouter: true
+                        i18nUseRouter: true,
+                        isDev: true
                     })
                     await terminate(child.pid)
 

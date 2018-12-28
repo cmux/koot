@@ -25,7 +25,7 @@ module.exports = ({
     if (typeof injectCache.styles === 'undefined') {
         injectCache.styles = getExtracted(localeId, compilation)
 
-        if (__DEV__) {
+        if (process.env.WEBPACK_BUILD_ENV === 'dev') {
             injectCache.styles += `<style id="__koot-react-hot-loader-error-overlay">`
             + `.react-hot-loader-error-overlay div {`
             + `    z-index: 99999;`
