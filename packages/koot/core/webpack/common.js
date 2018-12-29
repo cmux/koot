@@ -72,6 +72,8 @@ const plugins = async (env, stage, defines = {}/*, remainingKootBuildConfig = {}
             __SERVER__: stage == 'server',
             __DEV__: env == 'dev',
             __PROD__: env == 'prod',
+            __PRO__: env == 'prod',
+            __TEST__: false,
             __QA__: false,
             __PREPROD__: false,
             // '__SPA__': !!spa,
