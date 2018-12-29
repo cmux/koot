@@ -1,2 +1,0 @@
-export default async (/*app*/) => {
-}

@@ -1,5 +1,6 @@
-import AppView from '@views/app';
-import LoginView from '@views/login';
+import routeCheck from 'koot/React/route-check'
+
+import AppView from '@views/app'
 
 /**
  * 检查下一个路由是否需要验证登陆状态，
@@ -11,7 +12,7 @@ import LoginView from '@views/login';
  * @param {*} replace 
  * @param {*} callback 
  */
-const authFilter = ( nextState, replace, callback ) => {
+const authFilter = (nextState, replace, callback) => {
     //... 鉴权过程
     callback();
 }
@@ -19,12 +20,24 @@ const authFilter = ( nextState, replace, callback ) => {
 export default {
     path: '/',
     component: AppView,
-    redirect: '/login',
     onEnter: authFilter,
+
+    indexRoute: {
+        component: (nextState, cb) => {
+            require.ensure([], (require) => {
+                if (routeCheck(nextState)) cb(null, require('@views/home').default)
+            }, 'Page: Home')
+        }
+    },
+
     children: [
         {
-            path: 'login',
-            component: LoginView
+            path: 'static',
+            component: (nextState, cb) => {
+                require.ensure([], (require) => {
+                    if (routeCheck(nextState)) cb(null, require('@views/static').default)
+                }, 'Page: static')
+            }
         },
     ]
 }

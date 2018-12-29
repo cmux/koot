@@ -9,27 +9,14 @@ module.exports = (async () => {
             commons: [
                 'react',
                 'react-dom',
-
                 'redux',
                 'redux-thunk',
                 'react-redux',
-
                 'react-router',
                 'react-router-redux',
-
-                // 'react-transition-group',
-
-                // 'localforage',
-                // 'metas',
-                // 'classnames',
                 'js-cookie',
             ],
             ...defaults.entry,
-        },
-
-        output: {
-            filename: `core.[chunkhash].js`,
-            chunkFilename: `chunk.[chunkhash].js`,
         },
 
         // optimization: {
