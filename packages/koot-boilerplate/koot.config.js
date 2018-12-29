@@ -46,9 +46,9 @@ module.exports = {
         '@views': path.resolve('./src/views'),
     },
     defines: {
-        __PRO__: JSON.stringify(false),
-        __TEST__: JSON.stringify(false),
-        __DEV__: JSON.stringify(true)
+        __PROD__: JSON.stringify(false),
+        __PREPROD__: JSON.stringify(false),
+        __QA__: JSON.stringify(false)
     },
 
     staticCopyFrom: path.resolve(__dirname, './src/assets/public'),
