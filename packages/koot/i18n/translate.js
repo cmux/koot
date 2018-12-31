@@ -3,7 +3,8 @@ import locales from './locales'
 
 export let l = (() => {
     if (__SERVER__) {
-        if (__DEV__) return global.__KOOT_SSR__.locales[localeId]
+        if (__DEV__ && typeof global.__KOOT_SSR__ === 'object')
+            return global.__KOOT_SSR__.locales[localeId]
         // console.log({ locales })
         return locales[localeId]
     }

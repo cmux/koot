@@ -18,7 +18,7 @@ export { reduxForCreateStore }
 export { default as extend } from "__KOOT_HOC_EXTEND__"
 
 // 其他全局变量
-export const localeId = (() => {
+export const getLocaleId = () => {
     if (__CLIENT__)
         return window.__KOOT_LOCALEID__ || ''
     if (__SERVER__) {
@@ -28,8 +28,10 @@ export const localeId = (() => {
             return ''
         return __KOOT_LOCALEID__ || ''
     }
-})()
-export const store = (() => {
+}
+export const localeId = (() => getLocaleId())()
+
+export const getStore = () => {
     if (__CLIENT__)
         return window.__KOOT_STORE__
     if (__SERVER__) {
@@ -39,8 +41,10 @@ export const store = (() => {
             return ''
         return __KOOT_STORE__
     }
-})()
-export const history = (() => {
+}
+export const store = (() => getStore())()
+
+export const getHistory = () => {
     if (__CLIENT__)
         return window.__KOOT_HISTORY__
     if (__SERVER__) {
@@ -50,4 +54,5 @@ export const history = (() => {
             return ''
         return __KOOT_HISTORY__
     }
-})()
+}
+export const history = (() => getHistory())()
