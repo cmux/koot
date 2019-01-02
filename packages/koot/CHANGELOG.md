@@ -71,7 +71,7 @@
     - `react` -> _16.7.0_
     - `react-dom` -> _16.7.0_
     - `react-hot-loader` -> _4.6.3_
-    - `webpack` -> _4.28.2_
+    - `webpack` -> _4.28.3_
   - patch
     - `debug` -> _4.1.1_
     - `inquirer` -> _6.2.1_

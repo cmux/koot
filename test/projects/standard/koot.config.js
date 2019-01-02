@@ -178,9 +178,9 @@ module.exports = {
         'react-router-redux',
         'koot',
     ],
-    devHmr: {
-        multiStep: false
-    },
+    // devHmr: {
+    //     multiStep: false
+    // },
     devServer: {
         quiet: true
     },
