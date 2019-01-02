@@ -13,16 +13,48 @@ const RadioGroup = Radio.Group;
 const Option = Select.Option;
 const { MonthPicker, RangePicker, WeekPicker } = DatePicker;
 
+/**
+ * 时间日期类型自动转换为 moment 类型
+ * 
+ * @param {d} configItem 
+ */
 const dateValueHandler = ( configItem ) => {
     const { value } = configItem;
+    // let dateTimeType;
+    // switch (type) {
+    //     case 'timePicker':
+    //         dateTimeType = 'HH:mm:ss';
+    //         break;
+    //     case 'datePicker':
+    //         dateTimeType = 'YYYY-MM-DD';
+    //         break;
+    //     case 'dateTimePicker':
+    //         dateTimeType = 'YYYY-MM-DD HH:mm:ss';
+    //         break;
+    //     case 'monthPicker':
+    //         dateTimeType = 'YYYY-MM';
+    //         break;
+    //     case 'weekPicker':
+    //         dateTimeType = 'YYYY-mo';
+    //         break;
+    //     case 'dateRangePicker':
+    //         dateTimeType = 'YYYY-MM-DD';
+    //         break;
+    //     case 'dateTimeRangePicker':
+    //         dateTimeType = 'YYYY-MM-DD HH:mm:ss';
+    //         break;
+    //     default:
+    //         dateTimeType = 'YYYY-MM-DD HH:mm:ss';
+    //         break;
+    // }
     if( value ){
         let nextValue;
         if( Array.isArray(value) ){
-            nextValue = value.map(item => {
-                return item && moment(item)
+            nextValue = value.map(valueItem => {
+                return valueItem && moment(valueItem, 'x')
             })
         }else{
-            nextValue = value && moment(value)
+            nextValue = value && moment(value, 'x')
         }
         const nextConfigItem = Object.assign({}, configItem);
         nextConfigItem.value = nextValue;
@@ -39,6 +71,7 @@ const dateValueHandler = ( configItem ) => {
  */
 const fieldDecorator = ( configItem, reactDom ) => {
     const { value, __root } = configItem;
+    // const nextValue = datatimeHandler(configItem.type, value);
     const name = getName(configItem);  
     const finalComponent = __root.fieldDecorator(
         name,
@@ -226,6 +259,7 @@ export const renderButtonHandler = (configItem = {}) => {
 export const renderTimePickerHandler = (configItem = {}) => {
     const nextConfigItem = dateValueHandler(configItem);
     const props = getConfigItemProps(nextConfigItem);
+    props.format = configItem.format || 'HH:mm:ss';
     return fieldDecorator(
         nextConfigItem,
         (
@@ -249,6 +283,7 @@ export const renderDatePickerHandler = (configItem = {}) => {
     props.getCalendarContainer = ( triggerNode ) => {
         return triggerNode;
     };
+    props.format = configItem.format || 'YYYY/MM/DD';
     return fieldDecorator(
         nextConfigItem, 
         (
@@ -273,7 +308,7 @@ export const renderDateTimePickerHandler = (configItem) => {
     props.getCalendarContainer = ( triggerNode ) => {
         return triggerNode;
     };
-    props.format = props.format || "YYYY-MM-DD HH:mm:ss";
+    props.format = props.format || "YYYY/MM/DD HH:mm:ss";
     props.showTime = props.showTime || true;
     return fieldDecorator(
         nextConfigItem, 
@@ -298,6 +333,7 @@ export const renderMonthPickerHandler = (configItem = {}) => {
     props.getCalendarContainer = ( triggerNode ) => {
         return triggerNode;
     };
+    props.format = configItem.format || 'YYYY/MM';
     return fieldDecorator(
         nextConfigItem, 
         (
@@ -321,6 +357,7 @@ export const renderWeekPickerHandler = (configItem = {}) => {
     props.getCalendarContainer = ( triggerNode ) => {
         return triggerNode;
     };
+    props.format = configItem.format || 'YYYY-wo'
     return fieldDecorator(
         nextConfigItem, 
         (
@@ -344,6 +381,7 @@ export const renderDateRangePicker = (configItem = {}) => {
     props.getCalendarContainer = ( triggerNode ) => {
         return triggerNode;
     };
+    props.format = configItem.format || 'YYYY/MM/DD'
     return fieldDecorator(
         nextConfigItem, 
         (
@@ -367,7 +405,7 @@ export const renderDateTimeRangePicker = (configItem = {}) => {
     props.getCalendarContainer = ( triggerNode ) => {
         return triggerNode;
     };
-    props.format = props.format || "YYYY-MM-DD HH:mm:ss";
+    props.format = props.format || "YYYY/MM/DD HH:mm:ss";
     props.showTime = props.showTime || true;
     return fieldDecorator(
         nextConfigItem, 

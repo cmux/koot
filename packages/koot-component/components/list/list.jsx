@@ -33,7 +33,7 @@ class List extends Component {
     }
 
     columnsHandler = ( columns ) => {
-        return columns.map(item => {
+        return columns && columns.map(item => {
             const style = this.styleFormatter(item);
             const orignRender = item.render;
             item.render = (text, record, index) => {
@@ -128,7 +128,7 @@ class List extends Component {
                 total: config.page.total,
                 onChange: config.page.onPageIndexChange,
                 onShowSizeChange: config.page.onPageSizeChange,
-                showTotal: total => `Total ${total} items`, 
+                showTotal: total => `共 ${total} 条`, 
             }
         }
         if( pagination ){

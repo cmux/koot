@@ -95,7 +95,10 @@ const renderMenuList = ( _baseUrl, _routeList ) => {
     cache.abbreviationList = [];
     return (
         _routeList.map((routeItem) => {
-            const currentUrl = `${_baseUrl}${routeItem.path}`;
+            let currentUrl = `${_baseUrl}${routeItem.path}`;
+            if( routeItem.path === '' ){
+                currentUrl = currentUrl.replace(/[/]$/, '');
+            }
             const key = `${currentUrl}`;
             if( routeItem.meta ){
                 const { showMenu } = routeItem.meta;

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { renderTransfer } from './lib/core.js';
 import PropTypes from 'prop-types';
 import CreateFieldStore from './lib/create-field-store.js';
+import moment from 'moment';
 
 @KootExtend({
     styles: require('./form.module.less'),
@@ -29,6 +30,12 @@ class FormComponent extends Component {
         const oldFormData = Object.keys(oldFormFieldValues).length === 0 ? formData : oldFormFieldValues;
         
         const config = render(formData, oldFormData);
+        
+        if( Object.keys(formFieldValues).length === 0 ){
+            const config = render();
+            const initFormData = this.getFieldsValueObject(config);
+            this.fieldStore.setFields(initFormData)
+        }
        
         const nextConfig = Object.assign({}, config, {
             __root: this,
@@ -146,12 +153,27 @@ class FormComponent extends Component {
 
     decoratorOnChangeHandler = (name, actionName, event) => {
         const fieldMeta = this.fieldStore.getFieldMeta(name.toString());
-        const value = this.getValueFromEvent(event);
         const { oriProps } = this.fieldStore.getFieldMeta(name.toString());
+        let value = this.getValueFromEvent(event);
         if( oriProps[actionName] ){
             oriProps[actionName](event);
         }
         let resultObject = {};
+        // moment 格式处理
+        if( Array.isArray(value) ){
+            value = value.map(valueItem => {
+                if( moment.isMoment(valueItem) ){
+                    return valueItem.format('x');
+                }else{
+                    return valueItem
+                }
+            })
+        }else{
+            if( moment.isMoment(value) ){
+                value = value.format('x');
+            }
+        }
+        // format 处理
         if( Array.isArray(name) && Array.isArray(value) ){
             name.forEach((nameItem, index) => {
                 let nextValue = value[index];
