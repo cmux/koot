@@ -176,8 +176,10 @@ const run = async () => {
     // 运行服务器
     const pathServerJS = path.resolve(dist, 'server/index.js')
 
-    if (!fs.existsSync(pathServerJS)) {
+    if (!fs.existsSync(pathServerJS) || !fs.readFileSync(pathServerJS)) {
+        console.log('\n\n')
         spinner(chalk.yellowBright('[koot/build]')).fail()
+        return
     }
     // if (pm2) {
     //     // PM2 方式
