@@ -4,6 +4,7 @@ const fs = require('fs-extra')
 const path = require('path')
 const util = require('util')
 const exec = util.promisify(require('child_process').exec)
+const { spawn } = require('child_process')
 
 const program = require('commander')
 const npmRunScript = require('npm-run-script')
@@ -74,7 +75,7 @@ const run = async () => {
 
     // 打包
     if (build) {
-        const building = spinner(chalk.yellowBright('[koot/build] ') + __('build.building'))
+        // const building = spinner(chalk.yellowBright('[koot/build] ') + __('build.building'))
         const fileBuildFail = path.resolve(dist, filenameBuildFail)
 
         /** @type {String} build 命令的附加参数 */
@@ -84,13 +85,35 @@ const run = async () => {
             + (typeof type === 'string' ? ` --type ${type}` : '')
             + (kootTest ? ` --koot-test` : '')
 
-        const { stderr } = await exec(
-            `koot-build ${buildCmdArgs}`, {
-                env: {
-                    KOOT_COMMAND_START: JSON.stringify(true)
+        let stderr = ''
+        await new Promise(resolve => {
+            const child = spawn(
+                'koot-build',
+                buildCmdArgs.split(' '),
+                {
+                    stdio: 'inherit',
+                    shell: true,
                 }
-            }
-        )
+            )
+            child.on('close', () => {
+                resolve()
+            })
+            // child.on('error', (err) => {
+            //     stderr = err
+            //     resolve()
+            // })
+            // child.stderr.on('data', (data) => {
+            //     console.log(`stderr: ${data}`);
+            //     stderr += data
+            // })
+        })
+        // const { stderr } = await exec(
+        //     `koot-build ${buildCmdArgs}`, {
+        //         env: {
+        //             KOOT_COMMAND_START: JSON.stringify(true)
+        //         }
+        //     }
+        // )
         // await new Promise((resolve, reject) => {
         //     const child = npmRunScript(
         //         `koot-build`, {
@@ -127,7 +150,7 @@ const run = async () => {
             await afterBuild()
 
             // 标记 spinner 为出错
-            building.fail()
+            // building.fail()
 
             // console.log(typeof stderr)
 
@@ -138,7 +161,7 @@ const run = async () => {
             // 终止流程
             return
         }
-        building.succeed()
+        // building.succeed()
         await sleep(100)
     }
 
@@ -152,6 +175,10 @@ const run = async () => {
 
     // 运行服务器
     const pathServerJS = path.resolve(dist, 'server/index.js')
+
+    if (!fs.existsSync(pathServerJS)) {
+        spinner(chalk.yellowBright('[koot/build]')).fail()
+    }
     // if (pm2) {
     //     // PM2 方式
     //     console.log('--- pm2 ---')

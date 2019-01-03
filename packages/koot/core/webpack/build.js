@@ -177,6 +177,16 @@ module.exports = async (kootConfig = {}) => {
 
         const dist = getDistPath()
 
+        // 服务器环境
+        if (STAGE === 'server') {
+            // 清理已有的打包结果
+            fs.ensureDirSync(path.resolve(dist, `./server`))
+            fs.removeSync(path.resolve(dist, `./server/index.js`))
+            fs.removeSync(path.resolve(dist, `./server/index.js.map`))
+            fs.removeSync(path.resolve(dist, `./server/ssr.js`))
+            fs.removeSync(path.resolve(dist, `./server/ssr.js.map`))
+        }
+
         // 开发模式
         if (ENV === 'dev' && TYPE !== 'spa') {
             // 确保 server/index.js 存在
