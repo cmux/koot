@@ -37,6 +37,8 @@
 - React SPA
   - 对于传入自定 `store` 对象或生成方法的项目，确保生成 `store` 使用的 `history` 对象为浏览器所用对象
   - 移除 `AppContainer` 逻辑的相关文件
+- 添加依赖包
+  - `extract-hoc`
 - 移除依赖包
   - `koa-compose`
   - `koa-compress`
@@ -64,7 +66,7 @@
     - `@babel/plugin-transform-runtime` -> _7.2.0_
     - `@babel/polyfill` -> _7.2.5_
     - `@babel/preset-env` -> _7.2.3_
-    - `autoprefixer` -> _9.4.3_
+    - `autoprefixer` -> _9.4.4_
     - `koa` -> _2.6.2_
     - `less` -> _3.9.0_
     - `mini-css-extract-plugin` -> _0.5.0_
@@ -73,7 +75,10 @@
     - `react-dom` -> _16.7.0_
     - `react-hot-loader` -> _4.6.3_
     - `webpack` -> _4.28.3_
+    - `webpack-dev-middleware` -> _3.5.0_
   - patch
+    - `babel-loader` -> _8.0.5_
+    - `chalk` -> _2.4.2_
     - `debug` -> _4.1.1_
     - `inquirer` -> _6.2.1_
     - `pm2` -> _3.2.4_

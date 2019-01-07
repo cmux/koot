@@ -56,31 +56,20 @@ module.exports = require("babel-loader").custom(babel => {
             //     return preset
             // })
 
-            /** @type {Boolean} 已有的 plugin 中是否存在 `react-hot-loader/babel` */
-            let hasRHL = false
+
             const newPlugins = plugins
-                .filter(plugin => {
-                    if (typeof plugin.file === 'object' &&
+                .filter(plugin => !(
+                    typeof plugin.file === 'object' && (
+                        /extract-hoc(\/|\\)babel/.test(plugin.file.request) ||
                         /react-hot-loader(\/|\\)babel/.test(plugin.file.request)
-                    ) {
-                        hasRHL = true
+                    )
+                ))
 
-                        // 非开发模式下不应存在 RHL
-                        // create DLL 模式下不应存在 RHL
-                        // 非 react 不应存在 RHL
-                        if (__createDll || !__react || process.env.WEBPACK_BUILD_ENV !== 'dev') {
-                            return false
-                        }
-                    }
-                    // console.log(plugin.file.request)
-                    return true
-                })
-
-            if (!hasRHL &&
-                !__createDll &&
+            if (!__createDll &&
                 __react &&
                 process.env.WEBPACK_BUILD_ENV === 'dev'
             ) {
+                newPlugins.push(require('extract-hoc/babel'))
                 newPlugins.push(require('react-hot-loader/babel'))
             }
 
