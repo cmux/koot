@@ -32,6 +32,8 @@
     - 现在打包时不再会在项目根目录下生成临时文件
       - 这些文件现在移至 `/logs/tmp/` 目录下
     - 现在每种打包模式仅保留最近 2 次打包的日志文件 (`/logs/webpack-config/` 目录下)
+  - 开发模式
+    - 优化 React 组件热更新能力
 - React
   - 根层组件添加 `componentDidCatch` 生命周期方法，以保障 React 输出渲染结果
 - React SPA
