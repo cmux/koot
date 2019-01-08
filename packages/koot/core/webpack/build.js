@@ -173,6 +173,13 @@ module.exports = async (kootConfig = {}) => {
 
     /** @type {Function} @async 流程回调: webpack 执行前 */
     const before = async () => {
+
+        log('callback', 'build', `callback: ` + chalk.green('beforeBuild'))
+        // 创建 DLL 模式下不执行传入的生命周期方法
+        if (!createDll && typeof beforeBuild === 'function') {
+            await beforeBuild(data)
+        }
+
         building = true
 
         const dist = getDistPath()
@@ -203,11 +210,6 @@ module.exports = async (kootConfig = {}) => {
         // console.log(path.resolve(dist, filenameBuilding))
         // console.log(fs.existsSync(path.resolve(dist, filenameBuilding)))
 
-        log('callback', 'build', `callback: ` + chalk.green('beforeBuild'))
-        // 创建 DLL 模式下不执行传入的生命周期方法
-        if (!createDll && typeof beforeBuild === 'function') {
-            await beforeBuild(data)
-        }
     }
 
     /** @type {Function} @async 流程回调: webpack 执行后 */

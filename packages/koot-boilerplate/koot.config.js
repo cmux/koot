@@ -22,7 +22,7 @@ module.exports = {
     template: './src/index.ejs',
     templateInject: './src/index.inject.js',
 
-    routes: './src/router',
+    routes: './src/routes',
 
     store: './src/store',
     cookiesToStore: true,
@@ -44,11 +44,6 @@ module.exports = {
         '@services': path.resolve('./src/services'),
         '@store': path.resolve('./src/store'),
         '@views': path.resolve('./src/views'),
-    },
-    defines: {
-        __PROD__: JSON.stringify(false),
-        __PREPROD__: JSON.stringify(false),
-        __QA__: JSON.stringify(false)
     },
 
     staticCopyFrom: path.resolve(__dirname, './src/assets/public'),
@@ -102,25 +97,11 @@ module.exports = {
      * Webpack 相关
      *************************************************************************/
 
-    webpackConfig: async () => {
-        if (process.env.WEBPACK_BUILD_ENV === 'dev')
-            return await require('./config/webpack/dev')
-        return await require('./config/webpack/prod')
-    },
-    webpackBefore: async (/* kootConfig */) => {
+    webpackConfig: require('./config/webpack'),
+    webpackBefore: async ({ dist }) => {
+        // 每次打包前清空打包目录
         if (process.env.WEBPACK_BUILD_STAGE === 'client') {
-            const dist = process.env.KOOT_DIST_DIR
-            await fs.remove(path.resolve(dist, 'public'))
-            await fs.remove(path.resolve(dist, 'server'))
-        }
-        return
-    },
-    moduleCssFilenameTest: /\.(module|view|component)/,
-    internalLoaderOptions: {
-        'less-loader': {
-            modifyVars: {
-                '@font-size-base': '12px' 
-            }
+            await fs.emptyDir(dist)
         }
     },
     // 更多选项请查阅文档...

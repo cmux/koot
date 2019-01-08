@@ -17,7 +17,7 @@ module.exports = {
     // serverAfter: '',
     // serverOnRender: '',
 
-    moduleCssFilenameTest: /\.(component|module)/,
+    moduleCssFilenameTest: /\.(component|view|module)/,
 
     devPort: 3080,
 }

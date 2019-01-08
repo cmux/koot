@@ -19,6 +19,7 @@
     - [热更新](/react-hmr)
     - [组件同构属性对象](/react-render-props)
   - [PWA](/pwa)
+  - [routeCheck](/route-check)
   - 　
 
 - **开发建议**

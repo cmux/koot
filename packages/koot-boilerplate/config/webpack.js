@@ -1,8 +1,12 @@
-const webpack = require('webpack');
+const webpack = require('webpack')
 const path = require('path')
-const src = path.resolve(__dirname, '../../src')
 
-module.exports = async () => ({
+
+// ****************************************************************************
+
+
+/** @type {Object} 基础配置 */
+const configBase = {
 
     entry: {
         /**
@@ -11,7 +15,7 @@ module.exports = async () => ({
          * - 详见模板文件 `/src/index.ejs` 内的 `<%- content('critical.js') %>`
          */
         critical: [
-            path.resolve(src, './critical.js')
+            path.resolve('../../src/critical.js')
         ],
 
         /**
@@ -31,36 +35,60 @@ module.exports = async () => ({
                 test: /\.(ico|gif|jpg|jpeg|png|webp)$/,
                 loader: 'file-loader?context=static&name=assets/[hash:32].[ext]',
                 exclude: /node_modules/
-            }, {
+            },
+            {
                 test: /\.svg$/,
                 loader: 'svg-url-loader',
                 exclude: /node_modules/,
                 options: {
                     noquotes: true,
                 }
-            },
-            {
-                test: path.resolve(src, 'store'),
-                use: [
-                    {
-                        loader: 'expose-loader',
-                        options: 'Store'
-                    }
-                ]
             }
         ]
     },
 
     plugins: [
-        undefined, // Koot.js: 处理 webpack 配置时会自动过滤掉 null、undefined 等无意义的项
         new webpack.ProvidePlugin({
             KootExtend: ['koot', 'extend'],
             ActionTypes: ['@constants/action-types.js', 'default'],
             ReducerTypes: ['@constants/reducer-types.js', 'default'],
             Api: ['@constants/api.js', 'default'],
             Project: ['@constants/project.js', 'default'],
-            //...
         }),
     ],
 
-})
+}
+
+
+// ****************************************************************************
+
+
+/**
+ * 生成 Webpack 配置
+ * @returns {Object} Webpack 配置
+ */
+const factoryConfig = async () => {
+
+    // 针对开发环境
+    if (process.env.WEBPACK_BUILD_ENV === 'dev')
+        return configBase
+
+    // 针对生产环境
+    return Object.assign({}, configBase, {
+        entry: {
+            commons: [
+                'react',
+                'react-dom',
+                'redux',
+                'redux-thunk',
+                'react-redux',
+                'react-router',
+                'react-router-redux',
+                'js-cookie',
+            ],
+            ...configBase.entry,
+        }
+    })
+}
+
+module.exports = factoryConfig
