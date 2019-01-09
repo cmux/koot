@@ -1,5 +1,5 @@
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
-const { moduleCssFilenameTest: defaultModuleCssFilenameTest } = require('../../../libs/require-koot')('koot/defaults/koot-config')
+const { moduleCssFilenameTest: defaultModuleCssFilenameTest } = require('../../../libs/require-koot')('defaults/koot-config')
 
 /**
  * Loader 规则 - CSS
