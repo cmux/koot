@@ -1,8 +1,25 @@
 import React from 'react'
+import { extend } from 'koot'
 
-import '@assets/css/reset.less'
-import '@assets/css/common.less'
+import './global.less'
 
-const App = ({ children }) => children
+const App = extend({
+    styles: require('./app.view.less')
+})(
+    ({ className, children, ...props }) => (
+        <div className={className}>
+            <Nav className="nav" {...props} />
+            <Main className="main" children={children} {...props} />
+        </div>
+    )
+)
+
+const Nav = (props) => (
+    <nav {...props}></nav>
+)
+
+const Main = (props) => (
+    <main {...props} />
+)
 
 export default App
