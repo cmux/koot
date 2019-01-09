@@ -244,7 +244,7 @@ module.exports = (kootBuildConfig = {}) => {
                 exclude: regExpKootModules,
                 use: [
                     ...useLastNormalLoaders,
-                    "less-loader"
+                    useLessLoader
                 ]
             },
         ]
@@ -258,7 +258,7 @@ module.exports = (kootBuildConfig = {}) => {
                 exclude: regExpKootModules,
                 use: [
                     ...useLastNormalLoaders,
-                    "sass-loader"
+                    useSassLoader
                 ]
             },
         ]
