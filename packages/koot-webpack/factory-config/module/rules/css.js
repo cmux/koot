@@ -220,6 +220,7 @@ module.exports = (kootBuildConfig = {}) => {
 
     const useLastNormalLoaders = [
         useLastLoaderForNormal,
+        "css-loader",
         "postcss-loader"
     ].filter(item => !!item)
     rules.push({
