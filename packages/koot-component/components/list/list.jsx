@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Table } from 'antd';
-import { separatorFormat, ellipsisStyleFormat } from './format.js';
+import { separatorFormat, ellipsisStyleFormat, minWidthStyleFormat, maxWidthStyleFormat } from './format.js';
 import { isObject } from 'util';
+import { AutoTooltip } from './components';
 
 class List extends Component {
 
@@ -14,7 +15,7 @@ class List extends Component {
     render() {
         const { render } = this.props;
         const config  = render();
-        const props = this.propsHandler(config);
+        const props = this.propsHandler( Object.assign({}, this.props, config) );
         const { columns, dataSource } = config;
         const nextDataSource = dataSource && dataSource.map((dataItem, index) => {
             return Object.assign({}, dataItem, {
@@ -34,19 +35,24 @@ class List extends Component {
 
     columnsHandler = ( columns ) => {
         return columns && columns.map(item => {
+            const { autoTooltip } = item;
             const style = this.styleFormatter(item);
             const orignRender = item.render;
             item.render = (text, record, index) => {
                 let value = this.valueFormatter(text, item);
                 // dataIndex 不存在时 text === record
                 value = isObject(value) ? '' : value;
+                if( orignRender && typeof orignRender === 'function' ){
+                    value = orignRender(value, record, index);
+                }
                 return (
                     <div style={style}>
                         {
-                            orignRender && typeof orignRender === 'function'
-                                ? orignRender(value, record, index)
-                                : value
+                            autoTooltip === true
+                                ? <AutoTooltip>{value}</AutoTooltip>
+                                : <span>{value}</span>
                         }
+                        
                     </div>
                 )
             }
@@ -57,7 +63,9 @@ class List extends Component {
     styleFormatter = (item) => {
         const defaultStyle = {}
         const style = ellipsisStyleFormat(item.ellipsis);
-        return Object.assign(defaultStyle, style);
+        const minWidthStyle = minWidthStyleFormat(item.minWidth);
+        const maxWidthStyle = maxWidthStyleFormat(item.maxWidth);
+        return Object.assign(defaultStyle, style, minWidthStyle, maxWidthStyle);
     }
 
     valueFormatter = (text, item) => {
@@ -83,6 +91,7 @@ class List extends Component {
         delete nextConfig.columns;
         delete nextConfig.dataSource;
         delete nextConfig.page;
+        delete nextConfig.render;
 
         return nextConfig;
     }
