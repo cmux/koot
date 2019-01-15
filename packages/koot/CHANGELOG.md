@@ -68,7 +68,7 @@
     - `@babel/plugin-transform-runtime` -> _7.2.0_
     - `@babel/polyfill` -> _7.2.5_
     - `@babel/preset-env` -> _7.2.3_
-    - `autoprefixer` -> _9.4.4_
+    - `autoprefixer` -> _9.4.5_
     - `koa` -> _2.6.2_
     - `less` -> _3.9.0_
     - `mini-css-extract-plugin` -> _0.5.0_
@@ -76,16 +76,16 @@
     - `react` -> _16.7.0_
     - `react-dom` -> _16.7.0_
     - `react-hot-loader` -> _4.6.3_
-    - `webpack` -> _4.28.3_
+    - `webpack` -> _4.28.4_
     - `webpack-dev-middleware` -> _3.5.0_
   - patch
     - `babel-loader` -> _8.0.5_
     - `chalk` -> _2.4.2_
     - `debug` -> _4.1.1_
     - `inquirer` -> _6.2.1_
-    - `pm2` -> _3.2.4_
+    - `pm2` -> _3.2.8_
     - `portfinder` -> _1.0.20_
-    - `postcss` -> _7.0.7_
+    - `postcss` -> _7.0.11_
     - `rimraf` -> _2.6.3_
     - `webpack-dev-server` -> _3.1.14_
 
