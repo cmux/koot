@@ -85,7 +85,7 @@
     - `inquirer` -> _6.2.1_
     - `pm2` -> _3.2.8_
     - `portfinder` -> _1.0.20_
-    - `postcss` -> _7.0.11_
+    - `postcss` -> _7.0.13_
     - `rimraf` -> _2.6.3_
     - `webpack-dev-server` -> _3.1.14_
 
