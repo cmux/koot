@@ -10,8 +10,6 @@ export default {
     path: '/',
     component: require('@views/app').default, // 项目的根层组件
 
-    onEnter: authFilter,
-
     indexRoute: {
         // 标准: 打包后，该组件会存在于核心包中
         // 推荐: 小型项目或大型项目的小型页面使用
