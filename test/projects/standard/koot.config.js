@@ -94,6 +94,7 @@ module.exports = {
     renderCache: {
         maxAge: 10 * 1000,
     },
+    // renderCache: false,
     proxyRequestOrigin: {
         // protocol: 'koot',
     },

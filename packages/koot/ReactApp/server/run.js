@@ -61,7 +61,7 @@ const startKootIsomorphicServer = async () => {
     const template = await validateTemplate(templateConfig)
 
     // 渲染缓存
-    const renderCacheMap = !renderCacheConfig ? undefined : await createRenderCacheMap(renderCacheConfig)
+    const renderCacheMap = await createRenderCacheMap(renderCacheConfig)
 
     // 语言包写入内存
     const locales = !__DEV__ ? await validateI18n() : {}
