@@ -102,8 +102,8 @@ const middlewareIsomorphic = (options = {}) => {
             // console.log(`LocaleId -> ${LocaleId}`)
 
             // 如果存在缓存匹配，直接返回缓存结果
-            const thisRenderCache = renderCacheMap.get(LocaleId)
-            const cached = thisRenderCache.get(url)
+            const thisRenderCache = renderCacheMap ? renderCacheMap.get(LocaleId) : undefined
+            const cached = thisRenderCache ? thisRenderCache.get(url) : false
             if (!__DEV__ && cached !== false) {
                 ctx.body = cached
                 return
@@ -165,7 +165,8 @@ const middlewareIsomorphic = (options = {}) => {
 
             if (result.body) {
                 // HTML 结果暂存入缓存
-                thisRenderCache.set(url, result.body)
+                if (thisRenderCache)
+                    thisRenderCache.set(url, result.body)
                 ctx.body = result.body
                 return
             }

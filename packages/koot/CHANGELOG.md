@@ -77,13 +77,13 @@
     - `react-dom` -> _16.7.0_
     - `react-hot-loader` -> _4.6.3_
     - `webpack` -> _4.28.4_
-    - `webpack-dev-middleware` -> _3.5.0_
+    - `webpack-dev-middleware` -> _3.5.1_
   - patch
     - `babel-loader` -> _8.0.5_
     - `chalk` -> _2.4.2_
     - `debug` -> _4.1.1_
     - `inquirer` -> _6.2.1_
-    - `pm2` -> _3.2.8_
+    - `pm2` -> _3.2.9_
     - `portfinder` -> _1.0.20_
     - `postcss` -> _7.0.13_
     - `rimraf` -> _2.6.3_
