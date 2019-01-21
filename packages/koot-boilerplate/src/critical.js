@@ -1,3 +1,8 @@
+// 全局 CSS
+// 打包时会被自动抽取并整合到 extract.all.[hash].css
+// 引用方法: 无需引用，会自动注入到模板中
+import './global.less'
+
 // Critical 过程
 const doCricital = () => {
 

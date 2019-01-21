@@ -21,7 +21,7 @@ export default {
         getComponent: (nextState, cb) => {
             require.ensure([], (require) => {
                 if (routeCheck(nextState)) cb(null, require('@views/home').default)
-            }, 'Page: Home')
+            }, 'Page-Home')
         }
     },
 

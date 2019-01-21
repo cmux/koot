@@ -1,8 +1,6 @@
 import React from 'react'
 import { extend } from 'koot'
 
-import './global.less'
-
 const App = extend({
     styles: require('./app.view.less')
 })(

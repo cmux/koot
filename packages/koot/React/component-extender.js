@@ -1,6 +1,6 @@
 /* global __KOOT_SSR__:false */
 
-import { store } from '../'
+import { getStore } from '../'
 
 import React from 'react'
 import { connect } from 'react-redux'
@@ -209,7 +209,7 @@ export default (options = {}) => (WrappedComponent) => {
             const {
                 title,
                 metas
-            } = doPageinfo(store, getRenderPropsFromComponentProps(this.props), pageinfo)
+            } = doPageinfo(getStore(), getRenderPropsFromComponentProps(this.props), pageinfo)
             clientUpdatePageInfo(title, metas)
         }
 
@@ -217,7 +217,7 @@ export default (options = {}) => (WrappedComponent) => {
 
         state = {
             loaded: typeof dataCheck === 'function'
-                ? dataCheck(store.getState(), getRenderPropsFromComponentProps(this.props))
+                ? dataCheck(getStore().getState(), getRenderPropsFromComponentProps(this.props))
                 : undefined
             ,
         }
