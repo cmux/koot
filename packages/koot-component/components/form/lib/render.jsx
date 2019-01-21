@@ -528,7 +528,29 @@ export const renderCheckboxHandler = (configItem = {}) => {
 export const renderRadioHandler = (configItem = {}) => {
     const { data } = configItem;
     const props = getConfigItemProps(configItem);
-    props.options = data || [];
+    // props.options = data || [];
+    const childrenList = data.map((item) => {
+        if( props.buttonStyle  ){
+            return (
+                <Radio.Button
+                    value={item.value}
+                    key={item.value}
+                >
+                    {item.label}
+                </Radio.Button>
+            )
+        }else{
+            return (
+                <Radio
+                    value={item.value}
+                    key={item.value}
+                >
+                    {item.label}
+                </Radio>
+            )
+        }
+        
+    })
     return fieldDecorator(
         configItem, 
         (
@@ -536,6 +558,9 @@ export const renderRadioHandler = (configItem = {}) => {
             <RadioGroup
                 {...props}
             >
+                {
+                    childrenList
+                }
             </RadioGroup>
         )
     )
