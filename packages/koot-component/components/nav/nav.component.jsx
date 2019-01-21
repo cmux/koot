@@ -95,8 +95,9 @@ const renderMenuList = ( _baseUrl, _routeList ) => {
     cache.abbreviationList = [];
     return (
         _routeList.map((routeItem) => {
-            const currentUrl = `${_baseUrl}${routeItem.path}`;
+            let currentUrl = `${_baseUrl}${routeItem.path}`;
             const key = `${currentUrl}`;
+            const linkUrl = routeItem.path === '' ? currentUrl.replace(/[/]$/, '') : currentUrl;
             if( routeItem.meta ){
                 const { showMenu } = routeItem.meta;
                 if( showMenu === false ){
@@ -125,7 +126,7 @@ const renderMenuList = ( _baseUrl, _routeList ) => {
                     <Item
                         key={key}
                     >
-                        <Link to={currentUrl}>
+                        <Link to={linkUrl}>
                             { renderMenuItemContent(routeItem) }
                         </Link>
                     </Item>
@@ -181,37 +182,113 @@ class Nav extends Component {
     }
 
     componentDidMount() {
-        const { router } = this.props;
-        const { selectKeys, openKeys } = this.state;
-        const mathRoutesPathList = this.getMatchRoutesPath(router);
-        const nextSelectKeys = selectKeys.concat(mathRoutesPathList);
-        const nextOpenKeys = openKeys.concat(mathRoutesPathList);
+        const { stateChangeHandler } = this;
+        // 必须先执行
+        this.filterStateChangeEvent();
+        // 
+        this.updateSelectOpenKeys();
+        window.addEventListener('popstate', stateChangeHandler.bind(this))
+        window.addEventListener('nav.event.onpushstate', stateChangeHandler.bind(this))
+        window.addEventListener('nav.event.onreplacestate', stateChangeHandler.bind(this))
+    }
+
+    stateChangeHandler() {
+        this.updateSelectOpenKeys();
+    }
+
+    /**
+     * 
+     */
+    filterStateChangeEvent() {
+        (function(history){
+            const pushState = history.pushState;
+            const replaceState = history.replaceState;
+            history.pushState = function(state) {
+                const plainResult = pushState.apply(history, arguments);
+                if (typeof history.onpushstate == "function") {
+                    history.onpushstate({state: state});
+                }
+                window.dispatchEvent( new Event('nav.event.onpushstate') );
+                // ... whatever else you want to do
+                // maybe call onhashchange e.handler
+                return plainResult;
+            };
+            history.replaceState = function(state){
+                const plainResult = replaceState.apply(history, arguments);
+                if (typeof history.replacestate == "function") {
+                    history.replacestate({state: state});
+                }
+                window.dispatchEvent( new Event('nav.event.onreplacestate') );
+                return plainResult;
+            }
+        })(window.history);
+    }
+
+    // 更新 selectKeys openKeys
+    updateSelectOpenKeys = () => {
+        const mathRoutesPathList = this.getMatchPath();
         this.setState({
-            selectKeys: nextSelectKeys,
-            openKeys: nextOpenKeys
+            selectKeys: mathRoutesPathList,
+            openKeys: mathRoutesPathList
         })
     }
 
-    getMatchRoutesPath = ( router ) => {
-        const { routes, params } = router;
+    // getMatchRoutesPath = ( router ) => {
+    //     const { routes, params } = router;
+    //     let tempUrl = '';
+    //     let result = []
+    //     routes.forEach((route, index) => {
+    //         if( index > 0 ){
+    //             tempUrl = tempUrl + `/${route.path || ''}`;
+    //             result.push(tempUrl);
+    //         }
+    //     })
+    //     result = result.map(item => {
+    //         Object.keys(params).forEach(key => {
+    //             let patt = new RegExp(`/:${key}`,'g')
+    //             if( item.search(patt) !== -1 ){
+    //                 if( params[key] ){
+    //                     item = item.replace(patt, `/${params[key]}`);
+    //                 }
+    //             }
+    //         })
+    //         return item;
+    //     })
+    //     return result;
+    // }
+
+    // getObjectLocationSearch = ( search ) => {
+    //     if( !search ){
+    //         return;
+    //     }
+    //     const result = {};
+    //     const nextSearch = search.replace('?', '');
+    //     const searchList = nextSearch.split('&');
+    //     searchList.forEach((searchItem) => {
+    //         const temp = searchItem.split('=');
+    //         const key = temp[0];
+    //         const value = temp[1];
+    //         result[key] = value;
+    //     })
+    //     return result;
+    // }
+
+    /**
+     * 
+     */
+    getMatchPath = () => {
+        const { pathname } = window.location;
+        const result = [];
+        const pathNameList = pathname.split('/');
         let tempUrl = '';
-        let result = []
-        routes.forEach((route, index) => {
+        pathNameList.forEach((path, index) => {
             if( index > 0 ){
-                tempUrl = tempUrl + `/${route.path || ''}`;
+                tempUrl = tempUrl + `/${path || ''}`;
                 result.push(tempUrl);
             }
-        })
-        result = result.map(item => {
-            Object.keys(params).forEach(key => {
-                let patt = new RegExp(`/:${key}`,'g')
-                if( item.search(patt) !== -1 ){
-                    if( params[key] ){
-                        item = item.replace(patt, `/${params[key]}`);
-                    }
-                }
-            })
-            return item;
+            if( index === pathNameList.length - 1 ){
+                result.push(tempUrl + '/');
+            }
         })
         return result;
     }

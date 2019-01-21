@@ -11,13 +11,16 @@ class Sider extends Component {
     static propTypes = {
         children: PropTypes.node,
         collapsed: PropTypes.bool, 
+        onCollapsedChange: PropTypes.func
     }
 
     constructor(props) {
         super(props)
 
+        const { collapsed } = this.props;
+
         this.store = create({
-            collapsed: false,
+            collapsed: collapsed || false,
         })
     }
 
@@ -47,6 +50,10 @@ class Sider extends Component {
 
     componentDidMount() {
         this.store.subscribe(() => {
+            const { collapsed } = this.store.getState();
+            this.props.onCollapsedChange && 
+            typeof this.props.onCollapsedChange === 'function' && 
+            this.props.onCollapsedChange(collapsed)
             this.forceUpdate();
         }) 
     }

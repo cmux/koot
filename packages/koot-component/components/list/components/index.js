@@ -1,0 +1,1 @@
+export { default as AutoTooltip } from './auto-tooltip.component.jsx';
