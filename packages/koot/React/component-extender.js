@@ -271,7 +271,7 @@ export default (options = {}) => (WrappedComponent) => {
             this.mounted = true
 
             if (!this.state.loaded && typeof dataFetch !== 'undefined') {
-                doFetchData(store, getRenderPropsFromComponentProps(this.props), dataFetch)
+                doFetchData(getStore(), getRenderPropsFromComponentProps(this.props), dataFetch)
                     .then(() => {
                         if (!this.mounted) return
                         this.setState({
