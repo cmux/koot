@@ -1,4 +1,4 @@
-import * as portionConfig from '__KOOT_PROJECT_CONFIG_PORTION_PATHNAME__'
+import * as portionConfig from '__KOOT_PROJECT_CONFIG_PORTION_CLIENT_PATHNAME__'
 
 import validateReduxConfig from '../../React/validate/redux-config'
 window.__KOOT_STORE__ = ((reduxConfig = {}) => {

@@ -31,7 +31,8 @@ const validateSample = async (sample) => {
 
     // 重置环境变量
     delete process.env.KOOT_PROJECT_CONFIG_FULL_PATHNAME
-    delete process.env.KOOT_PROJECT_CONFIG_PORTION_PATHNAME
+    delete process.env.KOOT_PROJECT_CONFIG_PORTION_SERVER_PATHNAME
+    delete process.env.KOOT_PROJECT_CONFIG_PORTION_CLIENT_PATHNAME
 
     const { name, file, filename } = sample
 

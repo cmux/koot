@@ -7,9 +7,14 @@ const getCwd = require('./get-cwd')
  * @returns {String}
  */
 module.exports = (portion = false) => {
+    if (portion === 'client') {
+        return typeof process.env.KOOT_PROJECT_CONFIG_PORTION_CLIENT_PATHNAME === 'string'
+            ? process.env.KOOT_PROJECT_CONFIG_PORTION_CLIENT_PATHNAME
+            : path.resolve(getCwd(), 'koot.js')
+    }
     if (portion) {
-        return typeof process.env.KOOT_PROJECT_CONFIG_PORTION_PATHNAME === 'string'
-            ? process.env.KOOT_PROJECT_CONFIG_PORTION_PATHNAME
+        return typeof process.env.KOOT_PROJECT_CONFIG_PORTION_SERVER_PATHNAME === 'string'
+            ? process.env.KOOT_PROJECT_CONFIG_PORTION_SERVER_PATHNAME
             : path.resolve(getCwd(), 'koot.js')
     }
     return typeof process.env.KOOT_PROJECT_CONFIG_FULL_PATHNAME === 'string'

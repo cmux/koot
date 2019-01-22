@@ -1,6 +1,6 @@
-import useRouterHistory from 'react-router/lib/useRouterHistory'
-import createMemoryHistory from 'history/lib/createMemoryHistory'
-import { syncHistoryWithStore } from 'react-router-redux'
+// import useRouterHistory from 'react-router/lib/useRouterHistory'
+// import createMemoryHistory from 'history/lib/createMemoryHistory'
+// import { syncHistoryWithStore } from 'react-router-redux'
 
 import getChunkmap from '../../../../utils/get-chunkmap'
 import getSWPathname from '../../../../utils/get-sw-pathname'
@@ -8,7 +8,7 @@ import getSWPathname from '../../../../utils/get-sw-pathname'
 import i18nGetLangFromCtx from '../../../../i18n/server/get-lang-from-ctx'
 import i18nEnabled from '../../../../i18n/is-enabled'
 
-import initStore from './init-store'
+// import initStore from './init-store'
 import validateI18n from '../../validate/i18n'
 import ssr from './ssr'
 
@@ -26,7 +26,7 @@ import ssr from './ssr'
 const middlewareIsomorphic = (options = {}) => {
 
     const {
-        reduxConfig,
+        // reduxConfig,
         renderCacheMap,
         locales,
         proxyRequestOrigin = {},
@@ -121,29 +121,31 @@ const middlewareIsomorphic = (options = {}) => {
 
             // 生成/清理 Store
             // console.log('\x1b[36m⚑\x1b[0m' + ' Store created')
-            const Store = initStore(reduxConfig)
+            // const Store = initStore(reduxConfig)
 
             // 生成 History
-            const historyConfig = {
-                basename: LocaleId && process.env.KOOT_I18N_URL_USE === 'router'
-                    ? `/${LocaleId}`
-                    : '/'
-            }
-            const memoryHistory = useRouterHistory(() => createMemoryHistory(url))(historyConfig)
+            // const historyConfig = {
+            //     basename: LocaleId && process.env.KOOT_I18N_URL_USE === 'router'
+            //         ? `/${LocaleId}`
+            //         : '/'
+            // }
+            // const memoryHistory = useRouterHistory(() => createMemoryHistory(url))(historyConfig)
             /** @type {Object} 已生成的 History 实例 */
-            const History = syncHistoryWithStore(memoryHistory, Store)
+            // const History = syncHistoryWithStore(memoryHistory, Store)
 
             // eval SSR
             // [开发模式] 每次请求都重新验证一次语言包，以确保语言包的更新
             const SSRoptions = {
                 ctx,
 
-                Store, History, LocaleId,
+                // Store, History,
+                // memoryHistory,
+                LocaleId,
                 locales: __DEV__ ? await validateI18n() : locales,
 
                 // ssrConfig,
 
-                syncCookie: reduxConfig.syncCookie,
+                // syncCookie: reduxConfig.syncCookie,
                 proxyRequestOrigin, templateInject,
                 template,
 
@@ -151,8 +153,8 @@ const middlewareIsomorphic = (options = {}) => {
                 styleMap,
             }
             if (__DEV__) {
-                global.__KOOT_STORE__ = Store
-                global.__KOOT_HISTORY__ = History
+                // global.__KOOT_STORE__ = Store
+                // global.__KOOT_HISTORY__ = History
                 global.__KOOT_LOCALEID__ = LocaleId
                 global.__KOOT_SSR__ = SSRoptions
             }

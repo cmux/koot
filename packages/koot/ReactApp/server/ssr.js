@@ -1,6 +1,6 @@
 /* global
-    __KOOT_STORE__:false,
-    __KOOT_HISTORY__:false,
+    __KOOT_SSR_SET_STORE__:false,
+    __KOOT_SSR_SET_HISTORY__:false,
     __KOOT_LOCALEID__:false,
     __KOOT_SSR__:false
 */
@@ -9,6 +9,9 @@ import React from 'react'
 import { renderToString } from 'react-dom/server'
 import RootIsomorphic from './root-isomorphic'
 import match from 'react-router/lib/match'
+import useRouterHistory from 'react-router/lib/useRouterHistory'
+import createMemoryHistory from 'history/lib/createMemoryHistory'
+import { syncHistoryWithStore } from 'react-router-redux'
 
 import * as kootConfig from '__KOOT_PROJECT_CONFIG_FULL_PATHNAME__'
 
@@ -18,6 +21,7 @@ import { CHANGE_LANGUAGE } from '../action-types'
 
 import validateRouterConfig from '../../React/validate/router-config'
 import validateInject from '../../React/validate-inject'
+import validateReduxConfig from '../../React/validate/redux-config'
 import isNeedInjectCritical from '../../React/inject/is-need-inject-critical'
 import renderTemplate from '../../React/render-template'
 
@@ -25,6 +29,7 @@ import beforeRouterMatch from './middlewares/isomorphic/lifecycle/before-router-
 import beforeDataToStore from './middlewares/isomorphic/lifecycle/before-data-to-store'
 import afterDataToStore from './middlewares/isomorphic/lifecycle/after-data-to-store'
 import executeComponentsLifecycle from './middlewares/isomorphic/execute-components-lifecycle'
+import initStore from './middlewares/isomorphic/init-store'
 
 import i18nOnServerRender from '../../i18n/onServerRender'
 import i18nGenerateHtmlRedirectMetas from '../../i18n/server/generate-html-redirect-metas'
@@ -34,10 +39,41 @@ const ssr = async (options = {}) => {
 
     const {
         LocaleId = __DEV__ ? global.__KOOT_LOCALEID__ : __KOOT_LOCALEID__,
-        Store = __DEV__ ? global.__KOOT_STORE__ : __KOOT_STORE__,
-        History = __DEV__ ? global.__KOOT_HISTORY__ : __KOOT_HISTORY__,
+        // Store = __DEV__ ? global.__KOOT_STORE__ : __KOOT_STORE__,
+        // History = __DEV__ ? global.__KOOT_HISTORY__ : __KOOT_HISTORY__,
         SSR = __DEV__ ? global.__KOOT_SSR__ : __KOOT_SSR__
     } = options
+
+    // ========================================================================
+
+    const { redux: reduxConfigRaw = {} } = kootConfig
+    const reduxConfig = await validateReduxConfig(reduxConfigRaw)
+
+    // 生成/清理 Store
+    // console.log('\x1b[36m⚑\x1b[0m' + ' Store created')
+    const Store = initStore(reduxConfig)
+
+    // 生成 History
+    const historyConfig = {
+        basename: LocaleId && process.env.KOOT_I18N_URL_USE === 'router'
+            ? `/${LocaleId}`
+            : '/'
+    }
+    const memoryHistory = useRouterHistory(() => createMemoryHistory(url))(historyConfig)
+    /** @type {Object} 已生成的 History 实例 */
+    const History = syncHistoryWithStore(memoryHistory, Store)
+
+    const { syncCookie } = reduxConfig
+
+    if (__DEV__) {
+        global.__KOOT_STORE__ = Store
+        global.__KOOT_HISTORY__ = History
+    } else {
+        __KOOT_SSR_SET_STORE__(Store)
+        __KOOT_SSR_SET_HISTORY__(History)
+    }
+
+    // ========================================================================
 
     // console.log({
     //     LocaleId,
@@ -56,7 +92,7 @@ const ssr = async (options = {}) => {
         template,
         templateInject,
         proxyRequestOrigin,
-        syncCookie,
+        // syncCookie,
         ssrComplete,
     } = SSR
 

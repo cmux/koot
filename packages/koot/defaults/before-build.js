@@ -4,10 +4,12 @@
 module.exports = {
     // 处理项目配置相关
     keyFileProjectConfigTempFull: '__FILE_PROJECT_CONFIG_TEMP_FULL__',
-    keyFileProjectConfigTempPortion: '__FILE_PROJECT_CONFIG_TEMP_PORTION__',
+    keyFileProjectConfigTempPortionServer: '__FILE_PROJECT_CONFIG_TEMP_PORTION_SERVER__',
+    keyFileProjectConfigTempPortionClient: '__FILE_PROJECT_CONFIG_TEMP_PORTION_CLIENT__',
     dirConfigTemp: 'logs/tmp/config',
     filenameProjectConfigTempFull: 'full.*.js',
-    filenameProjectConfigTempPortion: 'portion.*.js',
+    filenameProjectConfigTempPortionServer: 'portion.server.*.js',
+    filenameProjectConfigTempPortionClient: 'portion.client.*.js',
     propertiesToExtract: [
         ['name', ''],
         ['type', 'react'],

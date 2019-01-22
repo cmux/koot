@@ -43,11 +43,21 @@ const ssr = async (__KOOT_SSR__) => new Promise(async resolve => {
     // await eval(__KOOT_SSR_FILE_CONTENT__)
 
 
+    let Store, History, __KOOT_STORE__, __KOOT_HISTORY__
     const {
-        Store: __KOOT_STORE__,
-        History: __KOOT_HISTORY__,
-        LocaleId: __KOOT_LOCALEID__,
+        // Store: __KOOT_STORE__,
+        // History: __KOOT_HISTORY__,
+        LocaleId: __KOOT_LOCALEID__
     } = __KOOT_SSR__
+
+    const __KOOT_SSR_SET_STORE__ = value => {
+        Store = value
+        __KOOT_STORE__ = value
+    }
+    const __KOOT_SSR_SET_HISTORY__ = value => {
+        History = value
+        __KOOT_HISTORY__ = value
+    }
 
     try {
         eval(__KOOT_SSR_FILE_CONTENT__)

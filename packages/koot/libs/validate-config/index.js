@@ -5,9 +5,11 @@ const validateConfigDist = require('../validate-config-dist')
 const getCwd = require('../../utils/get-cwd')
 const {
     keyFileProjectConfigTempFull,
-    keyFileProjectConfigTempPortion,
+    keyFileProjectConfigTempPortionServer,
+    keyFileProjectConfigTempPortionClient,
     filenameProjectConfigTempFull,
-    filenameProjectConfigTempPortion,
+    filenameProjectConfigTempPortionServer,
+    filenameProjectConfigTempPortionClient,
     propertiesToExtract: _propertiesToExtract,
     dirConfigTemp: _dirConfigTemp,
 } = require('../../defaults/before-build')
@@ -24,7 +26,8 @@ const __ = require('../../utils/translate')
  * 
  * 以下内容写入环境变量
  * - `KOOT_PROJECT_CONFIG_FULL_PATHNAME` 项目配置文件路径，包含所有需要引用的内容 (临时使用)
- * - `KOOT_PROJECT_CONFIG_PORTION_PATHNAME` 项目配置文件路径，包含部分需要引用的内容 (临时使用)
+ * - `KOOT_PROJECT_CONFIG_PORTION_SERVER_PATHNAME` 项目配置文件路径，包含部分需要引用的内容 (服务器端临时使用)
+ * - `KOOT_PROJECT_CONFIG_PORTION_CLIENT_PATHNAME` 项目配置文件路径，包含部分需要引用的内容 (客户端临时使用)
  * 
  * 兼容情况
  * - _0.8_: 当前版本
@@ -107,26 +110,36 @@ const validateConfig = async (projectDir = getCwd(), options = {}) => {
         return {
             ...finalValidate(kootConfig),
             [keyFileProjectConfigTempFull]: process.env.KOOT_PROJECT_CONFIG_FULL_PATHNAME,
-            [keyFileProjectConfigTempPortion]: process.env.KOOT_PROJECT_CONFIG_PORTION_PATHNAME
+            [keyFileProjectConfigTempPortionServer]: process.env.KOOT_PROJECT_CONFIG_PORTION_SERVER_PATHNAME,
+            [keyFileProjectConfigTempPortionClient]: process.env.KOOT_PROJECT_CONFIG_PORTION_CLIENT_PATHNAME
         }
     }
 
     // 代码中引用的配置文件 (存放于临时目录中)
-    const { tmpConfig, tmpConfigPortion } = await require('./extract-to-tmp')(projectDir, kootConfig)
+    const {
+        tmpConfig,
+        tmpConfigPortionServer,
+        tmpConfigPortionClient
+    } = await require('./extract-to-tmp')(projectDir, kootConfig)
 
     // 写入项目配置文件 (临时)
     const pathTmpConfig = path.resolve(dirConfigTemp, filenameProjectConfigTempFull.replace(/\*/g, Date.now()))
     process.env.KOOT_PROJECT_CONFIG_FULL_PATHNAME = pathTmpConfig
     await fs.writeFile(pathTmpConfig, tmpConfig, 'utf-8')
 
-    const pathTmpConfigPortion = path.resolve(dirConfigTemp, filenameProjectConfigTempPortion.replace(/\*/g, Date.now()))
-    process.env.KOOT_PROJECT_CONFIG_PORTION_PATHNAME = pathTmpConfigPortion
-    await fs.writeFile(pathTmpConfigPortion, tmpConfigPortion, 'utf-8')
+    const pathTmpConfigPortionServer = path.resolve(dirConfigTemp, filenameProjectConfigTempPortionServer.replace(/\*/g, Date.now()))
+    process.env.KOOT_PROJECT_CONFIG_PORTION_SERVER_PATHNAME = pathTmpConfigPortionServer
+    await fs.writeFile(pathTmpConfigPortionServer, tmpConfigPortionServer, 'utf-8')
+
+    const pathTmpConfigPortionClient = path.resolve(dirConfigTemp, filenameProjectConfigTempPortionClient.replace(/\*/g, Date.now()))
+    process.env.KOOT_PROJECT_CONFIG_PORTION_CLIENT_PATHNAME = pathTmpConfigPortionClient
+    await fs.writeFile(pathTmpConfigPortionClient, tmpConfigPortionClient, 'utf-8')
 
     return {
         ...finalValidate(kootConfig),
         [keyFileProjectConfigTempFull]: pathTmpConfig,
-        [keyFileProjectConfigTempPortion]: pathTmpConfigPortion
+        [keyFileProjectConfigTempPortionServer]: pathTmpConfigPortionServer,
+        [keyFileProjectConfigTempPortionClient]: pathTmpConfigPortionClient
     }
 }
 

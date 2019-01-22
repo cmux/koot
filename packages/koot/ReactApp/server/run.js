@@ -11,8 +11,8 @@ const fs = require('fs-extra')
 import {
     template as templateConfig,
     server as serverConfig,
-    redux as reduxConfigRaw
-} from '__KOOT_PROJECT_CONFIG_PORTION_PATHNAME__'
+    // redux as reduxConfigRaw
+} from '__KOOT_PROJECT_CONFIG_PORTION_SERVER_PATHNAME__'
 
 import getPathnameDevServerStart from '../../utils/get-pathname-dev-server-start'
 
@@ -21,7 +21,7 @@ import log from '../../libs/log'
 
 import validatePort from './validate/port'
 import createRenderCacheMap from './validate/create-render-cache-map'
-import validateReduxConfig from '../../React/validate/redux-config'
+// import validateReduxConfig from '../../React/validate/redux-config'
 import validateI18n from './validate/i18n'
 import validateTemplate from './validate/template'
 
@@ -55,7 +55,7 @@ const startKootIsomorphicServer = async () => {
     if (!port) throw new Error(errorMsg('VALIDATE_PORT', 'unavailable'))
 
     // 确定 Redux 相关配置
-    const reduxConfig = await validateReduxConfig(reduxConfigRaw)
+    // const reduxConfig = await validateReduxConfig(reduxConfigRaw)
 
     // 确定模板内容
     const template = await validateTemplate(templateConfig)
@@ -91,7 +91,7 @@ const startKootIsomorphicServer = async () => {
 
     // 挂载中间件: 同构服务器
     app.use(middlewareIsomorphic({
-        reduxConfig,
+        // reduxConfig,
         renderCacheMap,
         locales,
         proxyRequestOrigin,

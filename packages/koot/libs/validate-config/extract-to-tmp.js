@@ -100,15 +100,19 @@ module.exports = async (projectDir, config) => {
     ]
 
     /** @type {Object} 引用配置 (部分) 的配置对象 */
-    const tmpConfigPortion = {}
+    const tmpConfigPortionServer = {}
     propertiesPortion.forEach(key => {
         if (typeof tmpConfig[key] === 'object')
-            tmpConfigPortion[key] = { ...tmpConfig[key] }
+            tmpConfigPortionServer[key] = { ...tmpConfig[key] }
         else if (tmpConfig[key])
-            tmpConfigPortion[key] = tmpConfig[key]
+            tmpConfigPortionServer[key] = tmpConfig[key]
     })
-    if (typeof tmpConfigPortion.server === 'object')
-        delete tmpConfigPortion.server.onRender
+    if (typeof tmpConfigPortionServer.server === 'object')
+        delete tmpConfigPortionServer.server.onRender
+
+    const tmpConfigPortionClient = { ...tmpConfigPortionServer }
+    delete tmpConfigPortionServer.redux
+    delete tmpConfigPortionClient.server
 
     /**
      * 将对象结果转为字符串
@@ -128,6 +132,7 @@ module.exports = async (projectDir, config) => {
 
     return {
         tmpConfig: '// 核心代码中引用的配置文件\n\n' + transform(tmpConfig),
-        tmpConfigPortion: '// 核心代码中引用的配置文件 (部分)\n\n' + transform(tmpConfigPortion)
+        tmpConfigPortionServer: '// 核心代码中引用的配置文件 (部分)\n\n' + transform(tmpConfigPortionServer),
+        tmpConfigPortionClient: '// 核心代码中引用的配置文件 (部分)\n\n' + transform(tmpConfigPortionClient)
     }
 }
