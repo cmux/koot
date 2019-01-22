@@ -2,7 +2,7 @@
 
 > 模块化的 redux 组织方案
 
-> Redux 是一个成功的且扩展性极强的状态化管理器，但是其复杂且繁琐的开发体验是在是让人头疼
+> Redux 是一个成功的且扩展性极强的状态化管理器，但是其复杂且繁琐的开发体验是在是让人头疼
 
 * 当我们要完成一个复杂的业务时候，我们要管理大量的 createAction, action, reducer
 * Action 本身可以理解为一个定义，并不是真实存在的逻辑，为了完成异步 我们需要使用 reudx-thunk
@@ -37,7 +37,7 @@ module.js
 ```
     const module = {
         state: {
-            // 在此处定义默认的 state
+            // 在此处定义默认的state
             // 程序将在创建时将此处定义好的值初始化为默认值
             userinfo: {
                 username: 'liudehua',
@@ -103,7 +103,7 @@ module.js
     this.props.dispatch('SOME_ACTION_NAME')
 ```
 
-### action 函数及参数
+### action函数及参数
 ```
     // commit 用来提交 reducer
     // eg: commit('SOME_REDUCER_FUNCTION', payload)
@@ -175,5 +175,3 @@ index.js
     }
 ```
 
-
-./
