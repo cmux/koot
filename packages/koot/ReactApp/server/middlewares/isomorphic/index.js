@@ -183,6 +183,7 @@ const middlewareIsomorphic = (options = {}) => {
         } catch (err) {
 
             require('debug')('SYSTEM:isomorphic:error')('Server-Render Error Occures: %O', err.stack)
+            console.error(err)
             ctx.status = 500
             ctx.body = err.message
             ctx.app.emit('error', err, ctx)
