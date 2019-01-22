@@ -3,7 +3,7 @@
   "version": "1.0.9",
   "description": "模块化的redux, redux版本的vuex",
   "author": "zrain <zrainma@sina.com>",
-  "homepage": "https://github.com/cmux/koot#readme",
+  "homepage": "https://github.com/cmux/koot/tree/master/packages/koot-redux#readme",
   "license": "ISC",
   "main": "index.js",
   "directories": {
