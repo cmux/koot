@@ -12,7 +12,6 @@
 
 > koot-redux 同样尊循着与 redux 一样的原则
 
-
 ## 安装
 
 ### NPM
