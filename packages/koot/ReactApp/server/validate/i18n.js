@@ -11,7 +11,7 @@ import { setLocales } from '../../../i18n/locales'
  * - 将所有可用语种ID写入内存
  * - 将所有语种的语言包写入内存
  * 
- * _开发模式_ 同构中间件需执行该验证方法
+ * _开发环境_ 同构中间件需执行该验证方法
  * 
  * @async
  * @returns {void}

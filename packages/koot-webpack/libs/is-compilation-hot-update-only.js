@@ -4,7 +4,7 @@
  * @returns {Boolean}
  */
 module.exports = (compilation) => {
-    // 热更新仅在开发模式启用
+    // 热更新仅在开发环境启用
     // 如果 compilation 非法，返回
     if (process.env.WEBPACK_BUILD_ENV !== 'dev' ||
         typeof compilation !== 'object'

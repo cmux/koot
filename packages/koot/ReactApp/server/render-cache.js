@@ -15,7 +15,7 @@
 const defaults = require('../../defaults/render-cache')
 
 /**
- * @class React 同构渲染缓存，基于 URL (开发模式: 禁用缓存)
+ * @class React 同构渲染缓存，基于 URL (开发环境: 禁用缓存)
  */
 class KootReactRenderCache {
 

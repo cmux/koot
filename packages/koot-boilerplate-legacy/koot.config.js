@@ -154,7 +154,7 @@ module.exports = {
 
 
     /**************************************************************************
-     * 开发模式
+     * 开发环境
      *************************************************************************/
 
     devPort: 3080,
@@ -214,12 +214,12 @@ module.exports = {
      * @type {(Object)} 服务器端端相关配置
      * @namespace
      * @property {Object} [koaStatic] - KOA 静态资源服务器扩展配置
-     * @property {Object} [renderCache] - （仅生产模式）同构渲染缓存设置
+     * @property {Object} [renderCache] - （仅生产环境）同构渲染缓存设置
      * @property {Number} [renderCache.maxAge=1000] - 同构渲染缓存最大存在时间 (单位: ms)
      * @property {Number} [renderCache.maxCount=50] - 同构渲染缓存最多缓存的 URL 的数量
      * @property {cacheGet} [renderCache.get] - 自定义缓存检查与吐出方法。存在时, maxAge 和 maxCount 设置将被忽略
      * @property {cacheSet} [renderCache.set] - 自定义缓存存储方法。存在时, maxAge 和 maxCount 设置将被忽略
-     * @property {Object} [proxyRequestOrigin] - （仅生产模式）若本 Node.js 服务器是通过其他代理服务器请求的（如 nginx 反向代理），可用这个配置对象声明原请求的信息
+     * @property {Object} [proxyRequestOrigin] - （仅生产环境）若本 Node.js 服务器是通过其他代理服务器请求的（如 nginx 反向代理），可用这个配置对象声明原请求的信息
      * @property {String} [proxyRequestOrigin.protocol] - 协议名
      * @property {Pathname:Object} [reducers] - 服务器端专用 Reducer，与 combineReducers 参数语法相同。会整合到 redux.combineReducers 中
      * @property {Pathname:Object} [inject] - 注入内容
@@ -256,7 +256,7 @@ module.exports = {
      * @property {Function} beforeBuild 在 Webpack 打包执行前运行的方法，可为异步
      * @property {Function} afterBuild 在 Webpack 打包完成后运行的方法，可为异步
      * @property {Object} defines 扩展 webpack.DefinePlugin 的内容
-     * @property {String[]} dll [仅开发模式] 供 webpack.DllPlugin 使用。webpack 的监控不会处理这些库/library，以期提高开发模式的打包更新速度
+     * @property {String[]} dll [仅开发环境] 供 webpack.DllPlugin 使用。webpack 的监控不会处理这些库/library，以期提高开发环境的打包更新速度
      */
     // webpack: {
     //     dll: [

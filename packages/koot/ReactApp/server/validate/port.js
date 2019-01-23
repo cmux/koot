@@ -12,7 +12,7 @@ const getFreePort = require('../../../libs/get-free-port')
  */
 const doValidatePort = async () => {
 
-    // [开发模式] 如果 flag 文件中写有端口，直接使用该端口
+    // [开发环境] 如果 flag 文件中写有端口，直接使用该端口
     if (__DEV__) {
         let infos
         try {
@@ -40,7 +40,7 @@ const doValidatePort = async () => {
     // 如果不可用，输出日志
     logPortTaken(process.env.SERVER_PORT)
 
-    // [开发模式] 修改 flag 文件，标记端口被占用，并结束
+    // [开发环境] 修改 flag 文件，标记端口被占用，并结束
     if (__DEV__) {
         // 修改 flag 文件
         await fs.writeFile(
@@ -115,11 +115,11 @@ const logPortTaken = (port) => {
  * - 如果不可用，提示下一步操作
  * - 如果不可用同时之后的操作取消，返回 false
  * 
- * _生产模式_
+ * _生产环境_
  * 设定环境变量
  * - `SERVER_PORT` -> 指定的端口
  * 
- * _开发模式_
+ * _开发环境_
  * 设定环境变量
  * - `SERVER_PORT` -> 随机端口
  * - `SERVER_PORT_DEV_MAIN` -> 指定的端口
@@ -131,7 +131,7 @@ const validatePort = async () => {
     const port = await doValidatePort()
     if (!port) return false
     if (__DEV__) {
-        // 开发模式：在随机端口启用服务器
+        // 开发环境：在随机端口启用服务器
         const portFree = await getFreePort(port)
         process.env.SERVER_PORT = portFree
         process.env.SERVER_PORT_DEV_MAIN = port

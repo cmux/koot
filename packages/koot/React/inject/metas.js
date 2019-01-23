@@ -30,7 +30,7 @@ module.exports = ({ metaHtml = '' }) => {
 }
 
 /**
- * [开发模式] 额外内容
+ * [开发环境] 额外内容
  */
 const getDevExtra = () => {
     if (process.env.WEBPACK_BUILD_ENV !== 'dev') return ''

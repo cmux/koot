@@ -2,7 +2,7 @@ const isPortReachable = require('is-port-reachable')
 const getFreePort = require('../../../libs/get-free-port')
 
 /**
- * 仅限开发模式
+ * 仅限开发环境
  * 返回可用的 webpack-dev-server 端口
  * @async
  * @param {Number|Number[]|Object} 正在使用的端口

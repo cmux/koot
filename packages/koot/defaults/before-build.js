@@ -42,7 +42,7 @@ module.exports = {
     chunkNameExtractCss: '__KOOT__EXTRACT__CSS__',
     chunkNameClientRunFirst: '__KOOT__CLIENT__RUN__FIRST__',
 
-    // [开发模式] 临时文件名
+    // [开发环境] 临时文件名
     filenameWebpackDevServerPortTemp: '.dev_webpack-dev-server_port',
     filenameBuilding: '.koot-building',
     filenameBuildFail: '.koot-build-fail'

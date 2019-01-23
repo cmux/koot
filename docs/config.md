@@ -2,22 +2,22 @@
 
 项目根目录中的 `/koot.config.js` 为 koot 项目总配置文件，所有的 koot.js 项目必须提供该配置文件。
 
-该文件需要输出 _**Object**_。下面列出的配置项均为该 Object 内的元素。
+该文件需要输出 _**Object**_。下面列出的配置项均为该对象的第一级属性。
 
-如无特殊说明，所有项目均为**可选项**。
+如无特殊说明，所有配置项目均为**可选项**。
 
 **特殊类型**
 
 `Pathname` 类型表示到对应文件的路径名，支持绝对路径和相对路径，相对路径必须以 `.` 开头。
 
-`Pathname:[type]` 类型表示到对应文件的路径名，对应的文件必须是 `.js` `.jsx` 或 `.mjs` 文件，同时输出对应类型的结果。
+`Pathname:[type]` 类型表示到对应文件的路径名，对应的文件必须是 `.js` `.jsx` 或 `.mjs` 文件，同时输出对应类型的结果。如 `Pathname:Object` 表示对应到 js 文件，该文件需要输出 `Object` 类型。
 
 **简单配置示例**
 
 ```javascript
 // /koot.config.js
 module.exports = {
-    name: "Test Subject A-87",
+    name: "Test Subject D-HU",
     template: "./src/template.ejs",
     routes: "./src/routes",
     store: "./src/store"
@@ -33,7 +33,10 @@ module.exports = {
 - 类型: `String`
 - 默认值: `package.json` 中的 `name` 属性
 
-项目名称。页面的默认标题会使用该值。
+项目名称。以下情况会使用该名称作为默认值：
+
+- 同构：若首页组件没有通过 `extend()` 设定标题，默认使用该名作为页面标题。
+- SPA：模板中的 `<%= inject.title %>` 默认使用该名进行注入替换。
 
 ### type
 
@@ -44,7 +47,7 @@ module.exports = {
 
 ```javascript
 module.exports = {
-    // React 同构
+    // React 同构 (默认值)
     type: 'react',
 
     // React SPA
@@ -57,7 +60,7 @@ module.exports = {
 - 类型: `Pathname`
 - 默认值: `./dist`
 
-打包结果路径。
+打包结果存放路径。
 
 ### template
 
@@ -67,12 +70,26 @@ module.exports = {
 
 HTML 模板文件路径。目前仅支持 `.ejs` 文件。有关模板的使用请查阅 [HTML 模板](/template)。
 
+```javascript
+module.exports = {
+    // 示例配置
+    template: "./src/template.ejs"
+}
+```
+
 ### templateInject
 
 - 类型: `Pathname:Object`
 - 默认值: _无_
 
 自定义 HTML 模板替换内容。请查阅 [HTML 模板](/template)。
+
+```javascript
+module.exports = {
+    // 示例配置
+    templateInject: "./src/template-inject.js"
+}
+```
 
 ### routes
 
@@ -84,13 +101,27 @@ HTML 模板文件路径。目前仅支持 `.ejs` 文件。有关模板的使用�
 
 有关路由配置的编写请查阅 [react-router v3 官方文档/Route Configuration](https://github.com/ReactTraining/react-router/blob/v3/docs/guides/RouteConfiguration.md)。
 
+```javascript
+module.exports = {
+    // 示例配置
+    templateInject: "./src/routes"
+}
+```
+
 ### historyType
 
 - 类型: `String`
-- 默认值: `browserHistory` (同构) / `hashHistory` (SPA)
+- 默认值: 自动匹配 (同构项目使用 `browserHistory`，SPA项目使用 `hashHistory`)
 - **仅针对**: 客户端
 
 项目所用的 `history` 组件的类型。可省略 `History` 字段，如 `browserHistory` 和 `browser` 等效。
+
+```javascript
+module.exports = {
+    // 示例配置：无论项目类型，客户端环境统一使用 hashHistory
+    historyType: "hash"
+}
+```
 
 ### store
 
@@ -108,7 +139,7 @@ module.exports = {
 }
 
 /****************************
- * 文件: /src/store.js
+ * 文件: /src/store/index.js
  ***************************/
 const { createStore, combineReducers, applyMiddleware } = require('redux')
 // Koot.js 提供的生成 Redux store 所需要的相关内容
@@ -156,6 +187,100 @@ module.exports = {
 ```
 
 ### i18n
+
+- 类型: `Boolean` `Object` 或 `Array[]`
+- 默认值: `false`
+
+多语言配置。详情请查阅 [多语言 (i18n)](/i18n)。
+
+```javascript
+module.exports = {
+    // 不启用多语言支持 (默认值)
+    i18n: false,
+
+    /** 简易配置
+     * - `Array` 中每一个元素为 `Array`，其内第一个元素为**语种ID**，第二个元素为**语言包文件路径**
+     * - 采用该配置方式时，其他多语言相关选项均采用默认值（见下）
+     * - 第一行为默认语种
+     */
+    i18n: [
+        ['zh', './src/locales/zh.json'],
+        ['zh-tw', './src/locales/zh-tw.json'],
+        ['en', './src/locales/en.json']
+    ],
+
+    /** 完整配置
+     * - 当前列出的均为默认值
+     * - 除 `locales` 外均为**可选项**
+     */
+    i18n: {
+        /** `i18n.type`
+         * - 类型: `String`
+         * - 默认值: `default`
+         * 
+         * 多语言打包模式
+         * **仅针对**: 生产环境
+         * 
+         * 目前支持:
+         * - `default` (默认值)
+         *   客户端按语种分别打包，语言包内容会直接打入到代码中，代码结果中不存在“语言包对象” 
+         *   适合所有项目使用，推荐语言包较大的项目使用
+         * - `redux`
+         *   服务器输出 HTML 时，当前语种的语言包对象会写入 Redux store 
+         *   适合语言包较小，或对文件/请求体积不敏感的 WebApp 项目使用 
+         *   开发环境下会强制使用这一模式
+         */
+        type: 'default',
+
+        /** `i18n.use`
+         * - 类型: `String`
+         * - 默认值: `query`
+         *
+         * 使用 URL 切换语种的方式
+         *
+         * 目前支持:
+         * - `query` (默认值)
+         *   一般情况下，URL 中不会存在有关语种的字段。切换语种时使用名为 hl 的 URL 参数，如：
+         *     `https://some.project.com/?hl=zh-cn`
+         *     `https://some.project.com/list/articles/?page=10&hl=ja-jp`
+         * `router`
+         *   规定路由的第一层为语种ID。如果访问 URL 的路由第一层不是项目设定的已知的语种 ID，则会自动跳转到最近一次访问的语种或默认语种对应的页面。URL 示例：
+         *     `https://some.project.com/` 自动跳转到 `https://some.project.com/zh-cn/`
+         *     `https://some.project.com/ja-jp/list/articles/?page=10`
+         */
+        use: 'query',
+
+        /** `i18n.expr`
+         * - 类型: `String`
+         * - 默认值: `__`
+         *
+         * JavaScript 代码中多语言翻译方法名
+         */
+        expr: '__',
+
+        /** `i18n.domain`
+         * - 类型: `String`
+         * - 默认值: _无_
+         *
+         * Cookie 影响的域
+         */
+        domain: undefined,
+
+        /** `i18n.cookieKey`
+         * - 类型: `String`
+         * - 默认值: `spLocaleId`
+         *
+         * 语种ID存储于 Cookie 中的字段名
+         */
+        cookieKey: 'spLocaleId',
+
+        /** 语种ID和语言包
+         * 参见上文简易配置
+         */
+        locales: []
+    },
+}
+```
 
 ### pwa
 
@@ -224,7 +349,7 @@ module.exports = {
 - 默认值: 配置项 `port`
 - **仅针对**: 开发环境
 
-开发模式端口号。
+开发环境端口号。
 
 ### devDll
 
@@ -268,12 +393,12 @@ module.exports = {
 _**Object**_ `webpack`
 
 - _Array_ `webpack.dll`
-<br>**仅开发模式**
-<br>供 `webpack.DllPlugin` 使用。webpack 的监控不会处理这些库/library，以期提高开发模式的打包更新速度。
+<br>**仅开发环境**
+<br>供 `webpack.DllPlugin` 使用。webpack 的监控不会处理这些库/library，以期提高开发环境的打包更新速度。
 - _Object_ `webpack.hmr`
-<br>**仅开发模式**
+<br>**仅开发环境**
 <br>插件 `webpack.HotModuleReplacementPlugin` 的配置对象。
-<br>如果遭遇在开发模式下在保存文件后 `webpack` 不断无限的刷新打包的问题，请配置该项为 `{ multiStep: false }`
+<br>如果遭遇在开发环境下在保存文件后 `webpack` 不断无限的刷新打包的问题，请配置该项为 `{ multiStep: false }`
 - _Object_ `webpack.internalLoadersOptions`
 <br>用以扩展几乎无法修改的内置 `loader` 所用的设置，目前支持：
   - `less-loader`
@@ -455,7 +580,7 @@ _**Object**_ `i18n`
   <br>适合所有项目使用，推荐语言包较大的项目使用
   - `redux` 服务器输出 HTML 时，当前语种的语言包对象会写入 Redux store
   <br>适合语言包较小，或对文件/请求体积不敏感的 WebApp 项目使用
-  <br>开发模式下会强制使用这一模式
+  <br>开发环境下会强制使用这一模式
 - _String_ `i18n.use`
 <br>使用 URL 切换语种的方式，目前支持
   - `query` (默认) 一般情况下，URL 中不会存在有关语种的字段。切换语种时使用名为 `hl` 的 URL 参数，如：

@@ -105,7 +105,7 @@ const run = async () => {
         if (client) return 'client'
         if (server) return 'server'
 
-        // false - 同构项目的完整开发模式
+        // false - 同构项目的完整开发环境
         return false
     })()
 
@@ -337,7 +337,7 @@ const run = async () => {
             // process.exit(exitCode)
         })
 
-        // SPA 开发模式
+        // SPA 开发环境
         if (process.env.WEBPACK_BUILD_TYPE === 'spa') {
             // 等待 filenameBuilding 文件删除
             let flagCreated = false
@@ -376,7 +376,7 @@ const run = async () => {
 
     // ========================================================================
     //
-    // 没有设置 STAGE，表示同构项目的完整开发模式，开启多个进程
+    // 没有设置 STAGE，表示同构项目的完整开发环境，开启多个进程
     //
     // ========================================================================
     // spinner(

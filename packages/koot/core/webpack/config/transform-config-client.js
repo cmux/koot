@@ -120,7 +120,7 @@ module.exports = async (kootBuildConfig = {}) => {
                     result.output.chunkFilename = 'chunk.[chunkhash].js'
             }
 
-            // [开发模式]
+            // [开发环境]
             if (ENV === 'dev') {
                 // 标记打包目录（对应 prod 模式的结果）
                 result[keyConfigOutputPathShouldBe] = path.resolve(pathPublic, defaultPublicDirName)

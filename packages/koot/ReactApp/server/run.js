@@ -75,7 +75,7 @@ const startKootIsomorphicServer = async () => {
     if (typeof serverBefore === 'function')
         await serverBefore(app)
 
-    // [开发模式] 挂载中间件: 主服务器代理
+    // [开发环境] 挂载中间件: 主服务器代理
     if (__DEV__) app.use(middlewareRouterDev)
 
     // 挂载中间件: 静态资源访问

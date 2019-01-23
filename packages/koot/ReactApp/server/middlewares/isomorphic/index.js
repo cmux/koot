@@ -134,7 +134,7 @@ const middlewareIsomorphic = (options = {}) => {
             // const History = syncHistoryWithStore(memoryHistory, Store)
 
             // eval SSR
-            // [开发模式] 每次请求都重新验证一次语言包，以确保语言包的更新
+            // [开发环境] 每次请求都重新验证一次语言包，以确保语言包的更新
             const SSRoptions = {
                 ctx,
 

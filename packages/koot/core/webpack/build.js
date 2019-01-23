@@ -194,7 +194,7 @@ module.exports = async (kootConfig = {}) => {
             fs.removeSync(path.resolve(dist, `./server/ssr.js.map`))
         }
 
-        // 开发模式
+        // 开发环境
         if (ENV === 'dev' && TYPE !== 'spa') {
             // 确保 server/index.js 存在
             fs.ensureFileSync(path.resolve(dist, `./server/index.js`))
@@ -276,7 +276,7 @@ module.exports = async (kootConfig = {}) => {
     //
     // ========================================================================
 
-    // 开发模式: 确定 webpack-dev-server 端口号
+    // 开发环境: 确定 webpack-dev-server 端口号
     if (ENV === 'dev') {
         if (TYPE === 'spa') {
             process.env.WEBPACK_DEV_SERVER_PORT = process.env.SERVER_PORT

@@ -33,7 +33,7 @@ module.exports = ({
         console.log(e)
     }
 
-    // 开发模式: 将 content('critical.js') 转为 pathname() 方式
+    // 开发环境: 将 content('critical.js') 转为 pathname() 方式
     if (process.env.WEBPACK_BUILD_ENV === 'dev')
         template = template
             .replace(
