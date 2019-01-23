@@ -61,14 +61,14 @@
     - `koa-static` -> _5.0.0_
   - minor
     - `@babel/core` -> _7.2.2_
-    - `@babel/plugin-proposal-class-properties` -> _7.2.3_
-    - `@babel/plugin-proposal-decorators` -> _7.2.3_
-    - `@babel/plugin-proposal-object-rest-spread` -> _7.2.0_
+    - `@babel/plugin-proposal-class-properties` -> _7.3.0_
+    - `@babel/plugin-proposal-decorators` -> _7.3.0_
+    - `@babel/plugin-proposal-object-rest-spread` -> _7.3.1_
     - `@babel/plugin-syntax-dynamic-import` -> _7.2.0_
     - `@babel/plugin-transform-runtime` -> _7.2.0_
     - `@babel/polyfill` -> _7.2.5_
-    - `@babel/preset-env` -> _7.2.3_
-    - `autoprefixer` -> _9.4.5_
+    - `@babel/preset-env` -> _7.3.1_
+    - `autoprefixer` -> _9.4.6_
     - `koa` -> _2.6.2_
     - `less` -> _3.9.0_
     - `mini-css-extract-plugin` -> _0.5.0_
@@ -76,7 +76,7 @@
     - `react` -> _16.7.0_
     - `react-dom` -> _16.7.0_
     - `react-hot-loader` -> _4.6.3_
-    - `webpack` -> _4.28.4_
+    - `webpack` -> _4.29.0_
     - `webpack-dev-middleware` -> _3.5.1_
   - patch
     - `babel-loader` -> _8.0.5_
@@ -85,7 +85,7 @@
     - `inquirer` -> _6.2.1_
     - `pm2` -> _3.2.9_
     - `portfinder` -> _1.0.20_
-    - `postcss` -> _7.0.13_
+    - `postcss` -> _7.0.14_
     - `rimraf` -> _2.6.3_
     - `webpack-dev-server` -> _3.1.14_
 
