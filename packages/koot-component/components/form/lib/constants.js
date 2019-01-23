@@ -18,6 +18,8 @@ export const SUBMIT = 'submit';
 
 export const TEXT = 'text';
 
+// 日期时间类
+
 export const TIME_PICKER = 'timePicker';
 
 export const DATE_PICKER = 'datePicker';
@@ -31,6 +33,7 @@ export const DATE_TIME_RANGE_PICKER = 'dateTimeRangePicker';
 export const MOUNTH_PICKER  = 'monthPicker';
 
 export const WEEK_PICKER = 'weekPicker';
+
 
 export const SELECT = 'select';
 

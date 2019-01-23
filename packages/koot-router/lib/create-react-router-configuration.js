@@ -17,88 +17,151 @@ const isExtendsReactComponent = ( obj ) => {
     return false;
 }
 
-const routerHandler = ( _router ) => {
-    if( !_router ){
+/**
+ * 
+ * @param {*} nextState 
+ * @param {*} replace 
+ * @param {*} callback 
+ * @param {*} options 
+ */
+const beforeEachHook = (nextState, replace, callback, options = {}) => {
+    const { oriOnEnter, beforeEach, afterEach, onUpdate } = options;
+    const callbackFunc = () => {
+        callback();
+        afterEach && typeof afterEach === 'function' && afterEach(nextState)
+        onUpdate && typeof onUpdate === 'function' && onUpdate(nextState)
+    }
+    const nextFunc = () => {
+        if( oriOnEnter && typeof oriOnEnter === 'function' ){
+            oriOnEnter(nextState, replace, callbackFunc)
+        }else{
+            callbackFunc();
+        }
+    }
+    if( beforeEach && typeof beforeEach === 'function' ){
+        // nextState.router = router;
+        beforeEach(nextState, replace, nextFunc)
+    }else{
+        nextFunc();
+    }
+}
+
+/**
+ * 
+ */
+const redirectHandler = (nextState, replace, redirect) => {
+    let nextRedirect = redirect;
+    const { params } = nextState;
+    // 支持 redirect/:xxx 的形式
+    Object.keys(params).forEach(key => {
+        let patt = new RegExp(`/:${key}`,'g')
+        if( nextRedirect.search(patt) !== -1 ){
+            if( params[key] ){
+                nextRedirect = nextRedirect.replace(patt, `/${params[key]}`);
+            }
+        }
+    })
+    replace(nextRedirect);
+}
+
+const componentEncodeHandler = (obj, component ) => {
+    if( !component ){
+        return;
+    }
+    let key = isExtendsReactComponent(component) ? 'component' : 'getComponent';
+    obj[key] = component;
+}
+
+const nameEncodeHandler = (obj, name) => {
+    if( !name ){
+        return ;
+    }
+    obj['name'] = name;
+}
+
+const pathEncodeHandler = (obj, path) => {
+    obj['path'] = path;
+}
+
+const metaEncodeHandler = (obj, meta) => {
+    if( !meta ){
+        return;
+    }
+    obj['meta'] = meta;
+}
+
+const onEnterEncodeHandler = (obj, options) => {
+    const { oriOnEnter, beforeEach, afterEach, onUpdate, redirect, router = {} } = options;
+    const { path } = router;
+    const onEnterHook = (...args) => {
+        const [ nextState, replace ] = args; 
+        // console.info('redirect', redirect)
+        // console.info('router', router)
+        // 重定向
+        if( redirect ){
+            const { location = {} } = nextState;
+            const { pathname } = location;
+            // console.info('pathname', pathname)
+            if( pathname === path && pathname !== redirect ){
+                redirectHandler(nextState, replace, redirect)
+            }
+        }
+        // 如果 path === '' 
+        // indexRoute onEnter without callback handler
+        if( path === '' ){
+            return;
+        }
+        // 触发 beforeEach
+        beforeEachHook(...args, {
+            oriOnEnter,
+            beforeEach,
+            afterEach,
+            onUpdate
+        })
+    }
+    obj['onEnter'] = onEnterHook
+}
+
+const routerHandler = ( router, beforeEach, afterEach, onUpdate ) => {
+    if( !router ){
         return;
     }
 
     const result = {};
+    
+    const { name, path, component, redirect, children, onEnter, meta } = router;
 
-    const { name, path, component, redirect, children, onEnter, meta } = _router;
-
-    if( name ){
-        result.name = name;
-    }
-
-    if( path ){
-        result.path = path;
-    }
-
-    if( meta ){
-        result.meta = meta;
-    }
-
-    if( component ){
-        if( isExtendsReactComponent(component) ){
-            result.component = component;
-        }else{
-            result.getComponent = component
-        }
-    }
-
-    if( redirect ){
-        const onEnterHook = (nextState, replace) => {
-            let nextRedirect = redirect;
-            const { params } = nextState;
-            // 支持 redirect/:xxx 的形式
-            Object.keys(params).forEach(key => {
-                let patt = new RegExp(`/:${key}`,'g')
-                if( nextRedirect.search(patt) !== -1 ){
-                    if( params[key] ){
-                        nextRedirect = nextRedirect.replace(patt, `/${params[key]}`);
-                    }
-                }
-            })
-            replace(nextRedirect);
-        }
-
-        if( !result.indexRoute ){
-            result.indexRoute = {
-                onEnter: onEnterHook,
-            };
-        }else{
-            result.indexRoute.onEnter = onEnterHook;
-        }
-    }
-
-    if( onEnter ){
-        result.onEnter = onEnter
-    }
-
+    // name
+    nameEncodeHandler(result, name);
+    // path
+    pathEncodeHandler(result, path);
+    // meta
+    metaEncodeHandler(result, meta);
+    // component|getComponent
+    componentEncodeHandler(result, component);
+    // onEnter
+    onEnterEncodeHandler(result, {
+        oriOnEnter: onEnter,
+        beforeEach,
+        afterEach,
+        onUpdate,
+        redirect,
+        path,
+        router
+    });
+    // childrenRoutes
     if( children && children.length > 0 ){
         const childRoutes = [];
         children.forEach((childrenItem) => {
-            if( childrenItem.path === '' ){
-                if( !result.indexRoute ){
-                    if( isExtendsReactComponent(childrenItem.component) ){
-                        result.indexRoute = {
-                            component: childrenItem.component
-                        }
-                    }else{
-                        result.indexRoute = {
-                            getComponent: childrenItem.component
-                        }
-                    }
-                }else{
-                    if( isExtendsReactComponent(childrenItem.component) ){
-                        result.indexRoute.component = childrenItem.component
-                    }else{
-                        result.indexRoute.getComponent = childrenItem.component
-                    }
-                }
+            const { path } = childrenItem;
+            if( path === '' ){
+                const indexRoute = routerHandler(childrenItem, beforeEach, afterEach);
+                const { indexRoute: resultIndexRoute } = result;
+                const nextIndexRoute = Object.assign({}, resultIndexRoute, indexRoute)
+                result.indexRoute = nextIndexRoute;
             }else{
                 childRoutes.push(
-                    routerHandler( childrenItem )
+                    routerHandler(childrenItem, beforeEach, afterEach)
                 )
             }
         })
@@ -108,8 +171,8 @@ const routerHandler = ( _router ) => {
     return result;
 }
 
-const reactRouterConfigHandler = ( _router ) => {
-    return _router && routerHandler(_router);
+const reactRouterConfigHandler = (router, beforeEach, afterEach, onUpdate) => {
+    return router && routerHandler(router, beforeEach, afterEach, onUpdate);
 }
 
 export default reactRouterConfigHandler;

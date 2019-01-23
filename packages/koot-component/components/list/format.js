@@ -21,3 +21,32 @@ export const ellipsisStyleFormat  = (value) => {
     }
     return null;
 }
+
+export const minWidthStyleFormat  = ( minWidth ) => {
+    if( !minWidth ){
+        return {}
+    }
+    const isNumber = parseFloat(minWidth) === minWidth;
+    if( !isNumber && typeof minWidth !== 'string'){
+        return {}
+    }
+    const value = isNumber ? minWidth + 'px' : minWidth;
+    return {
+        minWidth: value
+    }
+}
+
+export const maxWidthStyleFormat  = ( maxWidth ) => {
+    if( !maxWidth ){
+        return {}
+    }
+    const isNumber = parseFloat(maxWidth) === maxWidth;
+    if( !isNumber && typeof maxWidth !== 'string'){
+        return {}
+    }
+    const value = isNumber ? maxWidth + 'px' : maxWidth;
+    return {
+        maxWidth: value
+    }
+
+}
