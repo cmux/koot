@@ -191,7 +191,9 @@ module.exports = {
 - 类型: `Boolean` `Object` 或 `Array[]`
 - 默认值: `false`
 
-多语言配置。详情请查阅 [多语言 (i18n)](/i18n)。
+多语言配置。
+
+关于多语言的使用、语言包规则等，请查阅 [多语言 (i18n)](/i18n)。
 
 ```javascript
 module.exports = {
@@ -240,12 +242,16 @@ module.exports = {
          *
          * 目前支持:
          * - `query` (默认值)
-         *   一般情况下，URL 中不会存在有关语种的字段。切换语种时使用名为 hl 的 URL 参数，如：
+         *   一般情况下，URL 中不会存在有关语种的字段。
+         *   切换语种时使用名为 hl 的 URL 参数，如：
          *     `https://some.project.com/?hl=zh-cn`
          *     `https://some.project.com/list/articles/?page=10&hl=ja-jp`
          * `router`
-         *   规定路由的第一层为语种ID。如果访问 URL 的路由第一层不是项目设定的已知的语种 ID，则会自动跳转到最近一次访问的语种或默认语种对应的页面。URL 示例：
+         *   规定路由的第一层为语种ID。
+         *   如果访问的 URL 的路由第一层不是项目设定的已知的语种 ID，则会自动跳转到最近一次访问的语种或默认语种对应的页面。
          *     `https://some.project.com/` 自动跳转到 `https://some.project.com/zh-cn/`
+         *   URL 示例：
+         *     `https://some.project.com/zh-cn/`
          *     `https://some.project.com/ja-jp/list/articles/?page=10`
          */
         use: 'query',
@@ -274,8 +280,11 @@ module.exports = {
          */
         cookieKey: 'spLocaleId',
 
-        /** 语种ID和语言包
-         * 参见上文简易配置
+        /** `i18n.locales`
+         * - 类型: `Array[]`
+         * - 默认值: `[]`
+         *
+         * 语种ID和语言包。参见上文简易配置
          */
         locales: []
     },
