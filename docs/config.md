@@ -169,7 +169,7 @@ module.exports = () => createStore(
 
 ```javascript
 module.exports = {
-    // 将所有 cookie 写入到到 store 中
+    // 将所有 cookie 写入到到 store 中 (默认值)
     // `state.server.cookie` 为 cookie 原始字符串
     cookiesToStore: true,
 
@@ -293,7 +293,31 @@ module.exports = {
 
 ### pwa
 
+- 类型: `Boolean` 或 `Object`
+- 默认值: `true`
+
+自动生成 `service-worker` 脚本文件的设置。
+
+关于自动生成的 `service-worker` 脚本文件的详情，请查阅 [PWA](/pwa)。
+
+```javascript
+module.exports = {
+    // 自动生成 `service-worker` 脚本文件，并自动注册 (默认值)
+    pwa: true,
+
+    // 不启用默认的 PWA 相关机制和功能
+    pwa: false,
+
+    // 详细设置
+    // TODO: 详细配置规则仍在调整中，暂不提供文档
+    pwa: {}
+}
+```
+
 ### aliases
+
+- 类型: `Object`
+- 默认值: `{}` (空对象)
 
 ### defines
 
@@ -540,104 +564,6 @@ module.exports = {
     // ...
 }
 ```
-
-### 多语言
-
-_**Boolean**_ `i18n`
-
-`i18n = false` 时，不启用多语言。不支持 `true`
-
-```javascript
-// 默认配置 (不启用多语言支持)
-module.exports = {
-    // ...
-    i18n: false,
-    // ...
-}
-```
-
-_**Array**_ `i18n`
-
-简易配置方式
-- `Array` 中每一项也为 `Array`，其中第一个元素为语种ID，第二个元素为语言包文件路径
-- 采用此方式时，其他多语言相关选项均采用默认值（见下）
-- 第一条为默认语种
-
-```javascript
-// 示例配置 (简易)
-module.exports = {
-    // ...
-    i18n: [
-        ['zh', './src/locales/zh.json'],
-        ['zh-tw', './src/locales/zh-tw.json'],
-        ['en', './src/locales/en.json']
-    ],
-    // ...
-}
-```
-
-_**Object**_ `i18n`
-
-完整配置方式
-
-- _Array_ `i18n.locales`
-<br>语种ID和语言包，参见上文简易配置
-- _String_ `i18n.type`
-<br>**仅生产模式**
-<br>多语言打包模式，目前支持
-  - `default` (默认) 客户端按语种分别打包，语言包内容会直接打入到代码中，代码结果中不存在“语言包对象”
-  <br>适合所有项目使用，推荐语言包较大的项目使用
-  - `redux` 服务器输出 HTML 时，当前语种的语言包对象会写入 Redux store
-  <br>适合语言包较小，或对文件/请求体积不敏感的 WebApp 项目使用
-  <br>开发环境下会强制使用这一模式
-- _String_ `i18n.use`
-<br>使用 URL 切换语种的方式，目前支持
-  - `query` (默认) 一般情况下，URL 中不会存在有关语种的字段。切换语种时使用名为 `hl` 的 URL 参数，如：
-    - `https://some.project.com/?hl=zh-cn`
-    - `https://some.project.com/list/articles/?page=10&hl=ja-jp`
-  - `router` 规定路由的第一层为语种ID。如果访问 URL 的路由第一层不是项目设定的已知的语种 ID，则会自动跳转到最近一次访问的语种或默认语种对应的页面。URL 示例：
-    - `https://some.project.com/` 自动跳转到 `https://some.project.com/zh-cn/`
-    - `https://some.project.com/ja-jp/list/articles/?page=10`
-- _String_ `i18n.expr`
-<br>JS 代码中多语言翻译方法名
-- _String_ `i18n.domain`
-<br>Cookie 影响的域
-- _String_ `i18n.cookieKey`
-<br>语种ID存储于 Cookie 中的字段名
-
-```javascript
-// 默认配置 (启用多语言支持)
-module.exports = {
-    // ...
-    i18n: {
-        locales: [],
-        type: 'default',
-        use: 'query',
-        expr: '__',
-        domain: undefined,
-        cookieKey: 'spLocaleId'
-    },
-    // ...
-}
-```
-```javascript
-// 示例配置
-module.exports = {
-    // ...
-    i18n: {
-        locales: [
-            ['zh', './src/locales/zh.json'],
-            ['zh-tw', './src/locales/zh-tw.json'],
-            ['en', './src/locales/en.json']
-        ],
-        type: 'redux',
-        use: 'router'
-    },
-    // ...
-}
-```
-
-关于多语言的使用和相关规则请查阅 [多语言](/i18n)
 
 ### 路径别名
 
