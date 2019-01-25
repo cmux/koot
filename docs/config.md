@@ -523,14 +523,125 @@ export default (...args) => {
 
 - 类型: `Number`
 - 默认值: `8080`
+- **仅针对**: 服务器端
 
 服务器启动端口号。（开发环境默认会使用该端口号）
 
 ### renderCache
 
+- 类型: `Object` 或 `Boolean`
+- 默认值: `{ maxAge: 5000, maxCount: 50 }`
+- **仅针对**: 服务器端，生产环境
+
+生产环境下服务器渲染缓存相关设置。默认行为: 
+
+- 根据**完整的** URL 进行缓存，即每个 URL 有各自的结果缓存
+  - `/page-a/` 和 `/page-a/?a=b` 有不同的缓存
+- 仅保留最近 **50** 个 URL 的结果
+- 每条结果最多保存 **5秒**
+
+```javascript
+module.exports = {
+    // 默认值
+    renderCache: {
+        maxAge: 5000,
+        maxCount: 50
+    },
+
+    // 完全禁用渲染缓存
+    renderCache: false,
+
+    // 详细设置
+    renderCache: {
+        /** `renderCache.maxAge`
+         * - 类型: `Number`
+         * - 默认值: `5000`
+         * 
+         * 每条结果最多保存时间, 单位: 毫秒 (ms)
+         */
+        maxAge: 5000,
+
+        /** `renderCache.maxCount`
+         * - 类型: `Number`
+         * - 默认值: `50`
+         * 
+         * 根据 URL 保留的结果条目数
+         */
+        maxCount: 50,
+
+        /** `renderCache.get`
+         * - 类型: `Function`
+         * - 默认值: `undefined`
+         * 
+         * 自定义缓存检查与吐出方法。存在时, maxAge 和 maxCount 设置将被忽略
+         * 
+         * @param {String} url 请求的完整的 URL
+         * @returns {Boolean|String} 返回 false 时，表示该 URL 没有缓存结果
+         */
+        get: (url) => {
+            // 自实现的缓存结果获取逻辑
+            // return false
+            return '完整渲染结果'
+        },
+
+        /** `renderCache.set`
+         * - 类型: `Function`
+         * - 默认值: `undefined`
+         * 
+         * 自定义缓存存储方法。存在时, maxAge 和 maxCount 设置将被忽略
+         * 
+         * @param {String} url 请求的完整的 URL
+         * @param {String} html 服务器渲染结果
+         * @void
+         */
+        set: (url, html) => {
+            // 自实现的缓存结果存储逻辑
+        }
+    },
+}
+```
+
 ### proxyRequestOrigin
 
+- 类型: `Object`
+- 默认值: `{}` (空对象)
+- **仅针对**: 服务器端，生产环境
+
+如果当前项目的 Node.js 服务器是通过其他代理服务器请求的（如 nginx 反向代理），可用这个配置声明原始请求的信息。
+
+```javascript
+module.exports = {
+    // 默认值
+    proxyRequestOrigin: {},
+
+    // 详细设置
+    proxyRequestOrigin: {
+        /** `proxyRequestOrigin.protocol`
+         * - 类型: `String`
+         * 协议名
+         */
+        protocol: 'https',
+    },
+}
+```
+
 ### koaStatic
+
+- 类型: `Object`
+- 默认值:
+```javascript
+{
+    maxage: 0,
+    hidden: true,
+    index: 'index.html',
+    defer: false,
+    gzip: true,
+    extensions: false
+}
+```
+- **仅针对**: 服务器端
+
+`koa-static` 静态资源服务器配置。配置方法与 `koa-static` 的官方方法相同。
 
 ### serverBefore
 

@@ -4,14 +4,7 @@ import koaStatic from 'koa-static'
 import getDirDistPublic from '../../../libs/get-dir-dist-public'
 import getDistPath from '../../../utils/get-dist-path'
 
-const koaStaticDefaults = {
-    maxage: 0,
-    hidden: true,
-    index: 'index.html',
-    defer: false,
-    gzip: true,
-    extensions: false
-}
+import koaStaticDefaults from '../../../defaults/koa-static'
 
 /**
  * KOA 中间件: 静态资源
