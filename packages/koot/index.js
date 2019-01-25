@@ -1,11 +1,8 @@
-// Redux 相关
-
-/**
- * Redux Store
- * @type {Object}
- */
-export let store
-export const setStore = o => store = o
+/* global
+    __KOOT_STORE__:false,
+    __KOOT_HISTORY__:false,
+    __KOOT_LOCALEID__:false,
+*/
 
 /**
  * 手动创建 Redux Store 时需要的相关对象
@@ -14,40 +11,48 @@ export const setStore = o => store = o
 import * as reduxForCreateStore from './React/redux'
 export { reduxForCreateStore }
 
-
-
-
-
-
-
-
-
-// 其他
-
-/**
- * History 对象
- * @type {Object}
- */
-export let history
-export const setHistory = o => history = o
-
-/**
- * [仅当多语言开启时存在] 当前语种ID
- * @type {String}
- */
-export let localeId
-export const setLocaleId = o => localeId = o
-
 /**
  * 通用的高阶组件/方法的装饰器
  * @type {Function}
  */
-export let extend = () => (WrappedComponent) => WrappedComponent
-export const setExtender = o => extend = o
+export { default as extend } from "__KOOT_HOC_EXTEND__"
 
-/**
- * 设置页面信息的高阶组件/方法
- * @type {Function}
- */
-export let pageinfo = () => (WrappedComponent) => WrappedComponent
-export const setPageinfo = o => pageinfo = o
+// 其他全局变量
+export const getLocaleId = () => {
+    if (__CLIENT__)
+        return window.__KOOT_LOCALEID__ || ''
+    if (__SERVER__) {
+        if (__DEV__)
+            return global.__KOOT_LOCALEID__
+        if (typeof __KOOT_LOCALEID__ === 'undefined')
+            return ''
+        return __KOOT_LOCALEID__ || ''
+    }
+}
+export const localeId = (() => getLocaleId())()
+
+export const getStore = () => {
+    if (__CLIENT__)
+        return window.__KOOT_STORE__
+    if (__SERVER__) {
+        if (__DEV__)
+            return global.__KOOT_STORE__
+        if (typeof __KOOT_STORE__ === 'undefined')
+            return ''
+        return __KOOT_STORE__
+    }
+}
+export const store = (() => getStore())()
+
+export const getHistory = () => {
+    if (__CLIENT__)
+        return window.__KOOT_HISTORY__
+    if (__SERVER__) {
+        if (__DEV__)
+            return global.__KOOT_HISTORY__
+        if (typeof __KOOT_HISTORY__ === 'undefined')
+            return ''
+        return __KOOT_HISTORY__
+    }
+}
+export const history = (() => getHistory())()

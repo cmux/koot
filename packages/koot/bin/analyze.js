@@ -50,11 +50,11 @@ const run = async () => {
     process.env.WEBPACK_BUILD_ENV = 'prod'
 
     // 读取构建配置
-    const buildConfig = await validateConfig()
+    const kootConfig = await validateConfig()
 
     await kootBuild({
         analyze: true,
-        ...buildConfig
+        ...kootConfig
     })
 
     console.log(' ')

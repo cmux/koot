@@ -18,8 +18,13 @@ class I18nPlugin {
         this.localeId = localeId
         this.locales = locales
 
-        if (typeof locales === 'string' && locales.substr(0, 2) === './')
-            this.locales = fs.readJsonSync(path.resolve(getCwd(), locales))
+        if (typeof locales === 'string') {
+            if (locales.substr(0, 2) === './') {
+                this.locales = fs.readJsonSync(path.resolve(getCwd(), locales))
+            } else if (path.isAbsolute(locales)) {
+                this.locales = fs.readJsonSync(path.resolve(locales))
+            }
+        }
     }
 
     apply(compiler) {
@@ -56,7 +61,7 @@ class I18nPlugin {
                     parser.hooks.call
                         .for(functionName)
                         .tap("I18nPlugin", function (expr) {
-                            const request = [].concat(['koot/i18n', 'default'])
+                            const request = [].concat(['koot/i18n/translate', 'default'])
                             // const nameIdentifier = tempFunctionName
                             let expression = `require(${JSON.stringify(request[0])})`
                             if (request.length > 1) {

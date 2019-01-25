@@ -31,13 +31,13 @@
         "__SPA__": false,
         "__QA__": false,
         "__REDUX_STATE__": false,
-        "__": true,
-        "KootExtend": true,
-        "ReducerTypes": true,
-        "ActionTypes": true,
-        "Api": true,
-        "Store": true,
-        "Project": true
+        "__": false,
+        "KootExtend": false,
+        "ReducerTypes": false,
+        "ActionTypes": false,
+        "Api": false,
+        "Store": false,
+        "Project": false
     },
     "settings": {
         "import/ignore": [

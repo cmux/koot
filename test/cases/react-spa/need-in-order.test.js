@@ -1,6 +1,6 @@
 // jest configuration
 
-jest.setTimeout(60 * 1 * 1000)
+jest.setTimeout(5 * 60 * 1000)
 
 //
 
@@ -61,7 +61,7 @@ const beforeTest = async (cpd) => {
  * @param {String} dist 
  * @param {String} title 
  */
-const afterTest = async (cpd, title) => {
+const afterTest = async (cpd/*, title*/) => {
     await sleep(2 * 1000)
     await removeTempProjectConfig(cpd)
 
@@ -77,7 +77,8 @@ describe('测试: React SPA 项目', async () => {
 
         describe(`项目: ${name}`, async () => {
 
-            const dist = path.resolve(dir, 'dist-spa-test')
+            const distDirName = 'dist-spa-test'
+            const dist = path.resolve(dir, distDirName)
             const fileIndexHtml = path.resolve(dist, 'index.html')
 
             if (fs.existsSync(dist))
@@ -89,7 +90,7 @@ describe('测试: React SPA 项目', async () => {
                 await beforeTest(dir)
 
                 const commandName = `${commandTestBuild}-spa-build`
-                const command = `koot-build --type react-spa --dest ${dist} --koot-test`
+                const command = `koot-build --type react-spa --dest ${distDirName} --koot-test`
                 await addCommand(commandName, command, dir)
 
                 // console.log(commandName)
@@ -120,8 +121,10 @@ describe('测试: React SPA 项目', async () => {
                 }
             })
 
+            // TODO: 测试: 有 extract.all.[*].css
+
             // TODO: 测试: 所有 Webpack 结果资源的访问
-        
+
             // TODO: 测试: extend connect 的 Array 用法
 
             if (fs.existsSync(dist))

@@ -1,17 +1,30 @@
+/**
+ * Webpack 打包相关
+ */
 module.exports = {
     // 处理项目配置相关
-    keyFileProjectConfigTemp: '__FILE_PROJECT_CONFIG_TEMP__',
-    filenameProjectConfigTemp: '.koot.config.tmp.*.js',
+    keyFileProjectConfigTempFull: '__FILE_PROJECT_CONFIG_TEMP_FULL__',
+    keyFileProjectConfigTempPortionServer: '__FILE_PROJECT_CONFIG_TEMP_PORTION_SERVER__',
+    keyFileProjectConfigTempPortionClient: '__FILE_PROJECT_CONFIG_TEMP_PORTION_CLIENT__',
+    dirConfigTemp: 'logs/tmp/config',
+    filenameProjectConfigTempFull: 'full.*.js',
+    filenameProjectConfigTempPortionServer: 'portion.server.*.js',
+    filenameProjectConfigTempPortionClient: 'portion.client.*.js',
     propertiesToExtract: [
         ['name', ''],
         ['type', 'react'],
         ['template', ''],
-        ['router', ''],
-        ['redux', {}],
+        ['templateInject', ''],
+        ['routes', ''],
+        ['historyType', ''],
+        ['store', ''],
+        ['cookiesToStore', ''],
         ['client', {}],
         ['server', {}]
     ],
     typesSPA: [
+        'spa',
+        'reactspa',
         'react-spa'
     ],
 
@@ -25,7 +38,11 @@ module.exports = {
     keyConfigQuiet: '__QUIET__',
     keyConfigOutputPathShouldBe: '__OUTPUT_PATH_SHOULD_BE__',
 
-    // [开发模式] 临时文件名
+    // 自定义 chunk
+    chunkNameExtractCss: '__KOOT__EXTRACT__CSS__',
+    chunkNameClientRunFirst: '__KOOT__CLIENT__RUN__FIRST__',
+
+    // [开发环境] 临时文件名
     filenameWebpackDevServerPortTemp: '.dev_webpack-dev-server_port',
     filenameBuilding: '.koot-building',
     filenameBuildFail: '.koot-build-fail'

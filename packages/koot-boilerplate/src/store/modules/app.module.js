@@ -1,8 +1,6 @@
-import UserModule from './user.module.js';
-
 export default {
     state: {
-        
+        lorem: ''
     },
     reducers: {
 
@@ -10,7 +8,4 @@ export default {
     actions: {
         
     },
-    modules: {
-        UserModule,
-    }
 }

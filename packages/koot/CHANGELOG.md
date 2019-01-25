@@ -1,3 +1,94 @@
+## 0.8.0
+**????-??-??**
+- **重大改动**
+  - 已放弃兼容 0.6 版本之前的项目配置模式
+  - 重写 React 同构服务器逻辑，原则上对已有项目不会造成影响
+    - 现在可以放心的从 `koot` 中引用 `store` `history` 和 `localeId` 了
+  - 移除了 `sp-css-import` 依赖包，请修改为新式的 `@extend()` 写法
+  - 移除了 `pageinfo()` 高阶组件，请修改为新式的 `@extend()` 写法
+  - 调整了项目配置方案，原则上对已有项目不会造成影响
+    - 0.6版本之前的配置文件现已不再支持
+  - 调整 CSS 打包、使用规则
+    - 现在明确只存在 2 种 CSS 文件：全局 CSS 和组件 CSS
+    - 可通过配置文件对文件名规则进行配置。详情请参见文档的 [配置/客户端](https://koot.js.org/#/config?id=webpack-amp-打包)
+    - 全局 CSS 规则
+      - 所有全局 CSS 文件会根据所属的 Webpack 入口，被抽出为对应的独立的 CSS 文件 (打包结果中的 `extract.[hash].css`)
+      - 所有这些 CSS 文件结果也会被整合到一个统一的 CSS 文件中 (打包结果中的 `extract.all.[hash].css`)
+      - 统一的 CSS 文件的文件内容会被自动写入到 `<head>` 标签内的 `<style>` 标签中
+      - 虽然通常情况下已无需要，不过根据 Webpack 入口抽出的 CSS 文件仍可根据具体的需求独立使用
+    - 组件 CSS 规则
+      - 所有的组件 CSS 必须通过 `extend` 高阶组件的 `styles` 选项调用
+      - 这些 CSS 文件必须有一个名为 `.component` 或 `.[name]__component` 的 className
+        - 该 className 会被更换为 hash 结果，如 `.a85c6k` 或 `.nav__bjj15a`
+      - `props.className` 会传入到对应的组件，其值为与上述结果对应的 hash 后的 className
+- 核心
+  - 配置项
+    - **新** `historyType` - 项目所用的 `history` 组件的类型。详情请参见文档的 [配置](https://koot.js.org/#/config?id=historytype) 章节
+    - **新** `internalLoaderOptions` - 用以扩展几乎无法修改的内置 `loader` 所用的设置。详情请参见文档的 [配置](https://koot.js.org/#/config?id=internalloaderoptions) 章节
+    - **新** `serverOnRender.beforeDataToStore` 和 `serverOnRender.afterDataToStore` - 允许更详细的使用服务器端渲染生命周期。详情请参见文档的 [配置](https://koot.js.org/#/config?id=Webpack) 章节
+    - `cookiesToStore` 现支持传入 `true`: 同步所有 cookie，包括 cookie 原始字符串 (以 `__` 为名称)
+  - 优化 `koot-start` 命令，尽量避免 `koot-build 命令未找到` 的问题
+  - Webpack 打包
+    - 现在打包时不再会在项目根目录下生成临时文件
+      - 这些文件现在移至 `/logs/tmp/` 目录下
+    - 现在每种打包模式仅保留最近 2 次打包的日志文件 (`/logs/webpack-config/` 目录下)
+  - 开发环境
+    - 优化 React 组件热更新能力
+- React
+  - 根层组件添加 `componentDidCatch` 生命周期方法，以保障 React 输出渲染结果
+- React SPA
+  - 对于传入自定 `store` 对象或生成方法的项目，确保生成 `store` 使用的 `history` 对象为浏览器所用对象
+  - 移除 `AppContainer` 逻辑的相关文件
+- 添加依赖包
+  - `extract-hoc`
+- 移除依赖包
+  - `koa-compose`
+  - `koa-compress`
+  - `koa-helmet`
+  - `koa-html-minifier`
+  - `koa-json`
+  - `koa-multer`
+  - `koa-onerror`
+  - `koa-response-time`
+  - `progress`
+  - `sp-css-import`
+- 更新依赖包
+  - major
+    - `css-loader` -> _2.1.0_
+    - `file-loader` -> _3.0.1_
+    - `koa-body` -> _4.0.6_
+    - `koa-mount` -> _4.0.0_
+    - `koa-static` -> _5.0.0_
+  - minor
+    - `@babel/core` -> _7.2.2_
+    - `@babel/plugin-proposal-class-properties` -> _7.3.0_
+    - `@babel/plugin-proposal-decorators` -> _7.3.0_
+    - `@babel/plugin-proposal-object-rest-spread` -> _7.3.1_
+    - `@babel/plugin-syntax-dynamic-import` -> _7.2.0_
+    - `@babel/plugin-transform-runtime` -> _7.2.0_
+    - `@babel/polyfill` -> _7.2.5_
+    - `@babel/preset-env` -> _7.3.1_
+    - `autoprefixer` -> _9.4.6_
+    - `koa` -> _2.6.2_
+    - `less` -> _3.9.0_
+    - `mini-css-extract-plugin` -> _0.5.0_
+    - `os-locale` -> _3.1.0_
+    - `react` -> _16.7.0_
+    - `react-dom` -> _16.7.0_
+    - `react-hot-loader` -> _4.6.3_
+    - `webpack` -> _4.29.0_
+    - `webpack-dev-middleware` -> _3.5.1_
+  - patch
+    - `babel-loader` -> _8.0.5_
+    - `chalk` -> _2.4.2_
+    - `debug` -> _4.1.1_
+    - `inquirer` -> _6.2.1_
+    - `pm2` -> _3.2.9_
+    - `portfinder` -> _1.0.20_
+    - `postcss` -> _7.0.14_
+    - `rimraf` -> _2.6.3_
+    - `webpack-dev-server` -> _3.1.14_
+
 ## 0.7.12
 **2018-12-24**
 - React

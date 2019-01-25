@@ -19,7 +19,7 @@ const getPathnameDevServerStart = require('../../utils/get-pathname-dev-server-s
  */
 const run = async () => {
 
-    if (require('./is-test-mode')()) {
+    if (global.kootTest || (process.env.KOOT_TEST_MODE && JSON.parse(process.env.KOOT_TEST_MODE))) {
         console.log(JSON.stringify({
             'koot-test': true,
             'process.env.SERVER_PORT': process.env.SERVER_PORT,

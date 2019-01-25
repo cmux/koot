@@ -1,5 +1,6 @@
 import { changeLocaleQueryKey } from '../../defaults/defines'
-import getLocaleIds from '../get-locale-ids'
+import availableLocaleIds from '../locale-ids'
+import isI18nEnabled from '../../i18n/is-enabled'
 
 /**
  * 生成用以声明该页面其他语种 URL 的 meta 标签的 HTML 代码
@@ -10,26 +11,27 @@ import getLocaleIds from '../get-locale-ids'
  * @returns {String} HTML 代码
  */
 const generateHtmlRedirectMetas = ({ ctx, proxyRequestOrigin, localeId }) => {
-    if (!JSON.parse(process.env.KOOT_I18N))
+    if (!isI18nEnabled())
         return ''
 
-    let { href } = ctx
+    let { href, origin } = ctx
     if (typeof proxyRequestOrigin.protocol === 'string') {
+        origin = origin.replace(/^http:\/\//, `${proxyRequestOrigin.protocol}://`)
         href = href.replace(/^http:\/\//, `${proxyRequestOrigin.protocol}://`)
     }
 
     const isUseRouter = process.env.KOOT_I18N_URL_USE === 'router'
 
-    let html = getLocaleIds()
+    let html = availableLocaleIds//getLocaleIds()
         .filter(thisLocaleId => thisLocaleId !== localeId)
         .map(l => {
 
             let thisHref = ''
 
             if (isUseRouter) {
-                thisHref = ctx.origin
-                    + ctx.href
-                        .replace(new RegExp(`^${ctx.origin}`), '')
+                thisHref = origin
+                    + href
+                        .replace(new RegExp(`^${origin}`), '')
                         .replace(new RegExp(`^${localeId}`), l)
                         .replace(new RegExp(`^/${localeId}`), '/' + l)
             } else {

@@ -69,7 +69,7 @@ const run = async () => {
         /*
         如果当前目录的项目是 Koot.js 项目，检查 Koot.js 版本，然后提供以下选项
             升级（koot-upgrade，当 Koot.js 有新版本时）
-            进入开发模式（koot-dev）
+            进入开发环境（koot-dev）
             打包分析（koot-analyze）
             打包正式版本（koot-build）
             打包正式版本并开启服务器（koot-start）

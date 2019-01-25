@@ -15,7 +15,7 @@ const typesCommands = {
     }
 }
 
-export default function(state = factory(), { type, ...data }) {
+export default function (state = factory(), { type, ...data }) {
     const actionResponse = typesCommands[type]
     return actionResponse ? actionResponse(state, data) : state
 }

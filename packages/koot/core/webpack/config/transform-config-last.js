@@ -17,7 +17,7 @@ const transform = async (config, kootBuildConfig = {}) => {
     const {
         [keyConfigBuildDll]: createDll = false,
         dist,
-        webpackDll = [],
+        devDll: webpackDll = [],
     } = kootBuildConfig
     const {
         WEBPACK_BUILD_STAGE: STAGE,
@@ -33,14 +33,20 @@ const transform = async (config, kootBuildConfig = {}) => {
             'react-redux',
             'react-router',
             'react-router-redux',
-            'koot',
+            // 'koot',
         ]
         const result = Array.isArray(config) ? { ...config[0] } : { ...config }
         delete result.watch
         delete result.watchOptions
+
+        // 如果自行添加了 koot，排除
+        const library = (!Array.isArray(webpackDll) || !webpackDll.length) ? defaults : webpackDll
+        if (library.includes('koot'))
+            library.splice(library.indexOf('koot'), 1)
         result.entry = {
-            library: (!Array.isArray(webpackDll) || !webpackDll.length) ? defaults : webpackDll
+            library
         }
+
         // console.log('result.entry.library', result.entry.library)
         result.output = {
             filename: filenameDll,
@@ -58,13 +64,20 @@ const transform = async (config, kootBuildConfig = {}) => {
     }
 
     // 数组情况，拆分每项分别处理
-    if (Array.isArray(config))
-        return config.map(thisConfig => transform(thisConfig))
+    if (Array.isArray(config)) {
+        const r = []
+        for (const thisConfig of config) {
+            r.push(await transform(thisConfig, kootBuildConfig))
+        }
+        return r
+    }
 
     // copy this
-    config = Object.assign({}, config)
 
-    return validate(config, kootBuildConfig)
+    return validate(
+        Object.assign({}, config),
+        kootBuildConfig
+    )
 }
 
 /**
@@ -81,6 +94,8 @@ const validate = (config, kootBuildConfig) => {
         }
     }
 
+    // console.log('')
+    // console.log('kootBuildConfig', kootBuildConfig)
     validatePlugins(config, kootBuildConfig)
     validateModuleRules(config, kootBuildConfig)
 
@@ -166,19 +181,19 @@ const validateModuleRules = (config) => {
 
     // 删除重复对象
     function removeDuplicateObject(list) {
-        let map = {}
-        list = (() => {
-            return list.map((rule) => {
-                let key = JSON.stringify(rule)
-                key = key.toLowerCase().replace(/ /g, '')
-                if (map[key])
-                    rule = undefined
-                else
-                    map[key] = 1
-                return rule
-            })
-        })()
-        return list.filter(rule => rule != undefined)
+        // let map = {}
+        // list = (() => {
+        //     return list.map((rule) => {
+        //         let key = JSON.stringify(rule)
+        //         key = key.toLowerCase().replace(/ /g, '')
+        //         if (map[key])
+        //             rule = undefined
+        //         else
+        //             map[key] = 1
+        //         return rule
+        //     })
+        // })()
+        return list.filter(rule => !!rule)
     }
 }
 

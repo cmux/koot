@@ -1,5 +1,8 @@
+const fs = require('fs-extra')
 const path = require('path')
+const webpack = require('webpack')
 const DefaultWebpackConfig = require('webpack-config').default
+// const ExtraWatchWebpackPlugin = require('extra-watch-webpack-plugin').default
 
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const KootI18nPlugin = require('../plugins/i18n')
@@ -21,12 +24,12 @@ const getDirDistPublic = require('../../../libs/get-dir-dist-public')
  */
 module.exports = async (kootBuildConfig = {}) => {
     const {
-        config = {},
+        webpackConfig: config = {},
         appType,
         dist,
         defaultPublicPathname,
         i18n,
-        staticAssets,
+        staticCopyFrom: staticAssets,
     } = kootBuildConfig
 
     const {
@@ -35,19 +38,6 @@ module.exports = async (kootBuildConfig = {}) => {
         WEBPACK_BUILD_STAGE: STAGE,
         WEBPACK_DEV_SERVER_PORT: clientDevServerPort,
     } = process.env
-
-    const defaultServerEntry = [
-        '@babel/register',
-        '@babel/polyfill',
-        path.resolve(__dirname, '../../../defaults/server-stage-0.js'),
-        path.resolve(
-            __dirname,
-            '../../../',
-            appType,
-            './server'
-        )
-    ]
-    if (ENV === 'dev') defaultServerEntry.push('webpack/hot/poll?1000')
 
     const configTargetDefault = await createTargetDefaultConfig({
         pathRun: getCwd(),
@@ -81,6 +71,11 @@ module.exports = async (kootBuildConfig = {}) => {
             functionName: i18n ? i18n.expr : undefined,
         })
     )
+    result.plugins.unshift(
+        new webpack.optimize.LimitChunkCountPlugin({
+            maxChunks: 1
+        })
+    )
 
     if (ENV === 'dev') {
         if (i18n && Array.isArray(i18n.locales) && i18n.locales.length > 0)
@@ -90,18 +85,6 @@ module.exports = async (kootBuildConfig = {}) => {
                     to: '../.locales/'
                 }))
             ))
-
-        if (typeof staticAssets === 'string')
-            result.plugins.push(new CopyWebpackPlugin([
-                {
-                    from: staticAssets,
-                    to: path.relative(result.output.path, getDirDistPublic(dist))
-                }
-            ]))
-
-        result.plugins.push(
-            new DevModePlugin({ dist })
-        )
 
         result.watchOptions = {
             ignored: [
@@ -113,9 +96,90 @@ module.exports = async (kootBuildConfig = {}) => {
         }
     }
 
-    result.entry = defaultServerEntry
+    // entry / 入口
+    const entryIndex = [
+        // '@babel/register',
+        '@babel/polyfill',
+        // path.resolve(__dirname, '../../../defaults/server-stage-0.js'),
+        path.resolve(__dirname, '../../../', appType, './server')
+    ]
+    const otherEntries = {}
+    const fileSSR = path.resolve(__dirname, '../../../', appType, './server/ssr.js')
+    if (ENV !== 'dev' && fs.existsSync(fileSSR)) {
+        otherEntries.ssr = [fileSSR]
+        // result.plugins.push(
+        //     new ExtraWatchWebpackPlugin({
+        //         files: [
+        //             fileSSR,
+        //             fileSSR.replace(/\.js$/, '.hot-update.js')
+        //         ]
+        //     })
+        // )
+    }
+    if (ENV === 'dev') {
+        Object.keys(otherEntries).forEach(key => {
+            otherEntries[key].push('webpack/hot/poll?1000')
+        })
+    }
 
-    return await transformConfigLast(result, kootBuildConfig)
+    // 覆盖 optimization
+    {
+        result.optimization = {
+            splitChunks: false,
+            removeAvailableModules: false,
+            removeEmptyChunks: false,
+            mergeDuplicateChunks: false,
+            occurrenceOrder: false,
+            concatenateModules: false,
+        }
+    }
 
-    // return result
+    // 拆分
+    const configsFull = [
+        {
+            ...result,
+            entry: {
+                index: entryIndex
+            },
+            output: {
+                ...result.output,
+                filename: 'index.js'
+            }
+        }
+    ]
+    Object.keys(otherEntries).forEach(entryName => {
+        configsFull.push({
+            ...result,
+            entry: {
+                [entryName]: otherEntries[entryName]
+            },
+            output: {
+                ...result.output,
+                filename: `${entryName}.js`
+            }
+        })
+    });
+
+    // 对最后一个配置进行加工
+    ((config) => {
+        if (ENV === 'dev') {
+            if (typeof staticAssets === 'string')
+                config.plugins.push(new CopyWebpackPlugin([
+                    {
+                        from: staticAssets,
+                        to: path.relative(config.output.path, getDirDistPublic(dist))
+                    }
+                ]))
+
+            config.plugins.push(
+                new DevModePlugin({ dist })
+            )
+        }
+    })(configsFull[configsFull.length - 1])
+
+
+    //
+
+
+    return await transformConfigLast(configsFull, kootBuildConfig)
 }

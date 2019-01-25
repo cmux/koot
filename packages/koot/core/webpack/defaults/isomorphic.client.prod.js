@@ -26,7 +26,8 @@ const factoryConfig = async (/*{
             new MiniCssExtractPlugin({
                 // Options similar to the same options in webpackOptions.output
                 // both options are optional
-                filename: "[name].[chunkhash].css",
+                // filename: "[name].[chunkhash].css",
+                filename: "extract.[id].[chunkhash].css",
                 // chunkFilename: "[id].css"
             }),
         ],

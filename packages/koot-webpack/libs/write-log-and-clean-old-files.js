@@ -5,7 +5,7 @@ const getCwd = require('./require-koot')('utils/get-cwd')
 const log = require('./require-koot')('libs/log')
 
 /** @type {Number} 同类型的日志文件保存的数量 (超过的日志文件会被删除) */
-const filesSameTypeKeep = 4
+const filesSameTypeKeep = 1
 // const daysToKeep = 2
 
 /** @type {String} 日志记录文件存放路径 (相对于项目根目录) */

@@ -1,6 +1,7 @@
-import getLocaleIds from '../get-locale-ids'
+import availableLocaleIds from '../locale-ids'
 import getLangFromCtx from './get-lang-from-ctx'
 import setCookie from '../set-cookie'
+import isI18nEnabled from '../is-enabled'
 
 /**
  * URL 使用 router 方式时，在同构中间件流程的匹配 react 路由之前，检查是否需要跳转
@@ -9,7 +10,7 @@ import setCookie from '../set-cookie'
  * @returns {Boolean} 是否进行跳转
  */
 const useRouterRedirect = (ctx) => {
-    if (!JSON.parse(process.env.KOOT_I18N))
+    if (!isI18nEnabled())
         return false
 
     if (process.env.KOOT_I18N_URL_USE !== 'router')
@@ -19,7 +20,7 @@ const useRouterRedirect = (ctx) => {
     if (pathname.substr(0, 1) === '/') pathname = pathname.substr(1)
     pathname = pathname.split('/')
 
-    if (!getLocaleIds().includes(pathname[0])) {
+    if (!availableLocaleIds.includes(pathname[0])) {
         const localeId = getLangFromCtx(ctx)
 
         // console.log('lang', lang)

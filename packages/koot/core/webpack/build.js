@@ -7,10 +7,10 @@ const chalk = require('chalk')
 const webpack = require('webpack')
 const WebpackDevServer = require('webpack-dev-server')
 
-const resetCssLoader = require('./loaders/css/reset')
+const resetCssLoader = require('koot-webpack/loaders/css/reset')
 
 const {
-    filenameWebpackDevServerPortTemp, keyFileProjectConfigTemp,
+    filenameWebpackDevServerPortTemp,
     keyConfigBuildDll,
     keyConfigQuiet,
     filenameBuilding, filenameBuildFail,
@@ -26,6 +26,8 @@ const readBaseConfig = require('../../utils/read-base-config')
 
 const _log = require('../../libs/log')
 const elapse = require('../../libs/elapse.js')
+const emptyTempConfigDir = require('../../libs/empty-temp-config-dir')
+const getHistoryTypeFromConfig = require('../../libs/get-history-type-from-config')
 
 const createWebpackConfig = require('./config/create')
 const validateWebpackDevServerPort = require('./config/validate-webpack-dev-server-port')
@@ -56,11 +58,11 @@ process.env.DO_WEBPACK = false
 /**
  * Webpack 打包
  * @async
- * @param {Object} kootBuildConfig
- * @param {Boolean} [kootBuildConfig.analyze=false] 是否为打包分析（analyze）模式
+ * @param {Object} kootConfig
+ * @param {Boolean} [kootConfig.analyze=false] 是否为打包分析（analyze）模式
  * @returns {Object}
  */
-module.exports = async (kootBuildConfig = {}) => {
+module.exports = async (kootConfig = {}) => {
 
     /**
      * @type {Object} 打包完成后返回的结果对象
@@ -123,12 +125,12 @@ module.exports = async (kootBuildConfig = {}) => {
 
     // 抽取配置
     let {
-        beforeBuild,
-        afterBuild,
+        webpackBefore: beforeBuild,
+        webpackAfter: afterBuild,
         analyze = false,
         [keyConfigQuiet]: quietMode = false,
         [keyConfigBuildDll]: createDll = false,
-    } = kootBuildConfig
+    } = kootConfig
 
     /** @type {String} 项目类型 */
     const appType = await getAppType()
@@ -154,6 +156,10 @@ module.exports = async (kootBuildConfig = {}) => {
         if (quietMode) return
         return _log(...args)
     }
+    const logEmptyLine = () => {
+        if (quietMode) return
+        return console.log('')
+    }
 
     // log: 打包流程正式开始
     log('build', __(
@@ -167,11 +173,28 @@ module.exports = async (kootBuildConfig = {}) => {
 
     /** @type {Function} @async 流程回调: webpack 执行前 */
     const before = async () => {
+
+        log('callback', 'build', `callback: ` + chalk.green('beforeBuild'))
+        // 创建 DLL 模式下不执行传入的生命周期方法
+        if (!createDll && typeof beforeBuild === 'function') {
+            await beforeBuild(data)
+        }
+
         building = true
 
         const dist = getDistPath()
 
-        // 开发模式
+        // 服务器环境
+        if (STAGE === 'server') {
+            // 清理已有的打包结果
+            fs.ensureDirSync(path.resolve(dist, `./server`))
+            fs.removeSync(path.resolve(dist, `./server/index.js`))
+            fs.removeSync(path.resolve(dist, `./server/index.js.map`))
+            fs.removeSync(path.resolve(dist, `./server/ssr.js`))
+            fs.removeSync(path.resolve(dist, `./server/ssr.js.map`))
+        }
+
+        // 开发环境
         if (ENV === 'dev' && TYPE !== 'spa') {
             // 确保 server/index.js 存在
             fs.ensureFileSync(path.resolve(dist, `./server/index.js`))
@@ -187,11 +210,6 @@ module.exports = async (kootBuildConfig = {}) => {
         // console.log(path.resolve(dist, filenameBuilding))
         // console.log(fs.existsSync(path.resolve(dist, filenameBuilding)))
 
-        log('callback', 'build', `callback: ` + chalk.green('beforeBuild'))
-        // 创建 DLL 模式下不执行传入的生命周期方法
-        if (!createDll && typeof beforeBuild === 'function') {
-            await beforeBuild(data)
-        }
     }
 
     /** @type {Function} @async 流程回调: webpack 执行后 */
@@ -258,13 +276,13 @@ module.exports = async (kootBuildConfig = {}) => {
     //
     // ========================================================================
 
-    // 开发模式: 确定 webpack-dev-server 端口号
+    // 开发环境: 确定 webpack-dev-server 端口号
     if (ENV === 'dev') {
         if (TYPE === 'spa') {
             process.env.WEBPACK_DEV_SERVER_PORT = process.env.SERVER_PORT
         } else {
             // 尝试读取记录端口号的临时文件
-            const dist = await validateDist(kootBuildConfig.dist)
+            const dist = await validateDist(kootConfig.dist)
             const pathnameTemp = path.resolve(dist, filenameWebpackDevServerPortTemp)
             const getExistResult = async () => {
                 if (fs.existsSync(pathnameTemp)) {
@@ -279,7 +297,7 @@ module.exports = async (kootBuildConfig = {}) => {
                 process.env.WEBPACK_DEV_SERVER_PORT = existResult
             } else {
                 // 如果上述临时文件不存在，从配置中解析结果
-                process.env.WEBPACK_DEV_SERVER_PORT = await validateWebpackDevServerPort(kootBuildConfig.port)
+                process.env.WEBPACK_DEV_SERVER_PORT = await validateWebpackDevServerPort(kootConfig.devPort)
                 // 将 webpack-dev-server 端口写入临时文件
                 await fs.writeFile(
                     pathnameTemp,
@@ -289,6 +307,9 @@ module.exports = async (kootBuildConfig = {}) => {
             }
         }
     }
+
+    // 确定 history 类型
+    process.env.KOOT_HISTORY_TYPE = await getHistoryTypeFromConfig(kootConfig)
 
 
 
@@ -304,7 +325,7 @@ module.exports = async (kootBuildConfig = {}) => {
     // 创建对应当前环境的 Webpack 配置
     //
     // ========================================================================
-    const data = await createWebpackConfig(Object.assign(kootBuildConfig, {
+    const data = await createWebpackConfig(Object.assign(kootConfig, {
         webpackCompilerHook: {
             afterEmit: () => buildingComplete(),
             done: after
@@ -316,11 +337,11 @@ module.exports = async (kootBuildConfig = {}) => {
         webpackConfig,
         pwa,
         i18n,
-        devServer,
+        devServer = {},
         pathnameChunkmap,
     } = data
 
-    if (TYPE === 'spa' && typeof !!kootBuildConfig.i18n) {
+    if (TYPE === 'spa' && typeof !!kootConfig.i18n) {
         log('error', 'build', chalk.redBright(__('build.spa_i18n_disabled_temporarily')))
     } else if (typeof i18n === 'object') {
         if (STAGE === 'client') {
@@ -373,11 +394,7 @@ module.exports = async (kootBuildConfig = {}) => {
      */
     const buildingError = (err) => {
         // 移除过程中创建的临时文件
-        if (data[keyFileProjectConfigTemp]) {
-            const pathnameTemp = path.resolve(data.dist, data[keyFileProjectConfigTemp])
-            if (fs.existsSync(pathnameTemp))
-                fs.removeSync(pathnameTemp)
-        }
+        emptyTempConfigDir()
 
         // 将错误添加入结果对象
         result.addError(err)
@@ -434,6 +451,12 @@ module.exports = async (kootBuildConfig = {}) => {
         // await sleep(20 * 1000)
         await beforeEachBuild()
         const compiler = webpack(webpackConfig)
+        const {
+            before,
+            headers = {},
+            // port,
+            ...extendDevServerOptions
+        } = devServer
         const devServerConfig = Object.assign({
             quiet: false,
             stats: { colors: true },
@@ -444,7 +467,8 @@ module.exports = async (kootBuildConfig = {}) => {
             contentBase: './',
             publicPath: TYPE === 'spa' ? '/' : '/dist/',
             headers: {
-                'Access-Control-Allow-Origin': '*'
+                'Access-Control-Allow-Origin': '*',
+                ...headers
             },
             open: TYPE === 'spa',
             watchOptions: {
@@ -460,16 +484,23 @@ module.exports = async (kootBuildConfig = {}) => {
                 if (appType === 'ReactSPA') {
                     require('../../ReactSPA/dev-server/extend')(app)
                 }
+                if (typeof before === 'function')
+                    return before(app)
             }
-        }, devServer)
+        }, extendDevServerOptions)
         const port = TYPE === 'spa' ? process.env.SERVER_PORT : process.env.WEBPACK_DEV_SERVER_PORT
+
+        // console.log('\n\ndevServer')
+        // console.log(devServerConfig)
 
         // more config
         // http://webpack.github.io/docs/webpack-dev-server.html
         const server = await new WebpackDevServer(compiler, devServerConfig)
         server.use(require('webpack-hot-middleware')(compiler))
+
         server.listen(port, '0.0.0.0', async (err) => {
             if (err) console.error(err)
+            // console.log('===========')
         })
 
         // 等待 building 标记为 false
@@ -480,6 +511,11 @@ module.exports = async (kootBuildConfig = {}) => {
             }, 500)
             wait()
         })
+
+        if (TYPE !== 'spa') {
+            logEmptyLine()
+            log('success', 'dev', `webpack-dev-server @ http://localhost:${port}`)
+        }
 
         return result
     }
@@ -642,6 +678,12 @@ module.exports = async (kootBuildConfig = {}) => {
         await beforeEachBuild()
         await new Promise((resolve, reject) => {
             webpack(webpackConfig, async (err, stats) => {
+                if (err && !stats) {
+                    buildingComplete()
+                    reject(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`)
+                    return buildingError(err)
+                }
+
                 const info = stats.toJson()
 
                 if (stats.hasWarnings()) {

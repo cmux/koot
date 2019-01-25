@@ -1,5 +1,11 @@
+// console.log('router/index.js', {
+//     'in __KOOT_SSR__': __KOOT_SSR__.LocaleId
+// });
+
 import routeCheck from 'koot/React/route-check'
 import Root from '@components/app'
+
+// console.log((typeof Store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' Store in [routes]')
 
 export default {
 
@@ -15,20 +21,32 @@ export default {
     },
 
     childRoutes: (() => {
-        const children = [{
-            path: 'static',
-            name: 'Page: Static Assets',
-            // component: require('@views/static').default,
-            getComponent: (nextState, cb) => {
-                require.ensure([], (require) => {
-                    if (routeCheck(nextState)) cb(null, require('@views/static').default)
-                }, 'Page: Static Assets')
+        const children = [
+            {
+                path: 'static',
+                name: 'Page: Static Assets',
+                // component: require('@views/static').default,
+                getComponent: (nextState, cb) => {
+                    require.ensure([], (require) => {
+                        if (routeCheck(nextState)) cb(null, require('@views/static').default)
+                    }, 'Page: Static Assets')
+                }
+            },
+            {
+                path: 'delayed',
+                name: 'Page: Delayed Rendering',
+                getComponent: (nextState, cb) => {
+                    require.ensure([], (require) => {
+                        if (routeCheck(nextState)) cb(null, require('@views/delayed').default)
+                    }, 'Page: Delayed Rendering')
+                }
             }
-        }]
+        ]
         if (!__SPA__) {
             children.push({
                 path: 'extend',
                 name: 'Page: Component Extender',
+                // component: require('@views/extend').default,
                 getComponent: (nextState, cb) => {
                     require.ensure([], (require) => {
                         if (routeCheck(nextState)) cb(null, require('@views/extend').default)

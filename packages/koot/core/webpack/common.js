@@ -4,10 +4,11 @@ const webpack = require('webpack')
 // const ExtractTextPlugin = require("extract-text-webpack-plugin")
 // const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 
-const createModuleRules = require('./config/create/module-rules')
-const defaultDefines = require('../../defaults/defines.js')
+const createModuleRules = require('koot-webpack/factory-config/module/rules')
+const defaultDefines = require('../../defaults/defines')
 const { keyConfigBuildDll } = require('../../defaults/before-build')
 const getPathnameProjectConfigFile = require('../../utils/get-pathname-project-config-file')
+const readBaseConfig = require('../../utils/read-base-config')
 
 // 打包结果目录
 const outputPath = 'dist'
@@ -22,6 +23,7 @@ const factory = async ({
     defines = {},
     css = {},
     [keyConfigBuildDll]: createDll = false,
+    ...remainingKootBuildConfig
 }) => {
 
     // const useSpCssLoader = {
@@ -39,7 +41,8 @@ const factory = async ({
                 aliases,
                 defines,
                 css,
-                createDll
+                createDll,
+                ...remainingKootBuildConfig
             })
         },
         resolve: {
@@ -48,38 +51,45 @@ const factory = async ({
                 '__modules',
                 'node_modules'
             ],
-            extensions: ['.js', '.jsx', '.json', '.css', '.less', '.sass', '.scss']
+            extensions: ['.js', '.jsx', '.mjs', '.json', '.css', '.less', '.sass', '.scss']
         },
-        plugins: plugins(env, stage, defines)
+        plugins: await plugins(env, stage, defines, remainingKootBuildConfig)
     }
 }
 
 
 // 执行顺序, 先 -> 后
-const plugins = (env, stage, defines = {}) => {
-    const defaults = {}
+const plugins = async (env, stage, defines = {}/*, remainingKootBuildConfig = {}*/) => {
+    const _defaultDefines = {}
     Object.keys(defaultDefines).forEach(key => {
-        defaults[key] = JSON.stringify(defaultDefines[key])
+        _defaultDefines[key] = JSON.stringify(defaultDefines[key])
     })
 
-    let g = Object.assign(
-        defaults,
+    const thisDefines = Object.assign(
+        _defaultDefines,
         {
             __CLIENT__: stage == 'client',
             __SERVER__: stage == 'server',
             __DEV__: env == 'dev',
             __PROD__: env == 'prod',
+            __PRO__: env == 'prod',
+            __TEST__: false,
+            __QA__: false,
+            __PREPROD__: false,
             // '__SPA__': !!spa,
             // __DIST__: JSON.stringify(process.env.KOOT_DIST_DIR),
 
             // 将 SERVER_PORT 赋值
             // 服务器启动时，会优先选取当前环境变量中的 SERVER_PORT，如果没有，会选择 __SERVER_PORT__
             __SERVER_PORT__: JSON.stringify(process.env.SERVER_PORT),
-
-            // __KOOT_PROJECT_CONFIG_PATHNAME__: getPathnameProjectConfigFile(),
         },
         defines
     )
+
+    for (let key in thisDefines) {
+        if (typeof thisDefines[key] === 'function')
+            thisDefines[key] = thisDefines[key]()
+    }
 
     if (env == 'prod') {
         process.env.NODE_ENV = 'production'
@@ -88,7 +98,7 @@ const plugins = (env, stage, defines = {}) => {
         // }
     }
 
-    const envs = [
+    const envsToDefine = [
         'KOOT_PROJECT_NAME',
         'KOOT_DIST_DIR',
         'KOOT_I18N',
@@ -106,32 +116,47 @@ const plugins = (env, stage, defines = {}) => {
         "WEBPACK_DEV_SERVER_PORT",
         // "WEBPACK_SERVER_PUBLIC_PATH",
     ]
-    const envsToDefine = envs.filter(key => (
-        typeof process.env[key] !== 'undefined'
-    ))
 
-    for (let key in g) {
-        if (typeof g[key] === 'function')
-            g[key] = g[key]()
+    const moduleReplacements = [
+        [/^__KOOT_PROJECT_CONFIG_FULL_PATHNAME__$/, getPathnameProjectConfigFile()],
+        [/^__KOOT_PROJECT_CONFIG_PORTION_SERVER_PATHNAME__$/, getPathnameProjectConfigFile('server')],
+        [/^__KOOT_PROJECT_CONFIG_PORTION_CLIENT_PATHNAME__$/, getPathnameProjectConfigFile('client')],
+        [
+            /^__KOOT_HOC_EXTEND__$/,
+            (() => {
+                if (/^React/.test(process.env.KOOT_PROJECT_TYPE))
+                    return path.resolve(__dirname, '../../React/component-extender.js')
+            })()
+        ],
+        // [
+        //     /^__KOOT_HOC_PAGEINFO__$/,
+        //     (() => {
+        //         if (/^React/.test(process.env.KOOT_PROJECT_TYPE))
+        //             return path.resolve(__dirname, '../../React/pageinfo.js')
+        //     })()
+        // ],
+    ]
+
+    const historyType = process.env.KOOT_HISTORY_TYPE
+    if (historyType) {
+        moduleReplacements.push([
+            /^__KOOT_CLIENT_REQUIRE_CREATE_HISTORY__$/,
+            `history/lib/create${historyType.substr(0, 1).toUpperCase() + historyType.substr(1)}`
+        ])
+        moduleReplacements.push([
+            /^__KOOT_CLIENT_REQUIRE_HISTORY__$/,
+            `react-router/lib/${historyType}`
+        ])
     }
 
     return [
-        new webpack.DefinePlugin(g),
-        new webpack.EnvironmentPlugin(envsToDefine),
-        // new webpack.ContextReplacementPlugin(
-        //     /^__KOOT_PROJECT_CONFIG_PATHNAME__$/,
-        //     (context) => {
-        //         const a = Object.assign(context, {
-        //             regExp: /^\.\/\w+/,
-        //             request: getPathnameProjectConfigFile()
-        //         })
-        //         console.log(a)
-        //     }
-        // ),
-        new webpack.NormalModuleReplacementPlugin(
-            /^__KOOT_PROJECT_CONFIG_PATHNAME__$/,
-            getPathnameProjectConfigFile()
-        )
+        new webpack.DefinePlugin(thisDefines),
+        new webpack.EnvironmentPlugin(envsToDefine.filter(key => (
+            typeof process.env[key] !== 'undefined'
+        ))),
+        ...moduleReplacements.map(([regex, value]) =>
+            new webpack.NormalModuleReplacementPlugin(regex, value)
+        ),
     ]
 }
 
@@ -144,7 +169,7 @@ const resolve = Object.assign({
         // Apps: path.resolve(appPath, './apps'),
         // "@app": path.resolve(appPath, './apps/app')
     },
-    extensions: ['.js', '.jsx', '.json', '.css', '.less', '.sass', '.scss']
+    extensions: ['.js', '.jsx', '.mjs', '.json', '.css', '.less', '.sass', '.scss']
 })
 
 

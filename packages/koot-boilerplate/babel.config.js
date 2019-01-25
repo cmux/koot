@@ -20,9 +20,6 @@ module.exports = function (api) {
 
             // syntax
             "@babel/plugin-syntax-dynamic-import",
-
-            // other
-            "react-hot-loader/babel",
         ]
     }
 }

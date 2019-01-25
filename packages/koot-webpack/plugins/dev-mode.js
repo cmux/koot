@@ -11,7 +11,7 @@ const isHotUpdate = require('../libs/is-compilation-hot-update-only')
 // let opened = false
 
 /**
- * Webpack 插件 - 开发模式扩展
+ * Webpack 插件 - 开发环境扩展
  */
 class DevModePlugin {
     constructor({

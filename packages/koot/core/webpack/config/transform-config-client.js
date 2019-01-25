@@ -1,3 +1,4 @@
+const fs = require('fs-extra')
 const path = require('path')
 const webpack = require('webpack')
 const DefaultWebpackConfig = require('webpack-config').default
@@ -7,8 +8,9 @@ const KootI18nPlugin = require('../plugins/i18n')
 const DevModePlugin = require('koot-webpack/plugins/dev-mode')
 const SpaTemplatePlugin = require('koot-webpack/plugins/spa-template')
 const GenerateChunkmapPlugin = require('koot-webpack/plugins/generate-chunkmap')
+const CreateGeneralCssBundlePlugin = require('koot-webpack/plugins/create-general-css-bundle')
 
-const { keyConfigBuildDll, keyConfigOutputPathShouldBe } = require('../../../defaults/before-build')
+const { keyConfigBuildDll, keyConfigOutputPathShouldBe, chunkNameClientRunFirst } = require('../../../defaults/before-build')
 const { hmrOptions } = require('../../../defaults/webpack-dev-server')
 
 // const {
@@ -32,15 +34,15 @@ const getDirDistPublic = require('../../../libs/get-dir-dist-public')
  */
 module.exports = async (kootBuildConfig = {}) => {
     const {
-        config,
+        webpackConfig: config,
         appType,
         i18n,
         dist,
-        inject,
+        templateInject: inject,
         defaultPublicDirName, defaultPublicPathname,
-        staticAssets,
+        staticCopyFrom: staticAssets,
         analyze = false,
-        webpackHmr = {},
+        devHmr: webpackHmr = {},
         [keyConfigBuildDll]: createDll = false,
         webpackCompilerHook = {},
     } = kootBuildConfig
@@ -118,7 +120,7 @@ module.exports = async (kootBuildConfig = {}) => {
                     result.output.chunkFilename = 'chunk.[chunkhash].js'
             }
 
-            // [开发模式]
+            // [开发环境]
             if (ENV === 'dev') {
                 // 标记打包目录（对应 prod 模式的结果）
                 result[keyConfigOutputPathShouldBe] = path.resolve(pathPublic, defaultPublicDirName)
@@ -141,6 +143,15 @@ module.exports = async (kootBuildConfig = {}) => {
                     result.entry[key].unshift(`webpack-dev-server/client?http://localhost:${getWDSport()}/sockjs-node/`)
                 }
                 // result.entry[entryClientHMR] = `webpack-dev-server/client?http://localhost:${getWDSport()}/sockjs-node/`
+            }
+            const fileRunFirst = path.resolve(
+                __dirname,
+                '../../../',
+                appType,
+                './client/run-first.js'
+            )
+            if (fs.existsSync(fileRunFirst)) {
+                result.entry[chunkNameClientRunFirst] = [fileRunFirst]
             }
         }
 
@@ -166,6 +177,12 @@ module.exports = async (kootBuildConfig = {}) => {
             }
 
             if (!createDll) {
+                result.plugins.push(
+                    await new CreateGeneralCssBundlePlugin({
+                        localeId: isSeperateLocale ? localeId : undefined,
+                    })
+                )
+
                 if (TYPE === 'spa') {
                     result.plugins.push(
                         new SpaTemplatePlugin({

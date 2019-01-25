@@ -10,7 +10,9 @@ const opn = require('opn')
 
 const contentWaiting = require('../defaults/content-waiting')
 const {
-    keyFileProjectConfigTemp,
+    keyFileProjectConfigTempFull,
+    keyFileProjectConfigTempPortionServer,
+    keyFileProjectConfigTempPortionClient,
     filenameWebpackDevServerPortTemp,
     filenameBuilding,
     // filenameDll, filenameDllManifest,
@@ -57,16 +59,16 @@ program
 
 /**
  * 进入开发环境
- * ****************************************************************************
- * 同构 (isomorphic)
- * 以 PM2 进程方式顺序执行以下流程
- *      1. 启动 webpack-dev-server (STAGE: client)
- *      2. 启动 webpack (watch mode) (STAGE: server)
- *      3. 运行 /server/index.js
- * ****************************************************************************
- * 单页面应用 (SPA)
- * 强制设置 STAGE 为 client，并启动 webpack-dev-server
- * ****************************************************************************
+ * ---
+ * **同构 (isomorphic)**
+ * 1. 启动 PM2 进程: `webpack-dev-server` (STAGE: client)
+ * 2. 启动 PM2 进程: `webpack` (watch mode) (STAGE: server)
+ * 3. 启动 PM2 进程: `[打包结果]/server/index.js`
+ * 4. 启动 PM2 进程: `ReactApp/server/index-dev.js`
+ * ---
+ * **单页面应用 (SPA)**
+ * - 强制设置 STAGE 为 client，并启动 webpack-dev-server
+ * 
  */
 const run = async () => {
 
@@ -103,7 +105,7 @@ const run = async () => {
         if (client) return 'client'
         if (server) return 'server'
 
-        // false - 同构项目的完整开发模式
+        // false - 同构项目的完整开发环境
         return false
     })()
 
@@ -131,16 +133,19 @@ const run = async () => {
     // ========================================================================
 
     // 验证、读取项目配置信息
-    const buildConfig = await validateConfig()
+    const kootConfig = await validateConfig()
 
     // 如果在命令中设置了 dest，强制修改配置中的 dist
-    if (dest) buildConfig.dist = validateConfigDist(dest)
+    if (dest) kootConfig.dist = validateConfigDist(dest)
 
     const {
         dist,
-        port: configPort,
-        [keyFileProjectConfigTemp]: fileProjectConfigTemp
-    } = buildConfig
+        // port: configPort,
+        devPort,
+        [keyFileProjectConfigTempFull]: fileProjectConfigTempFull,
+        [keyFileProjectConfigTempPortionServer]: fileProjectConfigTempPortionServer,
+        [keyFileProjectConfigTempPortionClient]: fileProjectConfigTempPortionClient
+    } = kootConfig
     const appType = await getAppType()
     const cwd = getCwd()
     const packageInfo = await fs.readJson(path.resolve(cwd, 'package.json'))
@@ -158,9 +163,12 @@ const run = async () => {
     await removeTempBuild(dist)
 
     // 如果有临时项目配置文件，更改环境变量
-    if (fileProjectConfigTemp) {
-        process.env.KOOT_PROJECT_CONFIG_PATHNAME = fileProjectConfigTemp
-    }
+    if (fileProjectConfigTempFull)
+        process.env.KOOT_PROJECT_CONFIG_FULL_PATHNAME = fileProjectConfigTempFull
+    if (fileProjectConfigTempPortionServer)
+        process.env.KOOT_PROJECT_CONFIG_PORTION_SERVER_PATHNAME = fileProjectConfigTempPortionServer
+    if (fileProjectConfigTempPortionClient)
+        process.env.KOOT_PROJECT_CONFIG_PORTION_CLIENT_PATHNAME = fileProjectConfigTempPortionClient
 
     // 如果为 SPA，强制设置 STAGE
     if (process.env.WEBPACK_BUILD_TYPE === 'spa') {
@@ -169,8 +177,9 @@ const run = async () => {
     }
 
     // 如果配置中存在 port，修改环境变量
-    if (typeof port === 'undefined' && typeof configPort !== 'undefined')
-        process.env.SERVER_PORT = getPort(configPort, 'dev')
+    // if (typeof port === 'undefined' && typeof configPort !== 'undefined')
+    //     process.env.SERVER_PORT = getPort(configPort, 'dev')
+    process.env.SERVER_PORT = devPort
 
 
 
@@ -280,15 +289,15 @@ const run = async () => {
         // DLL 打包
         if (stage) {
             process.env.WEBPACK_BUILD_STAGE = stage
-            await kootBuildVendorDll(buildConfig)
+            await kootBuildVendorDll(kootConfig)
         } else {
             const stageCurrent = process.env.WEBPACK_BUILD_STAGE
 
             process.env.WEBPACK_BUILD_STAGE = 'client'
-            await kootBuildVendorDll(buildConfig)
+            await kootBuildVendorDll(kootConfig)
             await sleep(500)
             process.env.WEBPACK_BUILD_STAGE = 'server'
-            await kootBuildVendorDll(buildConfig)
+            await kootBuildVendorDll(kootConfig)
 
             process.env.WEBPACK_BUILD_STAGE = stageCurrent
         }
@@ -328,7 +337,7 @@ const run = async () => {
             // process.exit(exitCode)
         })
 
-        // SPA 开发模式
+        // SPA 开发环境
         if (process.env.WEBPACK_BUILD_TYPE === 'spa') {
             // 等待 filenameBuilding 文件删除
             let flagCreated = false
@@ -367,7 +376,7 @@ const run = async () => {
 
     // ========================================================================
     //
-    // 没有设置 STAGE，表示同构项目的完整开发模式，开启多个进程
+    // 没有设置 STAGE，表示同构项目的完整开发环境，开启多个进程
     //
     // ========================================================================
     // spinner(

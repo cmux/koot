@@ -35,7 +35,6 @@ module.exports = async () => ({
     },
 
     plugins: [
-        // TODO: 添加插件并保留 undefined，打包出错
         undefined, // Koot.js: 处理 webpack 配置时会自动过滤掉 null、undefined 等无意义的项
     ],
 

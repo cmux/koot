@@ -16,7 +16,7 @@ const getChunkmap = (localeId, getFullResult = false) => {
 
     if (isI18nEnabled && typeof localeId === 'undefined') {
         try {
-            localeId = require('../i18n').localeId
+            localeId = require('../index').localeId
         } catch (e) { }
     }
 

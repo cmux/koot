@@ -1,5 +1,3 @@
-// import { localeId } from '../i18n'
-
 /**
  * 获取 service-worker 文件名
  * @param {String} [localeId] 如果提供，则会返回 [NAME].[localeId].js

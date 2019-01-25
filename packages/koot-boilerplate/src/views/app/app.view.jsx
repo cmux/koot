@@ -1,18 +1,23 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import '@assets/css/reset.less';
-import '@assets/css/common.less';
+import React from 'react'
+import { extend } from 'koot'
 
-class App extends Component {
+const App = extend({
+    styles: require('./app.view.less')
+})(
+    ({ className, children, ...props }) => (
+        <div className={className}>
+            <Nav className="nav" {...props} />
+            <Main className="main" children={children} {...props} />
+        </div>
+    )
+)
 
-    static propTypes = {
-        children: PropTypes.node 
-    }
+const Nav = (props) => (
+    <nav {...props}></nav>
+)
 
-    render() {
-        const { children } = this.props;
-        return children
-    }
-}
+const Main = (props) => (
+    <main {...props} />
+)
 
-export default App;
+export default App

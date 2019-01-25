@@ -10,9 +10,7 @@ module.exports = (compilation, dirRelative) => {
     if (typeof compilation !== 'object') return undefined
 
     const filemap = {}
-    const stats = (typeof compilation.getStats === 'function')
-        ? compilation.getStats()
-        : compilation
+    const stats = compilation.getStats()
 
     for (let id in stats.compilation.chunks) {
         const o = stats.compilation.chunks[id]
@@ -30,5 +28,6 @@ module.exports = (compilation, dirRelative) => {
                 })
         }
     }
+
     return filemap
 }

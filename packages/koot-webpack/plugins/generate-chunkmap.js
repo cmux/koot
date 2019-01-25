@@ -25,7 +25,7 @@ class GenerateChunkmap {
             if (isHotUpdate(stats))
                 return callback()
 
-            if (TYPE !== 'spa') await writeChunkmap(stats, localeId)
+            if (TYPE !== 'spa') await writeChunkmap(compilation, localeId)
 
             callback()
         })

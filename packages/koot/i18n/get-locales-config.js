@@ -1,3 +1,5 @@
+const isI18nEnabled = require('./is-enabled')
+
 let locales
 
 /**
@@ -6,7 +8,7 @@ let locales
  */
 module.exports = () => {
     if (!Array.isArray(locales)) {
-        if (JSON.parse(process.env.KOOT_I18N)) {
+        if (isI18nEnabled()) {
             locales = JSON.parse(process.env.KOOT_I18N_LOCALES) || []
         } else {
             locales = []

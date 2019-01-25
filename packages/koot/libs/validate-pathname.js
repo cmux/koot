@@ -9,32 +9,49 @@ const getCwd = require('../utils/get-cwd')
  * @returns {String}
  */
 module.exports = (str, cwd = '.') => {
-    if (fs.existsSync(str))
+
+    if (isExist(str))
         return str
 
     {
         const p = path.resolve(cwd, str)
-        if (fs.existsSync(p))
+        if (isExist(p))
             return p
     }
 
     {
         const p = path.resolve(process.cwd(), str)
-        if (fs.existsSync(p))
+        if (isExist(p))
             return p
     }
 
     {
         const p = path.resolve(getCwd(), str)
-        if (fs.existsSync(p))
+        if (isExist(p))
             return p
     }
 
     {
         const p = path.resolve(getCwd(), 'node_modules', str)
-        if (fs.existsSync(p))
+        if (isExist(p))
             return p
     }
 
     return str
+}
+
+const isExist = (pathname) => {
+    if (fs.existsSync(pathname))
+        return true
+
+    if (fs.existsSync(pathname + '.js'))
+        return true
+
+    if (fs.existsSync(pathname + '.mjs'))
+        return true
+
+    if (fs.existsSync(pathname + '.jsx'))
+        return true
+
+    return false
 }

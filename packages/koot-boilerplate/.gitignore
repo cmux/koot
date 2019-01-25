@@ -35,13 +35,10 @@ jspm_packages
 # Optional REPL history
 .node_repl_history
 
-# koot
-node_modules/
-*.log
-/logs
-.DS_Store
+# Visual Studio Code
 .vscode
 
-*.lock
-package-lock.json
-.koot.config.tmp.*.js   
+# koot
+node_modules/
+/logs/
+/dist/

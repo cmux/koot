@@ -4,6 +4,7 @@ const fs = require('fs-extra')
 const path = require('path')
 const util = require('util')
 const exec = util.promisify(require('child_process').exec)
+const { spawn } = require('child_process')
 
 const program = require('commander')
 const npmRunScript = require('npm-run-script')
@@ -11,7 +12,6 @@ const chalk = require('chalk')
 // const opn = require('opn')
 
 const {
-    keyFileProjectConfigTemp,
     filenameBuildFail,
 } = require('../defaults/before-build')
 const sleep = require('../utils/sleep')
@@ -23,6 +23,7 @@ const validateConfig = require('../libs/validate-config')
 const validateConfigDist = require('../libs/validate-config-dist')
 const __ = require('../utils/translate')
 // const getCwd = require('../utils/get-cwd')
+const emptyTempConfigDir = require('../libs/empty-temp-config-dir')
 
 program
     .version(require('../package').version, '-v, --version')
@@ -62,27 +63,19 @@ const run = async () => {
     process.env.KOOT_TEST_MODE = JSON.stringify(kootTest)
 
     // 读取构建配置
-    const buildConfig = await validateConfig()
+    const kootConfig = await validateConfig()
     await getAppType()
-    if (dest) buildConfig.dist = validateConfigDist(dest)
-    const {
-        dist,
-        // server,
-        [keyFileProjectConfigTemp]: filenameProjectConfigTemp,
-    } = buildConfig
+    if (dest) kootConfig.dist = validateConfigDist(dest)
+    const { dist } = kootConfig
 
     const afterBuild = async () => {
         // 删除过程中创建的临时文件
-        if (filenameProjectConfigTemp) {
-            const fileProjectConfigTemp = path.resolve(dist, filenameProjectConfigTemp)
-            if (fs.existsSync(fileProjectConfigTemp))
-                await fs.remove(filenameProjectConfigTemp)
-        }
+        emptyTempConfigDir()
     }
 
     // 打包
     if (build) {
-        const building = spinner(chalk.yellowBright('[koot/build] ') + __('build.building'))
+        // const building = spinner(chalk.yellowBright('[koot/build] ') + __('build.building'))
         const fileBuildFail = path.resolve(dist, filenameBuildFail)
 
         /** @type {String} build 命令的附加参数 */
@@ -92,13 +85,35 @@ const run = async () => {
             + (typeof type === 'string' ? ` --type ${type}` : '')
             + (kootTest ? ` --koot-test` : '')
 
-        const { stderr } = await exec(
-            `koot-build ${buildCmdArgs}`, {
-                env: {
-                    KOOT_COMMAND_START: JSON.stringify(true)
+        let stderr = ''
+        await new Promise(resolve => {
+            const child = spawn(
+                'koot-build',
+                buildCmdArgs.split(' '),
+                {
+                    stdio: 'inherit',
+                    shell: true,
                 }
-            }
-        )
+            )
+            child.on('close', () => {
+                resolve()
+            })
+            // child.on('error', (err) => {
+            //     stderr = err
+            //     resolve()
+            // })
+            // child.stderr.on('data', (data) => {
+            //     console.log(`stderr: ${data}`);
+            //     stderr += data
+            // })
+        })
+        // const { stderr } = await exec(
+        //     `koot-build ${buildCmdArgs}`, {
+        //         env: {
+        //             KOOT_COMMAND_START: JSON.stringify(true)
+        //         }
+        //     }
+        // )
         // await new Promise((resolve, reject) => {
         //     const child = npmRunScript(
         //         `koot-build`, {
@@ -135,7 +150,7 @@ const run = async () => {
             await afterBuild()
 
             // 标记 spinner 为出错
-            building.fail()
+            // building.fail()
 
             // console.log(typeof stderr)
 
@@ -146,7 +161,7 @@ const run = async () => {
             // 终止流程
             return
         }
-        building.succeed()
+        // building.succeed()
         await sleep(100)
     }
 
@@ -160,6 +175,12 @@ const run = async () => {
 
     // 运行服务器
     const pathServerJS = path.resolve(dist, 'server/index.js')
+
+    if (!fs.existsSync(pathServerJS) || !fs.readFileSync(pathServerJS)) {
+        console.log('\n\n')
+        spinner(chalk.yellowBright('[koot/build]')).fail()
+        return
+    }
     // if (pm2) {
     //     // PM2 方式
     //     console.log('--- pm2 ---')

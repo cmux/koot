@@ -1,16 +1,12 @@
-// TODO: All-in-one decorator for react component
-// https://github.com/cmux/koot/issues/8
+/* global __KOOT_SSR__:false */
+
+import { getStore } from '../'
 
 import React from 'react'
 import { connect } from 'react-redux'
 // import { hot } from 'react-hot-loader'
 // import PropTypes from 'prop-types'
 import hoistStatics from 'hoist-non-react-statics'
-// import { ImportStyle } from 'sp-css-import'
-
-//
-
-import { store } from '../index.js'
 
 //
 
@@ -21,7 +17,7 @@ import {
 import {
     append as appendStyle,
     remove as removeStyle,
-    StyleMapContext,
+    // StyleMapContext,
 } from './styles'
 import clientUpdatePageInfo from './client-update-page-info'
 
@@ -29,10 +25,11 @@ import clientUpdatePageInfo from './client-update-page-info'
 
 // 是否已挂载了组件
 let everMounted = false
-const defaultPageInfo = {
-    title: '',
-    metas: []
-}
+// const defaultPageInfo = {
+//     title: '',
+//     metas: []
+// }
+const styleMap = {}
 
 /**
  * 获取数据
@@ -59,6 +56,75 @@ const defaultPageInfo = {
  * @returns {Object}
  */
 
+/** 
+ * 获取同构数据的执行方法
+ * @param {Object} store
+ * @param {Object} props renderProps
+ * @returns {Promise}
+ */
+const doFetchData = (store, renderProps, dataFetch) => {
+    const result = dataFetch(store.getState(), renderProps, store.dispatch)
+    // if (result === true) {
+    //     isDataPreloaded = true
+    //     return new Promise(resolve => resolve())
+    // }
+    if (Array.isArray(result))
+        return Promise.all(result)
+    if (result instanceof Promise)
+        return result
+    return new Promise(resolve => resolve(result))
+}
+
+/** 
+ * 更新页面信息
+ * @param {Object} store
+ * @param {Object} props renderProps
+ * @returns {Object} infos
+ * @returns {String} infos.title
+ * @returns {Array} infos.metas
+ */
+const doPageinfo = (store, props, pageinfo) => {
+    const defaultPageInfo = {
+        title: '',
+        metas: []
+    }
+
+    if (typeof pageinfo !== 'function')
+        return defaultPageInfo
+
+    const state = store.getState()
+
+    let infos = pageinfo(state, props)
+    if (typeof infos !== 'object')
+        infos = defaultPageInfo
+
+    const {
+        title = defaultPageInfo.title,
+        metas = defaultPageInfo.metas
+    } = infos
+
+    if (state.localeId) {
+        if (!metas.some(meta => {
+            if (meta.name === 'koot-locale-id') {
+                meta.content = state.localeId
+                return true
+            }
+            return false
+        })) {
+            metas.push({
+                name: 'koot-locale-id',
+                content: state.localeId
+            })
+        }
+    }
+
+    return {
+        title,
+        metas
+    }
+}
+
+// console.log((typeof store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' store in [HOC] extend')
 /**
  * 高阶组件/组件装饰器：组件扩展
  * @param {Object} options 选项
@@ -71,6 +137,7 @@ const defaultPageInfo = {
  * @returns {Function} 封装好的 React 组件
  */
 export default (options = {}) => (WrappedComponent) => {
+    // console.log((typeof store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' store in [HOC] extend run')
 
     const {
         connect: _connect = false,
@@ -80,8 +147,12 @@ export default (options = {}) => (WrappedComponent) => {
             check: dataCheck,
         } = {},
         styles: _styles,
+        // ttt
         // hot: _hot = true,
+        // name
     } = options
+
+    // console.log('extend hoc run', { name, LocaleId })
 
     // 样式相关
 
@@ -95,6 +166,7 @@ export default (options = {}) => (WrappedComponent) => {
         Array.isArray(styles) &&
         styles.length > 0
     )
+    // console.log({ ttt, hasStyles, styles })
 
     // 同构数据相关
 
@@ -106,93 +178,27 @@ export default (options = {}) => (WrappedComponent) => {
         ? options.data
         : (typeof _dataFetch === 'function' || Array.isArray(_dataFetch) ? _dataFetch : undefined)
 
-    /** @type {Function} 获取同构数据的执行方法 */
-    const doFetchData = (store, renderProps) => {
-        const result = dataFetch(store.getState(), renderProps, store.dispatch)
-        // if (result === true) {
-        //     isDataPreloaded = true
-        //     return new Promise(resolve => resolve())
-        // }
-        if (Array.isArray(result))
-            return Promise.all(result)
-        if (result instanceof Promise)
-            return result
-        return new Promise(resolve => resolve(result))
-    }
-
-    // 页面信息相关
-
-    /** 
-     * 更新页面信息
-     * @param {Object} store
-     * @param {Object} props renderProps
-     * @returns {Object} infos
-     * @returns {String} infos.title
-     * @returns {Array} infos.metas
-     */
-    const doPageinfo = (store, props) => {
-        const defaultPageInfo = {
-            title: '',
-            metas: []
-        }
-
-        if (typeof pageinfo !== 'function')
-            return defaultPageInfo
-
-        const state = store.getState()
-
-        let infos = pageinfo(state, props)
-        if (typeof infos !== 'object')
-            infos = defaultPageInfo
-
-        const {
-            title = defaultPageInfo.title,
-            metas = defaultPageInfo.metas
-        } = infos
-
-        if (state.localeId) {
-            if (!metas.some(meta => {
-                if (meta.name === 'koot-locale-id') {
-                    meta.content = state.localeId
-                    return true
-                }
-                return false
-            })) {
-                metas.push({
-                    name: 'koot-locale-id',
-                    content: state.localeId
-                })
-            }
-        }
-
-        return {
-            title,
-            metas
-        }
-    }
-
     // 装饰组件
 
     class KootReactComponent extends React.Component {
-        static onServerRenderHtmlExtend = ({ htmlTool, store, renderProps = {} }) => {
+        static onServerRenderHtmlExtend = ({ store, renderProps = {} }) => {
             const {
                 title,
                 metas
-            } = doPageinfo(store, getRenderPropsFromServerProps(renderProps))
-            htmlTool.title = title
-            htmlTool.metas = metas
+            } = doPageinfo(store, getRenderPropsFromServerProps(renderProps), pageinfo)
+            return { title, metas }
         }
 
         static onServerRenderStoreExtend({ store, renderProps }) {
             if (typeof dataFetch === 'undefined')
                 return new Promise(resolve => resolve())
             // console.log('onServerRenderStoreExtend')
-            return doFetchData(store, getRenderPropsFromServerProps(renderProps))
+            return doFetchData(store, getRenderPropsFromServerProps(renderProps), dataFetch)
         }
 
         //
 
-        static contextType = StyleMapContext
+        // static contextType = StyleMapContext
 
         //
 
@@ -203,7 +209,7 @@ export default (options = {}) => (WrappedComponent) => {
             const {
                 title,
                 metas
-            } = doPageinfo(store, getRenderPropsFromComponentProps(this.props))
+            } = doPageinfo(getStore(), getRenderPropsFromComponentProps(this.props), pageinfo)
             clientUpdatePageInfo(title, metas)
         }
 
@@ -211,7 +217,7 @@ export default (options = {}) => (WrappedComponent) => {
 
         state = {
             loaded: typeof dataCheck === 'function'
-                ? dataCheck(store.getState(), getRenderPropsFromComponentProps(this.props))
+                ? dataCheck(getStore().getState(), getRenderPropsFromComponentProps(this.props))
                 : undefined
             ,
         }
@@ -220,12 +226,12 @@ export default (options = {}) => (WrappedComponent) => {
 
         //
 
-        constructor(props, context) {
-            super(props, context)
+        constructor(props/*, context*/) {
+            super(props/*, context*/)
 
             if (hasStyles) {
                 this.kootClassNames = styles.map(obj => obj.wrapper)
-                appendStyle(context, styles)
+                appendStyle(this.getStyleMap(/*context*/), styles)
                 // console.log('----------')
                 // console.log('styles', styles)
                 // console.log('theStyles', theStyles)
@@ -233,6 +239,25 @@ export default (options = {}) => (WrappedComponent) => {
                 // console.log('----------')
             }
         }
+
+        /**
+         * 获取 styleMap
+         * - 服务器端: 返回全局常量中的对照表
+         * - 客户端: 直接返回本文件内的 styleMap
+         */
+        getStyleMap(/*context*/) {
+            // console.log('extend', { LocaleId })
+            if (__SERVER__) {
+                if (__DEV__)
+                    return global.__KOOT_SSR__.styleMap
+                if (typeof __KOOT_SSR__ === 'object')
+                    return __KOOT_SSR__.styleMap
+            }
+            return styleMap
+            // return context
+        }
+
+        //
 
         componentDidUpdate(prevProps) {
             if (typeof prevProps.location === 'object' &&
@@ -246,7 +271,7 @@ export default (options = {}) => (WrappedComponent) => {
             this.mounted = true
 
             if (!this.state.loaded && typeof dataFetch !== 'undefined') {
-                doFetchData(store, getRenderPropsFromComponentProps(this.props))
+                doFetchData(getStore(), getRenderPropsFromComponentProps(this.props), dataFetch)
                     .then(() => {
                         if (!this.mounted) return
                         this.setState({
@@ -265,7 +290,7 @@ export default (options = {}) => (WrappedComponent) => {
         componentWillUnmount() {
             this.mounted = false
             if (hasStyles) {
-                removeStyle(this.context, styles)
+                removeStyle(this.getStyleMap(/*this.context*/), styles)
             }
         }
 

@@ -1,6 +1,6 @@
 import {
     actionInit,
-    actionLocales
+    // actionLocales
 } from '../redux'
 
 export default ({
@@ -12,8 +12,8 @@ export default ({
         return
 
     store.dispatch(actionInit(store.getState()))
-    if (JSON.parse(process.env.KOOT_I18N_TYPE) === 'redux')
-        store.dispatch(actionLocales(store.getState()))
+    // if (JSON.parse(process.env.KOOT_I18N_TYPE) === 'redux')
+    //     store.dispatch(actionLocales(store.getState()))
 
     // console.log(2)
 }

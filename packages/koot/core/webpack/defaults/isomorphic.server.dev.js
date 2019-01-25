@@ -15,13 +15,14 @@ const factoryConfig = async ({
 
     return {
         mode: "development",
+        devtool: 'source-map',
         target: 'async-node',
         node: {
             __dirname: true
         },
         watch: true,
         output: {
-            filename: 'index.js',
+            filename: '[name].js',
             chunkFilename: 'chunk.-_-_-_-_-_-[chunkhash]-_-_-_-_-_-.js',
             path: `${pathRun}/${common.outputPath}/server`,
             publicPath: `${publicPath}/`

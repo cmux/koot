@@ -1,7 +1,7 @@
 import React from 'react'
 import { extend } from 'koot'
 
-export default extend({
+const PageHome = extend({
     pageinfo: (/*state, renderProps*/) => ({
         title: __('title'),
         metas: [
@@ -9,7 +9,7 @@ export default extend({
             { 'page-name': 'home' },
         ]
     }),
-    styles: require('./styles.less'),
+    styles: require('./styles.component.less'),
 })(
     ({
         className
@@ -18,3 +18,4 @@ export default extend({
             <h2>Koot.js</h2>
         </div>
 )
+export default PageHome

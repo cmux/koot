@@ -1,8 +1,6 @@
 import parseLanguageList from './parse-language-list'
 
-import {
-    availableLocales,
-} from './index'
+import availableLocaleIds from './locale-ids'
 
 /**
  * 检查单项，如果和availableLocales内的项目有匹配，返回匹配，否则返回null
@@ -14,7 +12,7 @@ const checkItem = (input) => {
 
     // input = input.toLowerCase().replace(/_/g, '-')
 
-    availableLocales.some(_localeId => {
+    availableLocaleIds.some(_localeId => {
         if (_localeId == input)
             id = _localeId
         return id
@@ -26,7 +24,7 @@ const checkItem = (input) => {
         const seg = localeId.split(str)
 
         if (!id) {
-            availableLocales.some(_localeId => {
+            availableLocaleIds.some(_localeId => {
                 if (_localeId == seg[0] + '-' + seg[seg.length - 1])
                     id = _localeId
                 return id
@@ -34,7 +32,7 @@ const checkItem = (input) => {
         }
 
         if (!id) {
-            availableLocales.some(_localeId => {
+            availableLocaleIds.some(_localeId => {
                 if (_localeId == seg[0])
                     id = _localeId
                 return id
@@ -56,7 +54,7 @@ const checkItem = (input) => {
  * 
  * @param {string|array} input 
  * 
- * @returns 匹配的语言包ID localeId 或 availableLocales[0]
+ * @returns 匹配的语言包ID localeId 或 availableLocaleIds[0]
  */
 const parseLocaleId = (input) => {
 
@@ -74,16 +72,16 @@ const parseLocaleId = (input) => {
             return id
         })
 
-        return id || availableLocales[0]
+        return id || availableLocaleIds[0]
     }
 
     else if (!input && typeof navigator !== 'undefined')
-        return parseLocaleId(navigator.languages || navigator.language || navigator.browserLanguage || navigator.systemLanguage || navigator.userLanguage || availableLocales[0])
+        return parseLocaleId(navigator.languages || navigator.language || navigator.browserLanguage || navigator.systemLanguage || navigator.userLanguage || availableLocaleIds[0])
 
     else if (input)
-        return checkItem(input) || availableLocales[0]
+        return checkItem(input) || availableLocaleIds[0]
 
-    return availableLocales[0]
+    return availableLocaleIds[0]
 }
 
 export default parseLocaleId

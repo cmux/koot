@@ -5,8 +5,9 @@
   - [FAQ/疑难解答](/faq)
   - 　
 
-- **使用 & API文档**
+- **API 文档**
   - [项目配置](/config)
+  - [Webpack](/webpack)
   - [NPM 命令](/task)
   - [HTML 模板](/template)
   - [生命周期](/life-cycle)
@@ -18,6 +19,7 @@
     - [热更新](/react-hmr)
     - [组件同构属性对象](/react-render-props)
   - [PWA](/pwa)
+  - [routeCheck](/route-check)
   - 　
 
 - **开发建议**

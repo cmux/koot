@@ -1,5 +1,11 @@
 import React from 'react'
-import { store, history, extend } from 'koot'
+import { store, history, localeId, extend } from 'koot'
+if (__CLIENT__)
+    console.log('[App]', {
+        store,
+        history,
+        localeId
+    })
 
 import Nav from './_layout/nav'
 import Main from './_layout/main'
@@ -14,7 +20,8 @@ let stateShowed = false
         }
         return {}
     },
-    styles: require('./app.less')
+    styles: require('./app.less'),
+    name: 'App'
 })
 class App extends React.Component {
     componentDidMount() {
@@ -30,14 +37,29 @@ class App extends React.Component {
         // You can also log the error to an error reporting service
         // logErrorToMyService(error, info);
     }
-    render = () => (
-        <React.StrictMode>
-            <div id="app" className={this.props.className}>
-                <Nav />
-                <Main children={this.props.children} />
-            </div>
-        </React.StrictMode>
-    )
+    componentDidUpdate() {
+        // console.log(this.props)
+    }
+    render() {
+        if (__CLIENT__)
+            console.log('[App] render', {
+                store,
+                history,
+                localeId
+            })
+        // console.log('App render', {
+        //     'in __KOOT_SSR__': __KOOT_SSR__.LocaleId
+        // });
+        // console.log((typeof Store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' Store in [App] render')
+        return (
+            <React.StrictMode>
+                <div id="app" className={this.props.className}>
+                    <Nav />
+                    <Main children={this.props.children} />
+                </div>
+            </React.StrictMode>
+        )
+    }
 }
 
 export default App

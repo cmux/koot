@@ -27,7 +27,8 @@ const factoryConfig = async ({
             __SPA__: true,
         }),
         new MiniCssExtractPlugin({
-            filename: (localeId ? localeId : '') + ".[name].css",
+            // filename: (localeId ? localeId : '') + ".[name].css",
+            filename: (localeId ? localeId : '') + ".extract.[id].[chunkhash].css",
             // chunkFilename: "[id].css"
         }),
     ],

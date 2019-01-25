@@ -1,12 +1,5 @@
-const fs = require('fs-extra')
-const path = require('path')
-const glob = require('glob-promise')
-
-const {
-    filenameProjectConfigTemp,
-    // filenameDll, filenameDllManifest,
-} = require('../defaults/before-build')
 const getCwd = require('../utils/get-cwd')
+const emptyTempConfigDir = require('./empty-temp-config-dir')
 
 /**
  * @async
@@ -15,13 +8,7 @@ const getCwd = require('../utils/get-cwd')
 module.exports = async (cwd = getCwd()/*, dist = process.env.KOOT_DIST_DIR*/) => {
     try {
 
-        const files = await glob(path.resolve(cwd, filenameProjectConfigTemp), {
-            dot: true
-        })
-
-        for (let file of files) {
-            await fs.remove(file)
-        }
+        emptyTempConfigDir(cwd)
 
     } catch (e) {
 

@@ -3,10 +3,14 @@ import { extend } from 'koot'
 
 const PageHome = ({
     className
-}) =>
-    <div className={className}>
-        <h2>Boilerplate (Simple)</h2>
-    </div>
+}) => {
+    return (
+        <div className={className}>
+            <h2>Boilerplate (Simple)</h2>
+            <p>Incididunt deserunt nostrud exercitation duis ad et officia velit veniam nulla nostrud commodo adipisicing incididunt. Do voluptate in labore occaecat ipsum dolore ex ullamco enim Lorem anim est nulla. Aliquip laborum sunt excepteur eu consequat nisi duis.</p>
+        </div>
+    )
+}
 
 export default extend({
     connect: true,

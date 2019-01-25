@@ -4,6 +4,9 @@ import { extend } from 'koot'
 import Link from '@components/link'
 
 const Nav = props => {
+    // console.log('Nav render', {
+    //     'in __KOOT_SSR__': __KOOT_SSR__.LocaleId
+    // });
     const items = [
         {
             title: __SPA__ ? '首页' : __('pages.home.title'),
@@ -12,6 +15,10 @@ const Nav = props => {
         {
             title: __SPA__ ? '静态资源' : __('pages.static.title'),
             to: '/static'
+        },
+        {
+            title: __SPA__ ? '延迟渲染' : __('pages.delayed.title'),
+            to: '/delayed'
         }
     ]
     if (!__SPA__)
@@ -36,5 +43,6 @@ const Nav = props => {
 }
 
 export default extend({
-    styles: require('./styles.less')
+    styles: require('./styles.less'),
+    name: 'Nav'
 })(Nav)

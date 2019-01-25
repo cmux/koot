@@ -28,16 +28,24 @@ module.exports = () => {
         WEBPACK_DEV_SERVER_PORT: 3001,
 
         // 服务器端口
-        SERVER_PORT: process.env.WEBPACK_BUILD_ENV === 'dev' ? '3000' : '8080',
+        SERVER_PORT: (() => {
+            if (process.env.WEBPACK_BUILD_ENV === 'dev')
+                return '3000'
+            if (typeof __SERVER_PORT__ !== 'undefined')
+                return __SERVER_PORT__
+            return '8080'
+        })(),
 
-        // 服务器端口 (开发模式主服务器)
+        // 服务器端口 (开发环境主服务器)
         SERVER_PORT_DEV_MAIN: '3000',
 
         // Koot 项目启动目录路径。默认为 process.cwd()
         // KOOT_CWD: process.cwd(),
 
         // Koot 项目配置文件路径 (./koot.js)。默认不存在。如果存在则默认使用
-        // KOOT_PROJECT_CONFIG_PATHNAME: ...,
+        // KOOT_PROJECT_CONFIG_FULL_PATHNAME: ...,
+        // KOOT_PROJECT_CONFIG_PORTION_SERVER_PATHNAME: ...,
+        // KOOT_PROJECT_CONFIG_PORTION_CLIENT_PATHNAME: ...,
 
         // Koot 打包配置文件路径 (./koot.build.js)。默认不存在。如果存在则默认使用
         // KOOT_BUILD_CONFIG_PATHNAME: ...,
@@ -47,6 +55,9 @@ module.exports = () => {
 
         // 项目类型。默认不存在。如果存在则默认使用
         // KOOT_PROJECT_TYPE: ...,
+
+        // history 类型
+        // KOOT_HISTORY_TYPE: ...,
 
         // 总开关：i18n/多语言相关处理
         KOOT_I18N: JSON.stringify(false),

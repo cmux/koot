@@ -32,9 +32,9 @@ const projectsToUse = projects.filter(project => (
     project.name === 'standard'
 ))
 
+const commandTestBuild = 'koot-buildtest'
 /** @type {Boolean} 是否进行完整测试。如果为否，仅测试一次打包结果 */
 const fullTest = true
-const commandTestBuild = 'koot-buildtest'
 const headless = true
 
 //
@@ -124,8 +124,15 @@ const doTest = async (port, settings = {}) => {
     const page = await browser.newPage()
     const origin = isNaN(port) ? port : `http://127.0.0.1:${port}`
     const {
-        i18nUseRouter = false
+        i18nUseRouter = false,
+        isDev = false
     } = settings
+
+    const getLocaleId = async (page) => {
+        return await page.evaluate(() =>
+            document.querySelector('meta[name="koot-locale-id"]').getAttribute('content')
+        )
+    }
 
     // 测试: 同构结果
     {
@@ -148,6 +155,10 @@ const doTest = async (port, settings = {}) => {
         // 测试: <script> 标签之间不应有 ,
         expect(/<\/script>,<script/g.test(pageContent)).toBe(false)
 
+        // 测试: 配置 webpack.internalLoaders['less-loader']
+        const baseFontSize = await page.evaluate(() => getComputedStyle(document.body).getPropertyValue('font-size'))
+        expect(baseFontSize).toBe('40px')
+
         if (i18nUseRouter) {
             // 页面是否已跳转
             const pageUrl = await page.url()
@@ -164,7 +175,7 @@ const doTest = async (port, settings = {}) => {
             await page.goto(gotoUrl, {
                 waitUntil: 'networkidle0'
             })
-            const theLocaleId = await page.evaluate(() => document.querySelector('meta[name="koot-locale-id"]').getAttribute('content'))
+            const theLocaleId = await getLocaleId(page)
             expect(theLocaleId).toBe(localeId)
         }
         await testLocaleIdByQuery('zh')
@@ -215,9 +226,42 @@ const doTest = async (port, settings = {}) => {
         await testLinksToOtherLang('zh-tw', '?test=a')
     }
 
+    // 测试: 并发请求 state 是否正确
+    if (!isDev) {
+        await Promise.all([
+            new Promise(async resolve => {
+                const pageDelayed = await browser.newPage()
+                const localeIdDelayed = 'en'
+                const gotoUrlDelayed = i18nUseRouter
+                    ? `${origin}/${localeIdDelayed}/delayed`
+                    : `${origin}/delayed?${changeLocaleQueryKey}=${localeIdDelayed}`
+                await pageDelayed.goto(gotoUrlDelayed, {
+                    waitUntil: 'networkidle0'
+                })
+                const theLocaleId = await getLocaleId(pageDelayed)
+                expect(theLocaleId).toBe(localeIdDelayed)
+                resolve()
+            }),
+            new Promise(async resolve => {
+                const localeId = 'zh'
+                const gotoUrl = i18nUseRouter
+                    ? `${origin}/${localeId}`
+                    : `${origin}?${changeLocaleQueryKey}=${localeId}`
+                await page.goto(gotoUrl, {
+                    waitUntil: 'networkidle0'
+                })
+                const theLocaleId = await getLocaleId(page)
+                expect(theLocaleId).toBe(localeId)
+                resolve()
+            })
+        ])
+    }
+
     // TODO: 测试: 静态文件访问
 
     // TODO: 测试: 所有 Webpack 结果资源的访问
+
+    // TODO: 测试: 有 extract.all.[*].css
 
     // TODO: 测试: inject 的函数用法
 
@@ -306,8 +350,10 @@ describe('测试: React 同构项目', async () => {
                 // child.stdout.pipe(process.stdout)
                 // child.stderr.pipe(process.stderr)
                 // console.log('===============')
+
                 await waitForPort(child)
-                const port = await getPortFromConfig(dir)
+                // const port = await getPortFromConfig(dir)
+                const port = require(path.resolve(dir, 'koot.config.js')).port
                 child.stderr.on('data', err => {
                     errors.push(err)
                 })
@@ -381,7 +427,8 @@ describe('测试: React 同构项目', async () => {
                     const errors = []
 
                     await waitForPort(child)
-                    const port = await getPortFromConfig(dir)
+                    // const port = await getPortFromConfig(dir)
+                    const port = require(path.resolve(dir, 'koot.config.js')).port
                     child.stderr.on('data', err => {
                         errors.push(err)
                     })
@@ -425,18 +472,20 @@ describe('测试: React 同构项目', async () => {
                     // })
                     expect(errors.length).toBe(0)
 
-                    await doTest(port)
+                    await doTest(port, {
+                        isDev: true
+                    })
                     await terminate(child.pid)
 
                     await afterTest(dir, '[Development] 启动开发模式并访问')
                 })
                 test(`[Production] 打包并运行生产模式 (i18n.use="router")`, async () => {
                     await beforeTest(dir)
-    
+
                     const commandName = `${commandTestBuild}-isomorphic-start-i18n_use_router`
                     const command = `koot-start --koot-test --config koot.config.i18n-use-router.js`
                     await addCommand(commandName, command, dir)
-    
+
                     const child = execSync(
                         `npm run ${commandName}`,
                         {
@@ -444,20 +493,21 @@ describe('测试: React 同构项目', async () => {
                         },
                     )
                     const errors = []
-    
+
                     await waitForPort(child)
-                    const port = await getPortFromConfig(dir)
+                    // const port = await getPortFromConfig(dir)
+                    const port = require(path.resolve(dir, 'koot.config.js')).port
                     child.stderr.on('data', err => {
                         errors.push(err)
                     })
-    
+
                     expect(errors.length).toBe(0)
-    
+
                     await doTest(port, {
                         i18nUseRouter: true
                     })
                     await terminate(child.pid)
-    
+
                     await afterTest(dir, '[Production] 打包并运行生产模式 (i18n.use="router")')
                 })
                 test(`[Development] 启动开发模式并访问 (i18n.use="router")`, async () => {
@@ -489,11 +539,78 @@ describe('测试: React 同构项目', async () => {
                     expect(errors.length).toBe(0)
 
                     await doTest(port, {
-                        i18nUseRouter: true
+                        i18nUseRouter: true,
+                        isDev: true
                     })
                     await terminate(child.pid)
 
-                    await afterTest(dir, '[Development] 启动开发模式并访问')
+                    await afterTest(dir, '[Development] 启动开发模式并访问 (i18n.use="router")')
+                })
+                test(`[Production] 打包并运行生产模式 (0.6版配置)`, async () => {
+                    await beforeTest(dir)
+    
+                    const commandName = `${commandTestBuild}-isomorphic-start-config_old_0.6`
+                    const command = `koot-start --koot-test --config koot.config.old-0.6.js`
+                    await addCommand(commandName, command, dir)
+    
+                    const child = execSync(
+                        `npm run ${commandName}`,
+                        {
+                            cwd: dir,
+                        },
+                    )
+                    const errors = []
+    
+                    await waitForPort(child)
+                    // const port = await getPortFromConfig(dir)
+                    const port = require('../../../packages/koot/utils/get-port')(
+                        require(path.resolve(dir, 'koot.config.old-0.6.js')).port
+                    )
+                    child.stderr.on('data', err => {
+                        errors.push(err)
+                    })
+    
+                    expect(errors.length).toBe(0)
+    
+                    await doTest(port, {})
+                    await terminate(child.pid)
+    
+                    await afterTest(dir, '[Production] 打包并运行生产模式 (0.6版配置)')
+                })
+                test(`[Development] 启动开发模式并访问 (0.6版配置)`, async () => {
+                    await beforeTest(dir)
+    
+                    // const port = '8316'
+                    const commandName = `${commandTestBuild}-isomorphic-dev-config_old_0.6`
+                    const command = `koot-dev --no-open --koot-test --config koot.config.old-0.6.js`
+                    await addCommand(commandName, command, dir)
+    
+                    const child = execSync(
+                        `npm run ${commandName}`,
+                        {
+                            cwd: dir,
+                            stdio: ['pipe', 'pipe', 'pipe', 'ipc']
+                        },
+                    )
+                    const errors = []
+    
+                    const port = await waitForPort(child, / on.*http:.*:([0-9]+)/)
+                    child.stderr.on('data', err => {
+                        errors.push(err)
+                    })
+    
+                    // console.log({
+                    //     port,
+                    //     errors,
+                    // })
+                    expect(errors.length).toBe(0)
+    
+                    await doTest(port, {
+                        isDev: true
+                    })
+                    await terminate(child.pid)
+    
+                    await afterTest(dir, '[Development] 启动开发模式并访问 (0.6版配置)')
                 })
             }
 

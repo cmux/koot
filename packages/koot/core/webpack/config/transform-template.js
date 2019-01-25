@@ -16,8 +16,12 @@ module.exports = async (template) => {
         if (typeof template === 'undefined')
             template = await readBaseConfig('template')
 
-        if (typeof template === 'string' && template.substr(0, 2) === './') {
-            template = await fs.readFile(path.resolve(getCwd(), template))
+        if (typeof template === 'string') {
+            if (template.substr(0, 2) === './') {
+                template = await fs.readFile(path.resolve(getCwd(), template))
+            } else if (path.isAbsolute(template)) {
+                template = await fs.readFile(path.resolve(template))
+            }
             process.env.KOOT_HTML_TEMPLATE = template
         }
     }

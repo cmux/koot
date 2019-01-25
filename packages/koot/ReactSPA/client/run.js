@@ -2,36 +2,19 @@
 
 const React = require('react')
 import ReactDOM from 'react-dom'
-import {
-    // Router,
-    hashHistory,
-    // browserHistory,
-    // createMemoryHistory,
-} from 'react-router'
-import { syncHistoryWithStore/*, routerReducer*/ } from 'react-router-redux'
-// import { Provider } from 'react-redux'
-import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
-import thunk from 'redux-thunk'
+import history from "../../React/history"
+import { syncHistoryWithStore } from 'react-router-redux'
 
 //
 
 import {
-    setStore,
-    setHistory,
-    setExtender,
-    setPageinfo,
-    // setFetchdata,
-} from '../../'
-import componentExtender from '../../React/component-extender'
-import pageinfo from '../../React/pageinfo'
-// import fetchdata from '../../React/fetchdata'
-import {
-    // reducer as realtimeLocationReducer,
-    // REALTIME_LOCATION_REDUCER_NAME,
-    actionUpdate,
-} from '../../React/realtime-location'
+    localeId as LocaleId,
+    store as Store,
+    history as History
+} from '../../index'
+import { actionUpdate } from '../../React/realtime-location'
 import Root from '../../React/root.jsx'
-import { reducers } from '../../React/redux'
+import validateRouterConfig from '../../React/validate/router-config'
 // import {
 //     reducerLocaleId as i18nReducerLocaleId,
 //     reducerLocales as i18nReducerLocales,
@@ -43,20 +26,13 @@ import { reducers } from '../../React/redux'
 // 设置常量 & 变量
 // ============================================================================
 
-// const ROUTER_REDUCDER_NAME = 'routing'
 let logCountRouterUpdate = 0
 let logCountHistoryUpdate = 0
-setExtender(componentExtender)
-setPageinfo(pageinfo)
-// setFetchdata(fetchdata)
 
 
 
 export default ({
-    // i18n = JSON.parse(process.env.KOOT_I18N) || false,
     router,
-    redux,
-    // store,
     client
 }) => {
     // console.log({
@@ -71,43 +47,6 @@ export default ({
     } = client
     const onRouterUpdate = client.routerUpdate || client.onRouterUpdate
     const onHistoryUpdate = client.historyUpdate || client.onHistoryUpdate
-
-    // ============================================================================
-    // Redux/Reducer 初始化
-    // ============================================================================
-
-    // const reducersObject = {
-    //     // 路由状态扩展
-    //     [ROUTER_REDUCDER_NAME]: routerReducer,
-    //     // 目的：新页面请求处理完成后再改变URL
-    //     [REALTIME_LOCATION_REDUCER_NAME]: realtimeLocationReducer,
-    //     // 对应服务器生成的store
-    //     // [SERVER_REDUCER_NAME]: serverReducer,
-    // }
-    // if (i18n) {
-    //     reducersObject.localeId = i18nReducerLocaleId
-    //     reducersObject.locales = i18nReducerLocales
-    // }
-
-    // 兼容配置嵌套
-    if (!redux) redux = client.redux
-
-    let store
-    if (typeof redux.store === 'undefined') {
-        {
-            const { combineReducers } = redux
-            if (typeof combineReducers === 'object') {
-                for (let key in combineReducers) {
-                    reducers[key] = combineReducers[key]
-                }
-            }
-        }
-        store = compose(applyMiddleware(thunk))(createStore)(combineReducers(reducers))
-    } else if (typeof redux.store === 'function' && __CLIENT__) {
-        store = redux.store()
-    } else {
-        store = redux.store
-    }
 
 
 
@@ -125,16 +64,14 @@ export default ({
     // ============================================================================
     // 路由初始化
     // ============================================================================
-    if (typeof router !== 'object') {
-        if (client.router) // 兼容配置嵌套
-            router = client.router
-        else
-            router = {}
-    }
+    const routes = validateRouterConfig(router)
+    if (typeof routes.path === 'undefined')
+        routes.path = '/'
+    const thisHistory = syncHistoryWithStore(History, Store)
     const routerConfig = {
         // history: syncHistoryWithStore(memoryHistory, store),
-        history: syncHistoryWithStore(hashHistory, store),
-        routes: router,
+        history: thisHistory,
+        routes,
         onUpdate: (...args) => {
             if (__DEV__ && logCountRouterUpdate < 2) {
                 console.log(
@@ -149,43 +86,30 @@ export default ({
                 onRouterUpdate(...args)
         }
     }
-    if (typeof routerConfig.routes.path === 'undefined')
-        routerConfig.routes.path = '/'
-    const history = hashHistory
+    // const history = hashHistory
     // if (__CLIENT__) self.routerHistory = memoryHistory
     // if (__CLIENT__) self.routerHistory = hashHistory
 
     // memoryHistory.listen(location => {
-    hashHistory.listen(location => {
+    thisHistory.listen(location => {
         // if (__DEV__) {
         //     console.log('🌏 browserHistory update', location)
         // }
         // console.log(actionUpdate(location))
-        store.dispatch(actionUpdate(location))
+        Store.dispatch(actionUpdate(location))
         // console.log(store.getState())
 
         if (__DEV__ && logCountHistoryUpdate < 2) {
             console.log(
                 `🚩 [koot/client] ` +
                 `callback: onHistoryUpdate`,
-                [location, store]
+                [location, Store]
             )
             logCountHistoryUpdate++
         }
         if (typeof onHistoryUpdate === 'function')
-            onHistoryUpdate(location, store)
+            onHistoryUpdate(location, Store)
     })
-
-
-
-
-
-    // ============================================================================
-    // 设置常量
-    // ============================================================================
-
-    setStore(store)
-    setHistory(history)
 
 
 
@@ -226,11 +150,11 @@ export default ({
                 console.log(
                     `🚩 [koot/client] ` +
                     `callback: after`,
-                    { store, history }
+                    { Store, history }
                 )
             if (typeof after === 'function')
                 after({
-                    store, history
+                    Store, history
                 })
         })
         .then(() => {
@@ -238,10 +162,11 @@ export default ({
             // console.log('routerConfig', routerConfig)
 
             const { history, routes, ...ext } = routerConfig
+            // console.log(routes)
 
             ReactDOM.render(
                 <Root
-                    store={store}
+                    store={Store}
                     history={history}
                     routes={routes}
                     {...ext}

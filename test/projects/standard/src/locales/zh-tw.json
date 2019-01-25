@@ -17,6 +17,10 @@
             "method_require_content": "使用 require() 引用靜態文件。文件名將會被自動 Hash 化。",
             "method_static": "靜態資源文件夾方法",
             "method_static_content": "將靜態文件放入靜態資源文件夾中，該路徑可在 koot.build.js 中設置。"
+        },
+        "delayed": {
+            "title": "延遲渲染",
+            "description": "人為的將渲染過程推遲。"
         }
     }
 }

@@ -13,7 +13,7 @@ module.exports = {
 
     "about_to_create_new_project": "创建全新 Koot.js 项目...",
     "welcome_exist_select": "请选择命令:",
-    "welcome_exist_select_dev": "进入开发模式",
+    "welcome_exist_select_dev": "进入开发环境",
     "welcome_exist_select_analyze": "分析打包结果",
     "welcome_exist_select_build": "打包正式版本",
     "welcome_exist_select_start": "打包正式版本并开启服务器",
@@ -49,7 +49,7 @@ module.exports = {
     "whats_next": "接下来……",
     "step_goto_dir": "进入项目目录",
     "step_install_dependencies": "安装依赖",
-    "step_run_dev": "运行开发模式",
+    "step_run_dev": "运行开发环境",
     "step_visit": "等待浏览器自动打开页面",
 
     "welcome_upgrade": "Koot.js 项目升级",

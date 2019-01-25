@@ -1,18 +1,31 @@
 const path = require('path')
 
+const { chunkNameClientRunFirst } = require('../../defaults/before-build')
 const defaultEntrypoints = require('../../defaults/entrypoints')
 const readClientFile = require('../../utils/read-client-file')
 const getClientFilePath = require('../../utils/get-client-file-path')
 
 /**
  * 注入: JavaScript 代码
- * @param {Boolean} needInjectCritical
- * @param {Object} injectCache
- * @param {Object} entrypoints
- * @param {String} reduxHtml
+ * @param {Object} options
+ * @param {Boolean} [options.needInjectCritical]
+ * @param {Object} [options.injectCache]
+ * @param {Object} [options.entrypoints]
+ * @param {String} [options.localeId]
+ * @param {String} [options.reduxHtml]
+ * @param {Object} [options.compilation]
+ * @param {Object} [options.SSRState]
  * @returns {String}
  */
-module.exports = (needInjectCritical, injectCache, entrypoints, reduxHtml) => {
+module.exports = ({
+    needInjectCritical,
+    injectCache,
+    entrypoints,
+    localeId,
+    reduxHtml,
+    SSRState = {},
+    compilation,
+}) => {
 
     const ENV = process.env.WEBPACK_BUILD_ENV
     const isDev = Boolean(ENV === 'dev' || (typeof __DEV__ !== 'undefined' && __DEV__))
@@ -38,12 +51,15 @@ module.exports = (needInjectCritical, injectCache, entrypoints, reduxHtml) => {
         // console.log('entrypoints', entrypoints)
         defaultEntrypoints.forEach(key => {
             if (Array.isArray(entrypoints[key])) {
-                r += entrypoints[key].map(file => {
-                    // console.log(file)
-                    // if (isDev)
-                    // return `<script type="text/javascript" src="${getClientFilePath(true, file)}" defer></script>`
-                    return `<script type="text/javascript" src="${getClientFilePath(true, file)}" defer></script>`
-                }).join('')
+                r += entrypoints[key]
+                    .filter(file => /\.(js|jsx|mjs|ejs)$/.test(file))
+                    .map(file => {
+                        // console.log(file)
+                        // if (isDev)
+                        // return `<script type="text/javascript" src="${getClientFilePath(true, file)}" defer></script>`
+                        return `<script type="text/javascript" src="${getClientFilePath(true, file)}" defer></script>`
+                    })
+                    .join('')
             }
         })
 
@@ -68,7 +84,27 @@ module.exports = (needInjectCritical, injectCache, entrypoints, reduxHtml) => {
         injectCache.scriptsInBody = r
     }
 
-    return `<script type="text/javascript">${reduxHtml ? reduxHtml : `window.__REDUX_STATE__ = {}`}</script>`
+    return `<script type="text/javascript">`
+        + (reduxHtml ? reduxHtml : `window.__REDUX_STATE__ = {};`)
+        + `window.__KOOT_LOCALEID__ = "${SSRState.localeId || ''}";`
+        + `window.__KOOT_SSR_STATE__ = ${JSON.stringify(SSRState)};`
+        + `</script>`
+        + getClientRunFirstJS(localeId, compilation)
         + `${injectCache.scriptsInBody}`
 
+}
+
+/**
+ * 客户端预先执行 JS 的代码
+ * @param {*} localeId 
+ * @param {*} compilation 
+ * @returns {String}
+ */
+const getClientRunFirstJS = (localeId, compilation) => {
+    const filename = `${chunkNameClientRunFirst}.js`
+
+    if (process.env.WEBPACK_BUILD_ENV === 'dev')
+        return `<script type="text/javascript" src="${getClientFilePath(filename, localeId)}"></script>`
+
+    return `<script type="text/javascript">${readClientFile(filename, localeId, compilation)}</script>`
 }

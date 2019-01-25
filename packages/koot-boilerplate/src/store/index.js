@@ -1,32 +1,30 @@
-import { createReduxModuleStore, applyMiddleware } from 'koot-redux';
+import { createStore, combineReducers, applyMiddleware } from 'redux'
+import { reduxForCreateStore } from 'koot'
+import logger from 'redux-logger'
 
-import { reduxForCreateStore } from 'koot';
-
-import rootModule from './modules';
-
-import { composeWithDevTools } from 'redux-devtools-extension';
-
-const middlewareList = [
+const middlewares = [
     ...reduxForCreateStore.middlewares
 ]
+if( __CLIENT__ && __DEV__ ){
+    middlewares.push(logger)
+}
 
-// 创建store实例
-const store = createReduxModuleStore(
-    rootModule,
-    typeof window !== 'undefined' ? window.__REDUX_STATE__ : undefined,
-    composeWithDevTools(
-        applyMiddleware(
-            ...middlewareList
-        )
+/**
+ * 创建 Redux store 的方法
+ * 原则上支持任何与 `redux` 兼容的 store 对象
+ * - 可使用 koot-redux 提供的方法进行封装
+ */
+export default () => {
+    const {
+        reducers: defaultReducers, initialState
+    } = reduxForCreateStore
+
+    return createStore(
+        combineReducers({
+            ...defaultReducers,
+            // ...reducers
+        }),
+        initialState,
+        applyMiddleware(...middlewares)
     )
-)
-
-export const dispatch = store.dispatch;
-
-export const getState = store.getState;
-
-export const subscribe = store.subscribe;
-
-export const replaceReducer = store.replaceReducer;
-
-export default store;
+}

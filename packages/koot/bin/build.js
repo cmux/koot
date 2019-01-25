@@ -5,10 +5,9 @@ const path = require('path')
 const program = require('commander')
 const chalk = require('chalk')
 
-const { keyFileProjectConfigTemp, keyConfigQuiet, filenameBuilding } = require('../defaults/before-build')
+const { keyConfigQuiet, filenameBuilding } = require('../defaults/before-build')
 
 const __ = require('../utils/translate')
-// const readBuildConfigFile = require('../utils/read-build-config-file')
 const sleep = require('../utils/sleep')
 const setEnvFromCommand = require('../utils/set-env-from-command')
 const getAppType = require('../utils/get-app-type')
@@ -16,6 +15,7 @@ const validateConfig = require('../libs/validate-config')
 const validateConfigDist = require('../libs/validate-config-dist')
 const spinner = require('../utils/spinner')
 const initNodeEnv = require('../utils/init-node-env')
+const emptyTempConfigDir = require('../libs/empty-temp-config-dir')
 
 const kootBuild = require('../core/webpack/enter')
 
@@ -78,75 +78,40 @@ const run = async () => {
         return false
     })()
 
-    // TODO: 
-
-    // console.log(stage, env)
-
-    // if (!stage) {
-    //     console.log(
-    //         chalk.redBright('× ')
-    //         + __('build.missing_option', {
-    //             option: chalk.yellowBright('stage'),
-    //             example: 'koot-build ' + chalk.green('--stage client') + ' --env prod',
-    //             indent: '  '
-    //         })
-    //     )
-    //     return
-    // }
-
-    // if (!env) {
-    //     console.log(
-    //         chalk.redBright('× ')
-    //         + __('build.missing_option', {
-    //             option: chalk.yellowBright('env'),
-    //             example: 'koot-build ' + chalk.green('--env prod'),
-    //             indent: '  '
-    //         })
-    //     )
-    //     return
-    // }
-
     // 在所有操作执行之前定义环境变量
     process.env.WEBPACK_BUILD_STAGE = stage || 'client'
     process.env.WEBPACK_BUILD_ENV = env
 
-    // 读取构建配置
-    const buildConfig = await validateConfig()
+    // 生成配置
+    const kootConfig = await validateConfig()
     await getAppType()
-    // const buildConfig = await readBuildConfigFile()
-    // const {
-    //     server: hasServer
-    // } = buildConfig
-
-    if (dest) buildConfig.dist = validateConfigDist(dest)
+    if (dest) kootConfig.dist = validateConfigDist(dest)
 
     // 如果通过 koot-start 命令启动...
     if (fromCommandStart) {
-        // 非报错 log 不打出
-        buildConfig[keyConfigQuiet] = true
+        // 安静模式: 非报错 log 不打出
+        kootConfig[keyConfigQuiet] = true
     }
 
-    // 如果提供了 stage，仅针对 stage 执行打包
-    // SPA: 仅打包 client
+    // 如果提供了 stage，仅针对该 stage 执行打包
+    // SPA: 强制仅打包 client
     if (process.env.WEBPACK_BUILD_TYPE === 'spa' || stage) {
         // if (stage === 'server' && !hasServer) {
         //     console.log(chalk.redBright('× '))
         // }
-        await kootBuild(buildConfig)
-        await after(buildConfig)
+        await kootBuild(kootConfig)
+        await after(kootConfig)
         if (!fromCommandStart) console.log(' ')
         return
     }
 
     // 如过没有提供 stage，自动相继打包 client 和 server
-    await kootBuild({ ...buildConfig })
+    await kootBuild({ ...kootConfig })
     await sleep(100)
-
-    // if (!hasServer) return
 
     if (!fromCommandStart) console.log('\n' + ''.padEnd(60, '=') + '\n')
     process.env.WEBPACK_BUILD_STAGE = 'server'
-    await kootBuild({ ...buildConfig })
+    await kootBuild({ ...kootConfig })
     await sleep(100)
 
     if (!fromCommandStart) console.log('\n' + ''.padEnd(60, '=') + '\n')
@@ -158,22 +123,19 @@ const run = async () => {
         })
     )
 
-    await after(buildConfig)
+    await after(kootConfig)
     if (!fromCommandStart) console.log(' ')
+
+    // 结束
 }
 
 const after = async (config = {}) => {
     const ENV = process.env.WEBPACK_BUILD_ENV
 
-    const {
-        dist,
-        [keyFileProjectConfigTemp]: fileProjectConfigTemp
-    } = config
+    const { dist } = config
 
     // 移除临时配置文件
-    if (ENV === 'prod' && fileProjectConfigTemp) {
-        await fs.remove(fileProjectConfigTemp)
-    }
+    if (ENV === 'prod') emptyTempConfigDir()
 
     // 移除标记文件
     const fileBuilding = path.resolve(dist, filenameBuilding)

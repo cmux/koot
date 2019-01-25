@@ -15,6 +15,7 @@ const injectScripts = require('./inject/scripts')
  * @param {String} [reactHtml] 已处理完毕的 React 同构结果 HTML 代码
  * @param {String} [stylesHtml] 已处理完毕的样式结果 HTML 代码
  * @param {String} [reduxHtml] 已处理完毕的 redux store 结果 HTML 代码
+ * @param {Object} [SSRState] SSR 状态对象
  * @param {Object} [needInjectCritical] 是否需要自动注入 critical 内容
  * @param {Boolean} [needInjectCritical.styles=false]
  * @param {Boolean} [needInjectCritical.scripts=false]
@@ -26,6 +27,7 @@ module.exports = (options = {}) => {
 
         filemap = {},
         entrypoints = {},
+        compilation,
 
         localeId,
 
@@ -34,6 +36,7 @@ module.exports = (options = {}) => {
         reactHtml,
         stylesHtml,
         reduxHtml,
+        SSRState,
 
         needInjectCritical = {
             styles: false,
@@ -45,12 +48,27 @@ module.exports = (options = {}) => {
 
         htmlLang: injectHtmlLang(localeId),
         title,
-        metas: injectMetas(metaHtml),
-        styles: injectStyles(needInjectCritical.styles, injectCache, filemap, stylesHtml),
+        metas: injectMetas({ metaHtml, localeId, compilation }),
+        styles: injectStyles({
+            needInjectCritical: needInjectCritical.styles,
+            injectCache,
+            filemap,
+            stylesHtml,
+            localeId,
+            compilation,
+        }),
 
         react: reactHtml,
 
-        scripts: injectScripts(needInjectCritical.scripts, injectCache, entrypoints, reduxHtml),
+        scripts: injectScripts({
+            needInjectCritical: needInjectCritical.scripts,
+            injectCache,
+            entrypoints,
+            localeId,
+            reduxHtml,
+            SSRState,
+            compilation
+        }),
 
     }
 }

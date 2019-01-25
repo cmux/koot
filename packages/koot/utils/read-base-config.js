@@ -21,11 +21,30 @@ module.exports = async (key) => {
     } catch (e) { }
 
     const content = await fs.readFile(pathnameKootJS, 'utf-8')
-    const regex = new RegExp(`${key}[ ]*=[ ]*['"](.+?)['"]`, "gm")
-    const matches = regex.exec(content)
 
-    if (Array.isArray(matches) && matches.length > 1)
-        return matches[1]
+    {
+        const regex = new RegExp(`${key}[ ]*=[ ]*['"](.+?)['"]`, "gm")
+        const matches = regex.exec(content)
+        if (Array.isArray(matches) && matches.length > 1)
+            return matches[1]
+    }
+
+    {
+        const regex = new RegExp(`${key}[ ]*=[ ]*{(.+?)}`, "gm")
+        const matches = regex.exec(content)
+        if (Array.isArray(matches) && matches.length > 1) {
+            try {
+                return JSON.parse(`{${matches[1]}}`)
+            } catch (e) {
+                const c = matches[1]
+                    .replace(/([: ])require\(['"](.+?)['"]\)\.(\w+?)([}, ])/g, '$1"$2:$3"$4')
+                    .replace(/([: ])require\(['"](.+?)['"]\)\.(\w+?)$/g, '$1"$2:$3"')
+                    .replace(/([: ])require\(['"](.+?)['"]\)([}, ])/g, '$1"$2"$3')
+                    .replace(/([: ])require\(['"](.+?)['"]\)$/g, '$1"$2"')
+                return JSON.parse(`{${c}}`)
+            }
+        }
+    }
 
     return undefined
 }

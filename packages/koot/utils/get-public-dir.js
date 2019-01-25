@@ -7,8 +7,13 @@ const getWDSport = require('./get-webpack-dev-server-port')
 module.exports = () => {
     const isDev = process.env.WEBPACK_BUILD_ENV === 'dev' || (typeof __DEV__ !== 'undefined' && __DEV__)
 
-    if (process.env.WEBPACK_BUILD_TYPE === 'spa')
-        return isDev ? '/' : ''
+    if (process.env.WEBPACK_BUILD_TYPE === 'spa') {
+        if (isDev)
+            return '/'
+        if (/^browser/.test(process.env.KOOT_HISTORY_TYPE))
+            return '/'
+        return ''
+    }
 
     if (isDev) {
         const port = getWDSport()

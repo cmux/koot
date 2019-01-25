@@ -1,0 +1,39 @@
+@import (less) "~normalize.css/normalize.css";
+
+
+
+// extra resets ---------------------------------------------------------------
+
+*, *:before, *:after{
+	box-sizing: inherit;
+}
+
+button,
+input,
+optgroup,
+option,
+select,
+textarea{
+    font-family: inherit;
+}
+
+
+
+// global styles --------------------------------------------------------------
+
+html, body{
+	height: 100%;
+}
+
+:first-child{
+    margin-top: 0;
+}
+:last-child{
+    margin-bottom: 0;
+}
+
+[disabled]{
+    cursor: default;
+	pointer-events: none;
+    opacity: .5;
+}
