@@ -2,8 +2,8 @@
 
 const fs = require('fs-extra')
 const path = require('path')
-const util = require('util')
-const exec = util.promisify(require('child_process').exec)
+// const util = require('util')
+// const exec = util.promisify(require('child_process').exec)
 const { spawn } = require('child_process')
 
 const program = require('commander')
@@ -21,7 +21,7 @@ const setEnvFromCommand = require('../utils/set-env-from-command')
 const getAppType = require('../utils/get-app-type')
 const validateConfig = require('../libs/validate-config')
 const validateConfigDist = require('../libs/validate-config-dist')
-const __ = require('../utils/translate')
+// const __ = require('../utils/translate')
 // const getCwd = require('../utils/get-cwd')
 const emptyTempConfigDir = require('../libs/empty-temp-config-dir')
 
