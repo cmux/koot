@@ -325,6 +325,7 @@ module.exports = {
 - 使用 `webpack.resolve.alias` 实现
 
 ```javascript
+const path = require('path')
 module.exports = {
     // 默认值
     aliases: {},
@@ -377,17 +378,142 @@ const apiBase = __QA__ ? `http://qa-api.project.com/` : `https://api.project.com
 
 ### staticCopyFrom
 
+- 类型: `Pathname`
+- 默认值: __无__
+
+将目标目录内的所有文件复制到打包结果内的静态服务器目录中。
+
+- 原封不动的复制，会保留文件名和目录结构
+- 开发环境下也可以使用
+
+```javascript
+const path = require('path')
+module.exports = {
+    // 默认值
+    staticCopyFrom: undefined,
+
+    // 示例
+    staticCopyFrom: path.resolve(__dirname, './src/assets/public'),
+}
+```
+
+示例效果:
+
+- 文件 `/web/src/assets/public/favicon.ico` 可使用以下 URL 访问: `/favicon.ico`
+
 ---
 
 ## 客户端生命周期
 
 ### before
 
+- 类型: `Pathname:Function`
+- 默认值: _无_
+- **仅针对**: 客户端
+
+客户端/浏览器端中，在 React 代码执行/初始化之前，执行的方法。
+
+```javascript
+/****************************
+ * 文件: /koot.config.js
+ ***************************/
+module.exports = {
+    before: './src/lifecycle/client-before'
+}
+
+/****************************
+ * 文件: /src/lifecycle/client-before.js
+ ***************************/
+export default ({ store, history, localeId }) => {
+    // ...
+}
+```
+
 ### after
+
+- 类型: `Pathname:Function`
+- 默认值: _无_
+- **仅针对**: 客户端
+
+客户端/浏览器端中，在 React 代码执行/初始化之后，执行的方法。
+
+```javascript
+/****************************
+ * 文件: /koot.config.js
+ ***************************/
+module.exports = {
+    after: './src/lifecycle/client-after'
+}
+
+/****************************
+ * 文件: /src/lifecycle/client-after.js
+ ***************************/
+export default ({ store, history, localeId }) => {
+    // ...
+}
+```
+
+### onHistoryUpdate
+
+- 类型: `Pathname:Function`
+- 默认值: _无_
+- **仅针对**: 客户端
+
+客户端/浏览器端中，在 URL 或历史记录 (由 `history` 管理) 更新时，执行的回调方法。
+
+- 该回调发生在 `onRouterUpdate` 之前
+- 如果路由对应组件进行了代码分割，则会按顺序进行以下行为
+  1. 客户端/浏览器 URL 或历史记录改变之后即刻触发 `onHistoryUpdate`
+  2. 载入对应组件的代码 (如果已载入则跳过该步骤)
+  3. 渲染相应组件
+  4. 触发 `onRouterUpdate`
+
+```javascript
+/****************************
+ * 文件: /koot.config.js
+ ***************************/
+module.exports = {
+    onHistoryUpdate: './src/lifecycle/client-history-update'
+}
+
+/****************************
+ * 文件: /src/lifecycle/client-history-update.js
+ ***************************/
+export default (location, Store) => {
+    // ...
+}
+```
 
 ### onRouterUpdate
 
-### onHistoryUpdate
+- 类型: `Pathname:Function`
+- 默认值: _无_
+- **仅针对**: 客户端
+
+客户端/浏览器端中，在路由 (由 `react-router` 管理) 更新时，执行的回调方法。
+
+- 该回调发生在 `onHistoryUpdate` 之后
+- 如果路由对应组件进行了代码分割，则会按顺序进行以下行为
+  1. 客户端/浏览器 URL 或历史记录改变之后即刻触发 `onHistoryUpdate`
+  2. 载入对应组件的代码 (如果已载入则跳过该步骤)
+  3. 渲染相应组件
+  4. 触发 `onRouterUpdate`
+
+```javascript
+/****************************
+ * 文件: /koot.config.js
+ ***************************/
+module.exports = {
+    onRouterUpdate: './src/lifecycle/client-router-update'
+}
+
+/****************************
+ * 文件: /src/lifecycle/client-router-update.js
+ ***************************/
+export default (...args) => {
+    // 传入的参数与 `react-router` 相应的回调方法相同
+}
+```
 
 ---
 
