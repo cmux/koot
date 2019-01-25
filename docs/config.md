@@ -524,7 +524,7 @@ export default (...args) => {
 - 类型: `Number`
 - 默认值: `8080`
 
-服务器启动端口号。
+服务器启动端口号。（开发环境默认会使用该端口号）
 
 ### renderCache
 
@@ -559,7 +559,7 @@ export default (...args) => {
 ### devPort
 
 - 类型: `Number`
-- 默认值: 配置项 `port`
+- 默认值: 配置项 `port` 的值
 - **仅针对**: 开发环境
 
 开发环境端口号。
@@ -634,26 +634,6 @@ module.exports = {
         ],
         hmr: {},
         internalLoadersOptions: {}
-    },
-    // ...
-}
-```
-
-### 客户端/浏览器端
-
-_**Object**_ `client`
-
-- _String_ `client.historyType`
-<br>客户端中路由 (`router`) 所用的历史对象 (`history`) 类型。目前支持：
-  - `browser` _browserHistory_ (同构模式默认使用)
-  - `hash` _hashHistory_ (SPA 模式默认使用)
-
-```javascript
-// 默认配置
-module.exports = {
-    // ...
-    client: {
-        historyType: undefined
     },
     // ...
 }
@@ -744,23 +724,3 @@ module.exports = {
     // ...
 }
 ```
-
-### 路径别名
-
-_**Object**_ `aliases`
-
-### 服务器端口
-
-_**Number|Object**_ `port`
-
-### PWA
-
-_**Object**_ `pwa`
-
-### 静态资源
-
-_**Pathname**_ `staticAssets`
-
-### 开发服务器
-
-_**Object**_ `devServer`
