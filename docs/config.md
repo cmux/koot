@@ -319,7 +319,61 @@ module.exports = {
 - 类型: `Object`
 - 默认值: `{}` (空对象)
 
+定义文件、路径别名。可在任何经过 Webpack 处理的 JavaScript 和 CSS 相关文件中使用。
+
+- 一般情况下，所有 React 相关代码均会经过 Webpack 处理
+- 使用 `webpack.resolve.alias` 实现
+
+```javascript
+module.exports = {
+    // 默认值
+    aliases: {},
+
+    // 示例
+    aliases: {
+        '@src': path.resolve('./src'),
+        '@assets': path.resolve('./src/assets'),
+        '~base.less': path.resolve('./src/assets/css/base.less'),
+    },
+}
+```
+
+```javascript
+// 针对上述示例的代码
+import App from '@src/components/app';
+```
+
+```less
+// 针对上述示例的代码
+import '~base.less';
+```
+
 ### defines
+
+- 类型: `Object`
+- 默认值: `{}` (空对象)
+
+定义 JavaScript 代码中的常量。可在任何经过 Webpack 处理的 JavaScript 相关文件中使用。
+
+- 一般情况下，所有 React 相关代码均会经过 Webpack 处理
+- 使用 Webpack 插件 `DefinePlugin` 实现
+
+```javascript
+module.exports = {
+    // 默认值
+    defines: {},
+
+    // 示例
+    defines: {
+        __QA__: JSON.stringify(false),
+    },
+}
+```
+
+```javascript
+// 针对上述示例的代码
+const apiBase = __QA__ ? `http://qa-api.project.com/` : `https://api.project.com/`;
+```
 
 ### staticCopyFrom
 
