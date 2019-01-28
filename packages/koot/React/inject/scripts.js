@@ -71,7 +71,8 @@ module.exports = ({
             r += `<script id="__koot-pwa-register-sw" type="text/javascript">`
             if (isProd)
                 r += `if ('serviceWorker' in navigator) {`
-                    + `navigator.serviceWorker.register("${injectCache.pathnameSW}",`
+                // + `navigator.serviceWorker.register("${injectCache.pathnameSW}?koot=${process.env.KOOT_VERSION}",`
+                + `navigator.serviceWorker.register("${injectCache.pathnameSW}?koot=0.8",`
                     + `{scope: '/'}`
                     + `)`
                     + `.catch(err => {console.log('👩‍💻 Service Worker SUPPORTED. ERROR', err)})`
