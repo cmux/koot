@@ -57,12 +57,13 @@ function respondFromCacheThenNetwork(event) {
 }
 
 function shouldHandleFetch(event) {
-    return (
-        event.request.method.toLowerCase() === 'get'
-        && (event.request.url.indexOf(location.origin) > -1)
-        && (event.request.url.indexOf('google-analytics.com') === -1)
-        && (event.request.url.indexOf(location.origin + '/api') < 0)
-    )
+    if (event.request.method.toLowerCase() !== 'get') return false
+    if (event.request.url.indexOf(location.origin) < 0) return false
+    if (event.request.url.indexOf('google-analytics.com') !== -1) return false
+    if (event.request.url.indexOf(location.origin + '/api') > -1) return false
+    if (/\/service-worker(\.[a-z-_]+){0,1}\.js/i.test(event.request.url)) return false
+
+    return true
 }
 
 function shouldRespondFromNetworkThenCache(event) {

@@ -8,7 +8,7 @@ const createModuleRules = require('koot-webpack/factory-config/module/rules')
 const defaultDefines = require('../../defaults/defines')
 const { keyConfigBuildDll } = require('../../defaults/before-build')
 const getPathnameProjectConfigFile = require('../../utils/get-pathname-project-config-file')
-const readBaseConfig = require('../../utils/read-base-config')
+// const readBaseConfig = require('../../utils/read-base-config')
 
 // 打包结果目录
 const outputPath = 'dist'
@@ -99,6 +99,7 @@ const plugins = async (env, stage, defines = {}/*, remainingKootBuildConfig = {}
     }
 
     const envsToDefine = [
+        'KOOT_VERSION',
         'KOOT_PROJECT_NAME',
         'KOOT_DIST_DIR',
         'KOOT_I18N',

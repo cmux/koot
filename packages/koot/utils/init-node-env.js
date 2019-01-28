@@ -1,3 +1,6 @@
+const path = require('path')
+const fs = require('fs-extra')
+
 const defaultsPWA = require('../defaults/pwa')
 
 /**
@@ -38,6 +41,11 @@ module.exports = () => {
 
         // 服务器端口 (开发环境主服务器)
         SERVER_PORT_DEV_MAIN: '3000',
+
+        // Koot 版本号
+        KOOT_VERSION: encodeURI(
+            fs.readJSONSync(path.resolve(__dirname, '../package.json')).version
+        ),
 
         // Koot 项目启动目录路径。默认为 process.cwd()
         // KOOT_CWD: process.cwd(),
