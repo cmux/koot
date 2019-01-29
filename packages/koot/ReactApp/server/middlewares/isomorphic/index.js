@@ -155,8 +155,10 @@ const middlewareIsomorphic = (options = {}) => {
             if (__DEV__) {
                 // global.__KOOT_STORE__ = Store
                 // global.__KOOT_HISTORY__ = History
-                global.__KOOT_LOCALEID__ = LocaleId
-                global.__KOOT_SSR__ = SSRoptions
+                // global.__KOOT_LOCALEID__ = LocaleId
+                // global.__KOOT_SSR__ = SSRoptions
+                global.__KOOT_SSR_SET__(SSRoptions)
+                global.__KOOT_SSR_SET_LOCALEID__(LocaleId)
             }
             const result = await ssr(SSRoptions)
 

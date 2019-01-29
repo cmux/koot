@@ -56,7 +56,7 @@
   - major
     - `css-loader` -> _2.1.0_
     - `file-loader` -> _3.0.1_
-    - `koa-body` -> _4.0.6_
+    - `koa-body` -> _4.0.7_
     - `koa-mount` -> _4.0.0_
     - `koa-static` -> _5.0.0_
   - minor
@@ -68,8 +68,8 @@
     - `@babel/plugin-transform-runtime` -> _7.2.0_
     - `@babel/polyfill` -> _7.2.5_
     - `@babel/preset-env` -> _7.3.1_
-    - `autoprefixer` -> _9.4.6_
-    - `koa` -> _2.6.2_
+    - `autoprefixer` -> _9.4.7_
+    - `koa` -> _2.7.0_
     - `less` -> _3.9.0_
     - `mini-css-extract-plugin` -> _0.5.0_
     - `os-locale` -> _3.1.0_
