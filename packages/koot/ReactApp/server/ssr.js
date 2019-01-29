@@ -15,8 +15,9 @@ import { syncHistoryWithStore } from 'react-router-redux'
 
 import * as kootConfig from '__KOOT_PROJECT_CONFIG_FULL_PATHNAME__'
 
-import { publicPathPrefix } from '../../defaults/webpack-dev-server'
+import { resetStore, resetHistory } from '../../'
 
+import { publicPathPrefix } from '../../defaults/webpack-dev-server'
 import { CHANGE_LANGUAGE } from '../action-types'
 
 import validateRouterConfig from '../../React/validate/router-config'
@@ -73,6 +74,8 @@ const ssr = async (options = {}) => {
     } else {
         __KOOT_SSR_SET_STORE__(Store)
         __KOOT_SSR_SET_HISTORY__(History)
+        resetStore()
+        resetHistory()
     }
 
     // ========================================================================
