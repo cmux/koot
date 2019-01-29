@@ -29,6 +29,7 @@ export const getLocaleId = () => {
         return __KOOT_LOCALEID__ || ''
     }
 }
+export const resetLocaleId = () => localeId = getLocaleId()
 export let localeId = (() => getLocaleId())()
 
 export const getStore = () => {
@@ -42,6 +43,7 @@ export const getStore = () => {
         return __KOOT_STORE__
     }
 }
+export const resetStore = () => store = getStore()
 export let store = (() => getStore())()
 
 export const getHistory = () => {
@@ -55,12 +57,7 @@ export const getHistory = () => {
         return __KOOT_HISTORY__
     }
 }
-export const setHistory = v => {
-    if (__DEV__) {
-        global.__KOOT_HISTORY__ = v
-        history = v
-    }
-}
+export const resetHistory = () => history = getHistory()
 export let history = (() => getHistory())()
 
 if (__DEV__) {

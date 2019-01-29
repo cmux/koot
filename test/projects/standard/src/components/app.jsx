@@ -1,7 +1,7 @@
 import React from 'react'
 import { store, history, localeId, extend } from 'koot'
 
-// console.log('[App]', { store, history, localeId })
+console.log('[App]', { store, history, localeId })
 
 import Nav from './_layout/nav'
 import Main from './_layout/main'
@@ -37,7 +37,7 @@ class App extends React.Component {
         // console.log(this.props)
     }
     render() {
-        // console.log('[App] render', { store, history, localeId })
+        console.log('[App] render', { store, history, localeId })
         // console.log('App render', {
         //     'in __KOOT_SSR__': __KOOT_SSR__.LocaleId
         // });
