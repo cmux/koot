@@ -29,7 +29,7 @@ export const getLocaleId = () => {
         return __KOOT_LOCALEID__ || ''
     }
 }
-export const localeId = (() => getLocaleId())()
+export let localeId = (() => getLocaleId())()
 
 export const getStore = () => {
     if (__CLIENT__)
@@ -42,7 +42,7 @@ export const getStore = () => {
         return __KOOT_STORE__
     }
 }
-export const store = (() => getStore())()
+export let store = (() => getStore())()
 
 export const getHistory = () => {
     if (__CLIENT__)
@@ -55,4 +55,28 @@ export const getHistory = () => {
         return __KOOT_HISTORY__
     }
 }
-export const history = (() => getHistory())()
+export const setHistory = v => {
+    if (__DEV__) {
+        global.__KOOT_HISTORY__ = v
+        history = v
+    }
+}
+export let history = (() => getHistory())()
+
+if (__DEV__) {
+    global.__KOOT_SSR_SET__ = v => {
+        global.__KOOT_SSR__ = v
+    }
+    global.__KOOT_SSR_SET_LOCALEID__ = v => {
+        global.__KOOT_LOCALEID__ = v
+        localeId = v
+    }
+    global.__KOOT_SSR_SET_STORE__ = v => {
+        global.__KOOT_STORE__ = v
+        store = v
+    }
+    global.__KOOT_SSR_SET_HISTORY__ = v => {
+        global.__KOOT_HISTORY__ = v
+        history = v
+    }
+}
