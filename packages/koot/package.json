@@ -57,7 +57,6 @@
         "@babel/preset-react": "7.0.0",
         "@babel/register": "7.0.0",
         "acorn": "6.0.5",
-        "autoprefixer": "9.4.7",
         "babel-loader": "8.0.5",
         "chalk": "2.4.2",
         "classlist-polyfill": "1.2.0",

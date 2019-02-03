@@ -39,6 +39,7 @@
         "universal-cookie": "^3.0.4"
     },
     "devDependencies": {
+        "autoprefixer": "9.4.7",
         "axios-mock-adapter": "^1.15.0",
         "babel-eslint": "^10.0.1",
         "babel-plugin-import": "^1.9.1",

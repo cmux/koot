@@ -42,6 +42,7 @@
 - 添加依赖包
   - `extract-hoc`
 - 移除依赖包
+  - `autoprefixer`
   - `koa-compose`
   - `koa-compress`
   - `koa-helmet`
