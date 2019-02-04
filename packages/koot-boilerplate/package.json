@@ -1,56 +1,32 @@
 {
-    "name": "koot-boilerplate-common",
-    "private": true,
-    "version": "0.8.0-beta.5",
-    "description": "> TODO: description",
-    "author": "zrain <zrainma@sina.com>",
-    "homepage": "https://github.com/cmux/koot#readme",
-    "license": "ISC",
-    "main": "lib/koot-boilerplate-common.js",
-    "directories": {
-        "lib": "lib",
-        "test": "__tests__"
-    },
-    "files": [
-        "lib"
-    ],
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/cmux/koot.git"
-    },
-    "scripts": {
-        "start": "koot-start",
-        "start:server": "koot-start --no-build",
-        "build": "koot-build",
-        "build:spa": "koot-build --type spa",
-        "dev": "koot-dev",
-        "dev:no-open": "koot-dev --no-open",
-        "dev:spa": "koot-dev --type spa",
-        "analyze": "koot-analyze",
-        "eslint": "eslint \"src/**/*.+(js|jsx)\""
-    },
-    "dependencies": {
-        "axios": "^0.18.0",
-        "classnames": "^2.2.6",
-        "koot": "^0.8.0-beta.5",
-        "koot-redux": "^1.0.9",
-        "koot-router": "^1.0.5",
-        "prop-types": "^15.6.2",
-        "universal-cookie": "^3.0.4"
-    },
-    "devDependencies": {
-        "autoprefixer": "9.4.7",
-        "axios-mock-adapter": "^1.15.0",
-        "babel-eslint": "^10.0.1",
-        "babel-plugin-import": "^1.9.1",
-        "eslint": "^5.6.1",
-        "eslint-plugin-react": "^7.11.1",
-        "normalize.css": "^8.0.1",
-        "redux-devtools-extension": "^2.13.7",
-        "redux-logger": "^3.0.6",
-        "svg-url-loader": "^2.3.2"
-    },
-    "bugs": {
-        "url": "https://github.com/cmux/koot/issues"
-    }
+	"name": "koot-boilerplate-common",
+	"private": true,
+	"version": "0.8.0-beta.5",
+	"description": "> TODO: description",
+	"author": "zrain <zrainma@sina.com>",
+	"homepage": "https://github.com/cmux/koot#readme",
+	"license": "ISC",
+	"main": "lib/koot-boilerplate-common.js",
+	"directories": {
+		"lib": "lib",
+		"test": "__tests__"
+	},
+	"files": [
+		"lib"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/cmux/koot.git"
+	},
+	"dependencies": {
+		"axios": "^0.18.0"
+	},
+	"devDependencies": {
+		"babel-eslint": "^10.0.1",
+		"eslint": "^5.6.1",
+		"eslint-plugin-react": "^7.11.1"
+	},
+	"bugs": {
+		"url": "https://github.com/cmux/koot/issues"
+	}
 }

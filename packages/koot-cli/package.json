@@ -1,65 +1,50 @@
 {
-    "name": "koot-cli",
-    "version": "0.8.0-alpha.20",
-    "description": "CLI for creating and upgrading Koot.js project",
-    "main": "index.js",
-    "sideEffects": false,
-    "bin": {
-        "koot": "./bin/koot.js",
-        "koot-create": "./bin/koot-create.js",
-        "koot-upgrade": "./bin/koot-upgrade.js"
-    },
-    "scripts": {
-        "init": "node ./bin/init",
-        "eslint": "eslint \"!(node_modules|logs|dist|dist*|test)/**/*.+(js|jsx)\"",
-        "test": "jest"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/cmux/koot-cli"
-    },
-    "keywords": [
-        "es6/7",
-        "fullstack",
-        "react",
-        "react-server-render",
-        "react-router",
-        "redux",
-        "koa2",
-        "webpack2",
-        "http2"
-    ],
-    "license": "Apache-2.0",
-    "author": {
-        "name": "diablohu",
-        "email": "diablohudream@gmail.com",
-        "url": "http://diablohu.com"
-    },
-    "contributors": [
-        {
-            "name": "dongwenxiao",
-            "email": "cs_victor@126.com"
-        }
-    ],
-    "bugs": {
-        "url": "https://github.com/cmux/koot-cli/issues"
-    },
-    "engines": {
-        "node": ">=8.0.0"
-    },
-    "dependencies": {
-        "chalk": "2.4.1",
-        "download-git-repo": "1.1.0",
-        "fs-extra": "7.0.1",
-        "gitignore-globs": "0.1.1",
-        "glob-promise": "3.4.0",
-        "inquirer": "6.2.1",
-        "isbinaryfile": "3.0.3",
-        "latest-version": "4.0.0",
-        "npm-email": "3.0.0",
-        "ora": "3.0.0",
-        "os-locale": "3.0.1",
-        "package-json": "5.0.0",
-        "semver": "5.6.0"
-    }
+	"name": "koot-cli",
+	"version": "0.8.0-alpha.20",
+	"description": "CLI for creating and upgrading Koot.js project",
+	"main": "index.js",
+	"sideEffects": false,
+	"bin": {
+		"koot": "./bin/koot.js",
+		"koot-create": "./bin/koot-create.js",
+		"koot-upgrade": "./bin/koot-upgrade.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/cmux/koot-cli"
+	},
+	"keywords": [
+		"es6/7",
+		"fullstack",
+		"react",
+		"react-server-render",
+		"react-router",
+		"redux",
+		"koa2",
+		"webpack2",
+		"http2"
+	],
+	"license": "Apache-2.0",
+	"author": {
+		"name": "diablohu",
+		"email": "diablohudream@gmail.com",
+		"url": "http://diablohu.com"
+	},
+	"contributors": [
+		{
+			"name": "dongwenxiao",
+			"email": "cs_victor@126.com"
+		}
+	],
+	"bugs": {
+		"url": "https://github.com/cmux/koot-cli/issues"
+	},
+	"engines": {
+		"node": ">=8.0.0"
+	},
+	"dependencies": {
+		"chalk": "2.4.1",
+		"inquirer": "6.2.1",
+		"os-locale": "3.0.1"
+	}
 }

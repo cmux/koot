@@ -157,7 +157,7 @@ export default (options = {}) => (WrappedComponent) => {
     // 样式相关
 
     /** @type {Object} 经过 koot-css-loader 处理后的 css 文件的结果对象 */
-    const styles = (!Array.isArray(_styles) ? [_styles] : styles).filter(obj => (
+    const styles = (!Array.isArray(_styles) ? [_styles] : _styles).filter(obj => (
         typeof obj === 'object' && typeof obj.wrapper === 'string'
     ))
 

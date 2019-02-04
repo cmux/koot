@@ -76,14 +76,15 @@
     - `os-locale` -> _3.1.0_
     - `react` -> _16.7.0_
     - `react-dom` -> _16.7.0_
-    - `react-hot-loader` -> _4.6.3_
+    - `react-hot-loader` -> _4.6.5_
     - `webpack` -> _4.29.0_
     - `webpack-dev-middleware` -> _3.5.1_
   - patch
+    - `acorn` -> _6.0.6_
     - `babel-loader` -> _8.0.5_
     - `chalk` -> _2.4.2_
     - `debug` -> _4.1.1_
-    - `inquirer` -> _6.2.1_
+    - `inquirer` -> _6.2.2_
     - `pm2` -> _3.2.9_
     - `portfinder` -> _1.0.20_
     - `postcss` -> _7.0.14_
