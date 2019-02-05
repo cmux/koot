@@ -1,7 +1,7 @@
 {
     "name": "koot-boilerplate-common",
     "private": true,
-    "version": "0.8.0-beta.5",
+    "version": "0.8.0-beta.6",
     "description": "> TODO: description",
     "author": "zrain <zrainma@sina.com>",
     "homepage": "https://github.com/cmux/koot#readme",
@@ -32,7 +32,7 @@
     "dependencies": {
         "axios": "0.18.0",
         "classnames": "2.2.6",
-        "koot": "0.8.0-beta.5"
+        "koot": "^0.8.0-beta.6"
     },
     "devDependencies": {
         "autoprefixer": "9.4.7",
