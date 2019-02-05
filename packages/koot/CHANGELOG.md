@@ -64,7 +64,7 @@
     - `@babel/core` -> _7.2.2_
     - `@babel/plugin-proposal-class-properties` -> _7.3.0_
     - `@babel/plugin-proposal-decorators` -> _7.3.0_
-    - `@babel/plugin-proposal-object-rest-spread` -> _7.3.1_
+    - `@babel/plugin-proposal-object-rest-spread` -> _7.3.2_
     - `@babel/plugin-syntax-dynamic-import` -> _7.2.0_
     - `@babel/plugin-transform-runtime` -> _7.2.0_
     - `@babel/polyfill` -> _7.2.5_
@@ -77,10 +77,10 @@
     - `react` -> _16.7.0_
     - `react-dom` -> _16.7.0_
     - `react-hot-loader` -> _4.6.5_
-    - `webpack` -> _4.29.0_
+    - `webpack` -> _4.29.1_
     - `webpack-dev-middleware` -> _3.5.1_
   - patch
-    - `acorn` -> _6.0.6_
+    - `acorn` -> _6.0.7_
     - `babel-loader` -> _8.0.5_
     - `chalk` -> _2.4.2_
     - `debug` -> _4.1.1_
