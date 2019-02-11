@@ -57,7 +57,7 @@
   - major
     - `css-loader` -> _2.1.0_
     - `file-loader` -> _3.0.1_
-    - `koa-body` -> _4.0.7_
+    - `koa-body` -> _4.0.8_
     - `koa-mount` -> _4.0.0_
     - `koa-static` -> _5.0.0_
   - minor
@@ -69,18 +69,19 @@
     - `@babel/plugin-transform-runtime` -> _7.2.0_
     - `@babel/polyfill` -> _7.2.5_
     - `@babel/preset-env` -> _7.3.1_
+    - `acorn` -> _6.1.0_
     - `autoprefixer` -> _9.4.7_
     - `koa` -> _2.7.0_
     - `less` -> _3.9.0_
     - `mini-css-extract-plugin` -> _0.5.0_
+    - `ora` -> _3.1.0_
     - `os-locale` -> _3.1.0_
-    - `react` -> _16.7.0_
-    - `react-dom` -> _16.7.0_
+    - `react` -> _16.8.1_
+    - `react-dom` -> _16.8.1_
     - `react-hot-loader` -> _4.6.5_
-    - `webpack` -> _4.29.1_
-    - `webpack-dev-middleware` -> _3.5.1_
+    - `webpack` -> _4.29.3_
+    - `webpack-dev-middleware` -> _3.5.2_
   - patch
-    - `acorn` -> _6.0.7_
     - `babel-loader` -> _8.0.5_
     - `chalk` -> _2.4.2_
     - `debug` -> _4.1.1_
