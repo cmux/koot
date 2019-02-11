@@ -2,18 +2,14 @@
     "name": "koot-boilerplate-common",
     "private": true,
     "version": "0.8.0-beta.6",
-    "description": "> TODO: description",
-    "author": "zrain <zrainma@sina.com>",
-    "homepage": "https://github.com/cmux/koot#readme",
-    "license": "ISC",
-    "main": "lib/koot-boilerplate-common.js",
-    "directories": {
-        "lib": "lib",
-        "test": "__tests__"
+    "description": "Boilerplate (tech demo) for koot.js",
+    "author": {
+        "name": "diablohu",
+        "email": "diablohudream@gmail.com",
+        "url": "http://diablohu.com"
     },
-    "files": [
-        "lib"
-    ],
+    "homepage": "https://github.com/cmux/koot#readme",
+    "license": "none",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/cmux/koot.git"
@@ -39,7 +35,8 @@
         "babel-eslint": "10.0.1",
         "cssnano": "4.1.8",
         "eslint": "5.13.0",
-        "jest": "24.0.0",
+        "eslint-plugin-react": "7.12.4",
+        "jest": "24.1.0",
         "normalize.css": "8.0.1",
         "redux-logger": "3.0.6",
         "svg-url-loader": "2.3.2"

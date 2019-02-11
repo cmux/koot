@@ -44,6 +44,7 @@ module.exports = {
         '@services': path.resolve('./src/services'),
         '@store': path.resolve('./src/store'),
         '@views': path.resolve('./src/views'),
+        '~vars.less': path.resolve('./src/constants/less-variables/_all.less')
     },
 
     staticCopyFrom: path.resolve(__dirname, './src/assets/public'),
@@ -82,6 +83,7 @@ module.exports = {
     proxyRequestOrigin: {
         protocol: 'https',
     },
+    serverBefore: './src/server/before.js',
     // 更多选项请查阅文档...
 
 
@@ -129,9 +131,7 @@ module.exports = {
         'react-router-redux',
         'koot',
         'axios',
-        'prop-types',
-        'classnames',
-        'universal-cookie',
+        'classnames'
     ],
     // 更多选项请查阅文档...
 

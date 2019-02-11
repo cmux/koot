@@ -1,4 +1,3 @@
-const webpack = require('webpack')
 const path = require('path')
 
 
@@ -15,7 +14,7 @@ const configBase = {
          * - 详见模板文件 `/src/index.ejs` 内的 `<%- content('critical.js') %>`
          */
         critical: [
-            path.resolve('../../src/critical.js')
+            path.resolve(__dirname, '../src/critical.js')
         ],
 
         /**
@@ -47,16 +46,6 @@ const configBase = {
         ]
     },
 
-    plugins: [
-        new webpack.ProvidePlugin({
-            KootExtend: ['koot', 'extend'],
-            ActionTypes: ['@constants/action-types.js', 'default'],
-            ReducerTypes: ['@constants/reducer-types.js', 'default'],
-            Api: ['@constants/api.js', 'default'],
-            Project: ['@constants/project.js', 'default'],
-        }),
-    ],
-
 }
 
 
@@ -69,11 +58,12 @@ const configBase = {
  */
 const factoryConfig = async () => {
 
-    // 针对开发环境
+    // 针对：开发环境
     if (process.env.WEBPACK_BUILD_ENV === 'dev')
         return configBase
 
-    // 针对生产环境
+    // 针对：生产环境
+    // `entry` 项仅针对：客户端
     return Object.assign({}, configBase, {
         entry: {
             commons: [
@@ -85,6 +75,8 @@ const factoryConfig = async () => {
                 'react-router',
                 'react-router-redux',
                 'js-cookie',
+                'classnames',
+                'axios'
             ],
             ...configBase.entry,
         }
