@@ -1,4 +1,4 @@
 const path = require('path')
-const getCwd = require('./get-cwd')
+const getDirDevTmp = require('../libs/get-dir-dev-tmp')
 
-module.exports = (cwd = getCwd()) => path.resolve(cwd, 'logs/dev/.server-start')
+module.exports = (cwd) => path.resolve(getDirDevTmp(cwd), '.server-start')

@@ -34,6 +34,7 @@
     - 现在每种打包模式仅保留最近 2 次打包的日志文件 (`/logs/webpack-config/` 目录下)
   - 开发环境
     - 优化 React 组件热更新能力
+    - 将大部分开发环境所用的临时文件和标记文件整合、移动到 `/logs/dev` 目录中
 - React
   - 根层组件添加 `componentDidCatch` 生命周期方法，以保障 React 输出渲染结果
 - React SPA
@@ -60,6 +61,7 @@
     - `koa-body` -> _4.0.8_
     - `koa-mount` -> _4.0.0_
     - `koa-static` -> _5.0.0_
+    - `yargs` -> _13.1.0_
   - minor
     - `@babel/core` -> _7.2.2_
     - `@babel/plugin-proposal-class-properties` -> _7.3.0_

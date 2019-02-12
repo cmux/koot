@@ -28,10 +28,11 @@ const _log = require('../../libs/log')
 const elapse = require('../../libs/elapse.js')
 const emptyTempConfigDir = require('../../libs/empty-temp-config-dir')
 const getHistoryTypeFromConfig = require('../../libs/get-history-type-from-config')
+const getDirDevTmp = require('../../libs/get-dir-dev-tmp')
 
 const createWebpackConfig = require('./config/create')
 const validateWebpackDevServerPort = require('./config/validate-webpack-dev-server-port')
-const validateDist = require('./config/validate-dist')
+// const validateDist = require('./config/validate-dist')
 
 const afterServerProd = require('./lifecyle/after-server-prod')
 const cleanAndWriteLogFiles = require('koot-webpack/libs/write-log-and-clean-old-files')
@@ -282,8 +283,8 @@ module.exports = async (kootConfig = {}) => {
             process.env.WEBPACK_DEV_SERVER_PORT = process.env.SERVER_PORT
         } else {
             // 尝试读取记录端口号的临时文件
-            const dist = await validateDist(kootConfig.dist)
-            const pathnameTemp = path.resolve(dist, filenameWebpackDevServerPortTemp)
+            // const dist = await validateDist(kootConfig.dist)
+            const pathnameTemp = path.resolve(getDirDevTmp(), filenameWebpackDevServerPortTemp)
             const getExistResult = async () => {
                 if (fs.existsSync(pathnameTemp)) {
                     const content = await fs.readFile(pathnameTemp)

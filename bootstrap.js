@@ -1,4 +1,5 @@
-const ignore = "koot-@(cli|boilerplate|boilerplate-*)"
+// const ignore = "koot-@(cli|boilerplate|boilerplate-*)"
+const ignore = "koot-cli"
 
 const runCmd = async (cmd) => {
 
