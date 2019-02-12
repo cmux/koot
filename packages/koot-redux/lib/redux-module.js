@@ -75,7 +75,7 @@ class ReduxModule {
             const p = path[index];
             result = result[p]
             if( !result ){
-                return null;
+                return result;
             }
         }
         return result;
