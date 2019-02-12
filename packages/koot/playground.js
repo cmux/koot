@@ -3,7 +3,7 @@ const path = require('path')
 const util = require('util')
 const exec = require('child_process').exec
 const puppeteer = require('puppeteer')
-const npmRunScript = require('npm-run-script')
+// const npmRunScript = require('npm-run-script')
 const terminate = require('terminate')
 
 //
