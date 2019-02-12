@@ -34,6 +34,7 @@
     - 现在每种打包模式仅保留最近 2 次打包的日志文件 (`/logs/webpack-config/` 目录下)
   - 开发环境
     - 优化 React 组件热更新能力
+    - 将大部分开发环境所用的临时文件和标记文件整合、移动到 `/logs/dev` 目录中
 - React
   - 根层组件添加 `componentDidCatch` 生命周期方法，以保障 React 输出渲染结果
 - React SPA
@@ -42,6 +43,7 @@
 - 添加依赖包
   - `extract-hoc`
 - 移除依赖包
+  - `autoprefixer`
   - `koa-compose`
   - `koa-compress`
   - `koa-helmet`
@@ -56,33 +58,36 @@
   - major
     - `css-loader` -> _2.1.0_
     - `file-loader` -> _3.0.1_
-    - `koa-body` -> _4.0.7_
+    - `koa-body` -> _4.0.8_
     - `koa-mount` -> _4.0.0_
     - `koa-static` -> _5.0.0_
+    - `yargs` -> _13.1.0_
   - minor
     - `@babel/core` -> _7.2.2_
     - `@babel/plugin-proposal-class-properties` -> _7.3.0_
     - `@babel/plugin-proposal-decorators` -> _7.3.0_
-    - `@babel/plugin-proposal-object-rest-spread` -> _7.3.1_
+    - `@babel/plugin-proposal-object-rest-spread` -> _7.3.2_
     - `@babel/plugin-syntax-dynamic-import` -> _7.2.0_
     - `@babel/plugin-transform-runtime` -> _7.2.0_
     - `@babel/polyfill` -> _7.2.5_
     - `@babel/preset-env` -> _7.3.1_
+    - `acorn` -> _6.1.0_
     - `autoprefixer` -> _9.4.7_
     - `koa` -> _2.7.0_
     - `less` -> _3.9.0_
     - `mini-css-extract-plugin` -> _0.5.0_
+    - `ora` -> _3.1.0_
     - `os-locale` -> _3.1.0_
-    - `react` -> _16.7.0_
-    - `react-dom` -> _16.7.0_
-    - `react-hot-loader` -> _4.6.3_
-    - `webpack` -> _4.29.0_
-    - `webpack-dev-middleware` -> _3.5.1_
+    - `react` -> _16.8.1_
+    - `react-dom` -> _16.8.1_
+    - `react-hot-loader` -> _4.6.5_
+    - `webpack` -> _4.29.3_
+    - `webpack-dev-middleware` -> _3.5.2_
   - patch
     - `babel-loader` -> _8.0.5_
     - `chalk` -> _2.4.2_
     - `debug` -> _4.1.1_
-    - `inquirer` -> _6.2.1_
+    - `inquirer` -> _6.2.2_
     - `pm2` -> _3.2.9_
     - `portfinder` -> _1.0.20_
     - `postcss` -> _7.0.14_

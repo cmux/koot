@@ -5,6 +5,7 @@ const {
     keyConfigBuildDll, filenameDll, filenameDllManifest,
     keyConfigOutputPathShouldBe
 } = require('../../../defaults/before-build')
+const getDirDevDll = require('../../../libs/get-dir-dev-dll')
 
 /**
  * Webpack 配置处理 - 最终处理
@@ -16,12 +17,12 @@ const {
 const transform = async (config, kootBuildConfig = {}) => {
     const {
         [keyConfigBuildDll]: createDll = false,
-        dist,
+        // dist,
         devDll: webpackDll = [],
     } = kootBuildConfig
-    const {
-        WEBPACK_BUILD_STAGE: STAGE,
-    } = process.env
+    // const {
+    //     WEBPACK_BUILD_STAGE: STAGE,
+    // } = process.env
 
     // 生成 DLL 包模式: 本次打包仅生成 DLL 包
     if (createDll) {
@@ -51,7 +52,8 @@ const transform = async (config, kootBuildConfig = {}) => {
         result.output = {
             filename: filenameDll,
             library: "[name]_[hash]",
-            path: STAGE === 'server' ? path.resolve(dist, 'server') : dist
+            // path: STAGE === 'server' ? path.resolve(dist, 'server') : dist
+            path: getDirDevDll()
         }
         result.plugins.push(
             new webpack.DllPlugin({
@@ -127,7 +129,7 @@ const validate = (config, kootBuildConfig) => {
 const validatePlugins = (config, kootBuildConfig = {}) => {
     const {
         WEBPACK_BUILD_ENV: ENV,
-        WEBPACK_BUILD_STAGE: STAGE,
+        // WEBPACK_BUILD_STAGE: STAGE,
     } = process.env
 
     // 如果没有 plugins 项，创建空 Array
@@ -135,9 +137,10 @@ const validatePlugins = (config, kootBuildConfig = {}) => {
 
     if (ENV === 'dev' && !kootBuildConfig[keyConfigBuildDll]) {
         // 如果查有 DLL 结果文件，添加 DllReferencePlugin
-        const file = STAGE === 'server'
-            ? path.resolve(kootBuildConfig.dist, 'server', filenameDllManifest)
-            : path.resolve(kootBuildConfig.dist, filenameDllManifest)
+        // const file = STAGE === 'server'
+        //     ? path.resolve(kootBuildConfig.dist, 'server', filenameDllManifest)
+        //     : path.resolve(kootBuildConfig.dist, filenameDllManifest)
+        const file = path.resolve(kootBuildConfig.dist, 'server', filenameDllManifest)
         if (fs.existsSync(file)) {
             config.plugins.push(
                 new webpack.DllReferencePlugin({

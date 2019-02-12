@@ -49,13 +49,13 @@
     },
     "license": "Apache-2.0",
     "devDependencies": {
-        "lerna": "3.10.7",
+        "lerna": "3.11.1",
         "lerna-wizard": "1.0.9",
-        "eslint": "5.12.1",
+        "eslint": "5.13.0",
         "eslint-plugin-react": "7.12.4",
         "babel-eslint": "10.0.1",
-        "jest": "24.0.0",
-        "puppeteer": "1.11.0",
+        "jest": "24.1.0",
+        "puppeteer": "1.12.2",
         "jsdom": "13.2.0",
         "fs-extra": "7.0.1",
         "is-valid-path": "0.1.1"

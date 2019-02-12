@@ -12,7 +12,7 @@ import * as fullConfig from '__KOOT_PROJECT_CONFIG_FULL_PATHNAME__'
 
 import React from 'react'
 import { hydrate } from 'react-dom'
-import { syncHistoryWithStore } from 'react-router-redux'
+// import { syncHistoryWithStore } from 'react-router-redux'
 
 import validateRouterConfig from '../../React/validate/router-config'
 import { actionUpdate } from '../../React/realtime-location'
@@ -132,7 +132,7 @@ parseLifecycleMethod(before)
                 onHistoryUpdate(location, Store)
         })
 
-        const thisHistory = syncHistoryWithStore(History, Store)
+        // const thisHistory = syncHistoryWithStore(History, Store)
 
         // require('react-router/lib/match')({ history, routes }, (err, ...args) => {
         //     console.log({ err, ...args })
@@ -143,7 +143,8 @@ parseLifecycleMethod(before)
         return hydrate(
             <Root
                 store={Store}
-                history={thisHistory}
+                // history={thisHistory}
+                history={History}
                 routes={routes}
                 // onError={(...args) => console.log('route onError', ...args)}
                 // onUpdate={(...args) => console.log('route onUpdate', ...args)}

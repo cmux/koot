@@ -1,3 +1,6 @@
+// const ignore = "koot-@(cli|boilerplate|boilerplate-*)"
+const ignore = "koot-cli"
+
 const runCmd = async (cmd) => {
 
     // print name
@@ -25,9 +28,9 @@ const runCmd = async (cmd) => {
 
 const run = async () => {
 
-    await runCmd('lerna clean --yes')
+    await runCmd(`lerna clean --yes --ignore "${ignore}"`)
     await runCmd('npm install --no-save')
-    await runCmd('lerna bootstrap --hoist')
+    await runCmd(`lerna bootstrap --hoist --ignore "${ignore}"`)
 
     // 
 

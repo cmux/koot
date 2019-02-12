@@ -3,7 +3,6 @@
 const React = require('react')
 import ReactDOM from 'react-dom'
 import history from "../../React/history"
-import { syncHistoryWithStore } from 'react-router-redux'
 
 //
 
@@ -67,10 +66,10 @@ export default ({
     const routes = validateRouterConfig(router)
     if (typeof routes.path === 'undefined')
         routes.path = '/'
-    const thisHistory = syncHistoryWithStore(History, Store)
+    // const thisHistory = syncHistoryWithStore(History, Store)
     const routerConfig = {
         // history: syncHistoryWithStore(memoryHistory, store),
-        history: thisHistory,
+        history: History,
         routes,
         onUpdate: (...args) => {
             if (__DEV__ && logCountRouterUpdate < 2) {
@@ -91,7 +90,7 @@ export default ({
     // if (__CLIENT__) self.routerHistory = hashHistory
 
     // memoryHistory.listen(location => {
-    thisHistory.listen(location => {
+    History.listen(location => {
         // if (__DEV__) {
         //     console.log('🌏 browserHistory update', location)
         // }

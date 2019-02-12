@@ -48,18 +48,18 @@
         "node": ">=8.0.0"
     },
     "dependencies": {
-        "chalk": "2.4.1",
+        "chalk": "2.4.2",
         "download-git-repo": "1.1.0",
         "fs-extra": "7.0.1",
         "gitignore-globs": "0.1.1",
         "glob-promise": "3.4.0",
-        "inquirer": "6.2.1",
-        "isbinaryfile": "3.0.3",
+        "inquirer": "6.2.2",
+        "isbinaryfile": "4.0.0",
         "latest-version": "4.0.0",
         "npm-email": "3.0.0",
-        "ora": "3.0.0",
-        "os-locale": "3.0.1",
-        "package-json": "5.0.0",
+        "ora": "3.1.0",
+        "os-locale": "3.1.0",
+        "package-json": "6.0.0",
         "semver": "5.6.0"
     }
 }

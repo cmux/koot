@@ -23,6 +23,7 @@ const removeTempBuild = require('../libs/remove-temp-build')
 const removeTempProjectConfig = require('../libs/remove-temp-project-config')
 const validateConfig = require('../libs/validate-config')
 const validateConfigDist = require('../libs/validate-config-dist')
+const getDirDevTmp = require('../libs/get-dir-dev-tmp')
 
 const __ = require('../utils/translate')
 const sleep = require('../utils/sleep')
@@ -161,6 +162,7 @@ const run = async () => {
 
     // 清理遗留的临时文件
     await removeTempBuild(dist)
+    await fs.emptyDir(getDirDevTmp(cwd))
 
     // 如果有临时项目配置文件，更改环境变量
     if (fileProjectConfigTempFull)
@@ -209,6 +211,7 @@ const run = async () => {
 
         await removeTempProjectConfig()
         await removeTempBuild(dist)
+        await fs.emptyDir(getDirDevTmp(cwd))
 
         if (Array.isArray(processes) && processes.length) {
             if (waitingSpinner) waitingSpinner.stop()
@@ -397,8 +400,8 @@ const run = async () => {
 
         // console.log(`starting ${stage}`)
 
-        const pathLogOut = path.resolve(cwd, `logs/dev/${stage}.log`)
-        const pathLogErr = path.resolve(cwd, `logs/dev/${stage}-error.log`)
+        const pathLogOut = path.resolve(getDirDevTmp(cwd), `${stage}.log`)
+        const pathLogErr = path.resolve(getDirDevTmp(cwd), `${stage}-error.log`)
         if (fs.existsSync(pathLogOut)) await fs.remove(pathLogOut)
         if (fs.existsSync(pathLogErr)) await fs.remove(pathLogErr)
         await fs.ensureFile(pathLogOut)
@@ -572,7 +575,7 @@ const run = async () => {
         const errServerRun = await checkFileUpdate(pathServerStartFlag, contentWaiting)
 
         // 移除临时文件
-        await fs.remove(path.resolve(dist, filenameWebpackDevServerPortTemp))
+        await fs.remove(path.resolve(getDirDevTmp(cwd), filenameWebpackDevServerPortTemp))
 
         // waitingSpinner.stop()
         // waitingSpinner = undefined

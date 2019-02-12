@@ -8,7 +8,7 @@ import routeCheck from 'koot/React/route-check'
 export default {
 
     path: '/',
-    component: require('@views/app').default, // 项目的根层组件
+    component: require('@components/app').default, // 项目的根层组件
 
     indexRoute: {
         // 标准: 打包后，该组件会存在于核心包中
@@ -25,7 +25,7 @@ export default {
         }
     },
 
-    children: [
+    childRoutes: [
         {
             path: 'static',
             getComponent: (nextState, cb) => {

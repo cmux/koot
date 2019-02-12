@@ -15,6 +15,7 @@ const transformOutputPublicpath = require('./transform-output-publicpath')
 
 const getCwd = require('../../../utils/get-cwd')
 const getDirDistPublic = require('../../../libs/get-dir-dist-public')
+const getDirDevTmp = require('../../../libs/get-dir-dev-tmp')
 
 /**
  * Webpack 配置处理 - 服务器端配置
@@ -82,7 +83,8 @@ module.exports = async (kootBuildConfig = {}) => {
             result.plugins.push(new CopyWebpackPlugin(
                 i18n.locales.map(arr => ({
                     from: arr[2],
-                    to: '../.locales/'
+                    // to: '../.locales/'
+                    to: path.resolve(getDirDevTmp(), 'locales')
                 }))
             ))
 
