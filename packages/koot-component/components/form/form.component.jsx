@@ -31,11 +31,15 @@ class FormComponent extends Component {
         
         const config = render(formData, oldFormData);
         
-        if( Object.keys(formFieldValues).length === 0 ){
-            const config = render();
-            const initFormData = this.getFieldsValueObject(config);
-            this.fieldStore.setFields(initFormData)
-        }
+        // if( Object.keys(formFieldValues).length === 0 ){
+        //     const config = render();
+        //     const initFormData = this.getFieldsValueObject(config);
+        //     this.fieldStore.setFields(initFormData)
+        // }
+
+        // 每次将 render 后的 value 同步至 局部store中
+        const nextFormData = this.getFieldsValueObject(config);
+        this.fieldStore.setFields(nextFormData)
        
         const nextConfig = Object.assign({}, config, {
             __root: this,
