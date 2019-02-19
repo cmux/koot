@@ -98,7 +98,7 @@ class ReduxModule {
                 reference = reference[p]
             }
             if( !reference ){
-                return null;
+                return undefined;
             }
         }
         return result;
