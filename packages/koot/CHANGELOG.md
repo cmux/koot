@@ -56,15 +56,16 @@
   - `sp-css-import`
 - 更新依赖包
   - major
+    - `copy-webpack-plugin` -> _5.0.0
     - `css-loader` -> _2.1.0_
     - `file-loader` -> _3.0.1_
     - `koa-body` -> _4.0.8_
     - `koa-mount` -> _4.0.0_
     - `koa-static` -> _5.0.0_
-    - `yargs` -> _13.1.0_
+    - `yargs` -> _13.2.1_
   - minor
-    - `@babel/core` -> _7.2.2_
-    - `@babel/plugin-proposal-class-properties` -> _7.3.0_
+    - `@babel/core` -> _7.3.3_
+    - `@babel/plugin-proposal-class-properties` -> _7.3.3_
     - `@babel/plugin-proposal-decorators` -> _7.3.0_
     - `@babel/plugin-proposal-object-rest-spread` -> _7.3.2_
     - `@babel/plugin-syntax-dynamic-import` -> _7.2.0_
@@ -76,23 +77,24 @@
     - `koa` -> _2.7.0_
     - `less` -> _3.9.0_
     - `mini-css-extract-plugin` -> _0.5.0_
+    - `pm2` -> _3.3.1_
     - `ora` -> _3.1.0_
     - `os-locale` -> _3.1.0_
-    - `react` -> _16.8.1_
-    - `react-dom` -> _16.8.1_
-    - `react-hot-loader` -> _4.6.5_
-    - `webpack` -> _4.29.3_
-    - `webpack-dev-middleware` -> _3.5.2_
+    - `react` -> _16.8.2_
+    - `react-dom` -> _16.8.2_
+    - `react-hot-loader` -> _4.7.1_
+    - `webpack` -> _4.29.5_
+    - `webpack-dev-middleware` -> _3.6.0_
+    - `webpack-dev-server` -> _3.2.0_
   - patch
     - `babel-loader` -> _8.0.5_
     - `chalk` -> _2.4.2_
     - `debug` -> _4.1.1_
     - `inquirer` -> _6.2.2_
-    - `pm2` -> _3.2.9_
     - `portfinder` -> _1.0.20_
     - `postcss` -> _7.0.14_
     - `rimraf` -> _2.6.3_
-    - `webpack-dev-server` -> _3.1.14_
+    - `webpack-bundle-analyzer` -> _3.0.4_
 
 ## 0.7.12
 **2018-12-24**
