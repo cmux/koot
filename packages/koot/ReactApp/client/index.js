@@ -182,7 +182,7 @@ parseLifecycleMethod(before)
             }, maxRouterMatchTime)),
             new Promise((resolve, reject) => {
                 try {
-                    routerMatch({ history, routes }, (err/*, redirectLocation, renderProps*/) => {
+                    routerMatch({ history: History, routes }, (err/*, redirectLocation, renderProps*/) => {
                         isRouterMatchComplete = true
                         if (err) return reject(err)
                         // console.log('\nrouter match', { err, ...args })
