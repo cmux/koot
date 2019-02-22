@@ -3,7 +3,7 @@ import { hydrate } from 'react-dom'
 import { syncHistoryWithStore } from 'react-router-redux'
 import { createStore, applyMiddleware, compose } from 'redux'
 // import browserHistory from 'react-router/lib/browserHistory'
-// import match from 'react-router/lib/match'
+import routerMatch from 'react-router/lib/match'
 import createBrowserHistory from 'history/lib/createBrowserHistory'
 import { parsePath } from 'history/lib/PathUtils'
 // let render = (() => {
@@ -40,6 +40,9 @@ import Root from '../React/root.jsx'
 
 // 默认根 DOM 结点 ID
 const DEFAULT_ROOT_DOM_ID = 'root'
+
+/** @type {Number} react-router match 允许的最长运行时间 (ms) */
+const maxRouterMatchTime = 1000
 
 // redux store
 export let store
@@ -193,17 +196,49 @@ export default class ReactApp {
         //         console.log(err.stack)
         //     }
         // })
-        hydrate(
-            <Root
-                store={this.store}
-                history={history}
-                routes={routes}
-                // onError={(...args) => console.log('route onError', ...args)}
-                // onUpdate={(...args) => console.log('route onUpdate', ...args)}
-                {...ext}
-            />,
-            document.getElementById(root)
-        )
+        let isRendered = false
+        const doRender = () => {
+            if (isRendered) return
+            hydrate(
+                <Root
+                    store={this.store}
+                    history={history}
+                    routes={routes}
+                    // onError={(...args) => console.log('route onError', ...args)}
+                    // onUpdate={(...args) => console.log('route onUpdate', ...args)}
+                    {...ext}
+                />,
+                document.getElementById(root)
+            )
+            isRendered = true
+        }
+
+        let isRouterMatchComplete = false
+        Promise.race([
+            new Promise((resolve, reject) => setTimeout(() => {
+                if (!isRouterMatchComplete)
+                    reject(new Error('routerMatch timeout'))
+            }, maxRouterMatchTime)),
+            new Promise((resolve, reject) => {
+                try {
+                    routerMatch({ history, routes }, (err/*, redirectLocation, renderProps*/) => {
+                        isRouterMatchComplete = true
+                        if (err) return reject(err)
+                        // console.log('\nrouter match', { err, ...args })
+                        resolve()
+                    })
+                } catch (e) {
+                    isRouterMatchComplete = true
+                    reject(e)
+                }
+            })
+        ])
+            .then(doRender)
+            .catch(err => {
+                console.log('\n⚛️Page may flash blank due to `react-router` match failed!')
+                console.error(err)
+                doRender()
+            })
 
         // window.HISTORY = history
         // store = this.store
