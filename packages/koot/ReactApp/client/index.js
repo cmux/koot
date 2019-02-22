@@ -13,6 +13,7 @@ import * as fullConfig from '__KOOT_PROJECT_CONFIG_FULL_PATHNAME__'
 import React from 'react'
 import { hydrate } from 'react-dom'
 // import { syncHistoryWithStore } from 'react-router-redux'
+import routerMatch from 'react-router/lib/match'
 
 import validateRouterConfig from '../../React/validate/router-config'
 import { actionUpdate } from '../../React/realtime-location'
@@ -22,6 +23,9 @@ import i18nRegister from '../../i18n/register/isomorphic.client'
 
 let logCountRouterUpdate = 0
 let logCountHistoryUpdate = 0
+
+/** @type {Number} react-router match 允许的最长运行时间 (ms) */
+const maxRouterMatchTime = 1000
 
 
 // ----------------------------------------------------------------------------
@@ -140,18 +144,62 @@ parseLifecycleMethod(before)
         //         console.log(err.stack)
         //     }
         // })
-        return hydrate(
-            <Root
-                store={Store}
-                // history={thisHistory}
-                history={History}
-                routes={routes}
-                // onError={(...args) => console.log('route onError', ...args)}
-                // onUpdate={(...args) => console.log('route onUpdate', ...args)}
-                {...routerProps}
-            />,
-            document.getElementById('root')
-        )
+        // return hydrate(
+        //     <Root
+        //         store={Store}
+        //         // history={thisHistory}
+        //         history={History}
+        //         routes={routes}
+        //         // onError={(...args) => console.log('route onError', ...args)}
+        //         // onUpdate={(...args) => console.log('route onUpdate', ...args)}
+        //         {...routerProps}
+        //     />,
+        //     document.getElementById('root')
+        // )
+        let isRendered = false
+        const doHydrate = () => {
+            if (isRendered) return
+            hydrate(
+                <Root
+                    store={Store}
+                    // history={thisHistory}
+                    history={History}
+                    routes={routes}
+                    // onError={(...args) => console.log('route onError', ...args)}
+                    // onUpdate={(...args) => console.log('route onUpdate', ...args)}
+                    {...routerProps}
+                />,
+                document.getElementById('root')
+            )
+            isRendered = true
+        }
+
+        let isRouterMatchComplete = false
+        return Promise.race([
+            new Promise((resolve, reject) => setTimeout(() => {
+                if (!isRouterMatchComplete)
+                    reject(new Error('routerMatch timeout'))
+            }, maxRouterMatchTime)),
+            new Promise((resolve, reject) => {
+                try {
+                    routerMatch({ history, routes }, (err/*, redirectLocation, renderProps*/) => {
+                        isRouterMatchComplete = true
+                        if (err) return reject(err)
+                        // console.log('\nrouter match', { err, ...args })
+                        resolve()
+                    })
+                } catch (e) {
+                    isRouterMatchComplete = true
+                    reject(e)
+                }
+            })
+        ])
+            .then(doHydrate)
+            .catch(err => {
+                console.log('\n⚛️Page may flash blank due to `react-router` match failed!')
+                console.error(err)
+                doHydrate()
+            })
     })
     .then(() => {
         // 生命周期: 客户端流程结束

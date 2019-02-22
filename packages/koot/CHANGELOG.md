@@ -56,7 +56,7 @@
   - `sp-css-import`
 - 更新依赖包
   - major
-    - `copy-webpack-plugin` -> _5.0.0
+    - `copy-webpack-plugin` -> _5.0.0_
     - `css-loader` -> _2.1.0_
     - `file-loader` -> _3.0.1_
     - `koa-body` -> _4.0.8_
@@ -80,8 +80,8 @@
     - `pm2` -> _3.3.1_
     - `ora` -> _3.1.0_
     - `os-locale` -> _3.1.0_
-    - `react` -> _16.8.2_
-    - `react-dom` -> _16.8.2_
+    - `react` -> _16.8.3_
+    - `react-dom` -> _16.8.3_
     - `react-hot-loader` -> _4.7.1_
     - `webpack` -> _4.29.5_
     - `webpack-dev-middleware` -> _3.6.0_
@@ -95,6 +95,11 @@
     - `postcss` -> _7.0.14_
     - `rimraf` -> _2.6.3_
     - `webpack-bundle-analyzer` -> _3.0.4_
+
+## 0.7.13
+**2018-02-22**
+- React同构 (`ReactApp`)
+  - 进一步对客户端运行脚本进行优化，以减少初始渲染时闪屏出现几率
 
 ## 0.7.12
 **2018-12-24**
