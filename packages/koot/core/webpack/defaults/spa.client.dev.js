@@ -15,7 +15,7 @@ const factoryConfig = async ({
         // check enter.js for the fix
         filename: (localeId ? localeId : '') + `.entry.-_-_-_-_-_-[chunkhash]-_-_-_-_-_-.js`,
         chunkFilename: (localeId ? localeId : '') + `.chunk.-_-_-_-_-_-[chunkhash]-_-_-_-_-_-.js`,
-        path: '/',
+        // path: '/',
         publicPath: `/`
     },
     plugins: [
