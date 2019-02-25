@@ -13,4 +13,8 @@ module.exports = async (config) => {
         delete config.staticAssets
     }
 
+    if (config.staticCopyFrom && !Array.isArray(config.staticCopyFrom)) {
+        config.staticCopyFrom = [config.staticCopyFrom]
+    }
+
 }

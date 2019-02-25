@@ -165,13 +165,13 @@ module.exports = async (kootBuildConfig = {}) => {
     // 对最后一个配置进行加工
     ((config) => {
         if (ENV === 'dev') {
-            if (typeof staticAssets === 'string')
-                config.plugins.push(new CopyWebpackPlugin([
-                    {
-                        from: staticAssets,
+            if (Array.isArray(staticAssets))
+                config.plugins.push(new CopyWebpackPlugin(
+                    staticAssets.map(from => ({
+                        from,
                         to: path.relative(config.output.path, getDirDistPublic(dist))
-                    }
-                ]))
+                    }))
+                ))
 
             config.plugins.push(
                 new DevModePlugin({ dist })
