@@ -29,7 +29,7 @@ module.exports = async (kootConfig = {}) => {
     // 确定环境变量
     const {
         WEBPACK_BUILD_TYPE: TYPE,
-        // WEBPACK_BUILD_ENV: ENV,
+        WEBPACK_BUILD_ENV: ENV,
         WEBPACK_BUILD_STAGE: STAGE,
         // WEBPACK_ANALYZE,
         // SERVER_DOMAIN,
@@ -38,6 +38,8 @@ module.exports = async (kootConfig = {}) => {
 
     const defaultPublicDirName = 'includes'
     const defaultPublicPathname = (() => {
+        if (TYPE === 'spa' && ENV === 'dev')
+            return `/`
         if (TYPE === 'spa' && /^browser/.test(process.env.KOOT_HISTORY_TYPE))
             return `/${defaultPublicDirName}/`
         if (TYPE === 'spa')
