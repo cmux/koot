@@ -59,7 +59,7 @@ module.exports = {
 
     staticCopyFrom: [
         path.resolve(__dirname, './public'),
-        path.resolve(__dirname, './server')
+        // path.resolve(__dirname, './server')
     ],
 
 

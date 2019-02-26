@@ -65,14 +65,15 @@
     - `koa-static` -> _5.0.0_
     - `yargs` -> _13.2.1_
   - minor
-    - `@babel/core` -> _7.3.3_
-    - `@babel/plugin-proposal-class-properties` -> _7.3.3_
+    - `@babel/core` -> _7.3.4_
+    - `@babel/plugin-proposal-class-properties` -> _7.3.4_
     - `@babel/plugin-proposal-decorators` -> _7.3.0_
-    - `@babel/plugin-proposal-object-rest-spread` -> _7.3.2_
+    - `@babel/plugin-proposal-object-rest-spread` -> _7.3.4_
     - `@babel/plugin-syntax-dynamic-import` -> _7.2.0_
-    - `@babel/plugin-transform-runtime` -> _7.2.0_
+    - `@babel/plugin-transform-regenerator` -> _7.3.4_
+    - `@babel/plugin-transform-runtime` -> _7.3.4_
     - `@babel/polyfill` -> _7.2.5_
-    - `@babel/preset-env` -> _7.3.1_
+    - `@babel/preset-env` -> _7.3.4_
     - `acorn` -> _6.1.0_
     - `autoprefixer` -> _9.4.7_
     - `koa` -> _2.7.0_
@@ -86,7 +87,7 @@
     - `react-hot-loader` -> _4.7.1_
     - `webpack` -> _4.29.5_
     - `webpack-dev-middleware` -> _3.6.0_
-    - `webpack-dev-server` -> _3.2.0_
+    - `webpack-dev-server` -> _3.2.1_
   - patch
     - `babel-loader` -> _8.0.5_
     - `chalk` -> _2.4.2_
