@@ -1,9 +1,9 @@
 const fs = require('fs-extra')
 const path = require('path')
-const util = require('util')
+// const util = require('util')
 const exec = require('child_process').exec
 const puppeteer = require('puppeteer')
-const npmRunScript = require('npm-run-script')
+// const npmRunScript = require('npm-run-script')
 const terminate = require('terminate')
 
 //
@@ -21,7 +21,7 @@ const project = {
 //
 
 // const getPort = require('./utils/get-port')
-const getPathnameDevServerStart = require('./utils/get-pathname-dev-server-start')
+// const getPathnameDevServerStart = require('./utils/get-pathname-dev-server-start')
 const checkFileChange = require('./libs/check-file-change')
 
 //

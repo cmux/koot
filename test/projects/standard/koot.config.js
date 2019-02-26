@@ -57,7 +57,10 @@ module.exports = {
         __QA__: JSON.stringify(false),
     },
 
-    staticCopyFrom: path.resolve(__dirname, './public'),
+    staticCopyFrom: [
+        path.resolve(__dirname, './public'),
+        // path.resolve(__dirname, './server')
+    ],
 
 
 

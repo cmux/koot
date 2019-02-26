@@ -198,14 +198,15 @@ module.exports = async (kootBuildConfig = {}) => {
                     )
                 }
 
-                if ((ENV !== 'dev' || TYPE === 'spa') && typeof staticAssets === 'string' && !index)
-                    result.plugins.push(new CopyWebpackPlugin([
-                        {
-                            from: staticAssets,
+                if ((ENV !== 'dev' || TYPE === 'spa') && Array.isArray(staticAssets) && !index) {
+                    result.plugins.push(new CopyWebpackPlugin(
+                        staticAssets.map(from => ({
+                            from,
                             to: TYPE === 'spa' && ENV === 'dev' ? undefined : path.relative(result.output.path, pathPublic)
                             // to: path.relative(result.output.path, pathPublic)
-                        }
-                    ]))
+                        }))
+                    ))
+                }
             }
         }
 

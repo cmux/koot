@@ -27,6 +27,7 @@
     - **新** `internalLoaderOptions` - 用以扩展几乎无法修改的内置 `loader` 所用的设置。详情请参见文档的 [配置](https://koot.js.org/#/config?id=internalloaderoptions) 章节
     - **新** `serverOnRender.beforeDataToStore` 和 `serverOnRender.afterDataToStore` - 允许更详细的使用服务器端渲染生命周期。详情请参见文档的 [配置](https://koot.js.org/#/config?id=Webpack) 章节
     - `cookiesToStore` 现支持传入 `true`: 同步所有 cookie，包括 cookie 原始字符串 (以 `__` 为名称)
+    - `staticCopyFrom` / `staticAssets` 现支持传入 _Array_
   - 优化 `koot-start` 命令，尽量避免 `koot-build 命令未找到` 的问题
   - Webpack 打包
     - 现在打包时不再会在项目根目录下生成临时文件
@@ -56,43 +57,51 @@
   - `sp-css-import`
 - 更新依赖包
   - major
+    - `copy-webpack-plugin` -> _5.0.0_
     - `css-loader` -> _2.1.0_
     - `file-loader` -> _3.0.1_
     - `koa-body` -> _4.0.8_
     - `koa-mount` -> _4.0.0_
     - `koa-static` -> _5.0.0_
-    - `yargs` -> _13.1.0_
+    - `yargs` -> _13.2.1_
   - minor
-    - `@babel/core` -> _7.2.2_
-    - `@babel/plugin-proposal-class-properties` -> _7.3.0_
+    - `@babel/core` -> _7.3.4_
+    - `@babel/plugin-proposal-class-properties` -> _7.3.4_
     - `@babel/plugin-proposal-decorators` -> _7.3.0_
-    - `@babel/plugin-proposal-object-rest-spread` -> _7.3.2_
+    - `@babel/plugin-proposal-object-rest-spread` -> _7.3.4_
     - `@babel/plugin-syntax-dynamic-import` -> _7.2.0_
-    - `@babel/plugin-transform-runtime` -> _7.2.0_
+    - `@babel/plugin-transform-regenerator` -> _7.3.4_
+    - `@babel/plugin-transform-runtime` -> _7.3.4_
     - `@babel/polyfill` -> _7.2.5_
-    - `@babel/preset-env` -> _7.3.1_
+    - `@babel/preset-env` -> _7.3.4_
     - `acorn` -> _6.1.0_
     - `autoprefixer` -> _9.4.7_
     - `koa` -> _2.7.0_
     - `less` -> _3.9.0_
     - `mini-css-extract-plugin` -> _0.5.0_
+    - `pm2` -> _3.3.1_
     - `ora` -> _3.1.0_
     - `os-locale` -> _3.1.0_
-    - `react` -> _16.8.1_
-    - `react-dom` -> _16.8.1_
-    - `react-hot-loader` -> _4.6.5_
-    - `webpack` -> _4.29.3_
-    - `webpack-dev-middleware` -> _3.5.2_
+    - `react` -> _16.8.3_
+    - `react-dom` -> _16.8.3_
+    - `react-hot-loader` -> _4.7.1_
+    - `webpack` -> _4.29.5_
+    - `webpack-dev-middleware` -> _3.6.0_
+    - `webpack-dev-server` -> _3.2.1_
   - patch
     - `babel-loader` -> _8.0.5_
     - `chalk` -> _2.4.2_
     - `debug` -> _4.1.1_
     - `inquirer` -> _6.2.2_
-    - `pm2` -> _3.2.9_
     - `portfinder` -> _1.0.20_
     - `postcss` -> _7.0.14_
     - `rimraf` -> _2.6.3_
-    - `webpack-dev-server` -> _3.1.14_
+    - `webpack-bundle-analyzer` -> _3.0.4_
+
+## 0.7.13
+**2018-02-22**
+- React同构 (`ReactApp`)
+  - 进一步对客户端运行脚本进行优化，以减少初始渲染时闪屏出现几率
 
 ## 0.7.12
 **2018-12-24**
