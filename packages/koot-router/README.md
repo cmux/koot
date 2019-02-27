@@ -62,6 +62,23 @@ router/config.js
             {
                 path: 'other',
                 component: OtherView,
+            },
+            {
+                path: 'pathname',
+                meta: {
+                    name: ''
+                },
+                component: PathComponent,
+                children: [
+                    {
+                        path: 'pathchildname',
+                        meta: {
+                            name: '',
+                            showMenu: true  // 控制三级菜单的显示隐藏
+                        },
+                        component: PathchildnameComponent
+                    },
+                ]
             }
         ]
     }
