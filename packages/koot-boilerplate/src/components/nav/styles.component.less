@@ -1,0 +1,25 @@
+@import "~vars.less";
+
+.component{
+    display: block;
+    text-align: center;
+    overflow: hidden;
+    position: fixed;
+    z-index: @zindex-nav;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: @nav-height;
+    line-height: @nav-height;
+
+    background: @color-nav-background;
+    color: #fff;
+
+    .title-hidden{
+        display: block;
+        position: absolute;
+        top: -100%;
+        left: -100%;
+    }
+}

@@ -34,5 +34,13 @@ export default {
                 }, 'Page-Static')
             }
         },
+        {
+            path: 'isomorphic',
+            getComponent: (nextState, cb) => {
+                require.ensure([], (require) => {
+                    if (routeCheck(nextState)) cb(null, require('@views/isomorphic').default)
+                }, 'Page-Isomorphic')
+            }
+        },
     ]
 }
