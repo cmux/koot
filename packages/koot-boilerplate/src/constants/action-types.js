@@ -1,3 +1,2 @@
-export default {
-    TOGGLE_COLLAPSED: 'TOGGLE_COLLAPSED',
-}
+// page: home
+export const PAGE_HOME_SET_COVER_HEIGHT = 'PAGE_HOME_SET_COVER_HEIGHT'

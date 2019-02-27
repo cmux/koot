@@ -8,18 +8,28 @@
     z-index: @zindex-nav;
     top: 0;
     left: 0;
+    pointer-events: none;
+    transform: translateY(-100%);
 
     width: 100%;
     height: @nav-height;
     line-height: @nav-height;
 
-    background: @color-nav-background;
+    background: @theme-lightblue-50;
     color: #fff;
+    box-shadow: 0 1px 0 fade(@color-home-cover-background, 100%);
+
+    transition: transform 0.2s linear;
 
     .title-hidden{
         display: block;
         position: absolute;
         top: -100%;
         left: -100%;
+    }
+
+    &.on{
+        pointer-events: all;
+        transform: translateY(0);
     }
 }

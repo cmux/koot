@@ -2,6 +2,8 @@ import { createStore, combineReducers, applyMiddleware } from 'redux'
 import { reduxForCreateStore } from 'koot'
 import logger from 'redux-logger'
 
+import pageHome from './page-home/reducer'
+
 const middlewares = [
     ...reduxForCreateStore.middlewares
 ]
@@ -22,7 +24,7 @@ export default () => {
     return createStore(
         combineReducers({
             ...defaultReducers,
-            // ...reducers
+            pageHome,
         }),
         initialState,
         applyMiddleware(...middlewares)
