@@ -15,7 +15,7 @@ module.exports = {
      * 项目信息
      *************************************************************************/
 
-    name: 'Koot Boilerplate',
+    name: 'Koot.js Tech Demo',
     type: 'react',
     dist: './dist',
 

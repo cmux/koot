@@ -1,6 +1,18 @@
 @import "~vars.less";
 
 .component{
-    font-weight: 900;
-    font-size: 30px;
+    .cover{
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: center;
+        align-items: center;
+
+        width: 100%;
+        min-height: 400px;
+        height: 70vh;
+        max-height: 800px;
+
+        background: @color-home-cover-background;
+        color: #fff;
+    }
 }

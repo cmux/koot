@@ -1,20 +1,20 @@
 import React from 'react'
 import { extend } from 'koot'
 
-const PageStatic = extend({
+const PageIsomorphic = extend({
     pageinfo: () => ({
-        title: `${__('pages.static.title')} - ${__('title')}`,
+        title: `${__('pages.isomorphic.title')} - ${__('title')}`,
         metas: [
-            { 'description': __('pages.static.description') },
+            { 'description': __('pages.isomorphic.description') },
         ]
     }),
     styles: require('./styles.component.less')
 })(
     ({ routeParams, location, params, route, router, routes, ...props }) => (
         <div {...props}>
-            PAGE: STATIC
+            {__('pages.isomorphic.title')}
         </div>
     )
 )
 
-export default PageStatic
+export default PageIsomorphic
