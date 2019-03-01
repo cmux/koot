@@ -267,6 +267,10 @@ const doTest = async (port, settings = {}) => {
 
     // TODO: 测试: extend connect 的 Array 用法
 
+    // TODO: 测试: 切换路由/点击路由链接：不刷新页面
+
+    // TODO: 测试: hydrate 不会触发重新渲染
+
     await browser.close()
 }
 

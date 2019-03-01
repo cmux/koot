@@ -5,6 +5,7 @@ import classNames from 'classnames'
 import navItems from '@constants/nav-items'
 
 import { Link, IndexLink } from 'react-router'
+import Center from '@components/center'
 
 @extend({
     connect: state => ({
@@ -78,29 +79,44 @@ class Nav extends React.Component {
                 'on': this.state.show
             }])}>
                 <h1 className="title-hidden">Koot.js</h1>
-                {[['/', 'home']].concat(navItems).map((item, index) => {
-                    let route, name, Component
+                <Center className="wrapper">
+                    <div className="nav-links">
+                        {[['/', 'home']].concat(navItems).map((item, index) => {
+                            let route, name, Component
 
-                    if (Array.isArray(item)) {
-                        route = item[0]
-                        name = item[1]
-                    } else {
-                        route = item
-                        name = item
-                    }
+                            if (Array.isArray(item)) {
+                                route = item[0]
+                                name = item[1]
+                            } else {
+                                route = item
+                                name = item
+                            }
 
-                    Component = route === '/' ? IndexLink : Link
+                            Component = route === '/' ? IndexLink : Link
 
-                    return (
-                        <Component
-                            className="item"
-                            activeClassName="on"
-                            to={route}
-                            children={__('navs', name)}
-                            key={index}
-                        />
-                    )
-                })}
+                            return (
+                                <Component
+                                    className="item"
+                                    activeClassName="on"
+                                    to={route}
+                                    children={__('navs', name)}
+                                    key={index}
+                                />
+                            )
+                        })}
+                    </div>
+                    <div className="others">
+                        <a href="https://github.com/cmux/koot" target="_blank" className="github">
+                            <svg
+                                className="icon"
+                                xmlns="http://www.w3.org/2000/svg"
+                                xmlnsXlink="http://www.w3.org/1999/xlink"
+                                src={require('../../assets/icons/github.svg')}
+                            />
+                            Fork on GitHub
+                        </a>
+                    </div>
+                </Center>
             </nav>
         )
     }
