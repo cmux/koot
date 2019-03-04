@@ -189,13 +189,6 @@ export default (options = {}) => (WrappedComponent) => {
             return { title, metas }
         }
 
-        static onServerRenderStoreExtend({ store, renderProps }) {
-            if (typeof dataFetch === 'undefined')
-                return new Promise(resolve => resolve())
-            // console.log('onServerRenderStoreExtend')
-            return doFetchData(store, getRenderPropsFromServerProps(renderProps), dataFetch)
-        }
-
         //
 
         // static contextType = StyleMapContext
@@ -320,6 +313,15 @@ export default (options = {}) => (WrappedComponent) => {
         }
     }
 
+    if (typeof dataFetch !== 'undefined') {
+        KootReactComponent.onServerRenderStoreExtend = ({ store, renderProps }) => {
+            if (typeof dataFetch === 'undefined')
+                return new Promise(resolve => resolve())
+            // console.log('onServerRenderStoreExtend')
+            return doFetchData(store, getRenderPropsFromServerProps(renderProps), dataFetch)
+        }
+    }
+
     // if (_hot && __DEV__ && __CLIENT__) {
     //     const { hot, setConfig } = require('react-hot-loader')
     //     setConfig({ logLevel: 'debug' })
@@ -340,6 +342,17 @@ export default (options = {}) => (WrappedComponent) => {
         KootComponent = connect(_connect)(KootComponent)
     } else if (Array.isArray(_connect)) {
         KootComponent = connect(..._connect)(KootComponent)
+    }
+
+    /** 
+     * _服务器端_
+     * 将组件注册到同构渲染对象中
+     */
+    if (__SERVER__) {
+        const {
+            connectedComponents = []
+        } = __DEV__ ? global.__KOOT_SSR__ : __KOOT_SSR__
+        connectedComponents.push(KootComponent)
     }
 
     return KootComponent

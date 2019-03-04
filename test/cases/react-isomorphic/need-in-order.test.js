@@ -164,6 +164,10 @@ const doTest = async (port, settings = {}) => {
             const pageUrl = await page.url()
             expect((new RegExp(`^${origin}/.+`)).test(pageUrl)).toBe(true)
         }
+
+        // TODO: 数据同构
+
+        // TODO: title, meta 标签正确性
     }
 
     // 测试: 利用强制切换语种 URL 访问时，语种应正确
@@ -552,11 +556,11 @@ describe('测试: React 同构项目', async () => {
                 })
                 test(`[Production] 打包并运行生产模式 (0.6版配置)`, async () => {
                     await beforeTest(dir)
-    
+
                     const commandName = `${commandTestBuild}-isomorphic-start-config_old_0.6`
                     const command = `koot-start --koot-test --config koot.config.old-0.6.js`
                     await addCommand(commandName, command, dir)
-    
+
                     const child = execSync(
                         `npm run ${commandName}`,
                         {
@@ -564,7 +568,7 @@ describe('测试: React 同构项目', async () => {
                         },
                     )
                     const errors = []
-    
+
                     await waitForPort(child)
                     // const port = await getPortFromConfig(dir)
                     const port = require('../../../packages/koot/utils/get-port')(
@@ -573,22 +577,22 @@ describe('测试: React 同构项目', async () => {
                     child.stderr.on('data', err => {
                         errors.push(err)
                     })
-    
+
                     expect(errors.length).toBe(0)
-    
+
                     await doTest(port, {})
                     await terminate(child.pid)
-    
+
                     await afterTest(dir, '[Production] 打包并运行生产模式 (0.6版配置)')
                 })
                 test(`[Development] 启动开发模式并访问 (0.6版配置)`, async () => {
                     await beforeTest(dir)
-    
+
                     // const port = '8316'
                     const commandName = `${commandTestBuild}-isomorphic-dev-config_old_0.6`
                     const command = `koot-dev --no-open --koot-test --config koot.config.old-0.6.js`
                     await addCommand(commandName, command, dir)
-    
+
                     const child = execSync(
                         `npm run ${commandName}`,
                         {
@@ -597,23 +601,23 @@ describe('测试: React 同构项目', async () => {
                         },
                     )
                     const errors = []
-    
+
                     const port = await waitForPort(child, / on.*http:.*:([0-9]+)/)
                     child.stderr.on('data', err => {
                         errors.push(err)
                     })
-    
+
                     // console.log({
                     //     port,
                     //     errors,
                     // })
                     expect(errors.length).toBe(0)
-    
+
                     await doTest(port, {
                         isDev: true
                     })
                     await terminate(child.pid)
-    
+
                     await afterTest(dir, '[Development] 启动开发模式并访问 (0.6版配置)')
                 })
             }
