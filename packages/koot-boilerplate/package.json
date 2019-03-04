@@ -34,7 +34,7 @@
         "autoprefixer": "9.4.9",
         "babel-eslint": "10.0.1",
         "cssnano": "4.1.10",
-        "eslint": "5.14.1",
+        "eslint": "5.15.0",
         "eslint-plugin-react": "7.12.4",
         "jest": "24.1.0",
         "normalize.css": "8.0.1",

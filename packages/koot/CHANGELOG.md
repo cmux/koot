@@ -57,6 +57,7 @@
   - `sp-css-import`
 - 更新依赖包
   - major
+    - `cli-spinners` -> _2.0.0_
     - `copy-webpack-plugin` -> _5.0.0_
     - `css-loader` -> _2.1.0_
     - `file-loader` -> _3.0.1_
@@ -74,18 +75,19 @@
     - `@babel/plugin-transform-runtime` -> _7.3.4_
     - `@babel/polyfill` -> _7.2.5_
     - `@babel/preset-env` -> _7.3.4_
-    - `acorn` -> _6.1.0_
+    - `acorn` -> _6.1.1_
     - `autoprefixer` -> _9.4.7_
     - `koa` -> _2.7.0_
     - `less` -> _3.9.0_
     - `mini-css-extract-plugin` -> _0.5.0_
     - `pm2` -> _3.3.1_
-    - `ora` -> _3.1.0_
+    - `ora` -> _3.2.0_
     - `os-locale` -> _3.1.0_
     - `react` -> _16.8.3_
     - `react-dom` -> _16.8.3_
     - `react-hot-loader` -> _4.7.1_
-    - `webpack` -> _4.29.5_
+    - `webpack` -> _4.29.6_
+    - `webpack-bundle-analyzer` -> _3.1.0_
     - `webpack-dev-middleware` -> _3.6.0_
     - `webpack-dev-server` -> _3.2.1_
   - patch
@@ -96,7 +98,6 @@
     - `portfinder` -> _1.0.20_
     - `postcss` -> _7.0.14_
     - `rimraf` -> _2.6.3_
-    - `webpack-bundle-analyzer` -> _3.0.4_
 
 ## 0.7.13
 **2018-02-22**

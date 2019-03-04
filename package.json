@@ -49,9 +49,9 @@
     },
     "license": "Apache-2.0",
     "devDependencies": {
-        "lerna": "3.13.0",
+        "lerna": "3.13.1",
         "lerna-wizard": "1.0.9",
-        "eslint": "5.14.1",
+        "eslint": "5.15.0",
         "eslint-plugin-react": "7.12.4",
         "babel-eslint": "10.0.1",
         "jest": "24.1.0",
