@@ -38,6 +38,8 @@
     - 将大部分开发环境所用的临时文件和标记文件整合、移动到 `/logs/dev` 目录中
 - React
   - 根层组件添加 `componentDidCatch` 生命周期方法，以保障 React 输出渲染结果
+- React 同构
+  - 确保 `connect` 封装的组件，其数据同构功能可用
 - React SPA
   - 对于传入自定 `store` 对象或生成方法的项目，确保生成 `store` 使用的 `history` 对象为浏览器所用对象
   - 移除 `AppContainer` 逻辑的相关文件
