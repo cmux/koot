@@ -109,9 +109,9 @@
         "portfinder": "1.0.20",
         "postcss": "7.0.14",
         "postcss-loader": "3.0.0",
-        "react": "16.8.3",
-        "react-dom": "16.8.3",
-        "react-hot-loader": "4.7.1",
+        "react": "16.8.4",
+        "react-dom": "16.8.4",
+        "react-hot-loader": "4.7.2",
         "react-redux": "5.1.1",
         "react-router": "3.2.1",
         "react-router-redux": "4.0.8",
@@ -132,7 +132,7 @@
         "webpack-dev-server": "3.2.1",
         "webpack-hot-middleware": "2.24.3",
         "xmlify": "1.1.0",
-        "yargs": "13.2.1"
+        "yargs": "13.2.2"
     },
     "engines": {
         "node": ">=8.0.0"

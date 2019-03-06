@@ -66,7 +66,7 @@
     - `koa-body` -> _4.0.8_
     - `koa-mount` -> _4.0.0_
     - `koa-static` -> _5.0.0_
-    - `yargs` -> _13.2.1_
+    - `yargs` -> _13.2.2_
   - minor
     - `@babel/core` -> _7.3.4_
     - `@babel/plugin-proposal-class-properties` -> _7.3.4_
@@ -85,9 +85,9 @@
     - `pm2` -> _3.3.1_
     - `ora` -> _3.2.0_
     - `os-locale` -> _3.1.0_
-    - `react` -> _16.8.3_
-    - `react-dom` -> _16.8.3_
-    - `react-hot-loader` -> _4.7.1_
+    - `react` -> _16.8.4_
+    - `react-dom` -> _16.8.4_
+    - `react-hot-loader` -> _4.7.2_
     - `webpack` -> _4.29.6_
     - `webpack-bundle-analyzer` -> _3.1.0_
     - `webpack-dev-middleware` -> _3.6.0_
