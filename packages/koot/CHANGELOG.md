@@ -63,7 +63,7 @@
     - `copy-webpack-plugin` -> _5.0.0_
     - `css-loader` -> _2.1.0_
     - `file-loader` -> _3.0.1_
-    - `koa-body` -> _4.0.8_
+    - `koa-body` -> _4.1.0_
     - `koa-mount` -> _4.0.0_
     - `koa-static` -> _5.0.0_
     - `yargs` -> _13.2.2_
@@ -90,7 +90,7 @@
     - `react-hot-loader` -> _4.7.2_
     - `webpack` -> _4.29.6_
     - `webpack-bundle-analyzer` -> _3.1.0_
-    - `webpack-dev-middleware` -> _3.6.0_
+    - `webpack-dev-middleware` -> _3.6.1_
     - `webpack-dev-server` -> _3.2.1_
   - patch
     - `babel-loader` -> _8.0.5_
