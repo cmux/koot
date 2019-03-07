@@ -42,7 +42,7 @@ import Root from '../React/root.jsx'
 const DEFAULT_ROOT_DOM_ID = 'root'
 
 /** @type {Number} react-router match 允许的最长运行时间 (ms) */
-const maxRouterMatchTime = 1000
+const maxRouterMatchTime = 5 * 1000
 
 // redux store
 export let store
