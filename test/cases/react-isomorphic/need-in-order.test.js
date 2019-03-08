@@ -275,6 +275,8 @@ const doTest = async (port, settings = {}) => {
 
     // TODO: 测试: hydrate 不会触发重新渲染
 
+    // TODO: 测试: 开发环境热更新
+
     await browser.close()
 }
 
@@ -306,13 +308,13 @@ const afterTest = async (cwd, title) => {
 
 //
 
-describe('测试: React 同构项目', async () => {
+describe('测试: React 同构项目', () => {
 
     for (let {
         name,
         dir,
     } of projectsToUse) {
-        describe(`项目: ${name}`, async () => {
+        describe(`项目: ${name}`, () => {
             test(`[Production] 使用 koot-build 命令进行打包`, async () => {
                 await beforeTest(dir)
 

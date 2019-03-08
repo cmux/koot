@@ -630,24 +630,64 @@ module.exports = {
 ### koaStatic
 
 - 类型: `Object`
-- 默认值:
-```javascript
-{
-    maxage: 0,
-    hidden: true,
-    index: 'index.html',
-    defer: false,
-    gzip: true,
-    extensions: false
-}
-```
+- 默认值: _见下_
 - **仅针对**: 服务器端
 
-`koa-static` 静态资源服务器配置。配置方法与 `koa-static` 的官方方法相同。
+`koa-static` 静态资源服务器配置。配置对象采用 `koa-static` 的官方方案。
+
+```javascript
+module.exports = {
+    // 默认值
+    koaStatic: {
+        maxage: 0,
+        hidden: true,
+        index: 'index.html',
+        defer: false,
+        gzip: true,
+        extensions: false
+    }
+}
+```
 
 ### serverBefore
 
+- 类型: `Function`
+- 默认值: _无_
+- **仅针对**: 服务器端
+
+在服务器端创建 _Koa_ 实例后、挂载任何中间件前，执行的方法。
+
+```javascript
+module.exports = {
+    /** 
+     * @param {Object} app Koa实例
+     * @void
+     */
+    serverBefore: (app) => {
+        // 案例：挂载静态目录中间件
+    }
+}
+```
+
 ### serverAfter
+
+- 类型: `Function`
+- 默认值: _无_
+- **仅针对**: 服务器端
+
+在服务器端 _Koa_ 挂载所有中间件后、正式启动服务器服务之前，执行的方法。
+
+```javascript
+module.exports = {
+    /** 
+     * @param {Object} app Koa实例
+     * @void
+     */
+    serverAfter: (app) => {
+        // ...
+    }
+}
+```
 
 ### serverOnRender
 

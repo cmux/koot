@@ -9,7 +9,7 @@ const doTest = (p) => {
     ).toBe(true)
 }
 
-describe('测试: libs/validate-pathname', async () => {
+describe('测试: libs/validate-pathname', () => {
     test(`当前路径的相对路径`, async () => doTest(path.resolve(__dirname, '../../pre-test.js')))
     test(`项目根目录的相对路径 (写法#1)`, async () => doTest('LICENSE'))
     test(`项目根目录的相对路径 (写法#2)`, async () => doTest('./LICENSE'))

@@ -87,7 +87,7 @@
     - `os-locale` -> _3.1.0_
     - `react` -> _16.8.4_
     - `react-dom` -> _16.8.4_
-    - `react-hot-loader` -> _4.7.2_
+    - `react-hot-loader` -> _4.8.0_
     - `webpack` -> _4.29.6_
     - `webpack-bundle-analyzer` -> _3.1.0_
     - `webpack-dev-middleware` -> _3.6.1_
@@ -95,11 +95,17 @@
   - patch
     - `babel-loader` -> _8.0.5_
     - `chalk` -> _2.4.2_
+    - `css-loader` -> _2.1.1_
     - `debug` -> _4.1.1_
     - `inquirer` -> _6.2.2_
     - `portfinder` -> _1.0.20_
     - `postcss` -> _7.0.14_
     - `rimraf` -> _2.6.3_
+
+## 0.7.14
+**2018-03-07**
+- React同构 (`ReactApp`)
+  - 延长 `routerMatch` 超时的检测时间
 
 ## 0.7.13
 **2018-02-22**

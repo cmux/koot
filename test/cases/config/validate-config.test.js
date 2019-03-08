@@ -63,7 +63,7 @@ const validateSample = async (sample) => {
 
 // return
 
-describe('测试: 验证配置 (生成临时的核心代码引用文件，返回其他配置对象)', async () => {
+describe('测试: 验证配置 (生成临时的核心代码引用文件，返回其他配置对象)', () => {
     for (const { name, file, filename } of samples) {
 
         test(`类型: ${name}`, async () => {
