@@ -277,6 +277,10 @@ const doTest = async (port, settings = {}) => {
 
     // TODO: 测试: 开发环境热更新
 
+    // TODO: 测试: 访问404
+
+    // TODO: 测试: 访问全局子路由
+
     await browser.close()
 }
 
