@@ -27,6 +27,7 @@ const executeComponentLifecycle = async ({ store, renderProps, ctx }) => {
     let extendHtml
 
     const extractDataToStoreTask = (component) => {
+        if (!component) return
         if (typeof component[LIFECYCLE_DATA_TO_STORE] === 'function') {
             const thisTask = component[LIFECYCLE_DATA_TO_STORE]({ store, renderProps, ctx })
             // component[LIFECYCLE_DATA_TO_STORE] = undefined
@@ -46,6 +47,7 @@ const executeComponentLifecycle = async ({ store, renderProps, ctx }) => {
     }
 
     const extracHtmlExtendTask = (component) => {
+        if (!component) return
         if (typeof component[LIFECYCLE_HTML_EXTEND] === 'function') {
             extendHtml = component[LIFECYCLE_HTML_EXTEND]
             // component[LIFECYCLE_HTML_EXTEND] = undefined
