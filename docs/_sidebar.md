@@ -1,5 +1,5 @@
 - **上手**
-  - [开始使用](/?id=开始使用)
+  - [开始使用](/?id=安装命令行工具)
   - [模板项目结构](/boilerplate)
   - [技术术语](/glossary)
   - [FAQ/疑难解答](/faq)
@@ -7,8 +7,8 @@
 
 - **API 文档**
   - [项目配置](/config)
-  - [Webpack](/webpack)
   - [NPM 命令](/task)
+  - [Webpack 相关](/webpack)
   - [HTML 模板](/template)
   - [生命周期](/life-cycle)
   - [多语言 (i18n)](/i18n)

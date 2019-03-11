@@ -426,6 +426,13 @@ module.exports = {
 /****************************
  * 文件: /src/lifecycle/client-before.js
  ***************************/
+/**
+ * @param {Object} options
+ * @param {Object} [options.ctx] 本次请求的 Koa ctx 对象
+ * @param {Object} [options.history] History 对象
+ * @param {String} [options.localeId] 本次请求的语种 ID
+ * @returns {undefined|Promise}
+ */
 export default ({ store, history, localeId }) => {
     // ...
 }
@@ -450,6 +457,13 @@ module.exports = {
 /****************************
  * 文件: /src/lifecycle/client-after.js
  ***************************/
+/**
+ * @param {Object} options
+ * @param {Object} [options.ctx] 本次请求的 Koa ctx 对象
+ * @param {Object} [options.history] History 对象
+ * @param {String} [options.localeId] 本次请求的语种 ID
+ * @returns {undefined|Promise}
+ */
 export default ({ store, history, localeId }) => {
     // ...
 }
@@ -481,7 +495,12 @@ module.exports = {
 /****************************
  * 文件: /src/lifecycle/client-history-update.js
  ***************************/
-export default (location, Store) => {
+/**
+ * @param {Object} location react-router 封装的 location 对象
+ * @param {Object} store redux store 对象
+ * @void
+ */
+export default (location, store) => {
     // ...
 }
 ```
@@ -655,15 +674,19 @@ module.exports = {
 - 默认值: _无_
 - **仅针对**: 服务器端
 
-在服务器端创建 _Koa_ 实例后、挂载任何中间件前，执行的方法。
+在服务器端创建 _Koa_ 实例后、挂载任何中间件之前，执行的方法。
 
 ```javascript
 module.exports = {
+    // 默认值
+    serverBefore: undefined,
+
     /** 
+     * @async
      * @param {Object} app Koa实例
      * @void
      */
-    serverBefore: (app) => {
+    serverBefore: async (app) => {
         // 案例：挂载静态目录中间件
     }
 }
@@ -679,11 +702,15 @@ module.exports = {
 
 ```javascript
 module.exports = {
+    // 默认值
+    serverAfter: undefined,
+
     /** 
+     * @async
      * @param {Object} app Koa实例
      * @void
      */
-    serverAfter: (app) => {
+    serverAfter: async (app) => {
         // ...
     }
 }
@@ -691,19 +718,231 @@ module.exports = {
 
 ### serverOnRender
 
+- 类型: `Function` 或 `Object`
+- 默认值: _无_
+- **仅针对**: 服务器端
+
+在服务器端计算 React 渲染结果时运行的方法。
+
+```javascript
+module.exports = {
+    // 默认值
+    serverOnRender: undefined,
+
+    /** 在路由 (`react-router`) 匹配之后、进行 store 相关数据计算之前，运行的方法
+     * @async
+     * @param {Object} options
+     * @param {Object} [options.ctx] 本次请求的 Koa ctx 对象
+     * @param {Object} [options.store] redux store 对象
+     * @param {String} [options.localeId] 本次请求的语种 ID
+     * @void
+     */
+    serverOnRender: async ({ ctx, store, localeId }) => {
+        // 案例: 检查用户是否登录，如没有登陆，通过 Koa ctx 进行跳转
+    },
+
+    // 详细设置
+    serverOnRender: {
+        /** `serverOnRender.beforeRouterMatch`
+         * - 类型: `Function`
+         * 
+         * 在路由 (`react-router`) 匹配之前，运行的方法
+         * 
+         * @async
+         * @param {Object} options
+         * @param {Object} [options.ctx] 本次请求的 Koa ctx 对象
+         * @param {Object} [options.store] redux store 对象
+         * @void
+         */
+        beforeRouterMatch: async ({ ctx, store }) => {
+            // ...
+        },
+
+        /** `serverOnRender.beforeDataToStore`
+         * - 类型: `Function`
+         * 
+         * 在路由 (`react-router`) 匹配之后、进行 store 相关数据计算之前，运行的方法
+         * - 同 `serverOnRender` 为 `Function` 的情况
+         * 
+         * @async
+         * @param {Object} options
+         * @param {Object} [options.ctx] 本次请求的 Koa ctx 对象
+         * @param {Object} [options.store] redux store 对象
+         * @param {String} [options.localeId] 本次请求的语种 ID
+         * @void
+         */
+        beforeDataToStore: async ({ ctx, store, localeId }) => {
+            // ...
+        },
+
+        /** `serverOnRender.afterDataToStore`
+         * - 类型: `Function`
+         * 
+         * 在进行 store 相关数据计算之后，运行的方法
+         * 
+         * @async
+         * @param {Object} options
+         * @param {Object} [options.ctx] 本次请求的 Koa ctx 对象
+         * @param {Object} [options.store] redux store 对象
+         * @param {String} [options.localeId] 本次请求的语种 ID
+         * @void
+         */
+        afterDataToStore: async ({ ctx, store, localeId }) => {
+            // ...
+        }
+    }
+}
+```
+
 ---
 
 ## Webpack 相关
 
 ### webpackConfig
 
+- 类型: `Object` 或 `Function`
+- 默认值: _无_
+- **必填**
+- **仅针对**: Webpack 打包过程
+
+Webpack 打包配置。如果为 `Function`，需要返回 Webpack 打包配置，可为异步方法。有关 Koot.js 内 Webpack 的使用请查阅 [Webpack 相关](/webpack)。
+
+```javascript
+module.exports = {
+    // 默认值
+    webpackConfig: undefined,
+
+    // 示例配置 (koot-boilerplate 使用的配置)
+    webpackConfig: async () => ({
+        entry: {
+            /**
+             * 自定入口文件，需要手动编写使用逻辑
+             * - 该模板项目中，本 `critical` 入口的结果会被自动写入到 HTML 结果内，位于 `<body>` 标签中所有自动插入的 `<script>` 标签之前
+             * - 详见模板文件 `/src/index.ejs` 内的 `<%- content('critical.js') %>`
+             */
+            critical: [
+                path.resolve(__dirname, '../src/critical.js')
+            ]
+
+            /**
+             * Koot.js 会自动加入一个名为 `client` 的入口，其中包含所有 React 相关逻辑
+             * - 模板中的 `<%- inject.scripts %>` 会被自动替换为 `client` 入口的相关内容
+             */
+        },
+        module: {
+            rules: [
+                /** 
+                 * Koot.js 会为以下类型的文件自动添加 loader，无需进行配置
+                 * - `js` `mjs` `jsx`
+                 * - `css` `sass` `less`
+                 */
+                {
+                    test: /\.(ico|gif|jpg|jpeg|png|webp)$/,
+                    loader: 'file-loader?context=static&name=assets/[hash:32].[ext]',
+                    exclude: /node_modules/
+                },
+                {
+                    test: /\.svg$/,
+                    loader: 'svg-url-loader',
+                    exclude: /node_modules/,
+                    options: {
+                        noquotes: true,
+                    }
+                }
+            ]
+        }
+    })
+}
+```
+
 ### webpackBefore
+
+- 类型: `Function`
+- 默认值: _无_
+- **仅针对**: Webpack 打包过程
+
+Webpack 打包执行之前执行的方法。
+
+```javascript
+module.exports = {
+    // 默认值
+    webpackBefore: undefined,
+
+    /**
+     * @async
+     * @param {Object} kootConfig koot 完整配置对象
+     * @void
+     */
+    webpackBefore: async (kootConfig) => ({
+        // ...
+    })
+}
+```
 
 ### webpackAfter
 
+- 类型: `Function`
+- 默认值: _无_
+- **仅针对**: Webpack 打包过程
+
+Webpack 打包执行之后执行的方法。
+
+```javascript
+module.exports = {
+    // 默认值
+    webpackAfter: undefined,
+
+    /**
+     * @async
+     * @param {Object} kootConfig koot 完整配置对象
+     * @void
+     */
+    webpackAfter: async (kootConfig) => ({
+        // ...
+    })
+}
+```
+
 ### moduleCssFilenameTest
 
+- 类型: `RegExp`
+- 默认值: `/\.(component|view|module)/`
+- **仅针对**: Webpack 打包过程
+
+组件 CSS 文件名检查规则，不包括扩展名部分。有关 CSS 的使用请查阅 [CSS](/css)。
+
+_默认值解释:_ 文件名以 `.component.css` `.view.css` 或 `.module.css` (扩展名可为 `css` `less` `sass`) 为结尾的文件会当作组件 CSS，其他文件会被当做全局 CSS。
+
+```javascript
+module.exports = {
+    // 默认值
+    moduleCssFilenameTest: /\.(component|view|module)/
+}
+```
+
 ### internalLoaderOptions
+
+- 类型: `Object`
+- 默认值: _无_
+- **仅针对**: Webpack 打包过程
+
+用以扩展几乎无法修改的内置 Webpack loader 的配置。
+
+```javascript
+module.exports = {
+    // 默认值
+    internalLoaderOptions: undefined,
+
+    // 示例: 扩展 `less-loader` 的配置
+    internalLoaderOptions: {
+        'less-loader': {
+            modifyVars: {
+                'base-font-size': '40px'
+            }
+        }
+    }
+}
+```
 
 ---
 
@@ -712,13 +951,100 @@ module.exports = {
 ### devPort
 
 - 类型: `Number`
-- 默认值: 配置项 `port` 的值
+- 默认值: _无_ (默认使用配置项 `port` 的值)
 - **仅针对**: 开发环境
 
-开发环境端口号。
+指定开发环境端口号。
+
+```javascript
+module.exports = {
+    // 默认值 (默认使用配置项 `port` 的值)
+    devPort: undefined,
+
+    // 示例: 指定开发环境采用 8088 端口
+    devPort: 8088
+}
+```
 
 ### devDll
 
+- 类型: `Array`
+- 默认值: _见下_
+- **仅针对**: 开发环境
+
+开发环境中，将部分 NPM 包独立打包，在之后更新的过程中，这些 NPM 包不会参与热更新流程，从而加速热更新速度。
+
+```javascript
+module.exports = {
+    // 默认值
+    devDll: [
+        'react',
+        'react-dom',
+        'redux',
+        'redux-thunk',
+        'react-redux',
+        'react-router',
+        'react-router-redux',
+    ]
+}
+```
+
 ### devHmr
 
+- 类型: `Object`
+- 默认值: _见下_
+- **仅针对**: 开发环境
+
+扩展 Webpack 插件 `HotModuleReplacementPlugin` 的配置。
+
+```javascript
+module.exports = {
+    // 默认值
+    devHmr: {
+        multiStep: true,
+        fullBuildTimeout: process.env.WEBPACK_BUILD_TYPE === 'spa' ? 500 : undefined,
+        requestTimeout: process.env.WEBPACK_BUILD_TYPE === 'spa' ? undefined : 1000
+    }
+}
+```
+
 ### devServer
+
+- 类型: `Object`
+- 默认值: _见下_
+- **仅针对**: 开发环境
+
+扩展 `webpack-dev-server` 配置对象。
+
+```javascript
+module.exports = {
+    // 默认值
+    devServer: {
+        quiet: false,
+        stats: { colors: true },
+        clientLogLevel: 'error',
+        hot: true,
+        inline: true,
+        historyApiFallback: true,
+        contentBase: './',
+        publicPath: TYPE === 'spa' ? '/' : '/dist/',
+        headers: {
+            'Access-Control-Allow-Origin': '*'
+        },
+        open: TYPE === 'spa',
+        watchOptions: {
+            ignored: [
+                getDistPath(),
+                path.resolve(getDistPath(), '**/*')
+            ]
+        },
+        before: (app) => {
+            if (appType === 'ReactSPA') {
+                require('../../ReactSPA/dev-server/extend')(app)
+            }
+            if (typeof before === 'function')
+                return before(app)
+        }
+    }
+}
+```
