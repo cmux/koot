@@ -90,34 +90,31 @@ const metaEncodeHandler = (obj, meta) => {
     obj['meta'] = meta;
 }
 
+let oldPathname = null;
 const onEnterEncodeHandler = (obj, options) => {
     const { oriOnEnter, beforeEach, afterEach, onUpdate, redirect, router = {} } = options;
     const { path } = router;
     const onEnterHook = (...args) => {
-        const [ nextState, replace ] = args; 
-        // console.info('redirect', redirect)
-        // console.info('router', router)
+        const [ nextState, replace ] = args;
         // 重定向
         if( redirect ){
             const { location = {} } = nextState;
             const { pathname } = location;
-            // console.info('pathname', pathname)
             if( pathname === path && pathname !== redirect ){
                 redirectHandler(nextState, replace, redirect)
             }
         }
-        // 如果 path === '' 
-        // indexRoute onEnter without callback handler
-        if( path === '' ){
-            return;
+        const { pathname } = nextState.location;
+        if( pathname !== oldPathname ){
+            // 触发 beforeEach
+            beforeEachHook(...args, {
+                oriOnEnter,
+                beforeEach,
+                afterEach,
+                onUpdate
+            })
+            oldPathname = pathname;
         }
-        // 触发 beforeEach
-        beforeEachHook(...args, {
-            oriOnEnter,
-            beforeEach,
-            afterEach,
-            onUpdate
-        })
     }
     obj['onEnter'] = onEnterHook
 }
