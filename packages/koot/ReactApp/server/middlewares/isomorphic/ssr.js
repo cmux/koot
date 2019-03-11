@@ -16,6 +16,9 @@ const ssr = async (__KOOT_SSR__) => new Promise(async resolve => {
 
     if (__DEV__) {
         return await require('../../ssr').default()
+            .catch(err => resolve({
+                error: err
+            }))
     }
 
     if (!__KOOT_SSR_FILE_CONTENT__) {

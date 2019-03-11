@@ -68,14 +68,14 @@ const afterTest = async (cpd/*, title*/) => {
     // console.log(chalk.green('√ ') + title)
 }
 
-describe('测试: React SPA 项目', async () => {
+describe('测试: React SPA 项目', () => {
 
     for (let {
         name,
         dir,
     } of projectsToUse) {
 
-        describe(`项目: ${name}`, async () => {
+        describe(`项目: ${name}`, () => {
 
             const distDirName = 'dist-spa-test'
             const dist = path.resolve(dir, distDirName)

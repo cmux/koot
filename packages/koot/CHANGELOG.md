@@ -38,6 +38,8 @@
     - 将大部分开发环境所用的临时文件和标记文件整合、移动到 `/logs/dev` 目录中
 - React
   - 根层组件添加 `componentDidCatch` 生命周期方法，以保障 React 输出渲染结果
+- React 同构
+  - 确保 `connect` 封装的组件，其数据同构功能可用
 - React SPA
   - 对于传入自定 `store` 对象或生成方法的项目，确保生成 `store` 使用的 `history` 对象为浏览器所用对象
   - 移除 `AppContainer` 逻辑的相关文件
@@ -57,13 +59,14 @@
   - `sp-css-import`
 - 更新依赖包
   - major
+    - `cli-spinners` -> _2.0.0_
     - `copy-webpack-plugin` -> _5.0.0_
     - `css-loader` -> _2.1.0_
     - `file-loader` -> _3.0.1_
-    - `koa-body` -> _4.0.8_
+    - `koa-body` -> _4.1.0_
     - `koa-mount` -> _4.0.0_
     - `koa-static` -> _5.0.0_
-    - `yargs` -> _13.2.1_
+    - `yargs` -> _13.2.2_
   - minor
     - `@babel/core` -> _7.3.4_
     - `@babel/plugin-proposal-class-properties` -> _7.3.4_
@@ -74,29 +77,35 @@
     - `@babel/plugin-transform-runtime` -> _7.3.4_
     - `@babel/polyfill` -> _7.2.5_
     - `@babel/preset-env` -> _7.3.4_
-    - `acorn` -> _6.1.0_
+    - `acorn` -> _6.1.1_
     - `autoprefixer` -> _9.4.7_
     - `koa` -> _2.7.0_
     - `less` -> _3.9.0_
     - `mini-css-extract-plugin` -> _0.5.0_
     - `pm2` -> _3.3.1_
-    - `ora` -> _3.1.0_
+    - `ora` -> _3.2.0_
     - `os-locale` -> _3.1.0_
-    - `react` -> _16.8.3_
-    - `react-dom` -> _16.8.3_
-    - `react-hot-loader` -> _4.7.1_
-    - `webpack` -> _4.29.5_
-    - `webpack-dev-middleware` -> _3.6.0_
+    - `react` -> _16.8.4_
+    - `react-dom` -> _16.8.4_
+    - `react-hot-loader` -> _4.8.0_
+    - `webpack` -> _4.29.6_
+    - `webpack-bundle-analyzer` -> _3.1.0_
+    - `webpack-dev-middleware` -> _3.6.1_
     - `webpack-dev-server` -> _3.2.1_
   - patch
     - `babel-loader` -> _8.0.5_
     - `chalk` -> _2.4.2_
+    - `css-loader` -> _2.1.1_
     - `debug` -> _4.1.1_
     - `inquirer` -> _6.2.2_
     - `portfinder` -> _1.0.20_
     - `postcss` -> _7.0.14_
     - `rimraf` -> _2.6.3_
-    - `webpack-bundle-analyzer` -> _3.0.4_
+
+## 0.7.14
+**2018-03-07**
+- React同构 (`ReactApp`)
+  - 延长 `routerMatch` 超时的检测时间
 
 ## 0.7.13
 **2018-02-22**

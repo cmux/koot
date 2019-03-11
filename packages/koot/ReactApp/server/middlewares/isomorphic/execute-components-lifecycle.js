@@ -1,5 +1,7 @@
+/* global __KOOT_SSR__:false */
+
 /** @type {String} 同步数据到 store 的静态方法名 */
-const LIFECYCLE_DATA_TO_STOER = 'onServerRenderStoreExtend'
+const LIFECYCLE_DATA_TO_STORE = 'onServerRenderStoreExtend'
 /** @type {String} 扩展 HTML 信息的静态方法名 */
 const LIFECYCLE_HTML_EXTEND = 'onServerRenderHtmlExtend'
 
@@ -24,31 +26,77 @@ const executeComponentLifecycle = async ({ store, renderProps, ctx }) => {
      */
     let extendHtml
 
+    const extractDataToStoreTask = (component) => {
+        if (!component) return
+        if (typeof component[LIFECYCLE_DATA_TO_STORE] === 'function') {
+            const thisTask = component[LIFECYCLE_DATA_TO_STORE]({ store, renderProps, ctx })
+            // component[LIFECYCLE_DATA_TO_STORE] = undefined
+            if (Array.isArray(thisTask)) {
+                tasks = tasks.concat(thisTask)
+            } else if (thisTask instanceof Promise || thisTask.then) {
+                tasks.push(thisTask)
+            } else if (typeof thisTask === 'function') {
+                tasks.push(new Promise(async resolve => {
+                    await thisTask()
+                    resolve()
+                }))
+            }
+        } else if (component.WrappedComponent) {
+            extractDataToStoreTask(component.WrappedComponent)
+        }
+    }
+
+    const extracHtmlExtendTask = (component) => {
+        if (!component) return
+        if (typeof component[LIFECYCLE_HTML_EXTEND] === 'function') {
+            extendHtml = component[LIFECYCLE_HTML_EXTEND]
+            // component[LIFECYCLE_HTML_EXTEND] = undefined
+        } else if (component.WrappedComponent) {
+            extracHtmlExtendTask(component.WrappedComponent)
+        }
+    }
+
+    /** 
+     * _服务器端_
+     * 遍历同构渲染对象，执行其中对应的静态方法，并标记
+     */
+    if (__SERVER__) {
+        const connectedComponents = (() => {
+            const {
+                connectedComponents = []
+            } = __DEV__ ? global.__KOOT_SSR__ : __KOOT_SSR__
+
+            if (__DEV__) {
+                if (!global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__)
+                    global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__ = new Map()
+
+                const CTX = JSON.stringify(ctx)
+
+                if (global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__.has(CTX))
+                    return global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__.get(CTX)
+
+                global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__.set(CTX, connectedComponents)
+            }
+
+            return connectedComponents
+        })()
+        connectedComponents.forEach(component => {
+            extractDataToStoreTask(component)
+        })
+        // console.log('\n\n==========')
+        // console.log({ connectedComponents, renderProps })
+        // console.log('==========\n\n')
+    }
+
     for (const component of renderProps.components) {
         /**
          * @type {Component}
          * 当前组件
          * component.WrappedComponent 是 redux 装饰的外壳
          */
-        const thisComponent = component && component.WrappedComponent ? component.WrappedComponent : component
-        if (thisComponent) {
-            if (typeof thisComponent[LIFECYCLE_DATA_TO_STOER] === 'function') {
-                const thisTask = thisComponent[LIFECYCLE_DATA_TO_STOER]({ store, renderProps, ctx })
-                if (Array.isArray(thisTask)) {
-                    tasks = tasks.concat(thisTask)
-                } else if (thisTask instanceof Promise || thisTask.then) {
-                    tasks.push(thisTask)
-                } else if (typeof thisTask === 'function') {
-                    tasks.push(new Promise(async resolve => {
-                        await thisTask()
-                        resolve()
-                    }))
-                }
-            }
-            if (typeof thisComponent[LIFECYCLE_HTML_EXTEND] === 'function') {
-                extendHtml = thisComponent[LIFECYCLE_HTML_EXTEND]
-            }
-        }
+        // const thisComponent = component && component.WrappedComponent ? component.WrappedComponent : component
+        // extractDataToStoreTask(component)
+        extracHtmlExtendTask(component)
     }
 
     // 等待所有异步方法执行完毕

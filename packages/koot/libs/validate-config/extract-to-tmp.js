@@ -124,6 +124,8 @@ module.exports = async (projectDir, config) => {
             .map(key => {
                 if (key === 'server')
                     return `export const ${key} = __SERVER__ ? ${JSON.stringify(config[key])} : {};`
+                // if (key === 'router' && process.env.WEBPACK_BUILD_ENV === 'dev')
+                //     return `export const ${key} = () => {console.log(123); return ${JSON.stringify(config[key])}};`
                 return `export const ${key} = ${JSON.stringify(config[key])};`
             })
             .join('\n')

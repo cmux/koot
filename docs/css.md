@@ -1,10 +1,8 @@
 # CSS 使用
 
-**注** 本文所述内容仅适用于 0.8 及以上版本（当前仍在开发中）
-
 ### 全局 CSS & 组件 CSS
 
-Koot.js 规定，存在有 2 种 CSS 文件：全局 CSS (Global CSS) 和组件 CSS (Module CSS)
+在 Koot.js 中，我们规定存在有 2 种 CSS 文件：全局 CSS (Global CSS)、组件 CSS (Module CSS)
 
 **全局 CSS**
 
@@ -25,23 +23,27 @@ Koot.js 规定，存在有 2 种 CSS 文件：全局 CSS (Global CSS) 和组件 
 
 此外，Koot.js 已默认加入了处理 CSS、LESS 和 SASS 的 webpack loader，无需额外定义。
 
+```less
+// 组件 CSS 文件示例
+// /src/views/home/styles.component.less
+.component {
+    .cover {
+        width: 100%;
+        height: 100vh;
+    }
+}
+```
+
 ### 配置
 
-配置文件 (默认为 `/koot.config.js`) 中的 `css.fileBasename` 为这 2 种 CSS 文件的不包含扩展名的基本文件名正则规则的设置。以下是默认设置: 
+配置文件 (默认为 `/koot.config.js`) 中的 `moduleCssFilenameTest` 项目为这 2 种 CSS 文件的不包含扩展名的基本文件名正则规则的设置。以下是默认设置: 
 
 ```javascript
 module.exports = {
     // ...
-    css: {
-        fileBasename: {
-            // 全局 CSS 文件名规则（不包括扩展名的基础文件名）
-            normal: /^((?!\.(component|module)\.).)*/,
-            // 组件 CSS 文件名规则（不包括扩展名的基础文件名）
-            component: /\.(component|module)/
-        }
-    },
+    moduleCssFilenameTest: /\.(component|view|module)/,
     // ...
 }
 ```
 
-_默认规则解释:_ 以 `.component.css` 或 `.module.css` (扩展名可为 `css` `less` `sass` 等) 为结尾的文件会当作组件 CSS，其他文件会被当做全局 CSS
+_默认规则解释:_ 文件名以 `.component.css` `.view.css` 或 `.module.css` (扩展名可为 `css` `less` `sass`) 为结尾的文件会当作组件 CSS，其他文件会被当做全局 CSS。

@@ -151,6 +151,8 @@ const middlewareIsomorphic = (options = {}) => {
 
                 thisTemplateInjectCache, thisEntrypoints, thisFilemap, //thisStyleMap,
                 styleMap,
+
+                connectedComponents: []
             }
             if (__DEV__) {
                 // global.__KOOT_STORE__ = Store

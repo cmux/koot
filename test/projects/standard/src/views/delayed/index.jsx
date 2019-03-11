@@ -1,6 +1,8 @@
 import React from 'react'
 import { extend, localeId } from 'koot'
 
+import TS from '@components/ts'
+
 export default extend({
     connect: state => ({
         localeId: state.localeId
@@ -24,5 +26,7 @@ export default extend({
                 <li><em>props.localeId:</em> {localeId}</li>
                 <li><em>{"import { localeId } from 'koot': "}</em> {localeId}</li>
             </ul>
+            <p>TS</p>
+            <TS />
         </div>
 )

@@ -9,16 +9,20 @@ import i18nValidateRoutes from '../../i18n/validte-routes'
  */
 const validateRouterConfig = (kootConfigRouter) => {
 
-    if (typeof kootConfigRouter !== 'object')
+    let config = typeof kootConfigRouter === 'function'
+        ? kootConfigRouter()
+        : kootConfigRouter
+
+    if (typeof config !== 'object')
         throw new Error(errorMsg('VALIDATE_ROUTER_CONFIG', 'no router config or router object invalid'))
 
     const { ...routes } = (() => {
-        if (Array.isArray(kootConfigRouter)) {
+        if (Array.isArray(config)) {
             return {
-                childRoutes: [...kootConfigRouter]
+                childRoutes: [...config]
             }
         }
-        return kootConfigRouter
+        return config
     })()
 
     if (!routes.path) {

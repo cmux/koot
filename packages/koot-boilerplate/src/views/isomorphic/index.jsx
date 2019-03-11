@@ -1,6 +1,8 @@
 import React from 'react'
 import { extend } from 'koot'
 
+import Center from '@components/center'
+
 const PageIsomorphic = extend({
     pageinfo: () => ({
         title: `${__('pages.isomorphic.title')} - ${__('title')}`,
@@ -11,9 +13,9 @@ const PageIsomorphic = extend({
     styles: require('./styles.component.less')
 })(
     ({ routeParams, location, params, route, router, routes, ...props }) => (
-        <div {...props}>
+        <Center {...props}>
             {__('pages.isomorphic.title')}
-        </div>
+        </Center>
     )
 )
 

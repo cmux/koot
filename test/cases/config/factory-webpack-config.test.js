@@ -23,7 +23,7 @@ const envs = ['prod', 'dev']
 //     done()
 // })
 
-describe('测试: 生成 Webpack 配置', async () => {
+describe('测试: 生成 Webpack 配置', () => {
 
     // const dirProjects = path.resolve(__dirname, '../projects')
     // const projects = fs.readdirSync(dirProjects)

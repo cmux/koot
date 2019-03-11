@@ -25,7 +25,7 @@ let logCountRouterUpdate = 0
 let logCountHistoryUpdate = 0
 
 /** @type {Number} react-router match 允许的最长运行时间 (ms) */
-const maxRouterMatchTime = 1000
+const maxRouterMatchTime = 5 * 1000
 
 
 // ----------------------------------------------------------------------------
