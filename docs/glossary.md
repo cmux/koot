@@ -15,6 +15,5 @@
 
 ### 项目
 
- - [koot-cli](https://github.com/websage-team/koot-cli) cli tool for create project
- - [sp-boilerplate](https://github.com/websage-team/sp-boilerplate) boilerplate project
- - [sp-env](https://github.com/websage-team/sp-env) Linux env software
+ - [koot-cli](https://github.com/cmux/koot/tree/master/packages/koot-cli) CLI (Command-line Interface) 工具，用以创建、更新 Koot 项目。
+ - [koot-boilerplate](https://github.com/cmux/koot/tree/master/packages/koot-boilerplate) Koot.js 基础模板。

@@ -40,6 +40,16 @@ module.exports = (kootBuildConfig = {}) => {
         }]
     }
 
+    if (!createDll && env === 'dev' && stage === 'server') {
+        return [{
+            test: /\.(js|mjs|jsx)$/,
+            use: [
+                useBabelLoader(),
+                require.resolve('../../../loaders/koot-dev-ssr.js')
+            ]
+        }]
+    }
+
     return [{
         test: /\.(js|mjs|jsx)$/,
         use: useBabelLoader()

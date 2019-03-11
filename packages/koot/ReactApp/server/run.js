@@ -1,5 +1,4 @@
-
-if (__DEV__) global.__KOOT_SSR__ = {}
+/* __KOOT_DEV_SSR__ */
 
 // require('@babel/register')
 // require('@babel/polyfill')

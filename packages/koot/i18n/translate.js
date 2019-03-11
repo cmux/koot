@@ -3,10 +3,15 @@ import locales from './locales'
 
 export let l = (() => {
     if (__SERVER__) {
-        if (__DEV__ && typeof global.__KOOT_SSR__ === 'object')
-            return global.__KOOT_SSR__.locales[localeId]
+        if (__DEV__ && typeof global.__KOOT_SSR__ === 'object') {
+            if (typeof global.__KOOT_SSR__.locales === 'object')
+                return global.__KOOT_SSR__.locales[localeId]
+            return {}
+        }
         // console.log({ locales })
-        return locales[localeId]
+        if (typeof locales === 'object')
+            return locales[localeId]
+        return {}
     }
     if (JSON.parse(process.env.KOOT_I18N_TYPE) === 'redux')
         return locales
