@@ -15,6 +15,7 @@ const {
     keyFileProjectConfigTempPortionClient,
     filenameWebpackDevServerPortTemp,
     filenameBuilding,
+    filenameBuildFail,
     // filenameDll, filenameDllManifest,
 } = require('../defaults/before-build')
 
@@ -205,9 +206,12 @@ const run = async () => {
         process.removeListener('uncaughtException', exitHandler)
     }
     const exitHandler = async (options = {}) => {
-        const {
-            silent = false
+        let {
+            silent = false,
+            error = false,
         } = options
+
+        if (error) silent = true
 
         await removeTempProjectConfig()
         await removeTempBuild(dist)
@@ -238,7 +242,7 @@ const run = async () => {
             try {
                 // console.log(process.pid)
                 removeAllExitListeners()
-                console.log('\n\n\n' + chalk.cyanBright('Press CTRL+C again to exit.') + '\n\n')
+                if (!error) console.log('\n\n\n' + chalk.cyanBright('Press CTRL+C again to exit.') + '\n\n')
                 // process.kill(process.pid)
                 process.exit(1)
             } catch (e) {
@@ -248,7 +252,7 @@ const run = async () => {
             removeAllExitListeners()
             // 清屏
             // process.stdout.write('\x1B[2J\x1B[0f')
-            console.log('Press CTRL+C again to exit.')
+            if (!error) console.log('Press CTRL+C again to exit.')
 
             // 发送信息
             if (process.send) {
@@ -477,6 +481,13 @@ const run = async () => {
             return opn(`http://localhost:${process.env.SERVER_PORT}/`)
     }
 
+    // 遇到错误
+    const encounterError = e => {
+        const error = e instanceof Error ? e : new Error(e)
+        exitHandler({ error: true })
+        throw error
+    }
+
     // 连接 PM2
     // console.log('noDaemon', !global)
     pm2.connect(!global, async (err) => {
@@ -511,7 +522,11 @@ const run = async () => {
         /*const processClient = */await start('client')
 
         // 监视 chunkmap 文件，如果修改，进入下一步
-        await checkFileUpdate(pathChunkmap, contentWaiting)
+        await Promise.race([
+            checkFileUpdate(pathChunkmap, contentWaiting),
+            checkFileUpdate(path.resolve(getDirDevTmp(cwd), 'client-error.log'), '')
+                .then(encounterError)
+        ])
         // waitingSpinner.succeed()
         console.log(
             chalk.green('√ ')
@@ -608,3 +623,6 @@ const openBrowserPage = () => {
 }
 
 run()
+    .catch(err => {
+        console.error(err)
+    })

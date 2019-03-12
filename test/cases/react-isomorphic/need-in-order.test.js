@@ -279,7 +279,7 @@ const doTest = async (port, settings = {}) => {
 
     // TODO: 测试: 访问404
 
-    // TODO: 测试: 访问全局子路由
+    // TODO: 测试: 访问全局子路由 (例: 路由配置了 /a，强行访问 /a/b)
 
     await browser.close()
 }

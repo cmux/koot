@@ -60,7 +60,7 @@
 - 更新依赖包
   - major
     - `cli-spinners` -> _2.0.0_
-    - `copy-webpack-plugin` -> _5.0.0_
+    - `copy-webpack-plugin` -> _5.0.1_
     - `css-loader` -> _2.1.0_
     - `file-loader` -> _3.0.1_
     - `koa-body` -> _4.1.0_

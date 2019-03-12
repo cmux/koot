@@ -499,23 +499,29 @@ module.exports = async (kootConfig = {}) => {
         const server = await new WebpackDevServer(compiler, devServerConfig)
         server.use(require('webpack-hot-middleware')(compiler))
 
-        server.listen(port, '0.0.0.0', async (err) => {
-            if (err) console.error(err)
-            // console.log('===========')
-        })
+        try {
+            server.listen(port, '0.0.0.0', async (err) => {
+                // if (err) console.error(err)
+                if (err) buildingError(err)
+                // console.log('===========')
+            })
 
-        // 等待 building 标记为 false
-        await new Promise(resolve => {
-            const wait = () => setTimeout(() => {
-                if (building === false) return resolve()
-                return wait()
-            }, 500)
-            wait()
-        })
+            // 等待 building 标记为 false
+            await new Promise(resolve => {
+                const wait = () => setTimeout(() => {
+                    if (building === false) return resolve()
+                    return wait()
+                }, 500)
+                wait()
+            })
 
-        if (TYPE !== 'spa') {
-            logEmptyLine()
-            log('success', 'dev', `webpack-dev-server @ http://localhost:${port}`)
+            if (TYPE !== 'spa') {
+                logEmptyLine()
+                log('success', 'dev', `webpack-dev-server @ http://localhost:${port}`)
+            }
+
+        } catch (e) {
+            buildingError(e)
         }
 
         return result
