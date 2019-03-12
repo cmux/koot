@@ -1,9 +1,28 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Table } from 'antd';
+import { Resizable } from 'react-resizable';
 import { separatorFormat, ellipsisStyleFormat, minWidthStyleFormat, maxWidthStyleFormat } from './format.js';
 import { isObject } from 'util';
 import { AutoTooltip } from './components';
+
+const ResizeableTitle = (props) => {
+    const { onResize, width, ...restProps } = props;
+  
+    if (!width) {
+        return <th {...restProps} />;
+    }
+
+    return (
+        <Resizable 
+            width={width} 
+            height={0} 
+            onResize={onResize}
+        >
+            <th {...restProps} />
+        </Resizable>
+    );
+};
 
 const uuid = (len, radix) => {
     var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
@@ -33,7 +52,23 @@ const uuid = (len, radix) => {
     return uuid.join('');
 }
 
+// @KootExtend({
+//     styles: require('./list.module.less'),
+// })
+
+
 class List extends Component {
+
+    constructor(props) {
+        super(props);
+        const { render } = this.props;
+        const config  = render();
+        const { columns } = config;
+        this.state = {
+            columns: this.columnsHandler(columns)
+        }
+    }
+    
 
     static propTypes = {
         children: PropTypes.node,
@@ -41,25 +76,64 @@ class List extends Component {
     }
 
     render() {
-        const { render } = this.props;
+        const { render, resizable } = this.props;
         const config  = render();
         const props = this.propsHandler( Object.assign({}, this.props, config) );
-        const { columns, dataSource } = config;
+        const { dataSource } = config;
         const nextDataSource = dataSource && dataSource.map((dataItem, index) => {
             return Object.assign({}, dataItem, {
                 key: index
             })
         })
-        const nextColumns = this.columnsHandler(columns);
-        return (
-            <Table
-                columns={nextColumns}
-                dataSource={nextDataSource}
-                {...props}
-            >
-            </Table>
-        );
+        
+        let nextColumns;
+        if (resizable) {
+            nextColumns = this.state.columns.map((col, index) => ({
+                ...col,
+                onHeaderCell: column => ({
+                    width: column.width,
+                    onResize: this.handleResize(index),
+                }),
+            }));
+            return (
+                <Table
+                    components={this.components}
+                    columns={nextColumns}
+                    dataSource={nextDataSource}
+                    {...props}
+                >
+                </Table>
+            )
+        } else {
+            nextColumns = this.state.columns;
+            return (
+                <Table
+                    columns={nextColumns}
+                    dataSource={nextDataSource}
+                    {...props}
+                >
+                </Table>
+            )
+        }
+        
     }
+
+    components = {
+        header: {
+            cell: ResizeableTitle,
+        },
+    };
+
+    handleResize = index => (e, { size }) => {
+        this.setState(({ columns }) => {
+            const nextColumns = [...columns];
+            nextColumns[index] = {
+                ...nextColumns[index],
+                width: size.width,
+            };
+            return { columns: nextColumns };
+        });
+    };
 
     columnsHandler = ( columns ) => {
         return columns && columns.map(item => {
@@ -185,4 +259,7 @@ class List extends Component {
     }
 }
 
-export default List;
+// export default List;
+export default KootExtend({
+    styles: require('./list.module.less'),
+})(List);

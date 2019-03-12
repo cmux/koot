@@ -15,6 +15,7 @@
   "dependencies": {
     "classnames": "^2.2.6",
     "mini-store": "^2.0.0",
-    "prop-types": "^15.6.2"
+    "prop-types": "^15.6.2",
+    "react-resizable": "^1.7.5"
   }
 }
