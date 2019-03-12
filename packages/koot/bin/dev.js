@@ -15,7 +15,7 @@ const {
     keyFileProjectConfigTempPortionClient,
     filenameWebpackDevServerPortTemp,
     filenameBuilding,
-    filenameBuildFail,
+    // filenameBuildFail,
     // filenameDll, filenameDllManifest,
 } = require('../defaults/before-build')
 
@@ -522,11 +522,11 @@ const run = async () => {
         /*const processClient = */await start('client')
 
         // 监视 chunkmap 文件，如果修改，进入下一步
-        await Promise.race([
-            checkFileUpdate(pathChunkmap, contentWaiting),
-            checkFileUpdate(path.resolve(getDirDevTmp(cwd), 'client-error.log'), '')
-                .then(encounterError)
-        ])
+        // await Promise.race([
+        await checkFileUpdate(pathChunkmap, contentWaiting)
+        //     checkFileUpdate(path.resolve(getDirDevTmp(cwd), 'client-error.log'), '')
+        //         .then(encounterError)
+        // ])
         // waitingSpinner.succeed()
         console.log(
             chalk.green('√ ')
