@@ -412,7 +412,7 @@ const run = async () => {
         await fs.ensureFile(pathLogErr)
 
         const config = {
-            name: `dev-${stage}-${name}`,
+            name: `${stage}-${name}`,
             script: path.resolve(__dirname, './build.js'),
             args: `--stage ${stage} ${buildCmdArgs}`,
             cwd: cwd,
