@@ -93,6 +93,9 @@ module.exports = () => {
 
         // 当前是否是测试模式
         KOOT_TEST_MODE: JSON.stringify(false),
+
+        // 开发环境启动时间
+        // KOOT_DEV_START_TIME: Date.now(),
     }
     for (let key in defaults) {
         if (typeof process.env[key] === 'undefined') {

@@ -25,6 +25,7 @@ const removeTempProjectConfig = require('../libs/remove-temp-project-config')
 const validateConfig = require('../libs/validate-config')
 const validateConfigDist = require('../libs/validate-config-dist')
 const getDirDevTmp = require('../libs/get-dir-dev-tmp')
+const getDirDevCache = require('../libs/get-dir-dev-cache')
 
 const __ = require('../utils/translate')
 const sleep = require('../utils/sleep')
@@ -164,6 +165,9 @@ const run = async () => {
     // 清理遗留的临时文件
     await removeTempBuild(dist)
     await fs.emptyDir(getDirDevTmp(cwd))
+    const dirCache = getDirDevCache()
+    await fs.ensureDir(dirCache)
+    await fs.emptyDir(dirCache)
 
     // 如果有临时项目配置文件，更改环境变量
     if (fileProjectConfigTempFull)
@@ -183,6 +187,9 @@ const run = async () => {
     // if (typeof port === 'undefined' && typeof configPort !== 'undefined')
     //     process.env.SERVER_PORT = getPort(configPort, 'dev')
     process.env.SERVER_PORT = devPort
+
+    // 设置其他环境变量
+    process.env.KOOT_DEV_START_TIME = Date.now()
 
 
 

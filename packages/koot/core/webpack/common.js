@@ -111,6 +111,7 @@ const plugins = async (env, stage, defines = {}/*, remainingKootBuildConfig = {}
         "KOOT_HTML_TEMPLATE",
         "KOOT_PWA_AUTO_REGISTER",
         "KOOT_PWA_PATHNAME",
+        "KOOT_DEV_START_TIME",
         "WEBPACK_BUILD_TYPE",
         "WEBPACK_BUILD_ENV",
         "WEBPACK_CHUNKMAP",

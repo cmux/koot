@@ -73,6 +73,9 @@ const validateConfig = async (projectDir = getCwd(), options = {}) => {
         throw new Error(msg)
     }
 
+    if (!process.env.KOOT_DEV_START_TIME)
+        process.env.KOOT_DEV_START_TIME = Date.now()
+
     /** @type {String} 存放临时文件的目录 */
     const dirConfigTemp = tmpDir || path.resolve(projectDir, _dirConfigTemp)
     // 确保该临时目录存在
@@ -123,15 +126,15 @@ const validateConfig = async (projectDir = getCwd(), options = {}) => {
     } = await require('./extract-to-tmp')(projectDir, kootConfig)
 
     // 写入项目配置文件 (临时)
-    const pathTmpConfig = path.resolve(dirConfigTemp, filenameProjectConfigTempFull.replace(/\*/g, Date.now()))
+    const pathTmpConfig = path.resolve(dirConfigTemp, filenameProjectConfigTempFull.replace(/\*/g, process.env.KOOT_DEV_START_TIME))
     process.env.KOOT_PROJECT_CONFIG_FULL_PATHNAME = pathTmpConfig
     await fs.writeFile(pathTmpConfig, tmpConfig, 'utf-8')
 
-    const pathTmpConfigPortionServer = path.resolve(dirConfigTemp, filenameProjectConfigTempPortionServer.replace(/\*/g, Date.now()))
+    const pathTmpConfigPortionServer = path.resolve(dirConfigTemp, filenameProjectConfigTempPortionServer.replace(/\*/g, process.env.KOOT_DEV_START_TIME))
     process.env.KOOT_PROJECT_CONFIG_PORTION_SERVER_PATHNAME = pathTmpConfigPortionServer
     await fs.writeFile(pathTmpConfigPortionServer, tmpConfigPortionServer, 'utf-8')
 
-    const pathTmpConfigPortionClient = path.resolve(dirConfigTemp, filenameProjectConfigTempPortionClient.replace(/\*/g, Date.now()))
+    const pathTmpConfigPortionClient = path.resolve(dirConfigTemp, filenameProjectConfigTempPortionClient.replace(/\*/g, process.env.KOOT_DEV_START_TIME))
     process.env.KOOT_PROJECT_CONFIG_PORTION_CLIENT_PATHNAME = pathTmpConfigPortionClient
     await fs.writeFile(pathTmpConfigPortionClient, tmpConfigPortionClient, 'utf-8')
 

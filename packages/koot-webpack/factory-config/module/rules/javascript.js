@@ -1,3 +1,5 @@
+const getDirDevCache = require('../../../libs/require-koot')('libs/get-dir-dev-cache')
+
 /**
  * Loader 规则 - Javascript
  * @param {Object} options
@@ -24,6 +26,14 @@ module.exports = (kootBuildConfig = {}) => {
             options
         }
     }
+
+    const useCacheLoader = (options = {}) => ({
+        loader: 'cache-loader',
+        options: {
+            cacheDirectory: getDirDevCache(),
+            ...options
+        }
+    })
 
     const useThreadLoader = (options = {}) => ({
         loader: "thread-loader",
@@ -68,12 +78,14 @@ module.exports = (kootBuildConfig = {}) => {
             test: /\.(js|mjs)$/,
             use: [
                 useThreadLoader(),
+                useCacheLoader(),
                 useBabelLoader()
             ]
         }, {
             test: /\.jsx$/,
             use: [
                 useThreadLoader(),
+                useCacheLoader(),
                 useBabelLoader({
                     __react: true
                 }),
@@ -86,6 +98,8 @@ module.exports = (kootBuildConfig = {}) => {
         return [{
             test: /\.(js|mjs|jsx)$/,
             use: [
+                useThreadLoader(),
+                useCacheLoader(),
                 useBabelLoader(),
                 require.resolve('../../../loaders/koot-dev-ssr.js')
             ]
