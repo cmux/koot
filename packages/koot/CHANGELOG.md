@@ -44,7 +44,9 @@
   - 对于传入自定 `store` 对象或生成方法的项目，确保生成 `store` 使用的 `history` 对象为浏览器所用对象
   - 移除 `AppContainer` 逻辑的相关文件
 - 添加依赖包
+  - `cache-loader`
   - `extract-hoc`
+  - `thread-loader`
 - 移除依赖包
   - `autoprefixer`
   - `koa-compose`

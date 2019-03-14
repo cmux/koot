@@ -21,6 +21,7 @@ const factoryConfig = async ({
             chunkFilename: (localeId ? localeId : '') + `.chunk.-_-_-_-_-_-[chunkhash]-_-_-_-_-_-.js`,
             path: '/',
             publicPath: `http://localhost:${clientDevServerPort}/dist/`,
+            pathinfo: false,
             crossOriginLoading: 'anonymous',
         },
         plugins: [
