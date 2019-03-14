@@ -1,16 +1,15 @@
 ## 0.8.0
-**2019-03-12** (beta.18)
+**2019-03-14** (beta.19)
 - **重大改动**
-  - 已放弃兼容 0.6 版本之前的项目配置模式
   - 重写 React 同构服务器逻辑，原则上对已有项目不会造成影响
-    - 现在可以放心的从 `koot` 中引用 `store` `history` 和 `localeId` 了
-  - 移除了 `sp-css-import` 依赖包，请修改为新式的 `@extend()` 写法
-  - 移除了 `pageinfo()` 高阶组件，请修改为新式的 `@extend()` 写法
+    - 若发现从 `koot` 中引用的 `store` `history` 或 `localeId` 值为 `undefined`，请尝试改为使用 `getStore()` `getHistory()` 或 `getLocaleId()` 方法
+  - 移除了 `sp-css-import`，请修改为新式的 `@extend()` 写法
+  - 移除了 `pageinfo()`，请修改为新式的 `@extend()` 写法
   - 调整了项目配置方案，原则上对已有项目不会造成影响
     - 0.6版本之前的配置文件现已不再支持
   - 调整 CSS 打包、使用规则
     - 现在明确只存在 2 种 CSS 文件：全局 CSS 和组件 CSS
-    - 可通过配置文件对文件名规则进行配置。详情请参见文档的 [配置/客户端](https://koot.js.org/#/config?id=webpack-amp-打包)
+    - 可通过配置文件对文件名规则进行配置。详情请参见文档的 [CSS 使用/配置](https://koot.js.org/#/css?id=配置)
     - 全局 CSS 规则
       - 所有全局 CSS 文件会根据所属的 Webpack 入口，被抽出为对应的独立的 CSS 文件 (打包结果中的 `extract.[hash].css`)
       - 所有这些 CSS 文件结果也会被整合到一个统一的 CSS 文件中 (打包结果中的 `extract.all.[hash].css`)
@@ -28,16 +27,15 @@
     - **新** `serverOnRender.beforeDataToStore` 和 `serverOnRender.afterDataToStore` - 允许更详细的使用服务器端渲染生命周期。详情请参见文档的 [配置](https://koot.js.org/#/config?id=Webpack) 章节
     - `cookiesToStore` 现支持传入 `true`: 同步所有 cookie，包括 cookie 原始字符串 (以 `__` 为名称)
     - `staticCopyFrom` / `staticAssets` 现支持传入 _Array_
-  - 优化 `koot-start` 命令，尽量避免 `koot-build 命令未找到` 的问题
+  - 优化 `koot-start` 命令，进一步尝试避免 `koot-build 命令未找到` 的问题
   - Webpack 打包
-    - 现在打包时不再会在项目根目录下生成临时文件
-      - 这些文件现在移至 `/logs/tmp/` 目录下
+    - 打包时不再会在项目根目录下生成临时文件，这些文件现在移至 `/logs/tmp/` 目录下
     - 现在每种打包模式仅保留最近 2 次打包的日志文件 (`/logs/webpack-config/` 目录下)
   - 开发环境
-    - 优化 React 组件热更新能力
+    - 大辅优化热更新能力
     - 将大部分开发环境所用的临时文件和标记文件整合、移动到 `/logs/dev/` 目录中
 - React
-  - 根层组件添加 `componentDidCatch` 生命周期方法，以保障 React 输出渲染结果
+  - 根层组件添加 `componentDidCatch` 生命周期方法，以进一步保障 React 输出渲染结果
 - React 同构
   - 确保 `connect` 封装的组件，其数据同构功能可用
 - React SPA
