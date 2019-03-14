@@ -18,6 +18,7 @@ const pathname = './logs/webpack-config'
  * @param {Object} [option] 选项
  * @param {Boolean} [option.quietMode=false] 是否为安静模式，如果开启不会打出 console log
  * @param {Boolean} [option.createDll=false] 本次打包是否为生成 DLL
+ * @param {Boolean} [option.analyze=false] 是否为分析模式
  */
 module.exports = async (config = {}, options = {}) => {
     // 扩展不支持 toJSON 的类
@@ -28,6 +29,7 @@ module.exports = async (config = {}, options = {}) => {
     const {
         quietMode = false,
         createDll = false,
+        analyze = false,
     } = options
 
     const {
@@ -43,7 +45,12 @@ module.exports = async (config = {}, options = {}) => {
     await fs.ensureDir(dir)
 
     /** @type {String} 文件名中的类型部分 */
-    const filenameTypename = `${TYPE}.${STAGE}.${ENV}${createDll ? '.dll' : ''}`
+    const filenameSegMode = (() => {
+        if (createDll) return '.dll'
+        if (analyze) return '.analyze'
+        return ''
+    })()
+    const filenameTypename = `${TYPE}.${STAGE}.${ENV}${filenameSegMode}`
 
     // 清理目录
     {

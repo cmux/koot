@@ -126,5 +126,6 @@
         "webpack-hot-middleware": "2.24.3",
         "xmlify": "1.1.0",
         "yargs": "13.2.2"
-    }
+    },
+    "gitHead": "d249303fbd8e635e028addfa1ce656c58810b448"
 }

@@ -44,3 +44,5 @@ jspm_packages
 package-lock.json
 .koot.*
 test/cases/config/samples
+logs
+dist

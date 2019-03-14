@@ -419,7 +419,7 @@ module.exports = async (kootConfig = {}) => {
 
     // 处理日志文件
     await cleanAndWriteLogFiles(webpackConfig, {
-        quietMode, createDll
+        quietMode, createDll, analyze
     })
 
     // if (Array.isArray(webpackConfig)) {
