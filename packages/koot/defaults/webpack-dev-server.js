@@ -4,9 +4,9 @@ module.exports = {
     entryClientHMR: 'webpack-dev-server-client',
 
     hmrOptions: {
-        multiStep: true,
-        fullBuildTimeout: process.env.WEBPACK_BUILD_TYPE === 'spa' ? 500 : undefined,
-        requestTimeout: process.env.WEBPACK_BUILD_TYPE === 'spa' ? undefined : 1000
+        // multiStep: true,
+        // fullBuildTimeout: process.env.WEBPACK_BUILD_TYPE === 'spa' ? 500 : undefined,
+        // requestTimeout: process.env.WEBPACK_BUILD_TYPE === 'spa' ? undefined : 1000
     },
 
 }
