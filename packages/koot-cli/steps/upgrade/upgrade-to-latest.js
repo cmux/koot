@@ -22,7 +22,8 @@ module.exports = async (dir = process.cwd(), version) => {
     const waiting = spinner(msg + '...')
 
     // 修改 package.json 的依赖项
-    p.dependencies.koot = '^' + version
+    // p.dependencies.koot = '^' + version
+    p.dependencies.koot = version
     if (writeFile)
         await fs.writeJson(pathnamePackagejson, p, {
             spaces: 4

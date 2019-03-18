@@ -11,9 +11,8 @@
         "publish:only-core:next": "lerna publish --ignore-changes \"packages/!(koot|koot-webpack)/**\" --dist-tag next",
         "lerna:version": "lerna version",
         "lerna:version:only-core": "lerna version --ignore-changes \"packages/!(koot|koot-webpack)/**\"",
-        "pretest": "node ./test/pre-test.js",
-        "test": "jest \"^((?!need-in-order).)*\\.js$\" && npm run test:react",
-        "test:factoryconfig": "jest ./test/cases/actory-config/test.js",
+        "test": "node ./test/index.js",
+        "test:full": "node ./test/pre-test.js && jest \"^((?!need-in-order).)*\\.js$\" && npm run test:react",
         "test:react": "npm run test:react:spa && npm run test:react:isomorphic",
         "test:react:isomorphic": "jest ./test/cases/react-isomorphic",
         "test:react:spa": "jest ./test/cases/react-spa",
@@ -58,7 +57,9 @@
         "puppeteer": "1.13.0",
         "jsdom": "14.0.0",
         "fs-extra": "7.0.1",
-        "is-valid-path": "0.1.1"
+        "is-valid-path": "0.1.1",
+        "inquirer": "6.2.2",
+        "chalk": "2.4.2"
     },
     "dependencies": {
         "docsify-cli": "4.3.0"
