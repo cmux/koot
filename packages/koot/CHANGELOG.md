@@ -1,5 +1,5 @@
 ## 0.8.0
-**2019-03-14** (beta.19)
+**2019-03-18** (beta.20)
 - **重大改动**
   - 重写 React 同构服务器逻辑，原则上对已有项目不会造成影响
     - 若发现从 `koot` 中引用的 `store` `history` 或 `localeId` 值为 `undefined`，请尝试改为使用 `getStore()` `getHistory()` 或 `getLocaleId()` 方法
