@@ -102,14 +102,14 @@ const validate = (config, kootBuildConfig) => {
     validateModuleRules(config, kootBuildConfig)
 
     // analyze
-    const isAnalyze = (JSON.parse(process.env.WEBPACK_ANALYZE) || config.analyze) ? true : false
-    if (isAnalyze) {
-        config.output.filename = 'entry.[id].[name].js'
-        config.output.chunkFilename = 'chunk.[id].[name].js'
-        // config.plugins.push(
-        //     new (webpackBundleAnalyzer.BundleAnalyzerPlugin)()
-        // )
-    }
+    // const isAnalyze = (JSON.parse(process.env.WEBPACK_ANALYZE) || config.analyze) ? true : false
+    // if (isAnalyze) {
+    //     config.output.filename = 'entry.[id].[name].js'
+    //     config.output.chunkFilename = 'chunk.[id].[name].js'
+    //     // config.plugins.push(
+    //     //     new (webpackBundleAnalyzer.BundleAnalyzerPlugin)()
+    //     // )
+    // }
 
     // custom logic use
     delete config.__ext

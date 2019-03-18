@@ -46,12 +46,13 @@ const log = (obj, spaceCount = 1, deep = 2) => {
 module.exports = async (compilation, localeId) => {
     if (typeof compilation !== 'object') return {}
 
-    const stats = compilation.getStats()
+    const stats = compilation.getStats().toJson()
 
     const chunkmap = {}
     const entryChunks = {}
 
-    const dirRelative = path.relative(getDistPath(), stats.compilation.outputOptions.path).replace(`\\`, '/')
+    // const dirRelative = path.relative(getDistPath(), stats.compilation.outputOptions.path).replace(`\\`, '/')
+    const dirRelative = path.relative(getDistPath(), stats.outputPath).replace(`\\`, '/')
     const filepathname = getChunkmapPath()
     // stats.compilation.outputOptions.path,
 
@@ -62,18 +63,30 @@ module.exports = async (compilation, localeId) => {
     // }
 
     // 生成入口对照表
-    if (stats.compilation.entrypoints) {
-        stats.compilation.entrypoints.forEach((value, key) => {
-            // console.log(value, key, map)
+    // if (stats.compilation.entrypoints) {
+    //     stats.compilation.entrypoints.forEach((value, key) => {
+    //         entryChunks[key] = []
+    //         value.chunks.forEach(chunk => {
+    //             if (Array.isArray(chunk.files))
+    //                 chunk.files
+    //                     .filter(file => isNotSourcemap(file))
+    //                     .forEach(file =>
+    //                         entryChunks[key].push(getFilePathname(dirRelative, file))
+    //                     )
+    //         })
+    //     })
+    //     chunkmap['.entrypoints'] = entryChunks
+    // }
+    if (typeof stats.entrypoints === 'object') {
+        Object.keys(stats.entrypoints).forEach(key => {
+            const { assets } = stats.entrypoints[key]
+            if (!Array.isArray(assets)) return
             entryChunks[key] = []
-            value.chunks.forEach(chunk => {
-                if (Array.isArray(chunk.files))
-                    chunk.files
-                        .filter(file => isNotSourcemap(file))
-                        .forEach(file =>
-                            entryChunks[key].push(getFilePathname(dirRelative, file))
-                        )
-            })
+            assets
+                .filter(filename => isNotSourcemap(filename))
+                .forEach(filename =>
+                    entryChunks[key].push(getFilePathname(dirRelative, filename))
+                )
         })
         chunkmap['.entrypoints'] = entryChunks
     }
@@ -82,15 +95,20 @@ module.exports = async (compilation, localeId) => {
     chunkmap['.files'] = generateFilemap(compilation, dirRelative)
 
     // 生成所有入口和代码片段所输出的文件的对照表
-    for (let id in stats.compilation.chunks) {
-        const o = stats.compilation.chunks[id]
-        if (typeof o.name === 'undefined' || o.name === null) continue
-        chunkmap[o.name] = o.files
-
-        if (Array.isArray(o.files))
+    if (Array.isArray(stats.chunks)) {
+        // console.log(stats.chunks)
+        // for (let id in stats.compilation.chunks) {
+        //     const o = stats.compilation.chunks[id]
+        for (let id in stats.chunks) {
+            const o = stats.chunks[id]
+            if (typeof o.name === 'undefined' || o.name === null) continue
             chunkmap[o.name] = o.files
-                .filter(filename => isNotSourcemap(filename))
-                .map(filename => getFilePathname(dirRelative, filename))
+
+            if (Array.isArray(o.files))
+                chunkmap[o.name] = o.files
+                    .filter(filename => isNotSourcemap(filename))
+                    .map(filename => getFilePathname(dirRelative, filename))
+        }
     }
 
     let json = {}

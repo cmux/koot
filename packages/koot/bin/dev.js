@@ -15,6 +15,7 @@ const {
     keyFileProjectConfigTempPortionClient,
     filenameWebpackDevServerPortTemp,
     filenameBuilding,
+    // filenameBuildFail,
     // filenameDll, filenameDllManifest,
 } = require('../defaults/before-build')
 
@@ -24,6 +25,7 @@ const removeTempProjectConfig = require('../libs/remove-temp-project-config')
 const validateConfig = require('../libs/validate-config')
 const validateConfigDist = require('../libs/validate-config-dist')
 const getDirDevTmp = require('../libs/get-dir-dev-tmp')
+const getDirDevCache = require('../libs/get-dir-dev-cache')
 
 const __ = require('../utils/translate')
 const sleep = require('../utils/sleep')
@@ -163,6 +165,9 @@ const run = async () => {
     // 清理遗留的临时文件
     await removeTempBuild(dist)
     await fs.emptyDir(getDirDevTmp(cwd))
+    const dirCache = getDirDevCache()
+    await fs.ensureDir(dirCache)
+    await fs.emptyDir(dirCache)
 
     // 如果有临时项目配置文件，更改环境变量
     if (fileProjectConfigTempFull)
@@ -182,6 +187,9 @@ const run = async () => {
     // if (typeof port === 'undefined' && typeof configPort !== 'undefined')
     //     process.env.SERVER_PORT = getPort(configPort, 'dev')
     process.env.SERVER_PORT = devPort
+
+    // 设置其他环境变量
+    process.env.KOOT_DEV_START_TIME = Date.now()
 
 
 
@@ -205,9 +213,12 @@ const run = async () => {
         process.removeListener('uncaughtException', exitHandler)
     }
     const exitHandler = async (options = {}) => {
-        const {
-            silent = false
+        let {
+            silent = false,
+            error = false,
         } = options
+
+        if (error) silent = true
 
         await removeTempProjectConfig()
         await removeTempBuild(dist)
@@ -238,7 +249,7 @@ const run = async () => {
             try {
                 // console.log(process.pid)
                 removeAllExitListeners()
-                console.log('\n\n\n' + chalk.cyanBright('Press CTRL+C again to exit.') + '\n\n')
+                if (!error) console.log('\n\n\n' + chalk.cyanBright('Press CTRL+C again to exit.') + '\n\n')
                 // process.kill(process.pid)
                 process.exit(1)
             } catch (e) {
@@ -248,7 +259,7 @@ const run = async () => {
             removeAllExitListeners()
             // 清屏
             // process.stdout.write('\x1B[2J\x1B[0f')
-            console.log('Press CTRL+C again to exit.')
+            if (!error) console.log('Press CTRL+C again to exit.')
 
             // 发送信息
             if (process.send) {
@@ -408,7 +419,7 @@ const run = async () => {
         await fs.ensureFile(pathLogErr)
 
         const config = {
-            name: `dev-${stage}-${name}`,
+            name: `${stage}-${name}`,
             script: path.resolve(__dirname, './build.js'),
             args: `--stage ${stage} ${buildCmdArgs}`,
             cwd: cwd,
@@ -477,130 +488,145 @@ const run = async () => {
             return opn(`http://localhost:${process.env.SERVER_PORT}/`)
     }
 
+    // 遇到错误
+    const encounterError = e => {
+        const error = e instanceof Error ? e : new Error(e)
+        exitHandler({ error: true })
+        throw error
+    }
+
     // 连接 PM2
     // console.log('noDaemon', !global)
-    pm2.connect(!global, async (err) => {
-        if (err) {
-            // console.error(err)
-            process.exit(2)
-        }
+    try {
+        pm2.connect(!global, async (err) => {
+            if (err) {
+                // console.error(err)
+                process.exit(2)
+            }
 
-        console.log(
-            `  `
-            + chalk.yellowBright('[koot/build] ')
-            + __('build.build_start', {
-                type: chalk.cyanBright(__(`appType.${appType}`)),
-                stage: chalk.green('client'),
-                env: chalk.green('dev'),
-            })
-        )
+            console.log(
+                `  `
+                + chalk.yellowBright('[koot/build] ')
+                + __('build.build_start', {
+                    type: chalk.cyanBright(__(`appType.${appType}`)),
+                    stage: chalk.green('client'),
+                    env: chalk.green('dev'),
+                })
+            )
 
-        // 清空 chunkmap 文件
-        await fs.ensureFile(pathChunkmap)
-        await fs.writeFile(pathChunkmap, contentWaiting)
+            // 清空 chunkmap 文件
+            await fs.ensureFile(pathChunkmap)
+            await fs.writeFile(pathChunkmap, contentWaiting)
 
-        // 清空 server 打包结果文件
-        await fs.ensureFile(pathServerJS)
-        await fs.writeFile(pathServerJS, contentWaiting)
+            // 清空 server 打包结果文件
+            await fs.ensureFile(pathServerJS)
+            await fs.writeFile(pathServerJS, contentWaiting)
 
-        // 清空服务器启动成功标识文件
-        await fs.ensureFile(pathServerStartFlag)
-        await fs.writeFile(pathServerStartFlag, contentWaiting)
+            // 清空服务器启动成功标识文件
+            await fs.ensureFile(pathServerStartFlag)
+            await fs.writeFile(pathServerStartFlag, contentWaiting)
 
-        // 启动 client webpack-dev-server
-        /*const processClient = */await start('client')
+            // 启动 client webpack-dev-server
+            /*const processClient = */await start('client')
 
-        // 监视 chunkmap 文件，如果修改，进入下一步
-        await checkFileUpdate(pathChunkmap, contentWaiting)
-        // waitingSpinner.succeed()
-        console.log(
-            chalk.green('√ ')
-            + chalk.yellowBright('[koot/build] ')
-            + __('build.build_complete', {
-                type: chalk.cyanBright(__(`appType.${appType}`)),
-                stage: chalk.green('client'),
-                env: chalk.green('dev'),
-            })
-        )
-        // console.log(processClient[0].process, processClient[0].pid)
-        // console.log(
-        //     `  [${}]`
-        // )
+            // 监视 chunkmap 文件，如果修改，进入下一步
+            // await Promise.race([
+            await checkFileUpdate(pathChunkmap, contentWaiting)
+            //     checkFileUpdate(path.resolve(getDirDevTmp(cwd), 'client-error.log'), '')
+            //         .then(encounterError)
+            // ])
+            // waitingSpinner.succeed()
+            console.log(
+                chalk.green('√ ')
+                + chalk.yellowBright('[koot/build] ')
+                + __('build.build_complete', {
+                    type: chalk.cyanBright(__(`appType.${appType}`)),
+                    stage: chalk.green('client'),
+                    env: chalk.green('dev'),
+                })
+            )
+            // console.log(processClient[0].process, processClient[0].pid)
+            // console.log(
+            //     `  [${}]`
+            // )
 
-        // 启动 server webpack
-        // waitingSpinner = spinner(
-        //     chalk.yellowBright('[koot/build] ')
-        //     + __('build.build_start', {
-        //         type: chalk.cyanBright(appType),
-        //         stage: chalk.green('server'),
-        //         env: chalk.green('dev'),
-        //     })
-        // )
-        console.log(
-            `  `
-            + chalk.yellowBright('[koot/build] ')
-            + __('build.build_start', {
-                type: chalk.cyanBright(__(`appType.${appType}`)),
-                stage: chalk.green('server'),
-                env: chalk.green('dev'),
-            })
-        )
-        await start('server')
+            // 启动 server webpack
+            // waitingSpinner = spinner(
+            //     chalk.yellowBright('[koot/build] ')
+            //     + __('build.build_start', {
+            //         type: chalk.cyanBright(appType),
+            //         stage: chalk.green('server'),
+            //         env: chalk.green('dev'),
+            //     })
+            // )
+            console.log(
+                `  `
+                + chalk.yellowBright('[koot/build] ')
+                + __('build.build_start', {
+                    type: chalk.cyanBright(__(`appType.${appType}`)),
+                    stage: chalk.green('server'),
+                    env: chalk.green('dev'),
+                })
+            )
+            await start('server')
 
-        // 监视 server.js 文件，如果修改，进入下一步
-        await checkFileUpdate(pathServerJS, contentWaiting)
-        // waitingSpinner.succeed()
+            // 监视 server.js 文件，如果修改，进入下一步
+            await checkFileUpdate(pathServerJS, contentWaiting)
+            // waitingSpinner.succeed()
 
-        // 执行
-        // waitingSpinner = spinner(
-        //     chalk.yellowBright('[koot/build] ')
-        //     + 'waiting...'
-        // )
+            // 执行
+            // waitingSpinner = spinner(
+            //     chalk.yellowBright('[koot/build] ')
+            //     + 'waiting...'
+            // )
 
-        await sleep(500)
-        console.log(
-            chalk.green('√ ')
-            + chalk.yellowBright('[koot/build] ')
-            + __('build.build_complete', {
-                type: chalk.cyanBright(__(`appType.${appType}`)),
-                stage: chalk.green('server'),
-                env: chalk.green('dev'),
-            })
-        )
+            await sleep(500)
+            console.log(
+                chalk.green('√ ')
+                + chalk.yellowBright('[koot/build] ')
+                + __('build.build_complete', {
+                    type: chalk.cyanBright(__(`appType.${appType}`)),
+                    stage: chalk.green('server'),
+                    env: chalk.green('dev'),
+                })
+            )
 
-        // 启动服务器
-        await start('run')
+            // 启动服务器
+            await start('run')
 
-        // 监视服务器启动标识文件，如果修改，进入下一步
-        const errServerRun = await checkFileUpdate(pathServerStartFlag, contentWaiting)
+            // 监视服务器启动标识文件，如果修改，进入下一步
+            const errServerRun = await checkFileUpdate(pathServerStartFlag, contentWaiting)
 
-        // 移除临时文件
-        await fs.remove(path.resolve(getDirDevTmp(cwd), filenameWebpackDevServerPortTemp))
+            // 移除临时文件
+            await fs.remove(path.resolve(getDirDevTmp(cwd), filenameWebpackDevServerPortTemp))
 
-        // waitingSpinner.stop()
-        // waitingSpinner = undefined
+            // waitingSpinner.stop()
+            // waitingSpinner = undefined
 
-        /** @type {Object} 服务器相关信息 */
-        let infosServer
-        try {
-            infosServer = JSON.parse(errServerRun)
-        } catch (e) { }
+            /** @type {Object} 服务器相关信息 */
+            let infosServer
+            try {
+                infosServer = JSON.parse(errServerRun)
+            } catch (e) { }
 
-        if (typeof infosServer !== 'object' && errServerRun !== ' ' && errServerRun) {
-            // 出错
-            console.log(' ')
-            console.log(chalk.redBright(errServerRun))
-            console.log(' ')
-            return await exitHandler({
-                silent: true
-            })
-        }
+            if (typeof infosServer !== 'object' && errServerRun !== ' ' && errServerRun) {
+                // 出错
+                console.log(' ')
+                console.log(chalk.redBright(errServerRun))
+                console.log(' ')
+                return await exitHandler({
+                    silent: true
+                })
+            }
 
-        await start('main')
-        await checkFileUpdate(pathServerStartFlag, contentWaiting)
+            await start('main')
+            await checkFileUpdate(pathServerStartFlag, contentWaiting)
 
-        return complete()
-    })
+            return complete()
+        })
+    } catch (e) {
+        encounterError(e)
+    }
 }
 
 const openBrowserPage = () => {
@@ -608,3 +634,6 @@ const openBrowserPage = () => {
 }
 
 run()
+    .catch(err => {
+        console.error(err)
+    })

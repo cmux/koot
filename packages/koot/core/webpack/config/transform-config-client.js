@@ -111,8 +111,10 @@ module.exports = async (kootBuildConfig = {}) => {
 
             // analyze 模式，强制修改输出文件名
             if (analyze) {
-                result.output.filename = 'entry-[id].[name].js'
-                result.output.chunkFilename = 'chunck-[id].[name].js'
+                // result.output.filename = 'entry-[id].[name].js'
+                // result.output.chunkFilename = 'chunck-[id].[name].js'
+                result.output.filename = 'entry-[id].js'
+                result.output.chunkFilename = 'chunck-[id].js'
             } else {
                 if (!result.output.filename)
                     result.output.filename = 'entry.[chunkhash].js'

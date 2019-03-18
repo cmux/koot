@@ -13,7 +13,7 @@ const factoryConfig = async ({
     return {
         mode: "development",
         target: 'web',
-        devtool: 'source-map',
+        devtool: 'cheap-module-eval-source-map',
         output: {
             // -_-_-_-_-_- is trying to fix a pm2 bug that will currupt [name] value
             // check enter.js for the fix
@@ -21,6 +21,7 @@ const factoryConfig = async ({
             chunkFilename: (localeId ? localeId : '') + `.chunk.-_-_-_-_-_-[chunkhash]-_-_-_-_-_-.js`,
             path: '/',
             publicPath: `http://localhost:${clientDevServerPort}/dist/`,
+            pathinfo: false,
             crossOriginLoading: 'anonymous',
         },
         plugins: [

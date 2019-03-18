@@ -15,7 +15,7 @@ const factoryConfig = async ({
 
     return {
         mode: "development",
-        devtool: 'source-map',
+        devtool: 'cheap-module-eval-source-map',
         target: 'async-node',
         node: {
             __dirname: true
@@ -25,7 +25,8 @@ const factoryConfig = async ({
             filename: '[name].js',
             chunkFilename: 'chunk.-_-_-_-_-_-[chunkhash]-_-_-_-_-_-.js',
             path: `${pathRun}/${common.outputPath}/server`,
-            publicPath: `${publicPath}/`
+            publicPath: `${publicPath}/`,
+            pathinfo: false
         },
         plugins: [
             new webpack.DefinePlugin({
