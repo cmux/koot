@@ -1,11 +1,13 @@
 const fs = require('fs-extra')
 const path = require('path')
+const latestVersion = require('latest-version')
 
 const modifyDependency = require('../../../../packages/koot-cli/lib/modify-package-json/dependency')
 
-const p = fs.readJSONSync(path.resolve(__dirname, 'package.json'))
+const filePackage = path.resolve(__dirname, 'package.json')
+const p = fs.readJSONSync(filePackage)
 afterEach(() => {
-    fs.writeJSONSync(path.resolve(__dirname, 'package.json'), p)
+    fs.writeJSONSync(filePackage, p, { spaces: 4 })
 })
 
 describe('测试: 修改 package.json', () => {
@@ -38,28 +40,67 @@ describe('测试: 修改 package.json', () => {
         expect(error.message).toBe('`moduleName` not valid')
     })
 
-    // test(`添加新的依赖，未提供版本号`, async () => {
-    // })
+    test(`添加新的依赖，未提供版本号`, async () => {
+        const m = 'eslint'
+        const v = await latestVersion(m)
+        await modifyDependency(__dirname, m)
+        expect(fs.readJsonSync(filePackage).dependencies[m]).toBe(v)
+    })
 
-    // test(`添加新的依赖，供版本号`, async () => {
-    // })
+    test(`添加新的依赖，未提供版本号：依赖不存在，应报错`, async () => {
+        const m = 'package_not_exist'
+        let error
+        await modifyDependency(__dirname, m)
+            .catch(err => error = err)
+        expect(error.message).toBe(`Package \`${m}\` doesn't exist`)
+    })
 
-    // test(`更新依赖，未提供版本号`, async () => {
-    // })
+    test(`添加新的依赖，供版本号`, async () => {
+        const m = 'eslint'
+        const v = '1.0.0'
+        await modifyDependency(__dirname, m, v)
+        expect(fs.readJsonSync(filePackage).dependencies[m]).toBe(v)
+    })
 
-    // test(`更新依赖，供版本号`, async () => {
-    // })
+    test(`更新依赖，未提供版本号`, async () => {
+        const m = 'react'
+        const v = await latestVersion(m)
+        await modifyDependency(__dirname, m)
+        expect(fs.readJsonSync(filePackage).dependencies[m]).toBe(v)
+    })
 
-    // test(`删除依赖`, async () => {
-    // })
+    test(`更新依赖，供版本号`, async () => {
+        const m = 'react'
+        const v = '1.0.0'
+        await modifyDependency(__dirname, m, v)
+        expect(fs.readJsonSync(filePackage).dependencies[m]).toBe(v)
+    })
 
-    // test(`添加新的 dev 依赖，未提供版本号 (devPedendencies 已在 package.json 中出现)`, async () => {
-    // })
+    test(`删除依赖`, async () => {
+        const m = 'react'
+        await modifyDependency(__dirname, m, false)
+        expect(fs.readJsonSync(filePackage).dependencies[m]).toBe(undefined)
+    })
 
-    // test(`添加新的 dev 依赖，供版本号 (devPedendencies 已在 package.json 中出现)`, async () => {
-    // })
+    test(`添加新的 dev 依赖，未提供版本号 (devDependencies 已在 package.json 中出现)`, async () => {
+        const m = 'eslint'
+        const v = await latestVersion(m)
+        await modifyDependency(__dirname, m, undefined, 'dev')
+        expect(fs.readJsonSync(filePackage).devDependencies[m]).toBe(v)
+    })
 
-    // test(`添加新的 peer 依赖，供版本号 (peerPedendencies 没有在 package.json 中出现)`, async () => {
-    // })
+    test(`添加新的 dev 依赖，供版本号 (devDependencies 已在 package.json 中出现)`, async () => {
+        const m = 'eslint'
+        const v = '1.0.0'
+        await modifyDependency(__dirname, m, v, 'dev')
+        expect(fs.readJsonSync(filePackage).devDependencies[m]).toBe(v)
+    })
+
+    test(`添加新的 peer 依赖，供版本号 (peerDependencies 没有在 package.json 中出现)`, async () => {
+        const m = 'eslint'
+        const v = '1.0.0'
+        await modifyDependency(__dirname, m, v, 'peer')
+        expect(fs.readJsonSync(filePackage).peerDependencies[m]).toBe(v)
+    })
 
 })

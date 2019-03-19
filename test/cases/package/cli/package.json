@@ -1,1 +1,9 @@
-{"name":"koot-test-subject","description":"Test subject","private":true,"dependencies":{"react":"16.8.4"},"devDependencies":{}}
+{
+    "name": "koot-test-subject",
+    "description": "Test subject",
+    "private": true,
+    "dependencies": {
+        "react": "16.8.4"
+    },
+    "devDependencies": {}
+}
