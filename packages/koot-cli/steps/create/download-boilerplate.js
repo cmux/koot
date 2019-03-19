@@ -17,6 +17,9 @@ const repo = 'github:cmux/koot-boilerplate'
  * @param {String} dest 下载目标目录
  */
 module.exports = async (project, dest) => {
+
+    // TODO: 从综合代码库中下载
+
     /** @type {String} 下载临时目录 */
     const tmp = path.resolve(os.tmpdir(), `sp-${Date.now()}`)
     const waitingDownloading = spinner(chalk.whiteBright(_('downloading_boilerplate')) + '...')
