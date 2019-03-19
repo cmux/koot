@@ -1,0 +1,26 @@
+{
+    "title": "Koot.js Tech Demo",
+    "navs": {
+        "home": "Koot.js",
+        "isomorphic": "Data Isomorphic",
+        "static": "Static Assets"
+    },
+    "pages": {
+        "home": {
+            "title": "Welcome",
+            "description": "Koot.js Tech Demo boilerplate/template project."
+        },
+        "isomorphic": {
+            "title": "Data Isomorphic",
+            "description": "Tech Demo for data isomorphic rendering using Koot.js."
+        },
+        "static": {
+            "title": "Static Assets",
+            "description": "Tech Demo for static assets usage using Koot.js.",
+            "method_require": "Method: require()",
+            "method_require_content": "Use require() to include asset file. The file name will be hashed.",
+            "method_static": "Method: static folder",
+            "method_static_content": "Put asset file in static assets folder defined in koot.build.js"
+        }
+    }
+}

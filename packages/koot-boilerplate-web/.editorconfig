@@ -1,0 +1,19 @@
+# http://editorconfig.org
+root = true
+
+root = true
+
+[*]
+charset = utf-8
+indent_style = space
+indent_size = 4
+tab_width = 4
+trim_trailing_whitespace = true
+
+[**.json]
+indent_size = 2
+tab_size = 2
+
+[**.{js,jsx}]
+e4x = true
+brace_style = collapse,preserve-inline

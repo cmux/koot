@@ -1,0 +1,19 @@
+@import "~vars.less";
+
+.component{
+    .cover{
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: center;
+        align-items: center;
+
+        width: 100%;
+        min-height: 400px;
+        height: calc(100vh - 200px);
+        max-height: 800px;
+        margin-bottom: @main-gutter-top;
+
+        background: @color-home-cover-background;
+        color: #fff;
+    }
+}

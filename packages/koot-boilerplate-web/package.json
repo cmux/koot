@@ -1,0 +1,49 @@
+{
+    "name": "koot-boilerplate",
+    "private": true,
+    "version": "0.8.0-beta.20",
+    "description": "Tech-demo boilerplate for koot.js.",
+    "author": {
+        "name": "diablohu",
+        "email": "diablohudream@gmail.com",
+        "url": "http://diablohu.com"
+    },
+    "homepage": "https://github.com/cmux/koot#readme",
+    "license": "none",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/cmux/koot.git"
+    },
+    "scripts": {
+        "start": "koot-start",
+        "start:server": "koot-start --no-build",
+        "build": "koot-build",
+        "build:spa": "koot-build --type spa",
+        "dev": "koot-dev",
+        "dev:no-open": "koot-dev --no-open",
+        "dev:spa": "koot-dev --type spa",
+        "analyze": "koot-analyze",
+        "eslint": "eslint \"src/**/*.+(js|jsx)\""
+    },
+    "dependencies": {
+        "axios": "0.18.0",
+        "classnames": "2.2.6",
+        "echarts": "^4.1.0",
+        "koot": "^0.8.0-beta.20"
+    },
+    "devDependencies": {
+        "autoprefixer": "9.5.0",
+        "babel-eslint": "10.0.1",
+        "cssnano": "4.1.10",
+        "directory-named-webpack-plugin": "^4.0.1",
+        "eslint": "5.15.2",
+        "eslint-plugin-react": "7.12.4",
+        "jest": "24.5.0",
+        "normalize.css": "8.0.1",
+        "redux-logger": "3.0.6",
+        "svg-url-loader": "2.3.2"
+    },
+    "bugs": {
+        "url": "https://github.com/cmux/koot/issues"
+    }
+}

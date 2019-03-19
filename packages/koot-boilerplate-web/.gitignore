@@ -1,0 +1,16 @@
+*.un~
+.*.swp
+.*.swo
+*.rdb
+.DS_Store
+.vscode/
+node_modules/
+yarn-error.log*
+yarn-debug.log*
+npm-debug.log*
+lerna-debug.log
+bower_components
+/npm-debug.log
+/dump.rdb
+Thumbs.db
+
