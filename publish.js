@@ -1,12 +1,15 @@
 const fs = require('fs-extra')
 const path = require('path')
-const chalk = require('chalk')
 const inquirer = require('inquirer')
-const { spawn } = require('child_process')
+
+const runScript = require('./libs/run-script')
+const logWelcome = require('./libs/log/welcome')
+const logAbort = require('./libs/log/abort')
+const logFinish = require('./libs/log/finish')
 
 const run = async () => {
 
-    console.log('\n' + chalk.cyanBright('Koot.js - Publish') + '\n')
+    logWelcome('Publish')
 
     const defaultSelected = [
         // 'koot',
@@ -47,16 +50,21 @@ const run = async () => {
         choices: packages,
         default: defaultSelected,
     })
+    console.log('')
     if (!selected.length) {
-        console.log('No package selected. Aborted.')
+        logAbort('No package selected.')
         return
     }
 
-    const { tag = [] } = await inquirer.prompt({
+    const { tag = false } = await inquirer.prompt({
         type: 'list',
         name: 'tag',
         message: 'Select tag for NPM',
         choices: [
+            {
+                name: 'Please select a tag',
+                value: false
+            },
             {
                 name: 'No tag (none)',
                 value: ""
@@ -65,21 +73,19 @@ const run = async () => {
         ],
         default: 0,
     })
+    console.log('')
+    if (tag === false) {
+        logAbort('No tag selected.')
+        return
+    }
 
     const cmd = `lerna publish`
         + ` --ignore-changes "packages/!(${selected.join('|')})/**"`
         + (tag ? ` --dist-tag ${tag}` : '')
 
-    const segs = cmd.split(' ')
+    await runScript(cmd)
 
-    spawn(
-        segs.shift(),
-        segs,
-        {
-            stdio: 'inherit',
-            shell: true,
-        }
-    )
+    logFinish()
 }
 
 run().catch(e => console.error(e))
