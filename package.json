@@ -4,6 +4,7 @@
     "scripts": {
         "doc-server": "docsify serve docs",
         "bootstrap": "node bootstrap.js",
+        "publish": "node ./publish.js",
         "lerna": "lerna-wizard",
         "lerna:bootstrap": "lerna bootstrap --hoist",
         "lerna:publish": "lerna publish",

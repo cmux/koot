@@ -43,7 +43,7 @@ const run = async () => {
     const { selected = [] } = await inquirer.prompt({
         type: 'checkbox',
         name: 'selected',
-        message: 'Select package(s) to publish',
+        message: 'Select package(s) to publish\n ',
         choices: packages,
         default: defaultSelected,
     })
@@ -79,4 +79,4 @@ const run = async () => {
     )
 }
 
-run()
+run().catch(e => console.error(e))
