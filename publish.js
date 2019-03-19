@@ -10,7 +10,7 @@ const run = async () => {
 
     const defaultSelected = [
         'koot',
-        'koot-cli'
+        'koot-webpack'
     ]
 
     const dirPackages = path.resolve(__dirname, './packages')
