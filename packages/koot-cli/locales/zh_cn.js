@@ -64,5 +64,7 @@ module.exports = {
     "upgrade_files_changed": "修改的文件：",
     "upgrade_files_removed": "删除的文件：",
     "upgrade_0.2.0_warning": "已将 Babel 更新至 7.0，此次更新需要重写 Babel 配置。本更新程序已将现有的配置文件（.babelrc）删除，并生成了新的配置文件（babel.config.js）。如果打包失败，请参照 Babel 7.0 的全新文档自行修改 babel.config.js。",
-    "upgrade_0.7.0_warning": "新配置项: css。详情请参见文档 -> [https://koot.js.org/#/config]"
+    "upgrade_0.7.0_warning": "新配置项: css。详情请参见文档 -> [https://koot.js.org/#/config]",
+    "upgrade_0.8.0_warning_1": "重新整理了配置文件规则，详情青参见文档 -> [https://koot.js.org/#/config]",
+    "upgrade_0.8.0_warning_2": "另外，此次更新也完全重写了 React 同构服务器逻辑，原则上对已有项目不会造成影响。（若发现从 `koot` 中引用的 `store` `history` 或 `localeId` 值为 `undefined`，请尝试改为使用 `getStore()` `getHistory()` 或 `getLocaleId()` 方法）"
 }
