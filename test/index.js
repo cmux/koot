@@ -1,10 +1,17 @@
-const chalk = require('chalk')
 const inquirer = require('inquirer')
-const { spawn } = require('child_process')
+
+const runScript = require('../libs/run-script')
+const logWelcome = require('../libs/log/welcome')
+const logFinish = require('../libs/log/finish')
 
 const run = async () => {
 
-    console.log('\n' + chalk.cyanBright('Koot.js - Test') + '\n')
+    logWelcome('Test')
+
+    const jestScript = {
+        reactIsomorphic: `./test/cases/react-isomorphic`,
+        reactSPA: `./test/cases/react-spa`
+    }
 
     const { value } = await inquirer.prompt({
         type: 'list',
@@ -13,47 +20,61 @@ const run = async () => {
         choices: [
             {
                 name: 'Full',
-                value: 'full'
+                value: 'FULL'
             },
             new inquirer.Separator(),
             {
                 name: 'React - Full',
-                value: 'react'
+                value: 'REACT'
             },
             {
                 name: 'React - Only Isomorphic',
-                value: 'react:isomorphic'
+                value: jestScript.reactIsomorphic
             },
             {
                 name: 'React - Only SPA',
-                value: 'react:spa'
+                value: jestScript.reactSPA
             },
             new inquirer.Separator(),
             {
                 name: 'Package: koot-cli',
-                value: 'pakcage:cli'
+                value: './test/cases/package/cli'
             },
             new inquirer.Separator(),
             {
                 name: 'Lib: validate-pathname',
-                value: 'libs:validate-pathname'
+                value: './test/cases/libs/validate-pathname'
             },
             {
                 name: 'Lib: validate-config',
-                value: 'libs:validate-config'
+                value: './test/cases/.+/validate-config'
             },
+            new inquirer.Separator(),
         ],
         default: 'full',
     })
 
-    spawn(
-        'npm',
-        ['run', `test:${value}`],
-        {
-            stdio: 'inherit',
-            shell: true,
-        }
-    )
+    console.log('')
+
+    const script = (() => {
+
+        if (value === 'FULL')
+            return `node ./test/pre-test.js`
+                + `&& jest "^((?!need-in-order).)*\\.js$"`
+                + `&& jest ${jestScript.reactSPA}`
+                + `&& jest ${jestScript.reactIsomorphic}`
+
+        if (value === 'REACT')
+            return `jest ${jestScript.reactSPA}`
+                + `&& jest ${jestScript.reactIsomorphic}`
+
+        return `jest ${value}`
+
+    })()
+
+    await runScript(script)
+
+    logFinish()
 }
 
 run()
