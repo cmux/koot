@@ -1,6 +1,7 @@
 {
     "name": "koot-packages",
     "description": "All modules and packages for Koot.js",
+    "private": true,
     "scripts": {
         "doc-server": "docsify serve docs",
         "bootstrap": "node bootstrap.js",
