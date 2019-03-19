@@ -4,7 +4,7 @@ const { spawn } = require('child_process')
 
 const run = async () => {
 
-    console.log('\n' + chalk.cyanBright('Koot.js - Test'))
+    console.log('\n' + chalk.cyanBright('Koot.js - Test') + '\n')
 
     const { value } = await inquirer.prompt({
         type: 'list',

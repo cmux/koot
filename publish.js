@@ -6,11 +6,11 @@ const { spawn } = require('child_process')
 
 const run = async () => {
 
-    console.log('\n' + chalk.cyanBright('Koot.js - Publish'))
+    console.log('\n' + chalk.cyanBright('Koot.js - Publish') + '\n')
 
     const defaultSelected = [
-        'koot',
-        'koot-webpack'
+        // 'koot',
+        // 'koot-webpack'
     ]
 
     const dirPackages = path.resolve(__dirname, './packages')
@@ -47,7 +47,10 @@ const run = async () => {
         choices: packages,
         default: defaultSelected,
     })
-    if (!selected.length) return
+    if (!selected.length) {
+        console.log('No package selected. Aborted.')
+        return
+    }
 
     const { tag = [] } = await inquirer.prompt({
         type: 'list',
