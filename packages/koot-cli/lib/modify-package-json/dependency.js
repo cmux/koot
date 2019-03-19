@@ -1,3 +1,6 @@
+const fs = require('fs-extra')
+const path = require('path')
+
 /**
  * 修改 package.json: 更新依赖信息
  * @async
@@ -8,6 +11,23 @@
  * @returns {Array} 修改的文件列表
  */
 const modifyPackageDependency = async (dir, moduleName, version, type) => {
+
+    if (typeof dir !== 'string')
+        throw new Error('`dir` not valid')
+
+    if (typeof moduleName !== 'string')
+        throw new Error('`moduleName` not valid')
+
+    const filePackage = path.resolve(dir, 'package.json')
+    if (!fs.existsSync(filePackage))
+        throw new Error('`package.json` not found in target directory')
+
+    const p = await fs.readJson(filePackage, { throws: false })
+        .catch(() => {
+            throw new Error('`package.json` not valid JSON file')
+        })
+    if (typeof p !== 'object')
+        throw new Error('`package.json` not valid JSON file')
 
 }
 

@@ -11,7 +11,8 @@
         "koot-analyze": "./bin/analyze.js"
     },
     "scripts": {
-        "check-updates": "ncu -x react-router,koa-body,koa-compress,koa-json,koa-onerror,koa-static,koa-compose,koa-helmet,koa-mount"
+        "check-updates": "ncu -x react-router,koa-body,koa-compress,koa-json,koa-onerror,koa-static,koa-compose,koa-helmet,koa-mount",
+        "test": "echo \"Run tests from root\" && exit 1"
     },
     "repository": {
         "type": "git",

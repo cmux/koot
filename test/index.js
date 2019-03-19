@@ -30,6 +30,11 @@ const run = async () => {
             },
             new inquirer.Separator(),
             {
+                name: 'Package: koot-cli',
+                value: 'pakcage:cli'
+            },
+            new inquirer.Separator(),
+            {
                 name: 'Lib: validate-pathname',
                 value: 'libs:validate-pathname'
             },

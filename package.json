@@ -18,6 +18,7 @@
         "test:react:spa": "jest ./test/cases/react-spa",
         "test:libs:validate-pathname": "jest ./test/cases/libs/validate-pathname",
         "test:libs:validate-config": "jest ./test/cases/.+/validate-config",
+        "test:pakcage:cli": "jest ./test/cases/package/cli",
         "eslint:koot": "eslint \"packages/koot/!(node_modules|logs|dist|dist*|test)/**/*.+(js|jsx)\""
     },
     "repository": {
