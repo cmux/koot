@@ -8,7 +8,7 @@ const _ = require('../../lib/translate')
 const spinner = require('../../lib/spinner')
 const getConfigFile = require('../../lib/get-config-file')
 
-const repo = 'github:cmux/koot-boilerplate'
+const repo = 'github:cmux/koot'
 
 /**
  * 下载模板
@@ -18,15 +18,13 @@ const repo = 'github:cmux/koot-boilerplate'
  */
 module.exports = async (project, dest) => {
 
-    // TODO: 从综合代码库中下载
-
     /** @type {String} 下载临时目录 */
-    const tmp = path.resolve(os.tmpdir(), `sp-${Date.now()}`)
+    const downloadTo = path.resolve(os.tmpdir(), `sp-${Date.now()}`)
     const waitingDownloading = spinner(chalk.whiteBright(_('downloading_boilerplate')) + '...')
     await new Promise((resolve, reject) => {
         download(
             repo,
-            tmp,
+            downloadTo,
             err => {
                 if (err) return reject(err)
                 resolve()
@@ -37,6 +35,8 @@ module.exports = async (project, dest) => {
     spinner(chalk.whiteBright(_('downloading_boilerplate'))).finish()
 
     // 更新配置文件内容，并复制到目标目录中
+    /** @type {String} 模板所在目录 */
+    const tmp = path.resolve(downloadTo, `packages/koot-boilerplate`)
     const waitingCopying = spinner(chalk.whiteBright(_('copying_boilerplate')) + '...')
     const pathPackage = path.resolve(tmp, 'package.json')
     const p = await fs.readJson(pathPackage)
