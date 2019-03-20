@@ -1,6 +1,8 @@
 import React from 'react'
 import { extend } from 'koot'
 
+import Center from '@components/center'
+
 const PageStatic = extend({
     pageinfo: () => ({
         title: `${__('pages.static.title')} - ${__('title')}`,
@@ -11,9 +13,9 @@ const PageStatic = extend({
     styles: require('./styles.component.less')
 })(
     ({ routeParams, location, params, route, router, routes, ...props }) => (
-        <div {...props}>
-            PAGE: STATIC
-        </div>
+        <Center {...props}>
+            {__('pages.static.title')}
+        </Center>
     )
 )
 

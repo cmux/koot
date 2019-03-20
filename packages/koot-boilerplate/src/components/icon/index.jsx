@@ -4,7 +4,12 @@ import { extend } from 'koot'
 const Icon = extend({
     styles: require('./styles.component.less')
 })(
-    ({ className, style, icon, ...props }) => (
+    ({
+        className,
+        style,
+        id, icon,
+        ...props
+    }) => (
         <svg
             xmlns="http://www.w3.org/2000/svg"
             xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -12,7 +17,7 @@ const Icon = extend({
             style={style}
             {...props}
         >
-            <use xlinkHref={'#icon-' + icon}></use>
+            <use xlinkHref={'#icon-' + (id || icon)}></use>
         </svg>
     )
 )

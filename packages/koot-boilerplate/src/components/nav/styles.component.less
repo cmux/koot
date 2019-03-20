@@ -50,20 +50,26 @@
             color: #fff;
             text-decoration: none;
             white-space: nowrap;
+            .background(@color) {
+                background: linear-gradient(to right, transparent, @color 20px, @color calc(100% - 20px), transparent);
+            }
             &:hover{
-                background: fade(#fff, 10%);
+                .background(fade(#fff, 10%));
+            }
+            &:active{
+                .background(fade(#000, 10%));
             }
             & + a{
-                margin-left: 2px;
+                margin-left: 10px;
                 &::before{
                     content: "";
                     position: absolute;
                     width: 0;
                     height: 100%;
-                    left: -1px;
+                    left: -6px;
                     top: 0;
-                    border-left: 1px solid darken(@color-home-cover-background, 5%);
-                    border-right: 1px solid lighten(@color-home-cover-background, 5%);
+                    border-left: 1px solid darken(@color-home-cover-background, 2.5%);
+                    border-right: 1px solid lighten(@color-home-cover-background, 2.5%);
                 }
             }
         }
@@ -78,7 +84,15 @@
         flex: 0;
         .github{
             @icon-size: 16px;
-            padding-left: 20px;
+            padding-left: 30px;
+            .icon{
+                position: absolute;
+                top: 50%;
+                left: 10px;
+                width: @icon-size;
+                height: @icon-size;
+                margin-top: (0 - @icon-size / 2);
+            }
         }
     }
 }

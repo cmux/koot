@@ -6,6 +6,7 @@ import navItems from '@constants/nav-items'
 
 import { Link, IndexLink } from 'react-router'
 import Center from '@components/center'
+import Icon from '@components/icon'
 
 @extend({
     connect: state => ({
@@ -107,12 +108,7 @@ class Nav extends React.Component {
                     </div>
                     <div className="others">
                         <a href="https://github.com/cmux/koot" target="_blank" className="github">
-                            <svg
-                                className="icon"
-                                xmlns="http://www.w3.org/2000/svg"
-                                xmlnsXlink="http://www.w3.org/1999/xlink"
-                                src={require('../../assets/icons/github.svg')}
-                            />
+                            <Icon className="icon" icon="github" />
                             Fork on GitHub
                         </a>
                     </div>

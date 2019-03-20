@@ -18,23 +18,36 @@ import Center from '@components/center'
     styles: require('./styles.component.less')
 })
 class PageHome extends React.Component {
+    // rafId: undefined,
+
     componentDidMount() {
         this.setCoverHeight()
         window.addEventListener('resize', this.setCoverHeight)
+        setTimeout(() => {
+            const eventScroll = new Event('resize')
+            window.dispatchEvent(eventScroll)
+        })
     }
     componentWillUnmount() {
         window.removeEventListener('resize', this.setCoverHeight)
     }
 
     setCoverHeight = () => {
-        const {
-            y = 0,
-            top = 0,
-            height = 0,
-        } = this._cover.getBoundingClientRect()
-        this.props.dispatch(setCoverHeight(
-            height + (y || top) + (window.pageYOffset || document.documentElement.scrollTop)
-        ))
+        if (this.rafId) return
+
+        this.rafId = requestAnimationFrame(() => {
+            this.rafId = undefined
+            const {
+                y = 0,
+                top = 0,
+                height = 0,
+            } = this._cover.getBoundingClientRect()
+            this.props.dispatch(setCoverHeight(
+                height + (y || top) + (window.pageYOffset || document.documentElement.scrollTop)
+            ))
+            const eventScroll = new Event('scroll')
+            window.dispatchEvent(eventScroll)
+        })
     }
 
     render() {
