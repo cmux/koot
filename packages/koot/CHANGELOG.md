@@ -1,5 +1,5 @@
 ## 0.8.0
-**2019-03-18** (beta.20)
+**2019-03-20** (beta.22)
 - **重大改动**
   - 重写 React 同构服务器逻辑，原则上对已有项目不会造成影响
     - 若发现从 `koot` 中引用的 `store` `history` 或 `localeId` 值为 `undefined`，请尝试改为使用 `getStore()` `getHistory()` 或 `getLocaleId()` 方法
@@ -69,15 +69,16 @@
     - `koa-static` -> _5.0.0_
     - `yargs` -> _13.2.2_
   - minor
-    - `@babel/core` -> _7.3.4_
-    - `@babel/plugin-proposal-class-properties` -> _7.3.4_
-    - `@babel/plugin-proposal-decorators` -> _7.3.0_
-    - `@babel/plugin-proposal-object-rest-spread` -> _7.3.4_
+    - `@babel/core` -> _7.4.0_
+    - `@babel/plugin-proposal-class-properties` -> _7.4.0_
+    - `@babel/plugin-proposal-decorators` -> _7.4.0_
+    - `@babel/plugin-proposal-object-rest-spread` -> _7.4.0_
     - `@babel/plugin-syntax-dynamic-import` -> _7.2.0_
-    - `@babel/plugin-transform-regenerator` -> _7.3.4_
-    - `@babel/plugin-transform-runtime` -> _7.3.4_
-    - `@babel/polyfill` -> _7.2.5_
-    - `@babel/preset-env` -> _7.3.4_
+    - `@babel/plugin-transform-regenerator` -> _7.4.0_
+    - `@babel/plugin-transform-runtime` -> _7.4.0_
+    - `@babel/polyfill` -> _7.4.0_
+    - `@babel/preset-env` -> _7.4.1_
+    - `@babel/register` -> _7.4.0_
     - `acorn` -> _6.1.1_
     - `autoprefixer` -> _9.4.7_
     - `koa` -> _2.7.0_
