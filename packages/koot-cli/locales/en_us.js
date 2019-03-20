@@ -64,5 +64,7 @@ module.exports = {
     "upgrade_files_changed": "Files changed:",
     "upgrade_files_removed": "Files removed:",
     "upgrade_0.2.0_warning": "Updated Babel to 7.0 that requires re-writing Babel configuration. The upgrading process has removed existing config file (.babelrc) and created a new one (babel.config.js). If encountered error when building, please edit babel.config.js refering new official Babel doc.",
-    "upgrade_0.7.0_warning": "New configuration option: css. Check doc for more information -> [https://koot.js.org/#/config]"
+    "upgrade_0.7.0_warning": "New configuration option: css. Check doc for more information -> [https://koot.js.org/#/config]",
+    "upgrade_0.8.0_warning_1": "Revamp configuration options. Please make sure to check doc for more information -> [https://koot.js.org/#/config]",
+    "upgrade_0.8.0_warning_2": "We also made a complete overhaul to React isomorphic (SSR). There will be no effect to your existing project in theory. (If you do find that the value of `store` `history` or `localeId` imported from `koot` to be `undefined`, please try using `getStore()` `getHistory()` or `getLocaleId()` funtion imported from `koot`)"
 }

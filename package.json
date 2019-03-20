@@ -1,24 +1,12 @@
 {
     "name": "koot-packages",
     "description": "All modules and packages for Koot.js",
+    "private": true,
     "scripts": {
         "doc-server": "docsify serve docs",
         "bootstrap": "node bootstrap.js",
-        "lerna": "lerna-wizard",
-        "lerna:bootstrap": "lerna bootstrap --hoist",
-        "lerna:publish": "lerna publish",
-        "lerna:publish:only-core": "lerna publish --ignore-changes \"packages/!(koot|koot-webpack)/**\"",
-        "publish:only-core:next": "lerna publish --ignore-changes \"packages/!(koot|koot-webpack)/**\" --dist-tag next",
-        "lerna:version": "lerna version",
-        "lerna:version:only-core": "lerna version --ignore-changes \"packages/!(koot|koot-webpack)/**\"",
-        "pretest": "node ./test/pre-test.js",
-        "test": "jest \"^((?!need-in-order).)*\\.js$\" && npm run test:react",
-        "test:factoryconfig": "jest ./test/cases/actory-config/test.js",
-        "test:react": "npm run test:react:spa && npm run test:react:isomorphic",
-        "test:react:isomorphic": "jest ./test/cases/react-isomorphic",
-        "test:react:spa": "jest ./test/cases/react-spa",
-        "test:libs:validate-pathname": "jest ./test/cases/libs/validate-pathname",
-        "test:libs:validate-config": "jest ./test/cases/.+/validate-config",
+        "publish": "node ./publish.js",
+        "test": "node ./test/index.js",
         "eslint:koot": "eslint \"packages/koot/!(node_modules|logs|dist|dist*|test)/**/*.+(js|jsx)\""
     },
     "repository": {
@@ -58,7 +46,9 @@
         "puppeteer": "1.13.0",
         "jsdom": "14.0.0",
         "fs-extra": "7.0.1",
-        "is-valid-path": "0.1.1"
+        "is-valid-path": "0.1.1",
+        "inquirer": "6.2.2",
+        "chalk": "2.4.2"
     },
     "dependencies": {
         "docsify-cli": "4.3.0"

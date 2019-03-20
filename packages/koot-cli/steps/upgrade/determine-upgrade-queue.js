@@ -68,6 +68,11 @@ module.exports = async (dir = process.cwd()) => {
         versionKootLocal = '0.7.0'
     }
 
+    if (semver.lt(versionKootLocal, `0.8.0`)) {
+        queue.push(['0.7', '0.8'])
+        versionKootLocal = '0.8.0'
+    }
+
     const latestPackageJson = await packageJson('koot')
     const versionKootLastest = semver.valid(semver.coerce(latestPackageJson.version))
     // const latestPackageJson = {
