@@ -16,6 +16,7 @@
         margin-top: (0 - @nav-height);
         margin-bottom: (0 - @main-gutter-bottom);
         font-size: @base-font-size;
+        overflow-x: hidden;
 
         // background: @color-home-cover-background;
         color: #fff;
@@ -74,6 +75,8 @@
             .icon{
                 vertical-align: baseline;
                 margin-left: 4px;
+                width: 0.9em;
+                height: 0.9em;
             }
         }
     }
@@ -87,6 +90,9 @@
     @media screen and (max-width: @screen-phone-max-width) {
         .cover{
             font-size: floor(@base-font-size * 0.75);
+            .title{
+                letter-spacing: 0.1em;
+            }
         }
     }
 }
