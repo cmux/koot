@@ -43,7 +43,7 @@ module.exports = {
         '~vars.less': path.resolve('./src/assets/css/_all.less'),
     },
 
-    staticCopyFrom: path.resolve(__dirname, './src/assets/public'),
+    staticCopyFrom: path.resolve(__dirname, './public'),
 
     // 更多选项请查阅文档...
 

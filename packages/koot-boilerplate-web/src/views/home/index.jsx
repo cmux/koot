@@ -1,7 +1,6 @@
 import React from 'react';
 import { extend } from 'koot';
 
-import { set as setCoverHeight } from '@store/page-home';
 import navItems from '@constants/nav-items';
 
 import { Link } from 'react-router';
@@ -16,23 +15,6 @@ import Center from '@components/center';
     styles: require('./styles.component.less'),
 })
 class PageHome extends React.Component {
-    componentDidMount() {
-        this.setCoverHeight();
-        window.addEventListener('resize', this.setCoverHeight);
-    }
-    componentWillUnmount() {
-        window.removeEventListener('resize', this.setCoverHeight);
-    }
-
-    setCoverHeight = () => {
-        const { y = 0, top = 0, height = 0 } = this._cover.getBoundingClientRect();
-        this.props.dispatch(
-            setCoverHeight(
-                height + (y || top) + (window.pageYOffset || document.documentElement.scrollTop)
-            )
-        );
-    };
-
     render() {
         return (
             <div className={this.props.className}>

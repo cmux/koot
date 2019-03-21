@@ -57,8 +57,8 @@
       "git add"
     ],
     "*.{css,scss,less,json}": [
-        "node_modules/.bin/prettier --write",
-        "git add"
+      "node_modules/.bin/prettier --write",
+      "git add"
     ]
   },
   "bugs": {
