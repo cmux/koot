@@ -4,13 +4,15 @@
 @remMinScreenWidth: 320; //最小屏幕宽度
 @remFlowStep: 5; //设定rem参考值的递增值
 
-html {
-    font-size: $remMinScreenWidth / $remMaxScreenWith * $remRootSize + px;
-
-    @for $i from 0 through (($remMaxScreenWith - $remMinScreenWidth) / $remFlowStep) {
-        $remCurScreenWidth: $remMinScreenWidth + $i * $remFlowStep;
-        @media (min-width: $remCurScreenWidth + px) {
-            font-size: $remCurScreenWidth / $remDefaultWidth * $remRootSize + px;
-        }
+.loop(@i) when(@i < (@remMaxScreenWith - @remMinScreenWidth) / @remFlowStep) {
+    @remCurScreenWidth: @remMinScreenWidth + @i * @remFlowStep;
+    @media (min-width: @remCurScreenWidth + px) {
+        font-size: @remCurScreenWidth / @remDefaultWidth * @remRootSize + px;
     }
+    .loop(@i+1);
+}
+
+html {
+    font-size: @remMinScreenWidth / @remMaxScreenWith * @remRootSize + px;
+    .loop(0);
 }
