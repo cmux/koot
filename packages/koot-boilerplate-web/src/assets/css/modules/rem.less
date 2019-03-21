@@ -1,0 +1,16 @@
+@remRootSize: 100; //默认设计字号，实际中可以直接将默认设计宽度的设计稿中的dp除以100换成rem。例如，设计稿中20dp，可以直接写为0.2rem
+@remDefaultWidth: 375; //默认设计宽度
+@remMaxScreenWith: 600; //最大屏幕宽度
+@remMinScreenWidth: 320; //最小屏幕宽度
+@remFlowStep: 5; //设定rem参考值的递增值
+
+html {
+    font-size: $remMinScreenWidth / $remMaxScreenWith * $remRootSize + px;
+
+    @for $i from 0 through (($remMaxScreenWith - $remMinScreenWidth) / $remFlowStep) {
+        $remCurScreenWidth: $remMinScreenWidth + $i * $remFlowStep;
+        @media (min-width: $remCurScreenWidth + px) {
+            font-size: $remCurScreenWidth / $remDefaultWidth * $remRootSize + px;
+        }
+    }
+}
