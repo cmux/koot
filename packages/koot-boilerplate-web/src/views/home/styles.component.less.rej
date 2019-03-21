@@ -1,5 +1,0 @@
-diff a/packages/koot-boilerplate-web/src/views/home/styles.component.less b/packages/koot-boilerplate-web/src/views/home/styles.component.less	(rejected hunks)
-@@ -16,2 +16 @@
--
--                     background: @color-home-cover-background;
-+        background: @color-home-cover-background;
