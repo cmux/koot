@@ -1,8 +1,6 @@
 {
     "extends": "eslint:recommended",
-    "plugins": [
-        "react"
-    ],
+    "plugins": ["react"],
     "env": {
         "browser": true,
         "node": true,
@@ -40,9 +38,7 @@
         "Project": false
     },
     "settings": {
-        "import/ignore": [
-            "node_modules"
-        ]
+        "import/ignore": ["node_modules"]
     },
     "rules": {
         "no-const-assign": 1,

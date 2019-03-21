@@ -1,16 +1,15 @@
 /**
  * @module kootConfig
- * 
+ *
  * Koot.js 项目配置
- * 
+ *
  * 配置文档请查阅: [https://koot.js.org/#/config]
  */
 
-const fs = require('fs-extra')
-const path = require('path')
+const fs = require('fs-extra');
+const path = require('path');
 
 module.exports = {
-
     /**************************************************************************
      * 项目信息
      *************************************************************************/
@@ -27,10 +26,7 @@ module.exports = {
     store: './src/store',
     cookiesToStore: true,
 
-    i18n: [
-        ['zh', './src/locales/zh.json'],
-        ['en', './src/locales/en.json'],
-    ],
+    i18n: [['zh', './src/locales/zh.json'], ['en', './src/locales/en.json']],
 
     pwa: true,
 
@@ -44,36 +40,18 @@ module.exports = {
         '@services': path.resolve('./src/services'),
         '@store': path.resolve('./src/store'),
         '@views': path.resolve('./src/views'),
-        '~vars.less': path.resolve('./src/constants/less-variables/_all.less')
+        '~vars.less': path.resolve('./src/constants/less-variables/_all.less'),
     },
 
     staticCopyFrom: path.resolve(__dirname, './src/assets/public'),
 
     // 更多选项请查阅文档...
 
-
-
-
-
-
-
-
-
-
     /**************************************************************************
      * 客户端生命周期
      *************************************************************************/
 
     // 选项请查阅文档...
-
-
-
-
-
-
-
-
-
 
     /**************************************************************************
      * 服务器端设置 & 生命周期
@@ -86,15 +64,6 @@ module.exports = {
     serverBefore: './src/server/before.js',
     // 更多选项请查阅文档...
 
-
-
-
-
-
-
-
-
-
     /**************************************************************************
      * Webpack 相关
      *************************************************************************/
@@ -103,25 +72,16 @@ module.exports = {
     webpackBefore: async ({ dist }) => {
         // 每次打包前清空打包目录
         if (process.env.WEBPACK_BUILD_STAGE === 'client') {
-            await fs.emptyDir(dist)
+            await fs.emptyDir(dist);
         }
     },
     // 更多选项请查阅文档...
-
-
-
-
-
-
-
-
-
 
     /**************************************************************************
      * 开发环境
      *************************************************************************/
 
-    devPort: 3088,
+    devPort: 3000,
     devDll: [
         'react',
         'react-dom',
@@ -131,8 +91,7 @@ module.exports = {
         'react-router-redux',
         'koot',
         'axios',
-        'classnames'
+        'classnames',
     ],
     // 更多选项请查阅文档...
-
-}
+};
