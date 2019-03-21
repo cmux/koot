@@ -4,9 +4,9 @@ import classNames from 'classnames'
 
 import navItems from '@constants/nav-items'
 
-import { Link, IndexLink } from 'react-router'
 import Center from '@components/center'
 import Icon from '@components/icon'
+import NavItem from '@components/nav/item'
 
 @extend({
     connect: state => ({
@@ -82,32 +82,20 @@ class Nav extends React.Component {
                 <h1 className="title-hidden">Koot.js</h1>
                 <Center className="wrapper">
                     <div className="nav-links">
-                        {[['/', 'home']].concat(navItems).map((item, index) => {
-                            let route, name, Component
-
-                            if (Array.isArray(item)) {
-                                route = item[0]
-                                name = item[1]
-                            } else {
-                                route = item
-                                name = item
-                            }
-
-                            Component = route === '/' ? IndexLink : Link
-
-                            return (
-                                <Component
-                                    className="item"
-                                    activeClassName="on"
-                                    to={route}
-                                    children={__('navs', name)}
-                                    key={index}
-                                />
-                            )
-                        })}
+                        {[['/', 'home']].concat(navItems).map((item, index) => (
+                            <NavItem key={index} to={item} />
+                        ))}
+                        {/* <a href="https://koot.js.org" target="_blank" className="out-link docs">
+                            {__("navs.docs")}
+                            <Icon className="icon" icon="new-tab" />
+                        </a> */}
                     </div>
                     <div className="others">
-                        <a href="https://github.com/cmux/koot" target="_blank" className="github">
+                        {/* <a href="https://koot.js.org" target="_blank" className="other-link docs">
+                            <Icon className="icon" icon="books" />
+                            {__("navs.docs")}
+                        </a> */}
+                        <a href="https://github.com/cmux/koot" target="_blank" className="other-link github">
                             <Icon className="icon" icon="github" />
                             Fork on GitHub
                         </a>

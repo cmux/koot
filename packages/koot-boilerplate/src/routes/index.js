@@ -42,5 +42,13 @@ export default {
                 }, 'Page-Isomorphic')
             }
         },
+        {
+            path: 'i18n',
+            getComponent: (nextState, cb) => {
+                require.ensure([], (require) => {
+                    if (routeCheck(nextState)) cb(null, require('@views/i18n').default)
+                }, 'Page-I18n')
+            }
+        },
     ]
 }

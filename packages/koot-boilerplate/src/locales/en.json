@@ -1,9 +1,15 @@
 {
     "title": "Koot.js Tech Demo",
+    "intro": [
+        "React full-stack development framework",
+        "Also for SPA"
+    ],
     "navs": {
         "home": "Koot.js",
-        "isomorphic": "Data Isomorphic",
-        "static": "Static Assets"
+        "isomorphic": "Isomorphic",
+        "static": "Static Assets",
+        "i18n": "I18n",
+        "docs": "Docs"
     },
     "pages": {
         "home": {
@@ -11,8 +17,8 @@
             "description": "Koot.js Tech Demo boilerplate/template project."
         },
         "isomorphic": {
-            "title": "Data Isomorphic",
-            "description": "Tech Demo for data isomorphic rendering using Koot.js."
+            "title": "Isomorphic Rendering",
+            "description": "Tech Demo for data and page infos isomorphic rendering using Koot.js."
         },
         "static": {
             "title": "Static Assets",
@@ -21,6 +27,10 @@
             "method_require_content": "Use require() to include asset file. The file name will be hashed.",
             "method_static": "Method: static folder",
             "method_static_content": "Put asset file in static assets folder defined in koot.build.js"
+        },
+        "i18n": {
+            "title": "Internationalization (i18n)",
+            "description": "Tech Demo for i18n rendering using Koot.js."
         }
     }
 }

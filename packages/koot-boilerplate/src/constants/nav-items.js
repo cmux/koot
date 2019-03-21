@@ -1,4 +1,6 @@
 export default [
     'isomorphic',
-    'static'
+    'static',
+    'i18n',
+    ['https://koot.js.org', 'docs']
 ]

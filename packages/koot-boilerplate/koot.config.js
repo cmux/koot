@@ -48,7 +48,7 @@ module.exports = {
     },
 
     defines: {
-        __SVG_ICON_PACK__: JSON.stringify(fs.readFileSync(path.resolve(__dirname, './src/assets/symbol-defs.svg'), 'utf-8'))
+        __SVG_ICON_PACK__: JSON.stringify(fs.readFileSync(path.resolve(__dirname, './src/assets/symbol-defs.svg'), 'utf-8')).replace(/\n/g, '')
     },
 
     staticCopyFrom: path.resolve(__dirname, './src/assets/public'),
