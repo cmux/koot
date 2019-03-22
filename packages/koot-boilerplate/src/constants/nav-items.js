@@ -1,4 +1,5 @@
+import { doc as urlDoc } from '@constants/urls'
+
 export default [
-    'isomorphic',
-    'static'
+    [urlDoc, 'docs']
 ]

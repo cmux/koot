@@ -47,6 +47,10 @@ module.exports = {
         '~vars.less': path.resolve('./src/constants/less-variables/_all.less')
     },
 
+    defines: {
+        __SVG_ICON_PACK__: JSON.stringify(fs.readFileSync(path.resolve(__dirname, './src/assets/symbol-defs.svg'), 'utf-8')).replace(/\n/g, '')
+    },
+
     staticCopyFrom: path.resolve(__dirname, './src/assets/public'),
 
     // 更多选项请查阅文档...

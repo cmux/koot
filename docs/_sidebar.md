@@ -8,20 +8,17 @@
 - **API 文档**
   - [项目配置](/config)
   - [NPM 命令](/task)
-  - [Webpack 相关](/webpack)
-  - [HTML 模板](/template)
+  - [模板](/template)
+  - [Webpack](/webpack)
+  - [React](/react)
+  - [CSS](/css)
+  - [多语言开发](/i18n)
   - [生命周期](/life-cycle)
-  - [多语言 (i18n)](/i18n)
-  - [CSS 使用](/css)
   - [可修改的环境变量](/env)
-  - [React 相关](/react)
-    - [组件扩展 (extend)](/react-extend)
-    - [热更新](/react-hmr)
-    - [组件同构属性对象](/react-render-props)
   - [PWA](/pwa)
   - [routeCheck](/route-check)
   - 　
 
 - **开发建议**
-  - [多环境打包](/bundles)
   - [发布 & 上线](/deploy)
+  - [打包](/bundles)
