@@ -1,3 +1,5 @@
+import { doc as urlDoc } from '@constants/urls'
+
 export default [
-    ['https://koot.js.org', 'docs']
+    [urlDoc, 'docs']
 ]

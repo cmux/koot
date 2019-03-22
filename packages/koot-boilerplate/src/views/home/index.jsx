@@ -2,6 +2,7 @@ import React from 'react'
 import { extend } from 'koot'
 
 import navItems from '@constants/nav-items'
+import { github as urlGithub } from '@constants/urls'
 
 import { Link } from 'react-router'
 import NavItem from '@components/nav/item'
@@ -27,7 +28,7 @@ const PageHome = extend({
                 <Link className="button-start" to="start">{__('pages.home.start')}</Link>
             </div>
             <div className="nav">
-                {navItems.concat([['https://github.com/cmux/koot', 'github']]).map((item, index) => (
+                {navItems.concat([[urlGithub, 'github']]).map((item, index) => (
                     <NavItem key={index} to={item} />
                 ))}
             </div>
