@@ -53,7 +53,12 @@ describe('测试: 修改 package.json', () => {
         await modifyDependency(__dirname, m)
             .catch(err => error = err)
         // expect(error.message).toBe(`Package \`${m}\` doesn't exist`)
-        expect(error.message).toBe(`Package \`${m}\` could not be found`)
+        expect(
+            [
+                `Package \`${m}\` could not be found`,
+                `Package \`${m}\` doesn't exist`
+            ].includes(error.message)
+        ).toBe(true)
     })
 
     test(`添加新的依赖，供版本号`, async () => {
