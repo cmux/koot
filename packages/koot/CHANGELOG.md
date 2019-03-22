@@ -1,5 +1,5 @@
 ## 0.8.0
-**2019-03-20** (beta.22)
+**2019-03-22**
 - **重大改动**
   - 重写 React 同构服务器逻辑，原则上对已有项目不会造成影响
     - 若发现从 `koot` 中引用的 `store` `history` 或 `localeId` 值为 `undefined`，请尝试改为使用 `getStore()` `getHistory()` 或 `getLocaleId()` 方法
@@ -77,7 +77,7 @@
     - `@babel/plugin-transform-regenerator` -> _7.4.0_
     - `@babel/plugin-transform-runtime` -> _7.4.0_
     - `@babel/polyfill` -> _7.4.0_
-    - `@babel/preset-env` -> _7.4.1_
+    - `@babel/preset-env` -> _7.4.2_
     - `@babel/register` -> _7.4.0_
     - `acorn` -> _6.1.1_
     - `autoprefixer` -> _9.4.7_
