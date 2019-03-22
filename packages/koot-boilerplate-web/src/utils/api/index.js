@@ -1,6 +1,6 @@
 import path from 'path';
 
-const isDev = __CLIENT__ && !/cheetahgo\.cmcm\.com/.test(window.location.host);
+const isDev = __CLIENT__ && !/www\.cmcm\.com/.test(window.location.host);
 const apiCtx = require.context('./apis', false, /\.js$/);
 
 export default apiCtx.keys().reduce((exports, file) => {
