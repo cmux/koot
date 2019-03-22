@@ -6,6 +6,7 @@ const glob = require('glob-promise')
 const spinner = require('../../lib/spinner')
 const _ = require('../../lib/translate')
 const modifyPackageDependency = require('../../lib/modify-package-json/dependency')
+const updateVersionInPackagejson = require('./update-version-in-packagejson')
 
 module.exports = async (cwd = process.cwd(), prevVersion = '0.7.0') => {
 
@@ -60,6 +61,8 @@ module.exports = async (cwd = process.cwd(), prevVersion = '0.7.0') => {
             }
         }
     }
+
+    await updateVersionInPackagejson(cwd, '0.8.0')
 
     // 结束
     spinnerUpgrading.stop()
