@@ -9,8 +9,8 @@ tab_width = 4
 trim_trailing_whitespace = true
 
 [**.json]
-indent_size = 2
-tab_size = 2
+indent_size = 4
+tab_size = 4
 
 [**.{js,jsx}]
 e4x = true

@@ -23,7 +23,34 @@
     "dev:no-open": "koot-dev --no-open",
     "dev:spa": "koot-dev --type spa",
     "analyze": "koot-analyze",
-    "eslint": "eslint \"src/**/*.+(js|jsx)\""
+    "eslint": "eslint \"src/**/*.+(js|jsx)\"",
+    "stop:pm2": "pm2 stop pm2.json && pm2 delete pm2.json",
+    "start:pm2": "pm2 start pm2.json"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "./scripts/config/eslintrc.js"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx}": [
+      "node_modules/.bin/eslint --fix",
+      "node_modules/.bin/prettier --write",
+      "git add"
+    ],
+    "*.{css,scss,less,json}": [
+      "node_modules/.bin/prettier --write",
+      "git add"
+    ]
+  },
+  "bugs": {
+    "url": "https://github.com/cmux/koot/issues"
   },
   "dependencies": {
     "axios": "0.18.0",
@@ -44,24 +71,5 @@
     "prettier": "^1.16.4",
     "redux-logger": "3.0.6",
     "svg-url-loader": "2.3.2"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "*.{js,jsx}": [
-      "node_modules/.bin/eslint --fix",
-      "node_modules/.bin/prettier --write",
-      "git add"
-    ],
-    "*.{css,scss,less,json}": [
-      "node_modules/.bin/prettier --write",
-      "git add"
-    ]
-  },
-  "bugs": {
-    "url": "https://github.com/cmux/koot/issues"
   }
 }
