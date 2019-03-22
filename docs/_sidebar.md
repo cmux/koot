@@ -15,6 +15,8 @@
   - [CSS 使用](/css)
   - [可修改的环境变量](/env)
   - [React 相关](/react)
+    - __同构数据__
+    - __页面信息__
     - [组件扩展 (extend)](/react-extend)
     - [热更新](/react-hmr)
     - [组件同构属性对象](/react-render-props)
@@ -23,5 +25,5 @@
   - 　
 
 - **开发建议**
-  - [多环境打包](/bundles)
   - [发布 & 上线](/deploy)
+  - [打包](/bundles)

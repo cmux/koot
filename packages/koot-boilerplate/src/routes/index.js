@@ -27,27 +27,11 @@ export default {
 
     childRoutes: [
         {
-            path: 'static',
+            path: 'start',
             getComponent: (nextState, cb) => {
                 require.ensure([], (require) => {
-                    if (routeCheck(nextState)) cb(null, require('@views/static').default)
-                }, 'Page-Static')
-            }
-        },
-        {
-            path: 'isomorphic',
-            getComponent: (nextState, cb) => {
-                require.ensure([], (require) => {
-                    if (routeCheck(nextState)) cb(null, require('@views/isomorphic').default)
-                }, 'Page-Isomorphic')
-            }
-        },
-        {
-            path: 'i18n',
-            getComponent: (nextState, cb) => {
-                require.ensure([], (require) => {
-                    if (routeCheck(nextState)) cb(null, require('@views/i18n').default)
-                }, 'Page-I18n')
+                    if (routeCheck(nextState)) cb(null, require('@views/start').default)
+                }, 'pageStart')
             }
         },
     ]

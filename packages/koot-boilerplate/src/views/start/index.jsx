@@ -3,20 +3,20 @@ import { extend } from 'koot'
 
 import Center from '@components/center'
 
-const PageStatic = extend({
+const PageStart = extend({
     pageinfo: () => ({
-        title: `${__('pages.static.title')} - ${__('title')}`,
+        title: `${__('pages.start.title')} - ${__('title')}`,
         metas: [
-            { 'description': __('pages.static.description') },
+            { 'description': __('pages.start.description') },
         ]
     }),
     styles: require('./styles.component.less')
 })(
     ({ routeParams, location, params, route, router, routes, ...props }) => (
         <Center {...props}>
-            {__('pages.static.title')}
+            {__('pages.start.title')}
         </Center>
     )
 )
 
-export default PageStatic
+export default PageStart

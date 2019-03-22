@@ -9,8 +9,6 @@
     z-index: @zindex-nav;
     top: 0;
     left: 0;
-    pointer-events: none;
-    transform: translateY(-100%);
 
     width: 100%;
     height: @nav-height;
@@ -19,16 +17,7 @@
 
     background: @color-home-cover-background;
     color: #fff;
-
-    transition: none 0.2s linear;
-    transition-property: box-shadow, transform;
-
-    &.on{
-        pointer-events: all;
-        transform: translateY(0);
-        // box-shadow: 0 2px 4px fade(darken(@color-home-cover-background, 15%), 50%);
-        box-shadow: 0 2px 4px fade(#000, 50%);
-    }
+    box-shadow: 0 2px 4px fade(#000, 50%);
 
     .title-hidden{
         display: block;

@@ -6,31 +6,18 @@
     ],
     "navs": {
         "home": "Koot.js",
-        "isomorphic": "同构渲染",
-        "static": "静态资源",
-        "i18n": "多语言",
-        "docs": "开发文档"
+        "docs": "开发文档",
+        "github": "Github"
     },
     "pages": {
         "home": {
             "title": "欢迎",
-            "description": "Koot.js Tech Demo 模板/脚手架项目。"
+            "description": "Koot.js Tech Demo 模板/脚手架项目。",
+            "start": "快速上手"
         },
-        "isomorphic": {
-            "title": "同构渲染",
-            "description": "在 Koot.js 框架内如何进行数据和页面信息等内容的同构渲染。"
-        },
-        "static": {
-            "title": "静态资源",
-            "description": "在 Koot.js 框架内如何访问静态资源。",
-            "method_require": "require() 方法",
-            "method_require_content": "使用 require() 引用静态文件。文件名将会被自动 Hash 化。",
-            "method_static": "静态资源文件夹方法",
-            "method_static_content": "将静态文件放入静态资源文件夹中，该路径可在 koot.build.js 中设置。"
-        },
-        "i18n": {
-            "title": "国际化/多语言 (i18n)",
-            "description": "在 Koot.js 框架内如何进行国际化/多语言开发。"
+        "start": {
+            "title": "快速上手",
+            "description": "开发 Koot.js 项目的快速上手指南。"
         }
     }
 }
