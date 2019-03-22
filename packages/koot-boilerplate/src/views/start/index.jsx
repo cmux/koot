@@ -14,7 +14,18 @@ const PageStart = extend({
 })(
     ({ routeParams, location, params, route, router, routes, ...props }) => (
         <Center {...props}>
-            {__('pages.start.title')}
+            <h2 className="title">{__('pages.start.title')}</h2>
+            <ol>
+                <li>index.ejs</li>
+                <li>routes</li>
+                <li>learn: @extend (esp. css)</li>
+            </ol>
+            <h4 className="title-more">Learn more...</h4>
+            <ul>
+                <li>config</li>
+                <li>redux</li>
+                <li>webpack</li>
+            </ul>
         </Center>
     )
 )
