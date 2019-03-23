@@ -500,7 +500,7 @@ module.exports = async (kootConfig = {}) => {
         server.use(require('webpack-hot-middleware')(compiler))
 
         try {
-            server.listen(port, '0.0.0.0', async (err) => {
+            server.listen(port, async (err) => {
                 // if (err) console.error(err)
                 if (err) buildingError(err)
                 // console.log('===========')
