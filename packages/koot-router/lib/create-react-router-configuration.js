@@ -11,7 +11,7 @@ const isExtendsReactComponent = ( obj ) => {
     if( obj.prototype && obj.prototype.isReactComponent ){
         return true;
     }
-    if( typeof obj === 'function' && obj.length === 1 ){
+    if( typeof obj === 'function' && obj.length <= 1 ){
         return true;
     }
     return false;
@@ -100,7 +100,7 @@ const onEnterEncodeHandler = (obj, options) => {
         if( redirect ){
             const { location = {} } = nextState;
             const { pathname } = location;
-            if( pathname === path && pathname !== redirect ){
+            if( (pathname === path || path === '*') && pathname !== redirect ){
                 redirectHandler(nextState, replace, redirect)
             }
         }

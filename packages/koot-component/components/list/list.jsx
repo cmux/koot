@@ -61,12 +61,12 @@ class List extends Component {
 
     constructor(props) {
         super(props);
-        const { render } = this.props;
-        const config  = render();
-        const { columns } = config;
-        this.state = {
-            columns: this.columnsHandler(columns)
-        }
+        // const { render } = this.props;
+        // const config  = render();
+        // const { columns } = config;
+        // this.state = {
+        //     columns: this.columnsHandler(columns)
+        // }
     }
     
 
@@ -78,43 +78,44 @@ class List extends Component {
     render() {
         const { render, resizable } = this.props;
         const config  = render();
+        // 处理props
         const props = this.propsHandler( Object.assign({}, this.props, config) );
-        const { dataSource } = config;
+        // 处理数据源
+        const { dataSource, columns } = config;
         const nextDataSource = dataSource && dataSource.map((dataItem, index) => {
             return Object.assign({}, dataItem, {
                 key: index
             })
         })
         
-        let nextColumns;
-        if (resizable) {
-            nextColumns = this.state.columns.map((col, index) => ({
-                ...col,
-                onHeaderCell: column => ({
-                    width: column.width,
-                    onResize: this.handleResize(index),
-                }),
-            }));
-            return (
-                <Table
-                    components={this.components}
-                    columns={nextColumns}
-                    dataSource={nextDataSource}
-                    {...props}
-                >
-                </Table>
-            )
-        } else {
-            nextColumns = this.state.columns;
-            return (
-                <Table
-                    columns={nextColumns}
-                    dataSource={nextDataSource}
-                    {...props}
-                >
-                </Table>
-            )
-        }
+        let nextColumns = columns;
+        // if (resizable) {
+        //     nextColumns = nextColumns.map((col, index) => ({
+        //         ...col,
+        //         onHeaderCell: column => ({
+        //             width: column.width,
+        //             onResize: this.handleResize(index),
+        //         }),
+        //     }));
+        //     return (
+        //         <Table
+        //             components={this.components}
+        //             columns={nextColumns}
+        //             dataSource={nextDataSource}
+        //             {...props}
+        //         >
+        //         </Table>
+        //     )
+        // } else {
+        return (
+            <Table
+                columns={nextColumns}
+                dataSource={nextDataSource}
+                {...props}
+            >
+            </Table>
+        )
+        // }
         
     }
 
@@ -187,6 +188,7 @@ class List extends Component {
         const nextConfig = Object.assign({}, config);
         this.autoScrollHandler(nextConfig);
         this.defaultPropsHandler(nextConfig);
+        // this.resizeableHandler(nextConfig)
 
         if( !nextConfig.rowKey ){
             nextConfig.rowKey = () => {
@@ -251,7 +253,7 @@ class List extends Component {
         if( pagination ){
             config.pagination = pagination;
         }
-        if( page === false || pagination === false ){
+        if( !page && !pagination ){
             config.pagination = false;
         }
         config.size = config.size || 'middle';
