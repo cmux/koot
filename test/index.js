@@ -22,6 +22,10 @@ const run = async () => {
                 name: 'Full',
                 value: 'FULL'
             },
+            {
+                name: 'Full (donot init test projects)',
+                value: 'FULL-QUICK'
+            },
             new inquirer.Separator(),
             {
                 name: 'React - Full',
@@ -59,14 +63,25 @@ const run = async () => {
     const script = (() => {
 
         if (value === 'FULL')
-            return `node ./test/pre-test.js`
-                + `&& jest "^((?!need-in-order).)*\\.js$"`
-                + `&& jest ${jestScript.reactSPA}`
-                + `&& jest ${jestScript.reactIsomorphic}`
+            return [
+                `node ./test/pre-test.js`,
+                `jest "^((?!need-in-order).)*\\.js$"`,
+                `jest ${jestScript.reactSPA}`,
+                `jest ${jestScript.reactIsomorphic}`
+            ].join(' && ')
+
+        if (value === 'FULL-QUICK')
+            return [
+                `jest "^((?!need-in-order).)*\\.js$"`,
+                `jest ${jestScript.reactSPA}`,
+                `jest ${jestScript.reactIsomorphic}`
+            ].join(' && ')
 
         if (value === 'REACT')
-            return `jest ${jestScript.reactSPA}`
-                + `&& jest ${jestScript.reactIsomorphic}`
+            return [
+                `jest ${jestScript.reactSPA}`,
+                `jest ${jestScript.reactIsomorphic}`
+            ].join(' && ')
 
         return `jest ${value}`
 
