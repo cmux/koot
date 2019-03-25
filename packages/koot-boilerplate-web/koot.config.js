@@ -39,6 +39,7 @@ module.exports = {
         '@services': path.resolve('./src/services'),
         '@store': path.resolve('./src/store'),
         '@views': path.resolve('./src/views'),
+        '@utils': path.resolve('./src/utils'),
         '~all.less': path.resolve('./src/assets/css/all.less'),
     },
 

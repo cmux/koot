@@ -1,8 +1,9 @@
 import React from 'react';
 import { extend } from 'koot';
-
+import API from '@utils/api';
+import http from '@utils/http';
 import { Link } from 'react-router';
-
+// import
 @extend({
     connect: true,
     pageinfo: () => ({
@@ -12,6 +13,7 @@ import { Link } from 'react-router';
     styles: require('./styles.component.less'),
 })
 class PageHome extends React.Component {
+    componentDidMount() {}
     render() {
         return (
             <div className={this.props.className}>
