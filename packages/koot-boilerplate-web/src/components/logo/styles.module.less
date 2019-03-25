@@ -1,0 +1,72 @@
+.nav__component {
+    .pc-nav {
+    }
+    .mobile-nav {
+        display: none;
+        .nav-item {
+            padding: 0 30px;
+            min-width: 120px;
+            text-align: center;
+            a {
+                color: rgba(255, 255, 255, 0.6);
+                &:hover,
+                &.current {
+                    color: rgba(255, 255, 255, 1);
+                }
+            }
+            &.active {
+                a {
+                    color: rgba(255, 255, 255, 1);
+                }
+            }
+        }
+        .bm-menu-wrap {
+            width: 260px;
+            background: rgba(245, 247, 251, 1);
+            .bm-menu {
+                margin-top: 100px;
+            }
+            .bm-item-list {
+                padding-left: 0;
+                font-size: 20px;
+                line-height: 70px;
+            }
+            .bm-cross-button {
+                top: 20px !important;
+                right: 20px !important;
+                .bm-cross {
+                    height: 24px !important;
+                }
+            }
+            .bm-cross {
+                background: #b4b4b5;
+            }
+            .nav-item {
+                outline: none;
+                a {
+                    color: rgba(74, 74, 74, 1);
+                }
+            }
+        }
+        .bm-burger-button {
+            position: fixed;
+            width: 32px;
+            height: 30px;
+            right: 24px;
+            top: 24px;
+            .bm-burger-bars {
+                background: #373a47;
+                height: 2px !important;
+                background: rgba(255, 255, 255, 1);
+            }
+        }
+    }
+    @media (max-width: 600px) {
+        .pc-nav {
+            display: none;
+        }
+        .mobile-nav {
+            display: block;
+        }
+    }
+}

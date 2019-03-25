@@ -1,4 +1,4 @@
-export const HOST = ['https://test-www.cmcm.com', 'https://www.cmcm.com'];
+export const HOST = ['https://uxcms.cmcm.com', 'https://www.cmcm.com'];
 export const API = {
-    getList: 'xxx',
+    getList: '/api/categories_with_project',
 };
