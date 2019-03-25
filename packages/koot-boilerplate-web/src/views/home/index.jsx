@@ -19,12 +19,12 @@ class PageHome extends React.Component {
         return (
             <div className={classnames('home', this.props.className)}>
                 <Header />
-                <div className={this.props.className}>
+                <section className={this.props.className}>
                     <div className="cover" ref={el => (this._cover = el)}>
                         <h2>Koot.js</h2>
                         <div className="nav" />
                     </div>
-                </div>
+                </section>
             </div>
         );
     }
