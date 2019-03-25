@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { extend } from 'koot';
 import classnames from 'classnames';
-import Nav from '@components/nav';
-import Logo from '@components/logo';
+import Nav from '@modules/nav';
+import Logo from '@modules/logo';
 
-class Header extends React.Component {
+class Header extends Component {
     render() {
         return (
             <header className={classnames(this.props.className, 'header')}>

@@ -33,7 +33,7 @@ module.exports = {
         '@src': path.resolve('./src'),
         '@assets': path.resolve('./src/assets'),
         '@components': path.resolve('./src/components'),
-        '@constants': path.resolve('./src/constants'),
+        '@modules': path.resolve('./src/modules'),
         '@locales': path.resolve('./src/locales'),
         '@router': path.resolve('./src/router'),
         '@services': path.resolve('./src/services'),

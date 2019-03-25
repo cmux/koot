@@ -1,5 +1,5 @@
 // 移动端导航
-import React from 'react';
+import React, { Component } from 'react';
 import { extend } from 'koot';
 import { slide as Menu } from 'react-burger-menu';
 // import classnames from 'classnames';
@@ -19,7 +19,7 @@ const config = [
         link: '/about',
     },
 ];
-class MobileNav extends React.Component {
+class MobileNav extends Component {
     render() {
         return (
             <nav className={this.props.className}>

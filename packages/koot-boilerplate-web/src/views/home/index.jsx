@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { extend } from 'koot';
 import API from '@utils/api';
 import http from '@utils/http';
-import Header from '@components/header';
+import Header from '@modules/header';
+import Slider from '@components/slider';
 import classnames from 'classnames';
 
-class PageHome extends React.Component {
+class PageHome extends Component {
     componentDidMount() {
         http.get(API.ACCOUNT.getList(), { params: { project_id: 61 } })
             .then(resp => {
@@ -19,11 +20,8 @@ class PageHome extends React.Component {
         return (
             <div className={classnames('home', this.props.className)}>
                 <Header />
-                <section className={this.props.className}>
-                    <div className="cover" ref={el => (this._cover = el)}>
-                        <h2>Koot.js</h2>
-                        <div className="nav" />
-                    </div>
+                <section>
+                    <Slider />
                 </section>
             </div>
         );

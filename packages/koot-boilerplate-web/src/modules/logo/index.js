@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { extend } from 'koot';
 import classnames from 'classnames';
 import { Link } from 'react-router';
 import LogoImg from '@assets/images/logo.png';
 
-class Logo extends React.Component {
+class Logo extends Component {
     render() {
         return (
             <div className={classnames(this.props.className, 'logo-wrap')}>

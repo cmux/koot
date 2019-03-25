@@ -1,0 +1,16 @@
+.component {
+    height: 300px;
+    padding-top: 60px;
+    .swiper-container {
+        overflow: hidden;
+    }
+    .swiper-wrapper {
+        display: flex;
+        .swiper-slide {
+            min-width: 100%;
+            &:nth-child(odd) {
+                background: red;
+            }
+        }
+    }
+}
