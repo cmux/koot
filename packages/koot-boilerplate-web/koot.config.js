@@ -39,7 +39,7 @@ module.exports = {
         '@services': path.resolve('./src/services'),
         '@store': path.resolve('./src/store'),
         '@views': path.resolve('./src/views'),
-        '~vars.less': path.resolve('./src/assets/css/_all.less'),
+        '~all.less': path.resolve('./src/assets/css/all.less'),
     },
 
     staticCopyFrom: path.resolve(__dirname, './src/assets/public'),
