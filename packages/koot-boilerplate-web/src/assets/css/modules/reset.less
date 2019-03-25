@@ -1,0 +1,53 @@
+*,
+*:before,
+*:after {
+    box-sizing: inherit;
+}
+
+button,
+input,
+optgroup,
+option,
+select,
+textarea {
+    font-family: inherit;
+}
+
+// global styles --------------------------------------------------------------
+
+html,
+body {
+    height: 100%;
+}
+html {
+    box-sizing: border-box;
+    font-family: Roboto, 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue', Helvetica,
+        'Nimbus Sans L', Arial, 'Lucida Grande', 'Liberation Sans', 'Microsoft YaHei UI',
+        'Microsoft YaHei', 'Hiragino Sans GB', 'Wenquanyi Micro Hei', 'WenQuanYi Zen Hei',
+        'ST Heiti', SimHei, 'WenQuanYi Zen Hei Sharp', sans-serif, caption;
+    color: @color-base;
+}
+[disabled] {
+    cursor: default;
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+// 去掉按钮的outline
+.btn:focus,
+.btn:active:focus {
+    outline: none;
+}
+ul,
+li {
+    padding: 0;
+    list-style: none;
+}
+a,
+button {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+    background: none;
+    text-decoration: none;
+}

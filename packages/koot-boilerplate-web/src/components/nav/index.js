@@ -25,17 +25,14 @@ class MobileNav extends React.Component {
             <nav className={this.props.className}>
                 {/* pc导航 */}
                 <div className="pc-nav">
-                    <ul>
+                    <ul className="flex-center">
                         {config.map((item, index) => {
                             return (
-                                <Link
-                                    to={item.link}
-                                    className="nav-item"
-                                    key={index}
-                                    rel="noopener noreferrer"
-                                >
-                                    {item.name}
-                                </Link>
+                                <li key={index} className="nav-item">
+                                    <Link to={item.link} rel="noopener noreferrer">
+                                        {item.name}
+                                    </Link>
+                                </li>
                             );
                         })}
                     </ul>

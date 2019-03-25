@@ -1,8 +1,23 @@
 .nav__component {
     .pc-nav {
+        .nav-item {
+            height: 40px;
+            a {
+                display: block;
+                padding: 0 20px;
+                line-height: 40px;
+                color: #fff;
+                text-decoration: none;
+            }
+        }
     }
     .mobile-nav {
         display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
         .nav-item {
             padding: 0 30px;
             min-width: 120px;
@@ -19,6 +34,9 @@
                     color: rgba(255, 255, 255, 1);
                 }
             }
+        }
+        .bm-overlay {
+            background: rgba(0, 0, 0, 0.5);
         }
         .bm-menu-wrap {
             width: 260px;
@@ -49,7 +67,7 @@
             }
         }
         .bm-burger-button {
-            position: fixed;
+            position: absolute;
             width: 32px;
             height: 30px;
             right: 24px;
@@ -67,6 +85,12 @@
         }
         .mobile-nav {
             display: block;
+            .bm-burger-button {
+                width: 26px;
+                height: 24px;
+                right: 20px;
+                top: 20px;
+            }
         }
     }
 }
