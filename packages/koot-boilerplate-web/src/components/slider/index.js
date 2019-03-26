@@ -1,33 +1,38 @@
 import React, { Component } from 'react';
 import { extend } from 'koot';
-import classnames from 'classnames';
 import Swiper from 'react-id-swiper';
 
+const config = [
+    {
+        text: 'slide1',
+    },
+    {
+        text: 'slide2',
+    },
+    {
+        text: 'slide3',
+    },
+    {
+        text: 'slide4',
+    },
+];
 class Slider extends Component {
     render() {
         const params = {
             loop: true,
-            pagination: {
-                el: '.swiper-pagination',
-                type: 'bullets',
-                clickable: true,
-            },
-            navigation: {
-                nextEl: '.swiper-button-next',
-                prevEl: '.swiper-button-prev',
-            },
-            spaceBetween: 30,
         };
 
         return (
-            <div className={this.props.className}>
-                <Swiper {...params}>
-                    <div>Slide 1</div>
-                    <div>Slide 2</div>
-                    <div>Slide 3</div>
-                    <div>Slide 4</div>
-                    <div>Slide 5</div>
-                </Swiper>
+            <div className={this.props.className + ' main'}>
+                {__CLIENT__ ? (
+                    <Swiper {...params}>
+                        {config.map((item, index) => {
+                            return <div key="index">{item.text}</div>;
+                        })}
+                    </Swiper>
+                ) : (
+                    ''
+                )}
             </div>
         );
     }
