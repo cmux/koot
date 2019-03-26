@@ -24,15 +24,11 @@ class Slider extends Component {
 
         return (
             <div className={this.props.className + ' main'}>
-                {__CLIENT__ ? (
-                    <Swiper {...params}>
-                        {config.map((item, index) => {
-                            return <div key="index">{item.text}</div>;
-                        })}
-                    </Swiper>
-                ) : (
-                    ''
-                )}
+                <Swiper {...params}>
+                    {config.map((item, index) => {
+                        return <div key={index}>{item.text}</div>;
+                    })}
+                </Swiper>
             </div>
         );
     }

@@ -56,7 +56,7 @@
     "axios": "0.18.0",
     "classnames": "^2.2.6",
     "koot": "^0.8.0-beta.20",
-    "react-id-swiper": "^2.1.0",
+    "react-id-swiper": "1.6.9",
     "swiper": "^4.5.0"
   },
   "devDependencies": {

@@ -20,9 +20,7 @@ class PageHome extends Component {
         return (
             <div className={classnames('home', this.props.className)}>
                 <Header />
-                <section>
-                    <Slider />
-                </section>
+                <section>{/* <Slider /> */}</section>
             </div>
         );
     }

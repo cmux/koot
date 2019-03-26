@@ -2,15 +2,39 @@
     .pc-nav {
         .nav-item {
             height: 40px;
-            a {
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+            > a {
                 display: block;
                 padding: 0 20px;
                 line-height: 40px;
                 color: #fff;
                 text-decoration: none;
             }
+            &.hasSelect {
+                margin-right: 8px;
+                &:before {
+                    content: '';
+                    width: 24px;
+                    height: 24px;
+                    position: absolute;
+                    top: 50%;
+                    right: -5px;
+                    transform: translate(0, -50%);
+                    background: url('@assets/icon/arrow.svg') no-repeat;
+                    background-size: contain;
+                    color: #fff;
+                    transition: transform ease-out 0.3s;
+                }
+                &:hover {
+                    &:before {
+                        transform: translate(0, -50%) rotate(180deg);
+                    }
+                }
+            }
             &:last-child {
-                a {
+                > a {
                     padding-right: 0;
                 }
             }
