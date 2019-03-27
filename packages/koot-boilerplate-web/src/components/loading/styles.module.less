@@ -1,0 +1,112 @@
+.component {
+    .boxLoading {
+        width: 50px !important;
+        height: 60px !important;
+        margin: auto;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        animation: animate 2s linear infinite;
+        border-radius: 3px;
+        overflow: hidden;
+    }
+    .shadow {
+        content: '';
+        width: 50px !important;
+        height: 5px !important;
+        background: #000;
+        opacity: 0.1;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        border-radius: 50%;
+
+        animation: shadow 0.5s linear infinite;
+    }
+
+    .boxLoading img {
+        width: 100%;
+    }
+    .preload-exit {
+        opacity: 1;
+    }
+    .preload-exit-active {
+        opacity: 0;
+        transition: opacity 1s ease-in;
+    }
+}
+
+@keyframes animate {
+    4% {
+        border-bottom-left-radius: 3px;
+    }
+    6% {
+        transform: translateY(9px) rotate(22.5deg);
+    }
+    12% {
+        transform: translateY(18px) scale(1, 0.9) rotate(45deg);
+    }
+    18% {
+        transform: translateY(9px) rotate(67.5deg);
+    }
+    25% {
+        transform: translateY(0) rotate(90deg);
+    }
+    29% {
+        border-bottom-right-radius: 3px;
+    }
+    31% {
+        transform: translateY(9px) rotate(112.5deg);
+    }
+    37% {
+        transform: translateY(18px) scale(1, 0.9) rotate(135deg);
+    }
+    43% {
+        transform: translateY(9px) rotate(157.5deg);
+    }
+    50% {
+        transform: translateY(0) rotate(180deg);
+    }
+    54% {
+        border-top-right-radius: 3px;
+    }
+    56% {
+        transform: translateY(9px) rotate(202.5deg);
+    }
+    62% {
+        transform: translateY(18px) scale(1, 0.9) rotate(225deg);
+    }
+    68% {
+        transform: translateY(9px) rotate(247.5deg);
+    }
+    75% {
+        transform: translateY(0) rotate(270deg);
+    }
+    79% {
+        border-top-left-radius: 3px;
+    }
+    81% {
+        transform: translateY(9px) rotate(292.5deg);
+    }
+    87% {
+        transform: translateY(18px) scale(1, 0.9) rotate(315deg);
+    }
+    93% {
+        transform: translateY(9px) rotate(337.5deg);
+    }
+    100% {
+        transform: translateY(0) rotate(360deg);
+    }
+}
+
+@keyframes shadow {
+    0%,
+    100% {
+        transform: scale(1, 1);
+    }
+    50% {
+        transform: scale(1.2, 1);
+    }
+}

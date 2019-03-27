@@ -72,6 +72,7 @@
     "lint-staged": "^8.1.5",
     "normalize.css": "8.0.1",
     "prettier": "^1.16.4",
+    "react-awesome-snippets-preload": "0.0.4",
     "react-burger-menu": "^2.6.5",
     "redux-logger": "3.0.6",
     "svg-url-loader": "2.3.2"
