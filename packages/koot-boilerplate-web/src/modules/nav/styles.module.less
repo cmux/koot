@@ -1,6 +1,7 @@
+@navHeight: 60px; //导航高度
+@selectNavBackground: rgba(0, 0, 0, 0.3); //下拉背景色
 .nav__component {
     height: 100%;
-    overflow: hidden;
     .pc-nav {
         height: 100%;
         .default-nav-list {
@@ -10,7 +11,6 @@
             height: 100%;
             position: relative;
             cursor: pointer;
-            overflow: hidden;
             > a {
                 display: block;
                 padding: 0 20px;
@@ -18,26 +18,7 @@
                 color: #fff;
                 text-decoration: none;
             }
-            &.hasSelect {
-                margin-right: 8px;
-                .select-nav-dropdown-icon {
-                    width: 24px;
-                    height: 24px;
-                    position: absolute;
-                    top: 50%;
-                    right: -5px;
-                    transform: translate(0, -50%);
-                    background-size: contain;
-                    color: rgba(255, 255, 255, 0.54);
-                    transition: all ease-out 0.3s;
-                }
-                &:hover {
-                    .select-nav-dropdown-icon {
-                        transform: translate(0, -50%) rotate(-180deg);
-                        color: rgba(255, 255, 255, 1);
-                    }
-                }
-            }
+
             &:last-child {
                 > a {
                     padding-right: 0;
@@ -45,10 +26,40 @@
             }
         }
         .select-nav-wrap {
+            white-space: nowrap;
             position: absolute;
-            bottom: 0;
-            z-index: -1;
-            opacity: 0;
+            top: 100%;
+            left: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: all ease-out 0.2s;
+            background: @selectNavBackground;
+            .select-nav-item {
+                margin: 20px;
+            }
+        }
+        .hasSelect {
+            margin-right: 8px;
+            .select-nav-dropdown-icon {
+                width: 24px;
+                height: 24px;
+                position: absolute;
+                top: 50%;
+                right: -5px;
+                transform: translate(0, -50%);
+                color: rgba(255, 255, 255, 0.54);
+                transition: all linear 0.3s;
+            }
+            &:hover {
+                .select-nav-wrap {
+                    max-height: 500px;
+                    transition: all ease-in 0.2s;
+                }
+                .select-nav-dropdown-icon {
+                    transform: translate(0, -50%) rotate(-180deg);
+                    color: rgba(255, 255, 255, 1);
+                }
+            }
         }
     }
     .mobile-nav {

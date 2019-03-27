@@ -16,11 +16,11 @@ const config = [
         link: '/news',
         more: [
             {
-                name: '关于-1',
+                name: '关于-1关于-1关于-1',
                 link: '/about-1',
             },
             {
-                name: '关于-2',
+                name: '关于-2关于-1',
                 link: '/about-2',
             },
         ],
@@ -56,7 +56,7 @@ class MobileNav extends Component {
                     key={index}
                     className={classnames(
                         'flex-center',
-                        !isMore ? 'nav-item' : '"select-nav-item"',
+                        !isMore ? 'nav-item' : 'select-nav-item',
                         item.more ? 'hasSelect' : ''
                     )}
                 >
