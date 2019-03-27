@@ -1,5 +1,6 @@
 @selectNavBackground: rgba(0, 0, 0, 0.75); //下拉背景色
-
+@defaultColor: #000;
+@activeColor: #f0641e;
 .nav__component {
     height: 100%;
     .pc-nav {
@@ -66,10 +67,11 @@
                 transform: translate(0, -50%);
                 color: rgba(255, 255, 255, 0.54);
                 transition: all linear 0.3s;
+                transform-origin: center;
             }
             &:hover {
                 > a {
-                    color: #f0641e;
+                    color: @activeColor;
                 }
                 .select-nav-wrap {
                     max-height: 500px;
@@ -82,40 +84,72 @@
             }
         }
     }
+
     .mobile-nav {
         display: none;
         position: absolute;
         top: 0;
-        .nav-item {
-            padding: 0 30px;
-            min-width: 120px;
-            text-align: center;
-            a {
-                color: rgba(255, 255, 255, 0.6);
-                &:hover,
-                &.current {
-                    color: rgba(255, 255, 255, 1);
-                }
-            }
-            &.active {
-                a {
-                    color: rgba(255, 255, 255, 1);
-                }
-            }
-        }
+
         .bm-overlay {
+            left: 0;
             background: rgba(0, 0, 0, 0.5);
         }
         .bm-menu-wrap {
-            width: 260px !important;
+            width: 180px !important;
             background: rgba(245, 247, 251, 1);
             .bm-menu {
-                margin-top: 100px;
+                margin-top: 80px;
             }
             .bm-item-list {
-                padding-left: 0;
-                font-size: 20px;
-                line-height: 70px;
+                height: calc(100vh-80px) !important;
+                padding-bottom: 20px;
+                overflow: scroll;
+            }
+            .nav-item {
+                font-size: 18px;
+                text-align: center;
+                line-height: 38px;
+                position: relative;
+                outline: 0;
+                a {
+                    display: block;
+                    width: 100%;
+                    padding: 0 20px 0 40px;
+                    color: @defaultColor;
+                    &:hover,
+                    &.active {
+                        color: #f0641e;
+                    }
+                }
+            }
+
+            .select-nav-dropdown-icon {
+                position: absolute;
+                right: 20px;
+                top: 6px;
+                height: 24px;
+                transform-origin: 12px 14px;
+                transition: all linear 0.3s;
+            }
+            .select-nav-item {
+                text-align: center;
+            }
+            .hasSelect {
+                max-height: 38px;
+                overflow: hidden;
+                transition: all linear 0.3s;
+                > a {
+                    color: #000 !important;
+                }
+                &.active {
+                    max-height: 500px;
+                    .select-nav-dropdown-icon {
+                        transform: rotate(-180deg);
+                    }
+                }
+            }
+            .select-nav-wrap {
+                margin: 0;
             }
             .bm-cross-button {
                 top: 20px !important;
@@ -126,12 +160,6 @@
             }
             .bm-cross {
                 background: #b4b4b5;
-            }
-            .nav-item {
-                outline: none;
-                a {
-                    color: rgba(74, 74, 74, 1);
-                }
             }
         }
         .bm-burger-button {

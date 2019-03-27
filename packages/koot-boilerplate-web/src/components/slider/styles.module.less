@@ -1,4 +1,4 @@
-.component {
+.slide__component {
     height: 300px;
     .swiper-container {
         height: 100%;
@@ -11,6 +11,11 @@
             min-width: 100%;
             border: 1px solid #000;
             font-size: 0.3rem;
+        }
+    }
+    @media (max-width: 600px) {
+        &.main {
+            padding: 0;
         }
     }
 }

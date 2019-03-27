@@ -1,11 +1,15 @@
+@headerHeight: 60px; //header高度
 .header__component {
     background: rgba(0, 0, 0, 0.7);
-    height: 60px;
+    height: @headerHeight;
+    position: relative;
+    z-index: 999;
     .main {
         height: 100%;
     }
     @media (max-width: 600px) {
         position: fixed;
+        z-index: 999;
         top: 0;
         left: 0;
         width: 100%;

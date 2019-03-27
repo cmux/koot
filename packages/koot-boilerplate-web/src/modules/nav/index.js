@@ -17,19 +17,27 @@ const config = [
     },
     {
         name: '关于',
-        link: '/about',
+        link: '/',
         more: [
             {
-                name: '关于-1关于-1关于-1',
+                name: '关于关于关于',
                 link: '/about-1',
             },
             {
-                name: '关于-1关于-1关于-1',
+                name: '关于关于关于',
                 link: '/about-1',
             },
             {
-                name: '关于-1关于-1关于-1',
+                name: '关于关于关于',
                 link: '/about-1',
+            },
+            {
+                name: '关于-2关于-1',
+                link: '/about-2',
+            },
+            {
+                name: '关于-2关于-1',
+                link: '/about-2',
             },
             {
                 name: '关于-2关于-1',
@@ -39,6 +47,12 @@ const config = [
     },
 ];
 class MobileNav extends Component {
+    state = {};
+    selectDropdownAddClass = id => {
+        this.setState({
+            [id]: !this.state[id],
+        });
+    };
     renderList = (data, isMore) => {
         const navLink = (item, hasDropdown) => {
             return (
@@ -62,10 +76,12 @@ class MobileNav extends Component {
             return (
                 <li
                     key={index}
+                    onClick={item.more && this.selectDropdownAddClass.bind(this, item.name)}
                     className={classnames(
                         'flex-center',
                         !isMore ? 'nav-item' : 'select-nav-item',
-                        item.more ? 'hasSelect' : ''
+                        item.more ? 'hasSelect' : '',
+                        this.state[item.name] ? 'active' : ''
                     )}
                 >
                     {!item.more ? (
@@ -92,20 +108,7 @@ class MobileNav extends Component {
                 </div>
                 {/* mobile导航 */}
                 <div className="mobile-nav">
-                    <Menu right>
-                        {config.map((item, index) => {
-                            return (
-                                <Link
-                                    to={item.link}
-                                    className="nav-item "
-                                    key={index}
-                                    rel="noopener noreferrer"
-                                >
-                                    {item.name}
-                                </Link>
-                            );
-                        })}
-                    </Menu>
+                    <Menu right>{renderList(config)}</Menu>
                 </div>
             </nav>
         );

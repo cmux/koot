@@ -8,6 +8,13 @@ import classnames from 'classnames';
 
 class PageHome extends Component {
     componentDidMount() {
+        // if (__CLIENT__) {
+        //     const header = document.getElementsByTagName('header')[0];
+        //     const scrollHeight = window.scrollY;
+        //     if (scrollHeight == 0) {
+        //         header.style.position = 'static';
+        //     }
+        // }
         http.get(API.ACCOUNT.getList(), { params: { project_id: 61 } })
             .then(resp => {
                 console.log('请求成功 ====> ', resp.data.categories);
@@ -20,7 +27,9 @@ class PageHome extends Component {
         return (
             <div className={classnames('home', this.props.className)}>
                 <Header />
-                <section>{/* <Slider /> */}</section>
+                <section>
+                    <Slider />
+                </section>
             </div>
         );
     }
