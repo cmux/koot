@@ -1,5 +1,5 @@
 @navHeight: 60px; //导航高度
-@selectNavBackground: rgba(0, 0, 0, 0.3); //下拉背景色
+@selectNavBackground: rgba(0, 0, 0, 0.75); //下拉背景色
 .nav__component {
     height: 100%;
     .pc-nav {
@@ -11,6 +11,13 @@
             height: 100%;
             position: relative;
             cursor: pointer;
+            a {
+                color: #fff;
+                transition: all linear 0.2s;
+                &:hover {
+                    color: #f0641e;
+                }
+            }
             > a {
                 display: block;
                 padding: 0 20px;
