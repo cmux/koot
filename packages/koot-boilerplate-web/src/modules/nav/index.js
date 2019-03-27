@@ -14,7 +14,19 @@ const config = [
     {
         name: '新闻页',
         link: '/news',
+    },
+    {
+        name: '关于',
+        link: '/about',
         more: [
+            {
+                name: '关于-1关于-1关于-1',
+                link: '/about-1',
+            },
+            {
+                name: '关于-1关于-1关于-1',
+                link: '/about-1',
+            },
             {
                 name: '关于-1关于-1关于-1',
                 link: '/about-1',
@@ -24,10 +36,6 @@ const config = [
                 link: '/about-2',
             },
         ],
-    },
-    {
-        name: '关于',
-        link: '/about',
     },
 ];
 class MobileNav extends Component {

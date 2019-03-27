@@ -1,5 +1,6 @@
 @navHeight: 60px; //导航高度
 @selectNavBackground: rgba(0, 0, 0, 0.75); //下拉背景色
+
 .nav__component {
     height: 100%;
     .pc-nav {
@@ -28,7 +29,7 @@
 
             &:last-child {
                 > a {
-                    padding-right: 0;
+                    // padding-right: 0;
                 }
             }
         }
@@ -42,7 +43,17 @@
             transition: all ease-out 0.2s;
             background: @selectNavBackground;
             .select-nav-item {
-                margin: 20px;
+                margin: 8px 20px;
+                &:first-child {
+                    margin-top: 20px;
+                }
+                &:last-child {
+                    margin-bottom: 20px;
+                }
+            }
+            &:last-child {
+                left: auto;
+                right: 0;
             }
         }
         .hasSelect {
@@ -58,6 +69,9 @@
                 transition: all linear 0.3s;
             }
             &:hover {
+                > a {
+                    color: #f0641e;
+                }
                 .select-nav-wrap {
                     max-height: 500px;
                     transition: all ease-in 0.2s;
