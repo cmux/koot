@@ -4,6 +4,7 @@ import { extend } from 'koot';
 import { slide as Menu } from 'react-burger-menu';
 import classnames from 'classnames';
 import { Link } from 'react-router';
+import ArrowDropDown from '@material-ui/icons/ArrowDropDown';
 
 const config = [
     {
@@ -31,15 +32,22 @@ const config = [
 ];
 class MobileNav extends Component {
     renderList = (data, isMore) => {
-        const navLink = (item, flag) => {
+        const navLink = (item, hasDropdown) => {
             return (
-                <Link
-                    to={item.link}
-                    rel="noopener noreferrer"
-                    className={classnames({ 'select-nav-btn': !!flag })}
-                >
-                    {item.name}
-                </Link>
+                <Fragment>
+                    <Link
+                        to={item.link}
+                        rel="noopener noreferrer"
+                        className={classnames({ 'select-nav-dropdown': !!hasDropdown })}
+                    >
+                        {item.name}
+                    </Link>
+                    {!!hasDropdown && (
+                        <span className="select-nav-dropdown-icon">
+                            {__CLIENT__ && <ArrowDropDown />}
+                        </span>
+                    )}
+                </Fragment>
             );
         };
         return data.map((item, index) => {
@@ -47,6 +55,7 @@ class MobileNav extends Component {
                 <li
                     key={index}
                     className={classnames(
+                        'flex-center',
                         !isMore ? 'nav-item' : '"select-nav-item"',
                         item.more ? 'hasSelect' : ''
                     )}
@@ -71,7 +80,7 @@ class MobileNav extends Component {
             <nav className={this.props.className}>
                 {/* pc导航 */}
                 <div className="pc-nav">
-                    <ul className="flex-center">{renderList(config)}</ul>
+                    <ul className="flex-center default-nav-list">{renderList(config)}</ul>
                 </div>
                 {/* mobile导航 */}
                 <div className="mobile-nav">
@@ -80,7 +89,7 @@ class MobileNav extends Component {
                             return (
                                 <Link
                                     to={item.link}
-                                    className="nav-item"
+                                    className="nav-item "
                                     key={index}
                                     rel="noopener noreferrer"
                                 >

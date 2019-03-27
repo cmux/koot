@@ -1,7 +1,13 @@
 .nav__component {
+    height: 100%;
+    overflow: hidden;
     .pc-nav {
+        height: 100%;
+        .default-nav-list {
+            height: 100%;
+        }
         .nav-item {
-            height: 40px;
+            height: 100%;
             position: relative;
             cursor: pointer;
             overflow: hidden;
@@ -14,22 +20,21 @@
             }
             &.hasSelect {
                 margin-right: 8px;
-                &:before {
-                    content: '';
+                .select-nav-dropdown-icon {
                     width: 24px;
                     height: 24px;
                     position: absolute;
                     top: 50%;
                     right: -5px;
                     transform: translate(0, -50%);
-                    background: url('@assets/icon/arrow.svg') no-repeat;
                     background-size: contain;
-                    color: #fff;
-                    transition: transform ease-out 0.3s;
+                    color: rgba(255, 255, 255, 0.54);
+                    transition: all ease-out 0.3s;
                 }
                 &:hover {
-                    &:before {
-                        transform: translate(0, -50%) rotate(180deg);
+                    .select-nav-dropdown-icon {
+                        transform: translate(0, -50%) rotate(-180deg);
+                        color: rgba(255, 255, 255, 1);
                     }
                 }
             }
@@ -38,6 +43,12 @@
                     padding-right: 0;
                 }
             }
+        }
+        .select-nav-wrap {
+            position: absolute;
+            bottom: 0;
+            z-index: -1;
+            opacity: 0;
         }
     }
     .mobile-nav {

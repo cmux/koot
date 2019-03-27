@@ -6,6 +6,9 @@
         "error_file": "logs/online/www.cmcm.com.log",
         "max_memory_restart": "200M",
         "min_uptime": "30s",
-        "max_restarts": "5"
+        "max_restarts": "5",
+        "env": {
+            "SERVER_PORT": "3000"
+        }
     }
 }
