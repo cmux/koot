@@ -27,6 +27,8 @@ const commandTestBuild = 'koot-buildtest'
 
 //
 
+//
+
 /**
  * 向 package.json 里添加 npm 命令
  * @async
@@ -80,6 +82,7 @@ describe('测试: React SPA 项目', () => {
             const distDirName = 'dist-spa-test'
             const dist = path.resolve(dir, distDirName)
             const fileIndexHtml = path.resolve(dist, 'index.html')
+            const chunkmap = fs.readJsonSync(require('../../../packages/koot/utils/get-chunkmap-path')(dist))
 
             if (fs.existsSync(dist))
                 fs.emptyDirSync(dist)
@@ -113,11 +116,20 @@ describe('测试: React SPA 项目', () => {
                 expect(exist).toBe(true)
 
                 if (exist) {
-                    const dom = new JSDOM(fs.readFileSync(fileIndexHtml))
+                    const content = fs.readFileSync(fileIndexHtml)
+                    const dom = new JSDOM(content)
                     const config = require(path.resolve(dir, 'koot.config.js'))
                     expect(
                         dom.window.document.querySelector('title').textContent
                     ).toBe(config.name)
+
+                    // 测试: HTML 注入 (动态)
+                    const checkFilename = 'specialEntry.js'
+                    const checkString = `<!--:::KOOT:::TEST:::`
+                        + chunkmap['.files'][checkFilename]
+                        + fs.readFileSync(path.resolve(dist, chunkmap['.files'][checkFilename]), 'utf-8')
+                        + `-->`
+                    expect(content.includes(checkString)).toBe(true)
                 }
             })
 
