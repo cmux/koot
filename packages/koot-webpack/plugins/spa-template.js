@@ -125,7 +125,10 @@ class SpaTemplatePlugin {
 
             const html = renderTemplate({
                 template,
-                inject: Object.assign({}, defaultInject, inject),
+                inject: {
+                    ...defaultInject,
+                    ...eval(fs.readFileSync(inject, 'utf-8')).default
+                },
                 compilation
             })
 

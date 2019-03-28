@@ -13,6 +13,7 @@ const {
     filenameWebpackDevServerPortTemp,
     keyConfigBuildDll,
     keyConfigQuiet,
+    keyConfigWebpackSPATemplateInject,
     filenameBuilding, filenameBuildFail,
 } = require('../../defaults/before-build')
 
@@ -541,54 +542,90 @@ module.exports = async (kootConfig = {}) => {
             )
         }
 
+        let spinnerBuildingSingle
+        let errorEncountered = false
+
         // 执行打包
         const build = async (config, onComplete = buildingComplete) => {
-            await beforeEachBuild()
-            const compiler = webpack(config)
-            // console.log('compiler')
-            await new Promise((resolve, reject) => {
-                compiler.run(async (err, stats) => {
-                    if (err && !stats) {
+
+            const {
+                [keyConfigWebpackSPATemplateInject]: isSPATemplateInject = false
+            } = config
+            delete config[keyConfigWebpackSPATemplateInject]
+
+            /** @type {Boolean} Webpack 自我输出过错误信息 */
+            let webpackLoggedError = false
+
+            const error = (err) => {
+                errorEncountered = true
+
+                if (spinnerBuildingSingle)
+                    spinnerBuildingSingle.stop()
+
+                if (!webpackLoggedError) {
+                    buildingError(err)
+                }
+
+                throw err
+            }
+
+            try {
+
+                await beforeEachBuild()
+                const compiler = webpack(config)
+                // console.log('compiler')
+                await new Promise((resolve, reject) => {
+                    compiler.run(async (err, stats) => {
+                        if (err && !stats) {
+                            onComplete()
+                            reject(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`)
+                            return error(err)
+                        }
+
+                        const info = stats.toJson()
+
+                        if (stats.hasWarnings()) {
+                            result.addWarning(info.warnings)
+                        }
+
+                        if (stats.hasErrors()) {
+                            onComplete()
+                            console.log(stats.toString({
+                                chunks: false,
+                                colors: true
+                            }))
+                            webpackLoggedError = true
+                            reject(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${info.errors}`)
+                            return error(info.errors)
+                        }
+
+                        if (err) {
+                            onComplete()
+                            reject(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`)
+                            return error(err)
+                        }
+
                         onComplete()
-                        reject(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`)
-                        return buildingError(err)
-                    }
 
-                    const info = stats.toJson()
+                        // 非分析模式: log stats
+                        if (!analyze && !quietMode) {
+                            if (isSPATemplateInject) {
+                            } else {
+                                console.log(stats.toString({
+                                    assets: false,
+                                    builtAt: true,
+                                    colors: true,
+                                    // modules: false,
+                                }))
+                            }
+                        }
 
-                    if (stats.hasWarnings()) {
-                        result.addWarning(info.warnings)
-                    }
-
-                    if (stats.hasErrors()) {
-                        onComplete()
-                        console.log(stats.toString({
-                            chunks: false,
-                            colors: true
-                        }))
-                        reject(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${info.errors}`)
-                        return buildingError(info.errors)
-                    }
-
-                    if (err) {
-                        onComplete()
-                        reject(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`)
-                        return buildingError(err)
-                    }
-
-                    onComplete()
-
-                    // 非分析模式: log stats
-                    if (!analyze && !quietMode) {
-                        console.log(stats.toString({
-                            chunks: false, // 输出精简内容
-                            colors: true
-                        }))
-                    }
-
-                    setTimeout(() => resolve(), 10)
+                        setTimeout(() => resolve(), 100)
+                    })
                 })
-            })
+            } catch (e) {
+                error(e)
+            }
         }
 
         if (Array.isArray(webpackConfig)) {
@@ -596,26 +633,40 @@ module.exports = async (kootConfig = {}) => {
             // console.log(' ')
             // let index = 0
             for (let config of webpackConfig) {
-                const localeId = config.plugins
-                    .filter(plugin => typeof plugin.localeId === 'string')
-                    .reduce((prev, cur) => cur.localeId)
-                const spinnerBuildingSingle = (!kootTest && !quietMode)
-                    ? spinner(
-                        (chalk.yellowBright('[koot/build] ') + __('build.building_locale', {
-                            locale: localeId
-                        })).replace(new RegExp(' ' + localeId + '\\)'), ` ${chalk.green(localeId)})`)
+                if (errorEncountered) break
+                console.log(' ')
+
+                const localeId = (() => {
+                    const ids = config.plugins
+                        .filter(plugin => plugin && typeof plugin.localeId === 'string')
+                    if (ids.length)
+                        return ids.reduce((prev, cur) => cur.localeId)
+                    return false
+                })()
+                spinnerBuildingSingle = (() => {
+                    if (kootTest) return undefined
+                    if (quietMode) return undefined
+                    if (localeId)
+                        return spinner(
+                            (chalk.yellowBright('[koot/build] ') + __('build.building_locale', {
+                                locale: localeId
+                            })).replace(new RegExp(' ' + localeId + '\\)'), ` ${chalk.green(localeId)})`)
+                        )
+                    return spinner(
+                        chalk.yellowBright('[koot/build] ') + __('build.building')
                     )
-                    : undefined
+                })()
                 await build(config, () => {
                     if (spinnerBuildingSingle) {
                         if (result.hasError()) {
                             spinnerBuildingSingle.fail()
                         } else {
                             spinnerBuildingSingle.stop()
-                            setTimeout(() => {
-                                console.log(' ')
-                                log('success', 'build', chalk.green(`${localeId}`))
-                            })
+                            if (localeId)
+                                setTimeout(() => {
+                                    console.log(' ')
+                                    log('success', 'build', chalk.green(`${localeId}`))
+                                })
                         }
                     }
                 })
@@ -682,51 +733,67 @@ module.exports = async (kootConfig = {}) => {
             }
         }
 
-        await beforeEachBuild()
-        await new Promise((resolve, reject) => {
-            webpack(webpackConfig, async (err, stats) => {
-                if (err && !stats) {
+        /** @type {Boolean} Webpack 自我输出过错误信息 */
+        let webpackLoggedError = false
+
+        const error = (err) => {
+            if (!webpackLoggedError) {
+                buildingError(err)
+                console.error(err)
+            }
+            throw err
+        }
+
+        try {
+            await beforeEachBuild()
+            await new Promise((resolve, reject) => {
+                webpack(webpackConfig, async (err, stats) => {
+                    if (err && !stats) {
+                        buildingComplete()
+                        reject(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`)
+                        return error(err)
+                    }
+
+                    const info = stats.toJson()
+
+                    if (stats.hasWarnings()) {
+                        result.addWarning(info.warnings)
+                    }
+
+                    if (stats.hasErrors()) {
+                        buildingComplete()
+                        console.log(stats.toString({
+                            chunks: false,
+                            colors: true
+                        }))
+                        webpackLoggedError = true
+                        reject(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${info.errors}`)
+                        return error(info.errors)
+                    }
+
+                    if (err) {
+                        buildingComplete()
+                        reject(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`)
+                        return error(err)
+                    }
+
                     buildingComplete()
-                    reject(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`)
-                    return buildingError(err)
-                }
+                    if (!quietMode) console.log(' ')
 
-                const info = stats.toJson()
+                    if (!analyze && !quietMode)
+                        console.log(stats.toString({
+                            chunks: false, // Makes the build much quieter
+                            colors: true
+                        }))
 
-                if (stats.hasWarnings()) {
-                    result.addWarning(info.warnings)
-                }
-
-                if (stats.hasErrors()) {
-                    buildingComplete()
-                    console.log(stats.toString({
-                        chunks: false,
-                        colors: true
-                    }))
-                    reject(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${info.errors}`)
-                    return buildingError(info.errors)
-                }
-
-                if (err) {
-                    buildingComplete()
-                    reject(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`)
-                    return buildingError(err)
-                }
-
-                buildingComplete()
-                if (!quietMode) console.log(' ')
-
-                if (!analyze && !quietMode)
-                    console.log(stats.toString({
-                        chunks: false, // Makes the build much quieter
-                        colors: true
-                    }))
-
-                resolve()
+                    resolve()
+                })
             })
-        })
 
-        await after()
+            await after()
+        } catch (e) {
+            error(e)
+        }
 
         return result
     }

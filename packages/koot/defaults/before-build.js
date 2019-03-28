@@ -37,6 +37,7 @@ module.exports = {
     // 其他项目配置项名
     keyConfigQuiet: '__QUIET__',
     keyConfigOutputPathShouldBe: '__OUTPUT_PATH_SHOULD_BE__',
+    keyConfigWebpackSPATemplateInject: '__SPA_TEMPLATE_INJECT__',
 
     // 自定义 chunk
     chunkNameExtractCss: '__KOOT__EXTRACT__CSS__',
@@ -45,5 +46,6 @@ module.exports = {
     // [开发环境] 临时文件名
     filenameWebpackDevServerPortTemp: '.dev_webpack-dev-server_port',
     filenameBuilding: '.koot-building',
-    filenameBuildFail: '.koot-build-fail'
+    filenameBuildFail: '.koot-build-fail',
+    filenameSPATemplateInjectJS: '.spa-template-inject.js'
 }
