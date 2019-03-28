@@ -6,6 +6,7 @@ const getCwd = require('../utils/get-cwd')
 /**
  * 根据输入的字符串返回合法、存在的路径名
  * @param {String} str
+ * @param {String} [cwd]
  * @returns {String}
  */
 module.exports = (str, cwd = '.') => {

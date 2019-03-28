@@ -41,7 +41,7 @@ module.exports = async (projectDir, config) => {
 
         // SPA
         if (typesSPA.includes(config.type)) {
-            if (config.templateInject) obj.inject = config.templateInject
+            // if (config.templateInject) obj.inject = config.templateInject
         } else {
             obj.server = (() => {
                 const server = {}

@@ -125,7 +125,8 @@ class SpaTemplatePlugin {
 
             const html = renderTemplate({
                 template,
-                inject: Object.assign({}, defaultInject, inject),
+                // inject: Object.assign({}, defaultInject, require(path.resolve(getCwd(), inject))),
+                inject: eval(fs.readFileSync(inject, 'utf-8')).default,
                 compilation
             })
 

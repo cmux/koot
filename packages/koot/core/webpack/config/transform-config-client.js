@@ -10,7 +10,13 @@ const SpaTemplatePlugin = require('koot-webpack/plugins/spa-template')
 const GenerateChunkmapPlugin = require('koot-webpack/plugins/generate-chunkmap')
 const CreateGeneralCssBundlePlugin = require('koot-webpack/plugins/create-general-css-bundle')
 
-const { keyConfigBuildDll, keyConfigOutputPathShouldBe, chunkNameClientRunFirst } = require('../../../defaults/before-build')
+const {
+    keyConfigBuildDll,
+    keyConfigOutputPathShouldBe,
+    keyConfigWebpackSPATemplateInject,
+    chunkNameClientRunFirst,
+    filenameSPATemplateInjectJS
+} = require('../../../defaults/before-build')
 const { hmrOptions } = require('../../../defaults/webpack-dev-server')
 
 // const {
@@ -25,6 +31,9 @@ const transformOutputPublicpath = require('./transform-output-publicpath')
 const getCwd = require('../../../utils/get-cwd')
 const getWDSport = require('../../../utils/get-webpack-dev-server-port')
 const getDirDistPublic = require('../../../libs/get-dir-dist-public')
+const getDirTemp = require('../../../libs/get-dir-tmp')
+const validatePathname = require('../../../libs/validate-pathname')
+const isI18nEnabled = require('../../../i18n/is-enabled')
 
 /**
  * Webpack 配置处理 - 客户端配置
@@ -38,7 +47,7 @@ module.exports = async (kootBuildConfig = {}) => {
         appType,
         i18n,
         dist,
-        templateInject: inject,
+        templateInject,
         defaultPublicDirName, defaultPublicPathname,
         staticCopyFrom: staticAssets,
         analyze = false,
@@ -55,8 +64,29 @@ module.exports = async (kootBuildConfig = {}) => {
         './client'
     )
 
-    let index = 0
-    const handleSingleConfig = async (localeId, localesObj) => {
+    /** @type {Boolean} 是否为 SPA 同时需要模板注入支持 */
+    const isSPANeedTemplateInject = Boolean(
+        process.env.WEBPACK_BUILD_TYPE === 'spa' &&
+        !createDll &&
+        typeof templateInject !== 'undefined'
+    )
+
+    /**
+     * 创建 Webpack 配置对象
+     * @async
+     * @param {Object} options
+     * @param {String} [options.localeId] 如果针对语种生成单一配置，请提供语种 ID
+     * @param {Object} [options.localesObj] 如果针对语种生成单一配置，请提供语言包对象
+     * @param {Number} [options.index=0] 如果针对语种生成单一配置，请提供当前语种的位置 index
+     * @param {Boolean} [options.isSPATemplateInject=false] 是否是针对 SPA 模板注入生成单一配置
+     * @returns {Object} Webpack 配置
+     */
+    const createConfig = async (options = {}) => {
+        const {
+            localeId, localesObj,
+            isSPATemplateInject = false,
+            index = 0
+        } = options
         const {
             WEBPACK_BUILD_TYPE: TYPE,
             WEBPACK_BUILD_ENV: ENV,
@@ -94,150 +124,185 @@ module.exports = async (kootBuildConfig = {}) => {
             .merge(configTargetDefault)
             .merge(await transformConfigExtendDefault(thisConfig, kootBuildConfig))
 
-        { // 处理 output
-            // if (TYPE === 'spa') {
-            //     result.output = configTargetDefault.output
-            // }
-            if (typeof result.output !== 'object')
-                result.output = {}
-            if (!result.output.path) {
-                result.output.path = path.resolve(pathPublic, defaultPublicDirName)
-                result.output.publicPath = defaultPublicPathname
-            }
-            if (!result.output.publicPath) {
-                result.output.publicPath = defaultPublicPathname
-            }
-            result.output.publicPath = transformOutputPublicpath(result.output.publicPath)
+        if (isSPATemplateInject) {
+            Object.assign(result, {
+                target: 'async-node',
+                entry: validatePathname(templateInject, getCwd()),
+                output: {
+                    filename: filenameSPATemplateInjectJS,
+                    path: getDirTemp()
+                },
+                optimization: {
+                    splitChunks: false,
+                    removeAvailableModules: false,
+                    removeEmptyChunks: false,
+                    mergeDuplicateChunks: false,
+                    occurrenceOrder: false,
+                    concatenateModules: false,
+                    minimize: false,
+                },
+                [keyConfigWebpackSPATemplateInject]: true,
+                stats: 'errors-only',
+            })
+            delete result.optimization.minimizer
+        } else {
 
-            // analyze 模式，强制修改输出文件名
-            if (analyze) {
-                // result.output.filename = 'entry-[id].[name].js'
-                // result.output.chunkFilename = 'chunck-[id].[name].js'
-                result.output.filename = 'entry-[id].js'
-                result.output.chunkFilename = 'chunck-[id].js'
-            } else {
-                if (!result.output.filename)
-                    result.output.filename = 'entry.[chunkhash].js'
-                if (!result.output.chunkFilename)
-                    result.output.chunkFilename = 'chunk.[chunkhash].js'
-            }
+            { // 处理 output
+                // if (TYPE === 'spa') {
+                //     result.output = configTargetDefault.output
+                // }
+                if (typeof result.output !== 'object')
+                    result.output = {}
+                if (!result.output.path) {
+                    result.output.path = path.resolve(pathPublic, defaultPublicDirName)
+                    result.output.publicPath = defaultPublicPathname
+                }
+                if (!result.output.publicPath) {
+                    result.output.publicPath = defaultPublicPathname
+                }
+                result.output.publicPath = transformOutputPublicpath(result.output.publicPath)
 
-            // [开发环境]
-            if (ENV === 'dev') {
-                // 标记打包目录（对应 prod 模式的结果）
-                result[keyConfigOutputPathShouldBe] = path.resolve(pathPublic, defaultPublicDirName)
-            }
-        }
+                // analyze 模式，强制修改输出文件名
+                if (analyze) {
+                    // result.output.filename = 'entry-[id].[name].js'
+                    // result.output.chunkFilename = 'chunck-[id].[name].js'
+                    result.output.filename = 'entry-[id].js'
+                    result.output.chunkFilename = 'chunck-[id].js'
+                } else {
+                    if (!result.output.filename)
+                        result.output.filename = 'entry.[chunkhash].js'
+                    if (!result.output.chunkFilename)
+                        result.output.chunkFilename = 'chunk.[chunkhash].js'
+                }
 
-        { // 处理 entry
-            if (typeof result.entry === 'object' && !result.entry.client) {
-                result.entry.client = defaultClientEntry
-            } else if (typeof result.entry !== 'object') {
-                result.entry = {
-                    client: defaultClientEntry
+                // [开发环境]
+                if (ENV === 'dev') {
+                    // 标记打包目录（对应 prod 模式的结果）
+                    result[keyConfigOutputPathShouldBe] = path.resolve(pathPublic, defaultPublicDirName)
                 }
             }
-            if (ENV === 'dev') {
-                for (let key in result.entry) {
-                    if (!Array.isArray(result.entry[key]))
-                        result.entry[key] = [result.entry[key]]
-                    result.entry[key].unshift('webpack/hot/only-dev-server')
-                    result.entry[key].unshift(`webpack-dev-server/client?http://localhost:${getWDSport()}/sockjs-node/`)
+
+            { // 处理 entry
+                if (typeof result.entry === 'object' && !result.entry.client) {
+                    result.entry.client = defaultClientEntry
+                } else if (typeof result.entry !== 'object') {
+                    result.entry = {
+                        client: defaultClientEntry
+                    }
                 }
-                // result.entry[entryClientHMR] = `webpack-dev-server/client?http://localhost:${getWDSport()}/sockjs-node/`
-            }
-            const fileRunFirst = path.resolve(
-                __dirname,
-                '../../../',
-                appType,
-                './client/run-first.js'
-            )
-            if (fs.existsSync(fileRunFirst)) {
-                result.entry[chunkNameClientRunFirst] = [fileRunFirst]
-            }
-        }
-
-        { // 添加默认插件
-            result.plugins.unshift(
-                new KootI18nPlugin({
-                    stage: STAGE,
-                    functionName: i18n ? i18n.expr : undefined,
-                    localeId: i18n ? (isSeperateLocale ? localeId : undefined) : undefined,
-                    locales: i18n ? (isSeperateLocale ? localesObj : undefined) : undefined,
-                })
-            )
-            if (ENV === 'dev') {
-                result.plugins.push(
-                    new DevModePlugin(webpackCompilerHook)
+                if (ENV === 'dev') {
+                    for (let key in result.entry) {
+                        if (!Array.isArray(result.entry[key]))
+                            result.entry[key] = [result.entry[key]]
+                        result.entry[key].unshift('webpack/hot/only-dev-server')
+                        result.entry[key].unshift(`webpack-dev-server/client?http://localhost:${getWDSport()}/sockjs-node/`)
+                    }
+                    // result.entry[entryClientHMR] = `webpack-dev-server/client?http://localhost:${getWDSport()}/sockjs-node/`
+                }
+                const fileRunFirst = path.resolve(
+                    __dirname,
+                    '../../../',
+                    appType,
+                    './client/run-first.js'
                 )
-                result.plugins.push(
-                    new webpack.NamedModulesPlugin()
-                )
-                result.plugins.push(
-                    new webpack.HotModuleReplacementPlugin(Object.assign({}, hmrOptions, webpackHmr))
-                )
+                if (fs.existsSync(fileRunFirst)) {
+                    result.entry[chunkNameClientRunFirst] = [fileRunFirst]
+                }
             }
 
-            if (!createDll) {
-                result.plugins.push(
-                    await new CreateGeneralCssBundlePlugin({
-                        localeId: isSeperateLocale ? localeId : undefined,
+            { // 添加默认插件
+                // i18n 插件
+                result.plugins.unshift(
+                    new KootI18nPlugin({
+                        stage: STAGE,
+                        functionName: i18n ? i18n.expr : undefined,
+                        localeId: i18n ? (isSeperateLocale ? localeId : undefined) : undefined,
+                        locales: i18n ? (isSeperateLocale ? localesObj : undefined) : undefined,
                     })
                 )
 
-                if (TYPE === 'spa') {
+                // 开发环境辅助插件
+                if (ENV === 'dev') {
                     result.plugins.push(
-                        new SpaTemplatePlugin({
-                            localeId: isSeperateLocale ? localeId : undefined,
-                            inject,
-                        })
+                        new DevModePlugin(webpackCompilerHook)
                     )
-                } else {
                     result.plugins.push(
-                        await new GenerateChunkmapPlugin({
-                            localeId: isSeperateLocale ? localeId : undefined,
-                        })
+                        new webpack.NamedModulesPlugin()
+                    )
+                    result.plugins.push(
+                        new webpack.HotModuleReplacementPlugin(Object.assign({}, hmrOptions, webpackHmr))
                     )
                 }
 
-                if ((ENV !== 'dev' || TYPE === 'spa') && Array.isArray(staticAssets) && !index) {
-                    result.plugins.push(new CopyWebpackPlugin(
-                        staticAssets.map(from => ({
-                            from,
-                            to: TYPE === 'spa' && ENV === 'dev' ? undefined : path.relative(result.output.path, pathPublic)
-                            // to: path.relative(result.output.path, pathPublic)
-                        }))
-                    ))
+                if (!createDll) {
+                    result.plugins.push(
+                        await new CreateGeneralCssBundlePlugin({
+                            localeId: isSeperateLocale ? localeId : undefined,
+                        })
+                    )
+
+                    if (TYPE === 'spa') {
+                        result.plugins.push(
+                            new SpaTemplatePlugin({
+                                localeId: isSeperateLocale ? localeId : undefined,
+                                // inject: templateInject,
+                                inject: path.resolve(getDirTemp(), filenameSPATemplateInjectJS)
+                            })
+                        )
+                    } else {
+                        result.plugins.push(
+                            await new GenerateChunkmapPlugin({
+                                localeId: isSeperateLocale ? localeId : undefined,
+                            })
+                        )
+                    }
+
+                    if ((ENV !== 'dev' || TYPE === 'spa') && Array.isArray(staticAssets) && !index) {
+                        result.plugins.push(new CopyWebpackPlugin(
+                            staticAssets.map(from => ({
+                                from,
+                                to: TYPE === 'spa' && ENV === 'dev' ? undefined : path.relative(result.output.path, pathPublic)
+                                // to: path.relative(result.output.path, pathPublic)
+                            }))
+                        ))
+                    }
                 }
             }
         }
-
-        index++
 
         return await transformConfigLast(result, kootBuildConfig)
     }
 
-    return await (async () => {
-        if (typeof i18n === 'object') {
-            const {
-                type = 'default'
-            } = i18n
-            switch (type) {
-                case 'redux': {
-                    return await handleSingleConfig()
+    if (isI18nEnabled()) {
+        switch (i18n.type || 'default') {
+            case 'redux': {
+                if (isSPANeedTemplateInject)
+                    return [
+                        await createConfig({ isSPATemplateInject: true }),
+                        await createConfig()
+                    ]
+                return await createConfig()
+            }
+            default: {
+                // 多语言拆包模式: 每个语种一次打包
+                const results = []
+                let index = 0
+                for (const [localeId, localesObj] of i18n.locales) {
+                    if (isSPANeedTemplateInject)
+                        results.push(await createConfig({ localeId, localesObj, index, isSPATemplateInject: true }))
+                    results.push(await createConfig({ localeId, localesObj, index }))
+                    index++
                 }
-                default: {
-                    // 多语言拆包模式: 每个语种一次打包
-                    const configs = []
-                    for (let arr of i18n.locales) {
-                        const thisConfig = await handleSingleConfig(arr[0], arr[1])
-                        configs.push(thisConfig)
-                    }
-                    return configs
-                }
+                return results
             }
         }
+    } else {
+        if (isSPANeedTemplateInject)
+            return [
+                await createConfig({ isSPATemplateInject: true }),
+                await createConfig()
+            ]
+        return await createConfig()
+    }
 
-        return await handleSingleConfig()
-    })()
 }
