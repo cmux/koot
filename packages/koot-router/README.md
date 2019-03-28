@@ -4,29 +4,25 @@
 
 **路由器的概念**
 
-链接两个或多个设备
+链接两个或多个设备。
 
 **前端路由器**
 
-应该是页面组件的组织者，用于连接两个/或多个组件
+应该是页面组件的组织者，用于连接两个/或多个组件。
 
 **koot-router** 
 
-是基于 react-router 的 纯json 的路由组织方式
-
-**koot-router** 
-
-想要以一份通用且易理解的json格式来描述路由及组件相关的关系
+是基于 ```react-router``` 的```纯json```的路由组织方式，以一份通用且易理解的json格式来描述路由及组件相关的关系。
 
 ## 安装
 
 ### NPM
-```
+```shell
     npm install koot-router --save
 ```
 
 ### Yarn
-```
+```shell
     yarn koot-router
 ```
 
