@@ -368,10 +368,16 @@ const run = async () => {
                 wait()
             })
 
-            console.log('')
-            log('success', 'dev', __('dev.spa_success'))
-            console.log('           @ ' + chalk.green(`http://localhost:${process.env.SERVER_PORT}/`))
-            console.log('')
+            console.log(' ')
+
+            await new Promise(resolve => {
+                setTimeout(() => {
+                    log('success', 'dev', __('dev.spa_success'))
+                    console.log('           @ ' + chalk.green(`http://localhost:${process.env.SERVER_PORT}/`))
+                    console.log(' ')
+                    resolve()
+                }, 500)
+            })
 
             if (open) openBrowserPage()
         }

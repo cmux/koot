@@ -5,7 +5,7 @@ const middlewares = [
     ...reduxForCreateStore.middlewares
 ]
 if (__CLIENT__ && __DEV__) {
-    middlewares.push(require('redux-logger'))
+    middlewares.push(require('redux-logger').default)
 }
 
 /**

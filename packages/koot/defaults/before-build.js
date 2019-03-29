@@ -47,5 +47,5 @@ module.exports = {
     filenameWebpackDevServerPortTemp: '.dev_webpack-dev-server_port',
     filenameBuilding: '.koot-building',
     filenameBuildFail: '.koot-build-fail',
-    filenameSPATemplateInjectJS: '.spa-template-inject.js'
+    filenameSPATemplateInjectJS: '.spa-template-inject.LOCALEID.js'
 }

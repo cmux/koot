@@ -41,6 +41,8 @@ const removeBuildFlagFiles = require('../../libs/remove-build-flag-files')
 
 const createPWAsw = require('../pwa/create')
 
+const buildClient = require('./build-client')
+
 
 // 调试webpack模式
 // const DEBUG = 1
@@ -452,7 +454,32 @@ module.exports = async (kootConfig = {}) => {
     if (STAGE === 'client' && ENV === 'dev' && !createDll) {
         // await sleep(20 * 1000)
         await beforeEachBuild()
-        const compiler = webpack(webpackConfig)
+
+        const configsSPATemplateInject = []
+        const configsClientDev = []
+
+        if (Array.isArray(webpackConfig)) {
+            webpackConfig.forEach(config => {
+                if (config[keyConfigWebpackSPATemplateInject])
+                    configsSPATemplateInject.push(config)
+                else
+                    configsClientDev.push(config)
+            })
+        } else {
+            configsClientDev.push(webpackConfig)
+        }
+
+        for (const config of configsSPATemplateInject) {
+            await buildClient(config)
+                .then(err => {
+                    if (err) return buildingError(err)
+                })
+                .catch(err => {
+                    return buildingError(err)
+                })
+        }
+
+        const compiler = webpack(configsClientDev)
         const {
             before,
             headers = {},

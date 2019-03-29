@@ -15,7 +15,6 @@ const {
     keyConfigOutputPathShouldBe,
     keyConfigWebpackSPATemplateInject,
     chunkNameClientRunFirst,
-    filenameSPATemplateInjectJS
 } = require('../../../defaults/before-build')
 const { hmrOptions } = require('../../../defaults/webpack-dev-server')
 
@@ -32,6 +31,7 @@ const getCwd = require('../../../utils/get-cwd')
 const getWDSport = require('../../../utils/get-webpack-dev-server-port')
 const getDirDistPublic = require('../../../libs/get-dir-dist-public')
 const getDirTemp = require('../../../libs/get-dir-tmp')
+const getFilenameSPATemplateInject = require('../../../libs/get-filename-spa-template-inject')
 const validatePathname = require('../../../libs/validate-pathname')
 const isI18nEnabled = require('../../../i18n/is-enabled')
 
@@ -129,7 +129,7 @@ module.exports = async (kootBuildConfig = {}) => {
                 target: 'async-node',
                 entry: validatePathname(templateInject, getCwd()),
                 output: {
-                    filename: filenameSPATemplateInjectJS,
+                    filename: getFilenameSPATemplateInject(localeId),
                     path: getDirTemp()
                 },
                 optimization: {
@@ -246,7 +246,7 @@ module.exports = async (kootBuildConfig = {}) => {
                             new SpaTemplatePlugin({
                                 localeId: isSeperateLocale ? localeId : undefined,
                                 // inject: templateInject,
-                                inject: path.resolve(getDirTemp(), filenameSPATemplateInjectJS)
+                                inject: path.resolve(getDirTemp(), getFilenameSPATemplateInject(localeId))
                             })
                         )
                     } else {

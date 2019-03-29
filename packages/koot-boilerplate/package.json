@@ -21,7 +21,7 @@
         "build:spa": "koot-build --type spa",
         "dev": "koot-dev",
         "dev:no-open": "koot-dev --no-open",
-        "dev:spa": "koot-dev --type spa",
+        "dev:spa": "koot-dev --type spa --no-open",
         "analyze": "koot-analyze",
         "eslint": "eslint \"src/**/*.+(js|jsx)\""
     },
