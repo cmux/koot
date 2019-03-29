@@ -11,41 +11,14 @@ export default {
     //     title: '首页',
     // },
     children: [
-        // {
-        //     path: '',
-        //     component: Home,
-        // },
         {
-            path: 'home',
+            path: '',
             component: Home,
-            children: [
-                {
-                    path: ':id',
-                    component: NotFound,
-                },
-            ],
         },
-        // {
-        //     // 404页面
-        //     path: '*',
-        //     component: NotFound,
-        // },
-        // {
-        //     path: 'pathname',
-        //     meta: {
-        //         name: '',
-        //     },
-        //     component: PathComponent,
-        //     children: [
-        //         {
-        //             path: 'pathchildname',
-        //             meta: {
-        //                 name: '',
-        //                 showMenu: true, // 控制三级菜单的显示隐藏
-        //             },
-        //             component: PathchildnameComponent,
-        //         },
-        //     ],
-        // },
+        {
+            // 404页面
+            path: '*',
+            component: NotFound,
+        },
     ],
 };

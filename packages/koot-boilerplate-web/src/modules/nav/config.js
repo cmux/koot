@@ -1,15 +1,15 @@
 const config = [
     {
         name: '首页',
-        link: '/home',
+        link: '/',
     },
     {
         name: '新闻页',
-        link: '/home/23',
+        link: '/news',
     },
     {
         name: '关于',
-        link: '/',
+        link: '',
         more: [
             {
                 name: '关于关于关于',

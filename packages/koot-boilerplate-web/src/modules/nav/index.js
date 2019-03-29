@@ -14,7 +14,6 @@ class MobileNav extends Component {
         currentPath: '',
     };
     componentDidMount() {
-        console.log('routerConfig: ', routerConfig);
         this.setState(
             {
                 currentPath: store.getState().routing.locationBeforeTransitions.pathname,

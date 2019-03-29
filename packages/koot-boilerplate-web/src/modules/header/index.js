@@ -9,7 +9,7 @@ class Header extends Component {
     render() {
         return (
             // Affix 作用是固定header,如不需要可以去掉
-            <div className={classnames('header', this.props.className)}>
+            <div className={classnames('header  ', this.props.className)}>
                 <Affix offsetTop={0}>
                     <header>
                         <div className="flex-center main ">

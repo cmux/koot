@@ -3,7 +3,11 @@ import { extend } from 'koot';
 
 class NotFound extends Component {
     render() {
-        return <div className={this.props.className}>404</div>;
+        return (
+            <div className={this.props.className}>
+                <h1>404</h1>
+            </div>
+        );
     }
 }
 
