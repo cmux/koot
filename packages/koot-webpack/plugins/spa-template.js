@@ -123,11 +123,19 @@ class SpaTemplatePlugin {
             })()
             // console.log(Object.assign({}, defaultInject, inject))
 
+            const projectInject = ((thisModule) => {
+                if (typeof thisModule.default === 'object')
+                    return thisModule.default
+                if (typeof thisModule === 'object')
+                    return thisModule
+                return {}
+            })(eval(fs.readFileSync(inject, 'utf-8')))
+
             const html = renderTemplate({
                 template,
                 inject: {
                     ...defaultInject,
-                    ...eval(fs.readFileSync(inject, 'utf-8')).default
+                    ...projectInject
                 },
                 compilation
             })
