@@ -43,9 +43,7 @@ class Slider extends Component {
                         })}
                     </Swiper>
                 </div>
-                <ScrollAnimation data-animation="fadeInRight">
-                    <div>sdfsdfsdfsdfsdf</div>
-                </ScrollAnimation>
+                {/* <div data-animation="fadeInRight">sdfsdfsdfsdfsdf</div> */}
             </ScrollAnimation>
         );
     }

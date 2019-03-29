@@ -12,6 +12,7 @@ import routerConfig from '@routes/config.js';
 class MobileNav extends Component {
     state = {
         currentPath: '',
+        isMenuOpen: false,
     };
     componentDidMount() {
         this.setState(
@@ -19,7 +20,7 @@ class MobileNav extends Component {
                 currentPath: store.getState().routing.locationBeforeTransitions.pathname,
             },
             () => {
-                console.log(this.state);
+                console.log(store.getState().routing);
             }
         );
     }
@@ -29,7 +30,21 @@ class MobileNav extends Component {
     selectDropdownAddClass = id => {
         this.setState({
             [id]: !this.state[id],
+            isMenuOpen: true,
         });
+    };
+
+    changeMenuOpen = (link, event) => {
+        if (link === '') {
+            this.setState({
+                isMenuOpen: true,
+            });
+            return;
+        }
+        this.setState({
+            isMenuOpen: false,
+        });
+        event.stopPropagation();
     };
     renderList = (data, isMore) => {
         const navLink = (item, hasDropdown) => {
@@ -39,6 +54,9 @@ class MobileNav extends Component {
                         to={item.link}
                         rel="noopener noreferrer"
                         className={classnames({ 'select-nav-dropdown': !!hasDropdown })}
+                        onClick={e => {
+                            this.changeMenuOpen(item.link, e);
+                        }}
                     >
                         {item.name}
                     </Link>
@@ -78,6 +96,8 @@ class MobileNav extends Component {
     };
     render() {
         const { renderList } = this;
+        const { isMenuOpen } = this.state;
+
         return (
             <nav className={this.props.className}>
                 {/* pc导航 */}
@@ -86,7 +106,9 @@ class MobileNav extends Component {
                 </div>
                 {/* mobile导航 */}
                 <div className="mobile-nav">
-                    <Menu right>{renderList(config)}</Menu>
+                    <Menu isOpen={isMenuOpen} right>
+                        {renderList(config)}
+                    </Menu>
                 </div>
             </nav>
         );

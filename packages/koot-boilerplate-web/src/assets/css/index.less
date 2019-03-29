@@ -1,7 +1,7 @@
 @import (less) '~normalize.css/normalize.css';
 @import '~all.less';
 @import './modules/reset.less';
-@import './modules/animate.css';
+// @import './modules/animate.css';
 
 body {
     font-size: @base-font-size;
@@ -39,5 +39,14 @@ body {
     visibility: hidden;
     &.animated {
         visibility: visible;
+    }
+}
+.animated {
+    .aninode {
+        animation-duration: 1s;
+        animation-fill-mode: both;
+    }
+    .infinite {
+        animation-iteration-count: infinite;
     }
 }
