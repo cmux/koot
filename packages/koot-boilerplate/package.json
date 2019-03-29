@@ -1,7 +1,7 @@
 {
     "name": "koot-boilerplate",
     "private": true,
-    "version": "0.8.3",
+    "version": "0.8.4",
     "description": "Tech-demo boilerplate for koot.js.",
     "author": {
         "name": "diablohu",
@@ -28,7 +28,7 @@
     "dependencies": {
         "axios": "0.18.0",
         "classnames": "2.2.6",
-        "koot": "^0.8.3"
+        "koot": "^0.8.4"
     },
     "devDependencies": {
         "autoprefixer": "9.5.0",
