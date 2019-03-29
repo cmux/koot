@@ -23,10 +23,14 @@ class Slider extends Component {
         };
 
         return (
-            <div className={this.props.className + ' main'}>
+            <div
+                className={this.props.className + ' main animation-hide'}
+                data-scroll-watch
+                data-animation="fadeInLeft"
+            >
                 <Swiper {...params}>
                     {config.map((item, index) => {
-                        return <div key={index}>{item.text}</div>;
+                        return <div key={index}>{item.text} </div>;
                     })}
                 </Swiper>
             </div>

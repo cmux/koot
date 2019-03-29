@@ -1,53 +1,32 @@
 // 移动端导航
 import React, { Component, Fragment } from 'react';
-import { extend } from 'koot';
+import { extend, store } from 'koot';
 import { slide as Menu } from 'react-burger-menu';
 import classnames from 'classnames';
 import { Link } from 'react-router';
+// import queryString from 'query-string';
 import ArrowDropDown from '@material-ui/icons/ArrowDropDown';
+import config from './config';
+import routerConfig from '@routes/config.js';
 
-const config = [
-    {
-        name: '首页',
-        link: '/home',
-    },
-    {
-        name: '新闻页',
-        link: '/news',
-    },
-    {
-        name: '关于',
-        link: '/',
-        more: [
-            {
-                name: '关于关于关于',
-                link: '/about-1',
-            },
-            {
-                name: '关于关于关于',
-                link: '/about-1',
-            },
-            {
-                name: '关于关于关于',
-                link: '/about-1',
-            },
-            {
-                name: '关于-2关于-1',
-                link: '/about-2',
-            },
-            {
-                name: '关于-2关于-1',
-                link: '/about-2',
-            },
-            {
-                name: '关于-2关于-1',
-                link: '/about-2',
-            },
-        ],
-    },
-];
 class MobileNav extends Component {
-    state = {};
+    state = {
+        currentPath: '',
+    };
+    componentDidMount() {
+        console.log('routerConfig: ', routerConfig);
+        this.setState(
+            {
+                currentPath: store.getState().routing.locationBeforeTransitions.pathname,
+            },
+            () => {
+                console.log(this.state);
+            }
+        );
+    }
+    componentWillUpdate(currentProps) {
+        // console.log('++++++++++', store.getState().routing.locationBeforeTransitions);
+    }
     selectDropdownAddClass = id => {
         this.setState({
             [id]: !this.state[id],

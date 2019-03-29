@@ -35,7 +35,7 @@ module.exports = {
         '@components': path.resolve('./src/components'),
         '@modules': path.resolve('./src/modules'),
         '@locales': path.resolve('./src/locales'),
-        '@router': path.resolve('./src/router'),
+        '@routes': path.resolve('./src/routes'),
         '@services': path.resolve('./src/services'),
         '@store': path.resolve('./src/store'),
         '@views': path.resolve('./src/views'),

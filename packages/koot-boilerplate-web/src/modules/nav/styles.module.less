@@ -23,12 +23,12 @@
                 display: block;
                 padding: 0 20px;
                 line-height: 40px;
-                color: #fff;
                 text-decoration: none;
             }
 
             &:last-child {
                 > a {
+                    // 最后一项右对齐时去掉注释
                     // padding-right: 0;
                 }
             }
@@ -150,6 +150,7 @@
             }
             .select-nav-wrap {
                 margin: 0;
+                box-shadow: inset 0px 0px 7px 1px rgba(0, 0, 0, 0.3);
             }
             .bm-cross-button {
                 top: 20px !important;
@@ -173,6 +174,11 @@
                 height: 2px !important;
                 background: rgba(255, 255, 255, 1);
             }
+        }
+    }
+    .nav-item {
+        a.current {
+            color: #f0641e;
         }
     }
     @media (max-width: 600px) {
