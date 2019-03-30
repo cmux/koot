@@ -15,14 +15,78 @@
 ## 安装
 
 ### NPM
-```
-    npm install koot-redux --save
+```shell
+npm install koot-redux --save
 ```
 
 ### Yarn
+```shell
+yarn koot-redux
 ```
-    yarn koot-redux
+
+## 快速使用
+
+> 利用koot-cli 创建的模板项目，可按照如下修改使用。
+
+修改 File: /src/store/index.js
+```js
+    import { createReduxModuleStore, applyMiddleware } from 'koot-redux'
+    import { reduxForCreateStore } from 'koot'
+    import rootModule from './root'
+
+    const middlewares = [
+        ...reduxForCreateStore.middlewares
+    ]
+
+    export default () => {
+
+        const {
+            initialState
+        } = reduxForCreateStore
+
+
+        if (__CLIENT__ && __DEV__) {
+            return createReduxModuleStore(
+                rootModule,
+                initialState,
+                require('redux-devtools-extension').composeWithDevTools(applyMiddleware(...middlewares))
+            )
+        }
+
+        return createReduxModuleStore(
+            rootModule,
+            initialState
+        )
+
+    }
 ```
+
+添加 File: /src/store/root.js 
+```js
+    import { reduxForCreateStore } from 'koot'
+
+    export default {
+        state: {
+
+            ...reduxForCreateStore.reducers
+        },
+        reducers: {
+            ['SOME_REDUCER_FUNCTION']() {
+
+            }
+        },
+        actions: {
+            ['SOME_ACTION_FUNCTION']() {
+
+            }
+        },
+        modules: {
+            // 此处可扩展子集的 module 模块
+        }
+    }
+```
+
+
 
 ## Module
 在 koot-redux 中，
@@ -33,7 +97,7 @@
 
 module.js
 
-```
+```js
     const module = {
         state: {
             // 在此处定义默认的state
@@ -97,13 +161,13 @@ module.js
 然后在 action 中，提交你要执行的 reducer 操作
 
 ### 派发 action
-```
+```js
     // 派发 action
     this.props.dispatch('SOME_ACTION_NAME')
 ```
 
 ### action函数及参数
-```
+```js
     // commit 用来提交 reducer
     // eg: commit('SOME_REDUCER_FUNCTION', payload)
 
@@ -125,52 +189,4 @@ module.js
 
 * 我们建议 reducer 是一个纯净的、同步的存储过程，只跟数据存储本身有关。
 * 是否存储或其他业务判断逻辑我们推荐写到 action 当中。
-
-## 创建 store 
-
-index.js
-```
-    import React from 'react';
-    import { render } from 'react-dom';
-    import { Provider } from 'react-redux';
-    import { createReduxModuleStore } from 'koot-redux';
-    import rootModule from './store';
-    import App from './components/App'
-
-    const store = createReduxModuleStore(rootModule);
-
-    render(
-        <Provider store={store}>
-            <App />
-        </Provider>,
-        document.getElementById('root')
-    )
-```
-
-./store/index.js
-```
-    const rootModule = {
-        state: {
-            // 在此处定义默认的state
-            // 程序将在创建时将此处定义好的值初始化为默认值
-            userinfo: {
-                username: 'liudehua',
-                password: '123456'
-            }
-        },
-        reducers: {
-            ['SOME_REDUCER_FUNCTION'](){
-
-            }
-        },
-        actions: {
-            ['SOME_ACTION_FUNCTION'](){
-
-            }
-        },
-        modules: {
-            // 此处可扩展子集的 module 模块
-        }
-    }
-```
 
