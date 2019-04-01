@@ -1,10 +1,9 @@
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { reduxForCreateStore } from 'koot';
-import logger from 'redux-logger';
-
 const middlewares = [...reduxForCreateStore.middlewares];
+
 if (__CLIENT__ && __DEV__) {
-    middlewares.push(logger);
+    middlewares.push(require('redux-logger').default);
 }
 
 /**

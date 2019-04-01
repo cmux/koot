@@ -1,4 +1,5 @@
 const path = require('path');
+const ImageminPlugin = require('imagemin-webpack-plugin').default;
 
 // ****************************************************************************
 
@@ -70,6 +71,14 @@ const factoryConfig = async () => {
             ],
             ...configBase.entry,
         },
+        plugins: [
+            ...configBase.plugins,
+            new ImageminPlugin({
+                pngquant: {
+                    // quality: '95-100'
+                },
+            }),
+        ],
     });
 };
 

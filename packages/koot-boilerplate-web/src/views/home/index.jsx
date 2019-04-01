@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { extend, store } from 'koot';
+import { extend } from 'koot';
 import API from '@utils/api';
 import http from '@utils/http';
 import Slider from '@components/slider';
