@@ -72,7 +72,7 @@ const factoryConfig = async () => {
             ...configBase.entry,
         },
         plugins: [
-            ...configBase.plugins,
+            // ...configBase.plugins,
             new ImageminPlugin({
                 pngquant: {
                     // quality: '95-100'
