@@ -55,6 +55,8 @@ const transform = async (config, kootBuildConfig = {}) => {
             // path: STAGE === 'server' ? path.resolve(dist, 'server') : dist
             path: getDirDevDll()
         }
+        process.env.KOOT_DEV_DLL_FILE_CLIENT = path.resolve(getDirDevDll(undefined, 'client'), filenameDll)
+        process.env.KOOT_DEV_DLL_FILE_SERVER = path.resolve(getDirDevDll(undefined, 'server'), filenameDll)
         result.plugins.push(
             new webpack.DllPlugin({
                 // context: path.resolve(__dirname, '../../../../'),
@@ -140,7 +142,7 @@ const validatePlugins = (config, kootBuildConfig = {}) => {
         // const file = STAGE === 'server'
         //     ? path.resolve(kootBuildConfig.dist, 'server', filenameDllManifest)
         //     : path.resolve(kootBuildConfig.dist, filenameDllManifest)
-        const file = path.resolve(kootBuildConfig.dist, 'server', filenameDllManifest)
+        const file = path.resolve(getDirDevDll(), filenameDllManifest)
         if (fs.existsSync(file)) {
             config.plugins.push(
                 new webpack.DllReferencePlugin({

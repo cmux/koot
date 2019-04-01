@@ -9,7 +9,7 @@ import history from "../../React/history"
 import {
     localeId as LocaleId,
     store as Store,
-    history as History
+    getHistory
 } from '../../index'
 import { actionUpdate } from '../../React/realtime-location'
 import Root from '../../React/root.jsx'
@@ -66,6 +66,7 @@ export default ({
     const routes = validateRouterConfig(router)
     if (typeof routes.path === 'undefined')
         routes.path = '/'
+    const History = getHistory()
     // const thisHistory = syncHistoryWithStore(History, Store)
     const routerConfig = {
         // history: syncHistoryWithStore(memoryHistory, store),

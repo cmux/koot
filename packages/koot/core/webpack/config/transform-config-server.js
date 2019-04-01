@@ -7,6 +7,7 @@ const DefaultWebpackConfig = require('webpack-config').default
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const KootI18nPlugin = require('../plugins/i18n')
 const DevModePlugin = require('koot-webpack/plugins/dev-mode')
+const { keyConfigBuildDll } = require('../../../defaults/before-build')
 
 const createTargetDefaultConfig = require('./create-target-default')
 const transformConfigExtendDefault = require('./transform-config-extend-default')
@@ -31,6 +32,7 @@ module.exports = async (kootBuildConfig = {}) => {
         defaultPublicPathname,
         i18n,
         staticCopyFrom: staticAssets,
+        [keyConfigBuildDll]: createDll = false,
     } = kootBuildConfig
 
     const {
@@ -173,9 +175,11 @@ module.exports = async (kootBuildConfig = {}) => {
                     }))
                 ))
 
-            config.plugins.push(
-                new DevModePlugin({ dist })
-            )
+            if (!createDll) {
+                config.plugins.push(
+                    new DevModePlugin({ dist })
+                )
+            }
         }
     })(configsFull[configsFull.length - 1])
 

@@ -48,8 +48,8 @@ class DevModePlugin {
                     if (typeof this.dist !== 'string' || !this.dist)
                         return
 
-                    const fileDll = path.resolve(this.dist, 'server', filenameDll)
-                    if (!fs.existsSync(fileDll))
+                    const { KOOT_DEV_DLL_FILE_SERVER: fileDll } = process.env
+                    if (!fileDll || !fs.existsSync(fileDll))
                         return
 
                     for (const chunk of chunks) {

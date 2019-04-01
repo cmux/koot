@@ -1,7 +1,5 @@
 const fs = require('fs-extra')
-const path = require('path')
 
-const { filenameDll } = require('../../defaults/before-build')
 const { dll } = require('../../defaults/dev-request-uri')
 
 /**
@@ -36,8 +34,8 @@ const getDevExtra = () => {
     if (process.env.WEBPACK_BUILD_ENV !== 'dev') return ''
 
     // 判断是否存在 dll 文件，如果存在，在此引入
-    const fileDll = path.resolve(process.env.KOOT_DIST_DIR, filenameDll)
-    if (fs.existsSync(fileDll))
+    const { KOOT_DEV_DLL_FILE_CLIENT: fileDllClient } = process.env
+    if (fileDllClient && fs.existsSync(fileDllClient))
         return `<script type="text/javascript" src="${dll}"></script>`
 
     return ''

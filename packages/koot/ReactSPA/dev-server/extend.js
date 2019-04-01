@@ -1,8 +1,6 @@
 const fs = require('fs-extra')
-const path = require('path')
 
 const { dll } = require('../../defaults/dev-request-uri')
-const { filenameDll } = require('../../defaults/before-build')
 
 /**
  * 扩展 webpack-dev-server
@@ -11,9 +9,10 @@ const { filenameDll } = require('../../defaults/before-build')
 module.exports = (app) => {
     // console.log(server)
     // return
-    const file = path.resolve(process.env.KOOT_DIST_DIR, filenameDll)
-    app.get(`${dll}`, function (req, res) {
-        res.type('application/javascript')
-        res.send(fs.readFileSync(file))
-    })
+    const { KOOT_DEV_DLL_FILE_CLIENT: fileDll } = process.env
+    if (fileDll && fs.existsSync(fileDll))
+        app.get(`${dll}`, function (req, res) {
+            res.type('application/javascript')
+            res.send(fs.readFileSync(fileDll))
+        })
 }

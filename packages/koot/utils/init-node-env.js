@@ -96,6 +96,10 @@ module.exports = () => {
 
         // 开发环境启动时间
         // KOOT_DEV_START_TIME: Date.now(),
+
+        // 开发环境: DLL 文件路径
+        // KOOT_DEV_DLL_FILE_CLIENT: '',
+        // KOOT_DEV_DLL_FILE_SERVER: '',
     }
     for (let key in defaults) {
         if (typeof process.env[key] === 'undefined') {
