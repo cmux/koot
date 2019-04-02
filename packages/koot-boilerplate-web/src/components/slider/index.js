@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { extend } from 'koot';
 import Swiper from 'react-id-swiper';
 import classnames from 'classnames';
@@ -22,6 +22,7 @@ const config = [
         src: require('@assets/images/slide-2.jpg'),
     },
 ];
+
 class Slider extends Component {
     render() {
         const params = {
@@ -29,21 +30,31 @@ class Slider extends Component {
         };
 
         return (
-            <ScrollAnimation data-animation="fadeInLeft">
-                <div className={classnames('main', this.props.className)}>
+            <div className={classnames('main', this.props.className)}>
+                <ScrollAnimation data-animation="fadeInLeft">
                     {/* 占位图片 撑开高度 */}
-                    <img src={require('@assets/images/slide-1.jpg')} alt="" />
+                    <img
+                        className="placeholder-img"
+                        src={require('@assets/images/slide-1.jpg')}
+                        alt="placeholder"
+                    />
                     <Swiper {...params}>
                         {config.map((item, index) => {
                             return (
                                 <div key={index}>
-                                    <img src={item.src} alt={item.text} />
+                                    <img className="slider-img" src={item.src} alt={item.text} />
+                                    <ScrollAnimation
+                                        className="delay-2s"
+                                        data-animation="fadeInLeft"
+                                    >
+                                        <span>sdfasdfasfs</span>
+                                    </ScrollAnimation>
                                 </div>
                             );
                         })}
                     </Swiper>
-                </div>
-            </ScrollAnimation>
+                </ScrollAnimation>
+            </div>
         );
     }
 }

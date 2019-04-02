@@ -1,4 +1,6 @@
 .slide__component {
+    padding: 0;
+    overflow: hidden;
     .swiper-container {
         height: 100%;
         overflow: hidden;
@@ -16,8 +18,13 @@
             font-size: 0.3rem;
         }
     }
-    img {
+    .placeholder-img {
         display: block;
+        width: 100%;
+    }
+    .slider-img {
+        position: absolute;
+        height: 100%;
         width: 100%;
     }
     @media (max-width: 600px) {
