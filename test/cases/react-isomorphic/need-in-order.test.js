@@ -281,6 +281,8 @@ const doTest = async (port, settings = {}) => {
 
     // TODO: 测试: 访问全局子路由 (例: 路由配置了 /a，强行访问 /a/b)
 
+    // TODO: 测试: 同一个通配路由，访问另一个URL，检查同构结果 (connect component 是否可用)
+
     await browser.close()
 }
 
