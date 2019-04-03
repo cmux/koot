@@ -32,6 +32,14 @@ let everMounted = false
 const styleMap = {}
 
 /**
+ * @type {Number}
+ * _开发环境_
+ * _服务器_
+ * 使用该高阶组件的次数
+ */
+let devSSRConnectIndex = 0
+
+/**
  * 获取数据
  * @callback callbackFetchData
  * @param {Object} state 当前 state
@@ -89,14 +97,18 @@ const doPageinfo = (store, props, pageinfo) => {
         metas: []
     }
 
-    if (typeof pageinfo !== 'function')
+    if (typeof pageinfo !== 'function' && typeof pageinfo !== 'object')
         return defaultPageInfo
 
     const state = store.getState()
-
-    let infos = pageinfo(state, props)
-    if (typeof infos !== 'object')
-        infos = defaultPageInfo
+    const infos = (() => {
+        if (typeof pageinfo === 'object')
+            return pageinfo
+        const infos = pageinfo(state, props)
+        if (typeof infos !== 'object')
+            return defaultPageInfo
+        return infos
+    })()
 
     const {
         title = defaultPageInfo.title,
@@ -129,7 +141,7 @@ const doPageinfo = (store, props, pageinfo) => {
  * 高阶组件/组件装饰器：组件扩展
  * @param {Object} options 选项
  * @param {Boolean|Function} [options.connect] react-redux 的 connect() 的参数。如果为 true，表示使用 connect()，但不连接任何数据
- * @param {callbackGetPageInfo} [options.pageinfo]
+ * @param {Object|callbackGetPageInfo} [options.pageinfo]
  * @param {Object} [options.data] 同构数据相关
  * @param {callbackFetchData} [options.data.fetch]
  * @param {callbackCheckLoaded} [options.data.check]
@@ -196,7 +208,7 @@ export default (options = {}) => (WrappedComponent) => {
         //
 
         clientUpdatePageInfo() {
-            if (typeof pageinfo !== 'function')
+            if (typeof pageinfo !== 'function' && typeof pageinfo !== 'object')
                 return
 
             const {
@@ -349,6 +361,7 @@ export default (options = {}) => (WrappedComponent) => {
      * 将组件注册到同构渲染对象中
      */
     if (__SERVER__) {
+        if (__DEV__) KootComponent.id = devSSRConnectIndex++
         const {
             connectedComponents = []
         } = __DEV__ ? global.__KOOT_SSR__ : __KOOT_SSR__

@@ -56,51 +56,51 @@ const executeComponentLifecycle = async ({ store, renderProps, ctx }) => {
         }
     }
 
-    /** 
-     * _服务器端_
-     * 遍历同构渲染对象，执行其中对应的静态方法，并标记
-     */
-    if (__SERVER__) {
-        // const connectedComponents = (() => {
-        //     const {
-        //         connectedComponents = []
-        //     } = __DEV__ ? global.__KOOT_SSR__ : __KOOT_SSR__
-
-        //     if (__DEV__) {
-        //         if (!global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__)
-        //             global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__ = new Map()
-
-        //         const CTX = JSON.stringify(ctx)
-
-        //         if (global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__.has(CTX))
-        //             return global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__.get(CTX)
-
-        //         global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__.set(CTX, connectedComponents)
-        //     }
-
-        //     return connectedComponents
-        // })()
+    /** @type {Array} 使用 extend 高阶组件的组件 */
+    const connectedComponents = (() => {
         const {
             connectedComponents = []
         } = __DEV__ ? global.__KOOT_SSR__ : __KOOT_SSR__
-        connectedComponents.forEach(component => {
-            extractDataToStoreTask(component)
-        })
-        // console.log('\n\n==========')
-        // console.log({ connectedComponents, renderProps })
-        // console.log('==========\n\n')
-    }
 
-    for (const component of renderProps.components) {
-        /**
-         * @type {Component}
-         * 当前组件
-         * component.WrappedComponent 是 redux 装饰的外壳
-         */
-        // const thisComponent = component && component.WrappedComponent ? component.WrappedComponent : component
-        // extractDataToStoreTask(component)
+        if (__DEV__) {
+            // 旧代码
+            // if (!global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__)
+            //     global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__ = new Map()
+
+            // const CTX = JSON.stringify(ctx)
+
+            // if (global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__.has(CTX))
+            //     return global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__.get(CTX)
+
+            // global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__.set(CTX, connectedComponents)
+            renderProps.components
+                .filter(component => connectedComponents.every(c => c.id !== component.id))
+                .forEach(component => connectedComponents.push(component))
+        }
+
+        return connectedComponents
+    })()
+    // console.log('\n\n==========')
+    // console.log({ connectedComponents })
+    // console.log({ connectedComponents, renderProps })
+    // console.log('==========\n\n')
+
+    // 添加各项任务
+    connectedComponents.forEach(component => {
+        extractDataToStoreTask(component)
         extracHtmlExtendTask(component)
-    }
+    })
+
+    // 旧代码
+    // for (const component of renderProps.components) {
+    //     /**
+    //      * @type {Component}
+    //      * 当前组件
+    //      * component.WrappedComponent 是 redux 装饰的外壳
+    //      */
+    //     // const thisComponent = component && component.WrappedComponent ? component.WrappedComponent : component
+    //     // extractDataToStoreTask(component)
+    // }
 
     // 等待所有异步方法执行完毕
     await Promise.all(tasks)
