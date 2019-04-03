@@ -4,6 +4,14 @@
   - 修正开发环境下错误的 DLL 文件引用关系
 - 更新依赖包
   - patch
+    - `@babel/core` -> _7.4.3_
+    - `@babel/plugin-proposal-object-rest-spread` -> _7.4.3_
+    - `@babel/plugin-transform-regenerator` -> _7.4.3_
+    - `@babel/plugin-transform-runtime` -> _7.4.3_
+    - `@babel/polyfill` -> _7.4.3_
+    - `@babel/preset-env` -> _7.4.3_
+    - `commander` -> _2.20.0_
+    - `ora` -> _3.4.0_
     - `react-hot-loader` -> _4.8.2_
 
 ## 0.8.4

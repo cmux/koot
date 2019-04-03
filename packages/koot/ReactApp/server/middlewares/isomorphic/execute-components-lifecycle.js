@@ -61,25 +61,28 @@ const executeComponentLifecycle = async ({ store, renderProps, ctx }) => {
      * 遍历同构渲染对象，执行其中对应的静态方法，并标记
      */
     if (__SERVER__) {
-        const connectedComponents = (() => {
-            const {
-                connectedComponents = []
-            } = __DEV__ ? global.__KOOT_SSR__ : __KOOT_SSR__
+        // const connectedComponents = (() => {
+        //     const {
+        //         connectedComponents = []
+        //     } = __DEV__ ? global.__KOOT_SSR__ : __KOOT_SSR__
 
-            if (__DEV__) {
-                if (!global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__)
-                    global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__ = new Map()
+        //     if (__DEV__) {
+        //         if (!global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__)
+        //             global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__ = new Map()
 
-                const CTX = JSON.stringify(ctx)
+        //         const CTX = JSON.stringify(ctx)
 
-                if (global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__.has(CTX))
-                    return global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__.get(CTX)
+        //         if (global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__.has(CTX))
+        //             return global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__.get(CTX)
 
-                global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__.set(CTX, connectedComponents)
-            }
+        //         global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__.set(CTX, connectedComponents)
+        //     }
 
-            return connectedComponents
-        })()
+        //     return connectedComponents
+        // })()
+        const {
+            connectedComponents = []
+        } = __DEV__ ? global.__KOOT_SSR__ : __KOOT_SSR__
         connectedComponents.forEach(component => {
             extractDataToStoreTask(component)
         })
