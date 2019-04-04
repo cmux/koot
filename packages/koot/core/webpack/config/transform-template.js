@@ -2,11 +2,11 @@ const fs = require('fs-extra')
 const path = require('path')
 const readBaseConfig = require('../../../utils/read-base-config')
 const getCwd = require('../../../utils/get-cwd')
-
+const package = require('../../../package.json')
 /**
  * 处理 HTML 基础模板配置。以下内容写入环境变量
  *   - KOOT_HTML_TEMPLATE - 模板内容
- * 
+ *
  * @async
  * @param {*} template
  * @return {Boolean|String} 模板内容
@@ -21,8 +21,10 @@ module.exports = async (template) => {
                 template = await fs.readFile(path.resolve(getCwd(), template))
             } else if (path.isAbsolute(template)) {
                 template = await fs.readFile(path.resolve(template))
-            }
-            process.env.KOOT_HTML_TEMPLATE = template
+			}
+			let temp = template.toString();
+			temp +=  '<!-- rendered by using koot.js ' + package.version +'-->';
+			process.env.KOOT_HTML_TEMPLATE = new Buffer(temp)
         }
     }
     return template
