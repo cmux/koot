@@ -138,6 +138,23 @@ module.exports = async (kootBuildConfig = {}) => {
         }
     }
 
+    // webpack stats
+    {
+        if (typeof result.stats !== 'object')
+            result.stats = {}
+        Object.assign(result.stats, {
+            // copied from `'minimal'`
+            all: false,
+            modules: true,
+            maxModules: 0,
+            errors: true,
+            warnings: true,
+            // our additional options
+            moduleTrace: true,
+            errorDetails: true
+        })
+    }
+
     // 拆分
     const configsFull = [
         {

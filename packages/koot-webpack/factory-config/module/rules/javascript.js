@@ -16,24 +16,31 @@ module.exports = (kootBuildConfig = {}) => {
     const useBabelLoader = (options = {}) => {
         if (typeof options.cacheDirectory === 'undefined')
             options.cacheDirectory = true
+
         if (process.env.WEBPACK_BUILD_ENV === 'dev') {
-            options.compact = false
-            if (createDll)
+            if (createDll) {
                 options.__createDll = true
+                options.sourceMaps = false
+            } else {
+                // options.cacheDirectory = false
+            }
+            options.compact = false
+            options.cacheCompression = false
         }
+
         return {
             loader: require.resolve('../../../loaders/babel'),
             options
         }
     }
 
-    const useCacheLoader = (options = {}) => ({
-        loader: 'cache-loader',
-        options: {
-            cacheDirectory: getDirDevCache(),
-            ...options
-        }
-    })
+    // const useCacheLoader = (options = {}) => ({
+    //     loader: 'cache-loader',
+    //     options: {
+    //         cacheDirectory: getDirDevCache(),
+    //         ...options
+    //     }
+    // })
 
     const useThreadLoader = (options = {}) => ({
         loader: "thread-loader",
@@ -76,16 +83,30 @@ module.exports = (kootBuildConfig = {}) => {
     if (!createDll && env === 'dev' && stage === 'client') {
         return [{
             test: /\.(js|mjs)$/,
-            use: [
-                useThreadLoader(),
-                useCacheLoader(),
-                useBabelLoader()
+            oneOf: [
+                {
+                    include: /node_modules/,
+                    use: [
+                        useThreadLoader(),
+                        // useCacheLoader(),
+                        useBabelLoader({
+                            sourceMaps: false
+                        })
+                    ]
+                },
+                {
+                    use: [
+                        useThreadLoader(),
+                        // useCacheLoader(),
+                        useBabelLoader()
+                    ]
+                }
             ]
         }, {
             test: /\.jsx$/,
             use: [
                 useThreadLoader(),
-                useCacheLoader(),
+                // useCacheLoader(),
                 useBabelLoader({
                     __react: true
                 }),
@@ -99,7 +120,7 @@ module.exports = (kootBuildConfig = {}) => {
             test: /\.(js|mjs|jsx)$/,
             use: [
                 useThreadLoader(),
-                useCacheLoader(),
+                // useCacheLoader(),
                 useBabelLoader(),
                 require.resolve('../../../loaders/koot-dev-ssr.js')
             ]

@@ -127,6 +127,9 @@ module.exports = async (kootConfig = {}) => {
     /** @type {Number} 流程开始时间戳 */
     const timestampStart = Date.now()
 
+    /** @type {Boolean} 客户端 dev server 是否已启动 */
+    let isClientDevServerLaunched = false
+
     // 抽取配置
     let {
         webpackBefore: beforeBuild,
@@ -223,15 +226,16 @@ module.exports = async (kootConfig = {}) => {
         if (!quietMode) console.log(' ')
 
         if (!analyze && pwa && STAGE === 'client' && ENV === 'prod') {
-            // 生成PWA使用的 service-worker.js
+            // 生成 service-worker.js
             await createPWAsw(pwa, i18n)
         }
 
         if (STAGE === 'server' && ENV === 'prod') {
-            // 生成PWA使用的 service-worker.js
+            // 服务器端 / 生产环境
             await afterServerProd(data)
         }
 
+        // 移除所有标记文件
         await removeBuildFlagFiles(dist)
 
         log('callback', 'build', `callback: ` + chalk.green('afterBuild'))
@@ -253,8 +257,18 @@ module.exports = async (kootConfig = {}) => {
         // console.log(`  > start: ${timestampStart}`)
         // console.log(`  > end: ${Date.now()}`)
         // console.log(`  > ms: ${Date.now() - timestampStart}`)
-        if (!quietMode)
-            console.log(`  > ~${elapse(Date.now() - timestampStart)} @ ${(new Date()).toLocaleString()}`)
+        if (!quietMode) {
+            if (ENV === 'dev') {
+                if (isClientDevServerLaunched) {
+                    console.log(' ')
+                    console.log('------------------------------')
+                    console.log(' ')
+                } else {
+                    isClientDevServerLaunched = true
+                }
+            } else
+                console.log(`  > ~${elapse(Date.now() - timestampStart)} @ ${(new Date()).toLocaleString()}`)
+        }
 
         return
     }
@@ -488,8 +502,35 @@ module.exports = async (kootConfig = {}) => {
         } = devServer
         const devServerConfig = Object.assign({
             quiet: false,
-            stats: { colors: true },
-            clientLogLevel: 'error',
+            // stats: 'errors-only',
+            // stats: {
+            //     // all: false,
+            //     colors: true,
+            //     assets: false,
+            //     builtAt: true,
+            //     cached: false,
+            //     // cachedAssets: false,
+            //     children: false,
+            //     chunks: false,
+            //     maxModules: 0,
+            //     modules: false,
+            //     performance: false,
+            //     version: false,
+            // },
+            stats: {
+                // copied from `'minimal'`
+                all: false,
+                modules: true,
+                maxModules: 0,
+                errors: true,
+                warnings: true,
+                // our additional options
+                moduleTrace: true,
+                errorDetails: true
+            },
+            // info: false,
+            // noInfo: true,
+            clientLogLevel: 'info',
             hot: true,
             inline: true,
             historyApiFallback: true,

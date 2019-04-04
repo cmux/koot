@@ -13,7 +13,7 @@ const factoryConfig = async ({
     return {
         mode: "development",
         target: 'web',
-        devtool: 'cheap-module-eval-source-map',
+        devtool: 'cheap-module-source-map',
         output: {
             // -_-_-_-_-_- is trying to fix a pm2 bug that will currupt [name] value
             // check enter.js for the fix

@@ -179,6 +179,7 @@ module.exports = async (kootBuildConfig = {}) => {
                 if (ENV === 'dev') {
                     // 标记打包目录（对应 prod 模式的结果）
                     result[keyConfigOutputPathShouldBe] = path.resolve(pathPublic, defaultPublicDirName)
+                    result.output.pathinfo = false
                 }
             }
 
@@ -207,6 +208,18 @@ module.exports = async (kootBuildConfig = {}) => {
                 )
                 if (fs.existsSync(fileRunFirst)) {
                     result.entry[chunkNameClientRunFirst] = [fileRunFirst]
+                }
+            }
+
+            { // 处理 optimization
+                if (ENV === 'dev') {
+                    if (typeof result.optimization !== 'object')
+                        result.optimization = {}
+                    Object.assign(result.optimization, {
+                        removeAvailableModules: false,
+                        removeEmptyChunks: false,
+                        splitChunks: false,
+                    })
                 }
             }
 

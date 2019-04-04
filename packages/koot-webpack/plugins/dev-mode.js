@@ -1,11 +1,11 @@
 const fs = require('fs-extra')
-const path = require('path')
+// const path = require('path')
 // const opn = require('opn')
 
 const { ConcatSource } = require("webpack-sources")
 
 // const getPort = require('../libs/require-koot')('utils/get-port')
-const { filenameDll } = require('../libs/require-koot')('defaults/before-build')
+// const { filenameDll } = require('../libs/require-koot')('defaults/before-build')
 const isHotUpdate = require('../libs/is-compilation-hot-update-only')
 
 // let opened = false
@@ -28,7 +28,7 @@ class DevModePlugin {
             afterEmit, done
         } = this
 
-        const TYPE = process.env.WEBPACK_BUILD_TYPE
+        // const TYPE = process.env.WEBPACK_BUILD_TYPE
         const ENV = process.env.WEBPACK_BUILD_ENV
         const STAGE = process.env.WEBPACK_BUILD_STAGE
 
@@ -80,11 +80,11 @@ class DevModePlugin {
 
             if (typeof done === 'function') {
                 done()
-                setTimeout(() => {
-                    if (!TYPE === 'spa') {
-                        console.log('\n')
-                    }
-                })
+                // setTimeout(() => {
+                //     if (!TYPE === 'spa') {
+                //         console.log('\n')
+                //     }
+                // })
             }
 
             // if (TYPE === 'spa') {

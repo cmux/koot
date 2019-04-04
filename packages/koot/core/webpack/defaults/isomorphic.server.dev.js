@@ -15,7 +15,7 @@ const factoryConfig = async ({
 
     return {
         mode: "development",
-        devtool: 'cheap-module-eval-source-map',
+        devtool: 'cheap-module-source-map',
         target: 'async-node',
         node: {
             __dirname: true
