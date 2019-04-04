@@ -12,7 +12,7 @@ const beforeRouterMatch = async ({
         return needRedirect
 
     // 告诉前端，当前的url是啥
-    store.dispatch({ type: TELL_CLIENT_URL, data: ctx.origin })
+    store.dispatch({ type: TELL_CLIENT_URL, data: ctx.originTrue })
 
     // 把http请求带来的cookie同步到ssr的初始化redux state里
     // server.cookie 获取

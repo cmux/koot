@@ -96,10 +96,17 @@ const ssr = async (options = {}) => {
         styleMap,
         template,
         templateInject,
-        proxyRequestOrigin,
+        proxyRequestOrigin = {},
         // syncCookie,
         ssrComplete,
     } = SSR
+
+    ctx.originTrue = proxyRequestOrigin.protocol
+        ? ctx.origin.replace(/^http:\/\//, `${proxyRequestOrigin.protocol}://`)
+        : ctx.origin
+    ctx.hrefTrue = proxyRequestOrigin.protocol
+        ? ctx.href.replace(/^http:\/\//, `${proxyRequestOrigin.protocol}://`)
+        : ctx.href
 
     /** @type {String} 本次请求的 URL */
     const url = ctx.path + ctx.search
@@ -241,7 +248,7 @@ const ssr = async (options = {}) => {
         delete thisTemplateInjectCache.scriptsInBody
         // delete thisTemplateInjectCache.pathnameSW
 
-        const origin = ctx.origin.split('://')[1]
+        const origin = ctx.originTrue.split('://')[1]
         // origin = origin.split(':')[0]
         body = body.replace(
             /:\/\/localhost:([0-9]+)/mg,

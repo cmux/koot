@@ -151,7 +151,8 @@ module.exports = async (kootBuildConfig = {}) => {
             warnings: true,
             // our additional options
             moduleTrace: true,
-            errorDetails: true
+            errorDetails: true,
+            performance: false,
         })
     }
 

@@ -8,6 +8,7 @@
     - `pageinfo` 现在允许直接传入 _Object_
 - React 同构
   - 进一步优化开发环境下数据同构和页面信息更新的能力
+  - KOA `ctx` 新增: `ctx.originTrue` `ctx.hrefTrue`
 - 更新依赖包
   - patch
     - `webpack-dev-middleware` -> _3.6.2_

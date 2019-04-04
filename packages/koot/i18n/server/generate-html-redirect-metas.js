@@ -10,15 +10,19 @@ import isI18nEnabled from '../../i18n/is-enabled'
  * @param {String} options.localeId 当前语种
  * @returns {String} HTML 代码
  */
-const generateHtmlRedirectMetas = ({ ctx, proxyRequestOrigin, localeId }) => {
+const generateHtmlRedirectMetas = ({ ctx, localeId/*, proxyRequestOrigin*/ }) => {
     if (!isI18nEnabled())
         return ''
 
-    let { href, origin } = ctx
-    if (typeof proxyRequestOrigin.protocol === 'string') {
-        origin = origin.replace(/^http:\/\//, `${proxyRequestOrigin.protocol}://`)
-        href = href.replace(/^http:\/\//, `${proxyRequestOrigin.protocol}://`)
-    }
+    // let { href, origin } = ctx
+    // if (typeof proxyRequestOrigin.protocol === 'string') {
+    //     origin = origin.replace(/^http:\/\//, `${proxyRequestOrigin.protocol}://`)
+    //     href = href.replace(/^http:\/\//, `${proxyRequestOrigin.protocol}://`)
+    // }
+    const {
+        hrefTrue: href,
+        originTrue: origin
+    } = ctx
 
     const isUseRouter = process.env.KOOT_I18N_URL_USE === 'router'
 

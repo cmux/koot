@@ -30,9 +30,9 @@ const useRouterRedirect = (ctx) => {
         pathname = '/' + pathname.join('/')
 
         // 生成跳转后的地址
-        const newpath = ctx.origin
-            + ctx.href
-                .replace(new RegExp(`^${ctx.origin}`), '')
+        const newpath = ctx.originTrue
+            + ctx.hrefTrue
+                .replace(new RegExp(`^${ctx.originTrue}`), '')
                 .replace(new RegExp(`^${ctx.path}`), pathname)
 
         // console.log('newpath', newpath)
