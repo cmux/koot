@@ -9,6 +9,7 @@
 - React 同构
   - 进一步优化开发环境下数据同构和页面信息更新的能力
   - KOA `ctx` 新增: `ctx.originTrue` `ctx.hrefTrue`
+  - HTML 结果中的本域 URL，现在均会遵循 `proxyRequestOrigin` 的设置
 - 更新依赖包
   - patch
     - `webpack-dev-middleware` -> _3.6.2_
