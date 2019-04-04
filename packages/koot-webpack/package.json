@@ -1,6 +1,6 @@
 {
     "name": "koot-webpack",
-    "version": "0.8.5",
+    "version": "0.8.7",
     "description": "Webpack related resources for Koot.js",
     "sideEffects": false,
     "scripts": {},
