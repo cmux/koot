@@ -104,7 +104,7 @@ module.exports = {
 ```javascript
 module.exports = {
     // 示例配置
-    templateInject: "./src/routes"
+    routes: "./src/routes"
 }
 ```
 
