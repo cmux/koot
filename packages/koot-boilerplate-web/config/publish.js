@@ -9,7 +9,7 @@ const publish = () => {
     const time = dayjs(new Date()).format('YYYY/MM/DD_HH-mm');
 
     git()
-        .addTag(`${'release-' + time + '-' + id.generate()}`)
+        .addTag(`${'release-' + time + '_' + id.generate()}`)
         .pushTags('origin', 'koot-boilerplate-web');
 };
 
