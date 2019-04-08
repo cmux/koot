@@ -4,6 +4,6 @@ const git = require('simple-git');
 const time = dayjs(new Date()).format('MM/DD');
 
 git()
-    .addTag(`${'release-version_' + time + id.generate()}`)
+    .addTag(`${'release-version_' + time + '_' + id.generate()}`)
     .pushTags('origin')
     .push('origin');
