@@ -7,7 +7,8 @@ const publish = () => {
 
     git()
         .addTag(`${'release_' + time + '_version-' + id.generate()}`)
-        .pushTags('origin', 'koot-boilerplate-web');
+        .pushTags('origin')
+        .push('origin');
 };
 
 publish();
