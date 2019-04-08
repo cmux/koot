@@ -4,7 +4,8 @@ const uuidv1 = require('uuid/v1');
 // git commit & push
 const publish = () => {
     const git = require('simple-git');
-    const time = new Date().toLocaleDateString() + new Date().toLocaleTimeString();
+    const time =
+        new Date().toLocaleDateString() + '-' + new Date().toLocaleTimeString().replace(/:/g, '-');
 
     git()
         .addTag(`${'release-' + time + '-' + uuidv1()}`)
