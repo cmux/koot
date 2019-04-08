@@ -24,6 +24,7 @@
     "dev:spa": "koot-dev --type spa",
     "analyze": "koot-analyze",
     "eslint": "eslint \"src/**/*.+(js|jsx)\"",
+    "publish": " node config/publish.js",
     "stop:pm2": "pm2 stop pm2.json && pm2 delete pm2.json",
     "start:pm2": "pm2 start pm2.json"
   },
@@ -53,6 +54,8 @@
     "url": "https://github.com/cmux/koot/issues"
   },
   "dependencies": {
+    "@material-ui/core": "^3.9.2",
+    "@material-ui/icons": "^3.0.2",
     "animate.css": "^3.7.0",
     "antd": "^3.15.2",
     "axios": "0.18.0",
@@ -60,15 +63,20 @@
     "jquery": "^3.3.1",
     "koot": "^0.8.0-beta.20",
     "koot-router": "^1.0.12",
+    "normalize.css": "8.0.1",
     "prop-types": "^15.7.2",
+    "query-string": "^6.4.2",
+    "react-awesome-snippets-preload": "0.0.4",
+    "react-burger-menu": "^2.6.5",
     "react-id-swiper": "1.6.9",
+    "react-transition-group": "^2.7.1",
     "scrollwatch": "^2.0.1",
-    "swiper": "^4.5.0"
+    "swiper": "^4.5.0",
+    "uuid": "^3.3.2",
+    "vanilla-lazyload": "^11.0.6"
   },
   "devDependencies": {
-    "@material-ui/core": "^3.9.2",
-    "@material-ui/icons": "^3.0.2",
-    "autoprefixer": "9.5.0",
+    "autoprefixer": "^9.5.0",
     "babel-eslint": "^9.0.0",
     "cssnano": "4.1.10",
     "eslint": "^5.16.0",
@@ -81,15 +89,9 @@
     "imagemin-webpack-plugin": "^2.4.2",
     "jest": "24.5.0",
     "lint-staged": "^8.1.5",
-    "normalize.css": "8.0.1",
     "prettier": "^1.16.4",
-    "query-string": "^6.4.2",
-    "react-awesome-snippets-preload": "0.0.4",
-    "react-burger-menu": "^2.6.5",
-    "react-transition-group": "^2.7.1",
     "redux-logger": "3.0.6",
     "svg-url-loader": "2.3.2",
-    "vanilla-lazyload": "^11.0.6",
     "vconsole": "^3.3.0"
   }
 }
