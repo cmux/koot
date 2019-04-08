@@ -1,15 +1,12 @@
-// npm run publish
-// const path = require('path');
 const id = require('shortid');
 const dayjs = require('dayjs');
 
-// git commit & push
 const publish = () => {
     const git = require('simple-git');
-    const time = dayjs(new Date()).format('YYYY/MM/DD_HH-mm');
+    const time = dayjs(new Date()).format('YYYY/MM/DD-HH.mm');
 
     git()
-        .addTag(`${'release-' + time + '_' + id.generate()}`)
+        .addTag(`${'release_' + time + '_version-' + id.generate()}`)
         .pushTags('origin', 'koot-boilerplate-web');
 };
 
