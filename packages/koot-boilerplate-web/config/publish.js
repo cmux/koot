@@ -9,8 +9,7 @@ const publish = () => {
 
     git()
         .addTag(`${'release-' + time + '-' + uuidv1()}`)
-        .pushTags('origin', 'koot-boilerplate-web')
-        .push('origin', 'koot-boilerplate-web');
+        .pushTags('origin', 'koot-boilerplate-web');
 };
 
 publish();
