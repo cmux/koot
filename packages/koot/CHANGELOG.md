@@ -1,3 +1,20 @@
+
+## 0.9.0 (Alpha)
+**2019-04-09** (alpha.0)
+- 核心
+  - 渲染结果 (SSR & SPA) 结尾现在会附带 koot 版本信息作为 HTML 代码注释 (#64)
+- 更新依赖包
+  - major
+    - `cli-spinners` -> _2.1.0_
+    - `react-redux` -> _7.0.0-beta.0_ (#45)
+  - minor
+    - `pm2` -> _3.5.0_
+    - `webpack-bundle-analyzer` -> _3.2.0_
+    - `webpack-dev-server` -> _3.3.0_
+  - patch
+    - `es5-shim` -> _4.5.13_
+    - `react-hot-loader` -> _4.8.3_
+
 ## 0.8.7
 **2019-04-04**
 - 核心
