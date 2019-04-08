@@ -30,19 +30,13 @@
 
 ## 快速使用
 
-1. 安装命令行工具
+1. 初始化项目
 
 ```bash
-> sudo npm i -g koot-cli
+> npx koot-cli
 ```
 
-2. 初始化项目
-
-```bash
-> koot
-```
-
-3. 运行开发环境
+2. 运行开发环境
 
 ```bash
 > cd [项目名] && npm run dev
