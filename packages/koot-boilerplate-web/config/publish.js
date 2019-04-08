@@ -1,16 +1,16 @@
 // npm run publish
 // const path = require('path');
-const uuidv1 = require('uuid/v1');
+const id = require('shortid');
+const dayjs = require('dayjs');
+
 // git commit & push
 const publish = () => {
     const git = require('simple-git');
-    const time =
-        new Date().toLocaleDateString() + '-' + new Date().toLocaleTimeString().replace(/:/g, '-');
+    const time = dayjs(new Date()).format('YYYY/MM/DD_HH-mm');
 
     git()
-        .addTag(`${'release-' + time + '-' + uuidv1()}`)
-        .pushTags('origin', 'koot-boilerplate-web')
-        .push('origin', 'koot-boilerplate-web');
+        .addTag(`${'release-' + time + '-' + id.generate()}`)
+        .pushTags('origin', 'koot-boilerplate-web');
 };
 
 publish();
