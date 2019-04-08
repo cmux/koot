@@ -2,7 +2,10 @@ const fs = require('fs-extra')
 const path = require('path')
 const readBaseConfig = require('../../../utils/read-base-config')
 const getCwd = require('../../../utils/get-cwd')
-const package = require('../../../package.json')
+
+// ERROR: `package` is a reserved word
+const p = require('../../../package.json')
+
 /**
  * 处理 HTML 基础模板配置。以下内容写入环境变量
  *   - KOOT_HTML_TEMPLATE - 模板内容
@@ -21,10 +24,13 @@ module.exports = async (template) => {
                 template = await fs.readFile(path.resolve(getCwd(), template))
             } else if (path.isAbsolute(template)) {
                 template = await fs.readFile(path.resolve(template))
-			}
-			let temp = template.toString();
-			temp +=  '<!-- rendered by using koot.js ' + package.version +'-->';
-			process.env.KOOT_HTML_TEMPLATE = new Buffer(temp)
+            }
+
+            let temp = template.toString();
+            temp += '<!-- rendered by using koot.js ' + p.version + '-->';
+
+            // WARNING: Buffer() is deprecated
+            process.env.KOOT_HTML_TEMPLATE = Buffer.from(temp)
         }
     }
     return template
