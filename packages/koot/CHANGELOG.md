@@ -6,7 +6,6 @@
 - 更新依赖包
   - major
     - `cli-spinners` -> _2.1.0_
-    - `react-redux` -> _7.0.0-beta.0_ (#45)
   - minor
     - `pm2` -> _3.5.0_
     - `webpack-bundle-analyzer` -> _3.2.0_
