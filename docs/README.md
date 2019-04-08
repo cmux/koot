@@ -12,6 +12,8 @@
 > cd [项目名] && npm run dev
 ```
 
+---
+
 <details><summary>NPM 5.2.0 以前版本使用方法</summary>
 <p>
 
