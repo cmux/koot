@@ -104,7 +104,7 @@ module.exports = {
 ```javascript
 module.exports = {
     // 示例配置
-    templateInject: "./src/routes"
+    routes: "./src/routes"
 }
 ```
 
@@ -998,6 +998,11 @@ module.exports = {
 ```javascript
 module.exports = {
     // 默认值
+    devHmr: {
+        multiStep: false
+    },
+
+    // 开发环境下启动多步打包，以进一步加速热更新速度
     devHmr: {
         multiStep: true,
         fullBuildTimeout: process.env.WEBPACK_BUILD_TYPE === 'spa' ? 500 : undefined,
