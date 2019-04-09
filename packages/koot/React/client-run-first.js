@@ -14,6 +14,7 @@ window.__KOOT_STORE__ = ((reduxConfig = {}) => {
 window.__KOOT_HISTORY__ = syncHistoryWithStore(History, window.__KOOT_STORE__)
 
 // console filter
+// https://stackoverflow.com/questions/6659312/is-there-a-way-to-filter-output-in-google-chromes-console
 /*
 if (__DEV__) {
     (() => {
