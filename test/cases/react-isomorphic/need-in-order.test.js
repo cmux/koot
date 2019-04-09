@@ -261,6 +261,26 @@ const doTest = async (port, settings = {}) => {
         ])
     }
 
+    // 测试: 访问没有指定组件的路由
+    {
+        const name = 'testtesttest'
+        const url = `${origin}/static/${name}`
+        const res = await page.goto(url, {
+            waitUntil: 'networkidle0'
+        }).catch()
+
+        // 测试: 请求应 OK
+        expect(res.ok()).toBe(true)
+
+        // 测试: 相关页面特征存在
+        const featureString = await page.evaluate(() => {
+            const el = document.querySelector('.no-component-given')
+            if (el) return el.innerText
+            return ''
+        })
+        expect(featureString).toBe(name)
+    }
+
     // TODO: 测试: 静态文件访问
 
     // TODO: 测试: 所有 Webpack 结果资源的访问

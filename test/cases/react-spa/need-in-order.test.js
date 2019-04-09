@@ -82,7 +82,6 @@ describe('测试: React SPA 项目', () => {
             const distDirName = 'dist-spa-test'
             const dist = path.resolve(dir, distDirName)
             const fileIndexHtml = path.resolve(dist, 'index.html')
-            const chunkmap = fs.readJsonSync(require('../../../packages/koot/utils/get-chunkmap-path')(dist))
 
             if (fs.existsSync(dist))
                 fs.emptyDirSync(dist)
@@ -119,6 +118,8 @@ describe('测试: React SPA 项目', () => {
                     const content = fs.readFileSync(fileIndexHtml)
                     const dom = new JSDOM(content)
                     const config = require(path.resolve(dir, 'koot.config.js'))
+                    const chunkmap = fs.readJsonSync(require('../../../packages/koot/utils/get-chunkmap-path')(dist))
+
                     expect(
                         dom.window.document.querySelector('title').textContent
                     ).toBe(config.name)

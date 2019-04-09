@@ -73,9 +73,16 @@ const executeComponentLifecycle = async ({ store, renderProps, ctx }) => {
             //     return global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__.get(CTX)
 
             // global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__.set(CTX, connectedComponents)
-            renderProps.components
-                .filter(component => connectedComponents.every(c => c.id !== component.id))
+
+            const renderPropsComponents = (renderProps.components || []).filter(c => !!c)
+            // 将 renderProps 中的 components 寄存入全局的 connectedComponents 中
+            renderPropsComponents
+                .filter(component => component && connectedComponents.every(c => c.id !== component.id))
                 .forEach(component => connectedComponents.push(component))
+            // 将 renderProps 中的 components 移至队列最尾部
+            return connectedComponents
+                .filter(component => renderPropsComponents.every(c => c.id !== component.id))
+                .concat(renderPropsComponents)
         }
 
         return connectedComponents
