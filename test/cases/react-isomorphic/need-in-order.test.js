@@ -264,8 +264,20 @@ const doTest = async (port, settings = {}) => {
     // 测试: 访问没有指定组件的路由
     {
         const name = 'testtesttest'
-        const url = `${origin}/static/${name}`
-        const res = await page.goto(url, {
+
+        // 先测试父级路由
+        const urlParent = `${origin}/static`
+        await page.goto(urlParent, {
+            waitUntil: 'networkidle0'
+        }).catch()
+        const hasFeature = await page.evaluate(() =>
+            !!document.querySelector('.no-component-given')
+        )
+        expect(hasFeature).toBe(false)
+
+        // 没有指定组件的路由
+        const urlNoGiven = `${origin}/static/${name}`
+        const res = await page.goto(urlNoGiven, {
             waitUntil: 'networkidle0'
         }).catch()
 
