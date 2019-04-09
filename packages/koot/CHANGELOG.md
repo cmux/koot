@@ -13,7 +13,6 @@
   - minor
     - `pm2` -> _3.5.0_
     - `webpack-bundle-analyzer` -> _3.2.0_
-    - `webpack-dev-server` -> _3.3.0_
   - patch
     - `es5-shim` -> _4.5.13_
     - `react-hot-loader` -> _4.8.3_

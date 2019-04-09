@@ -62,6 +62,10 @@ const run = async () => {
                     new RegExp(`://${origin}/${publicPathPrefix}/sockjs-node/`, 'mg'),
                     `://localhost:${portWebpackDevServer}/sockjs-node/`
                 )
+                .replace(
+                    /(socketUrl\s*=\s*url.format\({\s*protocol:\s*protocol,\s*auth:\s*urlParts.auth,\s*hostname:\s*hostname,\s*port:\s*)(port)/mg,
+                    `$1${portWebpackDevServer}`
+                )
         }
     }))
     app.use(mount(`/${publicPathPrefix}`, proxyWebpackDevServer))
