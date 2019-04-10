@@ -5,6 +5,8 @@ const path = require('path')
 const program = require('commander')
 const chalk = require('chalk')
 
+const before = require('./_before')
+
 const { keyConfigQuiet, filenameBuilding } = require('../defaults/before-build')
 
 const __ = require('../utils/translate')
@@ -15,7 +17,8 @@ const validateConfig = require('../libs/validate-config')
 const validateConfigDist = require('../libs/validate-config-dist')
 const spinner = require('../utils/spinner')
 const initNodeEnv = require('../utils/init-node-env')
-const emptyTempConfigDir = require('../libs/empty-temp-config-dir')
+// const emptyTempConfigDir = require('../libs/empty-temp-config-dir')
+const getDirTemp = require('../libs/get-dir-tmp')
 
 const kootBuild = require('../core/webpack/enter')
 
@@ -29,7 +32,7 @@ program
     .option('--dest <destination-path>', 'Set destination directory')
     .option('--config <config-file-path>', 'Set config file pathname')
     .option('--type <project-type>', 'Set project type')
-    .option('--koot-dev', 'Koot dev mode')
+    .option('--koot-dev', 'Koot dev env')
     .option('--koot-test', 'Koot test mode')
     .parse(process.argv)
 
@@ -81,6 +84,9 @@ const run = async () => {
     // 在所有操作执行之前定义环境变量
     process.env.WEBPACK_BUILD_STAGE = stage || 'client'
     process.env.WEBPACK_BUILD_ENV = env
+
+    // 清理临时目录
+    await before({ kootDev })
 
     // 生成配置
     const kootConfig = await validateConfig()
@@ -134,8 +140,12 @@ const after = async (config = {}) => {
 
     const { dist } = config
 
-    // 移除临时配置文件
-    if (ENV === 'prod') emptyTempConfigDir()
+    if (ENV === 'prod') {
+        // 清理临时目录
+        await fs.remove(getDirTemp())
+        // 移除临时配置文件
+        // emptyTempConfigDir()
+    }
 
     // 移除标记文件
     const fileBuilding = path.resolve(dist, filenameBuilding)

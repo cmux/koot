@@ -1,7 +1,10 @@
 ## 0.8.8
 **2019-04-10**
+- 核心
+  - 现在会在打包流程完成后，删除临时目录 (`/logs/temp`)
 - 错误修正
   - _开发环境_ 访问没有指定组件的路由时，服务器报错并中止运行 ([#88](https://github.com/cmux/koot/issues/88))
+  - _SPA_ 没有指定 `templateInject` 选项时，打包失败 ([#87](https://github.com/cmux/koot/issues/87))
 
 ## 0.8.7
 **2019-04-04**

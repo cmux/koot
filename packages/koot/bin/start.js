@@ -11,6 +11,8 @@ const npmRunScript = require('npm-run-script')
 const chalk = require('chalk')
 // const opn = require('opn')
 
+const before = require('./_before')
+
 const {
     filenameBuildFail,
 } = require('../defaults/before-build')
@@ -23,7 +25,8 @@ const validateConfig = require('../libs/validate-config')
 const validateConfigDist = require('../libs/validate-config-dist')
 // const __ = require('../utils/translate')
 // const getCwd = require('../utils/get-cwd')
-const emptyTempConfigDir = require('../libs/empty-temp-config-dir')
+// const emptyTempConfigDir = require('../libs/empty-temp-config-dir')
+const getDirTemp = require('../libs/get-dir-tmp')
 
 program
     .version(require('../package').version, '-v, --version')
@@ -62,6 +65,8 @@ const run = async () => {
 
     process.env.KOOT_TEST_MODE = JSON.stringify(kootTest)
 
+    await before()
+
     // 读取构建配置
     const kootConfig = await validateConfig()
     await getAppType()
@@ -69,8 +74,10 @@ const run = async () => {
     const { dist } = kootConfig
 
     const afterBuild = async () => {
+        // 清理临时目录
+        await fs.remove(getDirTemp())
         // 删除过程中创建的临时文件
-        emptyTempConfigDir()
+        // emptyTempConfigDir()
     }
 
     // 打包

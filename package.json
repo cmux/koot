@@ -40,7 +40,7 @@
         "docsify-cli": "4.3.0"
     },
     "devDependencies": {
-        "lerna": "3.13.1",
+        "lerna": "3.13.2",
         "lerna-wizard": "1.0.9",
         "eslint": "5.16.0",
         "eslint-plugin-react": "7.12.4",

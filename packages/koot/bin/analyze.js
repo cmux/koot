@@ -1,13 +1,17 @@
 #!/usr/bin/env node
 
+const fs = require('fs-extra')
 const program = require('commander')
 // const chalk = require('chalk')
+
+const before = require('./_before')
 
 // const __ = require('../utils/translate')
 const validateConfig = require('../libs/validate-config')
 // const readBuildConfigFile = require('../utils/read-build-config-file')
 const setEnvFromCommand = require('../utils/set-env-from-command')
 const initNodeEnv = require('../utils/init-node-env')
+const getDirTemp = require('../libs/get-dir-tmp')
 
 const kootBuild = require('../core/webpack/enter')
 
@@ -49,6 +53,8 @@ const run = async () => {
     process.env.WEBPACK_BUILD_STAGE = stage || 'client'
     process.env.WEBPACK_BUILD_ENV = 'prod'
 
+    await before()
+
     // 读取构建配置
     const kootConfig = await validateConfig()
 
@@ -56,6 +62,9 @@ const run = async () => {
         analyze: true,
         ...kootConfig
     })
+
+    // 清理临时目录
+    await fs.remove(getDirTemp())
 
     console.log(' ')
 }
