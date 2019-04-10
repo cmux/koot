@@ -38,7 +38,7 @@
                 {
                     "learn": "高阶组件: extend",
                     "content": "装饰 React 组件，提供数据同构、页面信息修改（<title>、<meta> 标签等）、CSS 处理等能力。",
-                    "doc": "/react-extend"
+                    "doc": "/react?id=%E9%AB%98%E9%98%B6%E7%BB%84%E4%BB%B6-extend"
                 }
             ],
             "listAdvanced": [

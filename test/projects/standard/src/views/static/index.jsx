@@ -13,7 +13,8 @@ export default extend({
     name: 'PageStatic'
 })(
     ({
-        className
+        className,
+        params: { noComponentGiven }
     }) => {
         // console.log(A)
         return (
@@ -28,6 +29,11 @@ export default extend({
                     <p>{__('pages.static.method_static_content')}</p>
                     <img src={(__SPA__ ? '' : '/') + "photo.jpg"} />
                 </div>
+                {noComponentGiven && (
+                    <div className="no-component-given">
+                        {noComponentGiven}
+                    </div>
+                )}
             </div>
         )
     }

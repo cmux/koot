@@ -30,7 +30,10 @@ export default {
                     require.ensure([], (require) => {
                         if (routeCheck(nextState)) cb(null, require('@views/static').default)
                     }, 'Page: Static Assets')
-                }
+                },
+                childRoutes: [{
+                    path: ':noComponentGiven'
+                }],
             },
             {
                 path: 'delayed',

@@ -22,7 +22,7 @@ const getDirDistPublic = require('../libs/require-koot')('libs/get-dir-dist-publ
 class SpaTemplatePlugin {
     constructor(settings = {}) {
         this.localeId = settings.localeId
-        this.inject = settings.inject || {}
+        this.inject = settings.inject
     }
 
     apply(compiler) {
@@ -123,13 +123,18 @@ class SpaTemplatePlugin {
             })()
             // console.log(Object.assign({}, defaultInject, inject))
 
-            const projectInject = ((thisModule) => {
-                if (typeof thisModule.default === 'object')
-                    return thisModule.default
-                if (typeof thisModule === 'object')
-                    return thisModule
-                return {}
-            })(eval(fs.readFileSync(inject, 'utf-8')))
+            const projectInject = (() => {
+                if (!inject) return {}
+                if (typeof inject !== 'string') return {}
+                if (!fs.existsSync(inject)) return {}
+                return ((thisModule) => {
+                    if (typeof thisModule.default === 'object')
+                        return thisModule.default
+                    if (typeof thisModule === 'object')
+                        return thisModule
+                    return {}
+                })(eval(fs.readFileSync(inject, 'utf-8')))
+            })()
 
             const html = renderTemplate({
                 template,

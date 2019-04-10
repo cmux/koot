@@ -8,6 +8,8 @@ const chalk = require('chalk')
 const npmRunScript = require('npm-run-script')
 const opn = require('opn')
 
+const before = require('./_before')
+
 const contentWaiting = require('../defaults/content-waiting')
 const {
     keyFileProjectConfigTempFull,
@@ -26,6 +28,7 @@ const validateConfig = require('../libs/validate-config')
 const validateConfigDist = require('../libs/validate-config-dist')
 const getDirDevTmp = require('../libs/get-dir-dev-tmp')
 const getDirDevCache = require('../libs/get-dir-dev-cache')
+const getDirTemp = require('../libs/get-dir-tmp')
 
 const __ = require('../utils/translate')
 const sleep = require('../utils/sleep')
@@ -79,6 +82,8 @@ const run = async () => {
 
     // 清除所有临时配置文件
     await removeTempProjectConfig()
+    // 清理临时目录
+    await before()
 
     // 清空 log
     process.stdout.write('\x1B[2J\x1B[0f')
@@ -223,6 +228,8 @@ const run = async () => {
         await removeTempProjectConfig()
         await removeTempBuild(dist)
         await fs.emptyDir(getDirDevTmp(cwd))
+        // 清理临时目录
+        await fs.remove(getDirTemp())
 
         if (Array.isArray(processes) && processes.length) {
             if (waitingSpinner) waitingSpinner.stop()
