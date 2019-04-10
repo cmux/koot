@@ -1,12 +1,8 @@
 
 ## 0.9.0 (Alpha)
 **2019-??-??** (alpha.0)
-- **重大改动**
-  - _计划_ `react-router` 升级到 v4，并更新路由配置规则
-    - 有向下兼容处理，原则上对已有项目不会造成影响
-  - _计划_ `react-redux` 升级到 v7，原则上对已有项目不会造成影响
 - 核心
-  - 渲染结果 (SSR & SPA) 结尾现在会附带 koot 版本信息作为 HTML 代码注释 (#64)
+  - 渲染结果 (SSR & SPA) 结尾现在会附带 koot 版本信息作为 HTML 代码注释 ([#64](https://github.com/cmux/koot/issues/64))
 - 更新依赖包
   - major
     - `cli-spinners` -> _2.1.0_
@@ -16,6 +12,14 @@
   - patch
     - `es5-shim` -> _4.5.13_
     - `react-hot-loader` -> _4.8.3_
+
+## 0.8.8
+**2019-04-10**
+- 核心
+  - 现在会在打包流程完成后，删除临时目录 (`/logs/temp`)
+- 错误修正
+  - _开发环境_ 访问没有指定组件的路由时，服务器报错并中止运行 ([#88](https://github.com/cmux/koot/issues/88))
+  - _SPA_ 没有指定 `templateInject` 选项时，打包失败 ([#87](https://github.com/cmux/koot/issues/87))
 
 ## 0.8.7
 **2019-04-04**

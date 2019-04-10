@@ -38,7 +38,7 @@
                 {
                     "learn": "HOC: extend",
                     "content": "Enabling data-isomorphic, page infomation modification (<title>, <meta>, etc...), CSS processing, and more for React component",
-                    "doc": "/react?id=高阶组件-extend"
+                    "doc": "/react?id=%E9%AB%98%E9%98%B6%E7%BB%84%E4%BB%B6-extend"
                 }
             ],
             "listAdvanced": [
