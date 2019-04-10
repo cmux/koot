@@ -1,1 +1,1 @@
-import '../../React/client-run-first'
+require('../../React/client-run-first')

@@ -1,6 +1,5 @@
 const fs = require('fs-extra')
 // const path = require('path')
-// const opn = require('opn')
 
 const { ConcatSource } = require("webpack-sources")
 
@@ -86,11 +85,6 @@ class DevModePlugin {
                 //     }
                 // })
             }
-
-            // if (TYPE === 'spa') {
-            //     if (!opened) opn(`http://localhost:${getPort()}/`)
-            //     opened = true
-            // }
 
             callback()
         })

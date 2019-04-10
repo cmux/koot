@@ -6,12 +6,24 @@
 - 更新依赖包
   - major
     - `cli-spinners` -> _2.1.0_
+    - `opn` -> `open` _6.1.0_
   - minor
+    - `mini-css-extract-plugin` -> _0.6.0_
     - `pm2` -> _3.5.0_
     - `webpack-bundle-analyzer` -> _3.2.0_
+    - `webpack-dev-server` -> _3.3.1_
   - patch
     - `es5-shim` -> _4.5.13_
     - `react-hot-loader` -> _4.8.3_
+- **koot-cli**
+  - 更新依赖包
+  - major
+    - `semver` -> _6.0.0_
+  - minor
+    - `latest-version` -> _5.1.0_
+    - `npm-email` -> _3.2.0_
+    - `ora` -> _3.4.0_
+    - `package-json` -> _6.3.0_
 
 ## 0.8.8
 **2019-04-10**

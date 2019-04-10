@@ -200,12 +200,13 @@ module.exports = async (kootBuildConfig = {}) => {
                     }
                     // result.entry[entryClientHMR] = `webpack-dev-server/client?http://localhost:${getWDSport()}/sockjs-node/`
                 }
-                const fileRunFirst = path.resolve(
-                    __dirname,
-                    '../../../',
-                    appType,
-                    './client/run-first.js'
-                )
+                // const fileRunFirst = path.resolve(
+                //     __dirname,
+                //     '../../../',
+                //     appType,
+                //     './client/run-first.js'
+                // )
+                const fileRunFirst = path.resolve(__dirname, '../../../React/client-run-first.js')
                 if (fs.existsSync(fileRunFirst)) {
                     result.entry[chunkNameClientRunFirst] = [fileRunFirst]
                 }

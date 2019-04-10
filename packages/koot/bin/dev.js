@@ -6,7 +6,7 @@ const program = require('commander')
 const pm2 = require('pm2')
 const chalk = require('chalk')
 const npmRunScript = require('npm-run-script')
-const opn = require('opn')
+const opn = require('open')
 
 const before = require('./_before')
 
