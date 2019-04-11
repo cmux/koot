@@ -10,7 +10,7 @@
   - minor
     - `mini-css-extract-plugin` -> _0.6.0_
     - `pm2` -> _3.5.0_
-    - `webpack-bundle-analyzer` -> _3.2.0_
+    - `webpack-bundle-analyzer` -> _3.3.0_
     - `webpack-dev-server` -> _3.3.1_
   - patch
     - `es5-shim` -> _4.5.13_

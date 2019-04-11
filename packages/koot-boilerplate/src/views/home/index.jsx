@@ -25,7 +25,7 @@ const PageHome = extend({
                         <span className="line" key={index}>{str}</span>
                     ))}
                 </span>
-                <Link className="button-start" to="start">{__('pages.home.start')}</Link>
+                <Link className="button-start" to="/start">{__('pages.home.start')}</Link>
             </div>
             <div className="nav">
                 {navItems.concat([[urlGithub, 'github']]).map((item, index) => (
