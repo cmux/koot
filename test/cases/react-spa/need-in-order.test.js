@@ -148,3 +148,10 @@ describe('测试: React SPA 项目', () => {
 })
 
 // TODO: 开发环境
+
+/** TODO: 热更新测试
+ * - 修改 ejs
+ * - 修改 css
+ * - 修改 react 组件
+ * - 修改 extend 传入信息
+ */

@@ -1,11 +1,12 @@
 const fs = require('fs-extra')
-// const path = require('path')
+const path = require('path')
 
 const { ConcatSource } = require("webpack-sources")
 
 // const getPort = require('../libs/require-koot')('utils/get-port')
 // const { filenameDll } = require('../libs/require-koot')('defaults/before-build')
 const isHotUpdate = require('../libs/is-compilation-hot-update-only')
+const getCWD = require('../libs/require-koot')('utils/get-cwd')
 
 // let opened = false
 
@@ -14,20 +15,21 @@ const isHotUpdate = require('../libs/is-compilation-hot-update-only')
  */
 class DevModePlugin {
     constructor({
-        dist,
+        dist, template,
         afterEmit, done,
     }) {
         this.dist = dist
+        this.template = template
         this.afterEmit = afterEmit
         this.done = done
     }
 
     apply(compiler) {
         const {
-            afterEmit, done
+            afterEmit, done, template
         } = this
 
-        // const TYPE = process.env.WEBPACK_BUILD_TYPE
+        const TYPE = process.env.WEBPACK_BUILD_TYPE
         const ENV = process.env.WEBPACK_BUILD_ENV
         const STAGE = process.env.WEBPACK_BUILD_STAGE
 
@@ -68,6 +70,21 @@ class DevModePlugin {
                 })
             })
         }
+
+        compiler.hooks.afterCompile.tap.bind(compiler.hooks.afterCompile, 'DevModePlugin')(async (compilation) => {
+
+            /**
+             * [SSR/server] [SPA]
+             * 监视 ejs 模板，如果文件改变触发重新打包
+             */
+            if ((STAGE === 'server' || TYPE === 'spa') && typeof template === 'string') {
+                const file = path.resolve(getCWD(), template)
+                if (fs.existsSync(file)) {
+                    compilation.fileDependencies.add(file)
+                }
+            }
+
+        })
 
         // done - 执行 after 回调，并打开浏览器窗口
         compiler.hooks.done.tapAsync.bind(compiler.hooks.done, 'DevModePlugin')((compilation, callback) => {

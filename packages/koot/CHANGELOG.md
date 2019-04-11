@@ -3,6 +3,8 @@
 **2019-??-??** (alpha.0)
 - 核心
   - 渲染结果 (SSR & SPA) 结尾现在会附带 koot 版本信息作为 HTML 代码注释 ([#64](https://github.com/cmux/koot/issues/64))
+  - 开发环境
+    - 现在修改 `.ejs` 模板后刷新页面即可看到新的结果 ([#95](https://github.com/cmux/koot/issues/95))
 - 更新依赖包
   - major
     - `cli-spinners` -> _2.1.0_

@@ -32,6 +32,7 @@ module.exports = async (kootBuildConfig = {}) => {
         defaultPublicPathname,
         i18n,
         staticCopyFrom: staticAssets,
+        template,
         [keyConfigBuildDll]: createDll = false,
     } = kootBuildConfig
 
@@ -195,7 +196,7 @@ module.exports = async (kootBuildConfig = {}) => {
 
             if (!createDll) {
                 config.plugins.push(
-                    new DevModePlugin({ dist })
+                    new DevModePlugin({ dist, template })
                 )
             }
         }

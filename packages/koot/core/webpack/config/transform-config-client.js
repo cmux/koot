@@ -47,6 +47,7 @@ module.exports = async (kootBuildConfig = {}) => {
         appType,
         i18n,
         dist,
+        template,
         templateInject,
         defaultPublicDirName, defaultPublicPathname,
         staticCopyFrom: staticAssets,
@@ -238,7 +239,10 @@ module.exports = async (kootBuildConfig = {}) => {
                 // 开发环境辅助插件
                 if (ENV === 'dev') {
                     result.plugins.push(
-                        new DevModePlugin(webpackCompilerHook)
+                        new DevModePlugin({
+                            template,
+                            ...webpackCompilerHook
+                        })
                     )
                     result.plugins.push(
                         new webpack.NamedModulesPlugin()
@@ -258,6 +262,7 @@ module.exports = async (kootBuildConfig = {}) => {
                     if (TYPE === 'spa') {
                         result.plugins.push(
                             new SpaTemplatePlugin({
+                                template,
                                 localeId: isSeperateLocale ? localeId : undefined,
                                 // inject: templateInject,
                                 inject: path.resolve(getDirTemp(), getFilenameSPATemplateInject(localeId))
