@@ -12,7 +12,7 @@ let inited = false
  */
 export default (title, metas = []) => {
     if (__SERVER__) return
-    if (!inited) {
+    if (!__SPA__ && !inited) {
         inited = true
         return
     }
