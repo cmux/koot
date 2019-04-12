@@ -3,7 +3,7 @@ const path = require('path')
 const readBaseConfig = require('../utils/read-base-config')
 const getCwd = require('../utils/get-cwd')
 
-const { version } = require('../package.json')
+// const { version } = require('../package.json')
 
 /**
  * 处理模板内容代码并返回最终结果
@@ -27,7 +27,7 @@ const validateTemplate = async (template) => {
         templateStr = await fs.readFile(path.resolve(template), 'utf-8')
     }
 
-    return (templateStr + `\n<!-- rendered by using koot.js ${version} -->`)
+    return (templateStr + `\n<!-- rendered by using koot.js ${process.env.KOOT_VERSION} -->`)
 }
 
 module.exports = validateTemplate
