@@ -1,6 +1,5 @@
 const fs = require('fs-extra')
 const path = require('path')
-const readBaseConfig = require('../utils/read-base-config')
 const getCwd = require('../utils/get-cwd')
 
 // const { version } = require('../package.json')
@@ -12,9 +11,6 @@ const getCwd = require('../utils/get-cwd')
  * @returns {String} 处理后的模板内容代码
  */
 const validateTemplate = async (template) => {
-    if (typeof template === 'undefined')
-        template = await readBaseConfig('template')
-
     if (typeof template !== 'string')
         throw new Error('validate-template: `template` need to be String')
 
