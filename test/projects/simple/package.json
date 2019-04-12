@@ -29,7 +29,9 @@
         "koot-buildtest-isomorphic-build": "koot-build --env prod --koot-test",
         "koot-buildtest-isomorphic-start-server": "koot-start --no-build",
         "koot-buildtest-isomorphic-start-server-custom-port": "koot-start --no-build --port 8080",
-        "koot-buildtest-isomorphic-dev": "koot-dev --no-open"
+        "koot-buildtest-isomorphic-dev": "koot-dev --no-open",
+        "koot-basetest-prod": "koot-start --koot-test",
+        "koot-basetest-isomorphic-dev": "koot-dev --no-open --koot-test"
     },
     "dependencies": {
         "autoprefixer": "9.4.7",

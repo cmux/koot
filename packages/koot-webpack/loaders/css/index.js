@@ -154,22 +154,30 @@ function handleBackground(root) {
     // 处理背景图片
     root.walkDecls(/^(background|border|mask|src)/, decl => {
 
+        // decl.value = decl.value.replace(/url\(([ '"]*)(.+?)([ '"]*)\)/g, `url("${require("$2")}")`)
+        decl.value = decl.value.replace(/url\(([ '"]*)(.+?)([ '"]*)\)/g, (...args) => {
+            // console.log(args[2])
+            return `url(' + require('${args[2]}') + ')`
+        })
+        // decl.value = decl.value.replace(/url\(([ '"]*)(.+?)([ '"]*)\)/g, `url("${'require(' + "$2" + ')'}")`)
+
+        // 旧代码
         // 匹配到background中的url()
-        let matches = decl.value.match(/url\((.*?)\)/)
+        // let matches = decl.value.match(/url\((.*?)\)/)
 
-        if (matches && matches.length > 1) {
-            let v = matches[1]
+        // if (matches && matches.length > 1) {
+        //     let v = matches[1]
 
-            decl.value = decl.value.replace(v, (m) => {
+        //     decl.value = decl.value.replace(v, (m) => {
 
-                // 双引号变单引号
-                m = m.replace(/"/g, '\'')
-                if (m.indexOf('\'') < 0) {
-                    m = `'${m}'`
-                }
+        //         // 双引号变单引号
+        //         m = m.replace(/"/g, '\'')
+        //         if (m.indexOf('\'') < 0) {
+        //             m = `'${m}'`
+        //         }
 
-                return "' +  require(" + m + ") + '"
-            })
-        }
+        //         return "' +  require(" + m + ") + '"
+        //     })
+        // }
     })
 }
