@@ -14,7 +14,7 @@
   - [CSS](/css)
   - [多语言开发](/i18n)
   - [生命周期](/life-cycle)
-  - [可修改的环境变量](/env)
+  - [环境变量](/env)
   - [PWA](/pwa)
   - [routeCheck](/route-check)
   - 　
