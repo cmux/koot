@@ -11,7 +11,7 @@ _Koot.js_ 提供以下环境变量，可以在项目内几乎所有的 Javascrip
 - `WEBPACK_BUILD_ENV` 当前的环境
   - `dev` 默认，开发环境
   - `prod` 生产环境
-- `SERVER_PORT` 服务器启动端口号
+- `SERVER_PORT` 服务器启动端口号 / 开发服务器访问端口号
 - `KOOT_VERSION` Koot.js 版本号
 - `KOOT_PROJECT_NAME` 项目名，koot 配置文件中的 `name`
 - `KOOT_PROJECT_TYPE` 项目类型，koot 配置文件中的 `type`
