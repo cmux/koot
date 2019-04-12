@@ -1,8 +1,11 @@
 
 ## 0.9.0 (Alpha)
-**2019-04-11** (alpha.1)
+**2019-04-12** (alpha.2)
 - 核心
   - 渲染结果 (SSR & SPA) 结尾现在会附带 koot 版本信息作为 HTML 代码注释 ([#64](https://github.com/cmux/koot/issues/64))
+  - Webpack
+    - `koot-css-loader`
+      - 如果 CSS 属性值包含多个 `url()`，现在会正确处理
   - 开发环境
     - 现在修改 `.ejs` 模板后刷新页面即可看到新的结果 ([#95](https://github.com/cmux/koot/issues/95))
 - 更新依赖包
