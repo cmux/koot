@@ -1,6 +1,6 @@
 
 ## 0.9.0 (Alpha)
-**2019-04-12** (alpha.2)
+**2019-04-15** (alpha.3)
 - 核心
   - 渲染结果 (SSR & SPA) 结尾现在会附带 koot 版本信息作为 HTML 代码注释 ([#64](https://github.com/cmux/koot/issues/64))
   - Webpack
@@ -13,23 +13,26 @@
     - `cli-spinners` -> _2.1.0_
     - `opn` -> `open` _6.1.0_
   - minor
+    - `inquirer` -> _6.3.1_
     - `mini-css-extract-plugin` -> _0.6.0_
     - `pm2` -> _3.5.0_
+    - `webpack` -> _4.30.0_
     - `webpack-bundle-analyzer` -> _3.3.2_
     - `webpack-dev-server` -> _3.3.1_
   - patch
     - `es5-shim` -> _4.5.13_
     - `is-port-reachable` -> _2.0.1_
-    - `react-hot-loader` -> _4.8.3_
+    - `react-hot-loader` -> _4.8.4_
 - **koot-cli**
   - 更新依赖包
-  - major
-    - `semver` -> _6.0.0_
-  - minor
-    - `latest-version` -> _5.1.0_
-    - `npm-email` -> _3.2.0_
-    - `ora` -> _3.4.0_
-    - `package-json` -> _6.3.0_
+    - major
+      - `semver` -> _6.0.0_
+    - minor
+      - `inquirer` -> _6.3.1_
+      - `latest-version` -> _5.1.0_
+      - `npm-email` -> _3.2.0_
+      - `ora` -> _3.4.0_
+      - `package-json` -> _6.3.0_
 
 ## 0.8.9
 **2019-04-11**
