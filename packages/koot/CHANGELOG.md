@@ -1,6 +1,6 @@
 
 ## 0.9.0 (Alpha)
-**2019-04-??** (alpha.3)
+**2019-04-16** (alpha.3)
 - 核心
   - 渲染结果 (SSR & SPA) 结尾现在会附带 koot 版本信息作为 HTML 代码注释 ([#64](https://github.com/cmux/koot/issues/64))
   - Webpack
