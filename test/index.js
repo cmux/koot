@@ -58,6 +58,10 @@ const run = async () => {
                 name: 'Lib: validate-config',
                 value: './test/cases/.+/validate-config'
             },
+            {
+                name: 'Lib: koot-css-loader',
+                value: './test/cases/libs/koot-css-loader'
+            },
             new inquirer.Separator(),
         ],
         default: 'full',

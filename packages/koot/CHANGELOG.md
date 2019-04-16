@@ -1,11 +1,12 @@
 
 ## 0.9.0 (Alpha)
-**2019-04-15** (alpha.3)
+**2019-04-??** (alpha.3)
 - 核心
   - 渲染结果 (SSR & SPA) 结尾现在会附带 koot 版本信息作为 HTML 代码注释 ([#64](https://github.com/cmux/koot/issues/64))
   - Webpack
     - `koot-css-loader`
       - 如果 CSS 属性值包含多个 `url()`，现在会正确处理 ([#82](https://github.com/cmux/koot/issues/82))
+      - 类似 `.component .component` 这样使用空格 (` `) 选择器或 `>` 选择器时，现在选择器之后的 `.component` 字段会被保留，不会进行 hash。使用其他选择器的情况依旧会进行 hash。 ([#68](https://github.com/cmux/koot/issues/68))
   - 开发环境
     - 现在修改 `.ejs` 模板后刷新页面即可看到新的结果 ([#95](https://github.com/cmux/koot/issues/95))
 - 更新依赖包

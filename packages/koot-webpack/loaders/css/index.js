@@ -1,8 +1,13 @@
+/**
+ * @module koot-css-loader
+ */
+
 const postcss = require('postcss')
 const loaderUtils = require("loader-utils")
 const md5 = require('md5')
 
 const stats = require('./stats')
+const replaceSelector = require('./replace-selector')
 
 module.exports = function (content) {
     this.cacheable && this.cacheable()
@@ -14,6 +19,8 @@ module.exports = function (content) {
         mode = 'replace',
         readable = false,
     } = loaderUtils.getOptions(this)
+
+    const keyword = 'component'
 
     // md5后，class名字长度
     // 默认5个字符
@@ -81,16 +88,14 @@ module.exports = function (content) {
             if (rule.parent.type == 'atrule' && rule.parent.name == 'keyframes')
                 return
 
-            // 每个class外面加1层class
             rule.selectors = rule.selectors.map(selector => {
 
                 // 可读性好的class名字
                 // eg: .app_3fea
-
-                if (~selector.indexOf('__component')) {
+                if (~selector.indexOf(`__${keyword}`)) {
 
                     // 可读性处理
-                    let readablePatten = new RegExp('.[^ ^+^~^>]+?__component')
+                    let readablePatten = new RegExp(`.[^ ^+^~^>]+?__${keyword}`)
                     if (readable) {
                         let name = selector.match(readablePatten)[0]
 
@@ -107,23 +112,24 @@ module.exports = function (content) {
 
                         return result
                     }
+
                     // 不可读性处理
                     else {
-                        selector = selector.replace(readablePatten, '.component')
-                        return simpleReplace(selector, md5Name)
+                        selector = selector.replace(readablePatten, `.${keyword}`)
+                        return replaceSelector(selector, md5Name, keyword)
                     }
                 }
 
                 // class名字直接用md5值替换，可读性不好，用于压缩
-                else if (~selector.indexOf('.component')) {
-                    return simpleReplace(selector, md5Name)
-                } else {
+                else if (~selector.indexOf(`.${keyword}`)) {
+                    return replaceSelector(selector, md5Name, keyword)
+                }
+
+                // 如果上述条件都不满足，在外面加一层 .[hash]
+                else {
                     return `.${md5Name} ${selector}`
                 }
 
-                function simpleReplace(selector, md5Name) {
-                    return selector.replace(/.component/g, '.' + md5Name)
-                }
             })
         })
 
