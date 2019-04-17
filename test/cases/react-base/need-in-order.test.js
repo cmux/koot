@@ -107,7 +107,8 @@ const waitForPort = async (child, regex = /port.*\[32m([0-9]+)/) => await new Pr
 const doTest = async (port, settings = {}) => {
 
     const {
-        isDev = false
+        isDev = false,
+        enableJavascript = true,
     } = settings
 
     const defaultViewport = {
@@ -133,6 +134,15 @@ const doTest = async (port, settings = {}) => {
         defaultViewport
     })
     const page = await browser.newPage()
+    // await page.setJavaScriptEnabled(enableJavascript)
+    if (!enableJavascript) {
+        await page.setRequestInterception(true)
+        page.on('request', (request) => {
+            const url = request.url()
+            if (/\.js$/.test(url)) request.abort()
+            else request.continue()
+        });
+    }
     const origin = isNaN(port) ? port : `http://127.0.0.1:${port}`
 
     const res = await page.goto(origin, {
@@ -231,6 +241,7 @@ describe('测试: React 同构项目', () => {
                 expect(errors.length).toBe(0)
 
                 await doTest(port)
+                await doTest(port, { enableJavascript: false })
                 await terminate(child.pid)
                 await afterTest(dir, 'ENV: prod')
             })
@@ -265,6 +276,10 @@ describe('测试: React 同构项目', () => {
 
                 await doTest(port, {
                     isDev: true
+                })
+                await doTest(port, {
+                    isDev: true,
+                    enableJavascript: false
                 })
                 await terminate(child.pid)
                 await afterTest(dir, 'ENV: dev')
