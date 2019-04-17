@@ -1,6 +1,6 @@
 
 ## 0.9.0 (Alpha)
-**2019-04-16** (alpha.3)
+**2019-04-17** (alpha.4)
 - 核心
   - 配置项
     - **新** `devMemoryAllocation` - 指定开发环境中 node.js 分配的内存。详情请参见文档的 [配置](https://koot.js.org/#/config?id=devmemoryallocation) 章节
