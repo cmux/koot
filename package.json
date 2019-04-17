@@ -41,7 +41,7 @@
     },
     "devDependencies": {
         "camelcase": "5.3.1",
-        "lerna": "3.13.2",
+        "lerna": "3.13.3",
         "lerna-wizard": "1.0.9",
         "eslint": "5.16.0",
         "eslint-plugin-react": "7.12.4",
