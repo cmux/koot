@@ -6,12 +6,18 @@ test(`测试: libs/koot-css-loader`, async () => {
 
     const pairs = [
         ['.component', `.${classNameReplaceTo}`],
+        ['.component-inner', `.${classNameReplaceTo}-inner`],
         ['.component .component', `.${classNameReplaceTo} .component`],
+        ['.component .component .component', `.${classNameReplaceTo} .component .component`],
+        ['.component .component-inner', `.${classNameReplaceTo} .${classNameReplaceTo}-inner`],
         ['.component .wrapper .component', `.${classNameReplaceTo} .wrapper .component`],
         ['.component > .wrapper > .component', `.${classNameReplaceTo} > .wrapper > .component`],
         ['.component ~ .component', `.${classNameReplaceTo} ~ .${classNameReplaceTo}`],
         ['.component + .component', `.${classNameReplaceTo} + .${classNameReplaceTo}`],
-        ['.component[data-name=".component"]', `.${classNameReplaceTo}[data-name=".component"]`]
+        ['.component[data-name=".component"]', `.${classNameReplaceTo}[data-name=".component"]`],
+        ['body.test .component', `body.test .${classNameReplaceTo}`],
+        ['body.test .component.test2', `body.test .${classNameReplaceTo}.test2`],
+        ['body.test .component.test2 .component', `body.test .${classNameReplaceTo}.test2 .component`]
     ]
 
     for (const [selector, result] of pairs) {
