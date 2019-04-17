@@ -54,21 +54,46 @@ module.exports = ({
     )
 }
 
-const DEFAULT_TEMPLATE = `
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <script>//inject_meta</script>
-        <title><script>//inject_title</script></title>
-        <script>//inject_component_styles</script>
-    </head>
-    <body>
-        <div id="root">
-            <div><script>//inject_html</script></div>
-        </div>
-        <script>//inject_redux_state</script>
-        <script>//inject_js</script>
-    </body>
-    </html>
-`
+const DEFAULT_TEMPLATE = `<!DOCTYPE html>
+<html>
+
+<head<%- inject.htmlLang %>>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+
+    <title><%= inject.title %></title>
+
+    <base target="_self">
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="format-detection" content="telephone=no,email=no,address=no">
+    <meta name="format-detection" content="email=no">
+    <meta name="format-detection" content="address=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="HandheldFriendly" content="true">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- IE/Edge/Multi-engine -->
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <!-- iOS Safari -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- Customize -->
+    <meta name="theme-color" content="#0092f5" />
+
+    <%- inject.metas %>
+    <%- inject.styles %>
+</head>
+
+<body class="koot-system">
+    <div id="root"><%- inject.react %></div>
+    <script type="text/javascript"><%- content('critical.js') %></script>
+    <%- inject.scripts %>
+</body>
+
+</html>`
