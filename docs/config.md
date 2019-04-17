@@ -1051,3 +1051,38 @@ module.exports = {
     }
 }
 ```
+
+### devMemoryAllocation
+
+- 类型: `Number` 或 `Object`
+- 默认值: _无_
+- **仅针对**: 开发环境
+
+指定开发环境中 node.js 分配的内存 (单位: MB)。
+
+```javascript
+module.exports = {
+    // 默认值 (使用 node.js 默认)
+    devMemoryAllocation: undefined,
+
+    // SPA: 指定 `webpack-dev-server` (client) 分配的内存容量
+    // SSR: 指定 `webpack-dev-server` (client) 和服务器打包进程 (server) 分配的内存容量
+    devMemoryAllocation: 2048,
+
+    // SSR: 分别指定 `webpack-dev-server` (client) 和服务器打包进程 (server) 分配的内存容量
+    devMemoryAllocation: {
+        client: 2048,
+        server: 1024
+    },
+
+    // SSR: 仅指定 `webpack-dev-server` (client) 分配的内存容量
+    devMemoryAllocation: {
+        client: 2048
+    },
+
+    // SSR: 仅指定服务器打包进程 (server) 分配的内存容量
+    devMemoryAllocation: {
+        server: 1024
+    }
+}
+```

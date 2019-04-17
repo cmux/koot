@@ -2,6 +2,8 @@
 ## 0.9.0 (Alpha)
 **2019-04-16** (alpha.3)
 - 核心
+  - 配置项
+    - **新** `devMemoryAllocation` - 指定开发环境中 node.js 分配的内存。详情请参见文档的 [配置](https://koot.js.org/#/config?id=devmemoryallocation) 章节
   - 渲染结果 (SSR & SPA) 结尾现在会附带 koot 版本信息作为 HTML 代码注释 ([#64](https://github.com/cmux/koot/issues/64))
   - Webpack
     - `koot-css-loader`

@@ -6,7 +6,7 @@ const program = require('commander')
 const pm2 = require('pm2')
 const chalk = require('chalk')
 const npmRunScript = require('npm-run-script')
-const opn = require('open')
+const opn = require('opn')
 
 const before = require('./_before')
 
@@ -154,6 +154,17 @@ const run = async () => {
         [keyFileProjectConfigTempPortionServer]: fileProjectConfigTempPortionServer,
         [keyFileProjectConfigTempPortionClient]: fileProjectConfigTempPortionClient
     } = kootConfig
+    const [devMemoryAllocationClient, devMemoryAllocationServer] = (() => {
+        const { devMemoryAllocation } = kootConfig
+        if (!devMemoryAllocation)
+            return [undefined, undefined]
+        if (typeof devMemoryAllocation === 'object') {
+            return [devMemoryAllocation.client, devMemoryAllocation.server]
+        }
+        if (isNaN(devMemoryAllocation))
+            return [undefined, undefined]
+        return [parseInt(devMemoryAllocation), parseInt(devMemoryAllocation)]
+    })()
     const appType = await getAppType()
     const cwd = getCwd()
     const packageInfo = await fs.readJson(path.resolve(cwd, 'package.json'))
@@ -440,10 +451,20 @@ const run = async () => {
             cwd: cwd,
             output: pathLogOut,
             error: pathLogErr,
-            autorestart: false,
+            autorestart: false
         }
 
         switch (stage) {
+            case 'client': {
+                if (devMemoryAllocationClient)
+                    config.node_args = `--max-old-space-size=${devMemoryAllocationClient}`
+                break
+            }
+            case 'server': {
+                if (devMemoryAllocationServer)
+                    config.node_args = `--max-old-space-size=${devMemoryAllocationServer}`
+                break
+            }
             case 'run': {
                 Object.assign(config, {
                     script: pathServerJS,
