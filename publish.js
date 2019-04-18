@@ -2,42 +2,54 @@ const fs = require('fs-extra')
 const path = require('path')
 const inquirer = require('inquirer')
 const crlf = require('crlf')
+const glob = require('glob-promise')
 
 const runScript = require('./libs/run-script')
 const logWelcome = require('./libs/log/welcome')
 const logAbort = require('./libs/log/abort')
 const logFinish = require('./libs/log/finish')
-
-const filesChangedFromCRLFtoLF = []
+const spinner = require('./packages/koot/utils/spinner')
 
 const prePublish = async () => {
-    const dirKoot = path.resolve(__dirname, './packages/koot')
-    const { bin } = await fs.readJson(path.resolve(dirKoot, 'package.json'))
-    for (const pathname of bin) {
-        const file = path.resolve(dirKoot, pathname)
+
+    const title = 'pre-publish'
+    const waiting = spinner(title + '...')
+
+    const packages = await glob(path.resolve(__dirname, 'packages/*/package.json'))
+    const bins = []
+
+    // 汇总所有 bin 文件
+    for (const packageJson of packages) {
+        const dir = path.dirname(packageJson)
+        const { bin = {} } = await fs.readJson(packageJson)
+        for (const pathname of Object.values(bin)) {
+            bins.push(path.resolve(dir, pathname))
+        }
+    }
+
+    // 将所有 bin 文件的换行符改为 LF
+    for (const file of bins) {
         await new Promise((resolve, reject) => {
             crlf.set(file, 'LF', (err, endingType) => {
                 if (err) return reject(err)
-                if (endingType === 'CRLF')
-                    filesChangedFromCRLFtoLF.push(file)
                 resolve(endingType)
             })
         })
     }
-}
+    
+    // git commit
+    // const git = require('simple-git/promise')(__dirname)
+    // await git.add('./*')
+    // await git.commit(`changed all bins' line breaks to LF`)
 
-const postPublish = async () => {
-    for (const file of filesChangedFromCRLFtoLF) {
-        await new Promise((resolve, reject) => {
-            crlf.set(file, 'CRLF', (err) => {
-                if (err) return reject(err)
-                resolve()
-            })
-        })
-    }
+    waiting.stop()
+    spinner(title).succeed()
 }
 
 const run = async () => {
+    await prePublish()
+
+    return
 
     logWelcome('Publish')
 
@@ -115,13 +127,8 @@ const run = async () => {
         + ` --ignore-changes "packages/!(${selected.join('|')})/**"`
         + (tag ? ` --dist-tag ${tag}` : '')
     )
-    await postPublish()
 
     logFinish()
 }
 
-run()
-    .catch(async e => {
-        console.error(e)
-        await postPublish()
-    })
+run().catch(async e => console.error(e))
