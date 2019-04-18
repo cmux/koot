@@ -38,9 +38,9 @@ const prePublish = async () => {
     }
     
     // git commit
-    // const git = require('simple-git/promise')(__dirname)
-    // await git.add('./*')
-    // await git.commit(`changed all bins' line breaks to LF`)
+    const git = require('simple-git/promise')(__dirname)
+    await git.add('./*')
+    await git.commit(`changed all bins' line breaks to LF`)
 
     waiting.stop()
     spinner(title).succeed()
