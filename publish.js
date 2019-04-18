@@ -47,9 +47,6 @@ const prePublish = async () => {
 }
 
 const run = async () => {
-    await prePublish()
-
-    return
 
     logWelcome('Publish')
 
