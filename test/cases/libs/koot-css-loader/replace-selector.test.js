@@ -9,6 +9,8 @@ test(`测试: libs/koot-css-loader`, async () => {
         ['.component-inner', `.${classNameReplaceTo}-inner`],
         ['.component .component', `.${classNameReplaceTo} .component`],
         ['.component .component .component', `.${classNameReplaceTo} .component .component`],
+        ['.component .component .component[data-name="test"]', `.${classNameReplaceTo} .component .component[data-name="test"]`],
+        ['.component .component .component[data-name=".component"]', `.${classNameReplaceTo} .component .component[data-name=".component"]`],
         ['.component .component-inner', `.${classNameReplaceTo} .${classNameReplaceTo}-inner`],
         ['.component .wrapper .component', `.${classNameReplaceTo} .wrapper .component`],
         ['.component > .wrapper > .component', `.${classNameReplaceTo} > .wrapper > .component`],

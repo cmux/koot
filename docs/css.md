@@ -47,3 +47,32 @@ module.exports = {
 ```
 
 _默认规则解释:_ 文件名以 `.component.css` `.view.css` 或 `.module.css` (扩展名可为 `css` `less` `sass`) 为结尾的文件会当作组件 CSS，其他文件会被当做全局 CSS。
+
+### 组件 CSS 的 className hash 规则
+
+原则上，所有以 `.component` 开头的 className 均会被 hash，`component` 之后的字段会原样保留，如：
+
+- ✅ `.component` -> `.adf3`
+- ✅ `.component-wrapper` -> `.adf3-wrapper`
+- ✅ `.component[data-tip="Open"]` -> `.adf3[data-tip="Open"]`
+
+如果是带有连接器的选择器，一般情况下所有以 `.component` 开头的 className 均会被 hash，但当满足以下条件时，没有任何非属性选择器后缀的非第一个的 `.component` 会被忽略
+
+- 连接器为选择子元素：空格、`>` 等
+- `.component` 出现多次
+
+结果示例：
+
+- `.component .component` -> `.adf3 .component`
+- `.component .component .component` -> `.adf3 .component .component`
+- `.component .component .component[data-name="test"]` -> `.adf3 .component .component[data-name="test"]`
+- `.component .component .component[data-name=".component"]` -> `.adf3 .component .component[data-name=".component"]`
+- `.component .component-inner` -> `.adf3 .adf3-inner`
+- `.component .wrapper .component` -> `.adf3 .wrapper .component`
+- `.component > .wrapper > .component` -> `.adf3 > .wrapper > .component`
+- `.component ~ .component` -> `.adf3 ~ .adf3`
+- `.component + .component` -> `.adf3 + .adf3`
+- `.component[data-name=".component"]` -> `.adf3[data-name=".component"]`
+- `body.test .component` -> `body.test .adf3`
+- `body.test .component.test2` -> `body.test .adf3.test2`
+- `body.test .component.test2 .component` -> `body.test .adf3.test2 .component`]
