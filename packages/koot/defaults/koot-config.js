@@ -18,6 +18,7 @@ module.exports = {
     // serverOnRender: '',
 
     moduleCssFilenameTest: /\.(component|view|module)/,
+    bundleVersionsKeep: 2,
 
     devPort: 3080,
 }
