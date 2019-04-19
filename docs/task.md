@@ -95,3 +95,7 @@
 | --config &lt;config-file-path&gt; | 指定打包配置文件地址 | `koot-build --config ./koot.build.qa.js` |
 
 注：手动指定环境时，将不会默认打开首页。
+
+### 动态添加环境变量
+
+参见: [环境变量/动态添加环境变量](/env?id=动态添加环境变量)

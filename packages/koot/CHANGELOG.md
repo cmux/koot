@@ -3,15 +3,16 @@
 **2019-04-18** (alpha.6)
 - 核心
   - 配置项
-    - **新** `devMemoryAllocation` - 指定开发环境中 node.js 分配的内存。详情请参见文档的 [配置](https://koot.js.org/#/config?id=devmemoryallocation) 章节
+    - **新** `devMemoryAllocation` - 指定开发环境中 node.js 分配的内存。详情请参见文档 [配置/devmemoryallocation](https://koot.js.org/#/config?id=devmemoryallocation)
   - 现在可以使用 `yarn` 安装并使用 _Koot.js_ ([#99](https://github.com/cmux/koot/issues/99))
+  - 现在可以在 NPM 命令中动态添加变量了，这些变量会自动添加到环境变量中，并允许在项目代码中随意调用。详情请参见文档 [环境变量/动态添加环境变量](https://koot.js.org/#/env?id=动态添加环境变量) ([#78](https://github.com/cmux/koot/issues/78))
   - 渲染 (SSR & SPA 模板)
     - 结尾现在会附带 koot 版本信息作为 HTML 代码注释 ([#64](https://github.com/cmux/koot/issues/64))
     - 如果 ejs 模板中缺少关键注入项 (`inject`)，现在会自动添加 ([#81](https://github.com/cmux/koot/issues/81))
   - Webpack
     - `koot-css-loader`
       - 如果 CSS 属性值包含多个 `url()`，现在会正确处理 ([#82](https://github.com/cmux/koot/issues/82))
-      - 类似 `.component .component` 这样使用空格 (` `) 选择器或 `>` 选择器时，现在选择器之后的 `.component` 字段会被保留，不会进行 hash。使用其他选择器的情况依旧会进行 hash。详情请参见文档的 [CSS](https://koot.js.org/#/css?id=组件-css-的-classname-hash-规则) 章节 ([#68](https://github.com/cmux/koot/issues/68))
+      - 类似 `.component .component` 这样使用空格 (` `) 选择器或 `>` 选择器时，现在选择器之后的 `.component` 字段会被保留，不会进行 hash。使用其他选择器的情况依旧会进行 hash。详情请参见文档 [CSS/组件 CSS的 className hash 规则](https://koot.js.org/#/css?id=组件-css-的-classname-hash-规则) ([#68](https://github.com/cmux/koot/issues/68))
   - 开发环境
     - 现在修改 `.ejs` 模板后刷新页面即可看到新的结果 ([#95](https://github.com/cmux/koot/issues/95))
 - 更新依赖包
