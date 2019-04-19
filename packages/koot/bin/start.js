@@ -64,7 +64,7 @@ const run = async () => {
 
     process.env.KOOT_TEST_MODE = JSON.stringify(kootTest)
 
-    await before()
+    await before(program)
 
     // 读取构建配置
     const kootConfig = await validateConfig()

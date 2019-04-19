@@ -83,7 +83,7 @@ const run = async () => {
     // 清除所有临时配置文件
     await removeTempProjectConfig()
     // 清理临时目录
-    await before()
+    await before(program)
 
     // 清空 log
     process.stdout.write('\x1B[2J\x1B[0f')

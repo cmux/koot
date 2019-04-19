@@ -32,7 +32,12 @@ class App extends React.Component {
     }
     render = () => (
         <React.StrictMode>
-            <div id="app" className={this.props.className}>
+            <div
+                id="app"
+                className={this.props.className}
+                data-custom-env-notexist={undefined}
+                data-custom-env-aaaaa={process.env.aaaaa}
+            >
                 <Nav />
                 <Main children={this.props.children} />
             </div>

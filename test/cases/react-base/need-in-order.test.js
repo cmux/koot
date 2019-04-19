@@ -17,7 +17,10 @@ const chalk = require('chalk')
 
 const removeTempProjectConfig = require('../../../packages/koot/libs/remove-temp-project-config')
 const sleep = require('../../../packages/koot/utils/sleep')
-const { styles: puppeteerTestStyles } = require('../puppeteer-test')
+const {
+    styles: puppeteerTestStyles,
+    customEnv: puppeteerTestCustomEnv,
+} = require('../puppeteer-test')
 
 //
 
@@ -109,7 +112,9 @@ const doTest = async (port, settings = {}) => {
     const {
         isDev = false,
         enableJavascript = true,
+        customEnv = {},
     } = settings
+    customEnv.notexist = undefined
 
     const defaultViewport = {
         width: 800,
@@ -175,8 +180,8 @@ const doTest = async (port, settings = {}) => {
         await test(2);
     }
 
-    // 检查 koot-test-styles
     await puppeteerTestStyles(page)
+    await puppeteerTestCustomEnv(page, customEnv)
 
     await browser.close()
 }
@@ -205,6 +210,8 @@ const afterTest = async (cwd, title) => {
     await removeTempProjectConfig(cwd)
 
     console.log(chalk.green('√ ') + title)
+
+    await sleep(100)
 }
 
 //
@@ -225,7 +232,7 @@ describe('测试: React 同构项目', () => {
                 await addCommand(commandName, command, dir)
 
                 const child = execSync(
-                    `npm run ${commandName}`,
+                    `npm run ${commandName} -- aaaaa=a1b2c3`,
                     {
                         cwd: dir,
                     },
@@ -240,8 +247,17 @@ describe('测试: React 同构项目', () => {
 
                 expect(errors.length).toBe(0)
 
-                await doTest(port)
-                await doTest(port, { enableJavascript: false })
+                await doTest(port, {
+                    customEnv: {
+                        aaaaa: `a1b2c3`
+                    }
+                })
+                await doTest(port, {
+                    enableJavascript: false,
+                    customEnv: {
+                        aaaaa: `a1b2c3`
+                    }
+                })
                 await terminate(child.pid)
                 await afterTest(dir, 'ENV: prod')
             })
@@ -255,7 +271,7 @@ describe('测试: React 同构项目', () => {
                 await addCommand(commandName, command, dir)
 
                 const child = execSync(
-                    `npm run ${commandName}`,
+                    `npm run ${commandName} -- aaaaa=a1b2c3`,
                     {
                         cwd: dir,
                         stdio: ['pipe', 'pipe', 'pipe', 'ipc']
@@ -275,10 +291,16 @@ describe('测试: React 同构项目', () => {
                 expect(errors.length).toBe(0)
 
                 await doTest(port, {
-                    isDev: true
+                    isDev: true,
+                    customEnv: {
+                        aaaaa: `a1b2c3`
+                    },
                 })
                 await doTest(port, {
                     isDev: true,
+                    customEnv: {
+                        aaaaa: `a1b2c3`
+                    },
                     enableJavascript: false
                 })
                 await terminate(child.pid)

@@ -53,7 +53,7 @@ const run = async () => {
     process.env.WEBPACK_BUILD_STAGE = stage || 'client'
     process.env.WEBPACK_BUILD_ENV = 'prod'
 
-    await before()
+    await before(program)
 
     // 读取构建配置
     const kootConfig = await validateConfig()

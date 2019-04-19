@@ -121,6 +121,11 @@ const plugins = async (env, stage, defines = {}/*, remainingKootBuildConfig = {}
         // "WEBPACK_SERVER_PUBLIC_PATH",
     ]
 
+    JSON.parse(process.env.KOOT_CUSTOM_ENV_KEYS).forEach(key => {
+        if (typeof process.env[key] !== 'undefined')
+            envsToDefine.push(key)
+    })
+
     const moduleReplacements = [
         [/^__KOOT_PROJECT_CONFIG_FULL_PATHNAME__$/, getPathnameProjectConfigFile()],
         [/^__KOOT_PROJECT_CONFIG_PORTION_SERVER_PATHNAME__$/, getPathnameProjectConfigFile('server')],

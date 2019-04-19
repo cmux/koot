@@ -86,7 +86,7 @@ const run = async () => {
     process.env.WEBPACK_BUILD_ENV = env
 
     // 清理临时目录
-    await before({ kootDev })
+    await before(program)
 
     // 生成配置
     const kootConfig = await validateConfig()

@@ -39,6 +39,24 @@ const styles = async (page) => {
     }
 }
 
+const customEnv = async (page, customEnv = {}) => {
+    const tests = await page.evaluate((customEnv) => {
+        return Object.keys(customEnv).map(key => {
+            const value = customEnv[key]
+            const attr = `data-custom-env-${key}`
+            const el = document.querySelector(`[${attr}]`)
+            return {
+                check: value,
+                result: el ? el.getAttribute(attr) : undefined
+            }
+        })
+    }, customEnv)
+    for (const { check, result } of tests) {
+        expect(check).toEqual(result)
+    }
+}
+
 module.exports = {
-    styles
+    styles,
+    customEnv
 }

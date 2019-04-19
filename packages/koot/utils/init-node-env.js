@@ -100,6 +100,9 @@ module.exports = () => {
         // 开发环境: DLL 文件路径
         // KOOT_DEV_DLL_FILE_CLIENT: '',
         // KOOT_DEV_DLL_FILE_SERVER: '',
+
+        // 定制的环境变量键值
+        KOOT_CUSTOM_ENV_KEYS: JSON.stringify([]),
     }
     for (let key in defaults) {
         if (typeof process.env[key] === 'undefined') {
