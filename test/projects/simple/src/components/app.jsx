@@ -37,6 +37,7 @@ class App extends React.Component {
                 className={this.props.className}
                 data-custom-env-notexist={undefined}
                 data-custom-env-aaaaa={process.env.aaaaa}
+                data-custom-env-bbbbb={process.env.bbbbb}
             >
                 <Nav />
                 <Main children={this.props.children} />

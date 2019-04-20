@@ -227,12 +227,16 @@ describe('测试: React 同构项目', () => {
             test(`ENV: prod`, async () => {
                 await beforeTest(dir)
 
+                const customEnv = {
+                    aaaaa: "" + Date.now(),
+                    bbbbb: "" + Math.floor(Math.random() * 10000),
+                }
                 const commandName = `${commandTestBuild}-prod`
-                const command = `koot-start --koot-test`
+                const command = `koot-start --koot-test -- bbbbb=${customEnv.bbbbb}`
                 await addCommand(commandName, command, dir)
 
                 const child = execSync(
-                    `npm run ${commandName} -- aaaaa=a1b2c3`,
+                    `npm run ${commandName} -- aaaaa=${customEnv.aaaaa}`,
                     {
                         cwd: dir,
                     },
@@ -248,15 +252,11 @@ describe('测试: React 同构项目', () => {
                 expect(errors.length).toBe(0)
 
                 await doTest(port, {
-                    customEnv: {
-                        aaaaa: `a1b2c3`
-                    }
+                    customEnv
                 })
                 await doTest(port, {
                     enableJavascript: false,
-                    customEnv: {
-                        aaaaa: `a1b2c3`
-                    }
+                    customEnv
                 })
                 await terminate(child.pid)
                 await afterTest(dir, 'ENV: prod')
@@ -266,12 +266,16 @@ describe('测试: React 同构项目', () => {
                 await beforeTest(dir)
 
                 // const port = '8316'
+                const customEnv = {
+                    aaaaa: "" + Date.now(),
+                    bbbbb: "" + Math.floor(Math.random() * 10000),
+                }
                 const commandName = `${commandTestBuild}-isomorphic-dev`
-                const command = `koot-dev --no-open --koot-test`
+                const command = `koot-dev --no-open --koot-test -- bbbbb=${customEnv.bbbbb}`
                 await addCommand(commandName, command, dir)
 
                 const child = execSync(
-                    `npm run ${commandName} -- aaaaa=a1b2c3`,
+                    `npm run ${commandName} -- aaaaa=${customEnv.aaaaa}`,
                     {
                         cwd: dir,
                         stdio: ['pipe', 'pipe', 'pipe', 'ipc']
@@ -292,15 +296,11 @@ describe('测试: React 同构项目', () => {
 
                 await doTest(port, {
                     isDev: true,
-                    customEnv: {
-                        aaaaa: `a1b2c3`
-                    },
+                    customEnv,
                 })
                 await doTest(port, {
                     isDev: true,
-                    customEnv: {
-                        aaaaa: `a1b2c3`
-                    },
+                    customEnv,
                     enableJavascript: false
                 })
                 await terminate(child.pid)

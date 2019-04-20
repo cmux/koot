@@ -52,9 +52,20 @@ render() {
 _Koot.js_ 项目支持在 NPM 命令中动态添加变量，这些变量会自动添加入环境变量，在项目代码中可以任意调用这些环境变量，如：
 
 ```bash
-> npm start -- target=prod
-> npm run dev -- target=qa
+> npm start -- target=qa
 ```
+
+```json
+// package.json
+{
+    // ...
+    "scripts": {
+        "start": "koot-start -- target='qa'"
+    }
+    // ...
+}
+```
+
 ```javascript
 const apiBase = (() => {
     if (process.env.target === 'qa')
