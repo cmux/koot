@@ -60,7 +60,7 @@ _Koot.js_ 项目支持在 NPM 命令中动态添加变量，这些变量会自�
 {
     // ...
     "scripts": {
-        "start": "koot-start -- target='qa'"
+        "start": "koot-start -- target=qa"
     }
     // ...
 }
