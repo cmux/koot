@@ -25,7 +25,6 @@
     - `pm2` -> _3.5.0_
     - `webpack` -> _4.30.0_
     - `webpack-bundle-analyzer` -> _3.3.2_
-    - `webpack-dev-server` -> _3.3.1_
   - patch
     - `es5-shim` -> _4.5.13_
     - `is-port-reachable` -> _2.0.1_
