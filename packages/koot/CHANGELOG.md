@@ -10,7 +10,7 @@
     - 结尾现在会附带 koot 版本信息作为 HTML 代码注释 ([#64](https://github.com/cmux/koot/issues/64))
     - 如果 ejs 模板中缺少关键注入项 (`inject`)，现在会自动添加 ([#81](https://github.com/cmux/koot/issues/81))
   - SSR
-    - 现在会确保服务器打包进程之间正确的重置 `koot-css-loader` 的计数器 ([#100](https://github.com/cmux/koot/issues/100))
+    - 现在会确保在多次服务器打包进程之间正确的重置 `koot-css-loader` 的计数器 ([#100](https://github.com/cmux/koot/issues/100))
   - Webpack
     - `koot-css-loader`
       - 如果 CSS 属性值包含多个 `url()`，现在会正确处理 ([#82](https://github.com/cmux/koot/issues/82))
