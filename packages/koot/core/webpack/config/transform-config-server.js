@@ -69,17 +69,16 @@ module.exports = async (kootBuildConfig = {}) => {
 
     result.output.publicPath = transformOutputPublicpath(result.output.publicPath)
 
-    result.plugins.unshift(
+    result.plugins = [
+        new webpack.optimize.LimitChunkCountPlugin({
+            maxChunks: 1
+        }),
         new KootI18nPlugin({
             stage: STAGE,
             functionName: i18n ? i18n.expr : undefined,
-        })
-    )
-    result.plugins.unshift(
-        new webpack.optimize.LimitChunkCountPlugin({
-            maxChunks: 1
-        })
-    )
+        }),
+        ...result.plugins
+    ]
 
     if (ENV === 'dev') {
         if (i18n && Array.isArray(i18n.locales) && i18n.locales.length > 0)

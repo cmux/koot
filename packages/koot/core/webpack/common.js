@@ -5,6 +5,7 @@ const webpack = require('webpack')
 // const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 
 const createModuleRules = require('koot-webpack/factory-config/module/rules')
+const KootResetCssLoaderPlugin = require('koot-webpack/plugins/reset-css-loader')
 const defaultDefines = require('../../defaults/defines')
 const { keyConfigBuildDll } = require('../../defaults/before-build')
 const getPathnameProjectConfigFile = require('../../utils/get-pathname-project-config-file')
@@ -159,6 +160,7 @@ const plugins = async (env, stage, defines = {}/*, remainingKootBuildConfig = {}
     }
 
     return [
+        new KootResetCssLoaderPlugin(),
         new webpack.DefinePlugin(thisDefines),
         new webpack.EnvironmentPlugin(envsToDefine.filter(key => (
             typeof process.env[key] !== 'undefined'
