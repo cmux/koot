@@ -1,4 +1,4 @@
-const resetCssLoader = require('koot-webpack/loaders/css/reset')
+const resetCssLoader = require('../loaders/css/reset')
 
 /**
  * Webpack 插件 - 重置 `koot-css-loader` 计数器
