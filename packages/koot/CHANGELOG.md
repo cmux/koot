@@ -17,6 +17,7 @@
     - 现在修改 `.ejs` 模板后刷新页面即可看到新的结果 ([#95](https://github.com/cmux/koot/issues/95))
 - 更新依赖包
   - major
+    - `cache-loader` -> _3.0.0_
     - `cli-spinners` -> _2.1.0_
     - `opn` -> `open` _6.1.0_
   - minor

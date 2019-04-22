@@ -48,7 +48,7 @@
         "babel-eslint": "10.0.1",
         "jest": "24.7.1",
         "puppeteer": "1.14.0",
-        "jsdom": "14.0.0",
+        "jsdom": "15.0.0",
         "fs-extra": "7.0.1",
         "is-valid-path": "0.1.1",
         "inquirer": "6.3.1",
