@@ -228,8 +228,8 @@ describe('测试: React 同构项目', () => {
                 await beforeTest(dir)
 
                 const customEnv = {
-                    aaaaa: "" + Date.now(),
-                    bbbbb: "" + Math.floor(Math.random() * 10000),
+                    aaaaa: "" + Math.floor(Math.random() * 10000),
+                    bbbbb: "a1b2c3",
                 }
                 const commandName = `${commandTestBuild}-prod`
                 const command = `koot-start --koot-test -- bbbbb=${customEnv.bbbbb}`
@@ -267,8 +267,8 @@ describe('测试: React 同构项目', () => {
 
                 // const port = '8316'
                 const customEnv = {
-                    aaaaa: "" + Date.now(),
-                    bbbbb: "" + Math.floor(Math.random() * 10000),
+                    aaaaa: "" + Math.floor(Math.random() * 10000),
+                    bbbbb: "a1b2c3",
                 }
                 const commandName = `${commandTestBuild}-isomorphic-dev`
                 const command = `koot-dev --no-open --koot-test -- bbbbb=${customEnv.bbbbb}`
