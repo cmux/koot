@@ -942,6 +942,24 @@ module.exports = {
 }
 ```
 
+### classNameHashLength
+
+- 类型: `Number`
+- 默认值: `4`
+- **仅针对**: Webpack 打包过程
+
+调整组件 CSS 的 className hash 长度。
+
+```javascript
+module.exports = {
+    // 默认值
+    classNameHashLength: 4,
+
+    // 示例: 生产环境与开发环境不同值
+    classNameHashLength: process.env.WEBPACK_BUILD_ENV === 'dev' ? 16 : 4
+}
+```
+
 ---
 
 ## 开发环境

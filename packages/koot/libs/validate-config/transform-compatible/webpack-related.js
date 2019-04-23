@@ -47,4 +47,14 @@ module.exports = async (config) => {
 
     keys.forEach(([key, keyInWebpack]) => transform(key, keyInWebpack))
 
+    if (typeof config.classNameHashLength !== 'undefined') {
+        if (isNaN(config.classNameHashLength)) {
+            delete config.classNameHashLength
+        } else {
+            const r = parseInt(config.classNameHashLength)
+            if (r <= 0)
+                delete config.classNameHashLength
+        }
+    }
+
 }

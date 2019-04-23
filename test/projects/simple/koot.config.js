@@ -40,6 +40,7 @@ module.exports = {
         }
         return
     },
+    classNameHashLength: 1,
 
     devPort: 3081,
     devDll: [
