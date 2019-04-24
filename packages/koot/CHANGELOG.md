@@ -1,6 +1,6 @@
 
 ## 0.9.0 (Alpha)
-**2019-04-23** (alpha.9)
+**2019-04-24** (alpha.10)
 - 核心
   - 配置项
     - **新** `classNameHashLength` - 调整组件 CSS 的 className hash 长度。详情请参见文档 [配置/classNameHashLength](https://koot.js.org/#/config?id=classNameHashLength)
