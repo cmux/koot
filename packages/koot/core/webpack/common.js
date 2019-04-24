@@ -121,6 +121,9 @@ const plugins = async (env, stage, defines = {}/*, remainingKootBuildConfig = {}
         "WEBPACK_DEV_SERVER_PORT",
         // "WEBPACK_SERVER_PUBLIC_PATH",
     ]
+    if (process.env.KOOT_CLIENT_BUNDLE_SUBFOLDER) {
+        envsToDefine.push('KOOT_CLIENT_BUNDLE_SUBFOLDER')
+    }
 
     JSON.parse(process.env.KOOT_CUSTOM_ENV_KEYS).forEach(key => {
         if (typeof process.env[key] !== 'undefined')

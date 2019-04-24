@@ -35,12 +35,13 @@ module.exports = {
     webpackBefore: async () => {
         if (process.env.WEBPACK_BUILD_STAGE === 'client') {
             const dist = process.env.KOOT_DIST_DIR
-            await fs.remove(path.resolve(dist, 'public'))
+            // await fs.remove(path.resolve(dist, 'public'))
             await fs.remove(path.resolve(dist, 'server'))
         }
         return
     },
     classNameHashLength: 1,
+    bundleVersionsKeep: false,
 
     devPort: 3081,
     devDll: [

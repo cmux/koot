@@ -594,6 +594,70 @@ describe('测试: React 同构项目', () => {
 
                     await afterTest(dir, '[Development] 启动开发模式并访问 (i18n.use="router")')
                 })
+                test(`[Production] 打包并运行生产模式 (bundleVersionsKeep=false)`, async () => {
+                    await beforeTest(dir)
+
+                    const commandName = `${commandTestBuild}-isomorphic-start-no_bundles_keep`
+                    const command = `koot-start --koot-test --config koot.config.no-bundles-keep.js`
+                    await addCommand(commandName, command, dir)
+
+                    const child = execSync(
+                        `npm run ${commandName}`,
+                        {
+                            cwd: dir,
+                        },
+                    )
+                    const errors = []
+
+                    await waitForPort(child)
+                    // const port = await getPortFromConfig(dir)
+                    const port = require(path.resolve(dir, 'koot.config.js')).port
+                    child.stderr.on('data', err => {
+                        errors.push(err)
+                    })
+
+                    expect(errors.length).toBe(0)
+
+                    await doTest(port)
+                    await terminate(child.pid)
+
+                    await afterTest(dir, '[Production] 打包并运行生产模式 (bundleVersionsKeep=false)')
+                })
+                test(`[Development] 启动开发模式并访问 (bundleVersionsKeep=false)`, async () => {
+                    await beforeTest(dir)
+
+                    // const port = '8316'
+                    const commandName = `${commandTestBuild}-isomorphic-dev-no_bundles_keep`
+                    const command = `koot-dev --no-open --koot-test --config koot.config.no-bundles-keep.js`
+                    await addCommand(commandName, command, dir)
+
+                    const child = execSync(
+                        `npm run ${commandName}`,
+                        {
+                            cwd: dir,
+                            stdio: ['pipe', 'pipe', 'pipe', 'ipc']
+                        },
+                    )
+                    const errors = []
+
+                    const port = await waitForPort(child, / on.*http:.*:([0-9]+)/)
+                    child.stderr.on('data', err => {
+                        errors.push(err)
+                    })
+
+                    // console.log({
+                    //     port,
+                    //     errors,
+                    // })
+                    expect(errors.length).toBe(0)
+
+                    await doTest(port, {
+                        isDev: true
+                    })
+                    await terminate(child.pid)
+
+                    await afterTest(dir, '[Development] 启动开发模式并访问 (bundleVersionsKeep=false)')
+                })
                 test(`[Production] 打包并运行生产模式 (0.6版配置)`, async () => {
                     await beforeTest(dir)
 

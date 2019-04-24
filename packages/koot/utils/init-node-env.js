@@ -103,6 +103,9 @@ module.exports = () => {
 
         // 定制的环境变量键值
         KOOT_CUSTOM_ENV_KEYS: JSON.stringify([]),
+
+        // 客户端打包子目录名
+        KOOT_CLIENT_BUNDLE_SUBFOLDER: '',
     }
     for (let key in defaults) {
         if (typeof process.env[key] === 'undefined') {

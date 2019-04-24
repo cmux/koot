@@ -13,7 +13,7 @@ const defaultValues = require('../../defaults/koot-config')
 module.exports = async (projectDir, config) => {
 
     Object.keys(defaultValues).forEach(key => {
-        if (!config[key]) config[key] = defaultValues[key]
+        if (typeof config[key] === 'undefined') config[key] = defaultValues[key]
     })
 
     if (!config.name) {

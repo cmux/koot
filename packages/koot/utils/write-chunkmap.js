@@ -41,9 +41,10 @@ const log = (obj, spaceCount = 1, deep = 2) => {
  * 写入打包文件对应表 (chunkmap)
  * @param {*} stats 
  * @param {*} localeId 
+ * @param {String} [pathPublic]
  * @returns {Object} 打包文件对应表 (chunkmap)
  */
-module.exports = async (compilation, localeId) => {
+module.exports = async (compilation, localeId, pathPublic) => {
     if (typeof compilation !== 'object') return {}
 
     const stats = compilation.getStats().toJson()
@@ -52,9 +53,15 @@ module.exports = async (compilation, localeId) => {
     const entryChunks = {}
 
     // const dirRelative = path.relative(getDistPath(), stats.compilation.outputOptions.path).replace(`\\`, '/')
-    const dirRelative = path.relative(getDistPath(), stats.outputPath).replace(`\\`, '/')
+    const dirRelative = path.relative(getDistPath(), stats.outputPath).replace(/\\/g, '/')
     const filepathname = getChunkmapPath()
     // stats.compilation.outputOptions.path,
+
+    if (pathPublic) {
+        const relative = path.relative(getDistPath(), pathPublic).replace(/\\/g, '/')
+        chunkmap['.public'] = relative
+            + (relative.substr(0, relative.length - 1) === '/' ? '' : '/')
+    }
 
     fs.ensureFileSync(filepathname)
 
@@ -77,6 +84,7 @@ module.exports = async (compilation, localeId) => {
     //     })
     //     chunkmap['.entrypoints'] = entryChunks
     // }
+
     if (typeof stats.entrypoints === 'object') {
         Object.keys(stats.entrypoints).forEach(key => {
             const { assets } = stats.entrypoints[key]

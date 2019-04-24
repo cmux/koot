@@ -49,6 +49,7 @@ module.exports = async (kootBuildConfig = {}) => {
         dist,
         template,
         templateInject,
+        bundleVersionsKeep,
         defaultPublicDirName, defaultPublicPathname,
         staticCopyFrom: staticAssets,
         analyze = false,
@@ -99,7 +100,7 @@ module.exports = async (kootBuildConfig = {}) => {
         const isSeperateLocale = localeId && typeof localesObj === 'object'
 
         /** @type {String} 打包结果基础目录 (最终的打包目录是该目录下的 defaultPublicDirName 目录) */
-        const pathPublic = getDirDistPublic(dist)
+        const pathPublic = getDirDistPublic(dist, bundleVersionsKeep)
 
         /** @type {Object} 默认配置 */
         const configTargetDefault = await createTargetDefaultConfig({
@@ -272,6 +273,7 @@ module.exports = async (kootBuildConfig = {}) => {
                         result.plugins.push(
                             await new GenerateChunkmapPlugin({
                                 localeId: isSeperateLocale ? localeId : undefined,
+                                pathPublic
                             })
                         )
                     }
@@ -280,7 +282,9 @@ module.exports = async (kootBuildConfig = {}) => {
                         result.plugins.push(new CopyWebpackPlugin(
                             staticAssets.map(from => ({
                                 from,
-                                to: TYPE === 'spa' && ENV === 'dev' ? undefined : path.relative(result.output.path, pathPublic)
+                                to: TYPE === 'spa' && ENV === 'dev'
+                                    ? undefined
+                                    : path.relative(result.output.path, pathPublic)
                                 // to: path.relative(result.output.path, pathPublic)
                             }))
                         ))

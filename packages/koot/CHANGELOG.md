@@ -5,6 +5,7 @@
   - 配置项
     - **新** `classNameHashLength` - 调整组件 CSS 的 className hash 长度。详情请参见文档 [配置/classNameHashLength](https://koot.js.org/#/config?id=classNameHashLength)
     - **新** `devMemoryAllocation` - 指定开发环境中 node.js 分配的内存。详情请参见文档 [配置/devmemoryallocation](https://koot.js.org/#/config?id=devmemoryallocation)
+    - **新** `bundleVersionsKeep` - 指定客户端打包结果保留的版本的个数。详情请参见文档 [配置/bundleVersionsKeep](https://koot.js.org/#/config?id=bundleVersionsKeep) ([#79](https://github.com/cmux/koot/issues/79))
   - 现在可以使用 `yarn` 安装并使用 _Koot.js_ ([#99](https://github.com/cmux/koot/issues/99))
   - 现在可以在 NPM 命令中动态添加变量了，这些变量会自动添加到环境变量中，并允许在项目代码中随意调用。详情请参见文档 [环境变量/动态添加环境变量](https://koot.js.org/#/env?id=动态添加环境变量) ([#78](https://github.com/cmux/koot/issues/78))
   - SSR 渲染 & SPA 模板

@@ -135,6 +135,7 @@ module.exports = async (kootConfig = {}) => {
         webpackBefore: beforeBuild,
         webpackAfter: afterBuild,
         analyze = false,
+        bundleVersionsKeep,
         [keyConfigQuiet]: quietMode = false,
         [keyConfigBuildDll]: createDll = false,
     } = kootConfig
@@ -227,7 +228,7 @@ module.exports = async (kootConfig = {}) => {
 
         if (!analyze && pwa && STAGE === 'client' && ENV === 'prod') {
             // 生成 service-worker.js
-            await createPWAsw(pwa, i18n)
+            await createPWAsw(pwa, i18n, bundleVersionsKeep)
         }
 
         if (STAGE === 'server' && ENV === 'prod') {
