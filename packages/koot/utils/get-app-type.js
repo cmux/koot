@@ -2,6 +2,7 @@ const fs = require('fs')
 const getPathnameProjectConfigFile = require('./get-pathname-project-config-file')
 // const readBuildConfigFile = require('../utils/read-build-config-file')
 const getAppTypeString = require('./get-app-type-string')
+const envUpdateAppType = require('../libs/env/update-app-type')
 
 const extractType = () => {
     const pathnameKootJS = getPathnameProjectConfigFile()
@@ -39,24 +40,7 @@ module.exports = async (projectType = process.env.KOOT_PROJECT_TYPE) => {
         projectType = extractType() || ''
     }
 
-    switch (getAppTypeString(projectType)) {
-        case 'ReactApp': {
-            // if ((await readBuildConfigFile()).server)
-            process.env.WEBPACK_BUILD_TYPE = 'isomorphic'
-            process.env.KOOT_PROJECT_TYPE = 'ReactApp'
-            // return 'ReactSPA'
-            break
-        }
-
-        case 'ReactSPA': {
-            process.env.WEBPACK_BUILD_TYPE = 'spa'
-            process.env.KOOT_PROJECT_TYPE = 'ReactSPA'
-            break
-        }
-
-        // default:
-        //     return process.env.KOOT_PROJECT_TYPE
-    }
+    envUpdateAppType(getAppTypeString(projectType))
 
     return process.env.KOOT_PROJECT_TYPE
 }

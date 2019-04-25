@@ -2,6 +2,7 @@ const path = require('path')
 const chalk = require('chalk')
 const getAppTypeString = require('./get-app-type-string')
 const __ = require('./translate')
+const envUpdateAppType = require('../libs/env/update-app-type')
 
 /**
  * 从命令确定环境变量
@@ -33,6 +34,7 @@ module.exports = ({
 
     if (typeof type === 'string') {
         process.env.KOOT_PROJECT_TYPE = getAppTypeString(type)
+        envUpdateAppType(process.env.KOOT_PROJECT_TYPE)
         log('KOOT_PROJECT_TYPE', process.env.KOOT_PROJECT_TYPE + ` (${__(`appType.${process.env.KOOT_PROJECT_TYPE}`)})`)
         modified = true
     }

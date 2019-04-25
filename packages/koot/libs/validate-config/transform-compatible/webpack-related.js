@@ -57,7 +57,9 @@ module.exports = async (config) => {
         }
     }
 
-    if (process.env.WEBPACK_BUILD_ENV === 'dev') {
+    if (process.env.WEBPACK_BUILD_ENV === 'dev' ||
+        process.env.WEBPACK_BUILD_TYPE === 'spa'
+    ) {
         config.bundleVersionsKeep = false
     }
 
