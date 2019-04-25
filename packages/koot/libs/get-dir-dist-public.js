@@ -1,5 +1,7 @@
 const path = require('path')
 
+const getDirDistPublicFoldername = require('./get-dir-dist-public-foldername')
+
 /**
  * 获取打包结果基础目录
  * 最终的打包目录是该目录下的 includes (默认情况)
@@ -9,7 +11,7 @@ const path = require('path')
  */
 module.exports = (dist, bundleVersionsKeep) => {
     if (!result) {
-        const base = path.resolve(dist, process.env.WEBPACK_BUILD_TYPE === 'spa' ? '' : `public`)
+        const base = path.resolve(dist, getDirDistPublicFoldername())
         if (process.env.KOOT_CLIENT_BUNDLE_SUBFOLDER) {
             // console.log({
             //     result,

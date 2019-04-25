@@ -21,6 +21,8 @@
     - 现在进入开发环境不再会影响打包结果目录 ([#101](https://github.com/cmux/koot/issues/101))
     - 现在修改 `.ejs` 模板后刷新页面即可看到新的结果 ([#95](https://github.com/cmux/koot/issues/95))
     - 由于上述 className hash 和 `koot-css-loader` 的改动，开发环境下默认的组件 CSS className hash 长度调整为 `4` (与生产环境相同)
+  - 分析模式
+    - 现在进入分析模式不再会影响打包结果目录
 - 更新依赖包
   - major
     - `cache-loader` -> _3.0.0_

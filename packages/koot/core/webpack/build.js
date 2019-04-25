@@ -30,6 +30,8 @@ const elapse = require('../../libs/elapse.js')
 const emptyTempConfigDir = require('../../libs/empty-temp-config-dir')
 const getHistoryTypeFromConfig = require('../../libs/get-history-type-from-config')
 const getDirDevTmp = require('../../libs/get-dir-dev-tmp')
+const getDirDistPublic = require('../../libs/get-dir-dist-public')
+const getDirDistPublicFoldername = require('../../libs/get-dir-dist-public-foldername')
 
 const createWebpackConfig = require('./config/create')
 const validateWebpackDevServerPort = require('./config/validate-webpack-dev-server-port')
@@ -231,6 +233,34 @@ module.exports = async (kootConfig = {}) => {
             await createPWAsw(pwa, i18n, bundleVersionsKeep)
         }
 
+        if (!analyze && !createDll && STAGE === 'client' && ENV === 'prod' && bundleVersionsKeep) {
+            /** @type {String} 本次打包目标目录 */
+            const dest = getDirDistPublic()
+            const dirPublic = path.resolve(data.dist, getDirDistPublicFoldername())
+            /** @type {String[]} 要删除的目录 */
+            const toRemove = (await fs.readdir(dirPublic))
+                .map(filename => path.resolve(dirPublic, filename))
+                // .filter(file => {
+                //     const lstat = fs.lstatSync(file)
+                //     return lstat.isDirectory()
+                // })
+                .filter(dir => dir !== dest)
+                .sort((a, b) => {
+                    const nameA = path.basename(a)
+                    const nameB = path.basename(b)
+                    const regEx = /^koot-([0-9]+)$/
+                    const matchA = regEx.exec(nameA)
+                    const matchB = regEx.exec(nameB)
+                    if (!Array.isArray(matchA) || matchA.length < 2) return 1
+                    if (!Array.isArray(matchB) || matchB.length < 2) return -1
+                    return parseInt(matchB[1]) - parseInt(matchA[1])
+                })
+                .slice(bundleVersionsKeep - 1)
+            for (const file of toRemove) {
+                await fs.remove(file)
+            }
+        }
+
         if (STAGE === 'server' && ENV === 'prod') {
             // 服务器端 / 生产环境
             await afterServerProd(data)
@@ -412,8 +442,14 @@ module.exports = async (kootConfig = {}) => {
      * @param {Error|String} err 
      */
     const buildingError = (err) => {
+
         // 移除过程中创建的临时文件
         emptyTempConfigDir()
+
+        // 如果有打包版本子目录，删除
+        if (typeof process.env.KOOT_CLIENT_BUNDLE_SUBFOLDER === 'string' && process.env.KOOT_CLIENT_BUNDLE_SUBFOLDER) {
+            fs.removeSync(path.resolve(data.dist, process.env.KOOT_CLIENT_BUNDLE_SUBFOLDER))
+        }
 
         // 将错误添加入结果对象
         result.addError(err)
@@ -431,8 +467,13 @@ module.exports = async (kootConfig = {}) => {
         const fileBuilding = path.resolve(data.dist, filenameBuilding)
         if (fs.existsSync(fileBuilding))
             fs.removeSync(fileBuilding)
+
+        if (ENV === 'prod')
+            throw err
+
         // 返回结果对象
         return result
+
     }
 
     // 处理日志文件
@@ -623,7 +664,7 @@ module.exports = async (kootConfig = {}) => {
             delete config[keyConfigWebpackSPATemplateInject]
 
             /** @type {Boolean} Webpack 自我输出过错误信息 */
-            let webpackLoggedError = false
+            // let webpackLoggedError = false
 
             const error = (err) => {
                 errorEncountered = true
@@ -631,9 +672,9 @@ module.exports = async (kootConfig = {}) => {
                 if (spinnerBuildingSingle)
                     spinnerBuildingSingle.stop()
 
-                if (!webpackLoggedError) {
-                    buildingError(err)
-                }
+                // if (!webpackLoggedError) {
+                //     buildingError(err)
+                // }
 
                 throw err
             }
@@ -663,7 +704,7 @@ module.exports = async (kootConfig = {}) => {
                                 chunks: false,
                                 colors: true
                             }))
-                            webpackLoggedError = true
+                            // webpackLoggedError = true
                             reject(`webpack error: [${TYPE}-${STAGE}-${ENV}] ${info.errors}`)
                             return error(info.errors)
                         }
@@ -738,11 +779,11 @@ module.exports = async (kootConfig = {}) => {
                                 })
                         }
                     }
-                })
+                }).catch(buildingError)
                 // index++
             }
         } else {
-            await build(webpackConfig)
+            await build(webpackConfig).catch(buildingError)
             // console.log(' ')
         }
 

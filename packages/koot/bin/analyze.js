@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const fs = require('fs-extra')
+const path = require('path')
 const program = require('commander')
 // const chalk = require('chalk')
 
@@ -55,8 +56,20 @@ const run = async () => {
 
     await before(program)
 
+    // 处理目录
+    const dirAnalyzeBuild = require('../libs/get-dir-dev-tmp')(undefined, 'analyze')
+    await fs.ensureDir(dirAnalyzeBuild)
+    await fs.emptyDir(dirAnalyzeBuild)
+    await fs.ensureDir(path.resolve(dirAnalyzeBuild, 'public'))
+    await fs.ensureDir(path.resolve(dirAnalyzeBuild, 'server'))
+
     // 读取构建配置
-    const kootConfig = await validateConfig()
+    const kootConfig = {
+        ...await validateConfig(),
+
+        dist: dirAnalyzeBuild,
+        bundleVersionsKeep: false,
+    }
 
     await kootBuild({
         analyze: true,
@@ -65,6 +78,9 @@ const run = async () => {
 
     // 清理临时目录
     await fs.remove(getDirTemp())
+
+    // 清理结果目录
+    await fs.remove(dirAnalyzeBuild)
 
     console.log(' ')
 }
