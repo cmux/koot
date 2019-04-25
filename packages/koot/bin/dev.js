@@ -211,6 +211,9 @@ const run = async () => {
     // 设置其他环境变量
     process.env.KOOT_DEV_START_TIME = Date.now()
 
+    // 等待一段时间，确保某些硬盘操作的完成
+    await sleep(1000)
+
 
 
 
