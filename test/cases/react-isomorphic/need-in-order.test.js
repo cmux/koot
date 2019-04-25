@@ -732,6 +732,10 @@ describe('测试: React 同构项目', () => {
 
 // TODO: 打包结果的独立测试，打包结果需要在其他的独立目录中
 
+// TODO: render-template 传入的值，扩展
+
+// TODO: client before 确保可以使用 async 方法
+
 /** TODO: 热更新测试
  * - 修改 ejs
  * - 修改 css

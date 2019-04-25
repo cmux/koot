@@ -28,9 +28,11 @@ const check = props => {
     },
 })
 class TS extends React.Component {
-    componentDidMount() {
-        this.props.dispatch(updateServerTimestamp())
-    }
+    // componentDidMount() {
+    //     console.log('componentDidMount', this.props)
+    //     if (check(this.props)) return
+    //     this.props.dispatch(updateServerTimestamp())
+    // }
 
     componentWillUnmount() {
         this.props.dispatch(resetServerTimestamp())

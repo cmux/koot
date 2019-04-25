@@ -140,6 +140,15 @@ const run = async () => {
     //
     // ========================================================================
 
+    // 确保关键目录存在
+    const cwd = getCwd()
+    const dirDevTemp = getDirDevTmp(cwd)
+    await fs.ensureDir(dirDevTemp)
+    await fs.emptyDir(dirDevTemp)
+    const dirCache = getDirDevCache()
+    await fs.ensureDir(dirCache)
+    await fs.emptyDir(dirCache)
+
     // 验证、读取项目配置信息
     const kootConfig = await validateConfig()
 
@@ -166,7 +175,6 @@ const run = async () => {
         return [parseInt(devMemoryAllocation), parseInt(devMemoryAllocation)]
     })()
     const appType = await getAppType()
-    const cwd = getCwd()
     const packageInfo = await fs.readJson(path.resolve(cwd, 'package.json'))
     const {
         name
@@ -177,13 +185,9 @@ const run = async () => {
 
     /** @type {Boolean} 全局等待提示 */
     let waitingSpinner = false
-
+    
     // 清理遗留的临时文件
     await removeTempBuild(dist)
-    await fs.emptyDir(getDirDevTmp(cwd))
-    const dirCache = getDirDevCache()
-    await fs.ensureDir(dirCache)
-    await fs.emptyDir(dirCache)
 
     // 如果有临时项目配置文件，更改环境变量
     if (fileProjectConfigTempFull)

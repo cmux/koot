@@ -111,7 +111,7 @@ const validateConfig = async (projectDir = getCwd(), options = {}) => {
     // 如果定制了配置文件路径，直接返回结果
     if (typeof process.env.KOOT_PROJECT_CONFIG_FULL_PATHNAME === 'string') {
         return {
-            ...finalValidate(kootConfig),
+            ...await finalValidate(kootConfig),
             [keyFileProjectConfigTempFull]: process.env.KOOT_PROJECT_CONFIG_FULL_PATHNAME,
             [keyFileProjectConfigTempPortionServer]: process.env.KOOT_PROJECT_CONFIG_PORTION_SERVER_PATHNAME,
             [keyFileProjectConfigTempPortionClient]: process.env.KOOT_PROJECT_CONFIG_PORTION_CLIENT_PATHNAME
@@ -139,7 +139,7 @@ const validateConfig = async (projectDir = getCwd(), options = {}) => {
     await fs.writeFile(pathTmpConfigPortionClient, tmpConfigPortionClient, 'utf-8')
 
     return {
-        ...finalValidate(kootConfig),
+        ...await finalValidate(kootConfig),
         [keyFileProjectConfigTempFull]: pathTmpConfig,
         [keyFileProjectConfigTempPortionServer]: pathTmpConfigPortionServer,
         [keyFileProjectConfigTempPortionClient]: pathTmpConfigPortionClient
@@ -147,12 +147,20 @@ const validateConfig = async (projectDir = getCwd(), options = {}) => {
 }
 
 // 调整构建配置对象
-const finalValidate = (config = {}) => {
+const finalValidate = async (config = {}) => {
 
     // 改变配置项: dest -> dist
     if (typeof config.dest !== 'undefined') {
         config.dist = config.dest
         delete config.dest
+    }
+    if (process.env.WEBPACK_BUILD_ENV === 'dev') {
+        const dirDevBuild = require('../get-dir-dev-tmp')(undefined, 'build')
+        config.dist = dirDevBuild
+        await fs.ensureDir(dirDevBuild)
+        await fs.emptyDir(dirDevBuild)
+        await fs.ensureDir(path.resolve(dirDevBuild, 'public'))
+        await fs.ensureDir(path.resolve(dirDevBuild, 'server'))
     }
     if (typeof config.dist !== 'undefined') {
         validateConfigDist(config.dist)

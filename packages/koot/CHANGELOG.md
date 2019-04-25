@@ -18,6 +18,7 @@
       - 如果 CSS 属性值包含多个 `url()`，现在会正确处理 ([#82](https://github.com/cmux/koot/issues/82))
       - 类似 `.component .component` 这样使用空格 (` `) 选择器或 `>` 选择器时，现在选择器之后的 `.component` 字段会被保留，不会进行 hash。使用其他选择器的情况依旧会进行 hash。详情请参见文档 [CSS/组件 CSS的 className hash 规则](https://koot.js.org/#/css?id=组件-css-的-classname-hash-规则) ([#68](https://github.com/cmux/koot/issues/68))
   - 开发环境
+    - 现在进入开发环境不再会影响打包结果目录 ([#101](https://github.com/cmux/koot/issues/101))
     - 现在修改 `.ejs` 模板后刷新页面即可看到新的结果 ([#95](https://github.com/cmux/koot/issues/95))
     - 由于上述 className hash 和 `koot-css-loader` 的改动，开发环境下默认的组件 CSS className hash 长度调整为 `4` (与生产环境相同)
 - 更新依赖包

@@ -2,21 +2,70 @@ const fs = require('fs-extra')
 const path = require('path')
 
 const validateConfig = require('../../../packages/koot/libs/validate-config')
-const { keyFileProjectConfigTempFull } = require('../../../packages/koot/defaults/before-build')
+const {
+    keyFileProjectConfigTempFull,
+    keyFileProjectConfigTempPortionServer,
+    keyFileProjectConfigTempPortionClient
+} = require('../../../packages/koot/defaults/before-build')
+const getDirDevTemp = require('../../../packages/koot/libs/get-dir-dev-tmp')
 
-test(`测试: libs/validate-config`, async () => {
+const filesToClear = []
 
-    const {
-        [keyFileProjectConfigTempFull]: fileProjectConfig,
-        ...buildConfig
-    } = await validateConfig(path.resolve(__dirname, '../../projects/standard'))
+afterAll(() => {
+    // 清理临时文件
+    for (const file of filesToClear) {
+        fs.removeSync(file)
+    }
+})
 
-    expect(fs.existsSync(fileProjectConfig)).toBe(true)
-    const contentProjectConfig = await fs.readFile(fileProjectConfig, 'utf-8')
+describe(`测试: libs/validate-config`, () => {
 
-    // 移除临时项目配置文件
-    await fs.remove(fileProjectConfig)
+    const fileKeysToCheck = [
+        keyFileProjectConfigTempFull,
+        keyFileProjectConfigTempPortionServer,
+        keyFileProjectConfigTempPortionClient
+    ]
 
-    expect(typeof buildConfig).toBe('object')
-    expect(typeof contentProjectConfig).toBe('string')
+    test(`默认环境 (生产环境)`, async () => {
+
+        const buildConfig = await validateConfig(path.resolve(__dirname, '../../projects/standard'))
+
+        for (const key of fileKeysToCheck) {
+            const file = buildConfig[key]
+            const content = await fs.readFile(file, 'utf-8')
+            filesToClear.push(file)
+            expect(fs.existsSync(file)).toBe(true)
+            expect(typeof content).toBe('string')
+        }
+
+        expect(typeof buildConfig).toBe('object')
+    })
+
+    test(`强行指定开发环境`, async () => {
+
+        const envLast = {
+            WEBPACK_BUILD_ENV: process.env.WEBPACK_BUILD_ENV
+        }
+        process.env.WEBPACK_BUILD_ENV = 'dev'
+
+        const cwd = path.resolve(__dirname, '../../projects/standard')
+        const buildConfig = await validateConfig(cwd)
+
+        for (const key of fileKeysToCheck) {
+            const file = buildConfig[key]
+            const content = await fs.readFile(file, 'utf-8')
+            filesToClear.push(file)
+            expect(fs.existsSync(file)).toBe(true)
+            expect(typeof content).toBe('string')
+        }
+
+        expect(typeof buildConfig).toBe('object')
+        expect(buildConfig.dist).toBe(getDirDevTemp(undefined, 'build'))
+
+        // 还原环境变量
+        Object.keys(envLast).forEach(key => {
+            process.env[key] == envLast[key]
+        })
+    })
+
 })

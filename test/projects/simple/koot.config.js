@@ -41,7 +41,7 @@ module.exports = {
         return
     },
     classNameHashLength: 1,
-    bundleVersionsKeep: false,
+    // bundleVersionsKeep: false,
 
     devPort: 3081,
     devDll: [
