@@ -1,6 +1,12 @@
 
 ## 0.9.0 (Alpha)
 **2019-04-26** (beta.0)
+- **重大改动**
+  - 调整默认的 React SSR 项目客户端打包结果目录结构
+    - 现在会在 `public` 目录下建立多个名为 `koot-[时间戳]` 的目录
+    - 以最新的时间戳命名的目录即为当前的客户端打包结果
+    - 保留的这些目录的数量可控，默认为 `2`
+    - 该功能可主动关闭
 - 核心
   - 配置项
     - **新** `classNameHashLength` - 调整组件 CSS 的 className hash 长度。详情请参见文档 [配置/classNameHashLength](https://koot.js.org/#/config?id=classNameHashLength)
