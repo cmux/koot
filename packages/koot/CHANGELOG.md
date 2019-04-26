@@ -27,7 +27,7 @@
   - major
     - `cache-loader` -> _3.0.0_
     - `cli-spinners` -> _2.1.0_
-    - `opn` -> `open` _6.1.0_
+    - `opn` -> `open` _6.2.0_
   - minor
     - `inquirer` -> _6.3.1_
     - `mini-css-extract-plugin` -> _0.6.0_
@@ -35,9 +35,11 @@
     - `webpack` -> _4.30.0_
     - `webpack-bundle-analyzer` -> _3.3.2_
   - patch
+    - `copy-webpack-plugin` -> _5.0.3_
     - `es5-shim` -> _4.5.13_
     - `is-port-reachable` -> _2.0.1_
     - `react-hot-loader` -> _4.8.4_
+    - `webpack-hot-middleware` -> _2.24.4_
 - **koot-cli**
   - 更新依赖包
     - major
