@@ -1,6 +1,7 @@
 const baseConfig = require('./koot.config')
 
 module.exports = Object.assign({}, baseConfig, {
+    dist: './dist-i18n-use-router/',
     i18n: {
         use: 'router',
         locales: [

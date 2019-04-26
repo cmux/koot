@@ -31,7 +31,9 @@
         "koot-buildtest-isomorphic-start-server-custom-port": "koot-start --no-build --port 8080",
         "koot-buildtest-isomorphic-dev": "koot-dev --no-open",
         "koot-basetest-prod": "koot-start --koot-test -- bbbbb=a1b2c3",
-        "koot-basetest-isomorphic-dev": "koot-dev --no-open --koot-test -- bbbbb=a1b2c3"
+        "koot-basetest-isomorphic-dev": "koot-dev --no-open --koot-test -- bbbbb=a1b2c3",
+        "koot-basetest-no_bundle_versions_keep": "koot-build -c --config koot.config.no-bundles-keep.js",
+        "koot-basetest-bundle_versions_keep": "koot-build -c --config koot.config.bundles-keep.js"
     },
     "dependencies": {
         "autoprefixer": "9.4.7",

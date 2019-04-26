@@ -105,10 +105,10 @@ const waitForPort = async (child, regex = /port.*\[32m([0-9]+)/) => await new Pr
  * @param {String} dir 
  * @returns {number} port
  */
-const getPortFromConfig = async (dir) => {
-    const config = require(path.resolve(dir, 'koot.config.js'))
-    return require('../../../packages/koot/utils/get-port')(config.port)
-}
+// const getPortFromConfig = async (dir) => {
+//     const config = require(path.resolve(dir, 'koot.config.js'))
+//     return require('../../../packages/koot/utils/get-port')(config.port)
+// }
 
 /**
  * 测试项目
@@ -530,8 +530,12 @@ describe('测试: React 同构项目', () => {
                 test(`[Production] 打包并运行生产模式 (i18n.use="router")`, async () => {
                     await beforeTest(dir)
 
+                    const configFile = `koot.config.i18n-use-router.js`
+                    const dist = path.resolve(dir, require(path.resolve(dir, configFile)).dist)
                     const commandName = `${commandTestBuild}-isomorphic-start-i18n_use_router`
-                    const command = `koot-start --koot-test --config koot.config.i18n-use-router.js`
+                    const command = `koot-start --koot-test --config ${configFile}`
+
+                    await fs.remove(dist)
                     await addCommand(commandName, command, dir)
 
                     const child = execSync(
@@ -556,6 +560,7 @@ describe('测试: React 同构项目', () => {
                     })
                     await terminate(child.pid)
 
+                    await fs.remove(dist)
                     await afterTest(dir, '[Production] 打包并运行生产模式 (i18n.use="router")')
                 })
                 test(`[Development] 启动开发模式并访问 (i18n.use="router")`, async () => {
@@ -597,8 +602,12 @@ describe('测试: React 同构项目', () => {
                 test(`[Production] 打包并运行生产模式 (bundleVersionsKeep=false)`, async () => {
                     await beforeTest(dir)
 
+                    const configFile = `koot.config.no-bundles-keep.js`
+                    const dist = path.resolve(dir, require(path.resolve(dir, configFile)).dist)
                     const commandName = `${commandTestBuild}-isomorphic-start-no_bundles_keep`
-                    const command = `koot-start --koot-test --config koot.config.no-bundles-keep.js`
+                    const command = `koot-start --koot-test --config ${configFile}`
+
+                    await fs.remove(dist)
                     await addCommand(commandName, command, dir)
 
                     const child = execSync(
@@ -621,6 +630,7 @@ describe('测试: React 同构项目', () => {
                     await doTest(port)
                     await terminate(child.pid)
 
+                    await fs.remove(dist)
                     await afterTest(dir, '[Production] 打包并运行生产模式 (bundleVersionsKeep=false)')
                 })
                 test(`[Development] 启动开发模式并访问 (bundleVersionsKeep=false)`, async () => {
@@ -661,8 +671,12 @@ describe('测试: React 同构项目', () => {
                 test(`[Production] 打包并运行生产模式 (0.6版配置)`, async () => {
                     await beforeTest(dir)
 
+                    const configFile = `koot.config.old-0.6.js`
+                    const dist = path.resolve(dir, require(path.resolve(dir, configFile)).dist)
                     const commandName = `${commandTestBuild}-isomorphic-start-config_old_0.6`
-                    const command = `koot-start --koot-test --config koot.config.old-0.6.js`
+                    const command = `koot-start --koot-test --config ${configFile}`
+
+                    await fs.remove(dist)
                     await addCommand(commandName, command, dir)
 
                     const child = execSync(
@@ -676,7 +690,7 @@ describe('测试: React 同构项目', () => {
                     await waitForPort(child)
                     // const port = await getPortFromConfig(dir)
                     const port = require('../../../packages/koot/utils/get-port')(
-                        require(path.resolve(dir, 'koot.config.old-0.6.js')).port
+                        require(path.resolve(dir, configFile)).port
                     )
                     child.stderr.on('data', err => {
                         errors.push(err)
@@ -687,6 +701,7 @@ describe('测试: React 同构项目', () => {
                     await doTest(port, {})
                     await terminate(child.pid)
 
+                    await fs.remove(dist)
                     await afterTest(dir, '[Production] 打包并运行生产模式 (0.6版配置)')
                 })
                 test(`[Development] 启动开发模式并访问 (0.6版配置)`, async () => {

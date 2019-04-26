@@ -104,12 +104,6 @@ module.exports = {
      *************************************************************************/
 
     webpackConfig: require('./config/webpack'),
-    webpackBefore: async ({ dist }) => {
-        // 每次打包前清空打包目录
-        if (process.env.WEBPACK_BUILD_STAGE === 'client') {
-            await fs.emptyDir(dist)
-        }
-    },
     // 更多选项请查阅文档...
 
 

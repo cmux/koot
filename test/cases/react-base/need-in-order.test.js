@@ -307,6 +307,97 @@ describe('测试: React 同构项目', () => {
                 await afterTest(dir, 'ENV: dev')
             })
 
+            test(`[config] bundleVersionsKeep: false`, async () => {
+                await beforeTest(dir)
+
+                const configFile = `koot.config.no-bundles-keep.js`
+                const dist = path.resolve(dir, require(path.resolve(dir, configFile)).dist)
+                const commandName = `${commandTestBuild}-no_bundle_versions_keep`
+                const command = `koot-build -c --config ${configFile}`
+                const errors = []
+
+                await fs.remove(dist)
+                await addCommand(commandName, command, dir)
+
+                const chunks = `npm run ${commandName}`.split(' ')
+                await new Promise(resolve => {
+                    const child = require('child_process').spawn(
+                        chunks.shift(),
+                        chunks,
+                        {
+                            cwd: dir,
+                            stdio: false,
+                            shell: true,
+                        }
+                    )
+                    child.on('close', () => {
+                        resolve()
+                    })
+                }).catch(e => errors.push(e))
+
+                expect(errors.length).toBe(0)
+                expect(fs.existsSync(dist)).toBe(true)
+                expect(fs.existsSync(path.resolve(dist, 'public'))).toBe(true)
+                expect(fs.existsSync(path.resolve(dist, 'public/service-worker.js'))).toBe(true)
+
+                await fs.remove(dist)
+                await afterTest(dir, '[config] bundleVersionsKeep: false')
+            })
+
+            test(`[config] bundleVersionsKeep: 3`, async () => {
+                await beforeTest(dir)
+
+                const configFile = `koot.config.bundles-keep.js`
+                const { dist: _dist, bundleVersionsKeep } = require(path.resolve(dir, configFile))
+                const dist = path.resolve(dir, _dist)
+                const commandName = `${commandTestBuild}-bundle_versions_keep`
+                const command = `koot-build -c --config ${configFile}`
+                const errors = []
+
+                await fs.remove(dist)
+                await addCommand(commandName, command, dir)
+
+                for (let i = 0; i < bundleVersionsKeep + 2; i++) {
+                    const chunks = `npm run ${commandName}`.split(' ')
+                    await new Promise(resolve => {
+                        const child = require('child_process').spawn(
+                            chunks.shift(),
+                            chunks,
+                            {
+                                cwd: dir,
+                                stdio: false,
+                                shell: true,
+                            }
+                        )
+                        child.on('close', () => {
+                            resolve()
+                        })
+                    }).catch(e => errors.push(e))
+                }
+
+                const dirPublic = path.resolve(dist, 'public')
+                expect(errors.length).toBe(0)
+                expect(fs.existsSync(dist)).toBe(true)
+                expect(fs.existsSync(dirPublic)).toBe(true)
+                expect(fs.existsSync(path.resolve(dirPublic, 'service-worker.js'))).toBe(false)
+
+                const files = (await fs.readdir(dirPublic))
+                    .map(filename => path.resolve(dirPublic, filename))
+                const kootVersionFolders = (await fs.readdir(dirPublic))
+                    .filter(filename => {
+                        const file = path.resolve(dirPublic, filename)
+                        const lstat = fs.lstatSync(file)
+                        if (!lstat.isDirectory()) return false
+                        return /^koot-[0-9]+$/.test(filename)
+                    })
+
+                expect(kootVersionFolders.length).toBe(files.length)
+                expect(kootVersionFolders.length).toBe(bundleVersionsKeep)
+
+                await fs.remove(dist)
+                await afterTest(dir, '[config] bundleVersionsKeep: 3')
+            })
+
         })
     }
 })

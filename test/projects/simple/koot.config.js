@@ -1,4 +1,3 @@
-const fs = require('fs-extra')
 const path = require('path')
 
 module.exports = {
@@ -31,14 +30,6 @@ module.exports = {
         if (ENV === 'dev') return await require('./config/webpack/dev')
         if (ENV === 'prod') return await require('./config/webpack/prod')
         return {}
-    },
-    webpackBefore: async () => {
-        if (process.env.WEBPACK_BUILD_STAGE === 'client') {
-            const dist = process.env.KOOT_DIST_DIR
-            // await fs.remove(path.resolve(dist, 'public'))
-            await fs.remove(path.resolve(dist, 'server'))
-        }
-        return
     },
     classNameHashLength: 1,
     // bundleVersionsKeep: false,
