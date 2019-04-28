@@ -30,23 +30,32 @@
     - 由于上述 className hash 和 `koot-css-loader` 的改动，开发环境下默认的组件 CSS className hash 长度调整为 `6` (与生产环境相同)
   - 分析模式
     - 现在进入分析模式不再会影响打包结果目录
-- 更新依赖包
-  - major
-    - `cache-loader` -> _3.0.0_
-    - `cli-spinners` -> _2.1.0_
-    - `opn` -> `open` _6.2.0_
-  - minor
-    - `inquirer` -> _6.3.1_
-    - `mini-css-extract-plugin` -> _0.6.0_
-    - `pm2` -> _3.5.0_
-    - `webpack` -> _4.30.0_
-    - `webpack-bundle-analyzer` -> _3.3.2_
-  - patch
-    - `copy-webpack-plugin` -> _5.0.3_
-    - `es5-shim` -> _4.5.13_
-    - `is-port-reachable` -> _2.0.1_
-    - `react-hot-loader` -> _4.8.4_
-    - `webpack-hot-middleware` -> _2.24.4_
+  - 更新依赖包
+    - major
+      - `cache-loader` -> _3.0.0_
+      - `cli-spinners` -> _2.1.0_
+      - `opn` -> `open` _6.2.0_
+    - minor
+      - `inquirer` -> _6.3.1_
+      - `mini-css-extract-plugin` -> _0.6.0_
+      - `pm2` -> _3.5.0_
+      - `webpack` -> _4.30.0_
+      - `webpack-bundle-analyzer` -> _3.3.2_
+    - patch
+      - `@babel/core` -> _7.4.4_
+      - `@babel/plugin-proposal-class-properties` -> _7.4.4_
+      - `@babel/plugin-proposal-decorators` -> _7.4.4_
+      - `@babel/plugin-proposal-object-rest-spread` -> _7.4.4_
+      - `@babel/plugin-transform-regenerator` -> _7.4.4_
+      - `@babel/plugin-transform-runtime` -> _7.4.4_
+      - `@babel/polyfill` -> _7.4.4_
+      - `@babel/preset-env` -> _7.4.4_
+      - `@babel/register` -> _7.4.4_
+      - `copy-webpack-plugin` -> _5.0.3_
+      - `es5-shim` -> _4.5.13_
+      - `is-port-reachable` -> _2.0.1_
+      - `react-hot-loader` -> _4.8.4_
+      - `webpack-hot-middleware` -> _2.24.4_
 - **koot-cli**
   - 更新依赖包
     - major
