@@ -5,35 +5,35 @@ const DefaultWebpackConfig = require('webpack-config').default
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 const KootI18nPlugin = require('../plugins/i18n')
-const DevModePlugin = require('koot-webpack/plugins/dev-mode')
-const SpaTemplatePlugin = require('koot-webpack/plugins/spa-template')
-const GenerateChunkmapPlugin = require('koot-webpack/plugins/generate-chunkmap')
-const CreateGeneralCssBundlePlugin = require('koot-webpack/plugins/create-general-css-bundle')
+const DevModePlugin = require('../plugins/dev-mode')
+const SpaTemplatePlugin = require('../plugins/spa-template')
+const GenerateChunkmapPlugin = require('../plugins/generate-chunkmap')
+const CreateGeneralCssBundlePlugin = require('../plugins/create-general-css-bundle')
 
 const {
     keyConfigBuildDll,
     keyConfigOutputPathShouldBe,
     keyConfigWebpackSPATemplateInject,
     chunkNameClientRunFirst,
-} = require('../../../defaults/before-build')
-const { hmrOptions } = require('../../../defaults/webpack-dev-server')
+} = require('../libs/require-koot')('defaults/before-build')
+const { hmrOptions } = require('../libs/require-koot')('defaults/webpack-dev-server')
 
 // const {
 //     entryClientHMR
-// } = require('../../../defaults/webpack-dev-server')
+// } = require('../libs/require-koot')('defaults/webpack-dev-server')
 
 const createTargetDefaultConfig = require('./create-target-default')
 const transformConfigExtendDefault = require('./transform-config-extend-default')
 const transformConfigLast = require('./transform-config-last')
 const transformOutputPublicpath = require('./transform-output-publicpath')
 
-const getCwd = require('../../../utils/get-cwd')
-const getWDSport = require('../../../utils/get-webpack-dev-server-port')
-const getDirDistPublic = require('../../../libs/get-dir-dist-public')
-const getDirTemp = require('../../../libs/get-dir-tmp')
-const getFilenameSPATemplateInject = require('../../../libs/get-filename-spa-template-inject')
-const validatePathname = require('../../../libs/validate-pathname')
-const isI18nEnabled = require('../../../i18n/is-enabled')
+const getCwd = require('../libs/require-koot')('utils/get-cwd')
+const getWDSport = require('../libs/require-koot')('utils/get-webpack-dev-server-port')
+const getDirDistPublic = require('../libs/require-koot')('libs/get-dir-dist-public')
+const getDirTemp = require('../libs/require-koot')('libs/get-dir-tmp')
+const getFilenameSPATemplateInject = require('../libs/require-koot')('libs/get-filename-spa-template-inject')
+const validatePathname = require('../libs/require-koot')('libs/validate-pathname')
+const isI18nEnabled = require('../libs/require-koot')('i18n/is-enabled')
 
 /**
  * Webpack 配置处理 - 客户端配置
@@ -59,12 +59,7 @@ module.exports = async (kootBuildConfig = {}) => {
     } = kootBuildConfig
 
     /** @type {String} 默认入口文件 */
-    const defaultClientEntry = path.resolve(
-        __dirname,
-        '../../../',
-        appType,
-        './client'
-    )
+    const defaultClientEntry = require('../libs/get-koot-file')(`${appType}/client`)
 
     /** @type {Boolean} 是否为 SPA 同时需要模板注入支持 */
     const isSPANeedTemplateInject = Boolean(
@@ -208,7 +203,7 @@ module.exports = async (kootBuildConfig = {}) => {
                 //     appType,
                 //     './client/run-first.js'
                 // )
-                const fileRunFirst = path.resolve(__dirname, '../../../React/client-run-first.js')
+                const fileRunFirst = require('../libs/get-koot-file')('React/client-run-first.js')
                 if (fs.existsSync(fileRunFirst)) {
                     result.entry[chunkNameClientRunFirst] = [fileRunFirst]
                 }

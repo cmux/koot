@@ -4,8 +4,8 @@ const webpack = require('webpack')
 const {
     keyConfigBuildDll, filenameDll, filenameDllManifest,
     keyConfigOutputPathShouldBe
-} = require('../../../defaults/before-build')
-const getDirDevDll = require('../../../libs/get-dir-dev-dll')
+} = require('../libs/require-koot')('defaults/before-build')
+const getDirDevDll = require('../libs/require-koot')('libs/get-dir-dev-dll')
 
 /**
  * Webpack 配置处理 - 最终处理

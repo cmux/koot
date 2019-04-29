@@ -1,7 +1,7 @@
 const webpack = require('webpack')
 const common = require('../common')
 
-const { hmrOptions } = require('../../../defaults/webpack-dev-server')
+const { hmrOptions } = require('../../libs/require-koot')('defaults/webpack-dev-server')
 
 const factoryConfig = async ({
     pathRun,

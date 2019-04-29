@@ -4,7 +4,7 @@ const fs = require('fs-extra')
 // const path = require('path')
 const isValidPath = require('is-valid-path')
 
-const createConfig = require('../../../packages/koot/core/webpack/config/create')
+const createConfig = require('../../../packages/koot-webpack/factory-config/create')
 const validateConfig = require('../../../packages/koot/libs/validate-config')
 
 const {

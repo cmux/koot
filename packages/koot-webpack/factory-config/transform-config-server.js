@@ -6,17 +6,17 @@ const DefaultWebpackConfig = require('webpack-config').default
 
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const KootI18nPlugin = require('../plugins/i18n')
-const DevModePlugin = require('koot-webpack/plugins/dev-mode')
-const { keyConfigBuildDll } = require('../../../defaults/before-build')
+const DevModePlugin = require('../plugins/dev-mode')
+const { keyConfigBuildDll } = require('../libs/require-koot')('defaults/before-build')
 
 const createTargetDefaultConfig = require('./create-target-default')
 const transformConfigExtendDefault = require('./transform-config-extend-default')
 const transformConfigLast = require('./transform-config-last')
 const transformOutputPublicpath = require('./transform-output-publicpath')
 
-const getCwd = require('../../../utils/get-cwd')
-const getDirDistPublic = require('../../../libs/get-dir-dist-public')
-const getDirDevTmp = require('../../../libs/get-dir-dev-tmp')
+const getCwd = require('../libs/require-koot')('utils/get-cwd')
+const getDirDistPublic = require('../libs/require-koot')('libs/get-dir-dist-public')
+const getDirDevTmp = require('../libs/require-koot')('libs/get-dir-dev-tmp')
 
 /**
  * Webpack 配置处理 - 服务器端配置
@@ -105,10 +105,10 @@ module.exports = async (kootBuildConfig = {}) => {
         // '@babel/register',
         '@babel/polyfill',
         // path.resolve(__dirname, '../../../defaults/server-stage-0.js'),
-        path.resolve(__dirname, '../../../', appType, './server')
+        require('../libs/get-koot-file')(`${appType}/server`)
     ]
     const otherEntries = {}
-    const fileSSR = path.resolve(__dirname, '../../../', appType, './server/ssr.js')
+    const fileSSR = require('../libs/get-koot-file')(`${appType}/server/ssr.js`)
     if (ENV !== 'dev' && fs.existsSync(fileSSR)) {
         otherEntries.ssr = [fileSSR]
         // result.plugins.push(

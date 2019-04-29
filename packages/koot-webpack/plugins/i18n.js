@@ -3,7 +3,7 @@ const path = require('path')
 const ParserHelpers = require("webpack/lib/ParserHelpers")
 const ConstDependency = require('webpack/lib/dependencies/ConstDependency')
 const NullFactory = require("webpack/lib/NullFactory")
-const getCwd = require('../../../utils/get-cwd')
+const getCwd = require('../libs/require-koot')('utils/get-cwd')
 
 class I18nPlugin {
     constructor({

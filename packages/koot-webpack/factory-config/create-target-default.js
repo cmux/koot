@@ -16,7 +16,7 @@ module.exports = async (options = {}, configFilePathname) => {
     } = process.env
 
     // 根据当前环境变量，定位对应的默认配置文件
-    configFilePathname = configFilePathname || path.resolve(__dirname, `../defaults/${TYPE}.${STAGE}.${ENV}.js`)
+    configFilePathname = configFilePathname || path.resolve(__dirname, `_defaults/${TYPE}.${STAGE}.${ENV}.js`)
 
     if (!fs.existsSync(configFilePathname))
         throw new Error(`生产默认配置对象：未到对应的配置文件\n  > ${configFilePathname}`)

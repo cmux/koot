@@ -4,12 +4,12 @@ const webpack = require('webpack')
 // const ExtractTextPlugin = require("extract-text-webpack-plugin")
 // const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 
-const createModuleRules = require('koot-webpack/factory-config/module/rules')
-const KootResetCssLoaderPlugin = require('koot-webpack/plugins/reset-css-loader')
-const defaultDefines = require('../../defaults/defines')
-const { keyConfigBuildDll } = require('../../defaults/before-build')
-const getPathnameProjectConfigFile = require('../../utils/get-pathname-project-config-file')
-// const readBaseConfig = require('../../utils/read-base-config')
+const createModuleRules = require('./module/rules')
+const KootResetCssLoaderPlugin = require('../plugins/reset-css-loader')
+const defaultDefines = require('../libs/require-koot')('defaults/defines')
+const { keyConfigBuildDll } = require('../libs/require-koot')('defaults/before-build')
+const getPathnameProjectConfigFile = require('../libs/require-koot')('utils/get-pathname-project-config-file')
+// const readBaseConfig = require('../libs/require-koot')('utils/read-base-config')
 
 // 打包结果目录
 const outputPath = 'dist'
@@ -138,7 +138,7 @@ const plugins = async (env, stage, defines = {}/*, remainingKootBuildConfig = {}
             /^__KOOT_HOC_EXTEND__$/,
             (() => {
                 if (/^React/.test(process.env.KOOT_PROJECT_TYPE))
-                    return path.resolve(__dirname, '../../React/component-extender.js')
+                    return require('../libs/get-koot-file')('React/component-extender.js')
             })()
         ],
         // [

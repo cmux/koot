@@ -1,4 +1,4 @@
-const common = require('../common')
+const common = require('./common')
 
 /**
  * 生产通用默认配置对象

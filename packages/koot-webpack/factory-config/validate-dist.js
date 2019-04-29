@@ -1,6 +1,6 @@
 const fs = require('fs-extra')
 const path = require('path')
-const getCwd = require('../../../utils/get-cwd')
+const getCwd = require('../libs/require-koot')('utils/get-cwd')
 
 /**
  * 处理打包路径

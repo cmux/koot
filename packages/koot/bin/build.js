@@ -20,7 +20,7 @@ const initNodeEnv = require('../utils/init-node-env')
 // const emptyTempConfigDir = require('../libs/empty-temp-config-dir')
 const getDirTemp = require('../libs/get-dir-tmp')
 
-const kootBuild = require('../core/webpack/enter')
+const kootWebpackBuild = require('koot-webpack/build')
 
 program
     .version(require('../package').version, '-v, --version')
@@ -105,19 +105,19 @@ const run = async () => {
         // if (stage === 'server' && !hasServer) {
         //     console.log(chalk.redBright('× '))
         // }
-        await kootBuild(kootConfig)
+        await kootWebpackBuild(kootConfig)
         await after(kootConfig)
         if (!fromCommandStart) console.log(' ')
         return
     }
 
     // 如过没有提供 stage，自动相继打包 client 和 server
-    await kootBuild({ ...kootConfig })
+    await kootWebpackBuild({ ...kootConfig })
     await sleep(100)
 
     if (!fromCommandStart) console.log('\n' + ''.padEnd(60, '=') + '\n')
     process.env.WEBPACK_BUILD_STAGE = 'server'
-    await kootBuild({ ...kootConfig })
+    await kootWebpackBuild({ ...kootConfig })
     await sleep(100)
 
     if (!fromCommandStart) console.log('\n' + ''.padEnd(60, '=') + '\n')

@@ -45,7 +45,7 @@ const getLogMsg = require('../libs/get-log-msg')
 const log = require('../libs/log')
 // const terminate = require('../utils/terminate')
 
-const kootBuildVendorDll = require('../core/webpack/build-vendor-dll')
+const kootWebpackBuildVendorDll = require('koot-webpack/build-vendor-dll')
 
 program
     .version(require('../package').version, '-v, --version')
@@ -328,15 +328,15 @@ const run = async () => {
         // DLL 打包
         if (stage) {
             process.env.WEBPACK_BUILD_STAGE = stage
-            await kootBuildVendorDll(kootConfig)
+            await kootWebpackBuildVendorDll(kootConfig)
         } else {
             const stageCurrent = process.env.WEBPACK_BUILD_STAGE
 
             process.env.WEBPACK_BUILD_STAGE = 'client'
-            await kootBuildVendorDll(kootConfig)
+            await kootWebpackBuildVendorDll(kootConfig)
             await sleep(500)
             process.env.WEBPACK_BUILD_STAGE = 'server'
-            await kootBuildVendorDll(kootConfig)
+            await kootWebpackBuildVendorDll(kootConfig)
 
             process.env.WEBPACK_BUILD_STAGE = stageCurrent
         }

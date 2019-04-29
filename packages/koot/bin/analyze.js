@@ -14,7 +14,7 @@ const setEnvFromCommand = require('../utils/set-env-from-command')
 const initNodeEnv = require('../utils/init-node-env')
 const getDirTemp = require('../libs/get-dir-tmp')
 
-const kootBuild = require('../core/webpack/enter')
+const kootWebpackBuild = require('koot-webpack/build')
 
 program
     .version(require('../package').version, '-v, --version')
@@ -71,7 +71,7 @@ const run = async () => {
         bundleVersionsKeep: false,
     }
 
-    await kootBuild({
+    await kootWebpackBuild({
         analyze: true,
         ...kootConfig
     })

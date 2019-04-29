@@ -1,5 +1,5 @@
-const validateTemplate = require('../../../libs/validate-template')
-const readBaseConfig = require('../../../utils/read-base-config')
+const validateTemplate = require('../libs/require-koot')('libs/validate-template')
+const readBaseConfig = require('../libs/require-koot')('utils/read-base-config')
 
 /**
  * 处理 HTML 基础模板配置。以下内容写入环境变量

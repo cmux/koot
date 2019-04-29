@@ -1,10 +1,10 @@
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 
 // Libs & Utilities
-const getAppType = require('../../../utils/get-app-type')
-// const getPort = require('../../../utils/get-port')
-const getChunkmapPathname = require('../../../utils/get-chunkmap-path')
-const initNodeEnv = require('../../../utils/init-node-env')
+const getAppType = require('../libs/require-koot')('utils/get-app-type')
+// const getPort = require('../libs/require-koot')('utils/get-port')
+const getChunkmapPathname = require('../libs/require-koot')('utils/get-chunkmap-path')
+const initNodeEnv = require('../libs/require-koot')('utils/init-node-env')
 
 // Transformers
 const transformDist = require('./transform-dist')
@@ -15,7 +15,7 @@ const transformConfigClient = require('./transform-config-client')
 const transformConfigServer = require('./transform-config-server')
 
 // Defaults & Data
-const defaults = require('../../../defaults/build-config')
+const defaults = require('../libs/require-koot')('defaults/build-config')
 
 /**
  * 根据当前环境和配置，生成 Webpack 配置对象

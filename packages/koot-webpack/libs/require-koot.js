@@ -1,5 +1,7 @@
-const fs = require('fs')
-const path = require('path')
+// const fs = require('fs')
+// const path = require('path')
+
+const getKootFile = require('./get-koot-file')
 
 /**
  * 引用 koot 主包中的文件
@@ -10,15 +12,16 @@ module.exports = (theModule) => {
     try {
         return require(`koot/${theModule}`)
     } catch (e) {
-        let file = path.resolve(__dirname, '../../koot', theModule)
-
-        if (fs.existsSync(file))
-            return require(file)
-
-        if (fs.existsSync(file + '.js'))
-            return require(file + '.js')
-
-        if (fs.existsSync(file + '.jsx'))
-            return require(file + '.jsx')
+        let result;
+        [
+            '',
+            '.js', '.cjs', '.mjs', '.ts',
+            '.jsx', '.tsx'
+        ].some(ext => {
+            try {
+                result = require(getKootFile(theModule + ext))
+            } catch (e) { }
+        })
+        return result
     }
 }
