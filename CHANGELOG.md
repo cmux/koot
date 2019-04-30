@@ -34,6 +34,7 @@
     - major
       - `cache-loader` -> _3.0.0_
       - `cli-spinners` -> _2.1.0_
+      - `less-loader` -> _5.0.0_
       - `opn` -> `open` _6.2.0_
     - minor
       - `inquirer` -> _6.3.1_

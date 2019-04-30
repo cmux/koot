@@ -101,7 +101,7 @@
         "koa-router": "7.4.0",
         "koa-static": "5.0.0",
         "less": "3.9.0",
-        "less-loader": "4.1.0",
+        "less-loader": "5.0.0",
         "md5": "2.2.1",
         "md5-file": "4.0.0",
         "mini-css-extract-plugin": "0.6.0",
