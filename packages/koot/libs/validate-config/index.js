@@ -155,12 +155,7 @@ const finalValidate = async (config = {}) => {
         delete config.dest
     }
     if (process.env.WEBPACK_BUILD_ENV === 'dev') {
-        const dirDevBuild = require('../get-dir-dev-tmp')(undefined, 'build')
-        config.dist = dirDevBuild
-        await fs.ensureDir(dirDevBuild)
-        await fs.emptyDir(dirDevBuild)
-        await fs.ensureDir(path.resolve(dirDevBuild, 'public'))
-        await fs.ensureDir(path.resolve(dirDevBuild, 'server'))
+        config.dist = require('../get-dir-dev-tmp')(undefined, 'build')
     }
     if (typeof config.dist !== 'undefined') {
         validateConfigDist(config.dist)

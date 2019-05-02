@@ -180,12 +180,18 @@ const run = async () => {
         name
     } = packageInfo
 
+    // 清理目标目录
+    await fs.ensureDir(dist)
+    await fs.emptyDir(dist)
+    await fs.ensureDir(path.resolve(dist, 'public'))
+    await fs.ensureDir(path.resolve(dist, 'server'))
+
     /** @type {Array} 正在运行的进程/服务列表 */
     const processes = []
 
     /** @type {Boolean} 全局等待提示 */
     let waitingSpinner = false
-    
+
     // 清理遗留的临时文件
     await removeTempBuild(dist)
 
