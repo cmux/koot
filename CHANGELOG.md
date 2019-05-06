@@ -55,6 +55,7 @@
       - `copy-webpack-plugin` -> _5.0.3_
       - `es5-shim` -> _4.5.13_
       - `is-port-reachable` -> _2.0.1_
+      - `postcss` -> _7.0.16_
       - `react-hot-loader` -> _4.8.4_
       - `webpack-hot-middleware` -> _2.24.4_
 - **koot-cli**
