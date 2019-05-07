@@ -4,8 +4,7 @@
 // https://developers.google.com/web/fundamentals/primers/service-worker/?hl=en
 
 const CACHE_NAME = 'koot-sw-cache'
-const urlsToCache = [
-    '/',/* APPEND URLS HERE */]
+const urlsToCache = [/* APPEND URLS HERE */]
 
 function addToCache(request, response) {
     if (response.ok) {
