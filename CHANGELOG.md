@@ -30,6 +30,8 @@
     - 由于上述 className hash 和 `koot-css-loader` 的改动，开发环境下默认的组件 CSS className hash 长度调整为 `6` (与生产环境相同)
   - 分析模式
     - 现在进入分析模式不再会影响打包结果目录
+  - 错误修正
+    - 修正某些情况下，自动生成的 `service-worker` 文件无法正常处理离线请求的问题
   - 更新依赖包
     - major
       - `cache-loader` -> _3.0.0_

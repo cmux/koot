@@ -59,6 +59,7 @@ module.exports = {
 
 - 类型: `Pathname`
 - 默认值: `./dist`
+- **仅针对**: 生产环境
 
 打包结果存放路径。
 

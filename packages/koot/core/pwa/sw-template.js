@@ -14,6 +14,7 @@ function addToCache(request, response) {
         })
     } else {
         console.log('Request fail', response, request)
+        throw new Error(response)
     }
     return response
 }
