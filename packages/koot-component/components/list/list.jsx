@@ -2,21 +2,21 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Table } from 'antd';
 import { Resizable } from 'react-resizable';
-import { separatorFormat, ellipsisStyleFormat, minWidthStyleFormat, maxWidthStyleFormat } from './format.js';
 import { isObject } from 'util';
+import { separatorFormat, ellipsisStyleFormat, minWidthStyleFormat, maxWidthStyleFormat } from './format.js';
 import { AutoTooltip } from './components';
 
 const ResizeableTitle = (props) => {
     const { onResize, width, ...restProps } = props;
-  
+
     if (!width) {
         return <th {...restProps} />;
     }
 
     return (
-        <Resizable 
-            width={width} 
-            height={0} 
+        <Resizable
+            width={width}
+            height={0}
             onResize={onResize}
         >
             <th {...restProps} />
@@ -61,18 +61,81 @@ class List extends Component {
 
     constructor(props) {
         super(props);
-        // const { render } = this.props;
-        // const config  = render();
-        // const { columns } = config;
-        // this.state = {
-        //     columns: this.columnsHandler(columns)
-        // }
+        const { render } = this.props;
+        const config  = render();
+        const { columns } = config;
+        this.state = {
+            columns: this.columnsHandler(columns)
+        }
     }
-    
+
 
     static propTypes = {
         children: PropTypes.node,
         render: PropTypes.func.isRequired
+    }
+
+    static getDerivedStateFromProps(nextProps, prevState) {
+
+        const separatorFormatterHandler = (value, item) => {
+            if( item.separator ){
+                // 千位符格式化
+                value = separatorFormat(value, item.separator);
+            }
+            return value;
+        }
+
+        const valueFormatter = (text, item) => {
+            text = separatorFormatterHandler(text, item);
+            return text;
+        }
+
+        const styleFormatter = (item) => {
+            const defaultStyle = {}
+            const style = ellipsisStyleFormat(item.ellipsis);
+            const minWidthStyle = minWidthStyleFormat(item.minWidth);
+            const maxWidthStyle = maxWidthStyleFormat(item.maxWidth);
+            return Object.assign(defaultStyle, style, minWidthStyle, maxWidthStyle);
+        }
+
+        const columnsHandler = ( columns ) => {
+            return columns && columns.map(item => {
+                const { autoTooltip } = item;
+                const style = styleFormatter(item);
+                const orignRender = item.render;
+                item.render = (text, record, index) => {
+                    let value = valueFormatter(text, item);
+                    // dataIndex 不存在时 text === record
+                    value = isObject(value) ? '' : value;
+                    if( orignRender && typeof orignRender === 'function' ){
+                        value = orignRender(value, record, index);
+                    }
+                    return (
+                        <div style={style}>
+                            {
+                                autoTooltip === true
+                                    ? <AutoTooltip>{value}</AutoTooltip>
+                                    : <span>{value}</span>
+                            }
+
+                        </div>
+                    )
+                }
+                return item;
+            })
+        }
+
+        let newArr = columnsHandler(nextProps.render().columns),
+            oldArr = prevState.columns;
+
+        newArr.forEach(newItem => {
+            let tarObj = oldArr.find(oldItem => oldItem.dataIndex === newItem.dataIndex);
+            tarObj && (newItem.width = tarObj.width)
+        })
+
+        return {
+            columns: newArr
+        };
     }
 
     render() {
@@ -81,42 +144,47 @@ class List extends Component {
         // 处理props
         const props = this.propsHandler( Object.assign({}, this.props, config) );
         // 处理数据源
-        const { dataSource, columns } = config;
+        const { columns, dataSource } = config;
         const nextDataSource = dataSource && dataSource.map((dataItem, index) => {
             return Object.assign({}, dataItem, {
                 key: index
             })
         })
-        
-        let nextColumns = columns;
-        // if (resizable) {
-        //     nextColumns = nextColumns.map((col, index) => ({
-        //         ...col,
-        //         onHeaderCell: column => ({
-        //             width: column.width,
-        //             onResize: this.handleResize(index),
-        //         }),
-        //     }));
-        //     return (
-        //         <Table
-        //             components={this.components}
-        //             columns={nextColumns}
-        //             dataSource={nextDataSource}
-        //             {...props}
-        //         >
-        //         </Table>
-        //     )
-        // } else {
-        return (
-            <Table
-                columns={nextColumns}
-                dataSource={nextDataSource}
-                {...props}
-            >
-            </Table>
-        )
-        // }
-        
+        // console.log('====================================');
+        // console.log('老', this.state.columns);
+        // console.log('====================================');
+        // console.log('新', this.columnsHandler(this.props.render().columns));
+
+        let nextColumns;
+        if (resizable) {
+            nextColumns = this.state.columns.map((col, index) => ({
+                ...col,
+                onHeaderCell: column => ({
+                    width: column.width,
+                    onResize: this.handleResize(index),
+                }),
+            }));
+            return (
+                <Table
+                    components={this.components}
+                    columns={nextColumns}
+                    dataSource={nextDataSource}
+                    {...props}
+                >
+                </Table>
+            )
+        } else {
+            // nextColumns = this.state.columns;
+            return (
+                <Table
+                    columns={columns}
+                    dataSource={nextDataSource}
+                    {...props}
+                >
+                </Table>
+            )
+        }
+
     }
 
     components = {
@@ -155,7 +223,7 @@ class List extends Component {
                                 ? <AutoTooltip>{value}</AutoTooltip>
                                 : <span>{value}</span>
                         }
-                        
+
                     </div>
                 )
             }
@@ -233,7 +301,7 @@ class List extends Component {
     }
 
     /**
-     * 
+     *
      */
     defaultPropsHandler = ( config ) => {
         const { page, pagination } = config;
@@ -247,7 +315,7 @@ class List extends Component {
                 total: config.page.total,
                 onChange: config.page.onPageIndexChange,
                 onShowSizeChange: config.page.onPageSizeChange,
-                showTotal: total => `共 ${total} 条`, 
+                showTotal: total => `共 ${total} 条`,
             }
         }
         if( pagination ){
