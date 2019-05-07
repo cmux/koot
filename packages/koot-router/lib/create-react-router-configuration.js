@@ -1,7 +1,7 @@
 /**
  * 区分是否为 react 组件 或 react 函数组件
- * 
- * @param {*} obj 
+ *
+ * @param {*} obj
  */
 const isExtendsReactComponent = ( obj ) => {
     if( !obj ){
@@ -18,11 +18,11 @@ const isExtendsReactComponent = ( obj ) => {
 }
 
 /**
- * 
- * @param {*} nextState 
- * @param {*} replace 
- * @param {*} callback 
- * @param {*} options 
+ *
+ * @param {*} nextState
+ * @param {*} replace
+ * @param {*} callback
+ * @param {*} options
  */
 const beforeEachHook = (nextState, replace, callback, options = {}) => {
     const { oriOnEnter, beforeEach, afterEach, onUpdate } = options;
@@ -47,7 +47,7 @@ const beforeEachHook = (nextState, replace, callback, options = {}) => {
 }
 
 /**
- * 
+ *
  */
 const redirectHandler = (nextState, replace, redirect) => {
     let nextRedirect = redirect;
@@ -90,33 +90,72 @@ const metaEncodeHandler = (obj, meta) => {
     obj['meta'] = meta;
 }
 
+/**
+ * 全局的 oldPathname cache
+ *
+ * 用于每次. onEnterEncode 执行次数判断及控制
+ */
 let oldPathname = null;
+
 const onEnterEncodeHandler = (obj, options) => {
     const { oriOnEnter, beforeEach, afterEach, onUpdate, redirect, router = {} } = options;
     const { path } = router;
+
     const onEnterHook = (...args) => {
         const [ nextState, replace ] = args;
-        // 重定向
-        if( redirect ){
-            const { location = {} } = nextState;
-            const { pathname } = location;
-            if( (pathname === path || path === '*') && pathname !== redirect ){
-                redirectHandler(nextState, replace, redirect)
-            }
+        const { location = {}, routes = [] } = nextState;
+        const lastMatchRoutes = routes && routes[routes.length-1] && routes[routes.length-1];
+        const matchPath = lastMatchRoutes && lastMatchRoutes.path;
+        const { pathname: nextPathname } = location;
+
+        // 处理重定向
+        if( redirect &&
+            (
+                (matchPath && matchPath === path) ||
+                path === '*'
+            )  &&
+            nextPathname !== redirect
+        ){
+            redirectHandler(nextState, replace, redirect)
         }
-        const { pathname } = nextState.location;
-        if( pathname !== oldPathname ){
+
+        // 处理 beforeEachHook
+        if( nextPathname !== oldPathname ){
             // 触发 beforeEach
-            beforeEachHook(...args, {
+            beforeEachHook(...args,  {
                 oriOnEnter,
                 beforeEach,
                 afterEach,
                 onUpdate
             })
-            oldPathname = pathname;
+            oldPathname = nextPathname;
         }
     }
-    obj['onEnter'] = onEnterHook
+
+    // 用于辅助当路由为 /a/b -> /a 时，
+    // 不再触发 /a onEnter
+    // 已至于无法完成 /a 所包含的 redirect 问题
+    const onChangeHook = (...args) => {
+        const [ prevState, nextState, replace, callback ] = args;
+        const prevPathname = prevState.location.pathname;
+        const nextPathname = nextState.location.pathname;
+        if( redirect &&
+            prevPathname !== nextPathname &&
+            prevPathname.indexOf(nextPathname) !== -1 &&
+            (
+                nextPathname === `/${path}` ||
+                nextPathname === path ||
+                path === '*'
+            )
+        ){
+            redirectHandler(nextState, replace, redirect)
+        }
+        callback();
+    }
+
+    obj['onEnter'] = onEnterHook;
+    obj['onChange'] = onChangeHook;
+
 }
 
 const routerHandler = ( router, beforeEach, afterEach, onUpdate ) => {
@@ -125,7 +164,7 @@ const routerHandler = ( router, beforeEach, afterEach, onUpdate ) => {
     }
 
     const result = {};
-    
+
     const { name, path, component, redirect, children, onEnter, meta } = router;
 
     // name
