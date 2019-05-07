@@ -14,9 +14,12 @@ export default {
 
     indexRoute: {
         getComponent: (nextState, cb) => {
-            require.ensure([], (require) => {
-                if (routeCheck(nextState)) cb(null, require('@views/home').default)
-            }, 'Page: Home')
+            import(
+                /* webpackChunkName: "PageHome" */
+                '@views/home'
+            ).then(module => {
+                if (routeCheck(nextState)) cb(null, module.default);
+            })
         }
     },
 
@@ -27,9 +30,12 @@ export default {
                 name: 'Page: Static Assets',
                 // component: require('@views/static').default,
                 getComponent: (nextState, cb) => {
-                    require.ensure([], (require) => {
-                        if (routeCheck(nextState)) cb(null, require('@views/static').default)
-                    }, 'Page: Static Assets')
+                    import(
+                        /* webpackChunkName: "PageStatic" */
+                        '@views/static'
+                    ).then(module => {
+                        if (routeCheck(nextState)) cb(null, module.default);
+                    })
                 },
                 childRoutes: [{
                     path: ':noComponentGiven'
@@ -39,9 +45,12 @@ export default {
                 path: 'delayed',
                 name: 'Page: Delayed Rendering',
                 getComponent: (nextState, cb) => {
-                    require.ensure([], (require) => {
-                        if (routeCheck(nextState)) cb(null, require('@views/delayed').default)
-                    }, 'Page: Delayed Rendering')
+                    import(
+                        /* webpackChunkName: "PageDelayed" */
+                        '@views/delayed'
+                    ).then(module => {
+                        if (routeCheck(nextState)) cb(null, module.default);
+                    })
                 }
             }
         ]
@@ -51,9 +60,12 @@ export default {
                 name: 'Page: Component Extender',
                 // component: require('@views/extend').default,
                 getComponent: (nextState, cb) => {
-                    require.ensure([], (require) => {
-                        if (routeCheck(nextState)) cb(null, require('@views/extend').default)
-                    }, 'Page: Component Extender')
+                    import(
+                        /* webpackChunkName: "PageExtend" */
+                        '@views/extend'
+                    ).then(module => {
+                        if (routeCheck(nextState)) cb(null, module.default);
+                    })
                 }
             })
         }

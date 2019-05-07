@@ -70,6 +70,8 @@
       - `npm-email` -> _3.2.0_
       - `ora` -> _3.4.0_
       - `package-json` -> _6.3.0_
+- **koot-boilerplate**
+  - 使用 Webpack 的 `import()` 语法更新动态路由的写法
 
 ## 0.8.9
 **2019-04-11**
