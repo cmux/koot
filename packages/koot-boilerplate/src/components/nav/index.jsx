@@ -25,7 +25,7 @@ const Nav = extend({
                         ))}
                     </div>
                     <div className="others">
-                        <a href={urlGithub} target="_blank" className="other-link github">
+                        <a href={urlGithub} target="_blank" className="other-link github" rel="noopener noreferrer">
                             <Icon className="icon" icon="github" />
                             Fork on GitHub
                         </a>
