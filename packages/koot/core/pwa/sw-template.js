@@ -4,7 +4,8 @@
 // https://developers.google.com/web/fundamentals/primers/service-worker/?hl=en
 
 const CACHE_NAME = 'koot-sw-cache'
-const urlsToCache = [/* APPEND URLS HERE */]
+const urlsToCache = [
+    '/',/* APPEND URLS HERE */]
 
 function addToCache(request, response) {
     if (response.ok) {
@@ -69,7 +70,8 @@ function shouldHandleFetch(event) {
 
 function shouldRespondFromNetworkThenCache(event) {
     return (
-        event.request.headers.get('Accept').indexOf('text/html') >= 0
+        event.request.url.replace(new RegExp(`^${location.origin}`), '') === '/'
+        || event.request.headers.get('Accept').indexOf('text/html') >= 0
         // || /chunk.+\.js$/.test(event.request.url)
     )
 }
