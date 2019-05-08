@@ -1,9 +1,6 @@
 {
     "title": "Koot.js Tech Demo",
-    "intro": [
-        "React full-stack development framework",
-        "Also for SPA"
-    ],
+    "intro": ["React full-stack development framework", "Also for SPA"],
     "navs": {
         "home": "Koot.js",
         "docs": "Docs",

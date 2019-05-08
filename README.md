@@ -10,7 +10,7 @@
 </h3>
 
 <p align="center">
-    基于 <a href="https://facebook.github.io/react">React</a> 和 <a href="https://koa.bootcss.com/">Koa</a> 的完整前端技术解决方案。   
+    基于 <a href="https://facebook.github.io/react">React</a> 和 <a href="https://koa.bootcss.com/">Koa</a> 的完整前端技术解决方案。
 </p>
 
 <p align="center">
@@ -26,7 +26,7 @@
     <a href="https://lernajs.io/">
         <img src="https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg">
     </a>
-</p> 
+</p>
 
 ## 快速使用
 

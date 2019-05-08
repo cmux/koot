@@ -1,17 +1,17 @@
-const ora = require('ora')
+const ora = require('ora');
 
 /**
  * 输出完成信息
  * @void
- * @param {String} [msg] 
+ * @param {String} [msg]
  */
-const logFinish = (msg) => {
-    console.log('')
+const logFinish = msg => {
+    console.log('');
     ora({
         text: 'Task finished!'
-    }).succeed()
-    if (msg) console.log('  ' + msg)
-    console.log('')
-}
+    }).succeed();
+    if (msg) console.log('  ' + msg);
+    console.log('');
+};
 
-module.exports = logFinish
+module.exports = logFinish;

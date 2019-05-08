@@ -1,4 +1,4 @@
-import routeCheck from 'koot/React/route-check'
+import routeCheck from 'koot/React/route-check';
 
 /**
  * @type {Object} 路由配置对象
@@ -6,7 +6,6 @@ import routeCheck from 'koot/React/route-check'
  * - 可使用 koot-router 提供的方法封装路由配置对象
  */
 export default {
-
     path: '/',
     component: require('@components/app').default, // 项目的根层组件
 
@@ -28,7 +27,7 @@ export default {
                 '@views/home'
             ).then(module => {
                 if (routeCheck(nextState)) cb(null, module.default);
-            })
+            });
         }
     },
 
@@ -41,9 +40,8 @@ export default {
                     '@views/start'
                 ).then(module => {
                     if (routeCheck(nextState)) cb(null, module.default);
-                })
+                });
             }
-        },
+        }
     ]
-
-}
+};

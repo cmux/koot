@@ -21,10 +21,5 @@
             "~/*": ["./src/*"]
         }
     },
-    "exclude": [
-        ".*",
-        "dist",
-        "dist*",
-        "node_modules"
-    ]
+    "exclude": [".*", "dist", "dist*", "node_modules"]
 }

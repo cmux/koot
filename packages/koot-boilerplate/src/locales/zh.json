@@ -1,9 +1,6 @@
 {
     "title": "Koot.js Tech Demo",
-    "intro": [
-        "React 全栈开发框架",
-        "同样适用于 SPA"
-    ],
+    "intro": ["React 全栈开发框架", "同样适用于 SPA"],
     "navs": {
         "home": "Koot.js",
         "docs": "开发文档",

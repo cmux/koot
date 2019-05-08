@@ -23,7 +23,8 @@
         "dev:no-open": "koot-dev --no-open",
         "dev:spa": "koot-dev --type spa",
         "analyze": "koot-analyze",
-        "eslint": "eslint \"src/**/*.+(js|jsx)\""
+        "eslint": "eslint \"src/**/*.+(js|jsx)\"",
+        "format-code": "prettier --write \"src/**/*.+(js|jsx)\""
     },
     "dependencies": {
         "axios": "0.18.0",

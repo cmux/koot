@@ -1,19 +1,20 @@
-@import "~vars.less";
+@import '~vars.less';
 
-.component{
-
+.component {
     @list-item-padding: 15px;
 
-    min-height: calc(100vh - @nav-height - @main-gutter-top - @main-gutter-bottom);
+    min-height: calc(
+        100vh - @nav-height - @main-gutter-top - @main-gutter-bottom
+    );
     display: flex;
     flex-flow: column nowrap;
     justify-content: center;
 
-    .title{
+    .title {
         text-align: center;
     }
 
-    .list{
+    .list {
         @gutter: 20px;
         @color-accent: @theme-orange-a700;
         display: block;
@@ -21,15 +22,15 @@
         flex-flow: row wrap;
         margin: 0 (0 - @gutter) 0 0;
         padding: 0;
-        &::after{
-            content: "";
+        &::after {
+            content: '';
             display: block;
             width: 100%;
             height: 0;
             overflow: hidden;
             clear: both;
         }
-        .item{
+        .item {
             @padding: @list-item-padding;
             @border-radius: 10px;
             @border-width: 1px;
@@ -47,7 +48,7 @@
             list-style: none;
             // overflow: hidden;
 
-            .sub-title{
+            .sub-title {
                 display: block;
                 margin-top: (0 - @padding - @border-width);
                 margin-left: (0 - @padding - @border-width);
@@ -60,7 +61,7 @@
                 font-size: 16px;
                 line-height: 1.01em;
                 position: relative;
-                small{
+                small {
                     display: block;
                     font-size: 12px;
                     font-weight: normal;
@@ -70,47 +71,47 @@
                 }
             }
 
-            .content{
+            .content {
                 display: block;
                 flex: 1;
             }
 
-            .doc{
+            .doc {
                 display: inline-block;
                 margin-top: @padding;
                 color: @color-accent;
                 text-decoration: none;
                 font-size: 14px;
                 line-height: 1em;
-                .icon{
+                .icon {
                     @size: 14px;
                     width: @size;
                     height: @size;
                     vertical-align: bottom;
                     margin-left: 4px;
                 }
-                &:hover{
+                &:hover {
                     color: #000;
                 }
-                &:active{
+                &:active {
                     color: hsl(0, 0%, 65%);
                 }
             }
         }
 
-        &.list-advanced{
+        &.list-advanced {
             @color-accent-advanced: @theme-teal-a700;
-            .item{
+            .item {
                 border-color: @color-accent-advanced;
-                .sub-title{
+                .sub-title {
                     background: @color-accent-advanced;
                 }
-                .doc{
+                .doc {
                     color: @color-accent-advanced;
-                    &:hover{
+                    &:hover {
                         color: #000;
                     }
-                    &:active{
+                    &:active {
                         color: hsl(0, 0%, 65%);
                     }
                 }
@@ -119,18 +120,18 @@
 
         @media screen and (max-width: @screen-tablet-max-width) {
             margin-right: 0;
-            .item{
+            .item {
                 width: 100%;
             }
         }
     }
 
-    ol.list{
+    ol.list {
         counter-reset: num-list;
-        .item .sub-title{
+        .item .sub-title {
             @padding-left: (@list-item-padding + 40px);
             padding-left: @padding-left;
-            &::before{
+            &::before {
                 counter-increment: num-list;
                 content: counter(num-list);
                 position: absolute;
@@ -147,5 +148,4 @@
             }
         }
     }
-
 }
