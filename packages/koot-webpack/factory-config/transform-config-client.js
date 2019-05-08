@@ -15,25 +15,25 @@ const {
     keyConfigOutputPathShouldBe,
     keyConfigWebpackSPATemplateInject,
     chunkNameClientRunFirst,
-} = require('../libs/require-koot')('defaults/before-build')
-const { hmrOptions } = require('../libs/require-koot')('defaults/webpack-dev-server')
+} = require('koot/defaults/before-build')
+const { hmrOptions } = require('koot/defaults/webpack-dev-server')
 
 // const {
 //     entryClientHMR
-// } = require('../libs/require-koot')('defaults/webpack-dev-server')
+// } = require('koot/defaults/webpack-dev-server')
 
 const createTargetDefaultConfig = require('./create-target-default')
 const transformConfigExtendDefault = require('./transform-config-extend-default')
 const transformConfigLast = require('./transform-config-last')
 const transformOutputPublicpath = require('./transform-output-publicpath')
 
-const getCwd = require('../libs/require-koot')('utils/get-cwd')
-const getWDSport = require('../libs/require-koot')('utils/get-webpack-dev-server-port')
-const getDirDistPublic = require('../libs/require-koot')('libs/get-dir-dist-public')
-const getDirTemp = require('../libs/require-koot')('libs/get-dir-tmp')
-const getFilenameSPATemplateInject = require('../libs/require-koot')('libs/get-filename-spa-template-inject')
-const validatePathname = require('../libs/require-koot')('libs/validate-pathname')
-const isI18nEnabled = require('../libs/require-koot')('i18n/is-enabled')
+const getCwd = require('koot/utils/get-cwd')
+const getWDSport = require('koot/utils/get-webpack-dev-server-port')
+const getDirDistPublic = require('koot/libs/get-dir-dist-public')
+const getDirTemp = require('koot/libs/get-dir-tmp')
+const getFilenameSPATemplateInject = require('koot/libs/get-filename-spa-template-inject')
+const validatePathname = require('koot/libs/validate-pathname')
+const isI18nEnabled = require('koot/i18n/is-enabled')
 
 /**
  * Webpack 配置处理 - 客户端配置

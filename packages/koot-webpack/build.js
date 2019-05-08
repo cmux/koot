@@ -15,23 +15,23 @@ const {
     keyConfigQuiet,
     keyConfigWebpackSPATemplateInject,
     filenameBuilding, filenameBuildFail,
-} = require('./libs/require-koot')('defaults/before-build')
+} = require('koot/defaults/before-build')
 
-const __ = require('./libs/require-koot')('utils/translate')
-const spinner = require('./libs/require-koot')('utils/spinner')
-const getDistPath = require('./libs/require-koot')('utils/get-dist-path')
-const getAppType = require('./libs/require-koot')('utils/get-app-type')
-const readBaseConfig = require('./libs/require-koot')('utils/read-base-config')
-// const getCwd = require('./libs/require-koot')('utils/get-cwd')
-// const sleep = require('./libs/require-koot')('utils/sleep')
+const __ = require('koot/utils/translate')
+const spinner = require('koot/utils/spinner')
+const getDistPath = require('koot/utils/get-dist-path')
+const getAppType = require('koot/utils/get-app-type')
+const readBaseConfig = require('koot/utils/read-base-config')
+// const getCwd = require('koot/utils/get-cwd')
+// const sleep = require('koot/utils/sleep')
 
-const _log = require('./libs/require-koot')('libs/log')
-const elapse = require('./libs/require-koot')('libs/elapse.js')
-const emptyTempConfigDir = require('./libs/require-koot')('libs/empty-temp-config-dir')
-const getHistoryTypeFromConfig = require('./libs/require-koot')('libs/get-history-type-from-config')
-const getDirDevTmp = require('./libs/require-koot')('libs/get-dir-dev-tmp')
-const getDirDistPublic = require('./libs/require-koot')('libs/get-dir-dist-public')
-const getDirDistPublicFoldername = require('./libs/require-koot')('libs/get-dir-dist-public-foldername')
+const _log = require('koot/libs/log')
+const elapse = require('koot/libs/elapse.js')
+const emptyTempConfigDir = require('koot/libs/empty-temp-config-dir')
+const getHistoryTypeFromConfig = require('koot/libs/get-history-type-from-config')
+const getDirDevTmp = require('koot/libs/get-dir-dev-tmp')
+const getDirDistPublic = require('koot/libs/get-dir-dist-public')
+const getDirDistPublicFoldername = require('koot/libs/get-dir-dist-public-foldername')
 
 const createWebpackConfig = require('./factory-config/create')
 const validateWebpackDevServerPort = require('./factory-config/validate-webpack-dev-server-port')
@@ -39,9 +39,9 @@ const validateWebpackDevServerPort = require('./factory-config/validate-webpack-
 
 const afterServerProd = require('./factory-config/_lifecyle/after-server-prod')
 const cleanAndWriteLogFiles = require('./libs/write-log-and-clean-old-files')
-const removeBuildFlagFiles = require('./libs/require-koot')('libs/remove-build-flag-files')
+const removeBuildFlagFiles = require('koot/libs/remove-build-flag-files')
 
-const createPWAsw = require('./libs/require-koot')('core/pwa/create')
+const createPWAsw = require('koot/core/pwa/create')
 
 const buildClient = require('./build-client')
 
@@ -53,10 +53,10 @@ const buildClient = require('./build-client')
 // const RUN_PATH = getCwd()
 
 // 初始化环境变量
-require('./libs/require-koot')('utils/init-node-env')()
+require('koot/utils/init-node-env')()
 
 // 用户自定义系统配置
-// const SYSTEM_CONFIG = require('./libs/require-koot')('config/system')
+// const SYSTEM_CONFIG = require('koot/config/system')
 // const DIST_PATH = require('')
 
 process.env.DO_WEBPACK = false
@@ -595,7 +595,7 @@ module.exports = async (kootConfig = {}) => {
             },
             before: (app) => {
                 if (appType === 'ReactSPA') {
-                    require('./libs/require-koot')('ReactSPA/dev-server/extend')(app)
+                    require('koot/ReactSPA/dev-server/extend')(app)
                 }
                 if (typeof before === 'function')
                     return before(app)

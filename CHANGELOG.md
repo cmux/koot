@@ -1,6 +1,6 @@
 
-## 0.9.0 (Beta)
-**2019-05-07** (beta.6)
+## 0.9.0 (beta)
+**2019-05-08** (beta.7)
 - **重大改动**
   - 调整默认的 React SSR 项目客户端打包结果目录结构
     - 现在会在 `public` 目录下建立多个名为 `koot-[时间戳]` 的目录
@@ -56,6 +56,7 @@
       - `@babel/register` -> _7.4.4_
       - `copy-webpack-plugin` -> _5.0.3_
       - `es5-shim` -> _4.5.13_
+      - `glob` -> _7.1.4_
       - `is-port-reachable` -> _2.0.1_
       - `postcss` -> _7.0.16_
       - `react-hot-loader` -> _4.8.4_

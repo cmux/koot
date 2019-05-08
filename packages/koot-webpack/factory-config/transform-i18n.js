@@ -1,7 +1,7 @@
 const fs = require('fs-extra')
 const path = require('path')
 // const chalk = require('chalk')
-const getCwd = require('../libs/require-koot')('utils/get-cwd')
+const getCwd = require('koot/utils/get-cwd')
 
 /**
  * 处理 i18n 配置。以下内容写入环境变量

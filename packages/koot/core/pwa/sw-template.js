@@ -7,6 +7,9 @@ const CACHE_NAME = 'koot-sw-cache'
 const urlsToCache = [/* APPEND URLS HERE */]
 
 function addToCache(request, response) {
+    if (response.type === 'opaqueredirect')
+        return response
+
     if (response.ok) {
         const copy = response.clone()
         caches.open(CACHE_NAME).then(cache => {
@@ -16,6 +19,7 @@ function addToCache(request, response) {
         console.log('Request fail', response, request)
         throw new Error(response)
     }
+
     return response
 }
 

@@ -1,4 +1,4 @@
-const writeChunkmap = require('../libs/require-koot')('utils/write-chunkmap')
+const writeChunkmap = require('koot/utils/write-chunkmap')
 const isHotUpdate = require('../libs/is-compilation-hot-update-only')
 
 /**

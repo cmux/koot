@@ -8,7 +8,7 @@ const md5 = require('md5')
 
 const stats = require('./stats')
 const replaceSelector = require('./replace-selector')
-const { classNameHashLength: defaultClassNameHashLength } = require('../../libs/require-koot')('defaults/koot-config')
+const { classNameHashLength: defaultClassNameHashLength } = require('koot/defaults/koot-config')
 
 module.exports = function (content) {
     this.cacheable && this.cacheable()

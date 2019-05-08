@@ -1,4 +1,4 @@
-const { keyConfigBuildDll } = require('./libs/require-koot')('defaults/before-build')
+const { keyConfigBuildDll } = require('koot/defaults/before-build')
 const build = require('./build')
 
 /**

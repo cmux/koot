@@ -1,5 +1,5 @@
 
-const defaults = require('../libs/require-koot')('defaults/pwa')
+const defaults = require('koot/defaults/pwa')
 
 /**
  * 处理 PWA 配置。以下内容写入环境变量

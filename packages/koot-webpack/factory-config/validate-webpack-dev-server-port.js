@@ -1,5 +1,5 @@
 const isPortReachable = require('is-port-reachable')
-const getFreePort = require('../libs/require-koot')('libs/get-free-port')
+const getFreePort = require('koot/libs/get-free-port')
 
 /**
  * 仅限开发环境

@@ -1,8 +1,8 @@
 const fs = require('fs-extra')
 const path = require('path')
 
-const getCwd = require('./require-koot')('utils/get-cwd')
-const log = require('./require-koot')('libs/log')
+const getCwd = require('koot/utils/get-cwd')
+const log = require('koot/libs/log')
 
 /** @type {Number} 同类型的日志文件保存的数量 (超过的日志文件会被删除) */
 const filesSameTypeKeep = 1

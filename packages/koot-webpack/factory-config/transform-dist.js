@@ -1,7 +1,7 @@
 const fs = require('fs-extra')
 const path = require('path')
 const validate = require('./validate-dist')
-const getCwd = require('../libs/require-koot')('utils/get-cwd')
+const getCwd = require('koot/utils/get-cwd')
 
 /**
  * 处理打包路径。确保目标路径存在。以下内容写入环境变量

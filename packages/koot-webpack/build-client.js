@@ -1,7 +1,7 @@
 const webpack = require('webpack')
 const {
     keyConfigWebpackSPATemplateInject,
-} = require('./libs/require-koot')('defaults/before-build')
+} = require('koot/defaults/before-build')
 
 /**
  * 执行打包: client

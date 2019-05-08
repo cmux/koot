@@ -1,4 +1,4 @@
-// const getDirDevCache = require('../../../libs/require-koot')('libs/get-dir-dev-cache')
+// const getDirDevCache = require('koot/libs/get-dir-dev-cache')
 
 /**
  * Loader 规则 - Javascript

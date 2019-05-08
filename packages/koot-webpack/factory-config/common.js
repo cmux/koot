@@ -6,10 +6,10 @@ const webpack = require('webpack')
 
 const createModuleRules = require('./module/rules')
 const KootResetCssLoaderPlugin = require('../plugins/reset-css-loader')
-const defaultDefines = require('../libs/require-koot')('defaults/defines')
-const { keyConfigBuildDll } = require('../libs/require-koot')('defaults/before-build')
-const getPathnameProjectConfigFile = require('../libs/require-koot')('utils/get-pathname-project-config-file')
-// const readBaseConfig = require('../libs/require-koot')('utils/read-base-config')
+const defaultDefines = require('koot/defaults/defines')
+const { keyConfigBuildDll } = require('koot/defaults/before-build')
+const getPathnameProjectConfigFile = require('koot/utils/get-pathname-project-config-file')
+// const readBaseConfig = require('koot/utils/read-base-config')
 
 // 打包结果目录
 const outputPath = 'dist'

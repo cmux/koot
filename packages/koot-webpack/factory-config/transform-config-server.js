@@ -7,16 +7,16 @@ const DefaultWebpackConfig = require('webpack-config').default
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const KootI18nPlugin = require('../plugins/i18n')
 const DevModePlugin = require('../plugins/dev-mode')
-const { keyConfigBuildDll } = require('../libs/require-koot')('defaults/before-build')
+const { keyConfigBuildDll } = require('koot/defaults/before-build')
 
 const createTargetDefaultConfig = require('./create-target-default')
 const transformConfigExtendDefault = require('./transform-config-extend-default')
 const transformConfigLast = require('./transform-config-last')
 const transformOutputPublicpath = require('./transform-output-publicpath')
 
-const getCwd = require('../libs/require-koot')('utils/get-cwd')
-const getDirDistPublic = require('../libs/require-koot')('libs/get-dir-dist-public')
-const getDirDevTmp = require('../libs/require-koot')('libs/get-dir-dev-tmp')
+const getCwd = require('koot/utils/get-cwd')
+const getDirDistPublic = require('koot/libs/get-dir-dist-public')
+const getDirDevTmp = require('koot/libs/get-dir-dev-tmp')
 
 /**
  * Webpack 配置处理 - 服务器端配置

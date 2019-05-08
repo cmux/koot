@@ -5,6 +5,7 @@ const getKootFile = require('./get-koot-file')
 
 /**
  * 引用 koot 主包中的文件
+ * @deprecated
  * @param {String} theModule module 名
  * @returns {*} module
  */
