@@ -945,6 +945,7 @@ module.exports = {
 
 ### classNameHashLength
 
+- 需要: `koot >= 0.9`
 - 类型: `Number`
 - 默认值: `6`
 - **仅针对**: Webpack 打包过程
@@ -963,6 +964,7 @@ module.exports = {
 
 ### bundleVersionsKeep
 
+- 需要: `koot >= 0.9`
 - 类型: `Number`
 - 默认值: `2`
 - **仅针对**: 同构/SSR 项目的生产环境下的 Webpack 打包过程
@@ -1098,6 +1100,7 @@ module.exports = {
 
 ### devMemoryAllocation
 
+- 需要: `koot >= 0.9`
 - 类型: `Number` 或 `Object`
 - 默认值: _无_
 - **仅针对**: 开发环境
