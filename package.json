@@ -44,7 +44,7 @@
         "lerna": "3.13.4",
         "lerna-wizard": "1.0.9",
         "eslint": "5.16.0",
-        "eslint-config-koot": "0.0.1",
+        "eslint-config-koot": "0.0.2",
         "babel-eslint": "10.0.1",
         "jest": "24.8.0",
         "puppeteer": "1.15.0",
@@ -55,7 +55,20 @@
         "chalk": "2.4.2",
         "latest-version": "5.1.0",
         "crlf": "1.1.1",
-        "simple-git": "1.112.0",
-        "prettier": "1.17.0"
+        "simple-git": "1.113.0",
+        "prettier": "1.17.0",
+        "husky": "2.2.0",
+        "lint-staged": "8.1.6"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged"
+        }
+    },
+    "lint-staged": {
+        "*.{js,jsx,ts,tsx,json,md}": [
+            "prettier --write",
+            "git add"
+        ]
     }
 }
