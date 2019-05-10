@@ -43,7 +43,7 @@
             -   `inquirer` -> _6.3.1_
             -   `mini-css-extract-plugin` -> _0.6.0_
             -   `pm2` -> _3.5.0_
-            -   `webpack` -> _4.30.0_
+            -   `webpack` -> _4.31.0_
             -   `webpack-bundle-analyzer` -> _3.3.2_
         -   patch
             -   `@babel/core` -> _7.4.4_

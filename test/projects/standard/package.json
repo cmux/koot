@@ -130,7 +130,7 @@
         "thread-loader": "2.1.2",
         "universal-alias-loader": "1.2.2",
         "url-loader": "1.1.2",
-        "webpack": "4.30.0",
+        "webpack": "4.31.0",
         "webpack-bundle-analyzer": "3.3.2",
         "webpack-config": "7.5.0",
         "webpack-dev-middleware": "3.6.2",
