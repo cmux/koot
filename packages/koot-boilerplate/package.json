@@ -48,13 +48,17 @@
     "bugs": {
         "url": "https://github.com/cmux/koot/issues"
     },
+    "eslintIgnore": [
+        "node_modules/**/*"
+    ],
     "husky": {
         "hooks": {
             "pre-commit": "lint-staged"
         }
     },
     "lint-staged": {
-        "*.{js,jsx,ts,tsx,json,md}": [
+        "*.{js,jsx,ts,tsx,md}": [
+            "eslint --fix",
             "prettier --write",
             "git add"
         ]
