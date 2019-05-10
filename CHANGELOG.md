@@ -74,7 +74,10 @@
             -   `package-json` -> _6.3.0_
 -   **koot-boilerplate**
     -   添加 `eslint-config-koot` 和 `prettier` 配置
-    -   使用 Webpack 的 `import()` 语法更新动态路由的写法
+    -   添加 `husky` 和 `lint-stagged` 开发依赖包和相关配置
+        -   在 `git commit` 之前，自动对部分语法和编写习惯进行修复
+    -   更新动态路由的写法
+        -   使用 Webpack 的 `import()` 语法
 
 ## 0.8.9
 

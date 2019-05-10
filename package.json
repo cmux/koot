@@ -44,7 +44,7 @@
         "lerna": "3.13.4",
         "lerna-wizard": "1.0.9",
         "eslint": "5.16.0",
-        "eslint-config-koot": "0.0.2",
+        "eslint-config-koot": "0.0.3",
         "babel-eslint": "10.0.1",
         "jest": "24.8.0",
         "puppeteer": "1.15.0",
