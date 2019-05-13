@@ -1,6 +1,6 @@
-## 0.9.0 (beta)
+## 0.9.0 (RC)
 
-**2019-05-08** (beta.7)
+**2019-05-13** (rc.0)
 
 -   **重大改动**
     -   调整默认的 React SSR 项目客户端打包结果目录结构
@@ -37,8 +37,9 @@
         -   major
             -   `cache-loader` -> _3.0.0_
             -   `cli-spinners` -> _2.1.0_
+            -   `fs-extra` -> _8.0.0_
             -   `less-loader` -> _5.0.0_
-            -   `opn` -> `open` _6.2.0_
+            -   `opn` -> `open` _6.3.0_
         -   minor
             -   `inquirer` -> _6.3.1_
             -   `mini-css-extract-plugin` -> _0.6.0_
@@ -55,6 +56,7 @@
             -   `@babel/polyfill` -> _7.4.4_
             -   `@babel/preset-env` -> _7.4.4_
             -   `@babel/register` -> _7.4.4_
+            -   `babel-loader` -> _8.0.6_
             -   `copy-webpack-plugin` -> _5.0.3_
             -   `es5-shim` -> _4.5.13_
             -   `glob` -> _7.1.4_
@@ -65,6 +67,7 @@
 -   **koot-cli**
     -   更新依赖包
         -   major
+            -   `fs-extra` -> _8.0.0_
             -   `semver` -> _6.0.0_
         -   minor
             -   `inquirer` -> _6.3.1_
