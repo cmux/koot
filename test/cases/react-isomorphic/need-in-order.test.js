@@ -1,3 +1,7 @@
+/**
+ * React SSR 完全测试
+ */
+
 // jest configuration
 
 jest.setTimeout(24 * 60 * 60 * 1 * 1000);
@@ -139,6 +143,9 @@ const doTest = async (port, settings = {}) => {
         );
     };
 
+    const getSSRState = async page =>
+        await page.evaluate(() => window.__REDUX_STATE__);
+
     // 测试: 同构结果
     {
         const res = await page
@@ -175,26 +182,57 @@ const doTest = async (port, settings = {}) => {
             const pageUrl = await page.url();
             expect(new RegExp(`^${origin}/.+`).test(pageUrl)).toBe(true);
         }
-
-        // TODO: 数据同构
-
-        // TODO: title, meta 标签正确性
     }
 
-    // 测试: 利用强制切换语种 URL 访问时，语种应正确
+    // 测试: 利用 URL 可切换到对应语种，并且 SSR 数据正确
     {
-        const testLocaleIdByQuery = async localeId => {
+        const testTargetLocaleId = async (localeId, infos = {}) => {
             const gotoUrl = i18nUseRouter
-                ? `${origin}/${localeId}`
-                : `${origin}?${changeLocaleQueryKey}=${localeId}`;
+                ? `${origin}/${localeId}/extend`
+                : `${origin}/extend?${changeLocaleQueryKey}=${localeId}`;
+
             await page.goto(gotoUrl, {
                 waitUntil: 'networkidle0'
             });
+
             const theLocaleId = await getLocaleId(page);
             expect(theLocaleId).toBe(localeId);
+
+            const pageTitle = await page.evaluate(
+                () => document.querySelector('title').innerText
+            );
+            expect(pageTitle).toBe(infos.title);
+
+            const pageDescription = await page.evaluate(
+                () =>
+                    document.querySelector('meta[description]') &&
+                    document
+                        .querySelector('meta[description]')
+                        .getAttribute('description')
+            );
+            expect(pageDescription).toBe(infos.description);
+
+            const SSRState = await getSSRState(page);
+            expect(typeof SSRState.infos.serverTimestamp).toBe('number');
+
+            const SSRServerTime = await page.evaluate(
+                () =>
+                    document.querySelector('.timestamp strong') &&
+                    new Date(
+                        document.querySelector('.timestamp strong').innerText
+                    ).getTime()
+            );
+            expect(SSRServerTime).toBe(SSRState.infos.serverTimestamp);
         };
-        await testLocaleIdByQuery('zh');
-        await testLocaleIdByQuery('en');
+
+        await testTargetLocaleId('zh', {
+            title: '组件扩展 - Koot.js 模板项目',
+            description: '简介：Koot.js 组件扩展'
+        });
+        await testTargetLocaleId('en', {
+            title: 'Component Extend - Koot.js boilerplate',
+            description: 'Summary information for Koot.js Component Extend.'
+        });
     }
 
     // 测试: 到其他语种的链接
