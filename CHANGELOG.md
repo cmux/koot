@@ -35,9 +35,9 @@
         -   修正某些情况下，自动生成的 `service-worker` 文件无法正常处理离线请求的问题
     -   更新依赖包
         -   major
-            -   `cache-loader` -> _3.0.0_
+            -   `cache-loader` -> _3.0.1_
             -   `cli-spinners` -> _2.1.0_
-            -   `fs-extra` -> _8.0.0_
+            -   `fs-extra` -> _8.0.1_
             -   `less-loader` -> _5.0.0_
             -   `opn` -> `open` _6.3.0_
         -   minor
@@ -64,10 +64,11 @@
             -   `postcss` -> _7.0.16_
             -   `react-hot-loader` -> _4.8.4_
             -   `webpack-hot-middleware` -> _2.24.4_
+            -   `yargs` -> _13.2.4_
 -   **koot-cli**
     -   更新依赖包
         -   major
-            -   `fs-extra` -> _8.0.0_
+            -   `fs-extra` -> _8.0.1_
             -   `semver` -> _6.0.0_
         -   minor
             -   `inquirer` -> _6.3.1_
