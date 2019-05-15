@@ -18,7 +18,6 @@ const util = require('util');
 const execSync = require('child_process').exec;
 const exec = util.promisify(require('child_process').exec);
 const puppeteer = require('puppeteer');
-const doTerminate = require('terminate');
 const chalk = require('chalk');
 
 //
@@ -29,6 +28,9 @@ const {
     styles: puppeteerTestStyles,
     customEnv: puppeteerTestCustomEnv
 } = require('../puppeteer-test');
+const addCommand = require('../../libs/add-command-to-package-json');
+const terminate = require('../../libs/terminate-process');
+const waitForPort = require('../../libs/get-port-from-child-process');
 
 //
 
@@ -50,68 +52,25 @@ const headless = true;
 
 //
 
-/**
- * 向 package.json 里添加 npm 命令
- * @async
- * @param {String} name
- * @param {String} command
- * @param {String} cwd
- */
-const addCommand = async (name, command, cwd) => {
-    const pathPackage = path.resolve(cwd, 'package.json');
-    const p = await fs.readJson(pathPackage);
-    // if (!p.scripts[name])
-    p.scripts[name] = command;
-    await fs.writeJson(pathPackage, p, {
-        spaces: 4
-    });
+const defaultViewport = {
+    width: 800,
+    height: 800,
+    deviceScaleFactor: 1
 };
+let browser;
 
-/**
- * 终止进程
- * @async
- * @param {*} pid
- */
-const terminate = async pid =>
-    new Promise((resolve, reject) => {
-        doTerminate(pid, err => {
-            if (err) return reject(err);
-            resolve();
-        });
-    });
+beforeAll(() =>
+    puppeteer
+        .launch({
+            headless,
+            defaultViewport
+        })
+        .then(theBrowser => {
+            browser = theBrowser;
+        })
+);
 
-/**
- * 通过检查子进程的输出/日志/log，等待、分析并返回端口号
- * @async
- * @param {Process} child
- * @param {RegExp} regex
- * @returns {Number} port
- */
-const waitForPort = async (child, regex = /port.*\[32m([0-9]+)/) =>
-    await new Promise(resolve => {
-        let port;
-
-        child.stdout.on('data', msg => {
-            // console.log(msg)
-            try {
-                const obj = JSON.parse(msg);
-                if (obj['koot-test']) {
-                    port = obj.port;
-                }
-            } catch (e) {}
-
-            if (!port) {
-                const matches = regex.exec(msg);
-                if (Array.isArray(matches) && matches.length > 1) {
-                    port = parseInt(matches[1]);
-                }
-            }
-
-            if (port) {
-                return resolve(port);
-            }
-        });
-    });
+afterAll(() => browser.close());
 
 /**
  * 测试项目
@@ -123,11 +82,6 @@ const doTest = async (port, settings = {}) => {
     const { isDev = false, enableJavascript = true, customEnv = {} } = settings;
     customEnv.notexist = undefined;
 
-    const defaultViewport = {
-        width: 800,
-        height: 800,
-        deviceScaleFactor: 1
-    };
     const checkBackgroundResult = styleValue => {
         return styleValue.match(/url\([ "']*(.+?)[ '"]*\)/g).every(assetUri => {
             return assetUri.includes(
@@ -145,11 +99,8 @@ const doTest = async (port, settings = {}) => {
         await page.waitFor(200);
     };
 
-    const browser = await puppeteer.launch({
-        headless,
-        defaultViewport
-    });
-    const page = await browser.newPage();
+    const context = await browser.createIncognitoBrowserContext();
+    const page = await context.newPage();
     // await page.setJavaScriptEnabled(enableJavascript)
     if (!enableJavascript) {
         await page.setRequestInterception(true);
@@ -200,7 +151,7 @@ const doTest = async (port, settings = {}) => {
     await puppeteerTestStyles(page);
     await puppeteerTestCustomEnv(page, customEnv);
 
-    await browser.close();
+    await context.close();
 };
 
 /**

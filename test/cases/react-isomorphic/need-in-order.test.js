@@ -14,7 +14,6 @@ const util = require('util');
 const execSync = require('child_process').exec;
 const exec = util.promisify(require('child_process').exec);
 const puppeteer = require('puppeteer');
-const doTerminate = require('terminate');
 const chalk = require('chalk');
 
 //
@@ -24,6 +23,9 @@ const {
 } = require('../../../packages/koot/defaults/defines');
 const removeTempProjectConfig = require('../../../packages/koot/libs/remove-temp-project-config');
 const sleep = require('../../../packages/koot/utils/sleep');
+const addCommand = require('../../libs/add-command-to-package-json');
+const terminate = require('../../libs/terminate-process');
+const waitForPort = require('../../libs/get-port-from-child-process');
 
 //
 
@@ -47,68 +49,19 @@ const headless = true;
 
 //
 
-/**
- * 向 package.json 里添加 npm 命令
- * @async
- * @param {String} name
- * @param {String} command
- * @param {String} cwd
- */
-const addCommand = async (name, command, cwd) => {
-    const pathPackage = path.resolve(cwd, 'package.json');
-    const p = await fs.readJson(pathPackage);
-    // if (!p.scripts[name])
-    p.scripts[name] = command;
-    await fs.writeJson(pathPackage, p, {
-        spaces: 4
-    });
-};
+let browser;
 
-/**
- * 终止进程
- * @async
- * @param {*} pid
- */
-const terminate = async pid =>
-    new Promise((resolve, reject) => {
-        doTerminate(pid, err => {
-            if (err) return reject(err);
-            resolve();
-        });
-    });
+beforeAll(() =>
+    puppeteer
+        .launch({
+            headless
+        })
+        .then(theBrowser => {
+            browser = theBrowser;
+        })
+);
 
-/**
- * 通过检查子进程的输出/日志/log，等待、分析并返回端口号
- * @async
- * @param {Process} child
- * @param {RegExp} regex
- * @returns {Number} port
- */
-const waitForPort = async (child, regex = /port.*\[32m([0-9]+)/) =>
-    await new Promise(resolve => {
-        let port;
-
-        child.stdout.on('data', msg => {
-            // console.log(msg)
-            try {
-                const obj = JSON.parse(msg);
-                if (obj['koot-test']) {
-                    port = obj.port;
-                }
-            } catch (e) {}
-
-            if (!port) {
-                const matches = regex.exec(msg);
-                if (Array.isArray(matches) && matches.length > 1) {
-                    port = parseInt(matches[1]);
-                }
-            }
-
-            if (port) {
-                return resolve(port);
-            }
-        });
-    });
+afterAll(() => browser.close());
 
 /**
  * 从配置文件中分析服务器端口号
@@ -128,10 +81,8 @@ const waitForPort = async (child, regex = /port.*\[32m([0-9]+)/) =>
  * @param {Object} [settings.i18nUseRouter=false] 多语言使用路由模式
  */
 const doTest = async (port, settings = {}) => {
-    const browser = await puppeteer.launch({
-        headless
-    });
-    const page = await browser.newPage();
+    const context = await browser.createIncognitoBrowserContext();
+    const page = await context.newPage();
     const origin = isNaN(port) ? port : `http://127.0.0.1:${port}`;
     const { i18nUseRouter = false, isDev = false } = settings;
 
@@ -300,7 +251,7 @@ const doTest = async (port, settings = {}) => {
     if (!isDev) {
         await Promise.all([
             new Promise(async resolve => {
-                const pageDelayed = await browser.newPage();
+                const pageDelayed = await context.newPage();
                 const localeIdDelayed = 'en';
                 const gotoUrlDelayed = i18nUseRouter
                     ? `${origin}/${localeIdDelayed}/delayed`
@@ -385,7 +336,7 @@ const doTest = async (port, settings = {}) => {
 
     // TODO: 测试: 同一个通配路由，访问另一个URL，检查同构结果 (connect component 是否可用)
 
-    await browser.close();
+    await context.close();
 };
 
 /**
