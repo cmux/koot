@@ -9,14 +9,21 @@
         "jsx": "react",
         "baseUrl": ".",
         "paths": {
+            "@src": ["./src"],
             "@src/*": ["./src/*"],
+            "@assets": ["./src/assets"],
             "@assets/*": ["./src/assets/*"],
+            "@components": ["./src/components"],
             "@components/*": ["./src/components/*"],
+            "@constants": ["./src/constants"],
             "@constants/*": ["./src/constants/*"],
-            "@services/*": ["./src/services/*"],
+            "@store": ["./src/store"],
             "@store/*": ["./src/store/*"],
+            "@views": ["./src/views"],
             "@views/*": ["./src/views/*"],
-            "@server/*": ["./server/*"],
+            "@server": ["./src/server"],
+            "@server/*": ["./src/server/*"],
+            "~Assets": ["./src/assets"],
             "~Assets/*": ["./src/assets/*"],
             "~/*": ["./src/*"]
         }

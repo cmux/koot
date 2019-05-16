@@ -42,7 +42,7 @@
     },
     "devDependencies": {
         "camelcase": "5.3.1",
-        "lerna": "3.14.0",
+        "lerna": "3.14.1",
         "lerna-wizard": "1.0.9",
         "eslint": "5.16.0",
         "eslint-config-koot": "0.1.1",
@@ -59,7 +59,7 @@
         "simple-git": "1.113.0",
         "prettier": "1.17.1",
         "husky": "2.3.0",
-        "lint-staged": "8.1.6"
+        "lint-staged": "8.1.7"
     },
     "eslintIgnore": [
         "node_modules/**/*"
@@ -70,12 +70,12 @@
         }
     },
     "lint-staged": {
-        "*.{js,jsx,ts,tsx}": [
+        "*.{js,jsx,ts,tsx,cjs,mjs}": [
             "eslint --fix",
             "prettier --write",
             "git add"
         ],
-        "*.{json,md}": [
+        "*.{json,md,css,less,sass,scss}": [
             "prettier --write",
             "git add"
         ]

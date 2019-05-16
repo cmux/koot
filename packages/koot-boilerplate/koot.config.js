@@ -37,7 +37,7 @@ module.exports = {
         '@constants': path.resolve('./src/constants'),
         '@locales': path.resolve('./src/locales'),
         '@router': path.resolve('./src/router'),
-        '@services': path.resolve('./src/services'),
+        '@server': path.resolve('./src/server'),
         '@store': path.resolve('./src/store'),
         '@views': path.resolve('./src/views'),
         '~vars.less': path.resolve('./src/constants/less-variables/_all.less')

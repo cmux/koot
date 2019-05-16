@@ -39,7 +39,7 @@
         "eslint-config-koot": "0.1.1",
         "husky": "2.3.0",
         "jest": "24.8.0",
-        "lint-staged": "8.1.6",
+        "lint-staged": "8.1.7",
         "normalize.css": "8.0.1",
         "prettier": "1.17.1",
         "redux-logger": "3.0.6",
@@ -57,12 +57,12 @@
         }
     },
     "lint-staged": {
-        "*.{js,jsx,ts,tsx}": [
+        "*.{js,jsx,ts,tsx,cjs,mjs}": [
             "eslint --fix",
             "prettier --write",
             "git add"
         ],
-        "*.{json,md}": [
+        "*.{json,md,css,less,sass,scss}": [
             "prettier --write",
             "git add"
         ]

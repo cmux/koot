@@ -37,6 +37,7 @@
         -   major
             -   `cache-loader` -> _3.0.1_
             -   `cli-spinners` -> _2.1.0_
+            -   `cookie` -> _0.4.0_
             -   `fs-extra` -> _8.0.1_
             -   `less-loader` -> _5.0.0_
             -   `opn` -> `open` _6.3.0_
@@ -46,6 +47,8 @@
             -   `pm2` -> _3.5.0_
             -   `webpack` -> _4.31.0_
             -   `webpack-bundle-analyzer` -> _3.3.2_
+            -   `webpack-dev-middleware` -> _3.7.0_
+            -   `webpack-hot-middleware` -> _2.25.0_
         -   patch
             -   `@babel/core` -> _7.4.4_
             -   `@babel/plugin-proposal-class-properties` -> _7.4.4_
@@ -62,8 +65,7 @@
             -   `glob` -> _7.1.4_
             -   `is-port-reachable` -> _2.0.1_
             -   `postcss` -> _7.0.16_
-            -   `react-hot-loader` -> _4.8.4_
-            -   `webpack-hot-middleware` -> _2.24.4_
+            -   `react-hot-loader` -> _4.8.5_
             -   `yargs` -> _13.2.4_
 -   **koot-cli**
     -   更新依赖包
