@@ -360,9 +360,9 @@ describe('测试: React 同构项目', () => {
                     fs.existsSync(path.resolve(dirPublic, 'service-worker.js'))
                 ).toBe(false);
 
-                const files = (await fs.readdir(dirPublic)).map(filename =>
-                    path.resolve(dirPublic, filename)
-                );
+                const files = (await fs.readdir(dirPublic))
+                    .filter(filename => filename !== '.koot-current')
+                    .map(filename => path.resolve(dirPublic, filename));
                 const kootVersionFolders = (await fs.readdir(dirPublic)).filter(
                     filename => {
                         const file = path.resolve(dirPublic, filename);
