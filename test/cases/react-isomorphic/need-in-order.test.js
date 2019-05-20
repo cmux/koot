@@ -137,6 +137,13 @@ const doTest = async (port, settings = {}) => {
 
     // 测试: 利用 URL 可切换到对应语种，并且 SSR 数据正确
     {
+        /**
+         * 测试目标语种
+         * @param {String} localeId 语种ID
+         * @param {Object} infos 测试目标值
+         * @param {String} infos.title 页面标题
+         * @param {String} infos.description 页面简介
+         */
         const testTargetLocaleId = async (localeId, infos = {}) => {
             const gotoUrl = i18nUseRouter
                 ? `${origin}/${localeId}/extend`
@@ -146,14 +153,17 @@ const doTest = async (port, settings = {}) => {
                 waitUntil: 'networkidle0'
             });
 
+            // 测试语种 ID 正确
             const theLocaleId = await getLocaleId(page);
             expect(theLocaleId).toBe(localeId);
 
+            // 测试页面标题正确
             const pageTitle = await page.evaluate(
                 () => document.querySelector('title').innerText
             );
             expect(pageTitle).toBe(infos.title);
 
+            // 测试页面简介正确
             const pageDescription = await page.evaluate(
                 () =>
                     document.querySelector('meta[description]') &&
@@ -163,9 +173,8 @@ const doTest = async (port, settings = {}) => {
             );
             expect(pageDescription).toBe(infos.description);
 
+            // 测试 SSR Redux state 正确
             const SSRState = await getSSRState(page);
-            expect(typeof SSRState.infos.serverTimestamp).toBe('number');
-
             const SSRServerTime = await page.evaluate(
                 () =>
                     document.querySelector('.timestamp strong') &&
@@ -173,6 +182,7 @@ const doTest = async (port, settings = {}) => {
                         document.querySelector('.timestamp strong').innerText
                     ).getTime()
             );
+            expect(typeof SSRState.infos.serverTimestamp).toBe('number');
             expect(SSRServerTime).toBe(SSRState.infos.serverTimestamp);
         };
 
