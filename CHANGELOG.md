@@ -65,7 +65,7 @@
             -   `glob` -> _7.1.4_
             -   `is-port-reachable` -> _2.0.1_
             -   `postcss` -> _7.0.16_
-            -   `react-hot-loader` -> _4.8.5_
+            -   `react-hot-loader` -> _4.8.6_
             -   `yargs` -> _13.2.4_
 -   **koot-cli**
     -   更新依赖包
