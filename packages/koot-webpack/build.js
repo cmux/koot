@@ -16,6 +16,7 @@ const {
     keyConfigWebpackSPATemplateInject,
     filenameBuilding,
     filenameBuildFail,
+    WEBPACK_OUTPUT_PATH,
     CLIENT_ROOT_PATH
 } = require('koot/defaults/before-build');
 
@@ -150,6 +151,8 @@ module.exports = async (kootConfig = {}) => {
     } = process.env;
     const kootTest = JSON.parse(KOOT_TEST_MODE);
 
+    const filenameKootCurrent = '.koot-current';
+
     // 开发环境下创建 DLL 模式时，默认为静音模式
     if (ENV === 'dev' && createDll) quietMode = true;
 
@@ -177,6 +180,23 @@ module.exports = async (kootConfig = {}) => {
 
     /** @type {Function} @async 流程回调: webpack 执行前 */
     const before = async () => {
+        await fs.ensureDir(data[WEBPACK_OUTPUT_PATH]);
+        if (STAGE === 'client') {
+            const dest = getDirDistPublic();
+            data[CLIENT_ROOT_PATH] = dest;
+            // 创建 Flag 文件
+            if (bundleVersionsKeep) {
+                const basename = path.basename(dest);
+                const dirPublic = path.resolve(
+                    data.dist,
+                    getDirDistPublicFoldername()
+                );
+                const file = path.resolve(dirPublic, filenameKootCurrent);
+                await fs.ensureFile(file);
+                await fs.writeFile(file, basename, 'utf-8');
+            }
+        }
+
         log('callback', 'build', `callback: ` + chalk.green('beforeBuild'));
         // 创建 DLL 模式下不执行传入的生命周期方法
         if (!createDll && typeof beforeBuild === 'function') {
@@ -244,6 +264,7 @@ module.exports = async (kootConfig = {}) => {
              * - 以 koot- 开头的文件，如果后面的字符为数字，数字大的排在前
              */
             const toRemove = (await fs.readdir(dirPublic))
+                .filter(filename => filename !== filenameKootCurrent)
                 .map(filename => path.resolve(dirPublic, filename))
                 // .filter(file => {
                 //     const lstat = fs.lstatSync(file)
@@ -264,17 +285,6 @@ module.exports = async (kootConfig = {}) => {
             for (const file of toRemove) {
                 await fs.remove(file);
             }
-
-            // 创建 Flag 文件
-            data[CLIENT_ROOT_PATH] = dest;
-            if (bundleVersionsKeep) {
-                const basename = path.basename(dest);
-                const file = path.resolve(dirPublic, '.current');
-                await fs.ensureFile(file);
-                await fs.writeFile(file, basename, 'utf-8');
-            }
-        } else if (STAGE === 'client') {
-            data[CLIENT_ROOT_PATH] = getDirDistPublic();
         }
 
         if (STAGE === 'server' && ENV === 'prod') {

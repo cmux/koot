@@ -873,11 +873,15 @@ module.exports = {
 
     /**
      * @async
-     * @param {Object} kootConfig koot 完整配置对象
+     * @param {Object} kootConfigWithExtra koot 完整配置对象，附加额外信息
      * @void
      */
-    webpackBefore: async kootConfig => ({
-        // ...
+    webpackBefore: async kootConfigWithExtra => ({
+        /*
+         * `kootConfigWithExtra` 对象中的额外信息
+         * - `__WEBPACK_OUTPUT_PATH` - 本次打包的目标目录
+         * - `__CLIENT_ROOT_PATH` - 仅针对客户端，本次打包结果的客户端根目录
+         */
     })
 };
 ```
@@ -897,16 +901,11 @@ module.exports = {
 
     /**
      * @async
-     * @param {Object} kootConfigWithExtra koot 完整配置对象，附加部分额外信息
+     * @param {Object} kootConfigWithExtra koot 完整配置对象，附加额外信息
      * @void
      */
     webpackAfter: async kootConfigWithExtra => ({
-        /*
-         * `kootConfigWithExtra` 对象中的额外信息
-         * - `__WEBPACK_OUTPUT_PATH` - 本次打包的目标目录
-         * - `__CLIENT_ROOT_PATH` - 仅针对客户端，本次打包结果的客户端根目录
-         */
-        // ...
+        // `kootConfigWithExtra` 中的额外信息详见上文 `webpackBefore` 的说明
     })
 };
 ```

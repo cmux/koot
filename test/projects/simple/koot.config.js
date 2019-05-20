@@ -30,16 +30,26 @@ module.exports = {
         if (ENV === 'prod') return await require('./config/webpack/prod');
         return {};
     },
-    webpackAfter: async (kootConfigWithExtra = {}) => {
-        const {
-            __WEBPACK_OUTPUT_PATH,
-            __CLIENT_ROOT_PATH
-        } = kootConfigWithExtra;
-        console.log({
-            __WEBPACK_OUTPUT_PATH,
-            __CLIENT_ROOT_PATH
-        });
-    },
+    // webpackBefore: async (kootConfigWithExtra = {}) => {
+    //     const {
+    //         __WEBPACK_OUTPUT_PATH,
+    //         __CLIENT_ROOT_PATH
+    //     } = kootConfigWithExtra;
+    //     console.log('before', {
+    //         __WEBPACK_OUTPUT_PATH,
+    //         __CLIENT_ROOT_PATH
+    //     });
+    // },
+    // webpackAfter: async (kootConfigWithExtra = {}) => {
+    //     const {
+    //         __WEBPACK_OUTPUT_PATH,
+    //         __CLIENT_ROOT_PATH
+    //     } = kootConfigWithExtra;
+    //     console.log('after', {
+    //         __WEBPACK_OUTPUT_PATH,
+    //         __CLIENT_ROOT_PATH
+    //     });
+    // },
     classNameHashLength: 1,
     // bundleVersionsKeep: false,
 
