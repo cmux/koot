@@ -60,9 +60,11 @@ const ssr = async (options = {}) => {
                 ? `/${LocaleId}`
                 : '/'
     };
+    /* eslint-disable react-hooks/rules-of-hooks */
     const memoryHistory = useRouterHistory(() => createMemoryHistory(url))(
         historyConfig
     );
+    /* eslint-enable react-hooks/rules-of-hooks */
     /** @type {Object} 已生成的 History 实例 */
     const History = syncHistoryWithStore(memoryHistory, Store);
 

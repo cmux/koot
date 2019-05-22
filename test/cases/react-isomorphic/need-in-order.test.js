@@ -97,8 +97,12 @@ const doTest = async (port, settings = {}) => {
     const getSSRState = async page =>
         await page.evaluate(() => window.__REDUX_STATE__);
 
-    // 测试: 同构结果
+    // 测试: 页面基本结构
     {
+        const failedResponse = [];
+        page.on('response', res => {
+            if (!res.ok() && res.status() !== 302) failedResponse.push(res);
+        });
         const res = await page
             .goto(origin, {
                 waitUntil: 'networkidle0'
@@ -106,8 +110,20 @@ const doTest = async (port, settings = {}) => {
             .catch();
         const pageContent = await page.content();
 
-        // 测试: 请求应 OK
+        // 测试: 页面请求应 OK
         expect(res.ok()).toBe(true);
+
+        // 测试: 没有失败的请求
+        if (failedResponse.length) {
+            console.log(
+                'failedResponse',
+                failedResponse.map(res => ({
+                    status: res.status(),
+                    url: res.url()
+                }))
+            );
+        }
+        expect(failedResponse.length).toBe(0);
 
         // 测试: 页面标题的注入应成功
         const pageTitle = await page.evaluate(
@@ -324,7 +340,17 @@ const doTest = async (port, settings = {}) => {
         expect(featureString).toBe(name);
     }
 
-    // TODO: 测试: 静态文件访问
+    // 测试: 利用 staticCopyFrom 配置复制的文件可访问
+    {
+        const testUrl = `${origin}/__test.txt`;
+        const testContent = 'TEST';
+        const res = await page.goto(testUrl, {
+            waitUntil: 'networkidle0'
+        });
+        const result = await res.text();
+        expect(res.ok()).toBe(true);
+        expect(result).toBe(testContent);
+    }
 
     // TODO: 测试: 所有 Webpack 结果资源的访问
 
@@ -346,6 +372,7 @@ const doTest = async (port, settings = {}) => {
 
     // TODO: 测试: 同一个通配路由，访问另一个URL，检查同构结果 (connect component 是否可用)
 
+    await page.close();
     await context.close();
 };
 
