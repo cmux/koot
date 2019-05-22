@@ -1,5 +1,8 @@
 /**
- * Webpack 打包相关
+ * Webpack 打包相关的常量，包括：
+ * - 文件名
+ * - 代码中使用的临时常量名
+ * - `koot.config.js` 的属性名
  */
 module.exports = {
     // 处理项目配置相关
@@ -47,5 +50,8 @@ module.exports = {
     filenameWebpackDevServerPortTemp: '.dev_webpack-dev-server_port',
     filenameBuilding: '.koot-building',
     filenameBuildFail: '.koot-build-fail',
-    filenameSPATemplateInjectJS: '.spa-template-inject.LOCALEID.js'
+    filenameSPATemplateInjectJS: '.spa-template-inject.LOCALEID.js',
+
+    // [生产环境] 文件名
+    filenameCurrentBundle: '.koot-current'
 };

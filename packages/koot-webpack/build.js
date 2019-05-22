@@ -16,6 +16,7 @@ const {
     keyConfigWebpackSPATemplateInject,
     filenameBuilding,
     filenameBuildFail,
+    filenameCurrentBundle,
     WEBPACK_OUTPUT_PATH,
     CLIENT_ROOT_PATH
 } = require('koot/defaults/before-build');
@@ -151,8 +152,6 @@ module.exports = async (kootConfig = {}) => {
     } = process.env;
     const kootTest = JSON.parse(KOOT_TEST_MODE);
 
-    const filenameKootCurrent = '.koot-current';
-
     // 开发环境下创建 DLL 模式时，默认为静音模式
     if (ENV === 'dev' && createDll) quietMode = true;
 
@@ -191,7 +190,7 @@ module.exports = async (kootConfig = {}) => {
                     data.dist,
                     getDirDistPublicFoldername()
                 );
-                const file = path.resolve(dirPublic, filenameKootCurrent);
+                const file = path.resolve(dirPublic, filenameCurrentBundle);
                 await fs.ensureFile(file);
                 await fs.writeFile(file, basename, 'utf-8');
             }
@@ -264,7 +263,7 @@ module.exports = async (kootConfig = {}) => {
              * - 以 koot- 开头的文件，如果后面的字符为数字，数字大的排在前
              */
             const toRemove = (await fs.readdir(dirPublic))
-                .filter(filename => filename !== filenameKootCurrent)
+                .filter(filename => filename !== filenameCurrentBundle)
                 .map(filename => path.resolve(dirPublic, filename))
                 // .filter(file => {
                 //     const lstat = fs.lstatSync(file)

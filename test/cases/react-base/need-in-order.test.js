@@ -22,6 +22,9 @@ const chalk = require('chalk');
 
 //
 
+const {
+    filenameCurrentBundle
+} = require('../../../packages/koot/defaults/before-build');
 const removeTempProjectConfig = require('../../../packages/koot/libs/remove-temp-project-config');
 const sleep = require('../../../packages/koot/utils/sleep');
 const {
@@ -334,6 +337,7 @@ describe('测试: React 同构项目', () => {
                 await fs.remove(dist);
                 await addCommand(commandName, command, dir);
 
+                // 打包多次
                 for (let i = 0; i < bundleVersionsKeep + 2; i++) {
                     const chunks = `npm run ${commandName}`.split(' ');
                     await new Promise(resolve => {
@@ -361,7 +365,7 @@ describe('测试: React 同构项目', () => {
                 ).toBe(false);
 
                 const files = (await fs.readdir(dirPublic))
-                    .filter(filename => filename !== '.koot-current')
+                    .filter(filename => filename !== filenameCurrentBundle)
                     .map(filename => path.resolve(dirPublic, filename));
                 const kootVersionFolders = (await fs.readdir(dirPublic)).filter(
                     filename => {
@@ -372,8 +376,24 @@ describe('测试: React 同构项目', () => {
                     }
                 );
 
+                // 打包结果目录数量应该正确
                 expect(kootVersionFolders.length).toBe(files.length);
                 expect(kootVersionFolders.length).toBe(bundleVersionsKeep);
+
+                // 当前打包结果版本应该存在
+                const currentID =
+                    kootVersionFolders[kootVersionFolders.length - 1];
+                const dirCurrent = path.resolve(dirPublic, currentID);
+                const fileCurrent = path.resolve(
+                    dirPublic,
+                    filenameCurrentBundle
+                );
+                expect(fs.existsSync(fileCurrent)).toBe(true);
+                expect(currentID).toBe(fs.readFileSync(fileCurrent, 'utf-8'));
+                expect(fs.existsSync(dirCurrent)).toBe(true);
+                expect(
+                    fs.existsSync(path.resolve(dirCurrent, 'includes'))
+                ).toBe(true);
 
                 await fs.remove(dist);
                 await afterTest(dir, '[config] bundleVersionsKeep: 3');
