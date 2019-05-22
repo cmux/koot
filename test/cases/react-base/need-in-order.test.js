@@ -113,6 +113,12 @@ const doTest = async (port, settings = {}) => {
             else request.continue();
         });
     }
+    const failedResponse = [];
+    require('../../libs/puppeteer/page-event-response-failed-response')(
+        page,
+        failedResponse
+    );
+
     const origin = isNaN(port) ? port : `http://127.0.0.1:${port}`;
 
     const res = await page
@@ -154,6 +160,20 @@ const doTest = async (port, settings = {}) => {
     await puppeteerTestStyles(page);
     await puppeteerTestCustomEnv(page, customEnv);
 
+    // 测试: 没有失败的请求
+    if (failedResponse.length) {
+        console.log(
+            'failedResponse',
+            failedResponse.map(res => ({
+                status: res.status(),
+                url: res.url()
+            }))
+        );
+    }
+    expect(failedResponse.length).toBe(0);
+
+    // 结束测试
+    await page.close();
     await context.close();
 };
 

@@ -82,7 +82,6 @@ afterAll(() => browser.close());
  */
 const doTest = async (port, settings = {}) => {
     const context = await browser.createIncognitoBrowserContext();
-    const page = await context.newPage();
     const origin = isNaN(port) ? port : `http://127.0.0.1:${port}`;
     const { i18nUseRouter = false, isDev = false } = settings;
 
@@ -97,12 +96,15 @@ const doTest = async (port, settings = {}) => {
     const getSSRState = async page =>
         await page.evaluate(() => window.__REDUX_STATE__);
 
+    const page = await context.newPage();
+    const failedResponse = [];
+    require('../../libs/puppeteer/page-event-response-failed-response')(
+        page,
+        failedResponse
+    );
+
     // 测试: 页面基本结构
     {
-        const failedResponse = [];
-        page.on('response', res => {
-            if (!res.ok() && res.status() !== 302) failedResponse.push(res);
-        });
         const res = await page
             .goto(origin, {
                 waitUntil: 'networkidle0'
@@ -112,18 +114,6 @@ const doTest = async (port, settings = {}) => {
 
         // 测试: 页面请求应 OK
         expect(res.ok()).toBe(true);
-
-        // 测试: 没有失败的请求
-        if (failedResponse.length) {
-            console.log(
-                'failedResponse',
-                failedResponse.map(res => ({
-                    status: res.status(),
-                    url: res.url()
-                }))
-            );
-        }
-        expect(failedResponse.length).toBe(0);
 
         // 测试: 页面标题的注入应成功
         const pageTitle = await page.evaluate(
@@ -372,6 +362,19 @@ const doTest = async (port, settings = {}) => {
 
     // TODO: 测试: 同一个通配路由，访问另一个URL，检查同构结果 (connect component 是否可用)
 
+    // 测试: 没有失败的请求
+    if (failedResponse.length) {
+        console.log(
+            'failedResponse',
+            failedResponse.map(res => ({
+                status: res.status(),
+                url: res.url()
+            }))
+        );
+    }
+    expect(failedResponse.length).toBe(0);
+
+    // 结束测试
     await page.close();
     await context.close();
 };
