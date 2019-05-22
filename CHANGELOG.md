@@ -46,19 +46,19 @@
             -   `inquirer` -> _6.3.1_
             -   `mini-css-extract-plugin` -> _0.6.0_
             -   `pm2` -> _3.5.0_
-            -   `webpack` -> _4.31.0_
+            -   `webpack` -> _4.32.0_
             -   `webpack-bundle-analyzer` -> _3.3.2_
             -   `webpack-dev-middleware` -> _3.7.0_
             -   `webpack-hot-middleware` -> _2.25.0_
         -   patch
-            -   `@babel/core` -> _7.4.4_
+            -   `@babel/core` -> _7.4.5_
             -   `@babel/plugin-proposal-class-properties` -> _7.4.4_
             -   `@babel/plugin-proposal-decorators` -> _7.4.4_
             -   `@babel/plugin-proposal-object-rest-spread` -> _7.4.4_
-            -   `@babel/plugin-transform-regenerator` -> _7.4.4_
+            -   `@babel/plugin-transform-regenerator` -> _7.4.5_
             -   `@babel/plugin-transform-runtime` -> _7.4.4_
             -   `@babel/polyfill` -> _7.4.4_
-            -   `@babel/preset-env` -> _7.4.4_
+            -   `@babel/preset-env` -> _7.4.5_
             -   `@babel/register` -> _7.4.4_
             -   `babel-loader` -> _8.0.6_
             -   `copy-webpack-plugin` -> _5.0.3_
@@ -66,7 +66,7 @@
             -   `glob` -> _7.1.4_
             -   `is-port-reachable` -> _2.0.1_
             -   `postcss` -> _7.0.16_
-            -   `react-hot-loader` -> _4.8.6_
+            -   `react-hot-loader` -> _4.8.7_
             -   `yargs` -> _13.2.4_
 -   **koot-cli**
     -   更新依赖包
