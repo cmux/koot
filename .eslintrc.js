@@ -17,5 +17,8 @@ module.exports = {
         __KOOT_INJECT_METAS_START__: 'readonly',
         __KOOT_INJECT_METAS_END__: 'readonly',
         __KOOT_PROJECT_CONFIG_PATHNAME__: 'readonly'
+    },
+    rules: {
+        'react-hooks/rules-of-hooks': 0
     }
 };

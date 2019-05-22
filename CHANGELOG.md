@@ -49,6 +49,7 @@
             -   `webpack` -> _4.32.0_
             -   `webpack-bundle-analyzer` -> _3.3.2_
             -   `webpack-dev-middleware` -> _3.7.0_
+            -   `webpack-dev-server` -> _3.4.1_
             -   `webpack-hot-middleware` -> _2.25.0_
         -   patch
             -   `@babel/core` -> _7.4.5_

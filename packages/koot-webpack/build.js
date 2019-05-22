@@ -558,6 +558,10 @@ module.exports = async (kootConfig = {}) => {
             // port,
             ...extendDevServerOptions
         } = devServer;
+        const port =
+            TYPE === 'spa'
+                ? process.env.SERVER_PORT
+                : process.env.WEBPACK_DEV_SERVER_PORT;
         const devServerConfig = Object.assign(
             {
                 quiet: false,
@@ -590,7 +594,6 @@ module.exports = async (kootConfig = {}) => {
                 // info: false,
                 // noInfo: true,
                 clientLogLevel: 'info',
-                hot: true,
                 inline: true,
                 historyApiFallback: true,
                 contentBase: './',
@@ -614,14 +617,14 @@ module.exports = async (kootConfig = {}) => {
                         require('koot/ReactSPA/dev-server/extend')(app);
                     }
                     if (typeof before === 'function') return before(app);
-                }
+                },
+                hot: true,
+                hotOnly: true,
+                sockHost: 'localhost',
+                sockPort: port
             },
             extendDevServerOptions
         );
-        const port =
-            TYPE === 'spa'
-                ? process.env.SERVER_PORT
-                : process.env.WEBPACK_DEV_SERVER_PORT;
 
         // console.log('\n\ndevServer')
         // console.log(devServerConfig)
