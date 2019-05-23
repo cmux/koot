@@ -3,6 +3,7 @@
     "description": "Test subject",
     "private": true,
     "dependencies": {
+        "koot": "0.8.0",
         "react": "16.8.4"
     },
     "devDependencies": {}
