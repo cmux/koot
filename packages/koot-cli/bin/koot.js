@@ -1,45 +1,49 @@
 #!/usr/bin/env node
 
-const fs = require('fs-extra')
-const path = require('path')
-const chalk = require('chalk')
-const inquirer = require('inquirer')
-const semver = require('semver')
+const fs = require('fs-extra');
+const path = require('path');
+const chalk = require('chalk');
+const inquirer = require('inquirer');
+const semver = require('semver');
 
-const vars = require('../lib/vars')
-const getLocales = require('../lib/get-locales')
-const spinner = require('../lib/spinner')
-const _ = require('../lib/translate')
+const vars = require('../lib/vars');
+const getLocales = require('../lib/get-locales');
+const spinner = require('../lib/spinner');
+const _ = require('../lib/translate');
 
-const stepCheckUpdate = require('../steps/check-update')
-const stepCreate = require('../steps/create')
-const stepUpgrade = require('../steps/upgrade')
+const stepCheckUpdate = require('../steps/check-update');
+const stepCreate = require('../steps/create');
+const stepUpgrade = require('../steps/upgrade');
 
 const run = async () => {
-    vars.locales = await getLocales()
+    vars.locales = await getLocales();
 
-    console.log('')
-    console.log(chalk.cyanBright(_('welcome')))
+    console.log('');
+    console.log(chalk.cyanBright(_('welcome')));
 
-    await stepCheckUpdate()
+    if (await stepCheckUpdate()) return;
 
-    const cwd = process.cwd()
-    const pathnamePackageJson = path.resolve(cwd, 'package.json')
+    const cwd = process.cwd();
+    const pathnamePackageJson = path.resolve(cwd, 'package.json');
     const p = fs.existsSync(pathnamePackageJson)
         ? await fs.readJson(pathnamePackageJson)
-        : {}
-    const { dependencies = {} } = p
+        : {};
+    const { dependencies = {} } = p;
 
     if (typeof dependencies['super-project'] === 'string') {
-        const { lowestSuperProjectVersion } = vars
-        const versionSuper = dependencies['super-project']
+        const { lowestSuperProjectVersion } = vars;
+        const versionSuper = dependencies['super-project'];
 
         if (!semver.valid(versionSuper))
-            return spinner(_(`upgrade_error:super-project version invalid`)).fail()
+            return spinner(
+                _(`upgrade_error:super-project version invalid`)
+            ).fail();
 
-        const version = semver.valid(semver.coerce(versionSuper))
+        const version = semver.valid(semver.coerce(versionSuper));
         if (semver.satisfies(version, `<${lowestSuperProjectVersion}`))
-            return spinner(_(`upgrade_error:super-project version too low`)).fail()
+            return spinner(
+                _(`upgrade_error:super-project version too low`)
+            ).fail();
 
         const confirm = await inquirer.prompt({
             type: 'list',
@@ -53,16 +57,15 @@ const run = async () => {
                 {
                     name: _('cancel'),
                     value: false
-                },
+                }
             ],
-            default: true,
-        })
-        if (!confirm.value)
-            return
+            default: true
+        });
+        if (!confirm.value) return;
         return await stepUpgrade({
             showWelcome: false,
-            needConfirm: false,
-        })
+            needConfirm: false
+        });
     }
 
     if (typeof dependencies.koot === 'string') {
@@ -82,32 +85,35 @@ const run = async () => {
                 'dev',
                 'analyze',
                 'build',
-                'start',
+                'start'
                 // 'upgrade'
-            ].map(key => ({
-                name: chalk.yellow(`koot-${key}`)
-                    // + chalk.reset(' ')
-                    + ' '
-                    + _(`welcome_exist_select_${key}`),
-                value: key
-            })).concat({
-                name: _(`welcome_exist_select_upgrade`),
-                value: 'upgrade'
-            }),
+            ]
+                .map(key => ({
+                    name:
+                        chalk.yellow(`koot-${key}`) +
+                        // + chalk.reset(' ')
+                        ' ' +
+                        _(`welcome_exist_select_${key}`),
+                    value: key
+                }))
+                .concat({
+                    name: _(`welcome_exist_select_upgrade`),
+                    value: 'upgrade'
+                }),
             default: 'dev'
-        })
+        });
         switch (next.value) {
             case 'upgrade': {
                 return await stepUpgrade({
                     showWelcome: false,
-                    needConfirm: true,
-                })
+                    needConfirm: true
+                });
             }
             default: {
                 require(path.resolve(
                     cwd,
                     `node_modules/koot/bin/${next.value}`
-                ))
+                ));
                 // console.log(npm)
                 // console.log(npm.bin)
                 // const child = npmRunScript(`koot-${next.value}`, {})
@@ -125,11 +131,11 @@ const run = async () => {
         /*
         如果当前目录的项目不是 Koot.js 项目，自动运行 koot-create
         */
-        spinner(_('about_to_create_new_project')).warn()
+        spinner(_('about_to_create_new_project')).warn();
         await stepCreate({
             showWelcome: false
-        })
+        });
     }
-}
+};
 
-run()
+run();

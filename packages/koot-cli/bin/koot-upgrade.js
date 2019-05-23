@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
 const run = async () => {
-    await require('../steps/check-update')()
+    if (await require('../steps/check-update')()) return;
     await require('../steps/upgrade')({
         needConfirm: true
-    })
-}
+    });
+};
 
-run()
+run();
