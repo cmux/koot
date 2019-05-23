@@ -24,6 +24,8 @@ module.exports = {
     'koot-cli_updated': 'koot-cli 已更新',
     'koot-cli_updated_description':
         '请升级 koot-cli 到最新版本后再执行相关命令。可使用以下命令进行更新:',
+    'koot-cli_updated_suggestion':
+        '另外，我们强烈推荐通过以下命令使用 koot-cli，以确保每次使用均为最新版本:',
 
     project_name_required: '项目名称 (*)',
     project_name_needed: '请输入项目名称',
@@ -74,5 +76,9 @@ module.exports = {
     'upgrade_0.8.0_warning_1':
         '重新整理了配置文件规则，详情青参见文档 -> [https://koot.js.org/#/config]',
     'upgrade_0.8.0_warning_2':
-        '另外，此次更新也完全重写了 React 同构服务器逻辑，原则上对已有项目不会造成影响。（若发现从 `koot` 中引用的 `store` `history` 或 `localeId` 值为 `undefined`，请尝试改为使用 `getStore()` `getHistory()` 或 `getLocaleId()` 方法）'
+        '另外，此次更新也完全重写了 React 同构服务器逻辑，原则上对已有项目不会造成影响。（若发现从 `koot` 中引用的 `store` `history` 或 `localeId` 值为 `undefined`，请尝试改为使用 `getStore()` `getHistory()` 或 `getLocaleId()` 方法）',
+    'upgrade_0.9.0_warning_1':
+        'Koot 0.9 中针对 SSR 项目引入了全新的客户端打包结果文件结构。',
+    'upgrade_0.9.0_warning_2':
+        '为了兼容性起见，使用 cli 工具升级的项目，客户端打包结果文件结构不会变化。如果你对该新功能有兴趣，可手动开启，详情青参见文档 -> [https://koot.js.org/#/config?id=bundleversionskeep]'
 };

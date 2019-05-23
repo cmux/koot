@@ -24,6 +24,8 @@ module.exports = {
     'koot-cli_updated': 'koot-cli has updated',
     'koot-cli_updated_description':
         'Please upgrade koot-cli to latest version. Use following command to upgrade:',
+    'koot-cli_updated_suggestion':
+        'Besides, we strongly suggest that use the following command to use koot-cli, so that it will be the latest version everytime:',
 
     project_name_required: 'Project name (*)',
     project_name_needed: "Please input project's name",
@@ -74,5 +76,9 @@ module.exports = {
     'upgrade_0.8.0_warning_1':
         'Revamp configuration options. Please make sure to check doc for more information -> [https://koot.js.org/#/config]',
     'upgrade_0.8.0_warning_2':
-        'We also made a complete overhaul to React isomorphic (SSR). There will be no effect to your existing project in theory. (If you do find that the value of `store` `history` or `localeId` imported from `koot` to be `undefined`, please try using `getStore()` `getHistory()` or `getLocaleId()` funtion imported from `koot`)'
+        'We also made a complete overhaul to React isomorphic (SSR). There will be no effect to your existing project in theory. (If you do find that the value of `store` `history` or `localeId` imported from `koot` to be `undefined`, please try using `getStore()` `getHistory()` or `getLocaleId()` funtion imported from `koot`)',
+    'upgrade_0.9.0_warning_1':
+        'Koot 0.9 introduces brand new file structure for client bundles of SSR project.',
+    'upgrade_0.9.0_warning_2':
+        'But for compatibility reason, when upgrading by using CLI tool, this new feature is disabled. If you are interested in this new feature, you can enable it manually. See doc for details -> [https://koot.js.org/#/config?id=bundleversionskeep]'
 };

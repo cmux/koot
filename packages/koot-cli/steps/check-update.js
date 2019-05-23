@@ -42,6 +42,9 @@ module.exports = async () => {
         console.log('' + _('koot-cli_updated_description'));
         console.log(`  ` + chalk.gray(`> npm i -g koot-cli`));
         console.log(' ');
+        console.log('' + _('koot-cli_updated_suggestion'));
+        console.log(`  ` + chalk.gray(`> npx koot-cli`));
+        console.log(' ');
     }
 
     return needUpdate;
