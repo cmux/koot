@@ -48,11 +48,10 @@ module.exports = async dir => {
 
     if (!kootBaseVersion) throw new Error('version invalid');
 
-    p.koot.baseVersion = semver
-        .clean(kootBaseVersion)
-        .split('.')
-        .splice(0, 2)
-        .join('.');
+    p.koot.baseVersion = semver.clean(kootBaseVersion);
+    // .split('.')
+    // .splice(0, 2)
+    // .join('.');
 
     await fs.writeJson(filePackageJson, p);
 

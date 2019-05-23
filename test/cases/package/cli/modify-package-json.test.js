@@ -116,11 +116,10 @@ describe('测试: 修改 package.json', () => {
     test(`添加当前项目使用的 Koot.js 的最初版本信息`, async () => {
         await addKootVersionToPackageJson(__dirname);
         expect(fs.readJsonSync(filePackage).koot.baseVersion).toBe(
-            semver
-                .clean(packageOriginal.dependencies.koot)
-                .split('.')
-                .splice(0, 2)
-                .join('.')
+            semver.clean(packageOriginal.dependencies.koot)
+            // .split('.')
+            // .splice(0, 2)
+            // .join('.')
         );
     });
 });
