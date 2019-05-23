@@ -46,7 +46,7 @@
             -   `inquirer` -> _6.3.1_
             -   `mini-css-extract-plugin` -> _0.6.0_
             -   `pm2` -> _3.5.0_
-            -   `webpack` -> _4.32.0_
+            -   `webpack` -> _4.32.2_
             -   `webpack-bundle-analyzer` -> _3.3.2_
             -   `webpack-dev-middleware` -> _3.7.0_
             -   `webpack-dev-server` -> _3.4.1_
