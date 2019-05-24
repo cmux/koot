@@ -52,7 +52,9 @@ const prePublish = async () => {
         }
         complete();
     } catch (e) {
-        complete();
+        if (e.message === 'No staged files match any of provided globs.')
+            complete();
+        else console.error(e);
     }
 };
 
