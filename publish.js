@@ -43,6 +43,7 @@ const prePublish = async () => {
     const complete = () => {
         waiting.stop();
         spinner(title).succeed();
+        console.log(' ');
     };
     try {
         const { modified = [] } = await git.status();
