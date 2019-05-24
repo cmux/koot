@@ -1,3 +1,4 @@
+const fs = require('fs-extra');
 const path = require('path');
 const chalk = require('chalk');
 
@@ -14,34 +15,40 @@ const modifyPackageJsonAddKootVersion = require('../../lib/modify-package-json/a
  * @param {Boolean} [options.showWelcome=true] 显示欢迎信息
  */
 module.exports = async (options = {}) => {
-    const { showWelcome = true } = options;
+    let dest;
+    try {
+        const { showWelcome = true } = options;
 
-    vars.locales = await getLocales();
+        vars.locales = await getLocales();
 
-    if (showWelcome) {
+        if (showWelcome) {
+            console.log('');
+            console.log(chalk.cyanBright(_('welcome')));
+            console.log(_('required_info'));
+            console.log('');
+        }
+
+        const project = await require('./inquiry-project')();
+        dest = await require('./get-project-folder')(project);
+        await require('./download-boilerplate')(project, dest);
+        await modifyPackageJsonAddKootVersion(dest);
+
         console.log('');
-        console.log(chalk.cyanBright(_('welcome')));
-        console.log(_('required_info'));
+        // console.log(project)
+        // console.log(process.cwd(), dest)
+        // console.log(path.relative(process.cwd(), dest))
+
+        console.log(chalk.cyanBright(_('whats_next')));
+        logNext('goto_dir', `cd ${path.relative(process.cwd(), dest)}`);
+        logNext('install_dependencies', `npm i`);
+        logNext('run_dev', `npm run dev`);
+        logNext('visit');
+
         console.log('');
+    } catch (e) {
+        if (dest) await fs.remove(dest);
+        throw e;
     }
-
-    const project = await require('./inquiry-project')();
-    const dest = await require('./get-project-folder')(project);
-    await require('./download-boilerplate')(project, dest);
-    await modifyPackageJsonAddKootVersion(dest);
-
-    console.log('');
-    // console.log(project)
-    // console.log(process.cwd(), dest)
-    // console.log(path.relative(process.cwd(), dest))
-
-    console.log(chalk.cyanBright(_('whats_next')));
-    logNext('goto_dir', `cd ${path.relative(process.cwd(), dest)}`);
-    logNext('install_dependencies', `npm i`);
-    logNext('run_dev', `npm run dev`);
-    logNext('visit');
-
-    console.log('');
 };
 
 let nextStep = 1;
