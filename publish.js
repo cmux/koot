@@ -40,14 +40,20 @@ const prePublish = async () => {
 
     // git commit
     const git = require('simple-git/promise')(__dirname);
-    const { modified = [] } = await git.status();
-    if (modified.length) {
-        await git.add('./*');
-        await git.commit(`changed all bins' line breaks to LF`);
+    const complete = () => {
+        waiting.stop();
+        spinner(title).succeed();
+    };
+    try {
+        const { modified = [] } = await git.status();
+        if (modified.length) {
+            await git.add('./*');
+            await git.commit(`changed all bins' line breaks to LF`);
+        }
+        complete();
+    } catch (e) {
+        complete();
     }
-
-    waiting.stop();
-    spinner(title).succeed();
 };
 
 const run = async () => {
