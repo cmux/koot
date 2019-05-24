@@ -48,7 +48,7 @@
         "eslint-config-koot": "0.1.1",
         "babel-eslint": "10.0.1",
         "jest": "24.8.0",
-        "puppeteer": "1.16.0",
+        "puppeteer": "1.17.0",
         "jsdom": "15.1.0",
         "fs-extra": "8.0.1",
         "is-valid-path": "0.1.1",

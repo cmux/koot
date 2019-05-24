@@ -1,6 +1,6 @@
-## 0.9.0 (RC)
+## 0.9.0
 
-**2019-05-23** (rc.3)
+**2019-05-24**
 
 -   **重大改动**
     -   调整默认的 React SSR 项目客户端打包结果目录结构
@@ -47,7 +47,7 @@
         -   minor
             -   `inquirer` -> _6.3.1_
             -   `mini-css-extract-plugin` -> _0.6.0_
-            -   `pm2` -> _3.5.0_
+            -   `pm2` -> _3.5.1_
             -   `webpack` -> _4.32.2_
             -   `webpack-bundle-analyzer` -> _3.3.2_
             -   `webpack-dev-middleware` -> _3.7.0_
@@ -69,7 +69,7 @@
             -   `glob` -> _7.1.4_
             -   `is-port-reachable` -> _2.0.1_
             -   `postcss` -> _7.0.16_
-            -   `react-hot-loader` -> _4.8.7_
+            -   `react-hot-loader` -> _4.8.8_
             -   `yargs` -> _13.2.4_
 -   **koot-cli**
     -   更新依赖包
