@@ -10,6 +10,10 @@ import errorMsg from '../../../libs/error-msg'
  * @returns {String}
  */
 const validateTemplate = async (template) => {
+    if (__DEV__) {
+        return await require('../../../libs/validate-template')(template)
+    }
+
     if (typeof process.env.KOOT_HTML_TEMPLATE === 'string')
         template = process.env.KOOT_HTML_TEMPLATE
 

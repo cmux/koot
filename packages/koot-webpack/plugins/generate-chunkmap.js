@@ -1,4 +1,4 @@
-const writeChunkmap = require('../libs/require-koot')('utils/write-chunkmap')
+const writeChunkmap = require('koot/utils/write-chunkmap')
 const isHotUpdate = require('../libs/is-compilation-hot-update-only')
 
 /**
@@ -7,10 +7,12 @@ const isHotUpdate = require('../libs/is-compilation-hot-update-only')
 class GenerateChunkmap {
     constructor(settings = {}) {
         this.localeId = settings.localeId
+        this.pathPublic = settings.pathPublic
     }
 
     apply(compiler) {
         const localeId = this.localeId
+        const pathPublic = this.pathPublic
         const TYPE = process.env.WEBPACK_BUILD_TYPE
         const STAGE = process.env.WEBPACK_BUILD_STAGE
 
@@ -25,7 +27,7 @@ class GenerateChunkmap {
             if (isHotUpdate(stats))
                 return callback()
 
-            if (TYPE !== 'spa') await writeChunkmap(compilation, localeId)
+            if (TYPE !== 'spa') await writeChunkmap(compilation, localeId, pathPublic)
 
             callback()
         })

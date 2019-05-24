@@ -46,3 +46,36 @@ render() {
 以下环境变量可安全的根据项目要求进行修改（如 pm2 启动配置中）：
 
 - `SERVER_PORT`
+
+### 动态添加环境变量
+
+_Koot.js_ 项目支持在 NPM 命令中动态添加变量，这些变量会自动添加入环境变量，在项目代码中可以任意调用这些环境变量，如：
+
+```bash
+> npm start -- target=qa
+```
+
+```json
+// package.json
+{
+    // ...
+    "scripts": {
+        "start": "koot-start -- target=qa"
+    }
+    // ...
+}
+```
+
+```javascript
+const apiBase = (() => {
+    if (process.env.target === 'qa')
+        return "http://qa-api.project.com";
+    if (process.env.WEBPACK_BUILD_ENV === 'dev')
+        return "http://dev-api.project.com";
+    return "https://api.project.com";
+})();
+```
+
+注：
+- 按 NPM 之规定，必须使用 `npm run [命令名] -- [参数]` 这样的命令格式
+- 如果动态添加的变量名与已有的环境变量冲突，_Koot.js_ 会在启动阶段报错，提醒该错误

@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const fs = require('fs-extra')
+const path = require('path')
 const program = require('commander')
 // const chalk = require('chalk')
 
@@ -13,7 +14,7 @@ const setEnvFromCommand = require('../utils/set-env-from-command')
 const initNodeEnv = require('../utils/init-node-env')
 const getDirTemp = require('../libs/get-dir-tmp')
 
-const kootBuild = require('../core/webpack/enter')
+const kootWebpackBuild = require('koot-webpack/build')
 
 program
     .version(require('../package').version, '-v, --version')
@@ -53,18 +54,33 @@ const run = async () => {
     process.env.WEBPACK_BUILD_STAGE = stage || 'client'
     process.env.WEBPACK_BUILD_ENV = 'prod'
 
-    await before()
+    await before(program)
+
+    // 处理目录
+    const dirAnalyzeBuild = require('../libs/get-dir-dev-tmp')(undefined, 'analyze')
+    await fs.ensureDir(dirAnalyzeBuild)
+    await fs.emptyDir(dirAnalyzeBuild)
+    await fs.ensureDir(path.resolve(dirAnalyzeBuild, 'public'))
+    await fs.ensureDir(path.resolve(dirAnalyzeBuild, 'server'))
 
     // 读取构建配置
-    const kootConfig = await validateConfig()
+    const kootConfig = {
+        ...await validateConfig(),
 
-    await kootBuild({
+        dist: dirAnalyzeBuild,
+        bundleVersionsKeep: false,
+    }
+
+    await kootWebpackBuild({
         analyze: true,
         ...kootConfig
     })
 
     // 清理临时目录
     await fs.remove(getDirTemp())
+
+    // 清理结果目录
+    await fs.remove(dirAnalyzeBuild)
 
     console.log(' ')
 }

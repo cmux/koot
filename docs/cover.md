@@ -2,13 +2,11 @@
 
 # Koot.js
 
-> 基于 Koa+React 同构模式的 Web 开发框架
+> 同时支持 SSR 和 SPA 的 React 开发框架
 
-* Koa 、 React 、 Redux 、 Webpack
-* 更贴近原生CSS的样式书写
-* 支持多语言
-* 按需加载
-* PWA
+-   **SSR**：快速载入、SEO
+-   **易于开发**：零配置热更新、贴近原生 CSS 的样式书写方式
+-   **功能丰富**：多语言、按需载入、PWA 支持
 
 [GitHub](https://github.com/cmux/koot)
 [开始使用](#开始使用)

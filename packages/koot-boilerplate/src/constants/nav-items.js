@@ -1,5 +1,3 @@
-import { doc as urlDoc } from '@constants/urls'
+import { doc as urlDoc } from '@constants/urls';
 
-export default [
-    [urlDoc, 'docs']
-]
+export default [[urlDoc, 'docs']];

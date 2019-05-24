@@ -9,7 +9,6 @@ const { spawn } = require('child_process')
 const program = require('commander')
 const npmRunScript = require('npm-run-script')
 const chalk = require('chalk')
-// const opn = require('opn')
 
 const before = require('./_before')
 
@@ -65,7 +64,7 @@ const run = async () => {
 
     process.env.KOOT_TEST_MODE = JSON.stringify(kootTest)
 
-    await before()
+    await before(program)
 
     // 读取构建配置
     const kootConfig = await validateConfig()
@@ -171,12 +170,6 @@ const run = async () => {
         // building.succeed()
         await sleep(100)
     }
-
-    // if (!server) {
-    //     // console.log(chalk.redBright('× '))
-    //     opn(path.resolve(dist, 'public/index.html'))
-    //     return
-    // }
 
     await afterBuild()
 

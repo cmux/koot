@@ -9,6 +9,7 @@ const run = async () => {
     logWelcome('Test')
 
     const jestScript = {
+        reactBase: `./test/cases/react-base`,
         reactIsomorphic: `./test/cases/react-isomorphic`,
         reactSPA: `./test/cases/react-spa`
     }
@@ -32,7 +33,11 @@ const run = async () => {
                 value: 'REACT'
             },
             {
-                name: 'React - Only Isomorphic',
+                name: 'React - Only Base',
+                value: jestScript.reactBase
+            },
+            {
+                name: 'React - Only SSR',
                 value: jestScript.reactIsomorphic
             },
             {
@@ -53,6 +58,10 @@ const run = async () => {
                 name: 'Lib: validate-config',
                 value: './test/cases/.+/validate-config'
             },
+            {
+                name: 'Lib: koot-css-loader',
+                value: './test/cases/libs/koot-css-loader'
+            },
             new inquirer.Separator(),
         ],
         default: 'full',
@@ -62,25 +71,28 @@ const run = async () => {
 
     const script = (() => {
 
+        const jestReactAll = [
+            `jest ${jestScript.reactBase}`,
+            `jest ${jestScript.reactSPA}`,
+            `jest ${jestScript.reactIsomorphic}`
+        ]
+
         if (value === 'FULL')
             return [
                 `node ./test/pre-test.js`,
                 `jest "^((?!need-in-order).)*\\.js$"`,
-                `jest ${jestScript.reactSPA}`,
-                `jest ${jestScript.reactIsomorphic}`
+                ...jestReactAll
             ].join(' && ')
 
         if (value === 'FULL-QUICK')
             return [
                 `jest "^((?!need-in-order).)*\\.js$"`,
-                `jest ${jestScript.reactSPA}`,
-                `jest ${jestScript.reactIsomorphic}`
+                ...jestReactAll
             ].join(' && ')
 
         if (value === 'REACT')
             return [
-                `jest ${jestScript.reactSPA}`,
-                `jest ${jestScript.reactIsomorphic}`
+                ...jestReactAll
             ].join(' && ')
 
         return `jest ${value}`

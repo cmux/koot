@@ -1,7 +1,7 @@
 const isHotUpdate = require('../libs/is-compilation-hot-update-only')
 const md5 = require('md5')
 const Chunk = require('webpack/lib/Chunk')
-const { chunkNameExtractCss } = require('../libs/require-koot')('defaults/before-build')
+const { chunkNameExtractCss } = require('koot/defaults/before-build')
 
 /**
  * Webpack 插件 - 将抽取的 CSS 文件整合为一个文件，并修改 chunkmap

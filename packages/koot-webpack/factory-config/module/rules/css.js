@@ -1,5 +1,8 @@
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
-const { moduleCssFilenameTest: defaultModuleCssFilenameTest } = require('../../../libs/require-koot')('defaults/koot-config')
+const {
+    moduleCssFilenameTest: defaultModuleCssFilenameTest,
+    classNameHashLength: defaultClassNameHashLength
+} = require('koot/defaults/koot-config')
 
 /**
  * Loader 规则 - CSS
@@ -14,7 +17,8 @@ module.exports = (kootBuildConfig = {}) => {
     const {
         aliases = {},
         moduleCssFilenameTest = defaultModuleCssFilenameTest,
-        internalLoaderOptions = {}
+        internalLoaderOptions = {},
+        classNameHashLength = defaultClassNameHashLength,
     } = kootBuildConfig
 
     /** @type {Array} rules */
@@ -34,7 +38,8 @@ module.exports = (kootBuildConfig = {}) => {
     const useSpCssLoader = {
         loader: require.resolve('../../../loaders/css'),
         options: {
-            length: env === 'dev' ? 32 : 4,
+            // length: env === 'dev' ? 32 : 4,
+            length: classNameHashLength,
             mode: 'replace',
             readable: env === 'dev' ? true : false
         }

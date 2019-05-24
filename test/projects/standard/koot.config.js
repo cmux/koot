@@ -6,7 +6,6 @@
  * 配置文档请查阅: [https://koot.js.org/#/config]
  */
 
-const fs = require('fs-extra')
 const path = require('path')
 
 module.exports = {
@@ -137,11 +136,6 @@ module.exports = {
     },
     webpackBefore: async (/* kootConfig */) => {
         console.log('\n\n💢 webpackBefore')
-        if (process.env.WEBPACK_BUILD_STAGE === 'client') {
-            const dist = process.env.KOOT_DIST_DIR
-            await fs.remove(path.resolve(dist, 'public'))
-            await fs.remove(path.resolve(dist, 'server'))
-        }
         return
     },
     webpackAfter: async () => {

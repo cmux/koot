@@ -32,15 +32,27 @@ const getFilePath = (filename, localeId, isPathname = false) => {
     // const localeId = 'zh'
 
     // 如果标记为 pathname，直接返回结果
-    if (isPathname) return pathPublic + filename.replace(/(^\.\/|^)public\//, '')
+    if (isPathname) return pathPublic + filename.replace(
+        new RegExp('(^\\.\\/|^)public\\/' + (process.env.KOOT_CLIENT_BUNDLE_SUBFOLDER ? `${process.env.KOOT_CLIENT_BUNDLE_SUBFOLDER}\\/` : '')),
+        ''
+    )
 
     const chunkmap = getChunkmap(localeId)
+    const regPublicPath = chunkmap['.public']
+        ? new RegExp(`(^\\.\\/|^)${chunkmap['.public']}`)
+        : /(^\.\/|^)public\//
 
     // console.log('----------')
     // console.log(filename)
+    // console.log(chunkmap)
     // console.log(chunkmap['.files'])
     // console.log(chunkmap['.files'][filename])
-    // console.log(pathPublic + chunkmap['.files'][filename].replace(/(^\.\/|^)public\//, ''))
+    // console.log(regPublicPath)
+    // console.log(pathPublic + chunkmap['.files'][filename].replace(regPublicPath, ''))
+    // console.log({
+    //     regPublicPath,
+    //     'process.env.KOOT_CLIENT_BUNDLE_SUBFOLDER': process.env.KOOT_CLIENT_BUNDLE_SUBFOLDER
+    // })
     // console.log('----------')
 
     if (typeof chunkmap === 'object' &&
@@ -48,7 +60,7 @@ const getFilePath = (filename, localeId, isPathname = false) => {
         typeof chunkmap['.files'][filename] === 'string'
     ) {
         // console.log(filename, chunkmap['.files'][filename].replace(/(^\.\/|^)public\//, ''))
-        return pathPublic + chunkmap['.files'][filename].replace(/(^\.\/|^)public\//, '')
+        return pathPublic + chunkmap['.files'][filename].replace(regPublicPath, '')
     }
 
     if (isDev) {
@@ -76,7 +88,7 @@ const getFilePath = (filename, localeId, isPathname = false) => {
             })
         }
         if (result)
-            return `${pathPublic}${result.replace(/(^\.\/|^)public\//, '')}`
+            return `${pathPublic}${result.replace(regPublicPath, '')}`
     }
 
     // 如果没有找到 chunkmap 或是 chunkmap 中未找到目标项目，转为过滤文件形式

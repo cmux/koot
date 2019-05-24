@@ -7,6 +7,7 @@
         "bootstrap": "node bootstrap.js",
         "publish": "node ./publish.js",
         "test": "node ./test/index.js",
+        "lerna:changed": "lerna changed",
         "eslint:koot": "eslint \"packages/koot/!(node_modules|logs|dist|dist*|test)/**/*.+(js|jsx)\""
     },
     "repository": {
@@ -40,18 +41,43 @@
         "docsify-cli": "4.3.0"
     },
     "devDependencies": {
-        "lerna": "3.13.2",
+        "camelcase": "5.3.1",
+        "lerna": "3.14.1",
         "lerna-wizard": "1.0.9",
         "eslint": "5.16.0",
-        "eslint-plugin-react": "7.12.4",
+        "eslint-config-koot": "0.1.1",
         "babel-eslint": "10.0.1",
-        "jest": "24.7.1",
-        "puppeteer": "1.14.0",
-        "jsdom": "14.0.0",
-        "fs-extra": "7.0.1",
+        "jest": "24.8.0",
+        "puppeteer": "1.17.0",
+        "jsdom": "15.1.0",
+        "fs-extra": "8.0.1",
         "is-valid-path": "0.1.1",
-        "inquirer": "6.2.2",
+        "inquirer": "6.3.1",
         "chalk": "2.4.2",
-        "latest-version": "5.1.0"
+        "latest-version": "5.1.0",
+        "crlf": "1.1.1",
+        "simple-git": "1.113.0",
+        "prettier": "1.17.1",
+        "husky": "2.3.0",
+        "lint-staged": "8.1.7"
+    },
+    "eslintIgnore": [
+        "node_modules/**/*"
+    ],
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged"
+        }
+    },
+    "lint-staged": {
+        "*.{js,jsx,ts,tsx,cjs,mjs}": [
+            "eslint --fix",
+            "prettier --write",
+            "git add"
+        ],
+        "*.{json,md,css,less,sass,scss}": [
+            "prettier --write",
+            "git add"
+        ]
     }
 }

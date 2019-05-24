@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 
-<head<%- inject.htmlLang %>>
+<head <%- inject.htmlLang %>>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
 
@@ -32,16 +32,15 @@
 
     <%- inject.metas %>
     <style><%- content('critical.css') %></style>
-    <%- inject.styles %>
+    <%- inject.styles111 %>
 </head>
 
 <body>
     <div id="main-loader"></div>
     <div id="root"><%- inject.react %></div>
     <script type="text/javascript"><%- content('critical.js') %></script>
+    <div data-test="</head>"></div>
     <%- inject.scripts %>
 </body>
 
 </html>
-
-<%- inject.performanceInfos %>

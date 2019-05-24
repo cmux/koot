@@ -1,4 +1,4 @@
-const getDirDevCache = require('../../../libs/require-koot')('libs/get-dir-dev-cache')
+// const getDirDevCache = require('koot/libs/get-dir-dev-cache')
 
 /**
  * Loader 规则 - Javascript
@@ -82,7 +82,7 @@ module.exports = (kootBuildConfig = {}) => {
 
     if (!createDll && env === 'dev' && stage === 'client') {
         return [{
-            test: /\.(js|mjs)$/,
+            test: /\.(js|mjs|cjs|ts)$/,
             oneOf: [
                 {
                     include: /node_modules/,
@@ -103,7 +103,7 @@ module.exports = (kootBuildConfig = {}) => {
                 }
             ]
         }, {
-            test: /\.jsx$/,
+            test: /\.(jsx|tsx)$/,
             use: [
                 useThreadLoader(),
                 // useCacheLoader(),
@@ -117,7 +117,7 @@ module.exports = (kootBuildConfig = {}) => {
 
     if (!createDll && env === 'dev' && stage === 'server') {
         return [{
-            test: /\.(js|mjs|jsx)$/,
+            test: /\.(js|mjs|cjs|ts|jsx|tsx)$/,
             use: [
                 useThreadLoader(),
                 // useCacheLoader(),
@@ -128,7 +128,7 @@ module.exports = (kootBuildConfig = {}) => {
     }
 
     return [{
-        test: /\.(js|mjs|jsx)$/,
+        test: /\.(js|mjs|cjs|ts|jsx|tsx)$/,
         use: useBabelLoader()
     }]
 }

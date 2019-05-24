@@ -1,7 +1,8 @@
-const fs = require('fs-extra')
-const path = require('path')
+const fs = require('fs-extra');
+const path = require('path');
+const semver = require('semver');
 
-const defaultValues = require('../../defaults/koot-config')
+const defaultValues = require('../../defaults/koot-config');
 
 /**
  * 为空项添加默认值
@@ -11,22 +12,36 @@ const defaultValues = require('../../defaults/koot-config')
  * @returns {Object}
  */
 module.exports = async (projectDir, config) => {
+    const filePackageJson = path.resolve(projectDir, 'package.json');
+    const kootBaseVersion = await (async () => {
+        if (!fs.existsSync(filePackageJson)) return;
+        const { koot = {} } = await fs.readJson(filePackageJson);
+        return koot.baseVersion || undefined;
+    })();
 
     Object.keys(defaultValues).forEach(key => {
-        if (!config[key]) config[key] = defaultValues[key]
-    })
+        if (typeof config[key] === 'undefined') {
+            if (
+                key === 'bundleVersionsKeep' &&
+                kootBaseVersion &&
+                semver.lt(kootBaseVersion, '0.9.0')
+            ) {
+                config[key] = false;
+            } else {
+                config[key] = defaultValues[key];
+            }
+        }
+    });
 
     if (!config.name) {
-        const filePackageJson = path.resolve(projectDir, 'package.json')
         if (fs.existsSync(filePackageJson)) {
-            config.name = require(filePackageJson).name
+            config.name = require(filePackageJson).name;
         }
     }
 
     if (!config.webpackConfig) {
         config.webpackConfig = () => {
-            if (process.env.WEBPACK_BUILD_ENV === 'dev')
-                return {}
+            if (process.env.WEBPACK_BUILD_ENV === 'dev') return {};
             return {
                 entry: {
                     commons: [
@@ -36,21 +51,21 @@ module.exports = async (projectDir, config) => {
                         'redux-thunk',
                         'react-redux',
                         'react-router',
-                        'react-router-redux',
+                        'react-router-redux'
                     ]
                 },
                 optimization: {
                     splitChunks: {
                         cacheGroups: {
                             commons: {
-                                name: "commons",
-                                chunks: "initial",
+                                name: 'commons',
+                                chunks: 'initial',
                                 minChunks: 2
                             }
                         }
                     }
                 }
-            }
-        }
+            };
+        };
     }
-}
+};

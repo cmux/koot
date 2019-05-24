@@ -45,7 +45,7 @@ const getLogMsg = require('../libs/get-log-msg')
 const log = require('../libs/log')
 // const terminate = require('../utils/terminate')
 
-const kootBuildVendorDll = require('../core/webpack/build-vendor-dll')
+const kootWebpackBuildVendorDll = require('koot-webpack/build-vendor-dll')
 
 program
     .version(require('../package').version, '-v, --version')
@@ -83,7 +83,7 @@ const run = async () => {
     // 清除所有临时配置文件
     await removeTempProjectConfig()
     // 清理临时目录
-    await before()
+    await before(program)
 
     // 清空 log
     process.stdout.write('\x1B[2J\x1B[0f')
@@ -140,6 +140,15 @@ const run = async () => {
     //
     // ========================================================================
 
+    // 确保关键目录存在
+    const cwd = getCwd()
+    const dirDevTemp = getDirDevTmp(cwd)
+    await fs.ensureDir(dirDevTemp)
+    await fs.emptyDir(dirDevTemp)
+    const dirCache = getDirDevCache()
+    await fs.ensureDir(dirCache)
+    await fs.emptyDir(dirCache)
+
     // 验证、读取项目配置信息
     const kootConfig = await validateConfig()
 
@@ -154,12 +163,28 @@ const run = async () => {
         [keyFileProjectConfigTempPortionServer]: fileProjectConfigTempPortionServer,
         [keyFileProjectConfigTempPortionClient]: fileProjectConfigTempPortionClient
     } = kootConfig
+    const [devMemoryAllocationClient, devMemoryAllocationServer] = (() => {
+        const { devMemoryAllocation } = kootConfig
+        if (!devMemoryAllocation)
+            return [undefined, undefined]
+        if (typeof devMemoryAllocation === 'object') {
+            return [devMemoryAllocation.client, devMemoryAllocation.server]
+        }
+        if (isNaN(devMemoryAllocation))
+            return [undefined, undefined]
+        return [parseInt(devMemoryAllocation), parseInt(devMemoryAllocation)]
+    })()
     const appType = await getAppType()
-    const cwd = getCwd()
     const packageInfo = await fs.readJson(path.resolve(cwd, 'package.json'))
     const {
         name
     } = packageInfo
+
+    // 清理目标目录
+    await fs.ensureDir(dist)
+    await fs.emptyDir(dist)
+    await fs.ensureDir(path.resolve(dist, 'public'))
+    await fs.ensureDir(path.resolve(dist, 'server'))
 
     /** @type {Array} 正在运行的进程/服务列表 */
     const processes = []
@@ -169,10 +194,6 @@ const run = async () => {
 
     // 清理遗留的临时文件
     await removeTempBuild(dist)
-    await fs.emptyDir(getDirDevTmp(cwd))
-    const dirCache = getDirDevCache()
-    await fs.ensureDir(dirCache)
-    await fs.emptyDir(dirCache)
 
     // 如果有临时项目配置文件，更改环境变量
     if (fileProjectConfigTempFull)
@@ -195,6 +216,9 @@ const run = async () => {
 
     // 设置其他环境变量
     process.env.KOOT_DEV_START_TIME = Date.now()
+
+    // 等待一段时间，确保某些硬盘操作的完成
+    await sleep(1000)
 
 
 
@@ -310,15 +334,15 @@ const run = async () => {
         // DLL 打包
         if (stage) {
             process.env.WEBPACK_BUILD_STAGE = stage
-            await kootBuildVendorDll(kootConfig)
+            await kootWebpackBuildVendorDll(kootConfig)
         } else {
             const stageCurrent = process.env.WEBPACK_BUILD_STAGE
 
             process.env.WEBPACK_BUILD_STAGE = 'client'
-            await kootBuildVendorDll(kootConfig)
+            await kootWebpackBuildVendorDll(kootConfig)
             await sleep(500)
             process.env.WEBPACK_BUILD_STAGE = 'server'
-            await kootBuildVendorDll(kootConfig)
+            await kootWebpackBuildVendorDll(kootConfig)
 
             process.env.WEBPACK_BUILD_STAGE = stageCurrent
         }
@@ -440,10 +464,20 @@ const run = async () => {
             cwd: cwd,
             output: pathLogOut,
             error: pathLogErr,
-            autorestart: false,
+            autorestart: false
         }
 
         switch (stage) {
+            case 'client': {
+                if (devMemoryAllocationClient)
+                    config.node_args = `--max-old-space-size=${devMemoryAllocationClient}`
+                break
+            }
+            case 'server': {
+                if (devMemoryAllocationServer)
+                    config.node_args = `--max-old-space-size=${devMemoryAllocationServer}`
+                break
+            }
             case 'run': {
                 Object.assign(config, {
                     script: pathServerJS,

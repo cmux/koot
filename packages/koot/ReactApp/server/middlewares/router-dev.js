@@ -1,17 +1,18 @@
-const fs = require('fs-extra')
-const router = new require('koa-router')()
+const fs = require('fs-extra');
 
-const { dll } = require('../../../defaults/dev-request-uri')
+const router = new require('koa-router')();
 
-const { KOOT_DEV_DLL_FILE_CLIENT: fileDllClient } = process.env
+const { dll } = require('../../../defaults/dev-request-uri');
 
-router.get(dll, (ctx) => {
+const { KOOT_DEV_DLL_FILE_CLIENT: fileDllClient } = process.env;
+
+router.get(dll, ctx => {
     if (fileDllClient && fs.existsSync(fileDllClient)) {
-        ctx.type = 'application/javascript'
-        ctx.body = fs.readFileSync(fileDllClient)
+        ctx.type = 'application/javascript';
+        ctx.body = fs.readFileSync(fileDllClient);
     } else {
-        ctx.body = ""
+        ctx.body = '';
     }
-})
+});
 
-export default router.routes()
+export default router.routes();

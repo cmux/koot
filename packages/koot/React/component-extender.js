@@ -1,35 +1,35 @@
 /* global __KOOT_SSR__:false */
 
-import { getStore } from '../'
-
-import React from 'react'
-import { connect } from 'react-redux'
+import React from 'react';
+import { connect } from 'react-redux';
 // import { hot } from 'react-hot-loader'
 // import PropTypes from 'prop-types'
-import hoistStatics from 'hoist-non-react-statics'
+import hoistStatics from 'hoist-non-react-statics';
+
+import { getStore } from '../';
 
 //
 
 import {
     fromServerProps as getRenderPropsFromServerProps,
     fromComponentProps as getRenderPropsFromComponentProps
-} from './get-render-props'
+} from './get-render-props';
 import {
     append as appendStyle,
-    remove as removeStyle,
+    remove as removeStyle
     // StyleMapContext,
-} from './styles'
-import clientUpdatePageInfo from './client-update-page-info'
+} from './styles';
+import clientUpdatePageInfo from './client-update-page-info';
 
 //
 
 // 是否已挂载了组件
-let everMounted = false
+let everMounted = false;
 // const defaultPageInfo = {
 //     title: '',
 //     metas: []
 // }
-const styleMap = {}
+const styleMap = {};
 
 /**
  * @type {Number}
@@ -37,7 +37,7 @@ const styleMap = {}
  * _服务器_
  * 使用该高阶组件的次数
  */
-let devSSRConnectIndex = 0
+let devSSRConnectIndex = 0;
 
 /**
  * 获取数据
@@ -64,26 +64,24 @@ let devSSRConnectIndex = 0
  * @returns {Object}
  */
 
-/** 
+/**
  * 获取同构数据的执行方法
  * @param {Object} store
  * @param {Object} props renderProps
  * @returns {Promise}
  */
 const doFetchData = (store, renderProps, dataFetch) => {
-    const result = dataFetch(store.getState(), renderProps, store.dispatch)
+    const result = dataFetch(store.getState(), renderProps, store.dispatch);
     // if (result === true) {
     //     isDataPreloaded = true
     //     return new Promise(resolve => resolve())
     // }
-    if (Array.isArray(result))
-        return Promise.all(result)
-    if (result instanceof Promise)
-        return result
-    return new Promise(resolve => resolve(result))
-}
+    if (Array.isArray(result)) return Promise.all(result);
+    if (result instanceof Promise) return result;
+    return new Promise(resolve => resolve(result));
+};
 
-/** 
+/**
  * 更新页面信息
  * @param {Object} store
  * @param {Object} props renderProps
@@ -95,46 +93,46 @@ const doPageinfo = (store, props, pageinfo) => {
     const defaultPageInfo = {
         title: '',
         metas: []
-    }
+    };
 
     if (typeof pageinfo !== 'function' && typeof pageinfo !== 'object')
-        return defaultPageInfo
+        return defaultPageInfo;
 
-    const state = store.getState()
+    const state = store.getState();
     const infos = (() => {
-        if (typeof pageinfo === 'object')
-            return pageinfo
-        const infos = pageinfo(state, props)
-        if (typeof infos !== 'object')
-            return defaultPageInfo
-        return infos
-    })()
+        if (typeof pageinfo === 'object') return pageinfo;
+        const infos = pageinfo(state, props);
+        if (typeof infos !== 'object') return defaultPageInfo;
+        return infos;
+    })();
 
     const {
         title = defaultPageInfo.title,
         metas = defaultPageInfo.metas
-    } = infos
+    } = infos;
 
     if (state.localeId) {
-        if (!metas.some(meta => {
-            if (meta.name === 'koot-locale-id') {
-                meta.content = state.localeId
-                return true
-            }
-            return false
-        })) {
+        if (
+            !metas.some(meta => {
+                if (meta.name === 'koot-locale-id') {
+                    meta.content = state.localeId;
+                    return true;
+                }
+                return false;
+            })
+        ) {
             metas.push({
                 name: 'koot-locale-id',
                 content: state.localeId
-            })
+            });
         }
     }
 
     return {
         title,
         metas
-    }
-}
+    };
+};
 
 // console.log((typeof store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' store in [HOC] extend')
 /**
@@ -148,36 +146,30 @@ const doPageinfo = (store, props, pageinfo) => {
  * @param {Object} [options.styles] 组件 CSS 结果
  * @returns {Function} 封装好的 React 组件
  */
-export default (options = {}) => (WrappedComponent) => {
+export default (options = {}) => WrappedComponent => {
     // console.log((typeof store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' store in [HOC] extend run')
 
     const {
         connect: _connect = false,
         pageinfo,
-        data: {
-            fetch: _dataFetch,
-            check: dataCheck,
-        } = {},
-        styles: _styles,
+        data: { fetch: _dataFetch, check: dataCheck } = {},
+        styles: _styles
         // ttt
         // hot: _hot = true,
         // name
-    } = options
+    } = options;
 
     // console.log('extend hoc run', { name, LocaleId })
 
     // 样式相关
 
     /** @type {Object} 经过 koot-css-loader 处理后的 css 文件的结果对象 */
-    const styles = (!Array.isArray(_styles) ? [_styles] : _styles).filter(obj => (
-        typeof obj === 'object' && typeof obj.wrapper === 'string'
-    ))
+    const styles = (!Array.isArray(_styles) ? [_styles] : _styles).filter(
+        obj => typeof obj === 'object' && typeof obj.wrapper === 'string'
+    );
 
     /** @type {Boolean} 是否有上述结果对象 */
-    const hasStyles = (
-        Array.isArray(styles) &&
-        styles.length > 0
-    )
+    const hasStyles = Array.isArray(styles) && styles.length > 0;
     // console.log({ ttt, hasStyles, styles })
 
     // 同构数据相关
@@ -186,20 +178,24 @@ export default (options = {}) => (WrappedComponent) => {
     // let isDataPreloaded = false
 
     /** @type {Function} 获取同构数据 */
-    const dataFetch = typeof options.data === 'function' || Array.isArray(options.data)
-        ? options.data
-        : (typeof _dataFetch === 'function' || Array.isArray(_dataFetch) ? _dataFetch : undefined)
+    const dataFetch =
+        typeof options.data === 'function' || Array.isArray(options.data)
+            ? options.data
+            : typeof _dataFetch === 'function' || Array.isArray(_dataFetch)
+            ? _dataFetch
+            : undefined;
 
     // 装饰组件
 
     class KootReactComponent extends React.Component {
         static onServerRenderHtmlExtend = ({ store, renderProps = {} }) => {
-            const {
-                title,
-                metas
-            } = doPageinfo(store, getRenderPropsFromServerProps(renderProps), pageinfo)
-            return { title, metas }
-        }
+            const { title, metas } = doPageinfo(
+                store,
+                getRenderPropsFromServerProps(renderProps),
+                pageinfo
+            );
+            return { title, metas };
+        };
 
         //
 
@@ -209,34 +205,38 @@ export default (options = {}) => (WrappedComponent) => {
 
         clientUpdatePageInfo() {
             if (typeof pageinfo !== 'function' && typeof pageinfo !== 'object')
-                return
+                return;
 
-            const {
-                title,
-                metas
-            } = doPageinfo(getStore(), getRenderPropsFromComponentProps(this.props), pageinfo)
-            clientUpdatePageInfo(title, metas)
+            const { title, metas } = doPageinfo(
+                getStore(),
+                getRenderPropsFromComponentProps(this.props),
+                pageinfo
+            );
+            clientUpdatePageInfo(title, metas);
         }
 
         //
 
         state = {
-            loaded: typeof dataCheck === 'function'
-                ? dataCheck(getStore().getState(), getRenderPropsFromComponentProps(this.props))
-                : undefined
-            ,
-        }
-        mounted = false
-        kootClassNames = []
+            loaded:
+                typeof dataCheck === 'function'
+                    ? dataCheck(
+                          getStore().getState(),
+                          getRenderPropsFromComponentProps(this.props)
+                      )
+                    : undefined
+        };
+        mounted = false;
+        kootClassNames = [];
 
         //
 
-        constructor(props/*, context*/) {
-            super(props/*, context*/)
+        constructor(props /*, context*/) {
+            super(props /*, context*/);
 
             if (hasStyles) {
-                this.kootClassNames = styles.map(obj => obj.wrapper)
-                appendStyle(this.getStyleMap(/*context*/), styles)
+                this.kootClassNames = styles.map(obj => obj.wrapper);
+                appendStyle(this.getStyleMap(/*context*/), styles);
                 // console.log('----------')
                 // console.log('styles', styles)
                 // console.log('theStyles', theStyles)
@@ -253,49 +253,52 @@ export default (options = {}) => (WrappedComponent) => {
         getStyleMap(/*context*/) {
             // console.log('extend', { LocaleId })
             if (__SERVER__) {
-                if (__DEV__)
-                    return global.__KOOT_SSR__.styleMap
+                if (__DEV__) return global.__KOOT_SSR__.styleMap;
                 if (typeof __KOOT_SSR__ === 'object')
-                    return __KOOT_SSR__.styleMap
+                    return __KOOT_SSR__.styleMap;
             }
-            return styleMap
+            return styleMap;
             // return context
         }
 
         //
 
         componentDidUpdate(prevProps) {
-            if (typeof prevProps.location === 'object' &&
+            if (
+                typeof prevProps.location === 'object' &&
                 typeof this.props.location === 'object' &&
                 prevProps.location.pathname !== this.props.location.pathname
             )
-                this.clientUpdatePageInfo()
+                this.clientUpdatePageInfo();
         }
 
         componentDidMount() {
-            this.mounted = true
+            this.mounted = true;
 
             if (!this.state.loaded && typeof dataFetch !== 'undefined') {
-                doFetchData(getStore(), getRenderPropsFromComponentProps(this.props), dataFetch)
-                    .then(() => {
-                        if (!this.mounted) return
-                        this.setState({
-                            loaded: true,
-                        })
-                    })
+                doFetchData(
+                    getStore(),
+                    getRenderPropsFromComponentProps(this.props),
+                    dataFetch
+                ).then(() => {
+                    if (!this.mounted) return;
+                    this.setState({
+                        loaded: true
+                    });
+                });
             }
 
-            this.clientUpdatePageInfo()
+            this.clientUpdatePageInfo();
             if (everMounted) {
             } else {
-                everMounted = true
+                everMounted = true;
             }
         }
 
         componentWillUnmount() {
-            this.mounted = false
+            this.mounted = false;
             if (hasStyles) {
-                removeStyle(this.getStyleMap(/*this.context*/), styles)
+                removeStyle(this.getStyleMap(/*this.context*/), styles);
             }
         }
 
@@ -309,29 +312,42 @@ export default (options = {}) => (WrappedComponent) => {
 
             if (__CLIENT__ && this.kootClassNames instanceof HTMLElement) {
                 // console.log(this.kootClassNames)
-                this.kootClassNames = [this.kootClassNames.getAttribute('id')]
+                this.kootClassNames = [this.kootClassNames.getAttribute('id')];
             }
 
             const props = Object.assign({}, this.props, {
-                className: this.kootClassNames.concat(this.props.className).join(' ').trim(),
-                "data-class-name": this.kootClassNames.join(' ').trim(),
-            })
+                className: this.kootClassNames
+                    .concat(this.props.className)
+                    .join(' ')
+                    .trim(),
+                'data-class-name': this.kootClassNames.join(' ').trim()
+            });
 
             // if (__SERVER__) console.log('extender this.state.loaded', this.state.loaded)
-            if (typeof dataFetch !== 'undefined' && typeof dataCheck === 'function')
-                props.loaded = this.state.loaded
+            if (
+                typeof dataFetch !== 'undefined' &&
+                typeof dataCheck === 'function'
+            )
+                props.loaded = this.state.loaded;
 
-            return <WrappedComponent {...props} />
-        }
+            return <WrappedComponent {...props} />;
+        };
     }
 
     if (typeof dataFetch !== 'undefined') {
-        KootReactComponent.onServerRenderStoreExtend = ({ store, renderProps }) => {
+        KootReactComponent.onServerRenderStoreExtend = ({
+            store,
+            renderProps
+        }) => {
             if (typeof dataFetch === 'undefined')
-                return new Promise(resolve => resolve())
+                return new Promise(resolve => resolve());
             // console.log('onServerRenderStoreExtend')
-            return doFetchData(store, getRenderPropsFromServerProps(renderProps), dataFetch)
-        }
+            return doFetchData(
+                store,
+                getRenderPropsFromServerProps(renderProps),
+                dataFetch
+            );
+        };
     }
 
     // if (_hot && __DEV__ && __CLIENT__) {
@@ -340,7 +356,7 @@ export default (options = {}) => (WrappedComponent) => {
     //     KootComponent = hot(module)(KootComponent)
     // }
 
-    let KootComponent = hoistStatics(KootReactComponent, WrappedComponent)
+    let KootComponent = hoistStatics(KootReactComponent, WrappedComponent);
 
     // if (typeof styles === 'object' &&
     //     typeof styles.wrapper === 'string'
@@ -349,24 +365,24 @@ export default (options = {}) => (WrappedComponent) => {
     // }
 
     if (_connect === true) {
-        KootComponent = connect(() => ({}))(KootComponent)
+        KootComponent = connect(() => ({}))(KootComponent);
     } else if (typeof _connect === 'function') {
-        KootComponent = connect(_connect)(KootComponent)
+        KootComponent = connect(_connect)(KootComponent);
     } else if (Array.isArray(_connect)) {
-        KootComponent = connect(..._connect)(KootComponent)
+        KootComponent = connect(..._connect)(KootComponent);
     }
 
-    /** 
+    /**
      * _服务器端_
      * 将组件注册到同构渲染对象中
      */
     if (__SERVER__) {
-        if (__DEV__) KootComponent.id = devSSRConnectIndex++
-        const {
-            connectedComponents = []
-        } = __DEV__ ? global.__KOOT_SSR__ : __KOOT_SSR__
-        connectedComponents.push(KootComponent)
+        if (__DEV__) KootComponent.id = devSSRConnectIndex++;
+        const { connectedComponents = [] } = __DEV__
+            ? global.__KOOT_SSR__
+            : __KOOT_SSR__;
+        connectedComponents.push(KootComponent);
     }
 
-    return KootComponent
-}
+    return KootComponent;
+};

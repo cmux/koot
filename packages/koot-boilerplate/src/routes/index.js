@@ -1,4 +1,4 @@
-import routeCheck from 'koot/React/route-check'
+import routeCheck from 'koot/React/route-check';
 
 /**
  * @type {Object} 路由配置对象
@@ -6,7 +6,6 @@ import routeCheck from 'koot/React/route-check'
  * - 可使用 koot-router 提供的方法封装路由配置对象
  */
 export default {
-
     path: '/',
     component: require('@components/app').default, // 项目的根层组件
 
@@ -23,9 +22,12 @@ export default {
          * - 推荐使用 koot 提供的 `routeCheck()` 方法保证路由组件的正确渲染 (详情请查阅文档)
          */
         getComponent: (nextState, cb) => {
-            require.ensure([], (require) => {
-                if (routeCheck(nextState)) cb(null, require('@views/home').default)
-            }, 'Page-Home')
+            import(
+                /* webpackChunkName: "PageHome" */
+                '@views/home'
+            ).then(module => {
+                if (routeCheck(nextState)) cb(null, module.default);
+            });
         }
     },
 
@@ -33,11 +35,13 @@ export default {
         {
             path: 'start',
             getComponent: (nextState, cb) => {
-                require.ensure([], (require) => {
-                    if (routeCheck(nextState)) cb(null, require('@views/start').default)
-                }, 'pageStart')
+                import(
+                    /* webpackChunkName: "PageStart" */
+                    '@views/start'
+                ).then(module => {
+                    if (routeCheck(nextState)) cb(null, module.default);
+                });
             }
-        },
+        }
     ]
-
-}
+};

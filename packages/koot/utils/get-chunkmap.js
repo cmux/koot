@@ -2,6 +2,8 @@ const fs = require('fs-extra')
 const getChunkmapPath = require('./get-chunkmap-path')
 const getDistPath = require('./get-dist-path')
 
+let cachedChunkmap
+
 /**
  * 获取打包文件对应表 (chunkmap)
  * 
@@ -25,24 +27,33 @@ const getChunkmap = (localeId, getFullResult = false) => {
         : undefined
     const isI18nDefault = (isI18nEnabled && i18nType === 'default')
 
-    let chunkmap
-    if (typeof global.chunkmap === 'object') chunkmap = global.chunkmap
-    try {
-        chunkmap = JSON.parse(process.env.WEBPACK_CHUNKMAP)
-    } catch (e) {
-        chunkmap = false
-    }
+    const chunkmap = (() => {
+        if (cachedChunkmap) return cachedChunkmap
 
-    if (typeof chunkmap !== 'object' && typeof getDistPath() === 'string') {
-        chunkmap = fs.readJsonSync(getChunkmapPath())
-        if (process.env.WEBPACK_BUILD_STAGE === 'server')
-            global.chunkmap = chunkmap
-    }
+        let chunkmap
+
+        if (typeof global.chunkmap === 'object') chunkmap = global.chunkmap
+        try {
+            chunkmap = JSON.parse(process.env.WEBPACK_CHUNKMAP)
+        } catch (e) {
+            chunkmap = false
+        }
+        if (typeof chunkmap !== 'object' && typeof getDistPath() === 'string') {
+            chunkmap = fs.readJsonSync(getChunkmapPath())
+            if (process.env.WEBPACK_BUILD_STAGE === 'server')
+                global.chunkmap = chunkmap
+        }
+
+        if (process.env.WEBPACK_BUILD_ENV === 'prod')
+            cachedChunkmap = chunkmap
+        
+        return chunkmap
+    })()
 
     if (typeof chunkmap === 'object') {
         // let chunkmap = fs.readJsonSync(pathChunckmap)
         if (getFullResult) return chunkmap || {}
-        if (isI18nEnabled && isI18nDefault) chunkmap = chunkmap[`.${localeId}`] || {}
+        if (isI18nEnabled && isI18nDefault) return chunkmap[`.${localeId}`] || {}
     }
 
     return chunkmap || {}

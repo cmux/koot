@@ -17,10 +17,10 @@
 ```javascript
 // /koot.config.js
 module.exports = {
-    name: "Test Subject D-HU",
-    template: "./src/template.ejs",
-    routes: "./src/routes",
-    store: "./src/store"
+    name: 'Test Subject D-HU',
+    template: './src/template.ejs',
+    routes: './src/routes',
+    store: './src/store'
 };
 ```
 
@@ -30,18 +30,18 @@ module.exports = {
 
 ### name
 
-- 类型: `String`
-- 默认值: `package.json` 中的 `name` 属性
+-   类型: `String`
+-   默认值: `package.json` 中的 `name` 属性
 
 项目名称。以下情况会使用该名称作为默认值：
 
-- 同构：若首页组件没有通过 `extend()` 设定标题，默认使用该名作为页面标题。
-- SPA：模板中的 `<%= inject.title %>` 默认使用该名进行注入替换。
+-   同构：若首页组件没有通过 `extend()` 设定标题，默认使用该名作为页面标题。
+-   SPA：模板中的 `<%= inject.title %>` 默认使用该名进行注入替换。
 
 ### type
 
-- 类型: `String`
-- 默认值: `react`
+-   类型: `String`
+-   默认值: `react`
 
 项目类型。
 
@@ -52,50 +52,51 @@ module.exports = {
 
     // React SPA
     type: 'react-spa'
-}
+};
 ```
 
 ### dist
 
-- 类型: `Pathname`
-- 默认值: `./dist`
+-   类型: `Pathname`
+-   默认值: `./dist`
+-   **仅针对**: 生产环境
 
 打包结果存放路径。
 
 ### template
 
-- 类型: `Pathname`
-- 默认值: _无_
-- **必填**
+-   类型: `Pathname`
+-   默认值: _无_
+-   **必填**
 
 HTML 模板文件路径。目前仅支持 `.ejs` 文件。有关模板的使用请查阅 [HTML 模板](/template)。
 
 ```javascript
 module.exports = {
     // 示例配置
-    template: "./src/template.ejs"
-}
+    template: './src/template.ejs'
+};
 ```
 
 ### templateInject
 
-- 类型: `Pathname:Object`
-- 默认值: _无_
+-   类型: `Pathname:Object`
+-   默认值: _无_
 
 自定义 HTML 模板替换内容。请查阅 [HTML 模板](/template)。
 
 ```javascript
 module.exports = {
     // 示例配置
-    templateInject: "./src/template-inject.js"
-}
+    templateInject: './src/template-inject.js'
+};
 ```
 
 ### routes
 
-- 类型: `Pathname:Object`
-- 默认值: _无_
-- **必填**
+-   类型: `Pathname:Object`
+-   默认值: _无_
+-   **必填**
 
 路由配置，供 `react-router` 使用。Koot.js 目前使用的 `react-router` 版本为 _**v3**_。
 
@@ -104,29 +105,29 @@ module.exports = {
 ```javascript
 module.exports = {
     // 示例配置
-    routes: "./src/routes"
-}
+    routes: './src/routes'
+};
 ```
 
 ### historyType
 
-- 类型: `String`
-- 默认值: 自动匹配 (同构项目使用 `browserHistory`，SPA项目使用 `hashHistory`)
-- **仅针对**: 客户端
+-   类型: `String`
+-   默认值: 自动匹配 (同构项目使用 `browserHistory`，SPA 项目使用 `hashHistory`)
+-   **仅针对**: 客户端
 
 项目所用的 `history` 组件的类型。可省略 `History` 字段，如 `browserHistory` 和 `browser` 等效。
 
 ```javascript
 module.exports = {
     // 示例配置：无论项目类型，客户端环境统一使用 hashHistory
-    historyType: "hash"
-}
+    historyType: 'hash'
+};
 ```
 
 ### store
 
-- 类型: `Pathname:Function`
-- 默认值: _无_
+-   类型: `Pathname:Function`
+-   默认值: _无_
 
 生成 Redux store 的方法函数。
 
@@ -136,34 +137,37 @@ module.exports = {
  ***************************/
 module.exports = {
     store: './src/store'
-}
+};
 
 /****************************
  * 文件: /src/store/index.js
  ***************************/
-const { createStore, combineReducers, applyMiddleware } = require('redux')
+const { createStore, combineReducers, applyMiddleware } = require('redux');
 // Koot.js 提供的生成 Redux store 所需要的相关内容
 const {
-    reducers: kootDefaultReducers, initialState, middlewares
-} = require('koot').reduxForCreateStore
-// 项目使用的 reducer
-const projectReducers = require('./reducers.js')
-
-module.exports = () => createStore(
-    combineReducers({
-        ...kootDefaultReducers,
-        ...projectReducers
-    }),
+    reducers: kootDefaultReducers,
     initialState,
-    applyMiddleware(...middlewares)
-)
+    middlewares
+} = require('koot').reduxForCreateStore;
+// 项目使用的 reducer
+const projectReducers = require('./reducers.js');
+
+module.exports = () =>
+    createStore(
+        combineReducers({
+            ...kootDefaultReducers,
+            ...projectReducers
+        }),
+        initialState,
+        applyMiddleware(...middlewares)
+    );
 ```
 
 ### cookiesToStore
 
-- 类型: `Boolean` `String` 或 `String[]`
-- 默认值: `true`
-- **仅针对**: 同构项目类型
+-   类型: `Boolean` `String` 或 `String[]`
+-   默认值: `true`
+-   **仅针对**: 同构项目类型
 
 将 cookie 写入到 Redux store 中的 `state.server.cookie`。
 
@@ -182,14 +186,14 @@ module.exports = {
 
     // 仅将名为 `userToken` 的 cookie 写入到 store 中
     // `state.server.cookie` 为对象，key/value 对应 cookie 的每一项
-    cookiesToStore: ['userToken'],
-}
+    cookiesToStore: ['userToken']
+};
 ```
 
 ### i18n
 
-- 类型: `Boolean` `Object` 或 `Array[]`
-- 默认值: `false`
+-   类型: `Boolean` `Object` 或 `Array[]`
+-   默认值: `false`
 
 多语言配置。
 
@@ -219,17 +223,17 @@ module.exports = {
         /** `i18n.type`
          * - 类型: `String`
          * - 默认值: `default`
-         * 
+         *
          * 多语言打包模式
          * **仅针对**: 生产环境
-         * 
+         *
          * 目前支持:
          * - `default` (默认值)
-         *   客户端按语种分别打包，语言包内容会直接打入到代码中，代码结果中不存在“语言包对象” 
+         *   客户端按语种分别打包，语言包内容会直接打入到代码中，代码结果中不存在“语言包对象”
          *   适合所有项目使用，推荐语言包较大的项目使用
          * - `redux`
-         *   服务器输出 HTML 时，当前语种的语言包对象会写入 Redux store 
-         *   适合语言包较小，或对文件/请求体积不敏感的 WebApp 项目使用 
+         *   服务器输出 HTML 时，当前语种的语言包对象会写入 Redux store
+         *   适合语言包较小，或对文件/请求体积不敏感的 WebApp 项目使用
          *   开发环境下会强制使用这一模式
          */
         type: 'default',
@@ -287,14 +291,14 @@ module.exports = {
          * 语种ID和语言包。参见上文简易配置
          */
         locales: []
-    },
-}
+    }
+};
 ```
 
 ### pwa
 
-- 类型: `Boolean` 或 `Object`
-- 默认值: `true`
+-   类型: `Boolean` 或 `Object`
+-   默认值: `true`
 
 自动生成 `service-worker` 脚本文件的设置。
 
@@ -311,21 +315,21 @@ module.exports = {
     // 详细设置
     // TODO: 详细配置规则仍在调整中，暂不提供文档
     pwa: {}
-}
+};
 ```
 
 ### aliases
 
-- 类型: `Object`
-- 默认值: `{}` (空对象)
+-   类型: `Object`
+-   默认值: `{}` (空对象)
 
 定义文件、路径别名。可在任何经过 Webpack 处理的 JavaScript 和 CSS 相关文件中使用。
 
-- 一般情况下，所有 React 相关代码均会经过 Webpack 处理
-- 使用 `webpack.resolve.alias` 实现
+-   一般情况下，所有 React 相关代码均会经过 Webpack 处理
+-   使用 `webpack.resolve.alias` 实现
 
 ```javascript
-const path = require('path')
+const path = require('path');
 module.exports = {
     // 默认值
     aliases: {},
@@ -334,9 +338,9 @@ module.exports = {
     aliases: {
         '@src': path.resolve('./src'),
         '@assets': path.resolve('./src/assets'),
-        '~base.less': path.resolve('./src/assets/css/base.less'),
-    },
-}
+        '~base.less': path.resolve('./src/assets/css/base.less')
+    }
+};
 ```
 
 ```javascript
@@ -351,13 +355,13 @@ import '~base.less';
 
 ### defines
 
-- 类型: `Object`
-- 默认值: `{}` (空对象)
+-   类型: `Object`
+-   默认值: `{}` (空对象)
 
 定义 JavaScript 代码中的常量。可在任何经过 Webpack 处理的 JavaScript 相关文件中使用。
 
-- 一般情况下，所有 React 相关代码均会经过 Webpack 处理
-- 使用 Webpack 插件 `DefinePlugin` 实现
+-   一般情况下，所有 React 相关代码均会经过 Webpack 处理
+-   使用 Webpack 插件 `DefinePlugin` 实现
 
 ```javascript
 module.exports = {
@@ -366,40 +370,42 @@ module.exports = {
 
     // 示例
     defines: {
-        __QA__: JSON.stringify(false),
-    },
-}
+        __QA__: JSON.stringify(false)
+    }
+};
 ```
 
 ```javascript
 // 针对上述示例的代码
-const apiBase = __QA__ ? `http://qa-api.project.com/` : `https://api.project.com/`;
+const apiBase = __QA__
+    ? `http://qa-api.project.com/`
+    : `https://api.project.com/`;
 ```
 
 ### staticCopyFrom
 
-- 类型: `Pathname`
-- 默认值: __无__
+-   类型: `Pathname`
+-   默认值: **无**
 
 将目标目录内的所有文件复制到打包结果内的静态服务器目录中。
 
-- 原封不动的复制，会保留文件名和目录结构
-- 开发环境下也可以使用
+-   原封不动的复制，会保留文件名和目录结构
+-   开发环境下也可以使用
 
 ```javascript
-const path = require('path')
+const path = require('path');
 module.exports = {
     // 默认值
     staticCopyFrom: undefined,
 
     // 示例
-    staticCopyFrom: path.resolve(__dirname, './src/assets/public'),
-}
+    staticCopyFrom: path.resolve(__dirname, './src/assets/public')
+};
 ```
 
 示例效果:
 
-- 文件 `/web/src/assets/public/favicon.ico` 可使用以下 URL 访问: `/favicon.ico`
+-   文件 `/web/src/assets/public/favicon.ico` 可使用以下 URL 访问: `/favicon.ico`
 
 ---
 
@@ -407,9 +413,9 @@ module.exports = {
 
 ### before
 
-- 类型: `Pathname:Function`
-- 默认值: _无_
-- **仅针对**: 客户端
+-   类型: `Pathname:Function`
+-   默认值: _无_
+-   **仅针对**: 客户端
 
 客户端/浏览器端中，在 React 代码执行/初始化之前，执行的方法。
 
@@ -419,7 +425,7 @@ module.exports = {
  ***************************/
 module.exports = {
     before: './src/lifecycle/client-before'
-}
+};
 
 /****************************
  * 文件: /src/lifecycle/client-before.js
@@ -433,14 +439,14 @@ module.exports = {
  */
 export default ({ store, history, localeId }) => {
     // ...
-}
+};
 ```
 
 ### after
 
-- 类型: `Pathname:Function`
-- 默认值: _无_
-- **仅针对**: 客户端
+-   类型: `Pathname:Function`
+-   默认值: _无_
+-   **仅针对**: 客户端
 
 客户端/浏览器端中，在 React 代码执行/初始化之后，执行的方法。
 
@@ -450,7 +456,7 @@ export default ({ store, history, localeId }) => {
  ***************************/
 module.exports = {
     after: './src/lifecycle/client-after'
-}
+};
 
 /****************************
  * 文件: /src/lifecycle/client-after.js
@@ -464,23 +470,23 @@ module.exports = {
  */
 export default ({ store, history, localeId }) => {
     // ...
-}
+};
 ```
 
 ### onHistoryUpdate
 
-- 类型: `Pathname:Function`
-- 默认值: _无_
-- **仅针对**: 客户端
+-   类型: `Pathname:Function`
+-   默认值: _无_
+-   **仅针对**: 客户端
 
 客户端/浏览器端中，在 URL 或历史记录 (由 `history` 管理) 更新时，执行的回调方法。
 
-- 该回调发生在 `onRouterUpdate` 之前
-- 如果路由对应组件进行了代码分割，则会按顺序进行以下行为
-  1. 客户端/浏览器 URL 或历史记录改变之后即刻触发 `onHistoryUpdate`
-  2. 载入对应组件的代码 (如果已载入则跳过该步骤)
-  3. 渲染相应组件
-  4. 触发 `onRouterUpdate`
+-   该回调发生在 `onRouterUpdate` 之前
+-   如果路由对应组件进行了代码分割，则会按顺序进行以下行为
+    1. 客户端/浏览器 URL 或历史记录改变之后即刻触发 `onHistoryUpdate`
+    2. 载入对应组件的代码 (如果已载入则跳过该步骤)
+    3. 渲染相应组件
+    4. 触发 `onRouterUpdate`
 
 ```javascript
 /****************************
@@ -488,7 +494,7 @@ export default ({ store, history, localeId }) => {
  ***************************/
 module.exports = {
     onHistoryUpdate: './src/lifecycle/client-history-update'
-}
+};
 
 /****************************
  * 文件: /src/lifecycle/client-history-update.js
@@ -500,23 +506,23 @@ module.exports = {
  */
 export default (location, store) => {
     // ...
-}
+};
 ```
 
 ### onRouterUpdate
 
-- 类型: `Pathname:Function`
-- 默认值: _无_
-- **仅针对**: 客户端
+-   类型: `Pathname:Function`
+-   默认值: _无_
+-   **仅针对**: 客户端
 
 客户端/浏览器端中，在路由 (由 `react-router` 管理) 更新时，执行的回调方法。
 
-- 该回调发生在 `onHistoryUpdate` 之后
-- 如果路由对应组件进行了代码分割，则会按顺序进行以下行为
-  1. 客户端/浏览器 URL 或历史记录改变之后即刻触发 `onHistoryUpdate`
-  2. 载入对应组件的代码 (如果已载入则跳过该步骤)
-  3. 渲染相应组件
-  4. 触发 `onRouterUpdate`
+-   该回调发生在 `onHistoryUpdate` 之后
+-   如果路由对应组件进行了代码分割，则会按顺序进行以下行为
+    1. 客户端/浏览器 URL 或历史记录改变之后即刻触发 `onHistoryUpdate`
+    2. 载入对应组件的代码 (如果已载入则跳过该步骤)
+    3. 渲染相应组件
+    4. 触发 `onRouterUpdate`
 
 ```javascript
 /****************************
@@ -524,14 +530,14 @@ export default (location, store) => {
  ***************************/
 module.exports = {
     onRouterUpdate: './src/lifecycle/client-router-update'
-}
+};
 
 /****************************
  * 文件: /src/lifecycle/client-router-update.js
  ***************************/
 export default (...args) => {
     // 传入的参数与 `react-router` 相应的回调方法相同
-}
+};
 ```
 
 ---
@@ -540,24 +546,24 @@ export default (...args) => {
 
 ### port
 
-- 类型: `Number`
-- 默认值: `8080`
-- **仅针对**: 服务器端
+-   类型: `Number`
+-   默认值: `8080`
+-   **仅针对**: 服务器端
 
 服务器启动端口号。（开发环境默认会使用该端口号）
 
 ### renderCache
 
-- 类型: `Object` 或 `Boolean`
-- 默认值: `{ maxAge: 5000, maxCount: 50 }`
-- **仅针对**: 服务器端，生产环境
+-   类型: `Object` 或 `Boolean`
+-   默认值: `{ maxAge: 5000, maxCount: 50 }`
+-   **仅针对**: 服务器端，生产环境
 
-生产环境下服务器渲染缓存相关设置。默认行为: 
+生产环境下服务器渲染缓存相关设置。默认行为:
 
-- 根据**完整的** URL 进行缓存，即每个 URL 有各自的结果缓存
-  - `/page-a/` 和 `/page-a/?a=b` 有不同的缓存
-- 仅保留最近 **50** 个 URL 的结果
-- 每条结果最多保存 **5秒**
+-   根据**完整的** URL 进行缓存，即每个 URL 有各自的结果缓存
+    -   `/page-a/` 和 `/page-a/?a=b` 有不同的缓存
+-   仅保留最近 **50** 个 URL 的结果
+-   每条结果最多保存 **5 秒**
 
 ```javascript
 module.exports = {
@@ -575,7 +581,7 @@ module.exports = {
         /** `renderCache.maxAge`
          * - 类型: `Number`
          * - 默认值: `5000`
-         * 
+         *
          * 每条结果最多保存时间, 单位: 毫秒 (ms)
          */
         maxAge: 5000,
@@ -583,7 +589,7 @@ module.exports = {
         /** `renderCache.maxCount`
          * - 类型: `Number`
          * - 默认值: `50`
-         * 
+         *
          * 根据 URL 保留的结果条目数
          */
         maxCount: 50,
@@ -591,24 +597,24 @@ module.exports = {
         /** `renderCache.get`
          * - 类型: `Function`
          * - 默认值: `undefined`
-         * 
+         *
          * 自定义缓存检查与吐出方法。存在时, maxAge 和 maxCount 设置将被忽略
-         * 
+         *
          * @param {String} url 请求的完整的 URL
          * @returns {Boolean|String} 返回 false 时，表示该 URL 没有缓存结果
          */
-        get: (url) => {
+        get: url => {
             // 自实现的缓存结果获取逻辑
             // return false
-            return '完整渲染结果'
+            return '完整渲染结果';
         },
 
         /** `renderCache.set`
          * - 类型: `Function`
          * - 默认值: `undefined`
-         * 
+         *
          * 自定义缓存存储方法。存在时, maxAge 和 maxCount 设置将被忽略
-         * 
+         *
          * @param {String} url 请求的完整的 URL
          * @param {String} html 服务器渲染结果
          * @void
@@ -616,15 +622,15 @@ module.exports = {
         set: (url, html) => {
             // 自实现的缓存结果存储逻辑
         }
-    },
-}
+    }
+};
 ```
 
 ### proxyRequestOrigin
 
-- 类型: `Object`
-- 默认值: `{}` (空对象)
-- **仅针对**: 服务器端，生产环境
+-   类型: `Object`
+-   默认值: `{}` (空对象)
+-   **仅针对**: 服务器端，生产环境
 
 如果当前项目的 Node.js 服务器是通过其他代理服务器请求的（如 nginx 反向代理），可用这个配置声明原始请求的信息。
 
@@ -639,16 +645,16 @@ module.exports = {
          * - 类型: `String`
          * 协议名
          */
-        protocol: 'https',
-    },
-}
+        protocol: 'https'
+    }
+};
 ```
 
 ### koaStatic
 
-- 类型: `Object`
-- 默认值: _见下_
-- **仅针对**: 服务器端
+-   类型: `Object`
+-   默认值: _见下_
+-   **仅针对**: 服务器端
 
 `koa-static` 静态资源服务器配置。配置对象采用 `koa-static` 的官方方案。
 
@@ -663,14 +669,14 @@ module.exports = {
         gzip: true,
         extensions: false
     }
-}
+};
 ```
 
 ### serverBefore
 
-- 类型: `Function`
-- 默认值: _无_
-- **仅针对**: 服务器端
+-   类型: `Function`
+-   默认值: _无_
+-   **仅针对**: 服务器端
 
 在服务器端创建 _Koa_ 实例后、挂载任何中间件之前，执行的方法。
 
@@ -679,22 +685,22 @@ module.exports = {
     // 默认值
     serverBefore: undefined,
 
-    /** 
+    /**
      * @async
      * @param {Object} app Koa实例
      * @void
      */
-    serverBefore: async (app) => {
+    serverBefore: async app => {
         // 案例：挂载静态目录中间件
     }
-}
+};
 ```
 
 ### serverAfter
 
-- 类型: `Function`
-- 默认值: _无_
-- **仅针对**: 服务器端
+-   类型: `Function`
+-   默认值: _无_
+-   **仅针对**: 服务器端
 
 在服务器端 _Koa_ 挂载所有中间件后、正式启动服务器服务之前，执行的方法。
 
@@ -703,22 +709,22 @@ module.exports = {
     // 默认值
     serverAfter: undefined,
 
-    /** 
+    /**
      * @async
      * @param {Object} app Koa实例
      * @void
      */
-    serverAfter: async (app) => {
+    serverAfter: async app => {
         // ...
     }
-}
+};
 ```
 
 ### serverOnRender
 
-- 类型: `Function` 或 `Object`
-- 默认值: _无_
-- **仅针对**: 服务器端
+-   类型: `Function` 或 `Object`
+-   默认值: _无_
+-   **仅针对**: 服务器端
 
 在服务器端计算 React 渲染结果时运行的方法。
 
@@ -743,9 +749,9 @@ module.exports = {
     serverOnRender: {
         /** `serverOnRender.beforeRouterMatch`
          * - 类型: `Function`
-         * 
+         *
          * 在路由 (`react-router`) 匹配之前，运行的方法
-         * 
+         *
          * @async
          * @param {Object} options
          * @param {Object} [options.ctx] 本次请求的 Koa ctx 对象
@@ -758,10 +764,10 @@ module.exports = {
 
         /** `serverOnRender.beforeDataToStore`
          * - 类型: `Function`
-         * 
+         *
          * 在路由 (`react-router`) 匹配之后、进行 store 相关数据计算之前，运行的方法
          * - 同 `serverOnRender` 为 `Function` 的情况
-         * 
+         *
          * @async
          * @param {Object} options
          * @param {Object} [options.ctx] 本次请求的 Koa ctx 对象
@@ -775,9 +781,9 @@ module.exports = {
 
         /** `serverOnRender.afterDataToStore`
          * - 类型: `Function`
-         * 
+         *
          * 在进行 store 相关数据计算之后，运行的方法
-         * 
+         *
          * @async
          * @param {Object} options
          * @param {Object} [options.ctx] 本次请求的 Koa ctx 对象
@@ -789,7 +795,7 @@ module.exports = {
             // ...
         }
     }
-}
+};
 ```
 
 ---
@@ -798,10 +804,10 @@ module.exports = {
 
 ### webpackConfig
 
-- 类型: `Object` 或 `Function`
-- 默认值: _无_
-- **必填**
-- **仅针对**: Webpack 打包过程
+-   类型: `Object` 或 `Function`
+-   默认值: _无_
+-   **必填**
+-   **仅针对**: Webpack 打包过程
 
 Webpack 打包配置。如果为 `Function`，需要返回 Webpack 打包配置，可为异步方法。有关 Koot.js 内 Webpack 的使用请查阅 [Webpack 相关](/webpack)。
 
@@ -818,9 +824,7 @@ module.exports = {
              * - 该模板项目中，本 `critical` 入口的结果会被自动写入到 HTML 结果内，位于 `<body>` 标签中所有自动插入的 `<script>` 标签之前
              * - 详见模板文件 `/src/index.ejs` 内的 `<%- content('critical.js') %>`
              */
-            critical: [
-                path.resolve(__dirname, '../src/critical.js')
-            ]
+            critical: [path.resolve(__dirname, '../src/critical.js')]
 
             /**
              * Koot.js 会自动加入一个名为 `client` 的入口，其中包含所有 React 相关逻辑
@@ -829,14 +833,15 @@ module.exports = {
         },
         module: {
             rules: [
-                /** 
+                /**
                  * Koot.js 会为以下类型的文件自动添加 loader，无需进行配置
                  * - `js` `mjs` `jsx`
                  * - `css` `sass` `less`
                  */
                 {
                     test: /\.(ico|gif|jpg|jpeg|png|webp)$/,
-                    loader: 'file-loader?context=static&name=assets/[hash:32].[ext]',
+                    loader:
+                        'file-loader?context=static&name=assets/[hash:32].[ext]',
                     exclude: /node_modules/
                 },
                 {
@@ -844,20 +849,20 @@ module.exports = {
                     loader: 'svg-url-loader',
                     exclude: /node_modules/,
                     options: {
-                        noquotes: true,
+                        noquotes: true
                     }
                 }
             ]
         }
     })
-}
+};
 ```
 
 ### webpackBefore
 
-- 类型: `Function`
-- 默认值: _无_
-- **仅针对**: Webpack 打包过程
+-   类型: `Function`
+-   默认值: _无_
+-   **仅针对**: Webpack 打包过程
 
 Webpack 打包执行之前执行的方法。
 
@@ -868,20 +873,24 @@ module.exports = {
 
     /**
      * @async
-     * @param {Object} kootConfig koot 完整配置对象
+     * @param {Object} kootConfigWithExtra koot 完整配置对象，附加额外信息
      * @void
      */
-    webpackBefore: async (kootConfig) => ({
-        // ...
+    webpackBefore: async kootConfigWithExtra => ({
+        /*
+         * `kootConfigWithExtra` 对象中的额外信息
+         * - `__WEBPACK_OUTPUT_PATH` - 本次打包的目标目录
+         * - `__CLIENT_ROOT_PATH` - 仅针对客户端，本次打包结果的客户端根目录
+         */
     })
-}
+};
 ```
 
 ### webpackAfter
 
-- 类型: `Function`
-- 默认值: _无_
-- **仅针对**: Webpack 打包过程
+-   类型: `Function`
+-   默认值: _无_
+-   **仅针对**: Webpack 打包过程
 
 Webpack 打包执行之后执行的方法。
 
@@ -892,20 +901,20 @@ module.exports = {
 
     /**
      * @async
-     * @param {Object} kootConfig koot 完整配置对象
+     * @param {Object} kootConfigWithExtra koot 完整配置对象，附加额外信息
      * @void
      */
-    webpackAfter: async (kootConfig) => ({
-        // ...
+    webpackAfter: async kootConfigWithExtra => ({
+        // `kootConfigWithExtra` 中的额外信息详见上文 `webpackBefore` 的说明
     })
-}
+};
 ```
 
 ### moduleCssFilenameTest
 
-- 类型: `RegExp`
-- 默认值: `/\.(component|view|module)/`
-- **仅针对**: Webpack 打包过程
+-   类型: `RegExp`
+-   默认值: `/\.(component|view|module)/`
+-   **仅针对**: Webpack 打包过程
 
 组件 CSS 文件名检查规则，不包括扩展名部分。有关 CSS 的使用请查阅 [CSS](/css)。
 
@@ -915,14 +924,14 @@ _默认值解释:_ 文件名以 `.component.css` `.view.css` 或 `.module.css` (
 module.exports = {
     // 默认值
     moduleCssFilenameTest: /\.(component|view|module)/
-}
+};
 ```
 
 ### internalLoaderOptions
 
-- 类型: `Object`
-- 默认值: _无_
-- **仅针对**: Webpack 打包过程
+-   类型: `Object`
+-   默认值: _无_
+-   **仅针对**: Webpack 打包过程
 
 用以扩展几乎无法修改的内置 Webpack loader 的配置。
 
@@ -939,7 +948,52 @@ module.exports = {
             }
         }
     }
-}
+};
+```
+
+### classNameHashLength
+
+-   `koot >= 0.9`
+-   类型: `Number`
+-   默认值: `6`
+-   **仅针对**: Webpack 打包过程
+
+调整组件 CSS 的 className hash 长度。
+
+```javascript
+module.exports = {
+    // 默认值
+    classNameHashLength: 6,
+
+    // 示例: 生产环境与开发环境使用不同的值
+    classNameHashLength: process.env.WEBPACK_BUILD_ENV === 'dev' ? 16 : 4
+};
+```
+
+### bundleVersionsKeep
+
+-   `koot >= 0.9`
+-   类型: `Number`
+-   默认值: `2`
+-   **仅针对**: 同构/SSR 项目的生产环境下的 Webpack 打包过程
+
+指定客户端打包结果保留的版本的个数。如果为自然数，表示开启该功能，其他值均表示关闭该功能。
+
+-   开启时，客户端打包结果会在 `public/` 目录下多一级名为 `koot-[时间戳]/` 的目录（如 `public/koot-1556106436230/`）
+    -   这些目录会保留指定个数，如默认值 `2` 表示仅会保留 2 个这样的目录
+    -   通过清理这些目录，变相的实现了自动清理打包结果的功能
+-   关闭时，客户端打包结果会直接出现在 `public/` 目录下
+    -   注：该情况下 `public/` 目录不会自动清理，如果有相关需求需主动编写相关逻辑
+
+```javascript
+module.exports = {
+    // 默认值
+    bundleVersionsKeep: 2,
+
+    // 关闭该功能
+    // 注: 如果使用 koot-cli 从 0.9 之前的版本升级，默认会关闭该功能
+    bundleVersionsKeep: false
+};
 ```
 
 ---
@@ -948,9 +1002,9 @@ module.exports = {
 
 ### devPort
 
-- 类型: `Number`
-- 默认值: _无_ (默认使用配置项 `port` 的值)
-- **仅针对**: 开发环境
+-   类型: `Number`
+-   默认值: _无_ (默认使用配置项 `port` 的值)
+-   **仅针对**: 开发环境
 
 指定开发环境端口号。
 
@@ -961,14 +1015,14 @@ module.exports = {
 
     // 示例: 指定开发环境采用 8088 端口
     devPort: 8088
-}
+};
 ```
 
 ### devDll
 
-- 类型: `Array`
-- 默认值: _见下_
-- **仅针对**: 开发环境
+-   类型: `Array`
+-   默认值: _见下_
+-   **仅针对**: 开发环境
 
 开发环境中，将部分 NPM 包独立打包，在之后更新的过程中，这些 NPM 包不会参与热更新流程，从而加速热更新速度。
 
@@ -982,16 +1036,16 @@ module.exports = {
         'redux-thunk',
         'react-redux',
         'react-router',
-        'react-router-redux',
+        'react-router-redux'
     ]
-}
+};
 ```
 
 ### devHmr
 
-- 类型: `Object`
-- 默认值: _见下_
-- **仅针对**: 开发环境
+-   类型: `Object`
+-   默认值: _见下_
+-   **仅针对**: 开发环境
 
 扩展 Webpack 插件 `HotModuleReplacementPlugin` 的配置。
 
@@ -1005,17 +1059,19 @@ module.exports = {
     // 开发环境下启动多步打包，以进一步加速热更新速度
     devHmr: {
         multiStep: true,
-        fullBuildTimeout: process.env.WEBPACK_BUILD_TYPE === 'spa' ? 500 : undefined,
-        requestTimeout: process.env.WEBPACK_BUILD_TYPE === 'spa' ? undefined : 1000
+        fullBuildTimeout:
+            process.env.WEBPACK_BUILD_TYPE === 'spa' ? 500 : undefined,
+        requestTimeout:
+            process.env.WEBPACK_BUILD_TYPE === 'spa' ? undefined : 1000
     }
-}
+};
 ```
 
 ### devServer
 
-- 类型: `Object`
-- 默认值: _见下_
-- **仅针对**: 开发环境
+-   类型: `Object`
+-   默认值: _见下_
+-   **仅针对**: 开发环境
 
 扩展 `webpack-dev-server` 配置对象。
 
@@ -1036,18 +1092,50 @@ module.exports = {
         },
         open: TYPE === 'spa',
         watchOptions: {
-            ignored: [
-                getDistPath(),
-                path.resolve(getDistPath(), '**/*')
-            ]
+            ignored: [getDistPath(), path.resolve(getDistPath(), '**/*')]
         },
-        before: (app) => {
+        before: app => {
             if (appType === 'ReactSPA') {
-                require('../../ReactSPA/dev-server/extend')(app)
+                require('../../ReactSPA/dev-server/extend')(app);
             }
-            if (typeof before === 'function')
-                return before(app)
+            if (typeof before === 'function') return before(app);
         }
     }
-}
+};
+```
+
+### devMemoryAllocation
+
+-   `koot >= 0.9`
+-   类型: `Number` 或 `Object`
+-   默认值: _无_
+-   **仅针对**: 开发环境
+
+指定开发环境中 node.js 分配的内存 (单位: MB)。
+
+```javascript
+module.exports = {
+    // 默认值 (使用 node.js 默认)
+    devMemoryAllocation: undefined,
+
+    // SPA: 指定 `webpack-dev-server` (client) 分配的内存容量
+    // SSR: 指定 `webpack-dev-server` (client) 和服务器打包进程 (server) 分配的内存容量
+    devMemoryAllocation: 2048,
+
+    // SSR: 分别指定 `webpack-dev-server` (client) 和服务器打包进程 (server) 分配的内存容量
+    devMemoryAllocation: {
+        client: 2048,
+        server: 1024
+    },
+
+    // SSR: 仅指定 `webpack-dev-server` (client) 分配的内存容量
+    devMemoryAllocation: {
+        client: 2048
+    },
+
+    // SSR: 仅指定服务器打包进程 (server) 分配的内存容量
+    devMemoryAllocation: {
+        server: 1024
+    }
+};
 ```

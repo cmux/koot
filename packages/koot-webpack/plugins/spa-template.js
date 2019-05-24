@@ -5,13 +5,14 @@ const path = require('path')
 // const ejs = require('ejs')
 const chalk = require('chalk')
 
-const writeChunkmap = require('../libs/require-koot')('utils/write-chunkmap')
-const getAppType = require('../libs/require-koot')('utils/get-app-type')
-const __ = require('../libs/require-koot')('utils/translate')
-const getDistPath = require('../libs/require-koot')('utils/get-dist-path')
-const getCwd = require('../libs/require-koot')('utils/get-cwd')
-const getChunkmap = require('../libs/require-koot')('utils/get-chunkmap')
-const getDirDistPublic = require('../libs/require-koot')('libs/get-dir-dist-public')
+const writeChunkmap = require('koot/utils/write-chunkmap')
+const getAppType = require('koot/utils/get-app-type')
+const __ = require('koot/utils/translate')
+const getDistPath = require('koot/utils/get-dist-path')
+const getCwd = require('koot/utils/get-cwd')
+const getChunkmap = require('koot/utils/get-chunkmap')
+const getDirDistPublic = require('koot/libs/get-dir-dist-public')
+const validateTemplate = require('koot/libs/validate-template')
 
 /**
  * Webpack 插件 - 生成 SPA 主页面文件
@@ -23,12 +24,14 @@ class SpaTemplatePlugin {
     constructor(settings = {}) {
         this.localeId = settings.localeId
         this.inject = settings.inject
+        this.template = settings.template
     }
 
     apply(compiler) {
 
         const localeId = this.localeId
         const inject = this.inject
+        const template = this.template
         const filename = `index${localeId ? `.${localeId}` : ''}.html`
 
         // 失败原因
@@ -97,12 +100,14 @@ class SpaTemplatePlugin {
                 fail = __('build.spa_template_not_found')
                 return callback()
             }
-            const template = process.env.KOOT_HTML_TEMPLATE
+            const templateStr = process.env.WEBPACK_BUILD_ENV === 'dev'
+                ? await validateTemplate(template)
+                : process.env.KOOT_HTML_TEMPLATE
 
             const renderTemplate = (() => {
                 switch (appType) {
                     case 'ReactSPA': {
-                        return require('../libs/require-koot')(`React/render-template`)
+                        return require(`koot/React/render-template`)
                     }
                 }
                 return () => ''
@@ -110,12 +115,12 @@ class SpaTemplatePlugin {
             const defaultInject = (() => {
                 switch (appType) {
                     case 'ReactSPA': {
-                        return require('../libs/require-koot')(`ReactSPA/inject`)({
+                        return require(`koot/ReactSPA/inject`)({
                             filemap,
                             compilation,
                             entrypoints,
                             localeId,
-                            needInjectCritical: require('../libs/require-koot')(`React/inject/is-need-inject-critical`)(template)
+                            needInjectCritical: require(`koot/React/inject/is-need-inject-critical`)(templateStr)
                         })
                     }
                 }
@@ -137,7 +142,7 @@ class SpaTemplatePlugin {
             })()
 
             const html = renderTemplate({
-                template,
+                template: templateStr,
                 inject: {
                     ...defaultInject,
                     ...projectInject

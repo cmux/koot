@@ -3,7 +3,7 @@ const path = require('path')
 
 const {
     filenameBuilding, filenameBuildFail,
-} = require('./require-koot')('defaults/before-build')
+} = require('koot/defaults/before-build')
 
 /**
  * 清理打包标记文件

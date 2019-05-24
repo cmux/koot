@@ -1,17 +1,17 @@
-@import "~vars.less";
+@import '~vars.less';
 
 .component {
     position: relative;
     border-top: @nav-height solid transparent;
 
-    & > main{
+    & > main {
         border-top: @main-gutter-top solid transparent;
         border-bottom: @main-gutter-bottom solid transparent;
     }
 
-    &.is-home{
+    &.is-home {
         border-top-color: @color-home-cover-background;
-        & > main{
+        & > main {
             border-top-width: 0;
         }
     }

@@ -1,19 +1,12 @@
 {
     "version": "independent",
-    "packages": [
-        "packages/*"
-    ],
+    "packages": ["packages/*"],
     "command": {
         "bootstrap": {
-            "npmClientArgs": [
-                "--no-package-lock"
-            ]
+            "npmClientArgs": ["--no-package-lock"]
         },
         "publish": {
-            "ignoreChanges": [
-                "**/__tests__/**",
-                "**/*.md"
-            ]
+            "ignoreChanges": ["**/__tests__/**", "**/*.md"]
         }
     }
 }

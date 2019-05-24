@@ -34,11 +34,11 @@ const parsePattern = pattern => {
  * @param {boolean} [settings.outputFilenameHash=false] - 输出文件名中是否会加入 MD5 hash。若设为 true，输出文件名会变为 `${basename}.${md5hash}.js`
  * @param {string} [settings.customServiceWorkerPath=path.resolve(__dirname, '../service-worker/index.js')] - service-worker 文件模板
  * @param {string} [settings.globPattern=`/client/**//**`] - 利用 glob 初始化缓存文件列表（替换 service-worker 模板中的 urlsToCache 变量）
- * @param {Object} [settings.globOptions={}] - glob 设置
- * @param {Array} [settings.appendUrls=[]] - 手动追加缓存文件列表（追加到 service-worker 模板中的 urlsToCache 变量）
- * @returns {Promise}
- */
-const create = async (settings = {}, i18n) => {
+* @param {Object} [settings.globOptions={}] - glob 设置
+* @param {Array} [settings.appendUrls=[]] - 手动追加缓存文件列表（追加到 service-worker 模板中的 urlsToCache 变量）
+* @returns {Promise}
+*/
+const create = async (settings = {}, i18n, bundleVersionsKeep) => {
     // let options = Object.assign({
     //     outputPath: getCwd() + '/dist/public/',
     //     outputFilename: 'service-worker.js',
@@ -61,7 +61,7 @@ const create = async (settings = {}, i18n) => {
 
     const pathnamePolyfill = []
     const pathnameChunkmap = getChunkmapPath()
-    const outputPath = getDirDistPublic(getDistPath())
+    const outputPath = getDirDistPublic(getDistPath(), bundleVersionsKeep)
     const i18nType = typeof i18n === 'object' ? i18n.type : undefined
     const isI18nDefault = (i18nType === 'default')
 
@@ -77,6 +77,8 @@ const create = async (settings = {}, i18n) => {
                 _pathname = `.${_pathname}`
             return path.resolve(outputPath, _pathname)
         })()
+
+        await fs.ensureDir(outputPath)
 
         if (chunkmap.polyfill)
             if (Array.isArray(chunkmap.polyfill)) {
@@ -134,7 +136,7 @@ const create = async (settings = {}, i18n) => {
             outputFile,
             content.replace(
                 '[/* APPEND URLS HERE */]',
-                JSON.stringify(files, undefined, 4)
+                JSON.stringify([...new Set(files)], undefined, 4)
             ),
             'utf8'
         )
