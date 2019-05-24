@@ -1,10 +1,10 @@
-const factoryConfig = require('./_factory')
+const factoryConfig = require('./_factory');
 
-module.exports = (async () => {
-    const defaults = await factoryConfig()
+module.exports = async () => {
+    const defaults = await factoryConfig();
 
     // 针对开发环境的定制配置
-    const config = {}
+    const config = {};
 
-    return Object.assign({}, defaults, config)
-})()
+    return Object.assign({}, defaults, config);
+};

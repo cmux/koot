@@ -125,11 +125,15 @@ module.exports = {
         };
 
         // 针对：开发环境
-        if (process.env.WEBPACK_BUILD_ENV === 'dev') return configBase;
+        if (process.env.WEBPACK_BUILD_ENV === 'dev')
+            return {
+                ...configBase
+            };
 
         // 针对：生产环境
         // `entry` 项仅针对：客户端
-        return Object.assign({}, configBase, {
+        return {
+            ...configBase,
             entry: {
                 commons: [
                     'react',
@@ -145,7 +149,7 @@ module.exports = {
                 ],
                 ...configBase.entry
             }
-        });
+        };
     },
     // 更多选项请查阅文档...
 
