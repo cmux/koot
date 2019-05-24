@@ -103,9 +103,14 @@ module.exports = {
                      */
                     {
                         test: /\.(ico|gif|jpg|jpeg|png|webp)$/,
-                        loader:
-                            'file-loader?context=static&name=assets/[hash:32].[ext]',
-                        exclude: /node_modules/
+                        loader: 'file-loader',
+                        options: {
+                            context: 'static',
+                            name: 'assets/[hash:32].[ext]',
+                            emitFile: Boolean(
+                                process.env.WEBPACK_BUILD_STAGE === 'client'
+                            )
+                        }
                     },
                     {
                         test: /\.svg$/,
