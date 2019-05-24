@@ -239,6 +239,14 @@ describe('测试: React 同构项目', () => {
 
                 expect(errors.length).toBe(0);
 
+                // server-side 打包结果不应出现静态资源目录
+                expect(
+                    fs.existsSync(path.resolve(dir, 'dist/server/index.js'))
+                ).toBe(true);
+                expect(
+                    fs.existsSync(path.resolve(dir, 'dist/server/assets'))
+                ).toBe(false);
+
                 await doTest(port, {
                     customEnv
                 });

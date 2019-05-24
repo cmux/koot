@@ -1,7 +1,7 @@
 const factoryConfig = require('./_factory');
 const path = require('path');
 
-module.exports = (async () => {
+module.exports = async () => {
     const defaults = await factoryConfig();
 
     // 针对生产环境的定制配置
@@ -49,4 +49,4 @@ module.exports = (async () => {
     };
 
     return Object.assign({}, defaults, config);
-})();
+};

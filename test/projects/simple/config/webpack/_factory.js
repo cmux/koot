@@ -3,9 +3,9 @@ const path = require('path');
 const src = path.resolve(__dirname, '../../src');
 
 module.exports = async () => {
-    console.log({
-        'process.env.WEBPACK_BUILD_STAGE': process.env.WEBPACK_BUILD_STAGE
-    });
+    // console.log({
+    //     'process.env.WEBPACK_BUILD_STAGE': process.env.WEBPACK_BUILD_STAGE
+    // });
 
     return {
         // 所有的入口脚本 (entry) 均为客户端/浏览器端 (__CLIENT__) 使用

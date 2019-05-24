@@ -78,6 +78,9 @@ module.exports = {
      *************************************************************************/
 
     webpackConfig: async () => {
+        console.log({
+            'process.env.WEBPACK_BUILD_STAGE': process.env.WEBPACK_BUILD_STAGE
+        });
         /** @type {Object} 基础配置 */
         const configBase = {
             entry: {

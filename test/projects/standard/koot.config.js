@@ -1,15 +1,14 @@
 /**
  * @module kootConfig
- * 
+ *
  * Koot.js 项目配置
- * 
+ *
  * 配置文档请查阅: [https://koot.js.org/#/config]
  */
 
-const path = require('path')
+const path = require('path');
 
 module.exports = {
-
     /**************************************************************************
      * 项目信息
      *************************************************************************/
@@ -33,7 +32,7 @@ module.exports = {
         locales: [
             ['zh', './src/locales/zh.json'],
             ['zh-tw', './src/locales/zh-tw.json'],
-            ['en', './src/locales/en.json'],
+            ['en', './src/locales/en.json']
         ]
     },
 
@@ -48,27 +47,18 @@ module.exports = {
         '@store': path.resolve('./src/store'),
         '@views': path.resolve('./src/views'),
         '@server': path.resolve('./server'),
-        "~base.less": path.resolve('./src/constants/less/base.less'),
-        "~Assets": path.resolve('./src/assets'),
-        "~/": path.resolve('./src')
+        '~base.less': path.resolve('./src/constants/less/base.less'),
+        '~Assets': path.resolve('./src/assets'),
+        '~/': path.resolve('./src')
     },
     defines: {
-        __QA__: JSON.stringify(false),
+        __QA__: JSON.stringify(false)
     },
 
     staticCopyFrom: [
-        path.resolve(__dirname, './public'),
+        path.resolve(__dirname, './public')
         // path.resolve(__dirname, './server')
     ],
-
-
-
-
-
-
-
-
-
 
     /**************************************************************************
      * 客户端生命周期
@@ -79,22 +69,13 @@ module.exports = {
     onRouterUpdate: './src/services/lifecycle/on-router-update',
     onHistoryUpdate: './src/services/lifecycle/on-history-update',
 
-
-
-
-
-
-
-
-
-
     /**************************************************************************
      * 服务器端设置 & 生命周期
      *************************************************************************/
 
     port: 8080,
     renderCache: {
-        maxAge: 10 * 1000,
+        maxAge: 10 * 1000
     },
     // renderCache: false,
     proxyRequestOrigin: {
@@ -112,35 +93,26 @@ module.exports = {
     serverAfter: './server/lifecycle/after',
     serverOnRender: {
         beforeDataToStore: './server/lifecycle/on-render-before-data-to-store',
-        afterDataToStore: './server/lifecycle/on-render-after-data-to-store',
+        afterDataToStore: './server/lifecycle/on-render-after-data-to-store'
     },
-
-
-
-
-
-
-
-
-
 
     /**************************************************************************
      * Webpack 相关
      *************************************************************************/
 
     webpackConfig: async () => {
-        const ENV = process.env.WEBPACK_BUILD_ENV
-        if (ENV === 'dev') return await require('./config/webpack/dev')
-        if (ENV === 'prod') return await require('./config/webpack/prod')
-        return {}
+        const ENV = process.env.WEBPACK_BUILD_ENV;
+        if (ENV === 'dev') return await require('./config/webpack/dev')();
+        if (ENV === 'prod') return await require('./config/webpack/prod')();
+        return {};
     },
     webpackBefore: async (/* kootConfig */) => {
-        console.log('\n\n💢 webpackBefore')
-        return
+        console.log('\n\n💢 webpackBefore');
+        return;
     },
     webpackAfter: async () => {
-        console.log('\n\n💢 webpackAfter')
-        return
+        console.log('\n\n💢 webpackAfter');
+        return;
     },
     moduleCssFilenameTest: /^((?!\.g\.).)*/,
     internalLoaderOptions: {
@@ -151,15 +123,6 @@ module.exports = {
             aaa: 'bbb'
         }
     },
-
-
-
-
-
-
-
-
-
 
     /**************************************************************************
      * 开发模式
@@ -174,13 +137,12 @@ module.exports = {
         'react-redux',
         'react-router',
         'react-router-redux',
-        'koot',
+        'koot'
     ],
     // devHmr: {
     //     multiStep: false
     // },
     devServer: {
         quiet: true
-    },
-
-}
+    }
+};

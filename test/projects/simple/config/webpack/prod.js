@@ -1,7 +1,6 @@
 const factoryConfig = require('./_factory');
 
 module.exports = async () => {
-    console.log(1111);
     const defaults = await factoryConfig();
 
     // 针对生产环境的定制配置
