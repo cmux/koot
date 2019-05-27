@@ -3,9 +3,9 @@ const path = require('path');
 const src = path.resolve(__dirname, '../../src');
 
 module.exports = async () => {
-    console.log({
-        'process.env.WEBPACK_BUILD_STAGE': process.env.WEBPACK_BUILD_STAGE
-    });
+    // console.log({
+    //     'process.env.WEBPACK_BUILD_STAGE': process.env.WEBPACK_BUILD_STAGE
+    // });
 
     return {
         // 所有的入口脚本 (entry) 均为客户端/浏览器端 (__CLIENT__) 使用
@@ -29,11 +29,13 @@ module.exports = async () => {
                     loader: 'file-loader',
                     options: {
                         context: 'static',
-                        name: 'assets/[hash:32].[ext]',
-                        emitFile: Boolean(
-                            process.env.WEBPACK_BUILD_STAGE === 'client'
-                        )
+                        name: 'assets/[hash:32].[ext]'
+                        // emitFile: Boolean(
+                        //     process.env.WEBPACK_BUILD_STAGE === 'client'
+                        // )
                     }
+                    // loader:
+                    //     'file-loader?context=static&name=assets/[hash:32].[ext]&aaa=bbb'
                 },
                 {
                     test: /\.svg$/,
