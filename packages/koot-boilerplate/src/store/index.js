@@ -1,10 +1,7 @@
-import { createStore, combineReducers, applyMiddleware } from 'redux';
-import { reduxForCreateStore } from 'koot';
+import { createStore } from 'koot';
 
-const middlewares = [...reduxForCreateStore.middlewares];
-if (__CLIENT__ && __DEV__) {
-    middlewares.push(require('redux-logger').default);
-}
+const middlewares = [];
+if (__CLIENT__ && __DEV__) middlewares.push(require('redux-logger').default);
 
 /**
  * 创建 Redux store 的方法
@@ -13,15 +10,13 @@ if (__CLIENT__ && __DEV__) {
  *
  * 本例为 Redux 最基本的写法
  */
-export default () => {
-    const { reducers: defaultReducers, initialState } = reduxForCreateStore;
-
-    return createStore(
-        combineReducers({
-            ...defaultReducers
+export default () =>
+    createStore(
+        {
             // 这里添加项目中使用的 reducer
-        }),
-        initialState,
-        applyMiddleware(...middlewares)
+        },
+        [
+            ...middlewares
+            // 这里添加项目中使用的 middleware
+        ]
     );
-};

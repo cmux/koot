@@ -142,25 +142,13 @@ module.exports = {
 /****************************
  * 文件: /src/store/index.js
  ***************************/
-const { createStore, combineReducers, applyMiddleware } = require('redux');
-// Koot.js 提供的生成 Redux store 所需要的相关内容
-const {
-    reducers: kootDefaultReducers,
-    initialState,
-    middlewares
-} = require('koot').reduxForCreateStore;
+const { createStore } = require('koot');
 // 项目使用的 reducer
 const projectReducers = require('./reducers.js');
+// 项目使用的 middleware
+const projectMiddlewares = require('./middlewares.js');
 
-module.exports = () =>
-    createStore(
-        combineReducers({
-            ...kootDefaultReducers,
-            ...projectReducers
-        }),
-        initialState,
-        applyMiddleware(...middlewares)
-    );
+module.exports = () => createStore(projectReducers, projectMiddlewares);
 ```
 
 ### cookiesToStore

@@ -2,6 +2,18 @@
 
 **2019-??-??** (alpha.0)
 
+-   核心
+    -   **新** `createStore` 方法，方便项目更便捷的创建 Redux store
+        -   `import { createStore } from 'koot`
+        -   `export default () => createStore(reducers, middlewares);`
+        -   具体用法请参见文档 [配置/store](https://koot.js.org/#/config?id=store)
+    -   SSR
+        -   _服务器环境_: 会尝试修改 Webpack 的 `file-loader` 配置，尽量避免输出静态资源文件
+    -   更新依赖包
+        -   major
+        -   minor
+            -   `mini-css-extract-plugin` -> _0.7.0_
+        -   patch
 -   **koot-boilerplate**
     -   SSR
         -   现在服务器环境的打包结果中，不再会出现静态资源文件
