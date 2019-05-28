@@ -104,7 +104,7 @@
         "less-loader": "5.0.0",
         "md5": "2.2.1",
         "md5-file": "4.0.0",
-        "mini-css-extract-plugin": "0.6.0",
+        "mini-css-extract-plugin": "0.7.0",
         "npm-run-script": "0.0.4",
         "open": "6.3.0",
         "ora": "3.4.0",
