@@ -23,7 +23,7 @@ module.exports = {
     routes: './src/router',
     // historyType: 'hash',
 
-    store: './src/store/create',
+    store: './src/store/create-method-1',
     cookiesToStore: 'all',
 
     i18n: {

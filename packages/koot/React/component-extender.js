@@ -20,6 +20,7 @@ import {
     // StyleMapContext,
 } from './styles';
 import clientUpdatePageInfo from './client-update-page-info';
+import { RESET_CERTAIN_STATE } from './redux';
 
 //
 
@@ -152,7 +153,11 @@ export default (options = {}) => WrappedComponent => {
     const {
         connect: _connect = false,
         pageinfo,
-        data: { fetch: _dataFetch, check: dataCheck } = {},
+        data: {
+            fetch: _dataFetch,
+            check: dataCheck,
+            resetWhenUnmount: dataResetWhenUnmount
+        } = {},
         styles: _styles
         // ttt
         // hot: _hot = true,
@@ -299,6 +304,14 @@ export default (options = {}) => WrappedComponent => {
             this.mounted = false;
             if (hasStyles) {
                 removeStyle(this.getStyleMap(/*this.context*/), styles);
+            }
+            if (typeof dataResetWhenUnmount === 'object') {
+                setTimeout(() => {
+                    this.props.dispatch({
+                        type: RESET_CERTAIN_STATE,
+                        data: dataResetWhenUnmount
+                    });
+                });
             }
         }
 

@@ -143,12 +143,12 @@ module.exports = {
  * 文件: /src/store/index.js
  ***************************/
 const { createStore } = require('koot');
-// 项目使用的 reducer
-const projectReducers = require('./reducers.js');
-// 项目使用的 middleware
-const projectMiddlewares = require('./middlewares.js');
+/** @type {Object|Function} 项目使用的 reducer，可以是形式为 Object 的列表，也可以是 reducer 函数 */
+const appReducers = require('./reducers.js');
+/** @type {Array} 项目使用的 middleware 列表 */
+const appMiddlewares = require('./middlewares.js');
 
-module.exports = () => createStore(projectReducers, projectMiddlewares);
+module.exports = () => createStore(appReducers, appMiddlewares);
 ```
 
 ### cookiesToStore

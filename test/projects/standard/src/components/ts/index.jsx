@@ -1,31 +1,29 @@
-import React from 'react'
-import { extend } from 'koot'
+import React from 'react';
+import { extend } from 'koot';
 
 import {
     updateServerTimestamp,
     resetServerTimestamp
-} from '@store/infos/actions'
+} from '@store/infos/actions';
 
 const check = props => {
-    if (props.serverTimestamp)
-        return true
-}
+    if (props.serverTimestamp) return true;
+};
 
 @extend({
-    connect: (state) => ({
-        serverTimestamp: state.infos.serverTimestamp,
+    connect: state => ({
+        serverTimestamp: state.infos.serverTimestamp
     }),
 
     data: (state, renderProps, dispatch) => {
-        if (check(renderProps))
-            return true
+        if (check(renderProps)) return true;
         return Promise.all([
             dispatch(updateServerTimestamp()),
             new Promise(resolve => {
-                setTimeout(() => resolve(), 100)
+                setTimeout(() => resolve(), 100);
             })
-        ])
-    },
+        ]);
+    }
 })
 class TS extends React.Component {
     // componentDidMount() {
@@ -35,19 +33,16 @@ class TS extends React.Component {
     // }
 
     componentWillUnmount() {
-        this.props.dispatch(resetServerTimestamp())
+        this.props.dispatch(resetServerTimestamp());
     }
 
     render() {
-        if (!check(this.props))
-            return <div>LOADING...</div>
+        if (!check(this.props)) return <div>LOADING...</div>;
 
-        console.log('ts', this.props)
+        console.log('ts', this.props);
 
-        return (
-            <div children={this.props.serverTimestamp} />
-        )
+        return <div children={this.props.serverTimestamp} />;
     }
 }
 
-export default TS
+export default TS;

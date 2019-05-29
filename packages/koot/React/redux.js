@@ -25,7 +25,19 @@ import history from './history';
 //     return require('react-router/lib/browserHistory')
 // }
 
-//
+// ============================================================================
+// ============================================================================
+// ============================================================================
+// ============================================================================
+// ============================================================================
+
+export const RESET_CERTAIN_STATE = '@@KOOT@@RESET_CERTAIN_STATE';
+
+// ============================================================================
+// ============================================================================
+// ============================================================================
+// ============================================================================
+// ============================================================================
 
 /**
  * @type {Array}
@@ -43,8 +55,6 @@ if (isI18nEnabled()) {
     // reducers.locales = i18nReducerLocales
 }
 
-//
-
 /**
  * @type {Object}
  */
@@ -53,28 +63,116 @@ export const initialState = (() => {
     if (__SERVER__) return {};
 })();
 
-//
-
 /**
  * @type {Array}
  */
 export const middlewares = [thunk, routerMiddleware(history)];
 
+// const enhancerClientModifyState = createStore => (
+//     reducer,
+//     preloadedState,
+//     enhancer
+// ) => {
+//     const store = createStore(reducer, preloadedState, enhancer);
+//     console.log({ store, state: store.getState() });
+//     return store;
+// };
+
+// const rootReducerClientResetCertainState = (state, action) => {
+//     const reset = (data, prefix = '') => {
+//         for (const [key, value] of Object.entries(data)) {
+//             const newKey = prefix ? `${prefix}.${key}` : key;
+//             if (
+//                 typeof value === 'object' &&
+//                 typeof state[key] === 'object' &&
+//                 !Array.isArray(state[key])
+//             ) {
+//                 return reset(value, newKey);
+//             } else if (value === true) {
+//                 console.log(newKey);
+//             }
+//         }
+//     };
+//     if (
+//         __CLIENT__ &&
+//         action.type === RESET_CERTAIN_STATE &&
+//         typeof action.data === 'object'
+//     ) {
+//         reset(action.data);
+//     }
+// };
+
+// ============================================================================
+// ============================================================================
+// ============================================================================
+// ============================================================================
+// ============================================================================
+
 /**
  * 创建 redux store
  * - _注_: 与 redux 提供的 `createStore` 方法略有不同，仅需提供项目所用的 reducer 对象和中间件列表，**不需要**初始 state 对象
- * @param {Object} reducers 项目的 reducer 对象
- * @param {Array} middlewares 项目的中间件列表
+ * @param {Object|Function} appReducers 项目使用的 reducer，可为形式为 Object 的列表，也可以为 reducer 函数
+ * @param {Array} appMiddlewares 项目的中间件列表
  * @returns {Object} redux store
  */
-export const createStore = (projectReducers = {}, projectMiddlewares = []) =>
-    reduxCreateStore(
-        reduxCombineReducers({
-            ...projectReducers,
+export const createStore = (appReducer, appMiddlewares = []) => {
+    // const toCompose = [
+    //     reduxApplyMiddleware(...middlewares.concat(appMiddlewares))
+    // ];
+    // if (__CLIENT__) toCompose.push(enhancerClientModifyState);
+
+    const projectReducer = (() => {
+        if (typeof appReducer === 'function') {
+            const kootReducer = reduxCombineReducers({ ...reducers });
+            return (state, action) => {
+                const { appState, kootState } = sliceStateForReducers(state);
+                return {
+                    ...appReducer(appState, action),
+                    ...kootReducer(kootState, action)
+                };
+            };
+        } else if (
+            typeof appReducer === 'object' &&
+            !Array.isArray(appReducer)
+        ) {
+            return reduxCombineReducers({
+                ...appReducer,
+                ...reducers
+            });
+        }
+
+        return reduxCombineReducers({
             ...reducers
-        }),
+        });
+    })();
+
+    return reduxCreateStore(
+        projectReducer,
         initialState,
         reduxCompose(
-            reduxApplyMiddleware(...middlewares.concat(projectMiddlewares))
+            reduxApplyMiddleware(...middlewares.concat(appMiddlewares))
         )
     );
+};
+
+/**
+ * 将当前 state 拆分
+ * @param {Object} state
+ * @returns {Object} { appState, kootState }
+ */
+const sliceStateForReducers = state => {
+    const appState = {};
+    const kootState = {};
+    const keysForKootReducer = Object.keys(reducers);
+    Object.keys(state).forEach(key => {
+        if (keysForKootReducer.includes(key)) {
+            kootState[key] = state[key];
+        } else {
+            appState[key] = state[key];
+        }
+    });
+    return {
+        appState,
+        kootState
+    };
+};

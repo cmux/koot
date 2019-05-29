@@ -1,5 +1,20 @@
 /**
  * React SSR 完全测试
+ *
+ * 有关 store 创建方式
+ * - 默认配置
+ *     - 提供创建 store 的方法
+ *     - 使用封装的 createStore 方法
+ *     - 提供的 reducer 是 Object
+ * - i18n.use="router"
+ *     - 提供创建 store 的方法
+ *     - 使用封装的 createStore 方法
+ *     - 提供的 reducer 是 Function
+ * - bundleVersionsKeep=false
+ *     - 提供创建 store 的方法
+ *     - 使用自定函数
+ * - 0.6版配置
+ *     - 仅提供 reducer 列表
  */
 
 // jest configuration

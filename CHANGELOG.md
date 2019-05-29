@@ -5,7 +5,7 @@
 -   核心
     -   **新** `createStore` 方法，方便项目更便捷的创建 Redux store
         -   `import { createStore } from 'koot`
-        -   `export default () => createStore(reducers, middlewares);`
+        -   `export default () => createStore(appReducers, appMiddlewares);`
         -   具体用法请参见文档 [配置/store](https://koot.js.org/#/config?id=store)
     -   SSR
         -   _服务器环境_: 会尝试修改 Webpack 的 `file-loader` 配置，尽量避免输出静态资源文件
