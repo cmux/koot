@@ -1,9 +1,9 @@
-const path = require('path')
+const path = require('path');
 
-const { chunkNameClientRunFirst } = require('../../defaults/before-build')
-const defaultEntrypoints = require('../../defaults/entrypoints')
-const readClientFile = require('../../utils/read-client-file')
-const getClientFilePath = require('../../utils/get-client-file-path')
+const { chunkNameClientRunFirst } = require('../../defaults/before-build');
+const defaultEntrypoints = require('../../defaults/entrypoints');
+const readClientFile = require('../../utils/read-client-file');
+const getClientFilePath = require('../../utils/get-client-file-path');
 
 /**
  * 注入: JavaScript 代码
@@ -24,15 +24,16 @@ module.exports = ({
     localeId,
     reduxHtml,
     SSRState = {},
-    compilation,
+    compilation
 }) => {
-
-    const ENV = process.env.WEBPACK_BUILD_ENV
-    const isDev = Boolean(ENV === 'dev' || (typeof __DEV__ !== 'undefined' && __DEV__))
-    const isProd = !isDev
+    const ENV = process.env.WEBPACK_BUILD_ENV;
+    const isDev = Boolean(
+        ENV === 'dev' || (typeof __DEV__ !== 'undefined' && __DEV__)
+    );
+    const isProd = !isDev;
 
     if (isDev || typeof injectCache.scriptsInBody === 'undefined') {
-        let r = ''
+        let r = '';
 
         // 入口: critical
         if (needInjectCritical && Array.isArray(entrypoints.critical)) {
@@ -40,10 +41,16 @@ module.exports = ({
                 .filter(file => path.extname(file) === '.js')
                 .map(file => {
                     if (isDev)
-                        return `<script type="text/javascript" src="${getClientFilePath(true, file)}"></script>`
-                    return `<script type="text/javascript">${readClientFile(true, file)}</script>`
+                        return `<script type="text/javascript" src="${getClientFilePath(
+                            true,
+                            file
+                        )}"></script>`;
+                    return `<script type="text/javascript">${readClientFile(
+                        true,
+                        file
+                    )}</script>`;
                 })
-                .join('')
+                .join('');
         }
 
         // 其他默认入口
@@ -57,55 +64,73 @@ module.exports = ({
                         // console.log(file)
                         // if (isDev)
                         // return `<script type="text/javascript" src="${getClientFilePath(true, file)}" defer></script>`
-                        return `<script type="text/javascript" src="${getClientFilePath(true, file)}" defer></script>`
+                        return `<script type="text/javascript" src="${getClientFilePath(
+                            true,
+                            file
+                        )}" defer></script>`;
                     })
-                    .join('')
+                    .join('');
             }
-        })
+        });
 
         // 如果设置了 PWA 自动注册 Service-Worker，在此注册
-        const pwaAuto = typeof process.env.KOOT_PWA_AUTO_REGISTER === 'string'
-            ? JSON.parse(process.env.KOOT_PWA_AUTO_REGISTER)
-            : false
+        const pwaAuto =
+            typeof process.env.KOOT_PWA_AUTO_REGISTER === 'string'
+                ? JSON.parse(process.env.KOOT_PWA_AUTO_REGISTER)
+                : false;
         if (pwaAuto && typeof injectCache.pathnameSW === 'string') {
-            r += `<script id="__koot-pwa-register-sw" type="text/javascript">`
-            if (isProd)
-                r += `if ('serviceWorker' in navigator) {`
-                // + `navigator.serviceWorker.register("${injectCache.pathnameSW}?koot=${process.env.KOOT_VERSION}",`
-                + `navigator.serviceWorker.register("${injectCache.pathnameSW}?koot=0.8",`
-                    + `{scope: '/'}`
-                    + `)`
-                    + `.catch(err => {console.log('👩‍💻 Service Worker SUPPORTED. ERROR', err)})`
-                    + `}else{console.log('👩‍💻 Service Worker not supported!')}`
-            if (isDev)
-                r += `console.log('👩‍💻 No Service Worker for DEV mode.')`
-            r += `</script>`
+            r += `<script id="__koot-pwa-register-sw" type="text/javascript">`;
+            if (isProd) {
+                r +=
+                    `if ('serviceWorker' in navigator) {` +
+                    `window.addEventListener('load', function() {` +
+                    // + `navigator.serviceWorker.register("${injectCache.pathnameSW}?koot=${process.env.KOOT_VERSION}",`
+                    `navigator.serviceWorker.register("${
+                        injectCache.pathnameSW
+                    }?koot=0.8",` +
+                    `{scope: '/'}` +
+                    `)` +
+                    `.catch(err => {console.log('👩‍💻 Service Worker SUPPORTED. ERROR', err)})` +
+                    `});` +
+                    `}else{console.log('👩‍💻 Service Worker not supported!')}`;
+            } else if (isDev) {
+                r += `console.log('👩‍💻 No Service Worker for DEV mode.')`;
+            }
+            r += `</script>`;
         }
 
-        injectCache.scriptsInBody = r
+        injectCache.scriptsInBody = r;
     }
 
-    return `<script type="text/javascript">`
-        + (reduxHtml ? reduxHtml : `window.__REDUX_STATE__ = {};`)
-        + `window.__KOOT_LOCALEID__ = "${SSRState.localeId || ''}";`
-        + `window.__KOOT_SSR_STATE__ = ${JSON.stringify(SSRState)};`
-        + `</script>`
-        + getClientRunFirstJS(localeId, compilation)
-        + `${injectCache.scriptsInBody}`
-
-}
+    return (
+        `<script type="text/javascript">` +
+        (reduxHtml ? reduxHtml : `window.__REDUX_STATE__ = {};`) +
+        `window.__KOOT_LOCALEID__ = "${SSRState.localeId || ''}";` +
+        `window.__KOOT_SSR_STATE__ = ${JSON.stringify(SSRState)};` +
+        `</script>` +
+        getClientRunFirstJS(localeId, compilation) +
+        `${injectCache.scriptsInBody}`
+    );
+};
 
 /**
  * 客户端预先执行 JS 的代码
- * @param {*} localeId 
- * @param {*} compilation 
+ * @param {*} localeId
+ * @param {*} compilation
  * @returns {String}
  */
 const getClientRunFirstJS = (localeId, compilation) => {
-    const filename = `${chunkNameClientRunFirst}.js`
+    const filename = `${chunkNameClientRunFirst}.js`;
 
     if (process.env.WEBPACK_BUILD_ENV === 'dev')
-        return `<script type="text/javascript" src="${getClientFilePath(filename, localeId)}"></script>`
+        return `<script type="text/javascript" src="${getClientFilePath(
+            filename,
+            localeId
+        )}"></script>`;
 
-    return `<script type="text/javascript">${readClientFile(filename, localeId, compilation)}</script>`
-}
+    return `<script type="text/javascript">${readClientFile(
+        filename,
+        localeId,
+        compilation
+    )}</script>`;
+};

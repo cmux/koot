@@ -61,6 +61,6 @@
         "ora": "3.4.0",
         "os-locale": "3.1.0",
         "package-json": "6.3.0",
-        "semver": "6.1.0"
+        "semver": "6.1.1"
     }
 }

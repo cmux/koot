@@ -1,7 +1,7 @@
 /**
  * React SSR 完全测试
  *
- * 有关 store 创建方式
+ * 不同的 Koot 配置各使用某种 store 创建方式，用以测试多种方式
  * - 默认配置
  *     - 提供创建 store 的方法
  *     - 使用封装的 createStore 方法

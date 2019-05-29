@@ -5,10 +5,12 @@
 -   核心
     -   **新** `createStore` 方法，方便项目更便捷的创建 Redux store
         -   `import { createStore } from 'koot`
-        -   `export default () => createStore(appReducers, appMiddlewares);`
+        -   `export default () => createStore(appReducer, appMiddlewares);`
         -   具体用法请参见文档 [配置/store](https://koot.js.org/#/config?id=store)
     -   SSR
         -   _服务器环境_: 会尝试修改 Webpack 的 `file-loader` 配置，尽量避免输出静态资源文件
+    -   其他优化
+        -   默认的 `service-worker` 注册逻辑调整，现在会在 `document.onLoad` 时进行注册
     -   更新依赖包
         -   major
         -   minor
@@ -17,6 +19,10 @@
 -   **koot-boilerplate**
     -   SSR
         -   现在服务器环境的打包结果中，不再会出现静态资源文件
+-   **koot-cli**
+    -   更新依赖包
+        -   patch
+            -   `semver` -> _6.1.1_
 
 ## 0.9.1
 
