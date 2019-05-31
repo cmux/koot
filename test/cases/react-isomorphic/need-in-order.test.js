@@ -442,6 +442,8 @@ describe('测试: React 同构项目', () => {
 
                 // console.log(stderr)
 
+                // TODO: 依据 chunkmap，判断硬盘里是否有所有的文件，可考虑做成公用的生产环境打包结果测试
+
                 expect(typeof stderr).toBe('string');
                 expect(stderr).toBe('');
 
