@@ -114,7 +114,7 @@ class TypeCard extends Component {
       "ctc": "-34.93%",
       "stc": "8.42%"
     }],
-    "name": "\u5f15\u9886\u6b21\u6570",
+    "name": "点击",
     "total": 12528
   }, {
     "dataset": [{
@@ -153,7 +153,7 @@ class TypeCard extends Component {
       "ctc": "-36.56%",
       "stc": "7.88%"
     }],
-    "name": "\u95ee\u8def\u6b21\u6570",
+    "name": "语音",
     "total": 22247
   }]
 }
