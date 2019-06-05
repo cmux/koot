@@ -57,15 +57,15 @@ class TypeCard extends Component {
                     title: ['name', 'week'],
                     body: [
                         {
-                            key: 'num',
-                            separator: ',', //对数字进行千位符格式化
+                            key: 'num', // 对应需要渲染的key
+                            separator: ',', // 对数字进行千位符格式化
                         },
                     ]
                 },
                 series: {
                     type: 'line', // 图表类型，目前支持line,bar,pie
-                    x: 'name',
-                    y: 'num',
+                    x: 'name',  // x轴渲染时取的对应key, 可自定义
+                    y: 'num',  // y轴渲染时取的对应key, 可自定义
                     stack: true,
                 }
             }
@@ -74,10 +74,10 @@ class TypeCard extends Component {
 }
 ```
 
-数据格式如下：
+line,bar类型 数据格式如下：
 ```sh
 "data": {
-  "source": [{
+  "source": [{ // "source"和"dataset" 必须要有的，不然无法渲染
     "dataset": [{
       "name": "2019-05-28",
       "num": "1579",
@@ -89,30 +89,7 @@ class TypeCard extends Component {
       "ctc": "-4.94%",
       "stc": "-0.13%"
     }, {
-      "name": "2019-05-30",
-      "num": "1496",
-      "ctc": "-0.33%",
-      "stc": "-20.64%"
-    }, {
-      "name": "2019-05-31",
-      "num": "2285",
-      "ctc": "52.74%",
-      "stc": "5.06%"
-    }, {
-      "name": "2019-06-01",
-      "num": "2661",
-      "ctc": "16.46%",
-      "stc": "14.70%"
-    }, {
-      "name": "2019-06-02",
-      "num": "1821",
-      "ctc": "-31.57%",
-      "stc": "-6.71%"
-    }, {
-      "name": "2019-06-03",
-      "num": "1185",
-      "ctc": "-34.93%",
-      "stc": "8.42%"
+      ...
     }],
     "name": "点击",
     "total": 12528
@@ -128,30 +105,7 @@ class TypeCard extends Component {
       "ctc": "-7.70%",
       "stc": "-3.53%"
     }, {
-      "name": "2019-05-30",
-      "num": "2705",
-      "ctc": "6.45%",
-      "stc": "-18.57%"
-    }, {
-      "name": "2019-05-31",
-      "num": "4218",
-      "ctc": "55.93%",
-      "stc": "1.37%"
-    }, {
-      "name": "2019-06-01",
-      "num": "4772",
-      "ctc": "13.13%",
-      "stc": "13.43%"
-    }, {
-      "name": "2019-06-02",
-      "num": "3217",
-      "ctc": "-32.59%",
-      "stc": "-10.06%"
-    }, {
-      "name": "2019-06-03",
-      "num": "2041",
-      "ctc": "-36.56%",
-      "stc": "7.88%"
+      ...
     }],
     "name": "语音",
     "total": 22247
