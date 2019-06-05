@@ -18,7 +18,7 @@ npm install -g koot-component
 ### 使用 / Usage
 ```sh
 import React, { Component } from 'react';
-import { Chart } from '@components/chart';
+import { Chart } from 'koot-component';
 import moment from 'moment';
 
 class TypeCard extends Component {
