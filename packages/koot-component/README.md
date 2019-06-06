@@ -1,83 +1,126 @@
-# koot-component 是 koot.js 的组件库
-主要是为了加快开发效率，将一些在项目中常用到的组件封装好，供大家使用
+# `koot-component`
+> koot-component 是koot的组件库，配套koot使用，目前包含常用的样式组件，可快速搭建一套供后台使用的前端样式和展示数据图表的组件（基于[ECharts](https://github.com/apache/incubator-echarts)进行二次开发）
 
-## 安装 / Install
+### 为什么要针对ECharts进行二次开发？
+>因为koot是基于react规范进行开发的，ECharts不支持react开发规范，进行二次开发后，可以按照react开发规范直接进行开发，降低学习成本和开发成本，提高工作效率。
 
-```sh
+### 目前Chart主要支持三种常用的图表类型：bar,line,pie。属性可查看[官网](https://www.echartsjs.com/option.html#title)
+>新功能：支持字体自适应；
+场景：随着浏览器窗口的变化，ECharts图表也会发生相应的变化，但是字体却不变，通过该功能，可使字体与图表的大小相匹配，使图表更美观。
+## 安装 
+```shell
 npm install -g koot-component
 ```
+## 使用 
 
-### charts & react-echarts
-这个是在 [ECharts](https://github.com/apache/incubator-echarts) 基础上进行二次开发的，因为koot是使用react的开发规范来进行书写的，为了统一开发习惯和降低学习成本，封装了一层以支持用react书写规范和开发规范来写ECharts.
-
-目前支持三种格式：line, bar, pie.
-
-额外添加了新功能：支持字体自适应；
-场景：随着浏览器窗口的变化，ECharts图表也会发生相应的变化，但是字体却不变，在某些情况会，图表不够美观。通过该功能，可以使字体与图表的大小相匹配。
-
-### 使用 / Usage
-```sh
+* line,bar 类型例子：
+```js
 import React, { Component } from 'react';
 import { Chart } from 'koot-component';
-import moment from 'moment';
 
 class TypeCard extends Component {
     render() {
-        const { chartRender } = this;
         return (
-            <Chart render={chartRender}></Chart>
+            <Chart render={this.barAndLineRender}
+                onClick={e => {
+                // 支持ECharts触发事件
+                console.log(e)
+            }} ></Chart>
         )
     }
 
-    chartRender = () => {
-        const { data } = this.props;  // 渲染的数据来源
+    barAndLineRender = () => {
+        const tcValueFormatter = value => {
+            const color =
+                parseInt(value) > 0
+                    ? '#FF4343'
+                    : parseInt(value) < 0
+                    ? '#3AF7AC'
+                    : '#FFFFFF';
+            return `<span style="color: ${color}">${value}</span>`;
+        };
+
+        const { compare_type } = cardFilter;
         return {
-            type: 'chart',
+            type: 'chart', 
             nameMapper: {
-                'num': '次数',
+                num: '次数',   // num 对应取得key值，'次数' 是对应展示的字段，可自定义
+                stc: '同比',
+                ctc: '环比'
             },
-            source: data,
+            source: data, // 需渲染的数据
             encode: {
                 xAxis: {
-                    // x轴格式 ，同理 yAxis 对应的就是y轴格式
+                // x轴 数据处理，同理 yAxis对应y轴
                     axisLabel: {
-                     // 对x轴数据进行处理
-                        formatter: (value) => {
-                            return moment(value, 'YYYY-MM-DD').format('MM/DD')
+                        formatter: value => {
+                        // 格式转化
+                            ...
+                            }
+                            return value;
                         },
-                        color: function (value) {
-                            const weekDay = moment(value, 'YYYY-MM-DD').weekday();
-                            const color = (weekDay === 5 || weekDay === 6)  ? '#FF3400' : '#000000';
-                            return color;
+                        color: function(value) {
+                        // 颜色处理
+                            if (compare_type === 'day') {
+                                ...
+                                return color;
+                            }
+                            return '#000000';
                         }
-                    },
+                    }
                 },
                 tooltip: {
-                    //小浮窗
-                    title: ['name', 'week'],
+                    title:
+                    //  提示框标题
+                        compare_type === 'hour'
+                            ? ['name', 'hour', 'week']
+                            : ['name', 'week'],
                     body: [
+                    // 提示框主题
                         {
-                            key: 'num', // 对应需要渲染的key
-                            separator: ',', // 对数字进行千位符格式化
+                            key: 'num',
+                        // 展示字段里对应的数据
+                            separator: ','
+                        // 对数值型数据用千位符隔开
                         },
+                        {
+                            key: 'stc',
+                            formatter: tcValueFormatter
+                        // 格式化，使数据的变化更直观
+                        },
+                        {
+                            key: 'ctc',
+                            formatter: tcValueFormatter
+                        }
                     ]
                 },
-                series: {
-                    type: 'line', // 图表类型，目前支持line,bar,pie
-                    x: 'name',  // x轴渲染时取的对应key, 可自定义
-                    y: 'num',  // y轴渲染时取的对应key, 可自定义
-                    stack: true,
-                }
+                /**
+                 series 数据的渲染方式有两种
+                1，数组，[{datasetIndex: 0,}]，datasetIndex取对应下标数据，从0开始，这个方式适用于多条数据，需要按照不同的条件来渲染；
+                2，对象，{},有多少数据都会展示出来
+                **/
+                series: [
+                    {
+                        datasetIndex: 0,  //取对应下标数据，如果没有，会默认展示全部数据
+                        type: 'line',  // 图表类型，line, bar
+                        x: compare_type === 'hour' ? 'hour' : 'name', 
+                        // x轴展示内容 
+                        y: 'num', // y轴展示内容 
+                        label: {
+                            normal: {
+                                show: this.state.isShow,  // 是否展示图表数值
+                                position: 'top' // 数值位置
+                            }
+                        }
+                    }
+                ]
             }
-        }
-    }
+        };
 }
-```
 
-line,bar类型 数据格式如下：
-```sh
+// 数据格式如下：
 "data": {
-  "source": [{ // "source"和"dataset" 必须要有的，不然无法渲染
+  "source": [{ // 会解析"source"和"dataset"里面的内容 
     "dataset": [{
       "name": "2019-05-28",
       "num": "1579",
@@ -111,9 +154,63 @@ line,bar类型 数据格式如下：
     "total": 22247
   }]
 }
-  ```
-pie类型数据格式如下：
-```sh
+```
+* pie 类型例子：
+> pie与bar,line主要区别：
+> 1，没有xAxis和yAxis；
+> 2，series只能展示一条数据。
+```js
+pieRender = () => {
+    const { data } = this.props;
+    return {
+        type: 'chart',
+        nameMap: {},
+        source: data,
+        encode: {
+            series: [
+                {
+                    type: 'pie',  
+                    datasetIndex: 0,
+                    dataItem: {
+                        name: 'name',
+                        value: 'num'
+                    },
+                    label: {
+                        formatter: params => {
+                            const { name, value } = params;
+                            let v = separatorFormat(value);
+                            return `${name} ${v} 台`;
+                        }
+                    }
+                }
+            ],
+            tooltip: {
+                title: [
+                    {
+                        value: '运行状态'
+                    }
+                ],
+                body: [
+                    {
+                        key: 'num',
+                        separator: ',',
+                        formatter: value => {
+                            return `${value} 台`;
+                        }
+                    },
+                    {
+                        key: 'percent',
+                        formatter: value => {
+                            return `${value} %`;
+                        }
+                    }
+                ]
+            }
+        }
+    };
+};
+
+//数据格式：
 "data": {
     "source": [{
         "dataset": [{
@@ -128,4 +225,5 @@ pie类型数据格式如下：
         "total": 382724
     }]
 }
+
 ```
