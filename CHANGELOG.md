@@ -4,6 +4,8 @@
 
 核心
 
+-   **重大改动**
+    -   `node.js` 最低版本要求更新到 `8.9.0`
 -   **新** `createStore` 方法，方便项目更便捷的创建 Redux store
     -   `import { createStore } from 'koot`
     -   `export default () => createStore(appReducer, appMiddlewares);`
@@ -14,9 +16,16 @@
     -   默认的 `service-worker` 注册逻辑调整，现在会在 `document.onLoad` 时进行注册
 -   更新依赖包
     -   major
+        -   `cache-loader` -> _4.0.0_
+        -   `file-loader` -> _4.0.0_
+        -   `url-loader` -> _2.0.0_
     -   minor
         -   `mini-css-extract-plugin` -> _0.7.0_
+        -   `react-hot-loader` -> _4.9.0_
+        -   `webpack` -> _4.33.0_
+        -   `webpack-dev-server` -> _3.7.1_
     -   patch
+        -   `postcss` -> _7.0.17_
 
 **koot-boilerplate**
 

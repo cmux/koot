@@ -42,7 +42,7 @@
     },
     "devDependencies": {
         "camelcase": "5.3.1",
-        "lerna": "3.14.1",
+        "lerna": "3.15.0",
         "lerna-wizard": "1.0.9",
         "eslint": "5.16.0",
         "eslint-config-koot": "0.1.1",
@@ -57,9 +57,9 @@
         "latest-version": "5.1.0",
         "crlf": "1.1.1",
         "simple-git": "1.113.0",
-        "prettier": "1.17.1",
-        "husky": "2.3.0",
-        "lint-staged": "8.1.7"
+        "prettier": "1.18.2",
+        "husky": "2.4.0",
+        "lint-staged": "8.2.0"
     },
     "eslintIgnore": [
         "node_modules/**/*"
