@@ -18,6 +18,7 @@ import {
 import isI18nEnabled from '../i18n/is-enabled';
 // import history from "__KOOT_CLIENT_REQUIRE_HISTORY__"
 import history from './history';
+import { load as loadSessionStore } from './client-session-store';
 // const getHistory = () => {
 //     if (__SPA__) {
 //         return require('react-router/lib/hashHistory')
@@ -59,7 +60,10 @@ if (isI18nEnabled()) {
  * @type {Object}
  */
 export const initialState = (() => {
-    if (__CLIENT__) return window.__REDUX_STATE__;
+    if (__CLIENT__) {
+        console.log('sessionStore', loadSessionStore());
+        return window.__REDUX_STATE__;
+    }
     if (__SERVER__) return {};
 })();
 

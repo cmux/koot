@@ -25,6 +25,7 @@ module.exports = {
 
     store: './src/store/create-method-1',
     cookiesToStore: 'all',
+    sessionStore: true,
 
     i18n: {
         // type: 'redux', // 仅影响 client-prod 环境

@@ -67,7 +67,8 @@ const factory = async ({
 const plugins = async (
     env,
     stage,
-    defines = {} /*, remainingKootBuildConfig = {}*/
+    defines = {},
+    remainingKootBuildConfig = {}
 ) => {
     const _defaultDefines = {};
     Object.keys(defaultDefines).forEach(key => {
@@ -107,6 +108,7 @@ const plugins = async (
         // }
     }
 
+    // 打入环境变量
     const envsToDefine = [
         'KOOT_VERSION',
         'KOOT_PROJECT_NAME',
@@ -131,6 +133,12 @@ const plugins = async (
     ];
     if (process.env.KOOT_CLIENT_BUNDLE_SUBFOLDER) {
         envsToDefine.push('KOOT_CLIENT_BUNDLE_SUBFOLDER');
+    }
+    if (typeof remainingKootBuildConfig.sessionStore !== 'object') {
+        process.env.KOOT_SESSION_STORE = JSON.stringify(
+            remainingKootBuildConfig.sessionStore
+        );
+        envsToDefine.push('KOOT_SESSION_STORE');
     }
 
     JSON.parse(process.env.KOOT_CUSTOM_ENV_KEYS).forEach(key => {

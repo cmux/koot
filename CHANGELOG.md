@@ -21,7 +21,7 @@
         -   `url-loader` -> _2.0.0_
     -   minor
         -   `mini-css-extract-plugin` -> _0.7.0_
-        -   `react-hot-loader` -> _4.9.0_
+        -   `react-hot-loader` -> _4.11.0_
         -   `webpack` -> _4.33.0_
         -   `webpack-dev-server` -> _3.7.1_
     -   patch

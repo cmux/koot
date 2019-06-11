@@ -1,7 +1,7 @@
-const path = require('path')
-const fs = require('fs-extra')
+const path = require('path');
+const fs = require('fs-extra');
 
-const defaultsPWA = require('../defaults/pwa')
+const defaultsPWA = require('../defaults/pwa');
 
 /**
  * 初始化 node.js 环境变量
@@ -32,11 +32,9 @@ module.exports = () => {
 
         // 服务器端口
         SERVER_PORT: (() => {
-            if (process.env.WEBPACK_BUILD_ENV === 'dev')
-                return '3000'
-            if (typeof __SERVER_PORT__ !== 'undefined')
-                return __SERVER_PORT__
-            return '8080'
+            if (process.env.WEBPACK_BUILD_ENV === 'dev') return '3000';
+            if (typeof __SERVER_PORT__ !== 'undefined') return __SERVER_PORT__;
+            return '8080';
         })(),
 
         // 服务器端口 (开发环境主服务器)
@@ -106,10 +104,13 @@ module.exports = () => {
 
         // 客户端打包子目录名
         KOOT_CLIENT_BUNDLE_SUBFOLDER: '',
-    }
+
+        // 配置: sessionStore
+        KOOT_SESSION_STORE: JSON.stringify(false)
+    };
     for (let key in defaults) {
         if (typeof process.env[key] === 'undefined') {
-            process.env[key] = defaults[key]
+            process.env[key] = defaults[key];
         }
     }
-}
+};
