@@ -1,4 +1,3 @@
-
 // 维度：日期，产品，国家，渠道，版本
 // 指标(数据项)：新增用户，日活， 主动活跃， 沉默用户，登陆时长
 // 粒度：年，月，日，时，分，秒
@@ -25,7 +24,7 @@
 // 粒度
 // compare_type:    year, month, week, day, hour, minute, second
 // -----------------------------------------------------------
-// 返回数据结构 
+// 返回数据结构
 //      flat:   平铺 适用于表格系统
 //      embed:  嵌入 适用于图表系统
 // response_data_structure: 'flat || embed'
@@ -56,15 +55,14 @@
 //     pageSize: 10,
 // }
 
-
-data: {
+const data = {
     list: [],
     pagination: {
         pageIndex: 1,
         pageSize: 10,
         total: 100
     }
-}
+};
 
 const dataDesign = {
     code: 200,
@@ -75,16 +73,16 @@ const dataDesign = {
                 // .. 这一组数据统计信息
                 dataset: [
                     {
-                        "date": "2018-12-11",
-                        "service_active": 5997926,
+                        date: '2018-12-11',
+                        service_active: 5997926
                     },
                     {
-                        "date": "2018-12-12",
-                        "service_active": 5997926,
+                        date: '2018-12-12',
+                        service_active: 5997926
                     },
                     {
-                        "date": "2018-12-13",
-                        "service_active": 5997926,
+                        date: '2018-12-13',
+                        service_active: 5997926
                     }
                 ]
             },
@@ -93,16 +91,16 @@ const dataDesign = {
                 // .. 这一组数据统计信息
                 dataset: [
                     {
-                        "date": "2018-12-11",
-                        "service_active": 5997926,
-                    },
+                        date: '2018-12-11',
+                        service_active: 5997926
+                    }
                     //...
                 ]
-            },
+            }
         ]
     },
-    msg: '',
-}
+    msg: ''
+};
 // const dataDesign = {
 //     code: 200,
 //     data: {
@@ -147,16 +145,14 @@ const dataDesing1 = [
         // .. 这一组数据统计信息
         data: [
             {
-                "date": "2018-12-11",
-                "service_active": 5997926,
-                "active_user": 1370398,
-                "new_user": 189880,
-                "silent_user": 4627528,
-                "regular_user": 1180518,
-                "ave_online_time": 0,
-                "events": [
-                    "30100578全量"
-                ]
+                date: '2018-12-11',
+                service_active: 5997926,
+                active_user: 1370398,
+                new_user: 189880,
+                silent_user: 4627528,
+                regular_user: 1180518,
+                ave_online_time: 0,
+                events: ['30100578全量']
             }
         ]
     },
@@ -165,50 +161,50 @@ const dataDesing1 = [
         // .. 这一组数据统计信息
         data: [
             {
-                "date": "2018-12-11",
-                "service_active": 5997926,
-                "active_user": 1370398,
-                "new_user": 189880,
-                "silent_user": 4627528,
-                "regular_user": 1180518,
-                "ave_online_time": 0,
-                "events": [
-                    "30100578全量"
-                ]
+                date: '2018-12-11',
+                service_active: 5997926,
+                active_user: 1370398,
+                new_user: 189880,
+                silent_user: 4627528,
+                regular_user: 1180518,
+                ave_online_time: 0,
+                events: ['30100578全量']
             }
         ]
-    },
-]
-
+    }
+];
 
 const dataDesign2 = [
     {
-        "pt-1__date": "2018-12-11",
-        "pt-1__service_active": 5997926,
-        "pt-1__active_user": 1370398,
-        "pt-1__new_user": 189880,
-        "pt-1__silent_user": 4627528,
-        "pt-1__regular_user": 1180518,
-        "pt-1__ave_online_time": 0,
-        "pt-1__events": [
-            "30100578全量"
-        ],
-        "pt-2__date": "2018-12-11",
-        "pt-2__service_active": 5997926,
-        "pt-2__active_user": 1370398,
-        "pt-2__new_user": 189880,
-        "pt-2__silent_user": 4627528,
-        "pt-2__regular_user": 1180518,
-        "pt-2__ave_online_time": 0,
-        "pt-2__events": [
-            "30100578全量"
-        ]
-    },
-]
+        'pt-1__date': '2018-12-11',
+        'pt-1__service_active': 5997926,
+        'pt-1__active_user': 1370398,
+        'pt-1__new_user': 189880,
+        'pt-1__silent_user': 4627528,
+        'pt-1__regular_user': 1180518,
+        'pt-1__ave_online_time': 0,
+        'pt-1__events': ['30100578全量'],
+        'pt-2__date': '2018-12-11',
+        'pt-2__service_active': 5997926,
+        'pt-2__active_user': 1370398,
+        'pt-2__new_user': 189880,
+        'pt-2__silent_user': 4627528,
+        'pt-2__regular_user': 1180518,
+        'pt-2__ave_online_time': 0,
+        'pt-2__events': ['30100578全量']
+    }
+];
 
 const dataDesign3 = [
-    ["date", "service_active", "active_user", "new_user", "silent_user", "regular_user"], 
-    ["2018-12-11", 5997926, 1370398, 189880, 4627528, 1180518, 0]
-]
+    [
+        'date',
+        'service_active',
+        'active_user',
+        'new_user',
+        'silent_user',
+        'regular_user'
+    ],
+    ['2018-12-11', 5997926, 1370398, 189880, 4627528, 1180518, 0]
+];
 
 export default dataDesign;
