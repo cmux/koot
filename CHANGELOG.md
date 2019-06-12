@@ -14,11 +14,15 @@
     -   _服务器环境_: 会尝试修改 Webpack 的 `file-loader` 配置，尽量避免输出静态资源文件
 -   其他优化
     -   默认的 `service-worker` 注册逻辑调整，现在会在 `document.onLoad` 时进行注册
+-   添加依赖包
+    -   `lodash`
 -   更新依赖包
     -   major
         -   `cache-loader` -> _4.0.0_
+        -   `css-loader` -> _3.0.0_
         -   `file-loader` -> _4.0.0_
         -   `url-loader` -> _2.0.0_
+        -   `os-locale` -> _4.0.0_
     -   minor
         -   `mini-css-extract-plugin` -> _0.7.0_
         -   `react-hot-loader` -> _4.11.0_
