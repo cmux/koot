@@ -57,7 +57,7 @@
 // }
 
 
-data: {
+const data = {
     list: [],
     pagination: {
         pageIndex: 1,
