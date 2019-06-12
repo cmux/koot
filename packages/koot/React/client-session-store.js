@@ -40,6 +40,7 @@ export const save = () => {
             ? JSON.stringify(state)
             : (state => {
                   const result = {};
+                  // TODO: 根据配置对象存储
                   console.log({ configSessionStore, state, result });
                   return JSON.stringify(result);
               })(state)
@@ -65,10 +66,10 @@ export const addEventHandlerOnPageUnload = () => {
 export const load = () => {
     if (!able) return {};
 
-    if (configSessionStore === true || configSessionStore === 'all')
-        return JSON.parse(sessionStorage.getItem(sessionStorageKey) || '{}');
+    // if (configSessionStore === true || configSessionStore === 'all')
+    return JSON.parse(sessionStorage.getItem(sessionStorageKey) || '{}');
 
-    const result = {};
+    // const result = {};
 
-    return result;
+    // return result;
 };

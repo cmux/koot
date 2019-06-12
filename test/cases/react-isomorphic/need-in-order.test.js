@@ -1,7 +1,9 @@
 /**
  * React SSR 完全测试
  *
- * 不同的 Koot 配置各使用某种 store 创建方式，用以测试多种方式
+ * 不同的 Koot 配置会分别使用不同的配置，用以测试多种结果。以下是已有的案例
+ *
+ * **store**
  * - 默认配置
  *     - 提供创建 store 的方法
  *     - 使用封装的 createStore 方法
@@ -15,6 +17,8 @@
  *     - 使用自定函数
  * - 0.6版配置
  *     - 仅提供 reducer 列表
+ *
+ * **sessionStore**
  */
 
 // jest configuration

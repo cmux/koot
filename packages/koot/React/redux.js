@@ -1,3 +1,4 @@
+import { merge } from 'lodash';
 import {
     createStore as reduxCreateStore,
     combineReducers as reduxCombineReducers,
@@ -60,12 +61,16 @@ if (isI18nEnabled()) {
  * @type {Object}
  */
 export const initialState = (() => {
-    if (__CLIENT__) {
-        console.log('sessionStore', loadSessionStore());
-        return window.__REDUX_STATE__;
-    }
+    if (__CLIENT__) return merge(window.__REDUX_STATE__, loadSessionStore());
     if (__SERVER__) return {};
 })();
+if (__CLIENT__ && __DEV__) {
+    console.log({
+        sessionStore: loadSessionStore(),
+        initialState: window.__REDUX_STATE__,
+        merged: merge(window.__REDUX_STATE__, loadSessionStore())
+    });
+}
 
 /**
  * @type {Array}
