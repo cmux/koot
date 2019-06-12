@@ -44,6 +44,7 @@ module.exports = {
 
     // 自定义 chunk
     chunkNameExtractCss: '__KOOT__EXTRACT__CSS__',
+    chunkNameExtractCssForImport: '__KOOT__EXTRACT__CSS__NO__PUBLIC__PATH__',
     chunkNameClientRunFirst: '__KOOT__CLIENT__RUN__FIRST__',
 
     // [开发环境] 临时文件名

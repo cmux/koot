@@ -1,6 +1,9 @@
-const { chunkNameExtractCss } = require('../../defaults/before-build')
-const readClientFile = require('../../utils/read-client-file')
-const getClientFilePath = require('../../utils/get-client-file-path')
+const {
+    chunkNameExtractCss,
+    chunkNameExtractCssForImport
+} = require('../../defaults/before-build');
+const readClientFile = require('../../utils/read-client-file');
+const getClientFilePath = require('../../utils/get-client-file-path');
 
 /**
  * 注入: CSS 代码
@@ -19,20 +22,20 @@ module.exports = ({
     // filemap,
     stylesHtml,
     localeId,
-    compilation,
+    compilation
 }) => {
-
     if (typeof injectCache.styles === 'undefined') {
-        injectCache.styles = getExtracted(localeId, compilation)
+        injectCache.styles = getExtracted(localeId, compilation);
 
         if (process.env.WEBPACK_BUILD_ENV === 'dev') {
-            injectCache.styles += `<style id="__koot-react-hot-loader-error-overlay">`
-            + `.react-hot-loader-error-overlay div {`
-            + `    z-index: 99999;`
-            + `    font-size: 14px;`
-            + `    line-height: 1.5em;`
-            + `}`
-            + `</style>`
+            injectCache.styles +=
+                `<style id="__koot-react-hot-loader-error-overlay">` +
+                `.react-hot-loader-error-overlay div {` +
+                `    z-index: 99999;` +
+                `    font-size: 14px;` +
+                `    line-height: 1.5em;` +
+                `}` +
+                `</style>`;
         }
     }
 
@@ -40,9 +43,8 @@ module.exports = ({
     //     injectCache.styles += getCritical()
     // }
 
-    return injectCache.styles + stylesHtml
-
-}
+    return injectCache.styles + stylesHtml;
+};
 
 // const getCritical = () => {
 //     if (process.env.WEBPACK_BUILD_ENV === 'dev') {
@@ -52,14 +54,29 @@ module.exports = ({
 // }
 
 const getExtracted = (localeId, compilation) => {
-    const filename = `${chunkNameExtractCss}.css`
+    const filename = `${chunkNameExtractCss}.css`;
 
-    if (process.env.WEBPACK_BUILD_ENV === 'dev' && process.env.WEBPACK_BUILD_TYPE !== 'spa')
-        return `<link id="__koot-extracted-styles" media="all" rel="stylesheet" href="${getClientFilePath(filename, localeId)}" />`
+    if (
+        process.env.WEBPACK_BUILD_ENV === 'dev' &&
+        process.env.WEBPACK_BUILD_TYPE !== 'spa'
+    )
+        return `<link id="__koot-extracted-styles" media="all" rel="stylesheet" href="${getClientFilePath(
+            filename,
+            localeId
+        )}" />`;
 
-    const content = readClientFile(filename, localeId, compilation)
+    const content = readClientFile(filename, localeId, compilation);
+
     // 如果内容大于 50k
     if (content.length > 50 * 1000)
-        return `<link id="__koot-extracted-styles" media="all" rel="stylesheet" href="${getClientFilePath(filename, localeId)}" />`
-    return `<style id="__koot-extracted-styles" type="text/css">${content}</style>`
-}
+        return `<link id="__koot-extracted-styles" media="all" rel="stylesheet" href="${
+            process.env.WEBPACK_BUILD_TYPE === 'spa'
+                ? getClientFilePath(
+                      `${chunkNameExtractCssForImport}.css`,
+                      localeId
+                  )
+                : getClientFilePath(filename, localeId)
+        }" />`;
+
+    return `<style id="__koot-extracted-styles" type="text/css">${content}</style>`;
+};
