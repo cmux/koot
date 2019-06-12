@@ -7,11 +7,11 @@
 -   **重大改动**
     -   `node.js` 最低版本要求更新到 `8.9.0`
 -   **新** `createStore` 方法，方便项目更便捷的创建 Redux store
-    -   `import { createStore } from 'koot`
+    -   `import { createStore } from 'koot';`
     -   `export default () => createStore(appReducer, appMiddlewares);`
     -   具体用法请参见文档 [配置/store](https://koot.js.org/#/config?id=store)
 -   SSR
-    -   _服务器环境_: 会尝试修改 Webpack 的 `file-loader` 配置，尽量避免输出静态资源文件
+    -   _服务器环境_: 会尝试自动修改 _Webpack_ 的 `file-loader` 的配置，尽量避免输出静态资源文件
 -   其他优化
     -   默认的 `service-worker` 注册逻辑调整，现在会在 `document.onLoad` 时进行注册
 -   添加依赖包
