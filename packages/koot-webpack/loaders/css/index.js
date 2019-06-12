@@ -86,7 +86,10 @@ module.exports = function(content) {
         // let once = true // 处理名字只处理1次
         root.walkRules((rule /*, i*/) => {
             // 排除@keyframe
-            if (rule.parent.type == 'atrule' && rule.parent.name == 'keyframes')
+            if (
+                rule.parent.type === 'atrule' &&
+                rule.parent.name === 'keyframes'
+            )
                 return;
 
             rule.selectors = rule.selectors.map(selector => {
@@ -104,7 +107,7 @@ module.exports = function(content) {
                         customName = name.split('__')[0];
 
                         // 去掉第一个点
-                        if (customName.charAt(0) == '.')
+                        if (customName.charAt(0) === '.')
                             customName = customName.replace('.', '');
 
                         // 可读class名拼接md5字符串
