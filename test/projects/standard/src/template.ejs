@@ -37,6 +37,9 @@
 <body>
     <div id="root"><%- inject.react %></div>
     <script type="text/javascript"><%- content('critical.js') %></script>
+
+    <div id="global-css-test-1"></div>
+
     <%- inject.scripts %>
     <script type="text/javascript" src="<%- pathname('specialEntry.js') %>"></script>
 </body>
