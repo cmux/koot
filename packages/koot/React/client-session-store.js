@@ -65,11 +65,5 @@ export const addEventHandlerOnPageUnload = () => {
  */
 export const load = () => {
     if (!able) return {};
-
-    // if (configSessionStore === true || configSessionStore === 'all')
     return JSON.parse(sessionStorage.getItem(sessionStorageKey) || '{}');
-
-    // const result = {};
-
-    // return result;
 };
