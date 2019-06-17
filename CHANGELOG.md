@@ -43,6 +43,24 @@
     -   patch
         -   `semver` -> _6.1.1_
 
+## 0.9.6
+
+**2019-06-17**
+
+-   核心
+    -   React
+        -   高阶组件 `extend()`
+            -   优化 `props.updatePageinfo` 方法行为方式
+
+## 0.9.5
+
+**2019-06-17**
+
+-   核心
+    -   React
+        -   高阶组件 `extend()`
+            -   如果提供了 `pageinfo` 配置，组件会新增 `props.updatePageinfo` 方法，可用来手动触发页面信息更新
+
 ## 0.9.4
 
 **2019-06-12**

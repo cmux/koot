@@ -177,6 +177,10 @@ export default (options = {}) => WrappedComponent => {
     const hasStyles = Array.isArray(styles) && styles.length > 0;
     // console.log({ ttt, hasStyles, styles })
 
+    /** @type {Boolean} 是否有 pageinfo 对象 */
+    const hasPageinfo =
+        typeof pageinfo === 'function' || typeof pageinfo === 'object';
+
     // 同构数据相关
 
     /** @type {Boolean} 同构数据是否已经获取成功 */
@@ -209,8 +213,7 @@ export default (options = {}) => WrappedComponent => {
         //
 
         clientUpdatePageInfo() {
-            if (typeof pageinfo !== 'function' && typeof pageinfo !== 'object')
-                return;
+            if (!hasPageinfo) return;
 
             const { title, metas } = doPageinfo(
                 getStore(),
@@ -335,6 +338,8 @@ export default (options = {}) => WrappedComponent => {
                     .trim(),
                 'data-class-name': this.kootClassNames.join(' ').trim()
             });
+            if (hasPageinfo)
+                props.updatePageinfo = this.clientUpdatePageInfo.bind(this);
 
             // if (__SERVER__) console.log('extender this.state.loaded', this.state.loaded)
             if (
