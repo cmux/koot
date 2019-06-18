@@ -27,7 +27,7 @@
         -   `mini-css-extract-plugin` -> _0.7.0_
         -   `react-hot-loader` -> _4.11.1_
         -   `webpack` -> _4.34.0_
-        -   `webpack-dev-server` -> _3.7.1_
+        -   `webpack-dev-server` -> _3.7.2_
     -   patch
         -   `ejs` -> _2.6.2_
         -   `postcss` -> _7.0.17_
