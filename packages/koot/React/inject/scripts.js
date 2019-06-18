@@ -40,11 +40,9 @@ module.exports = ({
             r += entrypoints.critical
                 .filter(file => path.extname(file) === '.js')
                 .map(file => {
-                    if (isDev)
-                        return `<script type="text/javascript" src="${getClientFilePath(
-                            true,
-                            file
-                        )}"></script>`;
+                    if (isDev) {
+                        return getClientFilePath(true, file);
+                    }
                     return `<script type="text/javascript">${readClientFile(
                         true,
                         file
@@ -64,10 +62,11 @@ module.exports = ({
                         // console.log(file)
                         // if (isDev)
                         // return `<script type="text/javascript" src="${getClientFilePath(true, file)}" defer></script>`
-                        return `<script type="text/javascript" src="${getClientFilePath(
-                            true,
-                            file
-                        )}" defer></script>`;
+                        // return `<script type="text/javascript" src="${getClientFilePath(
+                        //     true,
+                        //     file
+                        // )}" defer></script>`;
+                        return combineFilePaths(true, file);
                     })
                     .join('');
             }
@@ -85,9 +84,7 @@ module.exports = ({
                     `if ('serviceWorker' in navigator) {` +
                     `window.addEventListener('load', function() {` +
                     // + `navigator.serviceWorker.register("${injectCache.pathnameSW}?koot=${process.env.KOOT_VERSION}",`
-                    `navigator.serviceWorker.register("${
-                        injectCache.pathnameSW
-                    }?koot=0.8",` +
+                    `navigator.serviceWorker.register("${injectCache.pathnameSW}?koot=0.8",` +
                     `{scope: '/'}` +
                     `)` +
                     `.catch(err => {console.log('👩‍💻 Service Worker SUPPORTED. ERROR', err)})` +
@@ -122,15 +119,34 @@ module.exports = ({
 const getClientRunFirstJS = (localeId, compilation) => {
     const filename = `${chunkNameClientRunFirst}.js`;
 
-    if (process.env.WEBPACK_BUILD_ENV === 'dev')
-        return `<script type="text/javascript" src="${getClientFilePath(
-            filename,
-            localeId
-        )}"></script>`;
+    if (process.env.WEBPACK_BUILD_ENV === 'dev') {
+        return combineFilePaths(filename, localeId);
+        // return `<script type="text/javascript" src="${getClientFilePath(
+        //     filename,
+        //     localeId
+        // )}"></script>`;
+    }
 
     return `<script type="text/javascript">${readClientFile(
         filename,
         localeId,
         compilation
     )}</script>`;
+};
+
+/**
+ * 返回 script 标签
+ * 如果有多个结果，会返回包含多个标签的 HTML 结果
+ * @param {...any} args `utils/get-client-file-path` 对应的参数
+ * @returns {String} 整合的 HTML 结果
+ */
+const combineFilePaths = (...args) => {
+    let pathnames = getClientFilePath(...args);
+    if (!Array.isArray(pathnames)) pathnames = [pathnames];
+    return pathnames
+        .map(
+            pathname =>
+                `<script type="text/javascript" src="${pathname}"></script>`
+        )
+        .join('');
 };
