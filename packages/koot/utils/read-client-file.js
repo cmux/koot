@@ -1,12 +1,12 @@
-const fs = require('fs-extra')
-const path = require('path')
-const isUrl = require('is-url')
+const fs = require('fs-extra');
+const path = require('path');
+const isUrl = require('is-url');
 
-const getFilePath = require('./get-client-file-path')
-const generateFilemap = require('./generate-filemap-from-compilation')
-const getDistPath = require('./get-dist-path')
-const getPort = require('./get-port')
-const getDirDistPublic = require('../libs/get-dir-dist-public')
+const getFilePath = require('./get-client-file-path');
+const generateFilemap = require('./generate-filemap-from-compilation');
+const getDistPath = require('./get-dist-path');
+const getPort = require('./get-port');
+const getDirDistPublic = require('../libs/get-dir-dist-public');
 
 /**
  * 读取目标客户端打包结果文件的内容
@@ -16,13 +16,24 @@ const getDirDistPublic = require('../libs/get-dir-dist-public')
  * @param {Boolean} [isPathname=false] 如果标记为 true，表示提供的 filename 为确切的访问地址，无需查询对照表，直接返回结果
  * @returns {String} 文件内容
  */
-const readClientFile = (filename, localeId, compilation, isPathname = false) => {
+const readClientFile = (
+    filename,
+    localeId,
+    compilation,
+    isPathname = false
+) => {
     // 如果第一个参数为 true，表示标记为 pathname
-    if (filename === true) return readClientFile(localeId, compilation || undefined, isPathname || undefined, true)
+    if (filename === true)
+        return readClientFile(
+            localeId,
+            compilation || undefined,
+            isPathname || undefined,
+            true
+        );
 
     // 如果提供了 webpack compilation 数据，尝试从其中查询对应文件的最终内容并返回
     if (typeof compilation === 'object') {
-        const filemap = generateFilemap(compilation)
+        const filemap = generateFilemap(compilation);
         if (typeof filemap === 'object') {
             // console.log('\n' + filename)
             // console.log(`typeof filemap["${filename}"]`, typeof filemap[filename])
@@ -31,47 +42,59 @@ const readClientFile = (filename, localeId, compilation, isPathname = false) => 
             //     console.log(key)
             // }
 
-            if (typeof filemap[filename] === 'string' &&
+            if (
+                typeof filemap[filename] === 'string' &&
                 typeof compilation.assets[filemap[filename]] !== 'undefined'
             ) {
-                const asset = compilation.assets[filemap[filename]]
+                const asset = compilation.assets[filemap[filename]];
                 // console.log(filename, filemap[filename])
                 // if (!asset._value) {
                 //     console.log(asset)
                 // }
                 // console.log('typeof asset.source', typeof asset.source)
-                if (typeof asset.source === 'function') return asset.source()
-                if (typeof asset._value !== 'undefined') return asset._value
-                if (typeof asset._cachedSource !== 'undefined') return asset._cachedSource
+                if (typeof asset.source === 'function') return asset.source();
+                if (typeof asset._value !== 'undefined') return asset._value;
+                if (typeof asset._cachedSource !== 'undefined')
+                    return asset._cachedSource;
                 // return '123'
             }
         }
     }
 
-    const pathname = getFilePath(filename, localeId, isPathname)
-    if (isUrl(pathname)) {
-        if (__DEV__) {
-            const syncRequest = require('sync-request')
-            // console.log(`${pathname} is URL`)
-            return syncRequest('GET', pathname, {}).getBody()
-        } else {
-            return `<!-- The pathname for file '${filename}' is a URL. Rendering file content from URL can only be done in DEV mode. -->`
+    // 在打包结果中寻找指定文件
+    let pathnames = getFilePath(filename, localeId, isPathname);
+    if (!Array.isArray(pathnames)) pathnames = [pathnames];
+
+    const results = pathnames.map(pathname => {
+        if (isUrl(pathname)) {
+            if (__DEV__) {
+                const syncRequest = require('sync-request');
+                // console.log(`${pathname} is URL`)
+                return syncRequest('GET', pathname, {}).getBody();
+            } else {
+                return `<!-- The pathname for file '${filename}' is a URL. Rendering file content from URL can only be done in DEV mode. -->`;
+            }
         }
-    }
 
-    if (process.env.WEBPACK_BUILD_TYPE === 'spa' && process.env.WEBPACK_BUILD_ENV === 'dev') {
-        return `<!-- http://localhost:${getPort()}${pathname} -->`
-        // const syncRequest = require('sync-request')
-        // return syncRequest('GET', `http://localhost:${getPort()}${pathname}`, {}).getBody()
-    }
+        if (
+            process.env.WEBPACK_BUILD_TYPE === 'spa' &&
+            process.env.WEBPACK_BUILD_ENV === 'dev'
+        ) {
+            return `<!-- http://localhost:${getPort()}${pathname} -->`;
+            // const syncRequest = require('sync-request')
+            // return syncRequest('GET', `http://localhost:${getPort()}${pathname}`, {}).getBody()
+        }
 
-    return fs.readFileSync(
-        path.resolve(
-            getDirDistPublic(getDistPath()),
-            getFilePath(filename, localeId, isPathname).replace(/^\//, '')
-        ),
-        'utf-8'
-    )
-}
+        return fs.readFileSync(
+            path.resolve(
+                getDirDistPublic(getDistPath()),
+                pathname.replace(/^\//, '')
+            ),
+            'utf-8'
+        );
+    });
 
-module.exports = readClientFile
+    return results.join('\n\n');
+};
+
+module.exports = readClientFile;

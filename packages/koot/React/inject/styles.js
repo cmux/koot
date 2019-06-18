@@ -59,24 +59,52 @@ const getExtracted = (localeId, compilation) => {
     if (
         process.env.WEBPACK_BUILD_ENV === 'dev' &&
         process.env.WEBPACK_BUILD_TYPE !== 'spa'
-    )
-        return `<link id="__koot-extracted-styles" media="all" rel="stylesheet" href="${getClientFilePath(
-            filename,
-            localeId
-        )}" />`;
+    ) {
+        // return `<link id="__koot-extracted-styles" media="all" rel="stylesheet" href="${getClientFilePath(
+        //     filename,
+        //     localeId
+        // )}" />`;
+        return combineFilePaths(filename, localeId);
+    }
 
     const content = readClientFile(filename, localeId, compilation);
 
     // 如果内容大于 50k
-    if (content.length > 50 * 1000)
-        return `<link id="__koot-extracted-styles" media="all" rel="stylesheet" href="${
-            process.env.WEBPACK_BUILD_TYPE === 'spa'
-                ? getClientFilePath(
-                      `${chunkNameExtractCssForImport}.css`,
-                      localeId
-                  )
-                : getClientFilePath(filename, localeId)
-        }" />`;
+    if (content.length > 50 * 1000) {
+        if (process.env.WEBPACK_BUILD_TYPE === 'spa') {
+            return combineFilePaths(
+                `${chunkNameExtractCssForImport}.css`,
+                localeId
+            );
+        } else {
+            return combineFilePaths(filename, localeId);
+        }
+        // return `<link id="__koot-extracted-styles" media="all" rel="stylesheet" href="${
+        //     process.env.WEBPACK_BUILD_TYPE === 'spa'
+        //         ? getClientFilePath(
+        //               `${chunkNameExtractCssForImport}.css`,
+        //               localeId
+        //           )
+        //         : getClientFilePath(filename, localeId)
+        // }" />`;
+    }
 
     return `<style id="__koot-extracted-styles" type="text/css">${content}</style>`;
+};
+
+/**
+ * 返回 link 标签
+ * 如果有多个结果，会返回包含多个标签的 HTML 结果
+ * @param {...any} args `utils/get-client-file-path` 对应的参数
+ * @returns {String} 整合的 HTML 结果
+ */
+const combineFilePaths = (...args) => {
+    let pathnames = getClientFilePath(...args);
+    if (!Array.isArray(pathnames)) pathnames = [pathnames];
+    return pathnames
+        .map(
+            pathname =>
+                `<link id="__koot-extracted-styles" media="all" rel="stylesheet" href="${pathname}" />`
+        )
+        .join('');
 };
