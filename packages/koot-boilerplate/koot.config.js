@@ -14,7 +14,7 @@ module.exports = {
      * 项目信息
      *************************************************************************/
 
-    name: 'Koot.js Tech Demo',
+    name: 'Koot.js App',
     type: 'react',
     dist: './dist',
 
@@ -151,7 +151,6 @@ module.exports = {
             },
             optimization: {
                 splitChunks: {
-                    // maxSize: 244 * 1024,
                     cacheGroups: {
                         commons: {
                             name: 'commons',
