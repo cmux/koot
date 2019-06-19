@@ -1,11 +1,11 @@
 # 命令
 
-在 `koot` 正确安装后，`package.json` 内 `scripts` 中的脚本里，可使用新的命令：
+在 `koot` 正确安装后，`package.json` 内 `scripts` 的脚本，可使用新的命令：
 
-- `koot-start` 打包并启动服务器
-- `koot-build` 打包
-- `koot-dev` 开启开发环境
-- `koot-analyze` 对客户端打包结果进行分析
+-   `koot-start` 打包并启动服务器
+-   `koot-build` 打包
+-   `koot-dev` 开启开发环境
+-   `koot-analyze` 对客户端打包结果进行分析
 
 **示例**
 
@@ -33,11 +33,11 @@
 
 **可用选项**
 
-| 选项 | 说明 | 示例 |
-|-|-|-|
-| --no-build | 不进行打包，直接开启服务器 | `koot-start --no-build` |
-| --type &lt;project-type&gt; | 指定项目类型，忽略 koot.js 中的配置 | `koot-start --type react-spa` |
-| --config &lt;config-file-path&gt; | 指定打包配置文件地址 | `koot-start --config ./koot.build.qa.js` |
+| 选项                              | 说明                                | 示例                                     |
+| --------------------------------- | ----------------------------------- | ---------------------------------------- |
+| --no-build                        | 不进行打包，直接开启服务器          | `koot-start --no-build`                  |
+| --type &lt;project-type&gt;       | 指定项目类型，忽略 koot.js 中的配置 | `koot-start --type react-spa`            |
+| --config &lt;config-file-path&gt; | 指定打包配置文件地址                | `koot-start --config ./koot.build.qa.js` |
 
 ---
 
@@ -47,15 +47,15 @@
 
 **可用选项**
 
-| 选项 | 说明 | 示例 |
-|-|-|-|
-| -c 或 --client | 只对客户端环境打包 | `koot-build -c` |
-| -s 或 --server | 只对服务器端环境打包 | `koot-build -s` |
-| --stage &lt;client&#124;server&gt; | 指定打包环境 | `koot-build --stage client` |
-| --env &lt;prod&#124;dev&gt; | 指定打包模式 | `koot-build --env dev` |
-| --type &lt;project-type&gt; | 指定项目类型，忽略 koot.js 中的配置 | `koot-build --type react-spa` |
-| --config &lt;config-file-path&gt; | 指定打包配置文件地址 | `koot-build --config ./koot.build.qa.js` |
-| --dest &lt;dist-path&gt; | 指定打包结果目录 | `koot-build --dest ./package-qa` |
+| 选项                               | 说明                                | 示例                                     |
+| ---------------------------------- | ----------------------------------- | ---------------------------------------- |
+| -c 或 --client                     | 只对客户端环境打包                  | `koot-build -c`                          |
+| -s 或 --server                     | 只对服务器端环境打包                | `koot-build -s`                          |
+| --stage &lt;client&#124;server&gt; | 指定打包环境                        | `koot-build --stage client`              |
+| --env &lt;prod&#124;dev&gt;        | 指定打包模式                        | `koot-build --env dev`                   |
+| --type &lt;project-type&gt;        | 指定项目类型，忽略 koot.js 中的配置 | `koot-build --type react-spa`            |
+| --config &lt;config-file-path&gt;  | 指定打包配置文件地址                | `koot-build --config ./koot.build.qa.js` |
+| --dest &lt;dist-path&gt;           | 指定打包结果目录                    | `koot-build --dest ./package-qa`         |
 
 以上命令可混合使用，如：`koot-build -c --env dev --config ./koot.build.qa.js`
 
@@ -67,14 +67,14 @@
 
 **可用选项**
 
-| 选项 | 说明 | 示例 |
-|-|-|-|
-| -c 或 --client | 只对客户端环境打包 | `koot-dev -c` |
-| -s 或 --server | 只对服务器端环境打包 | `koot-dev -s` |
-| -g 或 --global | 使用全局 PM2 | `koot-dev -g` |
+| 选项                     | 说明                              | 示例                             |
+| ------------------------ | --------------------------------- | -------------------------------- |
+| -c 或 --client           | 只对客户端环境打包                | `koot-dev -c`                    |
+| -s 或 --server           | 只对服务器端环境打包              | `koot-dev -s`                    |
+| -g 或 --global           | 使用全局 PM2                      | `koot-dev -g`                    |
 | --dest &lt;dist-path&gt; | 指定打包结果目录 (供临时文件使用) | `koot-build --dest ./package-qa` |
-| --no-open | 禁止自动打开浏览器/页面 | `koot-dev --no-open` |
-| --no-dll | 不使用 DLL 模式 | `koot-dev --no-dll` |
+| --no-open                | 禁止自动打开浏览器/页面           | `koot-dev --no-open`             |
+| --no-dll                 | 不使用 DLL 模式                   | `koot-dev --no-dll`              |
 
 注：手动指定环境时，将不会默认打开首页。
 
@@ -86,13 +86,13 @@
 
 **可用选项**
 
-| 选项 | 说明 | 示例 |
-|-|-|-|
-| -c 或 --client | 只对客户端环境打包 | `koot-dev -c` |
-| -s 或 --server | 只对服务器端环境打包 | `koot-dev -s` |
-| --stage &lt;client&#124;server&gt; | 指定打包环境 | `koot-build --stage client` |
-| --type &lt;project-type&gt; | 指定项目类型，忽略 koot.js 中的配置 | `koot-build --type react-spa` |
-| --config &lt;config-file-path&gt; | 指定打包配置文件地址 | `koot-build --config ./koot.build.qa.js` |
+| 选项                               | 说明                                | 示例                                     |
+| ---------------------------------- | ----------------------------------- | ---------------------------------------- |
+| -c 或 --client                     | 只对客户端环境打包                  | `koot-dev -c`                            |
+| -s 或 --server                     | 只对服务器端环境打包                | `koot-dev -s`                            |
+| --stage &lt;client&#124;server&gt; | 指定打包环境                        | `koot-build --stage client`              |
+| --type &lt;project-type&gt;        | 指定项目类型，忽略 koot.js 中的配置 | `koot-build --type react-spa`            |
+| --config &lt;config-file-path&gt;  | 指定打包配置文件地址                | `koot-build --config ./koot.build.qa.js` |
 
 注：手动指定环境时，将不会默认打开首页。
 
