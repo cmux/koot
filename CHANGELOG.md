@@ -5,7 +5,7 @@
 核心
 
 -   **重大改动**
-    -   `node.js` 最低版本要求更新到 `8.9.0`
+    -   `node.js` 最低版本要求提升到 `8.9.0`
 -   **新** `createStore` 方法，方便项目更便捷的创建 Redux store
     -   `import { createStore } from 'koot';`
     -   `export default () => createStore(appReducer, appMiddlewares);`
