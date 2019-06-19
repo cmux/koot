@@ -1,17 +1,16 @@
-import { syncHistoryWithStore } from 'react-router-redux'
-import * as portionConfig from '__KOOT_PROJECT_CONFIG_PORTION_CLIENT_PATHNAME__'
-import validateReduxConfig from './validate/redux-config'
-import History from './history'
+import { syncHistoryWithStore } from 'react-router-redux';
+import * as portionConfig from '__KOOT_PROJECT_CONFIG_PORTION_CLIENT_PATHNAME__';
+import validateReduxConfig from './validate/redux-config';
+import History from './history';
 
 window.__KOOT_STORE__ = ((reduxConfig = {}) => {
     if (typeof reduxConfig.factoryStore === 'function')
-        return reduxConfig.factoryStore()
-    if (typeof reduxConfig.store === 'object')
-        return reduxConfig.store
-    return {}
-})(validateReduxConfig(portionConfig.redux))
+        return reduxConfig.factoryStore();
+    if (typeof reduxConfig.store === 'object') return reduxConfig.store;
+    return {};
+})(validateReduxConfig(portionConfig.redux));
 
-window.__KOOT_HISTORY__ = syncHistoryWithStore(History, window.__KOOT_STORE__)
+window.__KOOT_HISTORY__ = syncHistoryWithStore(History, window.__KOOT_STORE__);
 
 // console filter
 // https://stackoverflow.com/questions/6659312/is-there-a-way-to-filter-output-in-google-chromes-console
