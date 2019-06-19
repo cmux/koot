@@ -3,6 +3,7 @@
     "private": true,
     "version": "0.9.7",
     "description": "Tech-demo boilerplate for koot.js.",
+    "sideEffects": false,
     "author": {
         "name": "diablohu",
         "email": "diablohudream@gmail.com",

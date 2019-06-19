@@ -40,7 +40,7 @@ module.exports = {
         '@server': path.resolve('./src/server'),
         '@store': path.resolve('./src/store'),
         '@views': path.resolve('./src/views'),
-        '~vars.less': path.resolve('./src/constants/less-variables/_all.less')
+        '~vars.less': path.resolve('./src/constants/less/_all.less')
     },
 
     defines: {

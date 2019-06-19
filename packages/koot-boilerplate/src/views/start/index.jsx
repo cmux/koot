@@ -6,12 +6,14 @@ import { doc as urlDoc } from '@constants/urls';
 import Center from '@components/center';
 import Icon from '@components/icon';
 
+//
+
 const PageStart = extend({
     pageinfo: () => ({
         title: `${__('pages.start.title')} - ${__('title')}`,
         metas: [{ description: __('pages.start.description') }]
     }),
-    styles: require('./styles.component.less')
+    styles: require('./index.module.less')
 })(({ className }) => (
     <Center className={className}>
         <h2 className="title">{__('pages.start.title')}</h2>
@@ -32,6 +34,8 @@ const PageStart = extend({
 ));
 
 export default PageStart;
+
+//
 
 const ListItem = ({ title, checkout, learn, content, list, doc }) => (
     <li className="item">

@@ -12,7 +12,7 @@ const PageHome = extend({
         title: `${__('pages.home.title')} - ${__('title')}`,
         metas: [{ description: __('pages.home.description') }]
     }),
-    styles: require('./styles.component.less')
+    styles: require('./index.module.less')
 })(({ className }) => (
     <div className={className}>
         <div className="wrapper">

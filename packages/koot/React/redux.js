@@ -1,4 +1,4 @@
-import { merge } from 'lodash';
+import merge from 'lodash/merge';
 import {
     createStore as reduxCreateStore,
     combineReducers as reduxCombineReducers,
@@ -67,8 +67,9 @@ export const initialState = (() => {
 if (__CLIENT__ && __DEV__) {
     console.log({
         sessionStore: loadSessionStore(),
-        initialState: window.__REDUX_STATE__,
-        merged: merge(window.__REDUX_STATE__, loadSessionStore())
+        merged: window.__REDUX_STATE__
+        // initialState: window.__REDUX_STATE__,
+        // merged: merge(window.__REDUX_STATE__, loadSessionStore())
     });
 }
 
