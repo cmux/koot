@@ -38,62 +38,63 @@ class CreateGeneralCssBundlePlugin {
             }
 
             // 拼接抽出的 CSS 文件的内容
-            if (Array.isArray(cssFiles) && cssFiles.length) {
-                const content = cssFiles
-                    .filter(filename => !!assets[filename])
-                    .map(filename => {
-                        const asset = assets[filename];
-                        if (typeof asset.source === 'function')
-                            return asset.source();
-                        if (typeof asset._value !== 'undefined')
-                            return asset._value;
-                        if (typeof asset._cachedSource !== 'undefined')
-                            return asset._cachedSource;
-                        return '';
-                    })
-                    .join('\n\n');
+            const content =
+                Array.isArray(cssFiles) && cssFiles.length
+                    ? cssFiles
+                          .filter(filename => !!assets[filename])
+                          .map(filename => {
+                              const asset = assets[filename];
+                              if (typeof asset.source === 'function')
+                                  return asset.source();
+                              if (typeof asset._value !== 'undefined')
+                                  return asset._value;
+                              if (typeof asset._cachedSource !== 'undefined')
+                                  return asset._cachedSource;
+                              return '';
+                          })
+                          .join('\n\n')
+                    : '';
 
-                const filename = `extract.all.${md5(content)}.css`;
+            const filename = `extract.all.${md5(content)}.css`;
+
+            // 添加 chunk
+            const chunk = new Chunk(chunkNameExtractCss);
+            const id = compilation.chunks.length;
+            chunk.files = [filename];
+            chunk.id = id;
+            chunk.ids = [id];
+            compilation.chunks.push(chunk);
+
+            // 写入 Webpack 文件流
+            newCompilationFileDependency(compilation, filename, content);
+
+            // 针对 SPA 类型: 输出额外的版本，其内的资源引用相对路径不会包含 publicPath
+            if (process.env.WEBPACK_BUILD_TYPE === 'spa') {
+                const thisContent = content.replace(
+                    new RegExp(
+                        `url\\(${stats.compilation.outputOptions.publicPath}`,
+                        'g'
+                    ),
+                    'url('
+                );
+                const thisFilename = `extract.all.${md5(
+                    content
+                )}.url-no-public-path.css`;
 
                 // 添加 chunk
-                const chunk = new Chunk(chunkNameExtractCss);
+                const chunk = new Chunk(chunkNameExtractCssForImport);
                 const id = compilation.chunks.length;
-                chunk.files = [filename];
+                chunk.files = [thisFilename];
                 chunk.id = id;
                 chunk.ids = [id];
                 compilation.chunks.push(chunk);
 
                 // 写入 Webpack 文件流
-                newCompilationFileDependency(compilation, filename, content);
-
-                // 针对 SPA 类型: 输出额外的版本，其内的资源引用相对路径不会包含 publicPath
-                if (process.env.WEBPACK_BUILD_TYPE === 'spa') {
-                    const thisContent = content.replace(
-                        new RegExp(
-                            `url\\(${stats.compilation.outputOptions.publicPath}`,
-                            'g'
-                        ),
-                        'url('
-                    );
-                    const thisFilename = `extract.all.${md5(
-                        content
-                    )}.url-no-public-path.css`;
-
-                    // 添加 chunk
-                    const chunk = new Chunk(chunkNameExtractCssForImport);
-                    const id = compilation.chunks.length;
-                    chunk.files = [thisFilename];
-                    chunk.id = id;
-                    chunk.ids = [id];
-                    compilation.chunks.push(chunk);
-
-                    // 写入 Webpack 文件流
-                    newCompilationFileDependency(
-                        compilation,
-                        thisFilename,
-                        thisContent
-                    );
-                }
+                newCompilationFileDependency(
+                    compilation,
+                    thisFilename,
+                    thisContent
+                );
             }
 
             return callback();

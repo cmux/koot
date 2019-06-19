@@ -148,6 +148,19 @@ module.exports = {
                     'axios'
                 ],
                 ...configBase.entry
+            },
+            optimization: {
+                splitChunks: {
+                    // maxSize: 244 * 1024,
+                    cacheGroups: {
+                        commons: {
+                            name: 'commons',
+                            chunks: 'initial',
+                            minChunks: 2,
+                            reuseExistingChunk: true
+                        }
+                    }
+                }
             }
         };
     },
