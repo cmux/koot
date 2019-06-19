@@ -652,7 +652,7 @@ module.exports = {
     // 默认值
     koaStatic: {
         maxage: 0,
-        hidden: true,
+        hidden: false,
         index: 'index.html',
         defer: false,
         gzip: true,

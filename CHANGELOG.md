@@ -6,16 +6,19 @@
 
 -   **重大改动**
     -   `node.js` 最低版本要求提升到 `8.9.0`
--   **新** `createStore` 方法，方便项目更便捷的创建 Redux store
+    -   SSR
+        -   _服务器_: 请求隐藏文件现在会默认返回 404 (可通过配置 `koaStatc.hidden` 来调整这一行为)
+-   **新配置项** `sessionStore` - 将全部或部分 _state_ 对象暂存在 `sessionStorage` 中，在刷新页面后这些 _state_ 会自动还原。详情请参见文档 [配置/sessionStore](https://koot.js.org/#/config?id=sessionStore)
+-   **新函数** `createStore()` - 方便项目更便捷的创建 _Redux store_
     -   `import { createStore } from 'koot';`
     -   `export default () => createStore(appReducer, appMiddlewares);`
     -   具体用法请参见文档 [配置/store](https://koot.js.org/#/config?id=store)
--   SSR
-    -   _服务器环境_: 会尝试自动修改 _Webpack_ 的 `file-loader` 的配置，尽量避免输出静态资源文件
--   分析模式
-    -   优化分析模式输出文件名的可读性
--   其他优化
+-   **优化**
     -   默认的 `service-worker` 注册逻辑调整，现在会在 `document.onLoad` 时进行注册
+    -   SSR
+        -   _服务器_: 会尝试自动修改 _Webpack_ 的 `file-loader` 的配置，尽量避免输出静态资源文件
+    -   分析模式
+        -   优化分析模式输出文件名的可读性
 -   添加依赖包
     -   `lodash`
 -   更新依赖包
@@ -36,7 +39,7 @@
 
 **koot-boilerplate**
 
--   优化默认文件结构
+-   优化默认文件夹结构
 -   优化默认 _Webpack_ 配置
 -   SSR
     -   现在服务器环境的打包结果中，不再会出现静态资源文件
