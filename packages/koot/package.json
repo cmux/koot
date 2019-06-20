@@ -1,6 +1,6 @@
 {
     "name": "koot",
-    "version": "0.9.7",
+    "version": "0.9.8",
     "description": "Koot.js - React isomorphic framework created by CMUX",
     "main": "index.js",
     "sideEffects": false,
@@ -91,7 +91,7 @@
         "koa-proxies": "0.8.1",
         "koa-router": "7.4.0",
         "koa-static": "5.0.0",
-        "koot-webpack": "^0.9.7",
+        "koot-webpack": "^0.9.8",
         "less": "3.9.0",
         "less-loader": "5.0.0",
         "lodash": "4.17.11",
@@ -132,5 +132,5 @@
         "xmlify": "1.1.0",
         "yargs": "13.2.4"
     },
-    "gitHead": "d249303fbd8e635e028addfa1ce656c58810b448"
+    "gitHead": "2c40d0d15861c83c7fff0db2557df6890abd084c"
 }

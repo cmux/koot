@@ -108,6 +108,9 @@ module.exports = async (kootConfigForThisBuild = {}) => {
             localeId
             /*APP_KEY: appName */
         });
+        const configTargetDefaultOutput = {
+            ...(configTargetDefault.output || {})
+        };
 
         const thisConfig = new DefaultWebpackConfig().merge(config);
 
@@ -178,9 +181,13 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                 result.output.chunkFilename = 'chunk-[id]-[name].js';
             } else {
                 if (!result.output.filename)
-                    result.output.filename = 'entry.[chunkhash].js';
+                    result.output.filename =
+                        configTargetDefaultOutput.filename ||
+                        'entry.[chunkhash].js';
                 if (!result.output.chunkFilename)
-                    result.output.chunkFilename = 'chunk.[chunkhash].js';
+                    result.output.chunkFilename =
+                        configTargetDefaultOutput.chunkFilename ||
+                        'chunk.[chunkhash].js';
             }
 
             // [开发环境]

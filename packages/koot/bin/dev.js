@@ -470,7 +470,7 @@ const run = async () => {
                         }
                         // autorestart: true,
                     });
-                    console.log(config);
+                    // console.log(config);
                     delete config.args;
                     // console.log(config)
                     // await fs.writeJson(
