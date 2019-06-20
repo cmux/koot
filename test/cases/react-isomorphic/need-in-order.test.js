@@ -19,6 +19,14 @@
  *     - 仅提供 reducer 列表
  *
  * **sessionStore**
+ * - 默认配置
+ *     - 禁用
+ * - i18n.use="router"
+ *     - `true` (全部开启)
+ * - i18n.use="router"
+ *     - `all` (全部开启)
+ * - i18n.use="router"
+ *     - 部分开启，同时混入无效设置
  */
 
 // jest configuration
