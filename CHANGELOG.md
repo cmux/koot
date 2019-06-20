@@ -6,6 +6,8 @@
 
 -   **优化**
     -   确保 _Webpack_ 配置中 `output` 的合法性
+-   **错误修正**
+    -   修正：某些情况下，开发环境中 `critical.js` 没有正确加载
 
 **koot-boilerplate**
 
