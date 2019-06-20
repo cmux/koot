@@ -191,9 +191,9 @@ const parsePattern = pattern => {
             chunkmapCurrent['service-worker'] = [
                 `${
                     chunkmapCurrent['.public']
-                        ? chunkmapCurrent['.public']
+                        ? chunkmapCurrent['.public'].replace(/\/$/, '')
                         : 'public'
-                }${pathnameSW}`.replace(/\/\//g, '/')
+                }${pathnameSW}`
             ];
 
             await fs.writeFile(
@@ -214,8 +214,10 @@ const parsePattern = pattern => {
         // 修改 .public-chunkmap.json，添加 service-worker 文件信息
         chunkmapFull['service-worker'] = [
             `${
-                chunkmapFull['.public'] ? chunkmapFull['.public'] : 'public'
-            }${pathname}`.replace(/\/\//g, '/')
+                chunkmapFull['.public']
+                    ? chunkmapFull['.public'].replace(/\/$/, '')
+                    : 'public'
+            }${pathname}`
         ];
 
         await fs.writeFile(
