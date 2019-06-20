@@ -41,7 +41,8 @@ module.exports = ({
                 .filter(file => path.extname(file) === '.js')
                 .map(file => {
                     if (isDev) {
-                        return getClientFilePath(true, file);
+                        // return `<script type="text/javascript" src="${getClientFilePath(true, file)}"></script>`;
+                        return combineFilePaths(true, file);
                     }
                     return `<script type="text/javascript">${readClientFile(
                         true,
@@ -144,7 +145,7 @@ const combineFilePaths = (...args) => {
     return pathnames
         .map(
             pathname =>
-                `<script type="text/javascript" src="${pathname}"></script>`
+                `<script type="text/javascript" src="${pathname}" defer></script>`
         )
         .join('');
 };
