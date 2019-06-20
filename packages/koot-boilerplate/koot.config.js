@@ -138,7 +138,19 @@ module.exports = {
                     'classnames',
                     'axios'
                 ],
-                ...configBase.entry
+                ...configBase.entry,
+                optimization: {
+                    splitChunks: {
+                        cacheGroups: {
+                            commons: {
+                                name: 'commons',
+                                chunks: 'initial',
+                                minChunks: 2,
+                                reuseExistingChunk: true
+                            }
+                        }
+                    }
+                }
             }
         });
     },
