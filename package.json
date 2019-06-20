@@ -56,7 +56,7 @@
         "chalk": "2.4.2",
         "latest-version": "5.1.0",
         "crlf": "1.1.1",
-        "simple-git": "1.115.0",
+        "simple-git": "1.116.0",
         "prettier": "1.18.2",
         "husky": "2.4.1",
         "lint-staged": "8.2.1"

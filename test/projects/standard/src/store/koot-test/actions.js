@@ -20,7 +20,8 @@ export const fetchAppName = () => dispatch => {
 
         dispatch({
             type: UPDATE_APP_NAME,
-            name: res.data
+            name: res.data,
+            nameTS: Date.now()
         });
         return res;
     });

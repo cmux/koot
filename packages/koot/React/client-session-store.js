@@ -1,3 +1,5 @@
+import get from 'lodash/get';
+import set from 'lodash/set';
 import { store as Store } from '../';
 
 const sessionStorageKey = '__KOOT_SESSION_STORE__';
@@ -34,17 +36,33 @@ export const save = () => {
         return rest;
     }, Store.getState());
 
-    sessionStorage.setItem(
-        sessionStorageKey,
-        configSessionStore === true || configSessionStore === 'all'
-            ? JSON.stringify(state)
-            : (state => {
-                  const result = {};
-                  // TODO: 根据配置对象存储
-                  console.log({ configSessionStore, state, result });
-                  return JSON.stringify(result);
-              })(state)
-    );
+    let saveState = {};
+
+    if (configSessionStore === true || configSessionStore === 'all') {
+        saveState = state;
+    } else if (
+        typeof configSessionStore === 'object' &&
+        !Array.isArray(configSessionStore)
+    ) {
+        // 根据配置对象存储
+        const parse = (obj, accumulatedKey = '') => {
+            Object.keys(obj).forEach(key => {
+                const currentAccumulatedKey =
+                    accumulatedKey + `[${JSON.stringify(key)}]`;
+                if (typeof obj[key] === 'object') {
+                    parse(obj[key], currentAccumulatedKey);
+                } else if (obj[key] === true) {
+                    const value = get(state, currentAccumulatedKey);
+                    if (typeof value !== 'undefined')
+                        set(saveState, currentAccumulatedKey, value);
+                }
+            });
+        };
+        parse(configSessionStore);
+        // console.log(configSessionStore, state, saveState);
+    }
+
+    sessionStorage.setItem(sessionStorageKey, JSON.stringify(saveState));
 
     return;
 };

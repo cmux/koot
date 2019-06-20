@@ -125,6 +125,7 @@ const plugins = async (
         'KOOT_DEV_START_TIME',
         'KOOT_DEV_DLL_FILE_CLIENT',
         'KOOT_DEV_DLL_FILE_SERVER',
+        'KOOT_SESSION_STORE',
         'WEBPACK_BUILD_TYPE',
         'WEBPACK_BUILD_ENV',
         'WEBPACK_CHUNKMAP',
@@ -134,11 +135,17 @@ const plugins = async (
     if (process.env.KOOT_CLIENT_BUNDLE_SUBFOLDER) {
         envsToDefine.push('KOOT_CLIENT_BUNDLE_SUBFOLDER');
     }
-    if (typeof remainingKootBuildConfig.sessionStore !== 'object') {
+    if (
+        remainingKootBuildConfig.sessionStore === true ||
+        remainingKootBuildConfig.sessionStore === 'all' ||
+        (typeof remainingKootBuildConfig.sessionStore === 'object' &&
+            !Array.isArray(remainingKootBuildConfig.sessionStore))
+    ) {
         process.env.KOOT_SESSION_STORE = JSON.stringify(
             remainingKootBuildConfig.sessionStore
         );
-        envsToDefine.push('KOOT_SESSION_STORE');
+    } else {
+        process.env.KOOT_SESSION_STORE = JSON.stringify(false);
     }
 
     JSON.parse(process.env.KOOT_CUSTOM_ENV_KEYS).forEach(key => {
