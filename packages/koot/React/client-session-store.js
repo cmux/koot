@@ -1,12 +1,11 @@
 import get from 'lodash/get';
 import set from 'lodash/set';
+
 import { store as Store } from '../';
+import { sessionStoreKey } from '../defaults/defines';
+import filterState from '../libs/filter-state';
 
-const sessionStorageKey = '__KOOT_SESSION_STORE__';
 const configSessionStore = JSON.parse(process.env.KOOT_SESSION_STORE);
-
-/** @type {String[]} 这些项目不予同步 */
-const itemsBlacklist = ['localeId', 'realtimeLocation', 'routing', 'server'];
 
 /** @type {Boolean} 当前是否可以/允许使用 sessionStore */
 const able = (() => {
@@ -31,10 +30,7 @@ export const save = () => {
     if (!able) return;
 
     /** @type {Object} 排除掉黑名单内的项目后的 state 对象 */
-    const state = itemsBlacklist.reduce((state, item) => {
-        const { [item]: _, ...rest } = state;
-        return rest;
-    }, Store.getState());
+    const state = filterState(Store.getState());
 
     let saveState = {};
 
@@ -62,7 +58,7 @@ export const save = () => {
         // console.log(configSessionStore, state, saveState);
     }
 
-    sessionStorage.setItem(sessionStorageKey, JSON.stringify(saveState));
+    sessionStorage.setItem(sessionStoreKey, JSON.stringify(saveState));
 
     return;
 };
@@ -83,5 +79,5 @@ export const addEventHandlerOnPageUnload = () => {
  */
 export const load = () => {
     if (!able) return {};
-    return JSON.parse(sessionStorage.getItem(sessionStorageKey) || '{}');
+    return JSON.parse(sessionStorage.getItem(sessionStoreKey) || '{}');
 };

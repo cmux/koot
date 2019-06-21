@@ -10,5 +10,7 @@ module.exports = Object.assign({}, baseConfig, {
             ['zh-tw', './src/locales/zh-tw.json'],
             ['en', './src/locales/en.json']
         ]
-    }
+    },
+
+    sessionStore: 'all'
 });

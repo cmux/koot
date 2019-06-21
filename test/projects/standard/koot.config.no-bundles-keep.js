@@ -15,5 +15,16 @@ module.exports = Object.assign({}, baseConfig, {
             await fs.remove(path.resolve(dist, 'server'));
         }
         return;
+    },
+
+    sessionStore: {
+        app: {
+            name: true
+        },
+        kootTest: {
+            app: {
+                name: true
+            }
+        }
     }
 });

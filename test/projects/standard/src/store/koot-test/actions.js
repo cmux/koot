@@ -2,7 +2,7 @@ import axios from 'axios';
 import { UPDATE_APP_NAME } from '@constants/action-types';
 import getPort from 'koot/utils/get-port';
 
-const apiBase = `http://127.0.0.1:${getPort()}`;
+const apiBase = __CLIENT__ ? '' : `http://127.0.0.1:${getPort()}`;
 
 export const fetchAppName = () => dispatch => {
     // console.log((typeof Store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' Store in [action] updateServerTimestamp')

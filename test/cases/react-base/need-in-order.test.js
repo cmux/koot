@@ -29,7 +29,8 @@ const removeTempProjectConfig = require('../../../packages/koot/libs/remove-temp
 const sleep = require('../../../packages/koot/utils/sleep');
 const {
     styles: puppeteerTestStyles,
-    customEnv: puppeteerTestCustomEnv
+    customEnv: puppeteerTestCustomEnv,
+    injectScripts: puppeteerTestInjectScripts
 } = require('../puppeteer-test');
 const addCommand = require('../../libs/add-command-to-package-json');
 const terminate = require('../../libs/terminate-process');
@@ -60,8 +61,8 @@ const defaultViewport = {
     height: 800,
     deviceScaleFactor: 1
 };
-let browser;
 
+let browser;
 beforeAll(() =>
     puppeteer
         .launch({
@@ -72,8 +73,15 @@ beforeAll(() =>
             browser = theBrowser;
         })
 );
-
 afterAll(() => browser.close());
+
+//
+
+let lastTime;
+beforeEach(() => (lastTime = Date.now()));
+afterEach(() => {});
+
+//
 
 /**
  * 测试项目
@@ -159,6 +167,7 @@ const doTest = async (port, settings = {}) => {
 
     await puppeteerTestStyles(page);
     await puppeteerTestCustomEnv(page, customEnv);
+    await puppeteerTestInjectScripts(page);
 
     // 测试: 没有失败的请求
     if (failedResponse.length) {
@@ -200,7 +209,11 @@ const afterTest = async (cwd, title) => {
     // 移除临时项目配置文件
     await removeTempProjectConfig(cwd);
 
-    console.log(chalk.green('√ ') + title);
+    console.log(
+        chalk.green('√ ') +
+            chalk.green(`${(Date.now() - lastTime) / 1000}s `) +
+            title
+    );
 
     await sleep(100);
 };
@@ -218,9 +231,7 @@ describe('测试: React 同构项目', () => {
                     bbbbb: 'a1b2c3'
                 };
                 const commandName = `${commandTestBuild}-prod`;
-                const command = `koot-start --koot-test -- bbbbb=${
-                    customEnv.bbbbb
-                }`;
+                const command = `koot-start --koot-test -- bbbbb=${customEnv.bbbbb}`;
                 await addCommand(commandName, command, dir);
 
                 const child = execSync(
@@ -267,9 +278,7 @@ describe('测试: React 同构项目', () => {
                     bbbbb: 'a1b2c3'
                 };
                 const commandName = `${commandTestBuild}-isomorphic-dev`;
-                const command = `koot-dev --no-open --koot-test -- bbbbb=${
-                    customEnv.bbbbb
-                }`;
+                const command = `koot-dev --no-open --koot-test -- bbbbb=${customEnv.bbbbb}`;
                 await addCommand(commandName, command, dir);
 
                 const child = execSync(

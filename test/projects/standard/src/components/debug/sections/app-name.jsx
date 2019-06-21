@@ -18,7 +18,12 @@ const DebugSectionAppName = extend({
         {appName ? (
             appName
         ) : (
-            <button onClick={() => dispatch(fetchAppName())}>GET DATA</button>
+            <button
+                data-button="get-data"
+                onClick={() => dispatch(fetchAppName())}
+            >
+                GET DATA
+            </button>
         )}
     </Section>
 ));
