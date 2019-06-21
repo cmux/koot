@@ -29,7 +29,7 @@
         -   `url-loader` -> _2.0.0_
         -   `os-locale` -> _4.0.0_
     -   minor
-        -   `inquirer` -> _6.4.0_
+        -   `inquirer` -> _6.4.1_
         -   `mini-css-extract-plugin` -> _0.7.0_
         -   `react-hot-loader` -> _4.11.1_
         -   `webpack` -> _4.35.0_
@@ -48,7 +48,7 @@
 
 -   更新依赖包
     -   minor
-        -   `inquirer` -> _6.4.0_
+        -   `inquirer` -> _6.4.1_
     -   patch
         -   `semver` -> _6.1.1_
 
