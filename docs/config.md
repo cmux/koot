@@ -156,7 +156,7 @@ module.exports = () => createStore(appReducers, appMiddlewares);
 
 -   类型: `Boolean` `String` 或 `String[]`
 -   默认值: `true`
--   **仅针对**: 同构项目类型
+-   **仅针对**: SSR 项目
 
 将 cookie 写入到 Redux store 中的 `state.server.cookie`。
 
@@ -176,6 +176,35 @@ module.exports = {
     // 仅将名为 `userToken` 的 cookie 写入到 store 中
     // `state.server.cookie` 为对象，key/value 对应 cookie 的每一项
     cookiesToStore: ['userToken']
+};
+```
+
+### sessionStore
+
+-   类型: `Boolean` 或 `Object`
+-   默认值: `false`
+-   **仅针对**: 客户端环境
+
+将全部或部分 _store_ 对象同步到浏览器/客户端的 `sessionStore` 中，在用户刷新页面后，这些值会被还原到 _store_，以确保和刷新前一致。
+
+```javascript
+module.exports = {
+    // 不启用 sessionStore 特性 (默认值)
+    sessionStore: false,
+
+    // 同步所有 _store_ 对象
+    // 不包括服务器相关数据，如 `localeId`、`server` 等
+    sessionStore: true,
+    sessionStore: 'all',
+
+    // 同步指定的对象内容
+    // 仅有设为 `true` 的对象会被同步
+    sessionStore: {
+        user: true,
+        page: {
+            home: true
+        }
+    }
 };
 ```
 
@@ -220,7 +249,7 @@ module.exports = {
          * - `default` (默认值)
          *   客户端按语种分别打包，语言包内容会直接打入到代码中，代码结果中不存在“语言包对象”
          *   适合所有项目使用，推荐语言包较大的项目使用
-         * - `redux`
+         * - `store`
          *   服务器输出 HTML 时，当前语种的语言包对象会写入 Redux store
          *   适合语言包较小，或对文件/请求体积不敏感的 WebApp 项目使用
          *   开发环境下会强制使用这一模式

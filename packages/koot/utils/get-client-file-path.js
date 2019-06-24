@@ -1,6 +1,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 
+const getI18nType = require('../i18n/get-type');
 const getPublicPath = require('./get-public-dir');
 const getChunkmap = require('./get-chunkmap');
 
@@ -24,9 +25,7 @@ const getFilePath = (filename, localeId, isPathname = false) => {
 
     const pathPublic = getPublicPath();
 
-    const i18nType = JSON.parse(process.env.KOOT_I18N)
-        ? JSON.parse(process.env.KOOT_I18N_TYPE)
-        : undefined;
+    const i18nType = getI18nType();
     const isI18nDefault = i18nType === 'default';
     const isDev =
         process.env.WEBPACK_BUILD_ENV === 'dev' ||

@@ -3,7 +3,7 @@ const inquirer = require('inquirer');
 const runScript = require('../libs/run-script');
 const logWelcome = require('../libs/log/welcome');
 const logFinish = require('../libs/log/finish');
-const terminate = require('./libs/terminate-process');
+// const terminate = require('./libs/terminate-process');
 
 const run = async () => {
     logWelcome('Test');

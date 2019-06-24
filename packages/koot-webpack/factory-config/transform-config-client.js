@@ -339,7 +339,8 @@ module.exports = async (kootConfigForThisBuild = {}) => {
 
     if (isI18nEnabled()) {
         switch (i18n.type || 'default') {
-            case 'redux': {
+            case 'redux':
+            case 'store': {
                 if (isSPANeedTemplateInject)
                     return [
                         await createConfig({ isSPATemplateInject: true }),

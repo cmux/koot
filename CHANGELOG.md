@@ -43,6 +43,9 @@
 -   优化默认文件夹结构
 -   SSR
     -   现在服务器环境的打包结果中，不再会出现静态资源文件
+-   更新依赖包
+    -   minor
+        -   `eslint-config-koot` -> _0.2.0_
 
 **koot-cli**
 
@@ -50,7 +53,7 @@
     -   minor
         -   `inquirer` -> _6.4.1_
     -   patch
-        -   `semver` -> _6.1.1_
+        -   `semver` -> _6.1.2_
 
 ## 0.9.9
 

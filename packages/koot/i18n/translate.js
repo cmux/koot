@@ -14,7 +14,7 @@ export let l = (() => {
         if (typeof locales === 'object') return locales[localeId];
         return {};
     }
-    if (JSON.parse(process.env.KOOT_I18N_TYPE) === 'redux') return locales;
+    if (JSON.parse(process.env.KOOT_I18N_TYPE) === 'store') return locales;
     return false;
 })();
 
