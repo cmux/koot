@@ -6,33 +6,31 @@
  * @returns {Array} rules
  */
 module.exports = (kootBuildConfig = {}) => {
-    const env = process.env.WEBPACK_BUILD_ENV
-    const stage = process.env.WEBPACK_BUILD_STAGE
+    const env = process.env.WEBPACK_BUILD_ENV;
+    const stage = process.env.WEBPACK_BUILD_STAGE;
 
-    const {
-        createDll = false,
-    } = kootBuildConfig
+    const { createDll = false } = kootBuildConfig;
 
-    const useBabelLoader = (options = {}) => {
+    const ruleUseBabelLoader = (options = {}) => {
         if (typeof options.cacheDirectory === 'undefined')
-            options.cacheDirectory = true
+            options.cacheDirectory = true;
 
         if (process.env.WEBPACK_BUILD_ENV === 'dev') {
             if (createDll) {
-                options.__createDll = true
-                options.sourceMaps = false
+                options.__createDll = true;
+                options.sourceMaps = false;
             } else {
                 // options.cacheDirectory = false
             }
-            options.compact = false
-            options.cacheCompression = false
+            options.compact = false;
+            options.cacheCompression = false;
         }
 
         return {
             loader: require.resolve('../../../loaders/babel'),
             options
-        }
-    }
+        };
+    };
 
     // const useCacheLoader = (options = {}) => ({
     //     loader: 'cache-loader',
@@ -42,8 +40,8 @@ module.exports = (kootBuildConfig = {}) => {
     //     }
     // })
 
-    const useThreadLoader = (options = {}) => ({
-        loader: "thread-loader",
+    const ruleUseThreadLoader = (options = {}) => ({
+        loader: 'thread-loader',
         // loaders with equal options will share worker pools
         options: {
             // the number of spawned workers, defaults to (number of cpus - 1) or
@@ -74,61 +72,68 @@ module.exports = (kootBuildConfig = {}) => {
 
             // name of the pool
             // can be used to create different pools with elsewise identical options
-            name: "koot-dev-workers-pool",
+            name: 'koot-dev-workers-pool',
 
             ...options
         }
-    })
+    });
 
     if (!createDll && env === 'dev' && stage === 'client') {
-        return [{
-            test: /\.(js|mjs|cjs|ts)$/,
-            oneOf: [
-                {
-                    include: /node_modules/,
-                    use: [
-                        useThreadLoader(),
-                        // useCacheLoader(),
-                        useBabelLoader({
-                            sourceMaps: false
-                        })
-                    ]
-                },
-                {
-                    use: [
-                        useThreadLoader(),
-                        // useCacheLoader(),
-                        useBabelLoader()
-                    ]
-                }
-            ]
-        }, {
-            test: /\.(jsx|tsx)$/,
-            use: [
-                useThreadLoader(),
-                // useCacheLoader(),
-                useBabelLoader({
-                    __react: true
-                }),
-                require.resolve('../../../loaders/react-hot')
-            ]
-        }]
+        return [
+            {
+                test: /\.(js|mjs|cjs|ts)$/,
+                oneOf: [
+                    {
+                        include: /node_modules/,
+                        use: [
+                            ruleUseThreadLoader(),
+                            // useCacheLoader(),
+                            ruleUseBabelLoader({
+                                sourceMaps: false
+                            })
+                        ]
+                    },
+                    {
+                        use: [
+                            ruleUseThreadLoader(),
+                            // useCacheLoader(),
+                            ruleUseBabelLoader()
+                        ]
+                    }
+                ]
+            },
+            {
+                test: /\.(jsx|tsx)$/,
+                use: [
+                    ruleUseThreadLoader(),
+                    // useCacheLoader(),
+                    ruleUseBabelLoader({
+                        __react: true
+                    }),
+                    require.resolve('../../../loaders/react-hot')
+                ]
+            }
+        ];
     }
 
     if (!createDll && env === 'dev' && stage === 'server') {
-        return [{
-            test: /\.(js|mjs|cjs|ts|jsx|tsx)$/,
-            use: [
-                useThreadLoader(),
-                // useCacheLoader(),
-                useBabelLoader(),
-                require.resolve('../../../loaders/koot-dev-ssr.js')
-            ]
-        }]
+        return [
+            {
+                test: /\.(js|mjs|cjs|ts|jsx|tsx)$/,
+                use: [
+                    ruleUseThreadLoader(),
+                    // useCacheLoader(),
+                    ruleUseBabelLoader(),
+                    require.resolve('../../../loaders/koot-dev-ssr.js')
+                ]
+            }
+        ];
     }
 
-    return [{
-        test: /\.(js|mjs|cjs|ts|jsx|tsx)$/,
-        use: useBabelLoader()
-    }]
-}
+    return [
+        {
+            test: /\.(js|mjs|cjs|ts|jsx|tsx)$/,
+            use: ruleUseBabelLoader()
+        }
+    ];
+};

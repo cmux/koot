@@ -218,7 +218,10 @@ const resolve = Object.assign({
     extensions: [
         '.js',
         '.jsx',
+        '.ts',
+        '.tsx',
         '.mjs',
+        '.cjs',
         '.json',
         '.css',
         '.less',
