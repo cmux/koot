@@ -11,6 +11,8 @@ module.exports = (kootBuildConfig = {}) => {
 
     const { createDll = false } = kootBuildConfig;
 
+    //
+
     const ruleUseBabelLoader = (options = {}) => {
         if (typeof options.cacheDirectory === 'undefined')
             options.cacheDirectory = true;
@@ -78,10 +80,12 @@ module.exports = (kootBuildConfig = {}) => {
         }
     });
 
+    //
+
     if (!createDll && env === 'dev' && stage === 'client') {
         return [
             {
-                test: /\.(js|mjs|cjs|ts)$/,
+                test: /\.(js|mjs|cjs)$/,
                 oneOf: [
                     {
                         include: /node_modules/,
@@ -103,7 +107,31 @@ module.exports = (kootBuildConfig = {}) => {
                 ]
             },
             {
-                test: /\.(jsx|tsx)$/,
+                test: /\.ts$/,
+                oneOf: [
+                    {
+                        include: /node_modules/,
+                        use: [
+                            ruleUseThreadLoader(),
+                            // useCacheLoader(),
+                            ruleUseBabelLoader({
+                                sourceMaps: false
+                            }),
+                            'ts-loader'
+                        ]
+                    },
+                    {
+                        use: [
+                            ruleUseThreadLoader(),
+                            // useCacheLoader(),
+                            ruleUseBabelLoader(),
+                            'ts-loader'
+                        ]
+                    }
+                ]
+            },
+            {
+                test: /\.jsx$/,
                 use: [
                     ruleUseThreadLoader(),
                     // useCacheLoader(),
@@ -112,6 +140,18 @@ module.exports = (kootBuildConfig = {}) => {
                     }),
                     require.resolve('../../../loaders/react-hot')
                 ]
+            },
+            {
+                test: /\.tsx$/,
+                use: [
+                    ruleUseThreadLoader(),
+                    // useCacheLoader(),
+                    ruleUseBabelLoader({
+                        __react: true
+                    }),
+                    require.resolve('../../../loaders/react-hot'),
+                    'ts-loader'
+                ]
             }
         ];
     }
@@ -119,12 +159,22 @@ module.exports = (kootBuildConfig = {}) => {
     if (!createDll && env === 'dev' && stage === 'server') {
         return [
             {
-                test: /\.(js|mjs|cjs|ts|jsx|tsx)$/,
+                test: /\.(js|mjs|cjs|jsx)$/,
                 use: [
                     ruleUseThreadLoader(),
                     // useCacheLoader(),
                     ruleUseBabelLoader(),
                     require.resolve('../../../loaders/koot-dev-ssr.js')
+                ]
+            },
+            {
+                test: /\.(ts|tsx)$/,
+                use: [
+                    ruleUseThreadLoader(),
+                    // useCacheLoader(),
+                    ruleUseBabelLoader(),
+                    require.resolve('../../../loaders/koot-dev-ssr.js'),
+                    'ts-loader'
                 ]
             }
         ];
@@ -132,8 +182,12 @@ module.exports = (kootBuildConfig = {}) => {
 
     return [
         {
-            test: /\.(js|mjs|cjs|ts|jsx|tsx)$/,
+            test: /\.(js|mjs|cjs|jsx)$/,
             use: ruleUseBabelLoader()
+        },
+        {
+            test: /\.(ts|tsx)$/,
+            use: [ruleUseBabelLoader(), 'ts-loader']
         }
     ];
 };
