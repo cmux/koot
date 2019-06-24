@@ -198,7 +198,8 @@ module.exports = {
     sessionStore: 'all',
 
     // 同步指定的对象内容
-    // 仅有设为 `true` 的对象会被同步
+    // 仅有设为 `true` 的属性会被同步
+    // 可通过对象的方式控制某个对象内哪些属性被同步
     sessionStore: {
         user: true,
         page: {
