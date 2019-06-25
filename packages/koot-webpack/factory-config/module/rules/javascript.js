@@ -80,6 +80,12 @@ module.exports = (kootBuildConfig = {}) => {
         }
     });
 
+    const ruleUseLoaders = (options = {}) => [
+        ruleUseThreadLoader(),
+        // useCacheLoader(),
+        ruleUseBabelLoader(options)
+    ];
+
     //
 
     if (!createDll && env === 'dev' && stage === 'client') {
@@ -89,20 +95,12 @@ module.exports = (kootBuildConfig = {}) => {
                 oneOf: [
                     {
                         include: /node_modules/,
-                        use: [
-                            ruleUseThreadLoader(),
-                            // useCacheLoader(),
-                            ruleUseBabelLoader({
-                                sourceMaps: false
-                            })
-                        ]
+                        use: ruleUseLoaders({
+                            sourceMaps: false
+                        })
                     },
                     {
-                        use: [
-                            ruleUseThreadLoader(),
-                            // useCacheLoader(),
-                            ruleUseBabelLoader()
-                        ]
+                        use: ruleUseLoaders()
                     }
                 ]
             },
@@ -111,31 +109,22 @@ module.exports = (kootBuildConfig = {}) => {
                 oneOf: [
                     {
                         include: /node_modules/,
-                        use: [
-                            ruleUseThreadLoader(),
-                            // useCacheLoader(),
-                            ruleUseBabelLoader({
-                                sourceMaps: false
-                            }),
-                            'ts-loader'
-                        ]
+                        use: ruleUseLoaders({
+                            sourceMaps: false,
+                            __typescript: true
+                        })
                     },
                     {
-                        use: [
-                            ruleUseThreadLoader(),
-                            // useCacheLoader(),
-                            ruleUseBabelLoader(),
-                            'ts-loader'
-                        ]
+                        use: ruleUseLoaders({
+                            __typescript: true
+                        })
                     }
                 ]
             },
             {
                 test: /\.jsx$/,
                 use: [
-                    ruleUseThreadLoader(),
-                    // useCacheLoader(),
-                    ruleUseBabelLoader({
+                    ...ruleUseLoaders({
                         __react: true
                     }),
                     require.resolve('../../../loaders/react-hot')
@@ -144,13 +133,11 @@ module.exports = (kootBuildConfig = {}) => {
             {
                 test: /\.tsx$/,
                 use: [
-                    ruleUseThreadLoader(),
-                    // useCacheLoader(),
-                    ruleUseBabelLoader({
-                        __react: true
+                    ...ruleUseLoaders({
+                        __react: true,
+                        __typescript: true
                     }),
-                    require.resolve('../../../loaders/react-hot'),
-                    'ts-loader'
+                    require.resolve('../../../loaders/react-hot')
                 ]
             }
         ];
@@ -161,20 +148,17 @@ module.exports = (kootBuildConfig = {}) => {
             {
                 test: /\.(js|mjs|cjs|jsx)$/,
                 use: [
-                    ruleUseThreadLoader(),
-                    // useCacheLoader(),
-                    ruleUseBabelLoader(),
+                    ...ruleUseLoaders(),
                     require.resolve('../../../loaders/koot-dev-ssr.js')
                 ]
             },
             {
                 test: /\.(ts|tsx)$/,
                 use: [
-                    ruleUseThreadLoader(),
-                    // useCacheLoader(),
-                    ruleUseBabelLoader(),
-                    require.resolve('../../../loaders/koot-dev-ssr.js'),
-                    'ts-loader'
+                    ...ruleUseLoaders({
+                        __typescript: true
+                    }),
+                    require.resolve('../../../loaders/koot-dev-ssr.js')
                 ]
             }
         ];
@@ -187,7 +171,7 @@ module.exports = (kootBuildConfig = {}) => {
         },
         {
             test: /\.(ts|tsx)$/,
-            use: [ruleUseBabelLoader(), 'ts-loader']
+            use: ruleUseBabelLoader({ __typescript: true })
         }
     ];
 };

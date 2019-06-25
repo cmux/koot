@@ -21,6 +21,9 @@
         "delayed": {
             "title": "Delayed Rendering",
             "description": "Manually delay the rendering process."
+        },
+        "ts": {
+            "msg": "React Component written in TypeScript!"
         }
     }
 }

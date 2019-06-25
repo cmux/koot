@@ -24,7 +24,7 @@
         "dev:spa": "koot-dev --type spa",
         "analyze": "koot-analyze",
         "eslint": "eslint \"src/**/*.+(js|jsx)\"",
-        "format-code": "prettier --write \"src/**/*.+(js|jsx)\""
+        "check-types": "tsc"
     },
     "dependencies": {
         "axios": "0.19.0",

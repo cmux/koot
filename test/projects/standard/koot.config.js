@@ -128,6 +128,10 @@ module.exports = {
                 'base-font-size': '40px'
             },
             aaa: 'bbb'
+        },
+        'ts-loader': {
+            context: __dirname,
+            configFile: path.resolve(__dirname, './tsconfog.json')
         }
     },
 

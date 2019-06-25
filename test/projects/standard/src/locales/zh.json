@@ -21,6 +21,9 @@
         "delayed": {
             "title": "延迟渲染",
             "description": "人为的将渲染过程推迟。"
+        },
+        "ts": {
+            "msg": "该 React 组件使用 TypeScript 编写！"
         }
     }
 }

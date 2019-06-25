@@ -46,18 +46,8 @@ const factory = async ({
             })
         },
         resolve: {
-            alias: { ...aliases },
-            modules: ['__modules', 'node_modules'],
-            extensions: [
-                '.js',
-                '.jsx',
-                '.mjs',
-                '.json',
-                '.css',
-                '.less',
-                '.sass',
-                '.scss'
-            ]
+            ...resolve,
+            alias: { ...resolve.alias, ...aliases }
         },
         plugins: await plugins(env, stage, defines, remainingKootBuildConfig)
     };

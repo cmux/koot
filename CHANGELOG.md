@@ -8,11 +8,13 @@
     -   `node.js` 最低版本要求提升到 `8.9.0`
     -   SSR
         -   _服务器_: 请求隐藏文件现在会默认返回 404 (可通过配置 `koaStatc.hidden` 来调整这一行为)
--   **新配置项** `sessionStore` - 将全部或部分 _state_ 对象暂存在 `sessionStorage` 中，在刷新页面后这些 _state_ 会自动还原。详情请参见文档 [配置/sessionStore](https://koot.js.org/#/config?id=sessionStore)
--   **新函数** `createStore()` - 方便项目更便捷的创建 _Redux store_
-    -   `import { createStore } from 'koot';`
-    -   `export default () => createStore(appReducer, appMiddlewares);`
-    -   具体用法请参见文档 [配置/store](https://koot.js.org/#/config?id=store)
+-   **新特性**
+    -   现支持使用 _TypeScript_ 开发 _React_ 组件。详情请参见文档 [TypeScript 开发](https://koot.js.org/#/typescript)
+    -   **新配置项** `sessionStore` - 将全部或部分 _state_ 对象暂存在 `sessionStorage` 中，在刷新页面后这些 _state_ 会自动还原。详情请参见文档 [配置/sessionStore](https://koot.js.org/#/config?id=sessionStore)
+    -   **新函数** `createStore()` - 方便项目更便捷的创建 _Redux store_
+        -   `import { createStore } from 'koot';`
+        -   `export default () => createStore(appReducer, appMiddlewares);`
+        -   具体用法请参见文档 [配置/store](https://koot.js.org/#/config?id=store)
 -   **优化**
     -   默认的 `service-worker` 注册逻辑调整，现在会在 `document.onLoad` 时进行注册
     -   SSR
@@ -22,7 +24,11 @@
     -   _Webpack_
         -   添加部分 _TypeScript_ 打包支持
 -   添加依赖包
+    -   `@types/node`
+    -   `@types/react`
+    -   `@types/react-dom`
     -   `lodash`
+    -   `typescript`
 -   更新依赖包
     -   major
         -   `cache-loader` -> _4.0.0_

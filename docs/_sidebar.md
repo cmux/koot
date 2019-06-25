@@ -22,8 +22,9 @@
 -   **开发**
 
     -   [React](/react)
-    -   [CSS](/css)
     -   [Store](/store)
+    -   [TypeScript](/typescript)
+    -   [CSS](/css)
     -   [多语言](/i18n)
     -   [生命周期](/life-cycle)
     -   [工具函数 / Utility](/utilities)
