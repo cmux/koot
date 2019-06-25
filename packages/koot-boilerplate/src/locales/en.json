@@ -61,7 +61,16 @@
                     "content": "After a successful build, you can simply deploy the whole /server folder onto your server, and run index.js using Node.js to start SSR server. For more information, you can check API document.",
                     "doc": "/deploy"
                 }
-            ]
+            ],
+            "bonus": "Bonus",
+            "bonusComponentInTS": "Write in TypeScript"
+        },
+        "ts": {
+            "title": "TypeScript",
+            "description": "A React Component that written in TypeScript",
+            "msg": "React Component written in TypeScript!",
+            "msgCheckFile": "You can check and modify the file `/src/views/ts-example/index.tsx`.",
+            "back": "Back to Quick Start"
         }
     }
 }

@@ -21,12 +21,12 @@
         -   _服务器_: 会尝试自动修改 _Webpack_ 的 `file-loader` 的配置，尽量避免输出静态资源文件
     -   分析模式
         -   优化分析模式输出文件名的可读性
-    -   _Webpack_
-        -   添加部分 _TypeScript_ 打包支持
 -   添加依赖包
     -   `@types/node`
     -   `@types/react`
     -   `@types/react-dom`
+    -   `@types/react-redux`
+    -   `@types/react-router`
     -   `lodash`
     -   `typescript`
 -   更新依赖包
@@ -49,6 +49,7 @@
 **koot-boilerplate**
 
 -   优化默认文件夹结构
+-   添加 _TypeScript_ 组件开发示例
 -   SSR
     -   现在服务器环境的打包结果中，不再会出现静态资源文件
 -   更新依赖包

@@ -1,12 +1,10 @@
 import React from 'react';
 import { extend } from '../../../../../../packages/koot/index';
 
-declare function __(...translateKeys: Array<string>): String;
-
 const TSComponentExample: React.Component = extend({
     styles: require('./index.module.less')
 })(({ className }) => (
-    <div className={className}>
+    <div className={className} data-koot-test-page="page-ts">
         <img
             src={require('@assets/typescript.svg')}
             className="logo"

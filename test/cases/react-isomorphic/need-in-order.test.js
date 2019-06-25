@@ -272,6 +272,7 @@ const doTest = async (port, settings = {}) => {
                         href: el.getAttribute('href')
                     }))
             );
+            /** @type {Object[]} */
             const linksToSameLang = await page.$$eval(
                 `link[rel="alternate"][hreflang="${localeId}"][href]`,
                 els =>
@@ -285,7 +286,8 @@ const doTest = async (port, settings = {}) => {
             expect(Array.isArray(linksToOtherLang)).toBe(true);
             expect(linksToOtherLang.length).toBeGreaterThan(0);
 
-            for (let { lang, href } of linksToOtherLang) {
+            for (const o of linksToOtherLang) {
+                const { lang, href } = o;
                 await page.goto(href, {
                     waitUntil: 'networkidle0'
                 });
@@ -513,6 +515,16 @@ const doTest = async (port, settings = {}) => {
         await context.close();
     }
 
+    // 测试：使用 TypeScript 编写的组件
+    {
+        const pageTS = origin + '/ts';
+        await page.goto(pageTS, {
+            waitUntil: 'networkidle0'
+        });
+        const el = await page.$('[data-koot-test-page="page-ts"]');
+        expect(el).not.toBe(null);
+    }
+
     // TODO: 测试: 所有 Webpack 结果资源的访问
 
     // TODO: 测试: 有 extract.all.[*].css
@@ -525,7 +537,7 @@ const doTest = async (port, settings = {}) => {
 
     // TODO: 测试: hydrate 不会触发重新渲染
 
-    // TODO: 测试: 开发环境热更新
+    // TODO: 测试: 开发环境热更新 (JSX & TSX)
 
     // TODO: 测试: 访问404
 
@@ -586,7 +598,8 @@ const afterTest = async (cwd, title) => {
 //
 
 describe('测试: React 同构项目', () => {
-    for (let { name, dir } of projectsToUse) {
+    for (const project of projectsToUse) {
+        const { name, dir } = project;
         describe(`项目: ${name}`, () => {
             test(`[prod] 使用 koot-build 命令进行打包`, async () => {
                 await beforeTest(dir);

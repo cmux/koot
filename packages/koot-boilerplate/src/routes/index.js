@@ -43,6 +43,17 @@ export default {
                     if (routeCheck(nextState)) cb(null, module.default);
                 });
             }
+        },
+        {
+            path: 'ts',
+            getComponent: (nextState, cb) => {
+                import(
+                    /* webpackChunkName: "PageTS" */
+                    '@views/ts-example'
+                ).then(module => {
+                    if (routeCheck(nextState)) cb(null, module.default);
+                });
+            }
         }
     ]
 };

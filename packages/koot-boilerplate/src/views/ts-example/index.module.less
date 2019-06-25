@@ -1,0 +1,33 @@
+@import '~vars.less';
+
+.component {
+    position: relative;
+    min-height: calc(100vh - @main-margin-vertical);
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    text-align: center;
+    padding-bottom: @main-margin-vertical;
+
+    img {
+        display: block;
+        position: relative;
+        width: 50%;
+        min-width: 200px;
+        max-width: 100%;
+        margin: 1em auto 3em auto;
+    }
+
+    .msg-big {
+        font-size: 22px;
+    }
+
+    .back {
+        display: inline-block;
+        font-size: @base-font-size;
+        margin-top: 2em;
+        .icon {
+            margin-right: 4px;
+        }
+    }
+}

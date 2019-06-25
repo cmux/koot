@@ -1,5 +1,6 @@
 import React from 'react';
 import { extend } from 'koot';
+import { Link } from 'react-router';
 
 import { doc as urlDoc } from '@constants/urls';
 
@@ -30,6 +31,10 @@ const PageStart = extend({
                 <ListItem key={index} {...item} />
             ))}
         </ul>
+        <p className="bonus">
+            <strong>{__('pages.start.bonus')}</strong>
+            <Link to="/ts">{__('pages.start.bonusComponentInTS')}</Link>
+        </p>
     </Center>
 ));
 

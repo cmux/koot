@@ -61,7 +61,16 @@
                     "content": "在成功打包后，只需要将打包结果目录中的 /server 目录部署到服务器，并使用 Node.js 执行其内的 index.js 即可正式启动服务器。",
                     "doc": "/deploy"
                 }
-            ]
+            ],
+            "bonus": "Bonus",
+            "bonusComponentInTS": "使用 TypeScript 开发"
+        },
+        "ts": {
+            "title": "TypeScript",
+            "description": "使用 TypeScript 编写 React 组件",
+            "msg": "该 React 组件使用 TypeScript 编写！",
+            "msgCheckFile": "可检阅、编辑该文件：`/src/views/ts-example/index.tsx`。",
+            "back": "返回到快速上手"
         }
     }
 }
