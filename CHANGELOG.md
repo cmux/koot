@@ -34,7 +34,7 @@
         -   `cache-loader` -> _4.0.0_
         -   `css-loader` -> _3.0.0_
         -   `file-loader` -> _4.0.0_
-        -   `url-loader` -> _2.0.0_
+        -   `url-loader` -> _2.0.1_
         -   `os-locale` -> _4.0.0_
     -   minor
         -   `inquirer` -> _6.4.1_
