@@ -18,7 +18,7 @@ https://github.com/cmux/koot
 
 */
 
-const TSComponentExample: React.Component = extend({
+const TSComponentExample: React.ComponentClass = extend({
     pageinfo: () => ({
         title: `${__('pages.ts.title')} - ${__('title')}`,
         metas: [{ description: __('pages.ts.description') }]

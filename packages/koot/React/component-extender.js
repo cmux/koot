@@ -158,7 +158,8 @@ export default (options = {}) => WrappedComponent => {
             check: dataCheck,
             resetWhenUnmount: dataResetWhenUnmount
         } = {},
-        styles: _styles
+        styles: _styles,
+        ssr = true
         // ttt
         // hot: _hot = true,
         // name
@@ -325,6 +326,11 @@ export default (options = {}) => WrappedComponent => {
             // console.log('this', this)
             // console.log('this.kootClassNames', this.kootClassNames)
             // console.log('this.props.className', this.props.className)
+
+            if (__SERVER__) {
+                if (ssr === false) return null;
+                if (ssr !== true) return ssr;
+            }
 
             if (__CLIENT__ && this.kootClassNames instanceof HTMLElement) {
                 // console.log(this.kootClassNames)

@@ -70,6 +70,13 @@ export default HomePage;
     -   _Function_ `data`
         <br>为 _Function_ 时，同 `data.fetch`
         <br>使用该方法时，需要自行编写检查数据的代码，推荐写在 redux action 中
+-   `ssr` 仅作用于 SSR 项目的服务器端：控制该组件的 SSR 行为
+    -   默认值：`true`
+    -   _Boolean_ `ssr`
+        <br>该组件是否需要 SSR。
+        <br>`false` 时，SSR 阶段不会渲染该组件，最终在 HTML 结果中不会出现相应的 HTML 代码。
+    -   _String_|_ReactComponent_ `ssr`
+        <br>在 SSR 时渲染指定的内容或组件
 
 #### 示例：使用所有参数
 
@@ -122,7 +129,12 @@ import { fetchUser } from '@api/user';
     // data 使用 Function 方式
     data: (state, renderProps, dispatch) => {
         return dispatch(fetchUser());
-    }
+    },
+
+    // 不进行 SSR
+    ssr: false,
+    // SSR 时渲染该组件
+    ssr: <div>Loading...</div>
 })
 class HomePage extends React.Component {
     // ...

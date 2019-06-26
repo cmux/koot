@@ -6,6 +6,7 @@ import { store, history, localeId, extend } from 'koot';
 import Nav from './_layout/nav';
 import Main from './_layout/main';
 import Debug from './debug';
+import SSR from './ssr';
 
 let stateShowed = false;
 
@@ -55,6 +56,7 @@ class App extends React.Component {
                     <Main children={this.props.children} />
                 </div>
                 <Debug />
+                <SSR />
             </React.StrictMode>
         );
     }

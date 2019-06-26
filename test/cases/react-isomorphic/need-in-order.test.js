@@ -43,6 +43,7 @@ const exec = util.promisify(require('child_process').exec);
 const puppeteer = require('puppeteer');
 const chalk = require('chalk');
 const get = require('lodash/get');
+const cheerio = require('cheerio');
 
 //
 
@@ -523,6 +524,37 @@ const doTest = async (port, settings = {}) => {
         });
         const el = await page.$('[data-koot-test-page="page-ts"]');
         expect(el).not.toBe(null);
+    }
+
+    // 测试：extend 高阶组件的 SSR 控制
+    {
+        const context = await browser.createIncognitoBrowserContext();
+        const page = await context.newPage();
+
+        const res = await page.goto(origin, {
+            waitUntil: 'networkidle0'
+        });
+
+        const HTML = await res.text();
+        const $ = cheerio.load(HTML);
+
+        const client = {
+            NoSSR: await page.$('#koot-test-no-ssr'),
+            ControledSSR: await page.$('#koot-test-controled-ssr')
+        };
+        const server = {
+            NoSSR: $('#koot-test-no-ssr'),
+            ControledSSR: $('#koot-test-controled-ssr')
+        };
+
+        expect(client.NoSSR).not.toBe(null);
+        expect(client.ControledSSR).not.toBe(null);
+
+        expect(server.NoSSR.text()).toBe('');
+        expect(server.ControledSSR.text()).toBe('Alternative content');
+
+        await page.close();
+        await context.close();
     }
 
     // TODO: 测试: 所有 Webpack 结果资源的访问

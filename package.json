@@ -44,6 +44,7 @@
         "babel-eslint": "10.0.2",
         "camelcase": "5.3.1",
         "chalk": "2.4.2",
+        "cheerio": "1.0.0-rc.3",
         "crlf": "1.1.1",
         "eslint": "5.16.0",
         "eslint-config-koot": "0.2.0",
