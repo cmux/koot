@@ -14,6 +14,16 @@
 
 ---
 
+### 初始化开发版本
+
+```bash
+> npx koot-cli -- next
+```
+
+使用该命令会初始化开发中的 _Koot.js_ 对应版本的模板项目
+
+---
+
 <details><summary>NPM 5.2.0 以前版本使用方法</summary>
 <p>
 
