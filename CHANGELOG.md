@@ -32,7 +32,7 @@
     -   `typescript`
 -   更新依赖包
     -   major
-        -   `cache-loader` -> _4.0.0_
+        -   `cache-loader` -> _4.0.1_
         -   `css-loader` -> _3.0.0_
         -   `file-loader` -> _4.0.0_
         -   `url-loader` -> _2.0.1_

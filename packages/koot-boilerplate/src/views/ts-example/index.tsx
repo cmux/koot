@@ -24,7 +24,7 @@ const TSComponentExample: React.ComponentClass = extend({
         metas: [{ description: __('pages.ts.description') }]
     }),
     styles: require('./index.module.less')
-})(({ className }) => (
+})(({ className, children }) => (
     <div className={className} data-koot-test-page="page-ts">
         <img
             src={require('@assets/typescript.svg')}
@@ -37,6 +37,7 @@ const TSComponentExample: React.ComponentClass = extend({
             <Icon className="icon" icon="circle-left3" />
             {__('pages.ts.back')}
         </Link>
+        {children}
     </div>
 ));
 
