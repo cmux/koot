@@ -1,5 +1,5 @@
 import React from 'react';
-import { extend } from '../../../../../../packages/koot/index';
+import { extend } from 'koot';
 
 const NoSSR: React.ComponentClass = extend({
     ssr: false

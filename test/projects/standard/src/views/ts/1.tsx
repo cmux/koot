@@ -2,8 +2,6 @@ import React from 'react';
 import { extend } from 'koot';
 import { Link } from 'react-router';
 
-import Icon from '@components/icon';
-
 @extend({
     pageinfo: () => ({
         title: `${__('pages.ts.title')} - ${__('title')}`,
@@ -22,10 +20,7 @@ class TSComponentExample extends React.Component {
                 />
                 <p className="msg-big">{__('pages.ts.msg')}</p>
                 <p className="msg-small">{__('pages.ts.msgCheckFile')}</p>
-                <Link to="/start" className="back">
-                    <Icon className="icon" icon="circle-left3" />
-                    {__('pages.ts.back')}
-                </Link>
+                <Link to="/start" className="back"></Link>
             </div>
         );
     }
