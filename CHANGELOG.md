@@ -10,7 +10,7 @@
         -   _服务器_: 请求隐藏文件现在会默认返回 404 (可通过配置 `koaStatc.hidden` 来调整这一行为)
 -   **新特性**
     -   现支持使用 _TypeScript_ 开发 _React_ 组件。详情请参见文档 [TypeScript 开发](https://koot.js.org/#/typescript)
-    -   `extend()` React 高阶组件新增选项 `ssr`：可控制 SSR 行为详情请参见文档 [React 开发](https://koot.js.org/#/react?id=参数)
+    -   `extend()` React 高阶组件新增选项 `ssr`：可控制对应组件的 SSR 行为。详情请参见文档 [React 开发](https://koot.js.org/#/react?id=参数)
     -   **新配置项** `sessionStore` - 将全部或部分 _state_ 对象暂存在 `sessionStorage` 中，在刷新页面后这些 _state_ 会自动还原。详情请参见文档 [配置/sessionStore](https://koot.js.org/#/config?id=sessionStore)
     -   **新函数** `createStore()` - 方便项目更便捷的创建 _Redux store_
         -   `import { createStore } from 'koot';`
