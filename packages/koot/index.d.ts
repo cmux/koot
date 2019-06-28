@@ -90,16 +90,16 @@ interface renderProps {
 
 /** 创建 _Redux store_ */
 export const createStore: (
-    appReducer: Reducer | CombineReducerObject,
+    appReducer: Reducer | CombineReducersObject,
     appMiddlewares: Array<Middleware>
 ) => Store;
-interface CombineReducerObject {
+interface CombineReducersObject {
     [reducerName: String]: Reducer;
 }
 
 /** 创建 _Redux store_ 时需要用到的内部数据 */
 export interface reduxForCreateStore {
-    reducers: CombineReducerObject;
+    reducers: CombineReducersObject;
     initialState: Object;
     middlewares: Array<Middleware>;
 }
