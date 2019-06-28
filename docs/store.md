@@ -21,6 +21,14 @@ _Koot.js_ 使用 _Redux_ 进行 _store_ 的管理。
 
 ---
 
+## 创建 store
+
+项目中使用的 _Redux store_ 需要自行创建。
+
+创建方式请查阅：[项目配置/store](/config?id=store)。
+
+---
+
 ## 默认存在的属性
 
 在 _store_ 中有一些默认会存在的属性，可供项目任意使用。请注意在创建 `combineReducer` 时不要和这些属性命名冲突。
