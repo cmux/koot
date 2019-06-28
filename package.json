@@ -49,7 +49,7 @@
         "eslint": "5.16.0",
         "eslint-config-koot": "0.2.0",
         "fs-extra": "8.0.1",
-        "husky": "2.4.1",
+        "husky": "2.7.0",
         "inquirer": "6.4.1",
         "is-valid-path": "0.1.1",
         "jest": "24.8.0",
@@ -59,7 +59,7 @@
         "lerna-wizard": "1.0.9",
         "lint-staged": "8.2.1",
         "prettier": "1.18.2",
-        "puppeteer": "1.18.0",
+        "puppeteer": "1.18.1",
         "simple-git": "1.116.0"
     },
     "eslintIgnore": [
