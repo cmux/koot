@@ -12,7 +12,7 @@ import getPathnameDevServerStart from '../../utils/get-pathname-dev-server-start
 import errorMsg from '../../libs/error-msg';
 import log from '../../libs/log';
 
-import validatePort from './validate/port';
+import validatePort from '../../libs/validate-port';
 import createRenderCacheMap from './validate/create-render-cache-map';
 // import validateReduxConfig from '../../React/validate/redux-config'
 import validateI18n from './validate/i18n';

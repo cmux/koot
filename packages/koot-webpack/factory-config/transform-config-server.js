@@ -1,27 +1,27 @@
-const fs = require('fs-extra')
-const path = require('path')
-const webpack = require('webpack')
-const DefaultWebpackConfig = require('webpack-config').default
+const fs = require('fs-extra');
+const path = require('path');
+const webpack = require('webpack');
+const DefaultWebpackConfig = require('webpack-config').default;
 // const ExtraWatchWebpackPlugin = require('extra-watch-webpack-plugin').default
 
-const CopyWebpackPlugin = require('copy-webpack-plugin')
-const KootI18nPlugin = require('../plugins/i18n')
-const DevModePlugin = require('../plugins/dev-mode')
-const { keyConfigBuildDll } = require('koot/defaults/before-build')
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const KootI18nPlugin = require('../plugins/i18n');
+const DevModePlugin = require('../plugins/dev-mode');
+const { keyConfigBuildDll } = require('koot/defaults/before-build');
 
-const createTargetDefaultConfig = require('./create-target-default')
-const transformConfigExtendDefault = require('./transform-config-extend-default')
-const transformConfigLast = require('./transform-config-last')
-const transformOutputPublicpath = require('./transform-output-publicpath')
+const createTargetDefaultConfig = require('./create-target-default');
+const transformConfigExtendDefault = require('./transform-config-extend-default');
+const transformConfigLast = require('./transform-config-last');
+const transformOutputPublicpath = require('./transform-output-publicpath');
 
-const getCwd = require('koot/utils/get-cwd')
-const getDirDistPublic = require('koot/libs/get-dir-dist-public')
-const getDirDevTmp = require('koot/libs/get-dir-dev-tmp')
+const getCwd = require('koot/utils/get-cwd');
+const getDirDistPublic = require('koot/libs/get-dir-dist-public');
+const getDirDevTmp = require('koot/libs/get-dir-dev-tmp');
 
 /**
  * Webpack 配置处理 - 服务器端配置
  * @async
- * @param {Object} kootBuildConfig 
+ * @param {Object} kootBuildConfig
  * @returns {Object} 处理后的配置
  */
 module.exports = async (kootBuildConfig = {}) => {
@@ -33,41 +33,44 @@ module.exports = async (kootBuildConfig = {}) => {
         i18n,
         staticCopyFrom: staticAssets,
         template,
-        [keyConfigBuildDll]: createDll = false,
-    } = kootBuildConfig
+        [keyConfigBuildDll]: createDll = false
+    } = kootBuildConfig;
 
     const {
-        // WEBPACK_BUILD_TYPE: TYPE,
+        WEBPACK_BUILD_TYPE: TYPE,
         WEBPACK_BUILD_ENV: ENV,
         WEBPACK_BUILD_STAGE: STAGE,
-        WEBPACK_DEV_SERVER_PORT: clientDevServerPort,
-    } = process.env
+        WEBPACK_DEV_SERVER_PORT: clientDevServerPort
+    } = process.env;
+
+    const isSPAProd = Boolean(ENV === 'prod' && TYPE === 'spa');
 
     const configTargetDefault = await createTargetDefaultConfig({
         pathRun: getCwd(),
-        clientDevServerPort,
-    })
+        clientDevServerPort
+    });
 
     /** @type {Object} 当前环境的 webpack 配置对象 */
     const result = new DefaultWebpackConfig()
         .merge(configTargetDefault)
-        .merge(config)
+        .merge(config);
 
-    await transformConfigExtendDefault(result, kootBuildConfig)
+    await transformConfigExtendDefault(result, kootBuildConfig);
 
-    Object.assign(result.output, configTargetDefault.output)
+    Object.assign(result.output, configTargetDefault.output);
 
     // 如果用户自己配置了服务端打包路径，则覆盖默认的
-    if (dist)
-        result.output.path = path.resolve(dist, './server')
+    if (dist) result.output.path = path.resolve(dist, './server');
     if (!result.output.publicPath)
-        result.output.publicPath = defaultPublicPathname
+        result.output.publicPath = defaultPublicPathname;
     if (!result.output.filename)
-        result.output.filename = 'entry.[chunkhash].js'
+        result.output.filename = 'entry.[chunkhash].js';
     if (!result.output.chunkFilename)
-        result.output.chunkFilename = 'chunk.[chunkhash].js'
+        result.output.chunkFilename = 'chunk.[chunkhash].js';
 
-    result.output.publicPath = transformOutputPublicpath(result.output.publicPath)
+    result.output.publicPath = transformOutputPublicpath(
+        result.output.publicPath
+    );
 
     result.plugins = [
         new webpack.optimize.LimitChunkCountPlugin({
@@ -75,20 +78,22 @@ module.exports = async (kootBuildConfig = {}) => {
         }),
         new KootI18nPlugin({
             stage: STAGE,
-            functionName: i18n ? i18n.expr : undefined,
+            functionName: i18n ? i18n.expr : undefined
         }),
         ...result.plugins
-    ]
+    ];
 
     if (ENV === 'dev') {
         if (i18n && Array.isArray(i18n.locales) && i18n.locales.length > 0)
-            result.plugins.push(new CopyWebpackPlugin(
-                i18n.locales.map(arr => ({
-                    from: arr[2],
-                    // to: '../.locales/'
-                    to: path.resolve(getDirDevTmp(), 'locales')
-                }))
-            ))
+            result.plugins.push(
+                new CopyWebpackPlugin(
+                    i18n.locales.map(arr => ({
+                        from: arr[2],
+                        // to: '../.locales/'
+                        to: path.resolve(getDirDevTmp(), 'locales')
+                    }))
+                )
+            );
 
         result.watchOptions = {
             ignored: [
@@ -97,7 +102,7 @@ module.exports = async (kootBuildConfig = {}) => {
                 dist,
                 path.resolve(dist, '**/*')
             ]
-        }
+        };
     }
 
     // entry / 入口
@@ -106,42 +111,46 @@ module.exports = async (kootBuildConfig = {}) => {
         '@babel/polyfill',
         // path.resolve(__dirname, '../../../defaults/server-stage-0.js'),
         require('../libs/get-koot-file')(`${appType}/server`)
-    ]
-    const otherEntries = {}
-    const fileSSR = require('../libs/get-koot-file')(`${appType}/server/ssr.js`)
-    if (ENV !== 'dev' && fs.existsSync(fileSSR)) {
-        otherEntries.ssr = [fileSSR]
-        // result.plugins.push(
-        //     new ExtraWatchWebpackPlugin({
-        //         files: [
-        //             fileSSR,
-        //             fileSSR.replace(/\.js$/, '.hot-update.js')
-        //         ]
-        //     })
-        // )
-    }
-    if (ENV === 'dev') {
-        Object.keys(otherEntries).forEach(key => {
-            otherEntries[key].push('webpack/hot/poll?1000')
-        })
-    }
-
-    // 覆盖 optimization
-    {
-        result.optimization = {
-            splitChunks: false,
-            removeAvailableModules: false,
-            removeEmptyChunks: false,
-            mergeDuplicateChunks: false,
-            occurrenceOrder: false,
-            concatenateModules: false,
+    ];
+    const otherEntries = {};
+    if (isSPAProd) {
+    } else {
+        const fileSSR = require('../libs/get-koot-file')(
+            `${appType}/server/ssr.js`
+        );
+        if (ENV !== 'dev' && fs.existsSync(fileSSR)) {
+            otherEntries.ssr = [fileSSR];
+            // result.plugins.push(
+            //     new ExtraWatchWebpackPlugin({
+            //         files: [
+            //             fileSSR,
+            //             fileSSR.replace(/\.js$/, '.hot-update.js')
+            //         ]
+            //     })
+            // )
+        }
+        if (ENV === 'dev') {
+            Object.keys(otherEntries).forEach(key => {
+                otherEntries[key].push('webpack/hot/poll?1000');
+            });
         }
     }
 
+    // 覆盖 optimization
+    result.optimization = {
+        splitChunks: false,
+        removeAvailableModules: false,
+        removeEmptyChunks: false,
+        mergeDuplicateChunks: false,
+        occurrenceOrder: false,
+        concatenateModules: false
+    };
+
     // webpack stats
-    {
-        if (typeof result.stats !== 'object')
-            result.stats = {}
+    if (isSPAProd) {
+        result.stats = 'none';
+    } else {
+        if (typeof result.stats !== 'object') result.stats = {};
         Object.assign(result.stats, {
             // copied from `'minimal'`
             all: false,
@@ -152,8 +161,8 @@ module.exports = async (kootBuildConfig = {}) => {
             // our additional options
             moduleTrace: true,
             errorDetails: true,
-            performance: false,
-        })
+            performance: false
+        });
     }
 
     // 拆分
@@ -168,42 +177,49 @@ module.exports = async (kootBuildConfig = {}) => {
                 filename: 'index.js'
             }
         }
-    ]
-    Object.keys(otherEntries).forEach(entryName => {
-        configsFull.push({
-            ...result,
-            entry: {
-                [entryName]: otherEntries[entryName]
-            },
-            output: {
-                ...result.output,
-                filename: `${entryName}.js`
+    ];
+
+    if (isSPAProd) {
+        if (dist) configsFull[0].output.path = path.resolve(dist, './_server');
+        return await transformConfigLast(configsFull, kootBuildConfig);
+    } else {
+        Object.keys(otherEntries).forEach(entryName => {
+            configsFull.push({
+                ...result,
+                entry: {
+                    [entryName]: otherEntries[entryName]
+                },
+                output: {
+                    ...result.output,
+                    filename: `${entryName}.js`
+                }
+            });
+        });
+
+        // 对最后一个配置进行加工
+        (config => {
+            if (ENV === 'dev') {
+                if (Array.isArray(staticAssets))
+                    config.plugins.push(
+                        new CopyWebpackPlugin(
+                            staticAssets.map(from => ({
+                                from,
+                                to: path.relative(
+                                    config.output.path,
+                                    getDirDistPublic(dist)
+                                )
+                            }))
+                        )
+                    );
+
+                if (!createDll) {
+                    config.plugins.push(new DevModePlugin({ dist, template }));
+                }
             }
-        })
-    });
+        })(configsFull[configsFull.length - 1]);
 
-    // 对最后一个配置进行加工
-    ((config) => {
-        if (ENV === 'dev') {
-            if (Array.isArray(staticAssets))
-                config.plugins.push(new CopyWebpackPlugin(
-                    staticAssets.map(from => ({
-                        from,
-                        to: path.relative(config.output.path, getDirDistPublic(dist))
-                    }))
-                ))
+        //
 
-            if (!createDll) {
-                config.plugins.push(
-                    new DevModePlugin({ dist, template })
-                )
-            }
-        }
-    })(configsFull[configsFull.length - 1])
-
-
-    //
-
-
-    return await transformConfigLast(configsFull, kootBuildConfig)
-}
+        return await transformConfigLast(configsFull, kootBuildConfig);
+    }
+};

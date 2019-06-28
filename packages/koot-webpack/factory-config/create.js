@@ -97,11 +97,26 @@ module.exports = async (kootConfig = {}) => {
         if (STAGE === 'server')
             config = await transformConfigServer(kootBuildConfig);
 
-        // ========================================================================
+        // ====================================================================
+        //
+        // SPA 生产环境
+        //
+        // ====================================================================
+        if (ENV === 'prod' && STAGE === 'client' && TYPE === 'spa') {
+            process.env.WEBPACK_BUILD_STAGE = 'server';
+            if (!Array.isArray(config)) config = config[0];
+            config = [
+                ...config,
+                ...(await transformConfigServer(kootBuildConfig))
+            ];
+            process.env.WEBPACK_BUILD_STAGE = 'client';
+        }
+
+        // ====================================================================
         //
         // 模式: analyze
         //
-        // ========================================================================
+        // ====================================================================
 
         if (analyze) {
             if (Array.isArray(config)) config = config[0];
