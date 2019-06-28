@@ -180,7 +180,7 @@ module.exports = async (kootBuildConfig = {}) => {
     ];
 
     if (isSPAProd) {
-        if (dist) configsFull[0].output.path = path.resolve(dist, './_server');
+        if (dist) configsFull[0].output.path = path.resolve(dist, './.server');
         return await transformConfigLast(configsFull, kootBuildConfig);
     } else {
         Object.keys(otherEntries).forEach(entryName => {

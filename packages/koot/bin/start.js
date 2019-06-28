@@ -164,7 +164,7 @@ const run = async () => {
     const pathServerJS = path.resolve(
         dist,
         process.env.WEBPACK_BUILD_TYPE === 'spa'
-            ? '_server/index.js'
+            ? '.server/index.js'
             : 'server/index.js'
     );
 
