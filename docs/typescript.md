@@ -10,29 +10,20 @@ _Koot.js_ 自动生成的 _Webpack_ 配置会对 TS 文件进行翻译，无需�
 
 ```tsx
 import React from 'react';
-import { extend } from 'koot';
+import { extend, ExtendedProps } from 'koot';
+import { Link } from 'react-router';
 
-/*
+import Icon from '@components/icon';
 
-There is no support for class decorator yet
-We suggest that write Functional Component when using HOC
-If you have a solution for this problem, feel free submitting it on our GitHub repo
-https://github.com/cmux/koot
+// Functional Component =======================================================
 
-当前尚未支持类的装饰器语法 (class decorator)
-我们建议在使用高阶组件 (HOC) 时采用函数式组件 (Functional Component) 的写法
-如果你有解决该问题的方案，欢迎发布到我们的 GitHub 上
-https://github.com/cmux/koot
-
-*/
-
-const TSComponentExample: React.Component = extend({
+const TSFunctionalComponent: React.ComponentClass = extend({
     pageinfo: () => ({
         title: `${__('pages.ts.title')} - ${__('title')}`,
         metas: [{ description: __('pages.ts.description') }]
     }),
     styles: require('./index.module.less')
-})(({ className }) => (
+})(({ className, children }) => (
     <div className={className} data-koot-test-page="page-ts">
         <img
             src={require('@assets/typescript.svg')}
@@ -41,8 +32,45 @@ const TSComponentExample: React.Component = extend({
         />
         <p className="msg-big">{__('pages.ts.msg')}</p>
         <p className="msg-small">{__('pages.ts.msgCheckFile')}</p>
+        <Link to="/start" className="back">
+            <Icon className="icon" icon="circle-left3" />
+            {__('pages.ts.back')}
+        </Link>
+        {children}
     </div>
 ));
 
-export default TSComponentExample;
+export default TSFunctionalComponent;
+
+// Component Class ============================================================
+
+@extend({
+    pageinfo: () => ({
+        title: `${__('pages.ts.title')} - ${__('title')}`,
+        metas: [{ description: __('pages.ts.description') }]
+    }),
+    styles: require('./index.module.less')
+})
+class TSComponentClass extends React.Component<ExtendedProps> {
+    render() {
+        return (
+            <div className={this.props.className} data-koot-test-page="page-ts">
+                <img
+                    src={require('@assets/typescript.svg')}
+                    className="logo"
+                    alt="TypeScript LOGO"
+                />
+                <p className="msg-big">{__('pages.ts.msg')}</p>
+                <p className="msg-small">{__('pages.ts.msgCheckFile')}</p>
+                <Link to="/start" className="back">
+                    <Icon className="icon" icon="circle-left3" />
+                    {__('pages.ts.back')}
+                </Link>
+                {this.props.children}
+            </div>
+        );
+    }
+}
+
+export { TSComponentClass };
 ```
