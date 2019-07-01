@@ -30,6 +30,7 @@
     -   `@types/react-dom`
     -   `@types/react-redux`
     -   `@types/react-router`
+    -   `execa`
     -   `lodash`
     -   `typescript`
 -   更新依赖包

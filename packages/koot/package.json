@@ -77,6 +77,7 @@
         "debug": "4.1.1",
         "ejs": "2.6.2",
         "es5-shim": "4.5.13",
+        "execa": "2.0.1",
         "extract-hoc": "0.0.5",
         "file-loader": "4.0.0",
         "fs-extra": "8.1.0",

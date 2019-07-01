@@ -8,6 +8,8 @@
 
 const path = require('path');
 
+// console.log(process.env.WEBPACK_BUILD_STAGE);
+
 module.exports = {
     /**************************************************************************
      * 项目信息
