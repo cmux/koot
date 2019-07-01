@@ -6,7 +6,7 @@ _Koot.js_ 使用 _Redux_ 进行 _store_ 的管理。
 
 ---
 
-## 相关配置
+### 相关配置
 
 以下是和 _store_ 相关的配置项目：
 
@@ -21,7 +21,7 @@ _Koot.js_ 使用 _Redux_ 进行 _store_ 的管理。
 
 ---
 
-## 创建 store
+### 创建 store
 
 项目中使用的 _Redux store_ 需要自行创建。
 
@@ -29,7 +29,7 @@ _Koot.js_ 使用 _Redux_ 进行 _store_ 的管理。
 
 ---
 
-## 默认存在的属性
+### 默认存在的属性
 
 在 _store_ 中有一些默认会存在的属性，可供项目任意使用。请注意在创建 `combineReducer` 时不要和这些属性命名冲突。
 
@@ -45,3 +45,21 @@ _Koot.js_ 使用 _Redux_ 进行 _store_ 的管理。
         <br>当前渲染的语种。与 `localeId` 相同
     -   `origin`
         <br>本次请求的 URL 源
+
+---
+
+### 获取 store
+
+通过 `getStore()` 函数，项目代码中可以随时获取当前的 _Redux store_。
+
+> 项目代码指所有经过 _Webpack_ 处理的 _JavaScript_ 文件的代码。通常来说，除了 _Koot.js_ 项目配置文件 (`koot.config.js`)、_Babel_ 配置文件 (babel.config.js) 等配置文件外，其他所有的代码文件都会经过 _Webpack_ 处理。
+
+```javascript
+import { getStore } from 'koot';
+
+const actionUpdateUser = data =>
+    getStore().dispatch({
+        type: 'UPDATE_UESR',
+        data
+    });
+```

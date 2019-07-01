@@ -1,6 +1,6 @@
 # React
 
-## 高阶组件 `extend`
+### 高阶组件 `extend`
 
 _Koot.js_ 为 _React_ 提供高阶组件 _extend()_，可赋予目标组件**CSS 命名空间**、**同构数据**、**更新页面信息**等能力。
 
@@ -33,7 +33,7 @@ class HomePage extends React.Component {
 export default HomePage;
 ```
 
-#### 参数
+##### 参数
 
 -   _Function_ `connect`
     <br>`connect([mapStateToProps], [mapDispatchToProps], [mergeProps], [options])`
@@ -78,7 +78,7 @@ export default HomePage;
     -   _String_|_ReactComponent_ `ssr`
         <br>在 SSR 时渲染指定的内容或组件
 
-#### 示例：使用所有参数
+##### 示例：使用所有参数
 
 ```javascript
 import { extend } from 'koot';
@@ -143,29 +143,33 @@ class HomePage extends React.Component {
 export default HomePage;
 ```
 
-## 组件获得新的 props
+##### 组件获得新的 props
 
 使用 _extend()_ 高阶组件封装后，目标组件将会获得以下新的 `props`
 
+-   _String_ `className`
+    <br>包含父组件传入的 `className` 以及过 hash 后本组件的 className
 -   _String_ `data-class-name`
     <br>经过 hash 后本组件的 className
     <br>注: 与 `props.className` 不同，`props['data-class-name']` 仅为本组件 CSS 的 className
 -   _Function_ `updatePageinfo`
     <br>如果提供了 `pageinfo` 配置，组件会新增 `props.updatePageinfo` 方法，可用来手动触发页面信息更新
 
-## 组件热更新
+---
 
-在**开发环境**下，所有 React 组件均会默认启用热更新机制——当源代码文件更新后，无需刷新网页即可看到最新的结果。
+### 组件热更新
 
-#### 注
+在**开发环境**中，所有 React 组件均会默认启用热更新机制
 
-Koot.js 默认的热更新能力有以下限制：
+> 所谓热更新，即在编辑器中修改并保存了代码文件后，无需刷新网页即可看到最新的结果。
+
+**注** Koot.js 默认的热更新能力有以下限制：
 
 -   仅影响扩展名为 `.jsx` 的文件
     -   非 React 组件文件请勿以 `.jsx` 作为文件扩展名
 -   仅影响 `.jsx` 文件中输出 (`export`) 的组件
 
-## 同构对象
+### 同构对象
 
 Koot.js 自定义的对象，其中包含以下属性/元素：
 

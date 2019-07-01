@@ -2,6 +2,8 @@
 
 SSR 与 SPA 模式均默认使用 HTML 模板文件。HTML 模板文件采用 `.ejs` 格式，遵循 `ejs` 语法。
 
+---
+
 ### 模板文件
 
 默认配置下，`/src/index.ejs` 为模板文件。以下是默认的模板文件内容：
@@ -55,6 +57,8 @@ SSR 与 SPA 模式均默认使用 HTML 模板文件。HTML 模板文件采用 `.
 <%- inject.performanceInfos %>
 ```
 
+---
+
 ### 注入变量
 
 从上面的 `HTML模板` 里可见多个 `<%- inject.[*] %>` 标签，这样的标签会被替换成对应的结果。
@@ -92,6 +96,8 @@ export default {
 | styles   | 同构结果的全部 CSS 代码          |
 | react    | 同构结果的全部 HTML 代码         |
 | scripts  | 默认使用的外部 JS 代码和文件引用 |
+
+---
 
 ### EJS 语法扩展
 

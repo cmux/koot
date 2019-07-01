@@ -2,7 +2,7 @@
 
 ---
 
-## SSR
+### SSR
 
 **Node.js 服务器**
 
@@ -34,7 +34,7 @@
 
 ---
 
-## SPA
+### SPA
 
 针对 SPA 项目，_Koot.js_ 会自动生成一个简易的 _Node.js_ 静态资源服务器。该服务器的 JavaScript 启动文件位于打包结果目录中下的 `.server/index.js`。
 

@@ -6,7 +6,7 @@ _Koot.js_ 自动生成的 _Webpack_ 配置会对 TS 文件进行翻译，无需�
 
 ---
 
-## TSX 代码示例
+### TSX 代码示例
 
 ```tsx
 import React from 'react';

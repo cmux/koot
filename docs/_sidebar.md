@@ -27,7 +27,7 @@
     -   [CSS](/css)
     -   [多语言](/i18n)
     -   [生命周期](/life-cycle)
-    -   [工具函数 / Utility](/utilities)
+    -   [全局与工具函数](/utilities)
 
 -   **建议**
     -   [发布 & 上线](/deploy)

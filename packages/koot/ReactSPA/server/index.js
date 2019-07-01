@@ -1,7 +1,7 @@
 // import { server as serverConfig } from '__KOOT_PROJECT_CONFIG_PORTION_SERVER_PATHNAME__';
 
 import koaStaticDefaults from '../../defaults/koa-static';
-import getDirDistPublic from '../../libs/get-dir-dist-public';
+// import getDirDistPublic from '../../libs/get-dir-dist-public';
 import getDistPath from '../../utils/get-dist-path';
 
 const Koa = require('koa');
