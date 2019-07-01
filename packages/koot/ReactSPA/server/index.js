@@ -80,7 +80,7 @@ startSPAServer().catch(err => {
  * @return {Function}
  */
 const staticMiddleware = (koaStaticConfig = {}) => {
-    const dir = getDirDistPublic(getDistPath());
+    const dir = getDistPath();
     const config = Object.assign({}, koaStaticDefaults, koaStaticConfig);
     // console.log('koa-statc', {
     //     dir,

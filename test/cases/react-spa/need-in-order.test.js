@@ -8,12 +8,15 @@ const fs = require('fs-extra');
 const path = require('path');
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
+const execSync = require('child_process').exec;
 // const chalk = require('chalk')
 const JSDOM = require('jsdom').JSDOM;
+const puppeteer = require('puppeteer');
 const {
     chunkNameExtractCss,
     chunkNameExtractCssForImport
 } = require('koot/defaults/before-build');
+const terminate = require('../../libs/terminate-process');
 
 //
 
@@ -77,7 +80,8 @@ const afterTest = async (cpd /*, title*/) => {
 };
 
 describe('测试: React SPA 项目', () => {
-    for (let { name, dir } of projectsToUse) {
+    for (const project of projectsToUse) {
+        const { name, dir } = project;
         describe(`项目: ${name}`, () => {
             const distDirName = 'dist-spa-test';
             const dist = path.resolve(dir, distDirName);
@@ -173,6 +177,77 @@ describe('测试: React SPA 项目', () => {
                 testFileFromFilelist(chunkNameExtractCssForImport + '.css');
 
                 // TODO: 测试: 有 extract.all.[*].css
+            });
+
+            test(`[prod] 简易服务器可用`, async () => {
+                const fileServerJS = path.resolve(dist, './.server/index.js');
+                expect(fs.existsSync(fileServerJS)).toBe(true);
+
+                const port = require(path.resolve(dir, 'koot.config.spa.js'))
+                    .port;
+
+                const browser = await puppeteer.launch({
+                    headless: true
+                });
+                const context = await browser.createIncognitoBrowserContext();
+
+                const testSpaServer = async cwd => {
+                    // console.log({
+                    //     command: `node ${fileServerJS}`,
+                    //     cwd
+                    // });
+                    const child = execSync(`node ${fileServerJS}`, {
+                        cwd
+                    });
+                    const errors = [];
+                    child.stderr.on('data', err => {
+                        errors.push(err);
+                    });
+
+                    const origin = isNaN(port)
+                        ? port
+                        : `http://127.0.0.1:${port}`;
+                    const page = await context.newPage();
+                    const failedResponse = [];
+                    require('../../libs/puppeteer/page-event-response-failed-response')(
+                        page,
+                        failedResponse
+                    );
+
+                    await page.goto(origin, {
+                        waitUntil: 'networkidle0'
+                    });
+
+                    // 测试: 没有失败的请求
+                    if (failedResponse.length) {
+                        console.log(
+                            'failedResponse',
+                            failedResponse.map(res => ({
+                                status: res.status(),
+                                url: res.url()
+                            }))
+                        );
+                    }
+                    expect(failedResponse.length).toBe(0);
+
+                    expect(errors.length).toBe(0);
+
+                    // 结束测试
+                    await page.close();
+                    await terminate(child.pid);
+                };
+
+                await testSpaServer(dir).catch(async e => {
+                    await context.close();
+                    await browser.close();
+                });
+                await testSpaServer(dist).catch(async e => {
+                    await context.close();
+                    await browser.close();
+                });
+
+                await context.close();
+                await browser.close();
             });
 
             // TODO: 测试: 所有 Webpack 结果资源的访问

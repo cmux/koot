@@ -50,7 +50,7 @@
     "dependencies": {
         "chalk": "2.4.2",
         "download-git-repo": "2.0.0",
-        "fs-extra": "8.0.1",
+        "fs-extra": "8.1.0",
         "gitignore-globs": "0.1.1",
         "glob": "7.1.4",
         "glob-promise": "3.4.0",

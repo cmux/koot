@@ -221,7 +221,8 @@ const afterTest = async (cwd, title) => {
 //
 
 describe('测试: React 同构项目', () => {
-    for (let { name, dir } of projectsToUse) {
+    for (const project of projectsToUse) {
+        const { name, dir } = project;
         describe(`项目: ${name}`, () => {
             test(`ENV: prod`, async () => {
                 await beforeTest(dir);
