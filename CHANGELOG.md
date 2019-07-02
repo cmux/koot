@@ -47,7 +47,7 @@
         -   `mini-css-extract-plugin` -> _0.7.0_
         -   `open` -> _6.4.0_
         -   `react-hot-loader` -> _4.12.0_
-        -   `webpack` -> _4.35.0_
+        -   `webpack` -> _4.35.2_
         -   `webpack-dev-server` -> _3.7.2_
     -   patch
         -   `ejs` -> _2.6.2_
@@ -61,6 +61,8 @@
     -   现在服务器环境的打包结果中，不再会出现静态资源文件
 -   更新依赖包
     -   major
+        -   `husky` -> _3.0.0_
+        -   `lint-staged` -> _9.0.0_
         -   `svg-url-loader` -> _3.0.0_
     -   minor
         -   `eslint-config-koot` -> _0.2.0_
@@ -72,7 +74,7 @@
         -   `fs-extra` -> _8.1.0_
         -   `inquirer` -> _6.4.1_
     -   patch
-        -   `semver` -> _6.1.2_
+        -   `semver` -> _6.2.0_
 
 ## 0.9.10
 

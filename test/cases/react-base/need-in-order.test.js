@@ -235,6 +235,11 @@ describe('测试: React 同构项目', () => {
                 const command = `koot-start --koot-test -- bbbbb=${customEnv.bbbbb}`;
                 await addCommand(commandName, command, dir);
 
+                // console.log(
+                //     customEnv,
+                //     `npm run ${commandName} -- aaaaa=${customEnv.aaaaa}`
+                // );
+
                 const child = execSync(
                     `npm run ${commandName} -- aaaaa=${customEnv.aaaaa}`,
                     {

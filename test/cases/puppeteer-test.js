@@ -67,7 +67,8 @@ const styles = async page => {
             }
         );
     });
-    for (const { check, result } of tests) {
+    for (const test of tests) {
+        const { check, result } = test;
         expect(check).toEqual(result);
     }
 };
@@ -92,7 +93,8 @@ const customEnv = async (page, customEnv = {}) => {
             };
         });
     }, customEnv);
-    for (const { check, result } of tests) {
+    for (const test of tests) {
+        const { check, result } = test;
         expect(check).toEqual(result);
     }
 };

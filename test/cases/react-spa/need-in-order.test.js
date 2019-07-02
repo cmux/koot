@@ -238,12 +238,10 @@ describe('测试: React SPA 项目', () => {
                 };
 
                 await testSpaServer(dir).catch(async e => {
-                    await context.close();
-                    await browser.close();
+                    console.log(e);
                 });
                 await testSpaServer(dist).catch(async e => {
-                    await context.close();
-                    await browser.close();
+                    console.log(e);
                 });
 
                 await context.close();
