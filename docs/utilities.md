@@ -2,7 +2,7 @@
 
 _Koot.js_ 提供许多全局函数与工具函数，项目代码中可随意调用这些函数并使用。
 
-> 项目代码指所有经过 _Webpack_ 处理的 _JavaScript_ 文件的代码。通常来说，除了 _Koot.js_ 项目配置文件 (`koot.config.js`)、_Babel_ 配置文件 (babel.config.js) 等配置文件外，其他所有的代码文件都会经过 _Webpack_ 处理。
+> 项目代码指所有经过 _Webpack_ 处理的 _JavaScript_ 文件的代码。通常来说，除了 _Koot.js_ 项目配置文件 (`koot.config.js`)、_Babel_ 配置文件 (`babel.config.js`) 等配置文件外，其他所有的代码文件都会经过 _Webpack_ 处理。
 
 ---
 
