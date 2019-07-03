@@ -31,6 +31,7 @@
     -   `@types/react-redux`
     -   `@types/react-router`
     -   `execa`
+    -   `koa-helmet`
     -   `lodash`
     -   `typescript`
 -   更新依赖包
@@ -62,7 +63,7 @@
 -   更新依赖包
     -   major
         -   `husky` -> _3.0.0_
-        -   `lint-staged` -> _9.0.0_
+        -   `lint-staged` -> _9.0.1_
         -   `svg-url-loader` -> _3.0.0_
     -   minor
         -   `eslint-config-koot` -> _0.2.0_

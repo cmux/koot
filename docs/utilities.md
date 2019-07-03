@@ -35,7 +35,7 @@ import getClientFilePath from 'koot/utils/get-client-file-path';
 
 目前提供以下全局函数
 
--   **`utils/get-client-file-path(filename)`**
+-   `utils/get-client-file-path(filename)`
     -   _仅服务器端_
     -   获取目标文件的访问地址
 -   `utils/read-client-file(filename)`

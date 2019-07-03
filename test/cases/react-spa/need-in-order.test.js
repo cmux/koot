@@ -185,6 +185,7 @@ describe('测试: React SPA 项目', () => {
 
                 const port = require(path.resolve(dir, 'koot.config.spa.js'))
                     .port;
+                const errors = [];
 
                 const browser = await puppeteer.launch({
                     headless: true
@@ -237,15 +238,21 @@ describe('测试: React SPA 项目', () => {
                     await terminate(child.pid);
                 };
 
-                await testSpaServer(dir).catch(async e => {
-                    console.log(e);
+                await testSpaServer(dir).catch(e => {
+                    errors.push(e);
                 });
-                await testSpaServer(dist).catch(async e => {
-                    console.log(e);
+                await testSpaServer(dist).catch(e => {
+                    errors.push(e);
                 });
 
                 await context.close();
                 await browser.close();
+
+                if (errors.length) {
+                    errors.forEach(e => console.error(e));
+                }
+
+                expect(errors.length).toBe(0);
             });
 
             // TODO: 测试: 所有 Webpack 结果资源的访问
