@@ -176,7 +176,7 @@ function handleBackground(root) {
             /url\(([ '"]*)(.+?)([ '"]*)\)/g,
             (...args) => {
                 // console.log(args[2])
-                return `url(' + require('${args[2]}') + ')`;
+                return `url("' + require('${args[2]}') + '")`;
             }
         );
         // decl.value = decl.value.replace(/url\(([ '"]*)(.+?)([ '"]*)\)/g, `url("${'require(' + "$2" + ')'}")`)
