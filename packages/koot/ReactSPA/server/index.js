@@ -1,10 +1,9 @@
 // import { server as serverConfig } from '__KOOT_PROJECT_CONFIG_PORTION_SERVER_PATHNAME__';
-
+import createKoaApp from '../../libs/create-koa-app';
 import koaStaticDefaults from '../../defaults/koa-static';
 // import getDirDistPublic from '../../libs/get-dir-dist-public';
 import getDistPath from '../../utils/get-dist-path';
 
-const Koa = require('koa');
 const koaStatic = require('koa-static');
 const convert = require('koa-convert');
 
@@ -29,7 +28,7 @@ const startSPAServer = async () => {
 
     // 创建 Koa 实例 (app)
     /** @type {Koa} Koa 服务器实例 */
-    const app = new Koa();
+    const app = createKoaApp();
 
     // 挂载中间件: 静态服务器
     app.use(

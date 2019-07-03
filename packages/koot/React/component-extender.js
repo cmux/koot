@@ -221,6 +221,7 @@ export default (options = {}) => WrappedComponent => {
                 getRenderPropsFromComponentProps(this.props),
                 pageinfo
             );
+
             clientUpdatePageInfo(title, metas);
         }
 
@@ -380,6 +381,7 @@ export default (options = {}) => WrappedComponent => {
     //     KootComponent = hot(module)(KootComponent)
     // }
 
+    // console.log(WrappedComponent);
     let KootComponent = hoistStatics(KootReactComponent, WrappedComponent);
 
     // if (typeof styles === 'object' &&
@@ -401,11 +403,14 @@ export default (options = {}) => WrappedComponent => {
      * 将组件注册到同构渲染对象中
      */
     if (__SERVER__) {
-        if (__DEV__) KootComponent.id = devSSRConnectIndex++;
+        if (__DEV__) {
+            KootComponent.id = devSSRConnectIndex++;
+            // KootComponent.pageinfo = pageinfo;
+        }
         const { connectedComponents = [] } = __DEV__
             ? global.__KOOT_SSR__
             : __KOOT_SSR__;
-        connectedComponents.push(KootComponent);
+        connectedComponents.unshift(KootComponent);
     }
 
     return KootComponent;

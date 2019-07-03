@@ -1,10 +1,9 @@
 /* global __KOOT_SSR__:false */
 
 /** @type {String} 同步数据到 store 的静态方法名 */
-const LIFECYCLE_DATA_TO_STORE = 'onServerRenderStoreExtend'
+const LIFECYCLE_DATA_TO_STORE = 'onServerRenderStoreExtend';
 /** @type {String} 扩展 HTML 信息的静态方法名 */
-const LIFECYCLE_HTML_EXTEND = 'onServerRenderHtmlExtend'
-
+const LIFECYCLE_HTML_EXTEND = 'onServerRenderHtmlExtend';
 
 /**
  * 执行匹配到的组件的静态生命周期方法
@@ -16,7 +15,7 @@ const LIFECYCLE_HTML_EXTEND = 'onServerRenderHtmlExtend'
  */
 const executeComponentLifecycle = async ({ store, renderProps, ctx }) => {
     /** @type {Array} 需要执行的异步方法 */
-    let tasks = []
+    let tasks = [];
 
     /**
      * @type {Function}
@@ -24,43 +23,49 @@ const executeComponentLifecycle = async ({ store, renderProps, ctx }) => {
      * 扩展 HTML 信息需要执行的方法
      * 仅执行匹配到的最深层组件对应的方法
      */
-    let extendHtml
+    let extendHtmlTasks = [];
 
-    const extractDataToStoreTask = (component) => {
-        if (!component) return
+    const extractDataToStoreTask = component => {
+        if (!component) return;
         if (typeof component[LIFECYCLE_DATA_TO_STORE] === 'function') {
-            const thisTask = component[LIFECYCLE_DATA_TO_STORE]({ store, renderProps, ctx })
+            const thisTask = component[LIFECYCLE_DATA_TO_STORE]({
+                store,
+                renderProps,
+                ctx
+            });
             // component[LIFECYCLE_DATA_TO_STORE] = undefined
             if (Array.isArray(thisTask)) {
-                tasks = tasks.concat(thisTask)
+                tasks = tasks.concat(thisTask);
             } else if (thisTask instanceof Promise || thisTask.then) {
-                tasks.push(thisTask)
+                tasks.push(thisTask);
             } else if (typeof thisTask === 'function') {
-                tasks.push(new Promise(async resolve => {
-                    await thisTask()
-                    resolve()
-                }))
+                tasks.push(
+                    new Promise(async resolve => {
+                        await thisTask();
+                        resolve();
+                    })
+                );
             }
         } else if (component.WrappedComponent) {
-            extractDataToStoreTask(component.WrappedComponent)
+            extractDataToStoreTask(component.WrappedComponent);
         }
-    }
+    };
 
-    const extracHtmlExtendTask = (component) => {
-        if (!component) return
+    const extracHtmlExtendTask = component => {
+        if (!component) return;
         if (typeof component[LIFECYCLE_HTML_EXTEND] === 'function') {
-            extendHtml = component[LIFECYCLE_HTML_EXTEND]
+            extendHtmlTasks.push(component[LIFECYCLE_HTML_EXTEND]);
             // component[LIFECYCLE_HTML_EXTEND] = undefined
         } else if (component.WrappedComponent) {
-            extracHtmlExtendTask(component.WrappedComponent)
+            extracHtmlExtendTask(component.WrappedComponent);
         }
-    }
+    };
 
     /** @type {Array} 使用 extend 高阶组件的组件 */
     const connectedComponents = (() => {
-        const {
-            connectedComponents = []
-        } = __DEV__ ? global.__KOOT_SSR__ : __KOOT_SSR__
+        const { connectedComponents = [] } = __DEV__
+            ? global.__KOOT_SSR__
+            : __KOOT_SSR__;
 
         if (__DEV__) {
             // 旧代码
@@ -74,29 +79,37 @@ const executeComponentLifecycle = async ({ store, renderProps, ctx }) => {
 
             // global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__.set(CTX, connectedComponents)
 
-            const renderPropsComponents = (renderProps.components || []).filter(c => !!c)
+            const renderPropsComponents = (renderProps.components || []).filter(
+                c => !!c
+            );
             // 将 renderProps 中的 components 寄存入全局的 connectedComponents 中
             renderPropsComponents
-                .filter(component => component && connectedComponents.every(c => c.id !== component.id))
-                .forEach(component => connectedComponents.push(component))
+                .filter(
+                    component =>
+                        component &&
+                        connectedComponents.every(c => c.id !== component.id)
+                )
+                .forEach(component => connectedComponents.push(component));
             // 将 renderProps 中的 components 移至队列最尾部
-            return connectedComponents
-                .filter(component => renderPropsComponents.every(c => c.id !== component.id))
-                .concat(renderPropsComponents)
+            return connectedComponents;
+            // .filter(component =>
+            //     renderPropsComponents.every(c => c.id !== component.id)
+            // )
+            // .concat(renderPropsComponents);
         }
 
-        return connectedComponents
-    })()
-    // console.log('\n\n==========')
-    // console.log({ connectedComponents })
-    // console.log({ connectedComponents, renderProps })
-    // console.log('==========\n\n')
+        return connectedComponents;
+    })();
+    // console.log('\n\n==========');
+    // console.log({ connectedComponents });
+    // console.log({ connectedComponents, renderProps });
+    // console.log('==========\n\n');
 
     // 添加各项任务
     connectedComponents.forEach(component => {
-        extractDataToStoreTask(component)
-        extracHtmlExtendTask(component)
-    })
+        extractDataToStoreTask(component);
+        extracHtmlExtendTask(component);
+    });
 
     // 旧代码
     // for (const component of renderProps.components) {
@@ -110,30 +123,43 @@ const executeComponentLifecycle = async ({ store, renderProps, ctx }) => {
     // }
 
     // 等待所有异步方法执行完毕
-    await Promise.all(tasks)
+    await Promise.all(tasks);
 
     // 扩展 HTML 相关信息
     const result = {
         title: process.env.KOOT_PROJECT_NAME || '',
         metaHtml: '',
-        reduxHtml: `window.__REDUX_STATE__ = ${JSON.stringify(store.getState())};`
-    }
-    if (typeof extendHtml === 'function') {
-        const {
-            title: thisTitle,
-            metas: thisMetas,
-        } = extendHtml({ store, renderProps, ctx })
+        reduxHtml: `window.__REDUX_STATE__ = ${JSON.stringify(
+            store.getState()
+        )};`
+    };
+    extendHtmlTasks.some(task => {
+        if (typeof task === 'function') {
+            const { title: thisTitle, metas: thisMetas } = task({
+                store,
+                renderProps,
+                ctx
+            });
 
-        result.title = thisTitle
-        if (Array.isArray(thisMetas))
-            result.metaHtml = thisMetas.map((meta) => (
-                '<meta'
-                + Object.keys(meta).map(key => ` ${key}="${meta[key]}"`).join('')
-                + '>'
-            )).join('')
-    }
+            if (thisTitle) result.title = thisTitle;
+            if (Array.isArray(thisMetas) && thisMetas.length)
+                result.metaHtml = thisMetas
+                    .map(
+                        meta =>
+                            '<meta' +
+                            Object.keys(meta)
+                                .map(key => ` ${key}="${meta[key]}"`)
+                                .join('') +
+                            '>'
+                    )
+                    .join('');
+            if (thisTitle && Array.isArray(thisMetas) && thisMetas.length)
+                return true;
+        }
+        return false;
+    });
 
-    return result
-}
+    return result;
+};
 
-export default executeComponentLifecycle
+export default executeComponentLifecycle;

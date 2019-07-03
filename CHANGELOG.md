@@ -11,17 +11,20 @@
 -   **新特性**
     -   现支持使用 _TypeScript_ 开发 _React_ 组件。详情请参见文档 [TypeScript 开发](https://koot.js.org/#/typescript)
     -   `extend()` React 高阶组件新增选项 `ssr`：可控制对应组件的 SSR 行为。详情请参见文档 [React 开发](https://koot.js.org/#/react?id=参数)
+    -   SSR
+        -   生产环境服务器现在加入一些基础的安全机制，如防御 XSS 等 (使用 `koa-helmet` 实现) ([#85](https://github.com/cmux/koot/issues/85))
     -   SPA
-        -   现在生产环境下会创建一个简易服务器的启动脚本文件（位于打包目录下的 `/.server/index.js`）
-    -   **新配置项** `sessionStore` - 将全部或部分 _state_ 对象暂存在 `sessionStorage` 中，在刷新页面后这些 _state_ 会自动还原。详情请参见文档 [配置/sessionStore](https://koot.js.org/#/config?id=sessionStore)
-    -   **新函数** `createStore()` - 方便项目更便捷的创建 _Redux store_
+        -   现在生产环境下会创建一个简易服务器的启动脚本文件 (位于打包目录下的 `/.server/index.js`) ([#103](https://github.com/cmux/koot/issues/103))
+    -   **新配置项** `sessionStore` - 将全部或部分 _state_ 对象暂存在 `sessionStorage` 中，在刷新页面后这些 _state_ 会自动还原。详情请参见文档 [配置/sessionStore](https://koot.js.org/#/config?id=sessionStore) ([#104](https://github.com/cmux/koot/issues/104))
+    -   **新函数** `createStore()` - 方便项目更便捷的创建 _Redux store_ ([#105](https://github.com/cmux/koot/issues/105))
         -   `import { createStore } from 'koot';`
         -   `export default () => createStore(appReducer, appMiddlewares);`
         -   具体用法请参见文档 [配置/store](https://koot.js.org/#/config?id=store)
 -   **优化**
     -   默认的 `service-worker` 注册逻辑调整，现在会在 `document.onLoad` 时进行注册
+    -   高阶组件 `extend()` 现在会尝试使用来自于最深部的组件的页面信息 (`pageinfo`)，而非来自父级或外部组件
     -   SSR
-        -   _服务器_: 会尝试自动修改 _Webpack_ 的 `file-loader` 的配置，尽量避免输出静态资源文件
+        -   _服务器_: 会尝试自动修改 _Webpack_ 的 `file-loader` 的配置，尽量避免输出静态资源文件 ([#83](https://github.com/cmux/koot/issues/83))
     -   分析模式
         -   优化分析模式输出文件名的可读性
 -   添加依赖包

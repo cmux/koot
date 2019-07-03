@@ -557,6 +557,68 @@ const doTest = async (port, settings = {}) => {
         await context.close();
     }
 
+    // 测试：页面信息应来自深部组件，而非外部父级
+    {
+        const specialMetaKey = 'koot-test-meta-aaa';
+
+        {
+            // 直接访问 /ts
+            const context = await browser.createIncognitoBrowserContext();
+            const page = await context.newPage();
+            const res = await page.goto(origin + '/ts', {
+                waitUntil: 'networkidle0'
+            });
+            const HTML = await res.text();
+            const $ = cheerio.load(HTML);
+
+            const titleSSR = $('head title').text();
+            const specialMetaSSR = $(`meta[${specialMetaKey}]`).attr(
+                specialMetaKey
+            );
+
+            const titleCSR = await page.evaluate(() => document.title);
+            const specialMetaCSR = await page.evaluate(specialMetaKey => {
+                const meta = document.querySelector(`meta[${specialMetaKey}]`);
+                if (meta) return meta.getAttribute(specialMetaKey);
+                return '';
+            }, specialMetaKey);
+
+            expect(titleSSR).toBe('AAA');
+            expect(titleSSR).toBe(titleCSR);
+            expect(specialMetaSSR).toBe('AAA');
+            expect(specialMetaSSR).toBe(specialMetaCSR);
+
+            await page.close();
+            await context.close();
+        }
+
+        {
+            // 路由跳转到 /ts
+            const context = await browser.createIncognitoBrowserContext();
+            const page = await context.newPage();
+            await page.goto(origin, {
+                waitUntil: 'networkidle0'
+            });
+            await Promise.all([
+                page.waitFor(`[data-koot-test-page="page-ts"]`),
+                page.click('a[href$="/ts"]')
+            ]);
+
+            const titleCSR = await page.evaluate(() => document.title);
+            const specialMetaCSR = await page.evaluate(specialMetaKey => {
+                const meta = document.querySelector(`meta[${specialMetaKey}]`);
+                if (meta) return meta.getAttribute(specialMetaKey);
+                return '';
+            }, specialMetaKey);
+
+            expect(titleCSR).toBe('AAA');
+            expect(specialMetaCSR).toBe('AAA');
+
+            await page.close();
+            await context.close();
+        }
+    }
+
     // TODO: 测试: 所有 Webpack 结果资源的访问
 
     // TODO: 测试: 有 extract.all.[*].css

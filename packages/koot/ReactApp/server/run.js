@@ -9,6 +9,7 @@ import {
 
 import getPathnameDevServerStart from '../../utils/get-pathname-dev-server-start';
 
+import createKoaApp from '../../libs/create-koa-app';
 import errorMsg from '../../libs/error-msg';
 import log from '../../libs/log';
 
@@ -25,7 +26,6 @@ import middlewareStatic from './middlewares/static';
 // require('@babel/register')
 // require('@babel/polyfill')
 require('isomorphic-fetch');
-const Koa = require('koa');
 const fs = require('fs-extra');
 
 //
@@ -64,7 +64,7 @@ const startKootIsomorphicServer = async () => {
 
     // 创建 Koa 实例 (app)
     /** @type {Koa} Koa 服务器实例 */
-    const app = new Koa();
+    const app = createKoaApp();
 
     // 生命周期: 服务器启动前
     if (__DEV__)

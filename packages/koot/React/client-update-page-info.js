@@ -1,9 +1,17 @@
+// import isEqual from 'lodash/isEqual';
+
 // 当前 meta 标签
 let currentMetaTags;
 // meta 标签区域结尾的 HTML 注释代码
 let nodeCommentEnd;
 
 let inited = false;
+
+const infoToChange = {
+    title: '',
+    metas: []
+};
+let changeTimeout = undefined;
 
 /**
  * (浏览器环境) 更新页面信息
@@ -14,9 +22,46 @@ let inited = false;
 export default (title, metas = []) => {
     if (__SERVER__) return;
     if (!__SPA__ && !inited) {
-        inited = true;
+        setTimeout(() => {
+            inited = true;
+        });
         return;
     }
+
+    // 判断 & 追加即将修改的内容
+    /*
+    // 如果新 meta 不存在于已有的 meta 列表，添加
+    metas.forEach(metaNew => {
+        if (!infoToChange.metas.length) infoToChange.metas.push(metaNew);
+        if (
+            !infoToChange.metas.every(metaExist => {
+                console.log(metaNew, metaExist, isEqual(metaNew, metaExist));
+                return isEqual(metaNew, metaExist);
+            })
+        ) {
+            console.log('PUSH');
+            infoToChange.metas.push(metaNew);
+        }
+    });
+    */
+    // 如果当前没有信息，设为当前信息
+    if (!infoToChange.title) {
+        infoToChange.title = title;
+        infoToChange.metas = metas;
+    }
+
+    if (changeTimeout) return;
+
+    changeTimeout = setTimeout(() => {
+        doUpdate();
+        infoToChange.title = '';
+        infoToChange.metas = [];
+        changeTimeout = undefined;
+    });
+};
+
+const doUpdate = () => {
+    const { title, metas } = infoToChange;
 
     // 替换页面标题
     document.title = title;
