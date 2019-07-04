@@ -21,8 +21,10 @@
         -   `export default () => createStore(appReducer, appMiddlewares);`
         -   具体用法请参见文档 [配置/store](https://koot.js.org/#/config?id=store)
 -   **优化**
-    -   默认的 `service-worker` 注册逻辑调整，现在会在 `document.onLoad` 时进行注册
     -   高阶组件 `extend()` 现在会尝试使用来自于最深部的组件的页面信息 (`pageinfo`)，而非来自父级或外部组件
+    -   `service-worker`
+        -   默认的注册逻辑调整，现在会在 `document.onLoad` 时进行注册
+        -   当请求没有本地缓存且访问出错时，现在会输出对应的 HTTP 请求结果
     -   SSR
         -   _服务器_: 会尝试自动修改 _Webpack_ 的 `file-loader` 的配置，尽量避免输出静态资源文件 ([#83](https://github.com/cmux/koot/issues/83))
     -   分析模式

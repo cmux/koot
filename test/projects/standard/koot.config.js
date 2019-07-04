@@ -91,12 +91,7 @@ module.exports = {
         // protocol: 'koot',
     },
     koaStatic: {
-        maxage: 0,
-        hidden: true,
-        index: 'test.photo.jpg',
-        defer: false,
-        gzip: true,
-        extensions: false
+        index: 'test.photo.jpg'
     },
     serverBefore: './server/lifecycle/before',
     serverAfter: './server/lifecycle/after',
