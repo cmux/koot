@@ -39,7 +39,7 @@
         "eslint-config-koot": "0.2.0",
         "husky": "3.0.0",
         "jest": "24.8.0",
-        "lint-staged": "9.0.1",
+        "lint-staged": "9.0.2",
         "normalize.css": "8.0.1",
         "prettier": "1.18.2",
         "redux-logger": "3.0.6",

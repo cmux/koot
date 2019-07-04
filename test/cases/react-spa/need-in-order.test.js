@@ -17,6 +17,7 @@ const {
     chunkNameExtractCssForImport
 } = require('koot/defaults/before-build');
 const terminate = require('../../libs/terminate-process');
+const waitForPort = require('../../libs/get-port-from-child-process');
 
 //
 
@@ -204,6 +205,8 @@ describe('测试: React SPA 项目', () => {
                     child.stderr.on('data', err => {
                         errors.push(err);
                     });
+
+                    await waitForPort(child);
 
                     const origin = isNaN(port)
                         ? port

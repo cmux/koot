@@ -141,8 +141,11 @@ const executeComponentLifecycle = async ({ store, renderProps, ctx }) => {
                 ctx
             });
 
-            if (thisTitle) result.title = thisTitle;
-            if (Array.isArray(thisMetas) && thisMetas.length)
+            const hasTitle = !!thisTitle;
+            const hasMeta = Array.isArray(thisMetas) && thisMetas.length;
+
+            if (hasTitle) result.title = thisTitle;
+            if (hasMeta)
                 result.metaHtml = thisMetas
                     .map(
                         meta =>
@@ -153,8 +156,8 @@ const executeComponentLifecycle = async ({ store, renderProps, ctx }) => {
                             '>'
                     )
                     .join('');
-            if (thisTitle && Array.isArray(thisMetas) && thisMetas.length)
-                return true;
+
+            if (hasTitle || hasMeta) return true;
         }
         return false;
     });

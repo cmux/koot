@@ -50,7 +50,7 @@
         -   `inquirer` -> _6.4.1_
         -   `mini-css-extract-plugin` -> _0.7.0_
         -   `open` -> _6.4.0_
-        -   `react-hot-loader` -> _4.12.0_
+        -   `react-hot-loader` -> _4.12.2_
         -   `webpack` -> _4.35.2_
         -   `webpack-dev-server` -> _3.7.2_
     -   patch
@@ -66,7 +66,7 @@
 -   更新依赖包
     -   major
         -   `husky` -> _3.0.0_
-        -   `lint-staged` -> _9.0.1_
+        -   `lint-staged` -> _9.0.2_
         -   `svg-url-loader` -> _3.0.0_
     -   minor
         -   `eslint-config-koot` -> _0.2.0_
@@ -79,6 +79,11 @@
         -   `inquirer` -> _6.4.1_
     -   patch
         -   `semver` -> _6.2.0_
+
+**koot-boilerplate**
+
+-   **css-loader**
+    -   现在 `url()` 引用的结果会添加引号
 
 ## 0.9.10
 

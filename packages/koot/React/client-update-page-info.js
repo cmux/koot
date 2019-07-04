@@ -45,7 +45,11 @@ export default (title, metas = []) => {
     });
     */
     // 如果当前没有信息，设为当前信息
-    if (!infoToChange.title) {
+    if (
+        !infoToChange.title ||
+        !Array.isArray(infoToChange.metas) ||
+        !infoToChange.metas.length
+    ) {
         infoToChange.title = title;
         infoToChange.metas = metas;
     }
