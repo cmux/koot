@@ -58,6 +58,7 @@ const addCommand = require('../../libs/add-command-to-package-json');
 const terminate = require('../../libs/terminate-process');
 const waitForPort = require('../../libs/get-port-from-child-process');
 const filterState = require('../../../packages/koot/libs/filter-state');
+const testHtmlRenderedByKoot = require('../../general-tests/html/rendered-by-koot');
 
 //
 
@@ -182,6 +183,8 @@ const doTest = async (port, settings = {}) => {
             const pageUrl = await page.url();
             expect(new RegExp(`^${origin}/.+`).test(pageUrl)).toBe(true);
         }
+
+        await testHtmlRenderedByKoot(await res.text());
     }
 
     // 测试: 利用 URL 可切换到对应语种，并且 SSR 数据正确

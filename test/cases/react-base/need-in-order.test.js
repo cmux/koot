@@ -35,6 +35,7 @@ const {
 const addCommand = require('../../libs/add-command-to-package-json');
 const terminate = require('../../libs/terminate-process');
 const waitForPort = require('../../libs/get-port-from-child-process');
+const testHtmlRenderedByKoot = require('../../general-tests/html/rendered-by-koot');
 
 //
 
@@ -137,6 +138,8 @@ const doTest = async (port, settings = {}) => {
 
     // 请求应 OK
     expect(res.ok()).toBe(true);
+
+    await testHtmlRenderedByKoot(await res.text());
 
     {
         // base 图片应该引用打包结果的文件

@@ -12,12 +12,16 @@ const execSync = require('child_process').exec;
 // const chalk = require('chalk')
 const JSDOM = require('jsdom').JSDOM;
 const puppeteer = require('puppeteer');
+
+//
+
 const {
     chunkNameExtractCss,
     chunkNameExtractCssForImport
 } = require('koot/defaults/before-build');
 const terminate = require('../../libs/terminate-process');
 const waitForPort = require('../../libs/get-port-from-child-process');
+const testHtmlRenderedByKoot = require('../../general-tests/html/rendered-by-koot');
 
 //
 
@@ -171,6 +175,8 @@ describe('测试: React SPA 项目', () => {
                         ) +
                         `-->`;
                     expect(content.includes(checkString)).toBe(true);
+
+                    await testHtmlRenderedByKoot(content);
                 }
 
                 // 测试文件: 全局 CSS
@@ -218,9 +224,10 @@ describe('测试: React SPA 项目', () => {
                         failedResponse
                     );
 
-                    await page.goto(origin, {
+                    const res = await page.goto(origin, {
                         waitUntil: 'networkidle0'
                     });
+                    const html = await res.text();
 
                     // 测试: 没有失败的请求
                     if (failedResponse.length) {
@@ -233,8 +240,9 @@ describe('测试: React SPA 项目', () => {
                         );
                     }
                     expect(failedResponse.length).toBe(0);
-
                     expect(errors.length).toBe(0);
+
+                    await testHtmlRenderedByKoot(html);
 
                     // 结束测试
                     await page.close();
