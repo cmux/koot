@@ -163,6 +163,12 @@ module.exports = async (kootBuildConfig = {}) => {
             errorDetails: true,
             performance: false
         });
+
+        if (typeof result.performance !== 'object') result.performance = {};
+        Object.assign(result.performance, {
+            maxEntrypointSize: 1 * 1024 * 1024,
+            maxAssetSize: 1 * 1024 * 1024
+        });
     }
 
     // 拆分
