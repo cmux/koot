@@ -11,7 +11,7 @@ _Koot.js_ 提供许多全局函数与工具函数，项目代码中可随意调�
 所有的全局函数都均引用自 `koot`，如：
 
 ```javascript
-import { extend, getLocaleId() } from 'koot';
+import { extend, getLocaleId } from 'koot';
 ```
 
 目前提供以下全局函数
