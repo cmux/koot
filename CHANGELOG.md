@@ -88,7 +88,7 @@
     -   patch
         -   `semver` -> _6.2.0_
 
-**koot-boilerplate**
+**koot-webpack**
 
 -   SSR 项目生产环境服务器端打包时，`performance` 下的 `maxEntrypointSize` 和 `maxAssetSize` 均设置为 `1MB`
 -   **css-loader**
