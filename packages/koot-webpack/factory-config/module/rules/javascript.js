@@ -137,7 +137,12 @@ module.exports = (kootBuildConfig = {}) => {
                         __react: true,
                         __typescript: true
                     }),
-                    require.resolve('../../../loaders/react-hot')
+                    {
+                        loader: require.resolve('../../../loaders/react-hot'),
+                        options: {
+                            __typescript: true
+                        }
+                    }
                 ]
             }
         ];

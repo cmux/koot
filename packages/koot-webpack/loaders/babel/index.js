@@ -38,7 +38,16 @@ module.exports = require('babel-loader').custom(babel => {
 
             const newPresets = [...presets];
             if (__typescript) {
-                newPresets.push(require('@babel/preset-typescript').default);
+                newPresets.push([
+                    require('@babel/preset-typescript').default,
+                    __react
+                        ? {
+                              isTSX: true,
+                              allExtensions: true
+                          }
+                        : {}
+                ]);
+                // console.log(newPresets);
             }
             // .filter(preset => {
             //     if (typeof preset.file === 'object' &&
@@ -119,7 +128,7 @@ module.exports = require('babel-loader').custom(babel => {
                 process.env.WEBPACK_BUILD_ENV === 'dev'
             ) {
                 result.code = result.code.replace(
-                    /(var _default = .+?;\n*)(;\n\n\(function \(\) \{\n[ ]*var reactHotLoader = )/m,
+                    /(var _default = .+?;\n*)(;\n\n\(function \(\) \{\n[ ]*var reactHotLoader = )/gm,
                     `$1\n/* harmony default export */ __webpack_exports__["default"] = (_default)$2`
                 );
             }

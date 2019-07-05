@@ -30,6 +30,7 @@
     -   分析模式
         -   优化分析模式输出文件名的可读性
 -   添加依赖包
+    -   `@babel/preset-typescript`
     -   `@types/node`
     -   `@types/react`
     -   `@types/react-dom`
@@ -52,7 +53,6 @@
         -   `@babel/plugin-proposal-object-rest-spread` -> _7.5.0_
         -   `@babel/plugin-transform-runtime` -> _7.5.0_
         -   `@babel/preset-env` -> _7.5.0_
-        -   `acorn` -> _6.2.0_
         -   `cli-spinners` -> _2.2.0_
         -   `fs-extra` -> _8.1.0_
         -   `inquirer` -> _6.4.1_
