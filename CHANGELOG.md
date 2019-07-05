@@ -58,7 +58,7 @@
         -   `inquirer` -> _6.4.1_
         -   `mini-css-extract-plugin` -> _0.7.0_
         -   `open` -> _6.4.0_
-        -   `react-hot-loader` -> _4.11.2_
+        -   `react-hot-loader` -> _4.11.1_
         -   `webpack` -> _4.35.2_
         -   `webpack-dev-server` -> _3.7.2_
     -   patch
