@@ -30,13 +30,13 @@ const sleep = require('../../../packages/koot/utils/sleep');
 const {
     styles: puppeteerTestStyles,
     customEnv: puppeteerTestCustomEnv,
-    injectScripts: puppeteerTestInjectScripts
+    injectScripts: puppeteerTestInjectScripts,
+    requestHidden404: testRequestHidden404
 } = require('../puppeteer-test');
 const addCommand = require('../../libs/add-command-to-package-json');
 const terminate = require('../../libs/terminate-process');
 const waitForPort = require('../../libs/get-port-from-child-process');
 const testHtmlRenderedByKoot = require('../../general-tests/html/rendered-by-koot');
-const testRequestHiddenFiles = require('../../general-tests/server/hidden-files-404');
 
 //
 
@@ -172,7 +172,7 @@ const doTest = async (port, settings = {}) => {
     await puppeteerTestStyles(page);
     await puppeteerTestCustomEnv(page, customEnv);
     await puppeteerTestInjectScripts(page);
-    await testRequestHiddenFiles(origin);
+    await testRequestHidden404(origin, browser);
 
     // 测试: 没有失败的请求
     if (failedResponse.length) {

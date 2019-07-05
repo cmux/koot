@@ -1,3 +1,5 @@
+const puppeteer = require('puppeteer');
+
 /**
  * puppeteer 测试
  *
@@ -122,8 +124,35 @@ const injectScripts = async page => {
     expect(result).toBe(true);
 };
 
+/**
+ * puppeteer 测试
+ *
+ * 访问隐藏文件返回 404
+ */
+const requestHidden404 = async (origin, browser) => {
+    let needToClose = !browser;
+
+    if (!browser)
+        browser = await puppeteer.launch({
+            headless: true
+        });
+
+    const context = await browser.createIncognitoBrowserContext();
+    const page = await context.newPage();
+    const res = await page.goto(`${origin}/.hidden-picture.jpg`, {
+        waitUntil: 'networkidle0'
+    });
+
+    await context.close();
+    if (needToClose) await browser.close();
+
+    expect(typeof res).toBe('object');
+    expect(res.status()).toBe(404);
+};
+
 module.exports = {
     styles,
     customEnv,
-    injectScripts
+    injectScripts,
+    requestHidden404
 };

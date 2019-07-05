@@ -59,12 +59,12 @@ const terminate = require('../../libs/terminate-process');
 const waitForPort = require('../../libs/get-port-from-child-process');
 const filterState = require('../../../packages/koot/libs/filter-state');
 const testHtmlRenderedByKoot = require('../../general-tests/html/rendered-by-koot');
-const testRequestHiddenFiles = require('../../general-tests/server/hidden-files-404');
 
 //
 
 const {
-    injectScripts: puppeteerTestInjectScripts
+    injectScripts: puppeteerTestInjectScripts,
+    requestHidden404: testRequestHidden404
 } = require('../puppeteer-test');
 
 //
@@ -645,7 +645,7 @@ const doTest = async (port, settings = {}) => {
 
     // 其他公用测试
     await puppeteerTestInjectScripts(page);
-    await testRequestHiddenFiles(origin);
+    await testRequestHidden404(origin, browser);
 
     // 测试: 没有失败的请求
     if (failedResponse.length) {

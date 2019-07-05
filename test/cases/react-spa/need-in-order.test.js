@@ -22,7 +22,7 @@ const {
 const terminate = require('../../libs/terminate-process');
 const waitForPort = require('../../libs/get-port-from-child-process');
 const testHtmlRenderedByKoot = require('../../general-tests/html/rendered-by-koot');
-const testRequestHiddenFiles = require('../../general-tests/server/hidden-files-404');
+const { requestHidden404: testRequestHidden404 } = require('../puppeteer-test');
 
 //
 
@@ -244,7 +244,7 @@ describe('测试: React SPA 项目', () => {
                     expect(errors.length).toBe(0);
 
                     await testHtmlRenderedByKoot(html);
-                    await testRequestHiddenFiles(origin);
+                    await testRequestHidden404(origin, browser);
 
                     // 结束测试
                     await page.close();
