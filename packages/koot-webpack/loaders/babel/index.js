@@ -119,19 +119,6 @@ module.exports = require('babel-loader').custom(babel => {
         },
 
         result(result) {
-            // For some reason, `default` export may be missing after babel compiling,
-            // expecially for TSX file.
-            // This is a hacky fix
-            if (
-                customOptions.__react &&
-                // customOptions.__typescript &&
-                process.env.WEBPACK_BUILD_ENV === 'dev'
-            ) {
-                result.code = result.code.replace(
-                    /(var _default = .+?;\n*)(;\n\n\(function \(\) \{\n[ ]*var reactHotLoader = )/gm,
-                    `$1\n/* harmony default export */ __webpack_exports__["default"] = (_default)$2`
-                );
-            }
             // if (process.env.WEBPACK_BUILD_ENV === 'dev') {
             //     const { code, ...r } = result
             //     return {

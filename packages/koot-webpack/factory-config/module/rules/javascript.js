@@ -80,11 +80,26 @@ module.exports = (kootBuildConfig = {}) => {
         }
     });
 
-    const ruleUseLoaders = (options = {}) => [
-        ruleUseThreadLoader(),
-        // useCacheLoader(),
-        ruleUseBabelLoader(options)
-    ];
+    const ruleUseLoaders = (options = {}) => {
+        const use = [ruleUseBabelLoader(options)];
+
+        if (!createDll && env === 'dev' && stage === 'client') {
+            use.unshift({
+                loader: require.resolve('../../../loaders/koot-dev-client.js'),
+                options
+            });
+            use.push({
+                loader: require.resolve('../../../loaders/react-hot'),
+                options
+            });
+        }
+
+        return [
+            ruleUseThreadLoader(),
+            // useCacheLoader(),
+            ...use
+        ];
+    };
 
     //
 
@@ -126,8 +141,8 @@ module.exports = (kootBuildConfig = {}) => {
                 use: [
                     ...ruleUseLoaders({
                         __react: true
-                    }),
-                    require.resolve('../../../loaders/react-hot')
+                    })
+                    // require.resolve('../../../loaders/react-hot')
                 ]
             },
             {
@@ -136,13 +151,13 @@ module.exports = (kootBuildConfig = {}) => {
                     ...ruleUseLoaders({
                         __react: true,
                         __typescript: true
-                    }),
-                    {
-                        loader: require.resolve('../../../loaders/react-hot'),
-                        options: {
-                            __typescript: true
-                        }
-                    }
+                    })
+                    // {
+                    //     loader: require.resolve('../../../loaders/react-hot'),
+                    //     options: {
+                    //         __typescript: true
+                    //     }
+                    // }
                 ]
             }
         ];

@@ -220,6 +220,10 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                             `webpack-dev-server/client?http://localhost:${getWDSport()}/sockjs-node/`
                         );
                     }
+                    // result.entry.client = [
+                    //     'react-hot-loader/patch',
+                    //     ...result.entry.client
+                    // ];
                     // result.entry[entryClientHMR] = `webpack-dev-server/client?http://localhost:${getWDSport()}/sockjs-node/`
                 }
                 // const fileRunFirst = path.resolve(
@@ -266,7 +270,7 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                 })
             );
 
-            // 开发环境辅助插件
+            // 开发环境辅助插件与其他能力
             if (ENV === 'dev') {
                 result.plugins.push(
                     new DevModePlugin({
@@ -280,6 +284,14 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                         Object.assign({}, hmrOptions, webpackHmr)
                     )
                 );
+                if (!createDll) {
+                    if (typeof result.resolve !== 'object') result.resolve = {};
+                    if (typeof result.resolve.alias !== 'object')
+                        result.resolve.alias = {};
+                    if (!result.resolve.alias['react-dom'])
+                        result.resolve.alias['react-dom'] =
+                            '@hot-loader/react-dom';
+                }
             }
 
             if (!createDll) {

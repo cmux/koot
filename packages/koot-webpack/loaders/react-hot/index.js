@@ -1,13 +1,13 @@
-// import { getOptions } from 'loader-utils';
+const { getOptions } = require('loader-utils');
 
 // modify based on:
 // https://github.com/NoamELB/react-hot-loader-loader
 
 function AddReactHotLoader(source) {
-    if (!source || !/^\s*export\s+default/m.exec(source)) return source;
+    const { __react = false } = getOptions(this) || {};
 
-    // const options = getOptions(this) || {};
-    // const { __typescript = false } = options;
+    if (!__react) return source;
+    if (!source || !/^\s*export\s+default/m.exec(source)) return source;
 
     let theSource = getImportLine() + source;
 
