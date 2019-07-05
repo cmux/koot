@@ -26,8 +26,8 @@ module.exports = {
 
     webpackConfig: async () => {
         const ENV = process.env.WEBPACK_BUILD_ENV;
-        if (ENV === 'dev') return await require('./config/webpack/dev');
-        if (ENV === 'prod') return await require('./config/webpack/prod');
+        if (ENV === 'dev') return await require('./config/webpack/dev')();
+        if (ENV === 'prod') return await require('./config/webpack/prod')();
         return {};
     },
     // webpackBefore: async (kootConfigWithExtra = {}) => {

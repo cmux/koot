@@ -191,27 +191,82 @@ const validatePlugins = (config, kootConfigForThisBuild = {}) => {
     );
 };
 
-const validateModuleRules = config => {
+const validateModuleRules = (config, kootConfigForThisBuild = {}) => {
     // 删除重复 loader
     if (Array.isArray(config.module.rules)) {
         config.module.rules = removeDuplicateObject(config.module.rules);
+        // 删除重复对象
+        function removeDuplicateObject(list) {
+            // let map = {}
+            // list = (() => {
+            //     return list.map((rule) => {
+            //         let key = JSON.stringify(rule)
+            //         key = key.toLowerCase().replace(/ /g, '')
+            //         if (map[key])
+            //             rule = undefined
+            //         else
+            //             map[key] = 1
+            //         return rule
+            //     })
+            // })()
+            return list.filter(rule => !!rule);
+        }
     }
 
-    // 删除重复对象
-    function removeDuplicateObject(list) {
-        // let map = {}
-        // list = (() => {
-        //     return list.map((rule) => {
-        //         let key = JSON.stringify(rule)
-        //         key = key.toLowerCase().replace(/ /g, '')
-        //         if (map[key])
-        //             rule = undefined
-        //         else
-        //             map[key] = 1
-        //         return rule
-        //     })
-        // })()
-        return list.filter(rule => !!rule);
+    // 针对某个 loader 进行调整
+    if (Array.isArray(config.module.rules)) {
+        const validateLoader = (loader, options = {}) => {
+            if (typeof loader === 'string' && loader.includes('?')) {
+                const segs = loader.split('?');
+                loader = segs[0];
+                options = {};
+                segs[1].split('&').forEach(pair => {
+                    const [key, value] = pair.split('=');
+                    options[key] = value;
+                });
+            }
+            switch (loader) {
+                case 'file-loader': {
+                    if (process.env.WEBPACK_BUILD_STAGE === 'server') {
+                        options.emitFile = false;
+                    }
+                    break;
+                }
+                default: {
+                }
+            }
+            return { loader, options };
+        };
+        const validateRule = rule => {
+            if (typeof rule.loader === 'string') {
+                const { loader, options } = validateLoader(
+                    rule.loader,
+                    rule.options
+                );
+                rule.loader = loader;
+                rule.options = options;
+            } else if (Array.isArray(rule.use)) {
+                rule.use = rule.use.map(use => {
+                    if (typeof use === 'string') {
+                        return validateLoader(use);
+                    } else if (typeof use === 'object') {
+                        return validateLoader(use.loader, use.options);
+                    }
+                    return use;
+                });
+            } else if (typeof rule.use === 'string') {
+                rule.use = validateLoader(rule.use);
+            } else if (typeof rule.use === 'object') {
+                rule.use = validateLoader(rule.use.loader, rule.use.options);
+            }
+        };
+        config.module.rules.forEach(rule => {
+            if (Array.isArray(rule.oneOf)) {
+                rule.oneOf.forEach(thisRule => validateRule(thisRule));
+            } else {
+                validateRule(rule);
+            }
+        });
     }
 };
 

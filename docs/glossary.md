@@ -1,19 +1,7 @@
+# 技术术语
 
-
-# 相关
-
-### 术语说明
-
-
-术语 | 解释 
-- | -
-```SSR``` | Server Side Render，服务端页面渲染，本文档泛指React在Node服务端渲染。
-```Isomorphic```  | 同构模式，指同一套代码在服务端和客户端都可以构建，本文档泛指一套React客户端代码可以在浏览器和服务端共用，达到渲染效果一致。
-
-
-
-
-### 项目
-
- - [koot-cli](https://github.com/cmux/koot/tree/master/packages/koot-cli) CLI (Command-line Interface) 工具，用以创建、更新 Koot 项目。
- - [koot-boilerplate](https://github.com/cmux/koot/tree/master/packages/koot-boilerplate) Koot.js 基础模板。
+| 术语         | 解释                                                                                                                                                                                                        |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SSR`        | Server-Side Rendering，服务端渲染，本文档泛指 React 在 Node 服务端渲染。                                                                                                                                    |
+| `Isomorphic` | 同构模式，指同一套代码在服务端和客户端都可以构建，本文档泛指一套 React 客户端代码可以在浏览器和服务端共用，达到渲染效果一致。                                                                               |
+| 项目代码     | 所有经过 _Webpack_ 处理的 _JavaScript_ 文件的代码。通常来说，除了 _Koot.js_ 项目配置文件 (`koot.config.js`)、_Babel_ 配置文件 (`babel.config.js`) 等配置文件外，其他所有的代码文件都会经过 _Webpack_ 处理。 |

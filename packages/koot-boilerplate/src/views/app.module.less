@@ -1,0 +1,37 @@
+@import '~vars.less';
+
+.component {
+    position: relative;
+    border-top: @nav-height solid transparent;
+
+    & > main {
+        border-top: @main-gutter-top solid transparent;
+        border-bottom: @main-gutter-bottom solid transparent;
+
+        a {
+            display: inline-block;
+            color: @color-nav-background;
+            text-decoration: none;
+            line-height: 1em;
+            .icon {
+                @size: 16px;
+                width: @size;
+                height: @size;
+                vertical-align: bottom;
+            }
+            &:hover {
+                color: #000;
+            }
+            &:active {
+                color: hsl(0, 0%, 65%);
+            }
+        }
+    }
+
+    &.is-home {
+        border-top-color: @color-home-cover-background;
+        & > main {
+            border-top-width: 0;
+        }
+    }
+}

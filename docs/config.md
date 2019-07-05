@@ -142,32 +142,21 @@ module.exports = {
 /****************************
  * 文件: /src/store/index.js
  ***************************/
-const { createStore, combineReducers, applyMiddleware } = require('redux');
-// Koot.js 提供的生成 Redux store 所需要的相关内容
-const {
-    reducers: kootDefaultReducers,
-    initialState,
-    middlewares
-} = require('koot').reduxForCreateStore;
-// 项目使用的 reducer
-const projectReducers = require('./reducers.js');
+const { createStore } = require('koot');
 
-module.exports = () =>
-    createStore(
-        combineReducers({
-            ...kootDefaultReducers,
-            ...projectReducers
-        }),
-        initialState,
-        applyMiddleware(...middlewares)
-    );
+/** @type {Object|Function} 项目使用的 reducer，可以是形式为 Object 的列表，也可以是 reducer 函数 */
+const appReducers = require('./reducers.js');
+/** @type {Array} 项目使用的 middleware 列表 */
+const appMiddlewares = require('./middlewares.js');
+
+module.exports = () => createStore(appReducers, appMiddlewares);
 ```
 
 ### cookiesToStore
 
 -   类型: `Boolean` `String` 或 `String[]`
 -   默认值: `true`
--   **仅针对**: 同构项目类型
+-   **仅针对**: SSR 项目
 
 将 cookie 写入到 Redux store 中的 `state.server.cookie`。
 
@@ -187,6 +176,36 @@ module.exports = {
     // 仅将名为 `userToken` 的 cookie 写入到 store 中
     // `state.server.cookie` 为对象，key/value 对应 cookie 的每一项
     cookiesToStore: ['userToken']
+};
+```
+
+### sessionStore
+
+-   类型: `Boolean` 或 `Object`
+-   默认值: `false`
+-   **仅针对**: 客户端环境
+
+将全部或部分 _store_ 对象同步到浏览器/客户端的 `sessionStore` 中，在用户刷新页面后，这些值会被还原到 _store_，以确保和刷新前一致。
+
+```javascript
+module.exports = {
+    // 不启用 sessionStore 特性 (默认值)
+    sessionStore: false,
+
+    // 同步所有 _store_ 对象
+    // 不包括服务器相关数据，如 `localeId`、`server` 等
+    sessionStore: true,
+    sessionStore: 'all',
+
+    // 同步指定的对象内容
+    // 仅有设为 `true` 的属性会被同步
+    // 可通过对象的方式控制某个对象内哪些属性被同步
+    sessionStore: {
+        user: true,
+        page: {
+            home: true
+        }
+    }
 };
 ```
 
@@ -231,7 +250,7 @@ module.exports = {
          * - `default` (默认值)
          *   客户端按语种分别打包，语言包内容会直接打入到代码中，代码结果中不存在“语言包对象”
          *   适合所有项目使用，推荐语言包较大的项目使用
-         * - `redux`
+         * - `store`
          *   服务器输出 HTML 时，当前语种的语言包对象会写入 Redux store
          *   适合语言包较小，或对文件/请求体积不敏感的 WebApp 项目使用
          *   开发环境下会强制使用这一模式
@@ -558,12 +577,17 @@ export default (...args) => {
 -   默认值: `{ maxAge: 5000, maxCount: 50 }`
 -   **仅针对**: 服务器端，生产环境
 
-生产环境下服务器渲染缓存相关设置。默认行为:
+生产环境下服务器渲染缓存相关设置。
+
+默认的缓存规则比较基础:
 
 -   根据**完整的** URL 进行缓存，即每个 URL 有各自的结果缓存
     -   `/page-a/` 和 `/page-a/?a=b` 有不同的缓存
 -   仅保留最近 **50** 个 URL 的结果
 -   每条结果最多保存 **5 秒**
+-   **没有**考虑 _Redux store_ 内的数据
+    -   如：相同的 URL 根据 _store_ 数据有不同结果，如针对当前登录的用户显示欢迎信息。该默认规则下，不同的用户在 5 秒内先后访问，后访问的用户会得到上一个用户访问的结果，这显然不是我们想要的
+    -   如有类似需求，请**禁用**默认的缓存规则，自行编写缓存规则
 
 ```javascript
 module.exports = {
@@ -630,7 +654,7 @@ module.exports = {
 
 -   类型: `Object`
 -   默认值: `{}` (空对象)
--   **仅针对**: 服务器端，生产环境
+-   **仅针对**: SSR 项目的服务器端、生产环境
 
 如果当前项目的 Node.js 服务器是通过其他代理服务器请求的（如 nginx 反向代理），可用这个配置声明原始请求的信息。
 
@@ -663,7 +687,7 @@ module.exports = {
     // 默认值
     koaStatic: {
         maxage: 0,
-        hidden: true,
+        hidden: false,
         index: 'index.html',
         defer: false,
         gzip: true,
@@ -676,7 +700,7 @@ module.exports = {
 
 -   类型: `Function`
 -   默认值: _无_
--   **仅针对**: 服务器端
+-   **仅针对**: SSR 项目的服务器端
 
 在服务器端创建 _Koa_ 实例后、挂载任何中间件之前，执行的方法。
 
@@ -700,7 +724,7 @@ module.exports = {
 
 -   类型: `Function`
 -   默认值: _无_
--   **仅针对**: 服务器端
+-   **仅针对**: SSR 项目的服务器端
 
 在服务器端 _Koa_ 挂载所有中间件后、正式启动服务器服务之前，执行的方法。
 
@@ -724,7 +748,7 @@ module.exports = {
 
 -   类型: `Function` 或 `Object`
 -   默认值: _无_
--   **仅针对**: 服务器端
+-   **仅针对**: SSR 项目的服务器端
 
 在服务器端计算 React 渲染结果时运行的方法。
 

@@ -136,7 +136,7 @@ const parsePattern = pattern => {
         await fs.writeFile(
             outputFile,
             content.replace(
-                '[/* APPEND URLS HERE */]',
+                /\[\n*\s*\/\*\s*APPEND URLS HERE\s*\*\/\s*\n*]/m,
                 JSON.stringify([...new Set(files)], undefined, 4)
             ),
             'utf8'

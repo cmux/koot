@@ -734,9 +734,7 @@ module.exports = async (kootConfig = {}) => {
                             );
                             // webpackLoggedError = true
                             reject(
-                                `webpack error: [${TYPE}-${STAGE}-${ENV}] ${
-                                    info.errors
-                                }`
+                                `webpack error: [${TYPE}-${STAGE}-${ENV}] ${info.errors}`
                             );
                             return error(info.errors);
                         }
@@ -936,9 +934,7 @@ module.exports = async (kootConfig = {}) => {
                         );
                         webpackLoggedError = true;
                         reject(
-                            `webpack error: [${TYPE}-${STAGE}-${ENV}] ${
-                                info.errors
-                            }`
+                            `webpack error: [${TYPE}-${STAGE}-${ENV}] ${info.errors}`
                         );
                         return error(info.errors);
                     }

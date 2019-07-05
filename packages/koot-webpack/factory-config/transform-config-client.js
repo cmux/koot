@@ -177,8 +177,8 @@ module.exports = async (kootConfigForThisBuild = {}) => {
             if (analyze) {
                 // result.output.filename = 'entry-[id].[name].js'
                 // result.output.chunkFilename = 'chunck-[id].[name].js'
-                result.output.filename = 'entry-[id].js';
-                result.output.chunkFilename = 'chunck-[id].js';
+                result.output.filename = 'entry-[id]-[name].js';
+                result.output.chunkFilename = 'chunk-[id]-[name].js';
             } else {
                 if (!result.output.filename)
                     result.output.filename =
@@ -339,7 +339,8 @@ module.exports = async (kootConfigForThisBuild = {}) => {
 
     if (isI18nEnabled()) {
         switch (i18n.type || 'default') {
-            case 'redux': {
+            case 'redux':
+            case 'store': {
                 if (isSPANeedTemplateInject)
                     return [
                         await createConfig({ isSPATemplateInject: true }),

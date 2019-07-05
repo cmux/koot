@@ -29,11 +29,14 @@ const removeTempProjectConfig = require('../../../packages/koot/libs/remove-temp
 const sleep = require('../../../packages/koot/utils/sleep');
 const {
     styles: puppeteerTestStyles,
-    customEnv: puppeteerTestCustomEnv
+    customEnv: puppeteerTestCustomEnv,
+    injectScripts: puppeteerTestInjectScripts,
+    requestHidden404: testRequestHidden404
 } = require('../puppeteer-test');
 const addCommand = require('../../libs/add-command-to-package-json');
 const terminate = require('../../libs/terminate-process');
 const waitForPort = require('../../libs/get-port-from-child-process');
+const testHtmlRenderedByKoot = require('../../general-tests/html/rendered-by-koot');
 
 //
 
@@ -60,8 +63,8 @@ const defaultViewport = {
     height: 800,
     deviceScaleFactor: 1
 };
-let browser;
 
+let browser;
 beforeAll(() =>
     puppeteer
         .launch({
@@ -72,8 +75,15 @@ beforeAll(() =>
             browser = theBrowser;
         })
 );
-
 afterAll(() => browser.close());
+
+//
+
+let lastTime;
+beforeEach(() => (lastTime = Date.now()));
+afterEach(() => {});
+
+//
 
 /**
  * 测试项目
@@ -130,6 +140,8 @@ const doTest = async (port, settings = {}) => {
     // 请求应 OK
     expect(res.ok()).toBe(true);
 
+    await testHtmlRenderedByKoot(await res.text());
+
     {
         // base 图片应该引用打包结果的文件
         const resultBase = await page.evaluate(() => {
@@ -159,6 +171,8 @@ const doTest = async (port, settings = {}) => {
 
     await puppeteerTestStyles(page);
     await puppeteerTestCustomEnv(page, customEnv);
+    await puppeteerTestInjectScripts(page);
+    await testRequestHidden404(origin, browser);
 
     // 测试: 没有失败的请求
     if (failedResponse.length) {
@@ -200,7 +214,11 @@ const afterTest = async (cwd, title) => {
     // 移除临时项目配置文件
     await removeTempProjectConfig(cwd);
 
-    console.log(chalk.green('√ ') + title);
+    console.log(
+        chalk.green('√ ') +
+            chalk.green(`${(Date.now() - lastTime) / 1000}s `) +
+            title
+    );
 
     await sleep(100);
 };
@@ -208,7 +226,8 @@ const afterTest = async (cwd, title) => {
 //
 
 describe('测试: React 同构项目', () => {
-    for (let { name, dir } of projectsToUse) {
+    for (const project of projectsToUse) {
+        const { name, dir } = project;
         describe(`项目: ${name}`, () => {
             test(`ENV: prod`, async () => {
                 await beforeTest(dir);
@@ -218,10 +237,13 @@ describe('测试: React 同构项目', () => {
                     bbbbb: 'a1b2c3'
                 };
                 const commandName = `${commandTestBuild}-prod`;
-                const command = `koot-start --koot-test -- bbbbb=${
-                    customEnv.bbbbb
-                }`;
+                const command = `koot-start --koot-test -- bbbbb=${customEnv.bbbbb}`;
                 await addCommand(commandName, command, dir);
+
+                // console.log(
+                //     customEnv,
+                //     `npm run ${commandName} -- aaaaa=${customEnv.aaaaa}`
+                // );
 
                 const child = execSync(
                     `npm run ${commandName} -- aaaaa=${customEnv.aaaaa}`,
@@ -238,6 +260,14 @@ describe('测试: React 同构项目', () => {
                 });
 
                 expect(errors.length).toBe(0);
+
+                // server-side 打包结果不应出现静态资源目录
+                expect(
+                    fs.existsSync(path.resolve(dir, 'dist/server/index.js'))
+                ).toBe(true);
+                expect(
+                    fs.existsSync(path.resolve(dir, 'dist/server/assets'))
+                ).toBe(false);
 
                 await doTest(port, {
                     customEnv
@@ -259,9 +289,7 @@ describe('测试: React 同构项目', () => {
                     bbbbb: 'a1b2c3'
                 };
                 const commandName = `${commandTestBuild}-isomorphic-dev`;
-                const command = `koot-dev --no-open --koot-test -- bbbbb=${
-                    customEnv.bbbbb
-                }`;
+                const command = `koot-dev --no-open --koot-test -- bbbbb=${customEnv.bbbbb}`;
                 await addCommand(commandName, command, dir);
 
                 const child = execSync(

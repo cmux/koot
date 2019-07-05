@@ -1,4 +1,5 @@
 import routeCheck from 'koot/React/route-check';
+import App from '@views/app';
 
 /**
  * @type {Object} 路由配置对象
@@ -7,7 +8,7 @@ import routeCheck from 'koot/React/route-check';
  */
 export default {
     path: '/',
-    component: require('@components/app').default, // 项目的根层组件
+    component: App, // 项目的根层组件
 
     indexRoute: {
         /**
@@ -38,6 +39,17 @@ export default {
                 import(
                     /* webpackChunkName: "PageStart" */
                     '@views/start'
+                ).then(module => {
+                    if (routeCheck(nextState)) cb(null, module.default);
+                });
+            }
+        },
+        {
+            path: 'ts',
+            getComponent: (nextState, cb) => {
+                import(
+                    /* webpackChunkName: "PageTS" */
+                    '@views/ts-example'
                 ).then(module => {
                     if (routeCheck(nextState)) cb(null, module.default);
                 });

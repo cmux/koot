@@ -1,20 +1,22 @@
-import React from 'react'
-import { store, history, localeId, extend } from 'koot'
+import React from 'react';
+import { store, history, localeId, extend } from 'koot';
 
 // console.log('[App]', { store, history, localeId })
 
-import Nav from './_layout/nav'
-import Main from './_layout/main'
+import Nav from './_layout/nav';
+import Main from './_layout/main';
+import Debug from './debug';
+import SSR from './ssr';
 
-let stateShowed = false
+let stateShowed = false;
 
 @extend({
     connect: state => {
         if (__CLIENT__ && __DEV__ && !stateShowed) {
-            console.log('root: redux store conected', state)
-            stateShowed = true
+            console.log('root: redux store conected', state);
+            stateShowed = true;
         }
-        return {}
+        return {};
     },
     styles: require('./app.less'),
     name: 'App'
@@ -22,12 +24,12 @@ let stateShowed = false
 class App extends React.Component {
     componentDidMount() {
         if (__DEV__) {
-            console.log('redux store', store)
-            console.log('history', history)
+            console.log('redux store', store);
+            console.log('history', history);
         }
     }
     componentDidCatch(error, info) {
-        console.log('ERROR', error, info)
+        console.log('ERROR', error, info);
         // Display fallback UI
         // this.setState({ hasError: true })
         // You can also log the error to an error reporting service
@@ -37,6 +39,11 @@ class App extends React.Component {
         // console.log(this.props)
     }
     render() {
+        // console.log({
+        //     'process.env.KOOT_SESSION_STORE': JSON.parse(
+        //         process.env.KOOT_SESSION_STORE
+        //     )
+        // });
         // console.log('[App] render', { store, history, localeId })
         // console.log('App render', {
         //     'in __KOOT_SSR__': __KOOT_SSR__.LocaleId
@@ -48,9 +55,11 @@ class App extends React.Component {
                     <Nav />
                     <Main children={this.props.children} />
                 </div>
+                <Debug />
+                <SSR />
             </React.StrictMode>
-        )
+        );
     }
 }
 
-export default App
+export default App;

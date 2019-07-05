@@ -31,10 +31,7 @@
         ],
         "borderColor": "#ccc",
         "borderWidth": 0,
-        "visualMapColor": [
-            "#4773c9",
-            "#a2d4e6"
-        ],
+        "visualMapColor": ["#4773c9", "#a2d4e6"],
         "legendTextColor": "#333333",
         "kColor": "#ff3400",
         "kColor0": "#00ca7a",
@@ -67,9 +64,7 @@
                 "axisLabelShow": true,
                 "axisLabelColor": "#333",
                 "splitLineShow": true,
-                "splitLineColor": [
-                    "#ccc"
-                ],
+                "splitLineColor": ["#ccc"],
                 "splitAreaShow": false,
                 "splitAreaColor": [
                     "rgba(250,250,250,0.3)",
@@ -86,9 +81,7 @@
                 "axisLabelShow": true,
                 "axisLabelColor": "#979ca6",
                 "splitLineShow": false,
-                "splitLineColor": [
-                    "#ccc"
-                ],
+                "splitLineColor": ["#ccc"],
                 "splitAreaShow": false,
                 "splitAreaColor": [
                     "rgba(250,250,250,0.3)",
@@ -105,9 +98,7 @@
                 "axisLabelShow": true,
                 "axisLabelColor": "#979ca6",
                 "splitLineShow": true,
-                "splitLineColor": [
-                    "#ccc"
-                ],
+                "splitLineColor": ["#ccc"],
                 "splitAreaShow": false,
                 "splitAreaColor": [
                     "rgba(250,250,250,0.3)",
@@ -124,9 +115,7 @@
                 "axisLabelShow": true,
                 "axisLabelColor": "#979ca6",
                 "splitLineShow": true,
-                "splitLineColor": [
-                    "#ccc"
-                ],
+                "splitLineColor": ["#ccc"],
                 "splitAreaShow": false,
                 "splitAreaColor": [
                     "rgba(250,250,250,0.3)",
@@ -143,9 +132,7 @@
                 "axisLabelShow": true,
                 "axisLabelColor": "#979ca6",
                 "splitLineShow": true,
-                "splitLineColor": [
-                    "#ccc"
-                ],
+                "splitLineColor": ["#ccc"],
                 "splitAreaShow": false,
                 "splitAreaColor": [
                     "rgba(250,250,250,0.3)",

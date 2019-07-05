@@ -1,26 +1,29 @@
 #!/usr/bin/env node
 
-const fs = require('fs-extra')
-const path = require('path')
-const program = require('commander')
-const chalk = require('chalk')
+const fs = require('fs-extra');
+const path = require('path');
+const program = require('commander');
+const chalk = require('chalk');
 
-const before = require('./_before')
+const before = require('./_before');
 
-const { keyConfigQuiet, filenameBuilding } = require('../defaults/before-build')
+const {
+    keyConfigQuiet,
+    filenameBuilding
+} = require('../defaults/before-build');
 
-const __ = require('../utils/translate')
-const sleep = require('../utils/sleep')
-const setEnvFromCommand = require('../utils/set-env-from-command')
-const getAppType = require('../utils/get-app-type')
-const validateConfig = require('../libs/validate-config')
-const validateConfigDist = require('../libs/validate-config-dist')
-const spinner = require('../utils/spinner')
-const initNodeEnv = require('../utils/init-node-env')
+const __ = require('../utils/translate');
+const sleep = require('../utils/sleep');
+const setEnvFromCommand = require('../utils/set-env-from-command');
+const getAppType = require('../utils/get-app-type');
+const validateConfig = require('../libs/validate-config');
+const validateConfigDist = require('../libs/validate-config-dist');
+const spinner = require('../utils/spinner');
+const initNodeEnv = require('../utils/init-node-env');
 // const emptyTempConfigDir = require('../libs/empty-temp-config-dir')
-const getDirTemp = require('../libs/get-dir-tmp')
+const getDirTemp = require('../libs/get-dir-tmp');
 
-const kootWebpackBuild = require('koot-webpack/build')
+const kootWebpackBuild = require('koot-webpack/build');
 
 program
     .version(require('../package').version, '-v, --version')
@@ -34,69 +37,74 @@ program
     .option('--type <project-type>', 'Set project type')
     .option('--koot-dev', 'Koot dev env')
     .option('--koot-test', 'Koot test mode')
-    .parse(process.argv)
+    .parse(process.argv);
 
 /** 判断是否是通过 koot-start 命令启动
  * @returns {Boolean}
  */
-const isFromCommandStart = () => (process.env.KOOT_COMMAND_START && JSON.parse(process.env.KOOT_COMMAND_START))
+const isFromCommandStart = () =>
+    process.env.KOOT_COMMAND_START &&
+    JSON.parse(process.env.KOOT_COMMAND_START);
 
 /**
  * 执行打包
  */
 const run = async () => {
-
     const {
-        client, server,
+        client,
+        server,
         stage: _stage,
         env = 'prod',
         config,
         type,
         dest,
         kootDev = false,
-        kootTest = false,
-    } = program
+        kootTest = false
+    } = program;
 
-    initNodeEnv()
+    initNodeEnv();
     // console.log(program)
 
     /** @type {Boolean} 是否为通过 koot-start 命令启动 */
-    const fromCommandStart = isFromCommandStart()
-    const fromOtherCommand = kootDev || fromCommandStart
+    const fromCommandStart = isFromCommandStart();
+    const fromOtherCommand = kootDev || fromCommandStart;
     if (!fromOtherCommand)
         // 清空 log
-        process.stdout.write('\x1B[2J\x1B[0f')
+        process.stdout.write('\x1B[2J\x1B[0f');
 
-    setEnvFromCommand({
-        config,
-        type,
-    }, fromOtherCommand)
+    setEnvFromCommand(
+        {
+            config,
+            type
+        },
+        fromOtherCommand
+    );
 
-    process.env.KOOT_TEST_MODE = JSON.stringify(kootTest)
+    process.env.KOOT_TEST_MODE = JSON.stringify(kootTest);
 
     const stage = (() => {
-        if (_stage) return _stage
-        if (client) return 'client'
-        if (server) return 'server'
-        return false
-    })()
+        if (_stage) return _stage;
+        if (client) return 'client';
+        if (server) return 'server';
+        return false;
+    })();
 
     // 在所有操作执行之前定义环境变量
-    process.env.WEBPACK_BUILD_STAGE = stage || 'client'
-    process.env.WEBPACK_BUILD_ENV = env
+    process.env.WEBPACK_BUILD_STAGE = stage || 'client';
+    process.env.WEBPACK_BUILD_ENV = env;
 
     // 清理临时目录
-    await before(program)
+    await before(program);
 
     // 生成配置
-    const kootConfig = await validateConfig()
-    await getAppType()
-    if (dest) kootConfig.dist = validateConfigDist(dest)
+    const kootConfig = await validateConfig();
+    await getAppType();
+    if (dest) kootConfig.dist = validateConfigDist(dest);
 
     // 如果通过 koot-start 命令启动...
     if (fromCommandStart) {
         // 安静模式: 非报错 log 不打出
-        kootConfig[keyConfigQuiet] = true
+        kootConfig[keyConfigQuiet] = true;
     }
 
     // 如果提供了 stage，仅针对该 stage 执行打包
@@ -105,60 +113,60 @@ const run = async () => {
         // if (stage === 'server' && !hasServer) {
         //     console.log(chalk.redBright('× '))
         // }
-        await kootWebpackBuild(kootConfig)
-        await after(kootConfig)
-        if (!fromCommandStart) console.log(' ')
-        return
+        await kootWebpackBuild(kootConfig);
+        await after(kootConfig);
+        if (!fromCommandStart) console.log(' ');
+        return;
     }
 
     // 如过没有提供 stage，自动相继打包 client 和 server
-    await kootWebpackBuild({ ...kootConfig })
-    await sleep(100)
+    await kootWebpackBuild({ ...kootConfig });
+    await sleep(100);
 
-    if (!fromCommandStart) console.log('\n' + ''.padEnd(60, '=') + '\n')
-    process.env.WEBPACK_BUILD_STAGE = 'server'
-    await kootWebpackBuild({ ...kootConfig })
-    await sleep(100)
+    if (!fromCommandStart) console.log('\n' + ''.padEnd(60, '=') + '\n');
+    process.env.WEBPACK_BUILD_STAGE = 'server';
+    await kootWebpackBuild({ ...kootConfig });
+    await sleep(100);
 
-    if (!fromCommandStart) console.log('\n' + ''.padEnd(60, '=') + '\n')
-    if (!fromCommandStart) console.log(
-        chalk.green('√ ')
-        + chalk.yellowBright('[koot/build] ')
-        + __('build.complete', {
-            time: (new Date()).toLocaleString()
-        })
-    )
+    if (!fromCommandStart) console.log('\n' + ''.padEnd(60, '=') + '\n');
+    if (!fromCommandStart)
+        console.log(
+            chalk.green('√ ') +
+                chalk.yellowBright('[koot/build] ') +
+                __('build.complete', {
+                    time: new Date().toLocaleString()
+                })
+        );
 
-    await after(kootConfig)
-    if (!fromCommandStart) console.log(' ')
+    await after(kootConfig);
+    if (!fromCommandStart) console.log(' ');
 
     // 结束
-}
+};
 
 const after = async (config = {}) => {
-    const ENV = process.env.WEBPACK_BUILD_ENV
+    const ENV = process.env.WEBPACK_BUILD_ENV;
 
-    const { dist } = config
+    const { dist } = config;
 
     if (ENV === 'prod') {
         // 清理临时目录
-        await fs.remove(getDirTemp())
+        await fs.remove(getDirTemp());
         // 移除临时配置文件
         // emptyTempConfigDir()
     }
 
     // 移除标记文件
-    const fileBuilding = path.resolve(dist, filenameBuilding)
+    const fileBuilding = path.resolve(dist, filenameBuilding);
 
-    if (fs.existsSync(fileBuilding))
-        await fs.remove(fileBuilding)
-}
+    if (fs.existsSync(fileBuilding)) await fs.remove(fileBuilding);
+};
 
 run().catch(err => {
     if (isFromCommandStart()) {
         // throw err
-        return console.error(err)
+        return console.error(err);
     }
-    spinner(chalk.yellowBright('[koot/build] ')).fail()
-    console.trace(err)
-})
+    spinner(chalk.yellowBright('[koot/build] ')).fail();
+    console.trace(err);
+});

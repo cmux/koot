@@ -1,47 +1,53 @@
 # 项目结构
 
+### 模板项目的目录结构
+
 ```
-[app folder]
-├── README.md
-├── node_modules
-├── dist
-├── .eslintrc
-├── .gitignore
-├── babel.config.js
-├── koot.js
-├── koot.bulid.js
-├── package.json
-├── postcss.config.js
-├── logs
-│   ├── dev
-│   ├── online
-│   └── webpack-config
-├── public
-│   ├── favicon.ico
-│   ├── index.html
-│   └── manifest.json
-└── src
-    ├── app
-    │   ├── api
-    │   ├── redux
-    │   │   ├── feature-1
-    │   │   │   ├── initial-state.js
-    │   │   │   ├── actions.js
-    │   │   │   └── reducer.js
-    │   │   ├── action-types.js
-    │   │   └── reducers.js
-    │   ├── lifecycle
-    │   ├── router
-    │   └── ui
-    │       ├── components
-    │       ├── containers
-    │       ├── pages
-    │       ├── base
-    │       └── root
-    ├── server
-    ├── locales
-    ├── webpack
-    └── html.ejs
-
-
+[app]
+├── 📄 README.md
+├── 📄 .eslintrc.js
+├── 📄 .gitignore
+├── 📄 .prettierrc.js
+├── 📄 babel.config.js
+├── 📄 browserslist
+├── 📄 jsconfig.json
+├── 📄 koot.config.js
+├── 📄 package.json
+├── 📄 postcss.config.js
+└── 📂 src
+    ├── 📄 critical.js
+    ├── 📄 global.less
+    ├── 📄 index.ejs
+    ├── 📄 index.inject.js
+    ├── 📂 assets
+    │   └── 📂 public
+    │       └── 📄 favicon.ico
+    ├── 📂 components
+    │   ├── 📂 组件#1
+    │   │   ├── 📄 index.jsx
+    │   │   └── 📄 index.module.less
+    │   └── 📂 组件#2
+    │       ├── 📄 index.jsx
+    │       └── 📄 index.module.less
+    ├── 📂 constants
+    │   ├── 📂 less
+    │   │   └── 📄 colors.less
+    │   └── 📄 action-types.js
+    ├── 📂 locales
+    │   ├── 📄 en.json
+    │   └── 📄 zh.json
+    ├── 📂 routes
+    │   └── 📄 index.js
+    ├── 📂 server
+    ├── 📂 store
+    │   ├── 📄 actions.js
+    │   ├── 📄 index.js
+    │   └── 📄 reducers.js
+    └── 📂 views
+        ├── 📂 视图#1
+        │   ├── 📄 index.jsx
+        │   └── 📄 index.module.less
+        └── 📂 视图#2
+            ├── 📄 index.jsx
+            └── 📄 index.module.less
 ```

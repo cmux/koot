@@ -87,6 +87,7 @@ const validateConfig = async (projectDir = getCwd(), options = {}) => {
     await require('./transform-compatible/template-inject')(kootConfig);
     await require('./transform-compatible/router-related')(kootConfig);
     await require('./transform-compatible/redux-related')(kootConfig);
+    await require('./transform-compatible/i18n-related')(kootConfig);
     await require('./transform-compatible/static-copy-from')(kootConfig);
     await require('./transform-compatible/client-related')(kootConfig);
     await require('./transform-compatible/server-related')(kootConfig);

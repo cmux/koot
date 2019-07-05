@@ -8,9 +8,10 @@
  * 手动创建 Redux Store 时需要的相关对象
  * @type {Object}
  */
-import * as reduxForCreateStore from './React/redux';
+import * as _reduxForCreateStore from './React/redux';
 
-export { reduxForCreateStore };
+const { createStore, ...reduxForCreateStore } = _reduxForCreateStore;
+export { createStore, reduxForCreateStore };
 
 /**
  * 通用的高阶组件/方法的装饰器

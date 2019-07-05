@@ -2,6 +2,7 @@ module.exports = {
     type: 'react',
     dist: './dist',
     cookiesToStore: true,
+    sessionStore: false,
     i18n: false,
     pwa: true,
     aliases: {},
@@ -21,5 +22,5 @@ module.exports = {
     classNameHashLength: 6,
     bundleVersionsKeep: 2,
 
-    devPort: 3080,
-}
+    devPort: 3080
+};

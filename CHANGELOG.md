@@ -1,3 +1,93 @@
+## 0.10.0 (in-dev)
+
+**2019-??-??** (beta)
+
+核心
+
+-   **重大改动**
+    -   `node.js` 最低版本要求提升到 `8.9.0`
+    -   SSR
+        -   _服务器_: 请求隐藏文件现在会默认返回 404 (可通过配置 `koaStatc.hidden` 来调整这一行为)
+-   **新特性**
+    -   现支持使用 _TypeScript_ 开发 _React_ 组件。详情请参见文档 [TypeScript 开发](https://koot.js.org/#/typescript)
+    -   `extend()` React 高阶组件新增选项 `ssr`：可控制对应组件的 SSR 行为。详情请参见文档 [React 开发](https://koot.js.org/#/react?id=参数)
+    -   SSR
+        -   生产环境服务器现在加入一些基础的安全机制，如防御 XSS 等 (使用 `koa-helmet` 实现) ([#85](https://github.com/cmux/koot/issues/85))
+    -   SPA
+        -   现在生产环境下会创建一个简易服务器的启动脚本文件 (位于打包目录下的 `/.server/index.js`) ([#103](https://github.com/cmux/koot/issues/103))
+    -   **新配置项** `sessionStore` - 将全部或部分 _state_ 对象暂存在 `sessionStorage` 中，在刷新页面后这些 _state_ 会自动还原。详情请参见文档 [配置/sessionStore](https://koot.js.org/#/config?id=sessionStore) ([#104](https://github.com/cmux/koot/issues/104))
+    -   **新函数** `createStore()` - 方便项目更便捷的创建 _Redux store_ ([#105](https://github.com/cmux/koot/issues/105))
+        -   `import { createStore } from 'koot';`
+        -   `export default () => createStore(appReducer, appMiddlewares);`
+        -   具体用法请参见文档 [配置/store](https://koot.js.org/#/config?id=store)
+-   **优化**
+    -   高阶组件 `extend()` 现在会尝试使用来自于最深部的组件的页面信息 (`pageinfo`)，而非来自父级或外部组件
+    -   `service-worker`
+        -   默认的注册逻辑调整，现在会在 `document.onLoad` 时进行注册
+        -   当请求没有本地缓存且访问出错时，现在会输出对应的 HTTP 请求结果
+    -   SSR
+        -   _服务器_: 会尝试自动修改 _Webpack_ 的 `file-loader` 的配置，尽量避免输出静态资源文件 ([#83](https://github.com/cmux/koot/issues/83))
+    -   分析模式
+        -   优化分析模式输出文件名的可读性
+-   添加依赖包
+    -   `@types/node`
+    -   `@types/react`
+    -   `@types/react-dom`
+    -   `@types/react-redux`
+    -   `@types/react-router`
+    -   `execa`
+    -   `koa-helmet`
+    -   `lodash`
+    -   `typescript`
+-   更新依赖包
+    -   major
+        -   `cache-loader` -> _4.0.1_
+        -   `css-loader` -> _3.0.0_
+        -   `file-loader` -> _4.0.0_
+        -   `url-loader` -> _2.0.1_
+        -   `os-locale` -> _4.0.0_
+    -   minor
+        -   `cli-spinners` -> _2.2.0_
+        -   `fs-extra` -> _8.1.0_
+        -   `inquirer` -> _6.4.1_
+        -   `mini-css-extract-plugin` -> _0.7.0_
+        -   `open` -> _6.4.0_
+        -   `react-hot-loader` -> _4.12.2_
+        -   `webpack` -> _4.35.2_
+        -   `webpack-dev-server` -> _3.7.2_
+    -   patch
+        -   `ejs` -> _2.6.2_
+        -   `postcss` -> _7.0.17_
+
+**koot-boilerplate**
+
+-   优化默认文件夹结构
+-   添加 _TypeScript_ 组件开发示例
+-   SSR
+    -   现在服务器环境的打包结果中，不再会出现静态资源文件
+-   更新依赖包
+    -   major
+        -   `husky` -> _3.0.0_
+        -   `lint-staged` -> _9.0.2_
+        -   `svg-url-loader` -> _3.0.0_
+    -   minor
+        -   `eslint-config-koot` -> _0.2.0_
+
+**koot-cli**
+
+-   更新依赖包
+    -   minor
+        -   `fs-extra` -> _8.1.0_
+        -   `inquirer` -> _6.4.1_
+    -   patch
+        -   `semver` -> _6.2.0_
+
+**koot-boilerplate**
+
+-   SSR 项目生产环境服务器端打包时，`performance` 下的 `maxEntrypointSize` 和 `maxAssetSize` 均设置为 `1MB`
+-   **css-loader**
+    -   现在 `url()` 引用的结果会添加引号
+
 ## 0.9.10
 
 **2019-06-26**

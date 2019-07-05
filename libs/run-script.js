@@ -16,13 +16,16 @@ const run = async (script, options = {}) => {
     if (logBeforeRun) logRunScript(script);
 
     const arr = script.split(' ');
-    await new Promise(resolve => {
+    await new Promise((resolve, reject) => {
         const child = spawn(arr.shift(), arr, {
             stdio: 'inherit',
             shell: true
         });
-        child.on('close', () => {
-            resolve();
+        child.on('close', async () => {
+            resolve(child);
+        });
+        child.on('error', err => {
+            reject(err);
         });
     });
 };

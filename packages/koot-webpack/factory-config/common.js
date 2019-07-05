@@ -46,18 +46,8 @@ const factory = async ({
             })
         },
         resolve: {
-            alias: { ...aliases },
-            modules: ['__modules', 'node_modules'],
-            extensions: [
-                '.js',
-                '.jsx',
-                '.mjs',
-                '.json',
-                '.css',
-                '.less',
-                '.sass',
-                '.scss'
-            ]
+            ...resolve,
+            alias: { ...resolve.alias, ...aliases }
         },
         plugins: await plugins(env, stage, defines, remainingKootBuildConfig)
     };
@@ -67,7 +57,8 @@ const factory = async ({
 const plugins = async (
     env,
     stage,
-    defines = {} /*, remainingKootBuildConfig = {}*/
+    defines = {},
+    remainingKootBuildConfig = {}
 ) => {
     const _defaultDefines = {};
     Object.keys(defaultDefines).forEach(key => {
@@ -107,6 +98,7 @@ const plugins = async (
         // }
     }
 
+    // 打入环境变量
     const envsToDefine = [
         'KOOT_VERSION',
         'KOOT_PROJECT_NAME',
@@ -123,6 +115,7 @@ const plugins = async (
         'KOOT_DEV_START_TIME',
         'KOOT_DEV_DLL_FILE_CLIENT',
         'KOOT_DEV_DLL_FILE_SERVER',
+        'KOOT_SESSION_STORE',
         'WEBPACK_BUILD_TYPE',
         'WEBPACK_BUILD_ENV',
         'WEBPACK_CHUNKMAP',
@@ -131,6 +124,18 @@ const plugins = async (
     ];
     if (process.env.KOOT_CLIENT_BUNDLE_SUBFOLDER) {
         envsToDefine.push('KOOT_CLIENT_BUNDLE_SUBFOLDER');
+    }
+    if (
+        remainingKootBuildConfig.sessionStore === true ||
+        remainingKootBuildConfig.sessionStore === 'all' ||
+        (typeof remainingKootBuildConfig.sessionStore === 'object' &&
+            !Array.isArray(remainingKootBuildConfig.sessionStore))
+    ) {
+        process.env.KOOT_SESSION_STORE = JSON.stringify(
+            remainingKootBuildConfig.sessionStore
+        );
+    } else {
+        process.env.KOOT_SESSION_STORE = JSON.stringify(false);
     }
 
     JSON.parse(process.env.KOOT_CUSTOM_ENV_KEYS).forEach(key => {
@@ -203,7 +208,10 @@ const resolve = Object.assign({
     extensions: [
         '.js',
         '.jsx',
+        '.ts',
+        '.tsx',
         '.mjs',
+        '.cjs',
         '.json',
         '.css',
         '.less',

@@ -1,5 +1,32 @@
 /**
  * React SSR 完全测试
+ *
+ * 不同的 Koot 配置会分别使用不同的配置，用以测试多种结果。以下是已有的案例
+ *
+ * **store**
+ * - 默认配置
+ *     - 提供创建 store 的方法
+ *     - 使用封装的 createStore 方法
+ *     - 提供的 reducer 是 Object
+ * - i18n.use="router"
+ *     - 提供创建 store 的方法
+ *     - 使用封装的 createStore 方法
+ *     - 提供的 reducer 是 Function
+ * - bundleVersionsKeep=false
+ *     - 提供创建 store 的方法
+ *     - 使用自定函数
+ * - 0.6版配置
+ *     - 仅提供 reducer 列表
+ *
+ * **sessionStore**
+ * - 默认配置
+ *     - `true` (全部开启)
+ * - i18n.use="router"
+ *     - `all` (全部开启)
+ * - bundleVersionsKeep=false
+ *     - 部分开启，同时混入无效设置
+ * - 0.6版配置
+ *     - 禁用
  */
 
 // jest configuration
@@ -15,17 +42,30 @@ const execSync = require('child_process').exec;
 const exec = util.promisify(require('child_process').exec);
 const puppeteer = require('puppeteer');
 const chalk = require('chalk');
+const get = require('lodash/get');
+const cheerio = require('cheerio');
 
 //
 
 const {
-    changeLocaleQueryKey
+    changeLocaleQueryKey,
+    sessionStoreKey
 } = require('../../../packages/koot/defaults/defines');
+const defaultKootConfig = require('../../../packages/koot/defaults/koot-config');
 const removeTempProjectConfig = require('../../../packages/koot/libs/remove-temp-project-config');
 const sleep = require('../../../packages/koot/utils/sleep');
 const addCommand = require('../../libs/add-command-to-package-json');
 const terminate = require('../../libs/terminate-process');
 const waitForPort = require('../../libs/get-port-from-child-process');
+const filterState = require('../../../packages/koot/libs/filter-state');
+const testHtmlRenderedByKoot = require('../../general-tests/html/rendered-by-koot');
+
+//
+
+const {
+    injectScripts: puppeteerTestInjectScripts,
+    requestHidden404: testRequestHidden404
+} = require('../puppeteer-test');
 
 //
 
@@ -50,7 +90,6 @@ const headless = true;
 //
 
 let browser;
-
 beforeAll(() =>
     puppeteer
         .launch({
@@ -60,8 +99,13 @@ beforeAll(() =>
             browser = theBrowser;
         })
 );
+afterAll(() => browser.close().then(() => (browser = undefined)));
 
-afterAll(() => browser.close());
+//
+
+let lastTime;
+beforeEach(() => (lastTime = Date.now()));
+//
 
 /**
  * 从配置文件中分析服务器端口号
@@ -78,12 +122,13 @@ afterAll(() => browser.close());
  * @async
  * @param {Number} port
  * @param {Object} settings
+ * @param {Object} [settings.kootConfig={}] Koot 配置对象
  * @param {Object} [settings.i18nUseRouter=false] 多语言使用路由模式
  */
 const doTest = async (port, settings = {}) => {
     const context = await browser.createIncognitoBrowserContext();
     const origin = isNaN(port) ? port : `http://127.0.0.1:${port}`;
-    const { i18nUseRouter = false, isDev = false } = settings;
+    const { kootConfig = {}, i18nUseRouter = false, isDev = false } = settings;
 
     const getLocaleId = async page => {
         return await page.evaluate(() =>
@@ -139,6 +184,8 @@ const doTest = async (port, settings = {}) => {
             const pageUrl = await page.url();
             expect(new RegExp(`^${origin}/.+`).test(pageUrl)).toBe(true);
         }
+
+        await testHtmlRenderedByKoot(await res.text());
     }
 
     // 测试: 利用 URL 可切换到对应语种，并且 SSR 数据正确
@@ -230,6 +277,7 @@ const doTest = async (port, settings = {}) => {
                         href: el.getAttribute('href')
                     }))
             );
+            /** @type {Object[]} */
             const linksToSameLang = await page.$$eval(
                 `link[rel="alternate"][hreflang="${localeId}"][href]`,
                 els =>
@@ -243,7 +291,8 @@ const doTest = async (port, settings = {}) => {
             expect(Array.isArray(linksToOtherLang)).toBe(true);
             expect(linksToOtherLang.length).toBeGreaterThan(0);
 
-            for (let { lang, href } of linksToOtherLang) {
+            for (const o of linksToOtherLang) {
+                const { lang, href } = o;
                 await page.goto(href, {
                     waitUntil: 'networkidle0'
                 });
@@ -342,6 +391,238 @@ const doTest = async (port, settings = {}) => {
         expect(result).toBe(testContent);
     }
 
+    // 测试：sessionStore
+    {
+        const context = await browser.createIncognitoBrowserContext();
+        const page = await context.newPage();
+        await page.goto(origin, {
+            waitUntil: 'networkidle0'
+        });
+
+        const { sessionStore = defaultKootConfig.sessionStore } = kootConfig;
+        const getSessionStoreAfterRefresh = async () => {
+            // 点击 GET DATA
+            const selectorBtn =
+                '#koot-debug [data-section="app-name"] [data-button="get-data"]';
+            await Promise.all([
+                page.click(selectorBtn),
+                page.waitForSelector(selectorBtn, {
+                    hidden: true
+                })
+                // page.waitForResponse(response =>
+                //     /\/app-name$/.test(response.url())
+                // )
+            ]);
+
+            const before = await page.evaluate(() => {
+                return {
+                    stateBefore: window.__KOOT_STORE__.getState(),
+                    ssrState: window.__REDUX_STATE__
+                };
+            });
+            before.stateBefore = filterState(before.stateBefore);
+            before.ssrState = filterState(before.ssrState);
+
+            await page.reload({ waitUntil: 'networkidle0' });
+
+            const after = {
+                ...(await page.evaluate(sessionStoreKey => {
+                    let sessionStore;
+                    try {
+                        sessionStore = JSON.parse(
+                            window.sessionStorage.getItem(sessionStoreKey)
+                        );
+                    } catch (e) {}
+
+                    let content;
+                    try {
+                        content = document.querySelector(
+                            '#koot-debug [data-section="app-name"] .section-content'
+                        ).innerText;
+                    } catch (e) {}
+
+                    return {
+                        sessionStore,
+                        state: window.__KOOT_STORE__.getState(),
+                        content
+                    };
+                }, sessionStoreKey))
+            };
+
+            after.state = filterState(after.state);
+
+            return {
+                ...before,
+                ...after
+            };
+        };
+
+        if (sessionStore === true || sessionStore === 'all') {
+            const result = await getSessionStoreAfterRefresh();
+            expect(result.stateBefore).toEqual(result.sessionStore);
+            expect(result.sessionStore).toEqual(result.state);
+            expect(result.state).not.toEqual(result.ssrState);
+            expect(result.content).toBe(result.state.kootTest.app.name);
+        } else if (typeof sessionStore === 'object') {
+            const result = await getSessionStoreAfterRefresh();
+            const checkValue = (obj, accumulatedKey = '') => {
+                Object.keys(obj).forEach(key => {
+                    const value = obj[key];
+                    if (typeof value === 'object') {
+                        checkValue(
+                            value,
+                            accumulatedKey + `[${JSON.stringify(key)}]`
+                        );
+                    } else {
+                        const keyCur =
+                            accumulatedKey + `[${JSON.stringify(key)}]`;
+                        const valueInStateBefore = get(
+                            result.stateBefore,
+                            keyCur
+                        );
+                        const valueInSessionStore = get(
+                            result.sessionStore,
+                            keyCur
+                        );
+                        const valueInStateAfter = get(result.state, keyCur);
+                        if (typeof valueInStateBefore === 'undefined') {
+                            expect(valueInSessionStore).toBe(undefined);
+                            expect(valueInStateAfter).toBe(undefined);
+                        } else {
+                            expect(valueInStateBefore).toBe(
+                                valueInSessionStore
+                            );
+                            expect(valueInSessionStore).toBe(valueInStateAfter);
+                        }
+                    }
+                });
+            };
+            checkValue(sessionStore);
+            if (get(result.state, 'kootTest.app.name')) {
+                expect(result.content).toBe(result.state.kootTest.app.name);
+            } else {
+                expect(result.content).not.toBe(
+                    result.stateBefore.kootTest.app.name
+                );
+            }
+            expect(result.state).not.toEqual(result.ssrState);
+        } else {
+            const result = await getSessionStoreAfterRefresh();
+            expect(result.sessionStore).toBe(null);
+            expect(result.stateBefore).not.toEqual(result.state);
+            expect(result.state.kootTest).toEqual(result.ssrState.kootTest);
+            expect(result.content).not.toBe(
+                result.stateBefore.kootTest.app.name
+            );
+        }
+
+        await page.close();
+        await context.close();
+    }
+
+    // 测试：使用 TypeScript 编写的组件
+    {
+        const pageTS = origin + '/ts';
+        await page.goto(pageTS, {
+            waitUntil: 'networkidle0'
+        });
+        const el = await page.$('[data-koot-test-page="page-ts"]');
+        expect(el).not.toBe(null);
+    }
+
+    // 测试：extend 高阶组件的 SSR 控制
+    {
+        const context = await browser.createIncognitoBrowserContext();
+        const page = await context.newPage();
+
+        const res = await page.goto(origin, {
+            waitUntil: 'networkidle0'
+        });
+
+        const HTML = await res.text();
+        const $ = cheerio.load(HTML);
+
+        const client = {
+            NoSSR: await page.$('#koot-test-no-ssr'),
+            ControledSSR: await page.$('#koot-test-controled-ssr')
+        };
+        const server = {
+            NoSSR: $('#koot-test-no-ssr'),
+            ControledSSR: $('#koot-test-controled-ssr')
+        };
+
+        expect(client.NoSSR).not.toBe(null);
+        expect(client.ControledSSR).not.toBe(null);
+
+        expect(server.NoSSR.text()).toBe('');
+        expect(server.ControledSSR.text()).toBe('Alternative content');
+
+        await page.close();
+        await context.close();
+    }
+
+    // 测试：页面信息应来自深部组件，而非外部父级
+    {
+        const specialMetaKey = 'koot-test-meta-aaa';
+
+        {
+            // 直接访问 /ts
+            const context = await browser.createIncognitoBrowserContext();
+            const page = await context.newPage();
+            const res = await page.goto(origin + '/ts', {
+                waitUntil: 'networkidle0'
+            });
+            const HTML = await res.text();
+            const $ = cheerio.load(HTML);
+
+            const titleSSR = $('head title').text();
+            const specialMetaSSR = $(`meta[${specialMetaKey}]`).attr(
+                specialMetaKey
+            );
+
+            const titleCSR = await page.evaluate(() => document.title);
+            const specialMetaCSR = await page.evaluate(specialMetaKey => {
+                const meta = document.querySelector(`meta[${specialMetaKey}]`);
+                if (meta) return meta.getAttribute(specialMetaKey);
+                return '';
+            }, specialMetaKey);
+
+            expect(titleSSR).toBe('AAA');
+            expect(titleSSR).toBe(titleCSR);
+            expect(specialMetaSSR).toBe('AAA');
+            expect(specialMetaSSR).toBe(specialMetaCSR);
+
+            await page.close();
+            await context.close();
+        }
+
+        {
+            // 路由跳转到 /ts
+            const context = await browser.createIncognitoBrowserContext();
+            const page = await context.newPage();
+            await page.goto(origin, {
+                waitUntil: 'networkidle0'
+            });
+            await Promise.all([
+                page.waitFor(`[data-koot-test-page="page-ts"]`),
+                page.click('a[href$="/ts"]')
+            ]);
+
+            const titleCSR = await page.evaluate(() => document.title);
+            const specialMetaCSR = await page.evaluate(specialMetaKey => {
+                const meta = document.querySelector(`meta[${specialMetaKey}]`);
+                if (meta) return meta.getAttribute(specialMetaKey);
+                return '';
+            }, specialMetaKey);
+
+            expect(titleCSR).toBe('AAA');
+            expect(specialMetaCSR).toBe('AAA');
+
+            await page.close();
+            await context.close();
+        }
+    }
+
     // TODO: 测试: 所有 Webpack 结果资源的访问
 
     // TODO: 测试: 有 extract.all.[*].css
@@ -354,13 +635,17 @@ const doTest = async (port, settings = {}) => {
 
     // TODO: 测试: hydrate 不会触发重新渲染
 
-    // TODO: 测试: 开发环境热更新
+    // TODO: 测试: 开发环境热更新 (JSX & TSX)
 
     // TODO: 测试: 访问404
 
     // TODO: 测试: 访问全局子路由 (例: 路由配置了 /a，强行访问 /a/b)
 
     // TODO: 测试: 同一个通配路由，访问另一个URL，检查同构结果 (connect component 是否可用)
+
+    // 其他公用测试
+    await puppeteerTestInjectScripts(page);
+    await testRequestHidden404(origin, browser);
 
     // 测试: 没有失败的请求
     if (failedResponse.length) {
@@ -402,15 +687,20 @@ const afterTest = async (cwd, title) => {
     // 移除临时项目配置文件
     await removeTempProjectConfig(cwd);
 
-    console.log(chalk.green('√ ') + title);
+    console.log(
+        chalk.green('√ ') +
+            chalk.green(`${(Date.now() - lastTime) / 1000}s `) +
+            title
+    );
 };
 
 //
 
 describe('测试: React 同构项目', () => {
-    for (let { name, dir } of projectsToUse) {
+    for (const project of projectsToUse) {
+        const { name, dir } = project;
         describe(`项目: ${name}`, () => {
-            test(`[Production] 使用 koot-build 命令进行打包`, async () => {
+            test(`[prod] 使用 koot-build 命令进行打包`, async () => {
                 await beforeTest(dir);
 
                 const commandName = `${commandTestBuild}-isomorphic-build`;
@@ -427,17 +717,17 @@ describe('测试: React 同构项目', () => {
 
                 // console.log(stderr)
 
+                // TODO: 依据 chunkmap，判断硬盘里是否有所有的文件，可考虑做成公用的生产环境打包结果测试
+
                 expect(typeof stderr).toBe('string');
                 expect(stderr).toBe('');
 
-                await afterTest(
-                    dir,
-                    '[Production] 使用 koot-build 命令进行打包'
-                );
+                await afterTest(dir, '[prod] 使用 koot-build 命令进行打包');
             });
-            test(`[Production] 使用 koot-start (--no-build) 命令启动服务器并访问`, async () => {
+            test(`[prod] 使用 koot-start (--no-build) 命令启动服务器并访问`, async () => {
                 await beforeTest(dir);
 
+                const configFile = `koot.config.js`;
                 const commandName = `${commandTestBuild}-isomorphic-start-server`;
                 const command = `koot-start --no-build --koot-test`;
                 await addCommand(commandName, command, dir);
@@ -474,18 +764,21 @@ describe('测试: React 同构项目', () => {
                 // })
                 expect(errors.length).toBe(0);
 
-                await doTest(port);
+                await doTest(port, {
+                    kootConfig: require(path.resolve(dir, configFile))
+                });
                 await terminate(child.pid);
 
                 await afterTest(
                     dir,
-                    '[Production] 使用 koot-start (--no-build) 命令启动服务器并访问'
+                    '[prod] 使用 koot-start (--no-build) 命令启动服务器并访问'
                 );
             });
             if (fullTest) {
-                test(`[Production] 使用 koot-start (--no-build) 命令启动服务器并访问 (自定义端口号)`, async () => {
+                test(`[prod] 使用 koot-start (--no-build) 命令启动服务器并访问 (自定义端口号)`, async () => {
                     await beforeTest(dir);
 
+                    const configFile = `koot.config.js`;
                     const port = '8316';
                     const commandName = `${commandTestBuild}-isomorphic-start-server-custom-port`;
                     const command = `koot-start --no-build --port ${port} --koot-test`;
@@ -521,17 +814,20 @@ describe('测试: React 同构项目', () => {
                     // })
                     expect(errors.length).toBe(0);
 
-                    await doTest(port);
+                    await doTest(port, {
+                        kootConfig: require(path.resolve(dir, configFile))
+                    });
                     await terminate(child.pid);
 
                     await afterTest(
                         dir,
-                        '[Production] 使用 koot-start (--no-build) 命令启动服务器并访问 (自定义端口号)'
+                        '[prod] 使用 koot-start (--no-build) 命令启动服务器并访问 (自定义端口号)'
                     );
                 });
-                test(`[Production] 使用打包后的执行文件启动服务器并访问`, async () => {
+                test(`[prod] 使用打包后的执行文件启动服务器并访问`, async () => {
                     await beforeTest(dir);
 
+                    const configFile = `koot.config.js`;
                     const cwd = path.resolve(dir, 'dist');
                     const child = execSync(
                         `node ${path.resolve(cwd, 'index.js')}`,
@@ -555,17 +851,20 @@ describe('测试: React 同构项目', () => {
                     // })
                     expect(errors.length).toBe(0);
 
-                    await doTest(port);
+                    await doTest(port, {
+                        kootConfig: require(path.resolve(dir, configFile))
+                    });
                     await terminate(child.pid);
 
                     await afterTest(
                         dir,
-                        '[Production] 使用打包后的执行文件启动服务器并访问'
+                        '[prod] 使用打包后的执行文件启动服务器并访问'
                     );
                 });
-                test(`[Development] 启动开发模式并访问`, async () => {
+                test(`[dev] 启动开发模式并访问`, async () => {
                     await beforeTest(dir);
 
+                    const configFile = `koot.config.js`;
                     // const port = '8316'
                     const commandName = `${commandTestBuild}-isomorphic-dev`;
                     const command = `koot-dev --no-open --koot-test`;
@@ -592,13 +891,14 @@ describe('测试: React 同构项目', () => {
                     expect(errors.length).toBe(0);
 
                     await doTest(port, {
+                        kootConfig: require(path.resolve(dir, configFile)),
                         isDev: true
                     });
                     await terminate(child.pid);
 
-                    await afterTest(dir, '[Development] 启动开发模式并访问');
+                    await afterTest(dir, '[dev] 启动开发模式并访问');
                 });
-                test(`[Production] 打包并运行生产模式 (i18n.use="router")`, async () => {
+                test(`[prod] 打包并运行生产模式 (i18n.use="router")`, async () => {
                     await beforeTest(dir);
 
                     const configFile = `koot.config.i18n-use-router.js`;
@@ -628,6 +928,7 @@ describe('测试: React 同构项目', () => {
                     expect(errors.length).toBe(0);
 
                     await doTest(port, {
+                        kootConfig: require(path.resolve(dir, configFile)),
                         i18nUseRouter: true
                     });
                     await terminate(child.pid);
@@ -635,15 +936,16 @@ describe('测试: React 同构项目', () => {
                     await fs.remove(dist);
                     await afterTest(
                         dir,
-                        '[Production] 打包并运行生产模式 (i18n.use="router")'
+                        '[prod] 打包并运行生产模式 (i18n.use="router")'
                     );
                 });
-                test(`[Development] 启动开发模式并访问 (i18n.use="router")`, async () => {
+                test(`[dev] 启动开发模式并访问 (i18n.use="router")`, async () => {
                     await beforeTest(dir);
 
+                    const configFile = `koot.config.i18n-use-router.js`;
                     // const port = '8316'
                     const commandName = `${commandTestBuild}-isomorphic-dev-i18n_use_router`;
-                    const command = `koot-dev --no-open --koot-test --config koot.config.i18n-use-router.js`;
+                    const command = `koot-dev --no-open --koot-test --config ${configFile}`;
                     await addCommand(commandName, command, dir);
 
                     const child = execSync(`npm run ${commandName}`, {
@@ -667,6 +969,7 @@ describe('测试: React 同构项目', () => {
                     expect(errors.length).toBe(0);
 
                     await doTest(port, {
+                        kootConfig: require(path.resolve(dir, configFile)),
                         i18nUseRouter: true,
                         isDev: true
                     });
@@ -674,10 +977,10 @@ describe('测试: React 同构项目', () => {
 
                     await afterTest(
                         dir,
-                        '[Development] 启动开发模式并访问 (i18n.use="router")'
+                        '[dev] 启动开发模式并访问 (i18n.use="router")'
                     );
                 });
-                test(`[Production] 打包并运行生产模式 (bundleVersionsKeep=false)`, async () => {
+                test(`[prod] 打包并运行生产模式 (bundleVersionsKeep=false)`, async () => {
                     await beforeTest(dir);
 
                     const configFile = `koot.config.no-bundles-keep.js`;
@@ -706,21 +1009,24 @@ describe('测试: React 同构项目', () => {
 
                     expect(errors.length).toBe(0);
 
-                    await doTest(port);
+                    await doTest(port, {
+                        kootConfig: require(path.resolve(dir, configFile))
+                    });
                     await terminate(child.pid);
 
                     await fs.remove(dist);
                     await afterTest(
                         dir,
-                        '[Production] 打包并运行生产模式 (bundleVersionsKeep=false)'
+                        '[prod] 打包并运行生产模式 (bundleVersionsKeep=false)'
                     );
                 });
-                test(`[Development] 启动开发模式并访问 (bundleVersionsKeep=false)`, async () => {
+                test(`[dev] 启动开发模式并访问 (bundleVersionsKeep=false)`, async () => {
                     await beforeTest(dir);
 
+                    const configFile = `koot.config.no-bundles-keep.js`;
                     // const port = '8316'
                     const commandName = `${commandTestBuild}-isomorphic-dev-no_bundles_keep`;
-                    const command = `koot-dev --no-open --koot-test --config koot.config.no-bundles-keep.js`;
+                    const command = `koot-dev --no-open --koot-test --config ${configFile}`;
                     await addCommand(commandName, command, dir);
 
                     const child = execSync(`npm run ${commandName}`, {
@@ -744,16 +1050,17 @@ describe('测试: React 同构项目', () => {
                     expect(errors.length).toBe(0);
 
                     await doTest(port, {
+                        kootConfig: require(path.resolve(dir, configFile)),
                         isDev: true
                     });
                     await terminate(child.pid);
 
                     await afterTest(
                         dir,
-                        '[Development] 启动开发模式并访问 (bundleVersionsKeep=false)'
+                        '[dev] 启动开发模式并访问 (bundleVersionsKeep=false)'
                     );
                 });
-                test(`[Production] 打包并运行生产模式 (0.6版配置)`, async () => {
+                test(`[prod] 打包并运行生产模式 (0.6版配置)`, async () => {
                     await beforeTest(dir);
 
                     const configFile = `koot.config.old-0.6.js`;
@@ -783,21 +1090,24 @@ describe('测试: React 同构项目', () => {
 
                     expect(errors.length).toBe(0);
 
-                    await doTest(port, {});
+                    await doTest(port, {
+                        kootConfig: require(path.resolve(dir, configFile))
+                    });
                     await terminate(child.pid);
 
                     await fs.remove(dist);
                     await afterTest(
                         dir,
-                        '[Production] 打包并运行生产模式 (0.6版配置)'
+                        '[prod] 打包并运行生产模式 (0.6版配置)'
                     );
                 });
-                test(`[Development] 启动开发模式并访问 (0.6版配置)`, async () => {
+                test(`[dev] 启动开发模式并访问 (0.6版配置)`, async () => {
                     await beforeTest(dir);
 
+                    const configFile = `koot.config.old-0.6.js`;
                     // const port = '8316'
                     const commandName = `${commandTestBuild}-isomorphic-dev-config_old_0.6`;
-                    const command = `koot-dev --no-open --koot-test --config koot.config.old-0.6.js`;
+                    const command = `koot-dev --no-open --koot-test --config ${configFile}`;
                     await addCommand(commandName, command, dir);
 
                     const child = execSync(`npm run ${commandName}`, {
@@ -821,13 +1131,14 @@ describe('测试: React 同构项目', () => {
                     expect(errors.length).toBe(0);
 
                     await doTest(port, {
+                        kootConfig: require(path.resolve(dir, configFile)),
                         isDev: true
                     });
                     await terminate(child.pid);
 
                     await afterTest(
                         dir,
-                        '[Development] 启动开发模式并访问 (0.6版配置)'
+                        '[dev] 启动开发模式并访问 (0.6版配置)'
                     );
                 });
             }

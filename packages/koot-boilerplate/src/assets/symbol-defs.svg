@@ -1,5 +1,14 @@
 <svg aria-hidden="true" style="position: absolute; width: 0; height: 0; overflow: hidden;" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <defs>
+<symbol id="icon-circle-left3" viewBox="0 0 16 16">
+<title>circle-left3</title>
+<path d="M8 16c4.418 0 8-3.582 8-8s-3.582-8-8-8c-4.418 0-8 3.582-8 8s3.582 8 8 8zM8 1.5c3.59 0 6.5 2.91 6.5 6.5s-2.91 6.5-6.5 6.5c-3.59 0-6.5-2.91-6.5-6.5s2.91-6.5 6.5-6.5z"></path>
+<path d="M7.5 4l-4 4 4 4 1.5-1.5-1.5-1.5h4.5v-2h-4.5l1.5-1.5z"></path>
+</symbol>
+<symbol id="icon-circle-left4" viewBox="0 0 16 16">
+<title>circle-left4</title>
+<path d="M8 0c-4.418 0-8 3.582-8 8s3.582 8 8 8 8-3.582 8-8-3.582-8-8-8zM13 9h-5.5l2 2-1.5 1.5-4.5-4.5 4.5-4.5 1.5 1.5-2 2h5.5v2z"></path>
+</symbol>
 <symbol id="icon-new-tab" viewBox="0 0 16 16">
 <title>new-tab</title>
 <path d="M11 13h-8v-8h4.5l2-2h-8.5v12h12v-8.5l-2 2v4.5z"></path>

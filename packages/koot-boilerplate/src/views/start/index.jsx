@@ -1,17 +1,20 @@
 import React from 'react';
 import { extend } from 'koot';
+import { Link } from 'react-router';
 
 import { doc as urlDoc } from '@constants/urls';
 
 import Center from '@components/center';
 import Icon from '@components/icon';
 
+//
+
 const PageStart = extend({
     pageinfo: () => ({
         title: `${__('pages.start.title')} - ${__('title')}`,
         metas: [{ description: __('pages.start.description') }]
     }),
-    styles: require('./styles.component.less')
+    styles: require('./index.module.less')
 })(({ className }) => (
     <Center className={className}>
         <h2 className="title">{__('pages.start.title')}</h2>
@@ -28,10 +31,16 @@ const PageStart = extend({
                 <ListItem key={index} {...item} />
             ))}
         </ul>
+        <p className="bonus">
+            <strong>{__('pages.start.bonus')}</strong>
+            <Link to="/ts">{__('pages.start.bonusComponentInTS')}</Link>
+        </p>
     </Center>
 ));
 
 export default PageStart;
+
+//
 
 const ListItem = ({ title, checkout, learn, content, list, doc }) => (
     <li className="item">

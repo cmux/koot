@@ -80,18 +80,20 @@ module.exports = ({
                 : false;
         if (pwaAuto && typeof injectCache.pathnameSW === 'string') {
             r += `<script id="__koot-pwa-register-sw" type="text/javascript">`;
-            if (isProd)
+            if (isProd) {
                 r +=
                     `if ('serviceWorker' in navigator) {` +
+                    `window.addEventListener('load', function() {` +
                     // + `navigator.serviceWorker.register("${injectCache.pathnameSW}?koot=${process.env.KOOT_VERSION}",`
-                    `navigator.serviceWorker.register("${
-                        injectCache.pathnameSW
-                    }?koot=0.8",` +
+                    `navigator.serviceWorker.register("${injectCache.pathnameSW}?koot=0.8",` +
                     `{scope: '/'}` +
                     `)` +
                     `.catch(err => {console.log('👩‍💻 Service Worker SUPPORTED. ERROR', err)})` +
+                    `});` +
                     `}else{console.log('👩‍💻 Service Worker not supported!')}`;
-            if (isDev) r += `console.log('👩‍💻 No Service Worker for DEV mode.')`;
+            } else if (isDev) {
+                r += `console.log('👩‍💻 No Service Worker for DEV mode.')`;
+            }
             r += `</script>`;
         }
 

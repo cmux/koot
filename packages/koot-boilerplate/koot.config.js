@@ -14,7 +14,7 @@ module.exports = {
      * 项目信息
      *************************************************************************/
 
-    name: 'Koot.js Tech Demo',
+    name: 'Koot.js App',
     type: 'react',
     dist: './dist',
 
@@ -40,7 +40,7 @@ module.exports = {
         '@server': path.resolve('./src/server'),
         '@store': path.resolve('./src/store'),
         '@views': path.resolve('./src/views'),
-        '~vars.less': path.resolve('./src/constants/less-variables/_all.less')
+        '~vars.less': path.resolve('./src/constants/less/_all.less')
     },
 
     defines: {
@@ -103,9 +103,14 @@ module.exports = {
                      */
                     {
                         test: /\.(ico|gif|jpg|jpeg|png|webp)$/,
-                        loader:
-                            'file-loader?context=static&name=assets/[hash:32].[ext]',
-                        exclude: /node_modules/
+                        loader: 'file-loader',
+                        options: {
+                            context: 'static',
+                            name: 'assets/[hash:32].[ext]',
+                            emitFile: Boolean(
+                                process.env.WEBPACK_BUILD_STAGE === 'client'
+                            )
+                        }
                     },
                     {
                         test: /\.svg$/,
@@ -120,11 +125,15 @@ module.exports = {
         };
 
         // 针对：开发环境
-        if (process.env.WEBPACK_BUILD_ENV === 'dev') return configBase;
+        if (process.env.WEBPACK_BUILD_ENV === 'dev')
+            return {
+                ...configBase
+            };
 
         // 针对：生产环境
         // `entry` 项仅针对：客户端
-        return Object.assign({}, configBase, {
+        return {
+            ...configBase,
             entry: {
                 commons: [
                     'react',
@@ -152,7 +161,7 @@ module.exports = {
                     }
                 }
             }
-        });
+        };
     },
     // 更多选项请查阅文档...
 

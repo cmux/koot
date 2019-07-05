@@ -1,7 +1,7 @@
-import React from 'react'
-import { extend } from 'koot'
+import React from 'react';
+import { extend } from 'koot';
 
-import Link from '@components/link'
+import Link from '@components/link';
 
 const Nav = props => {
     // console.log('Nav render', {
@@ -19,13 +19,19 @@ const Nav = props => {
         {
             title: __SPA__ ? '延迟渲染' : __('pages.delayed.title'),
             to: '/delayed'
+        },
+        {
+            title: 'TypeScript',
+            to: '/ts'
         }
-    ]
+    ];
+
     if (!__SPA__)
         items.splice(1, 0, {
             title: __('pages.extend.title'),
             to: '/extend'
-        })
+        });
+
     return (
         <div {...props}>
             <h1 className="logo">Koot.js</h1>
@@ -39,10 +45,10 @@ const Nav = props => {
                 />
             ))}
         </div>
-    )
-}
+    );
+};
 
 export default extend({
     styles: require('./styles.less'),
     name: 'Nav'
-})(Nav)
+})(Nav);

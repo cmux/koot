@@ -20,6 +20,7 @@ import {
     // StyleMapContext,
 } from './styles';
 import clientUpdatePageInfo from './client-update-page-info';
+import { RESET_CERTAIN_STATE } from './redux';
 
 //
 
@@ -152,8 +153,13 @@ export default (options = {}) => WrappedComponent => {
     const {
         connect: _connect = false,
         pageinfo,
-        data: { fetch: _dataFetch, check: dataCheck } = {},
-        styles: _styles
+        data: {
+            fetch: _dataFetch,
+            check: dataCheck,
+            resetWhenUnmount: dataResetWhenUnmount
+        } = {},
+        styles: _styles,
+        ssr = true
         // ttt
         // hot: _hot = true,
         // name
@@ -215,6 +221,7 @@ export default (options = {}) => WrappedComponent => {
                 getRenderPropsFromComponentProps(this.props),
                 pageinfo
             );
+
             clientUpdatePageInfo(title, metas);
         }
 
@@ -303,6 +310,14 @@ export default (options = {}) => WrappedComponent => {
             if (hasStyles) {
                 removeStyle(this.getStyleMap(/*this.context*/), styles);
             }
+            if (typeof dataResetWhenUnmount === 'object') {
+                setTimeout(() => {
+                    this.props.dispatch({
+                        type: RESET_CERTAIN_STATE,
+                        data: dataResetWhenUnmount
+                    });
+                });
+            }
         }
 
         //
@@ -312,6 +327,11 @@ export default (options = {}) => WrappedComponent => {
             // console.log('this', this)
             // console.log('this.kootClassNames', this.kootClassNames)
             // console.log('this.props.className', this.props.className)
+
+            if (__SERVER__) {
+                if (ssr === false) return null;
+                if (ssr !== true) return ssr;
+            }
 
             if (__CLIENT__ && this.kootClassNames instanceof HTMLElement) {
                 // console.log(this.kootClassNames)
@@ -361,6 +381,7 @@ export default (options = {}) => WrappedComponent => {
     //     KootComponent = hot(module)(KootComponent)
     // }
 
+    // console.log(WrappedComponent);
     let KootComponent = hoistStatics(KootReactComponent, WrappedComponent);
 
     // if (typeof styles === 'object' &&
@@ -382,11 +403,14 @@ export default (options = {}) => WrappedComponent => {
      * 将组件注册到同构渲染对象中
      */
     if (__SERVER__) {
-        if (__DEV__) KootComponent.id = devSSRConnectIndex++;
+        if (__DEV__) {
+            KootComponent.id = devSSRConnectIndex++;
+            // KootComponent.pageinfo = pageinfo;
+        }
         const { connectedComponents = [] } = __DEV__
             ? global.__KOOT_SSR__
             : __KOOT_SSR__;
-        connectedComponents.push(KootComponent);
+        connectedComponents.unshift(KootComponent);
     }
 
     return KootComponent;

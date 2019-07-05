@@ -1,18 +1,18 @@
-const inquirer = require('inquirer')
+const inquirer = require('inquirer');
 
-const runScript = require('../libs/run-script')
-const logWelcome = require('../libs/log/welcome')
-const logFinish = require('../libs/log/finish')
+const runScript = require('../libs/run-script');
+const logWelcome = require('../libs/log/welcome');
+const logFinish = require('../libs/log/finish');
+// const terminate = require('./libs/terminate-process');
 
 const run = async () => {
-
-    logWelcome('Test')
+    logWelcome('Test');
 
     const jestScript = {
         reactBase: `./test/cases/react-base`,
         reactIsomorphic: `./test/cases/react-isomorphic`,
         reactSPA: `./test/cases/react-spa`
-    }
+    };
 
     const { value } = await inquirer.prompt({
         type: 'list',
@@ -62,46 +62,43 @@ const run = async () => {
                 name: 'Lib: koot-css-loader',
                 value: './test/cases/libs/koot-css-loader'
             },
-            new inquirer.Separator(),
+            new inquirer.Separator()
         ],
-        default: 'full',
-    })
+        default: 'full'
+    });
 
-    console.log('')
+    console.log('');
 
     const script = (() => {
-
         const jestReactAll = [
             `jest ${jestScript.reactBase}`,
             `jest ${jestScript.reactSPA}`,
             `jest ${jestScript.reactIsomorphic}`
-        ]
+        ];
 
         if (value === 'FULL')
             return [
                 `node ./test/pre-test.js`,
                 `jest "^((?!need-in-order).)*\\.js$"`,
                 ...jestReactAll
-            ].join(' && ')
+            ].join(' && ');
 
         if (value === 'FULL-QUICK')
             return [
                 `jest "^((?!need-in-order).)*\\.js$"`,
                 ...jestReactAll
-            ].join(' && ')
+            ].join(' && ');
 
-        if (value === 'REACT')
-            return [
-                ...jestReactAll
-            ].join(' && ')
+        if (value === 'REACT') return [...jestReactAll].join(' && ');
 
-        return `jest ${value}`
+        return `jest ${value}`;
+    })();
 
-    })()
+    await runScript(script);
 
-    await runScript(script)
+    logFinish();
 
-    logFinish()
-}
+    // throw new Error('Force terminate process');
+};
 
-run()
+run();

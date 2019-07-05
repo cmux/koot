@@ -7,7 +7,7 @@ import Nav from '@components/nav';
 // ----------------------------------------------------------------------------
 
 const App = extend({
-    styles: require('./app.component.less')
+    styles: require('./app.module.less')
 })(({ className, children, location, ...props }) => (
     <React.StrictMode>
         <div
