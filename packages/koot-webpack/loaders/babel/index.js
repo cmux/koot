@@ -38,7 +38,7 @@ module.exports = require('babel-loader').custom(babel => {
 
             const newPresets = [...presets];
             if (__typescript) {
-                newPresets.push([
+                newPresets.unshift([
                     require('@babel/preset-typescript').default,
                     __react
                         ? {
