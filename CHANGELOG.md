@@ -12,7 +12,7 @@
     -   现支持使用 _TypeScript_ 开发 _React_ 组件。详情请参见文档 [TypeScript 开发](https://koot.js.org/#/typescript)
     -   `extend()` React 高阶组件新增选项 `ssr`：可控制对应组件的 SSR 行为。详情请参见文档 [React 开发](https://koot.js.org/#/react?id=参数)
     -   SSR
-        -   生产环境服务器现在加入一些基础的安全机制，如防御 XSS 等 (使用 `koa-helmet` 实现) ([#85](https://github.com/cmux/koot/issues/85))
+        -   生产环境服务器现在加入一些基础的安全机制，如防御 XSS 等 (使用 `koa-helmet` 实现) ([#135](https://github.com/cmux/koot/issues/135))
     -   SPA
         -   现在生产环境下会创建一个简易服务器的启动脚本文件 (位于打包目录下的 `/.server/index.js`) ([#103](https://github.com/cmux/koot/issues/103))
     -   **新配置项** `sessionStore` - 将全部或部分 _state_ 对象暂存在 `sessionStorage` 中，在刷新页面后这些 _state_ 会自动还原。详情请参见文档 [配置/sessionStore](https://koot.js.org/#/config?id=sessionStore) ([#104](https://github.com/cmux/koot/issues/104))
