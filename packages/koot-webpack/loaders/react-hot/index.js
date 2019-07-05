@@ -1,8 +1,13 @@
+// import { getOptions } from 'loader-utils';
+
 // modify based on:
 // https://github.com/NoamELB/react-hot-loader-loader
 
 function AddReactHotLoader(source) {
     if (!source || !/^\s*export\s+default/m.exec(source)) return source;
+
+    // const options = getOptions(this) || {};
+    // const { __typescript = false } = options;
 
     let theSource = getImportLine() + source;
 
@@ -35,7 +40,7 @@ function AddReactHotLoader(source) {
         theSource = transformSourceDefault(theSource);
     }
 
-    // console.log(theSource)
+    // if (__typescript) console.log(theSource);
     return theSource;
 }
 
@@ -87,7 +92,7 @@ function transformSourceForExportClassDirectly(source) {
 // getters
 
 function getImportLine() {
-    return `import {hot} from 'react-hot-loader';\n`;
+    return `import { hot } from 'react-hot-loader';\n`;
 }
 
 function getExportDefaultClassName(source) {
