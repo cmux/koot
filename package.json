@@ -7,6 +7,7 @@
         "bootstrap": "node bootstrap.js",
         "publish": "node ./publish.js",
         "test": "node ./test/index.js",
+        "reset": "node ./reset.js",
         "lerna:changed": "lerna changed",
         "eslint:koot": "eslint \"packages/koot/!(node_modules|logs|dist|dist*|test)/**/*.+(js|jsx)\""
     },
