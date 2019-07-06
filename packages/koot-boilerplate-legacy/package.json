@@ -1,7 +1,7 @@
 {
     "name": "koot-boilerplate-legacy",
     "private": true,
-    "version": "0.10.1",
+    "version": "0.10.2",
     "description": "Koot.js 模板项目",
     "author": {
         "name": "Diablohu",
@@ -33,7 +33,7 @@
     "dependencies": {
         "axios": "0.18.0",
         "cssnano": "4.1.10",
-        "koot": "^0.10.1",
+        "koot": "^0.10.2",
         "normalize.css": "8.0.1",
         "svg-url-loader": "2.3.2"
     },
