@@ -1,3 +1,25 @@
+## 0.10.2
+
+**2019-07-07**
+
+核心
+
+-   更新依赖包
+    -   patch
+        -   `@babel/plugin-proposal-object-rest-spread` -> _7.5.1_
+
+**koot-boilerplate**
+
+-   更新依赖包
+    -   minor
+        -   `lint-staged` -> _9.1.0_
+    -   patch
+        -   `autoprefixer` -> _9.6.1_
+
+**koot-webpack**
+
+-   继续针对开发环境热更新调整生成的 _Webpack_ 配置
+
 ## 0.10.1
 
 **2019-07-06**

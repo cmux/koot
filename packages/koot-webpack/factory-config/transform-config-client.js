@@ -284,14 +284,14 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                         Object.assign({}, hmrOptions, webpackHmr)
                     )
                 );
-                if (!createDll) {
-                    if (typeof result.resolve !== 'object') result.resolve = {};
-                    if (typeof result.resolve.alias !== 'object')
-                        result.resolve.alias = {};
-                    if (!result.resolve.alias['react-dom'])
-                        result.resolve.alias['react-dom'] =
-                            '@hot-loader/react-dom';
-                }
+                // if (!createDll) {
+                //     if (typeof result.resolve !== 'object') result.resolve = {};
+                //     if (typeof result.resolve.alias !== 'object')
+                //         result.resolve.alias = {};
+                //     if (!result.resolve.alias['react-dom'])
+                //         result.resolve.alias['react-dom'] =
+                //             '@hot-loader/react-dom';
+                // }
             }
 
             if (!createDll) {

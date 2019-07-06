@@ -157,6 +157,8 @@ const doTest = async (port, settings = {}) => {
             .catch();
         const pageContent = await page.content();
 
+        await testHtmlRenderedByKoot(await res.text());
+
         // 测试: 页面请求应 OK
         expect(res.ok()).toBe(true);
 
@@ -185,7 +187,17 @@ const doTest = async (port, settings = {}) => {
             expect(new RegExp(`^${origin}/.+`).test(pageUrl)).toBe(true);
         }
 
-        await testHtmlRenderedByKoot(await res.text());
+        // 测试：点击 Link 组件的路由跳转
+        {
+            let err;
+            await page.click('a[href$="/static"]');
+            await page
+                .waitFor(`#main > [data-koot-test-page="static"]`, {
+                    timeout: 5000
+                })
+                .catch(e => (err = e));
+            expect(typeof err).toBe('undefined');
+        }
     }
 
     // 测试: 利用 URL 可切换到对应语种，并且 SSR 数据正确
@@ -630,8 +642,6 @@ const doTest = async (port, settings = {}) => {
     // TODO: 测试: inject 的函数用法
 
     // TODO: 测试: extend connect 的 Array 用法
-
-    // TODO: 测试: 切换路由/点击路由链接：不刷新页面
 
     // TODO: 测试: hydrate 不会触发重新渲染
 

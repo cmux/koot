@@ -32,14 +32,14 @@
         "koot": "^0.10.1"
     },
     "devDependencies": {
-        "autoprefixer": "9.6.0",
+        "autoprefixer": "9.6.1",
         "babel-eslint": "10.0.2",
         "cssnano": "4.1.10",
         "eslint": "5.16.0",
         "eslint-config-koot": "0.2.0",
         "husky": "3.0.0",
         "jest": "24.8.0",
-        "lint-staged": "9.0.2",
+        "lint-staged": "9.1.0",
         "normalize.css": "8.0.1",
         "prettier": "1.18.2",
         "redux-logger": "3.0.6",
