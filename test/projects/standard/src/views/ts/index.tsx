@@ -1,6 +1,8 @@
 import React from 'react';
 import { extend } from 'koot';
 
+console.log('!:!:! KOOT TEST VIEW: TS PAGE !:!:!');
+
 const TSComponentExample: React.ComponentClass = extend({
     pageinfo: (/*state, renderProps*/) => ({
         title: `TypeScript - ${__('title')}`,

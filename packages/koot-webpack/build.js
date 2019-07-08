@@ -601,7 +601,9 @@ module.exports = async (kootConfig = {}) => {
                     'Access-Control-Allow-Origin': '*',
                     ...headers
                 },
-                open: TYPE === 'spa',
+                // 打开页面的操作由 /bin/dev.js 管理并执行
+                // open: TYPE === 'spa',
+                open: false,
                 watchOptions: {
                     // aggregateTimeout: 20 * 1000,
                     ignored: [
