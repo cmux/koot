@@ -6,7 +6,7 @@ import { isFunction, isObject } from './utils.js';
  */
 class ReduxModule {
 
-    constructor( module, moduleName ) {
+    constructor( module, moduleName, preloadedState ) {
 
         const { state, reducers, actions, modules } = module;
         // 
@@ -28,12 +28,25 @@ class ReduxModule {
         //
         this.__external_reducers = this.getExternalModuleReducers( this.__state );
 
+        // 合并preloadedState到state
+        if (preloadedState) {
+            Object.keys(preloadedState).forEach(itemKey => {
+                if (!modules || !modules[itemKey]) {
+                    state[itemKey] = preloadedState[itemKey];
+                }
+            });
+        }
+
         // 实例化所有子模块并存储在 __children 下
         // this.__children[key] = new ReduxModule(this.__modules[key])
         if( Object.keys(this.__modules).length ){
             Object.keys(this.__modules).forEach(moduleName => {
                 const moduleItem = this.__modules[moduleName];
-                this.__children[moduleName] = new ReduxModule(moduleItem, moduleName);
+                let preloadedStateItem;
+                if (preloadedState && preloadedState[moduleName]) {
+                    preloadedStateItem = preloadedState[moduleName];
+                }
+                this.__children[moduleName] = new ReduxModule(moduleItem, moduleName, preloadedStateItem);
             })
         }
     }

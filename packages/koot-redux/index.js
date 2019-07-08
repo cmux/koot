@@ -26,7 +26,7 @@ const createReduxModuleStore = ( module, preloadedState, enhancer ) => {
 
     // 初始化
     // 将对应的数据模型 module 实例化为 reduxModule 对象
-    const moduleInstance = new ReduxModule(module, 'root');
+    const moduleInstance = new ReduxModule(module, 'root', preloadedState);
     // 拿到处理后的 rootReducer 函数
     const rootReducer = moduleInstance.createReducer();
 
