@@ -1,7 +1,7 @@
 import React from 'react';
 import { extend } from 'koot';
 
-console.log('!:!:! KOOT TEST VIEW: WELCOME PAGE !:!:!');
+if (__CLIENT__) console.log('!:!:! KOOT TEST VIEW: WELCOME PAGE !:!:!');
 
 export default extend({
     connect: state => ({

@@ -3,6 +3,14 @@
 /// <reference types="react-dom" />
 
 declare function __(...translateKeys: Array<string>): String;
+/** 当前是否为客户端 */
+declare const __CLIENT__: Boolean;
+/** 当前是否为服务器端 */
+declare const __SERVER__: Boolean;
+/** 当前是否为开发环境 */
+declare const __DEV__: Boolean;
+/** 当前是否为 SPA 模式 */
+declare const __SPA__: Boolean;
 
 //
 

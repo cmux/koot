@@ -30,8 +30,7 @@
  */
 
 // jest configuration
-
-jest.setTimeout(24 * 60 * 60 * 1 * 1000);
+jest.setTimeout(5 * 60 * 1 * 1000);
 
 //
 
@@ -99,7 +98,12 @@ beforeAll(() =>
             browser = theBrowser;
         })
 );
-afterAll(() => browser.close().then(() => (browser = undefined)));
+afterAll(() =>
+    browser
+        .close()
+        .then(() => (browser = undefined))
+        .then(() => exec(`pm2 kill`))
+);
 
 //
 
@@ -577,8 +581,8 @@ const doTest = async (port, settings = {}) => {
     {
         const specialMetaKey = 'koot-test-meta-aaa';
 
+        // 直接访问 /ts
         {
-            // 直接访问 /ts
             const context = await browser.createIncognitoBrowserContext();
             const page = await context.newPage();
             const res = await page.goto(origin + '/ts', {
@@ -608,8 +612,8 @@ const doTest = async (port, settings = {}) => {
             await context.close();
         }
 
+        // 路由跳转到 /ts
         {
-            // 路由跳转到 /ts
             const context = await browser.createIncognitoBrowserContext();
             const page = await context.newPage();
             await page.goto(origin, {
@@ -629,6 +633,51 @@ const doTest = async (port, settings = {}) => {
 
             expect(titleCSR).toBe('AAA');
             expect(specialMetaCSR).toBe('AAA');
+
+            await page.close();
+            await context.close();
+        }
+
+        // 直接访问 /test-pageinfo-deep
+        {
+            const context = await browser.createIncognitoBrowserContext();
+            const page = await context.newPage();
+            const res = await page.goto(origin + '/test-pageinfo-deep', {
+                waitUntil: 'networkidle0'
+            });
+            const HTML = await res.text();
+            const $ = cheerio.load(HTML);
+
+            const titleSSR = $('head title').text();
+            const titleCSR = await page.evaluate(() => document.title);
+
+            expect(titleSSR).toBe('AAA');
+            expect(titleSSR).toBe(titleCSR);
+
+            await page.close();
+            await context.close();
+        }
+
+        // 路由跳转到 /test-pageinfo-deep
+        {
+            const context = await browser.createIncognitoBrowserContext();
+            const page = await context.newPage();
+            await page.goto(origin, {
+                waitUntil: 'networkidle0'
+            });
+            await Promise.all([
+                page.waitFor(`[data-koot-test-page="page-test-pageinfo-deep"]`),
+                // page.click('a[href$="/test-pageinfo-deep"]'),
+                page.evaluate(() => {
+                    document
+                        .querySelector('a[href$="/test-pageinfo-deep"]')
+                        .click();
+                })
+            ]);
+
+            const titleCSR = await page.evaluate(() => document.title);
+
+            expect(titleCSR).toBe('AAA');
 
             await page.close();
             await context.close();
@@ -672,6 +721,8 @@ const doTest = async (port, settings = {}) => {
     // 结束测试
     await page.close();
     await context.close();
+
+    return;
 };
 
 /**
@@ -692,6 +743,7 @@ const beforeTest = async cwd => {
  * @param {String} title
  */
 const afterTest = async (cwd, title) => {
+    // await fs.remove(path.resolve(cwd, 'logs'));
     await sleep(2 * 1000);
     await exec(`pm2 kill`);
     // 移除临时项目配置文件
@@ -704,6 +756,18 @@ const afterTest = async (cwd, title) => {
     );
 };
 
+const emptyDist = async dir => {
+    if (!fs.existsSync(dir)) return;
+    const files = await fs.readdir(dir);
+    for (const filename of files) {
+        const file = path.resolve(dir, filename);
+        const lstat = fs.lstatSync(file);
+        if (!(filename === 'node_modules' && lstat.isDirectory())) {
+            await fs.remove(file);
+        }
+    }
+};
+
 //
 
 describe('测试: React 同构项目', () => {
@@ -712,6 +776,7 @@ describe('测试: React 同构项目', () => {
         describe(`项目: ${name}`, () => {
             test(`[prod] 使用 koot-build 命令进行打包`, async () => {
                 await beforeTest(dir);
+                await emptyDist(path.resolve(dir, 'dist'));
 
                 const commandName = `${commandTestBuild}-isomorphic-build`;
                 const command = `koot-build --env prod --koot-test`;
@@ -727,12 +792,25 @@ describe('测试: React 同构项目', () => {
 
                 // console.log(stderr)
 
-                // TODO: 依据 chunkmap，判断硬盘里是否有所有的文件，可考虑做成公用的生产环境打包结果测试
-
                 expect(typeof stderr).toBe('string');
                 expect(stderr).toBe('');
 
                 await afterTest(dir, '[prod] 使用 koot-build 命令进行打包');
+            });
+            test(`[prod] 打包结果文件正确性测试`, async () => {
+                await beforeTest(dir);
+
+                // TODO: 依据 chunkmap，判断硬盘里是否有所有的文件，可考虑做成公用的生产环境打包结果测试
+
+                // TODO: 检查 client.js，应该没有拆分出去的代码特征
+                // '!:!:! KOOT TEST ROUTES CONFIG !:!:!'
+
+                // TODO: 检查特定的拆分出去的代码，应该有特征
+                // '!:!:! KOOT TEST VIEW: WELCOME PAGE !:!:!'
+                // '!:!:! KOOT TEST VIEW: EXTEND PAGE | TEST 2 !:!:!'
+
+                expect(' ').toBe('');
+                await afterTest(dir, '[prod] 打包结果文件正确性测试');
             });
             test(`[prod] 使用 koot-start (--no-build) 命令启动服务器并访问`, async () => {
                 await beforeTest(dir);
@@ -866,6 +944,7 @@ describe('测试: React 同构项目', () => {
                     });
                     await terminate(child.pid);
 
+                    await emptyDist(cwd);
                     await afterTest(
                         dir,
                         '[prod] 使用打包后的执行文件启动服务器并访问'
@@ -919,7 +998,7 @@ describe('测试: React 同构项目', () => {
                     const commandName = `${commandTestBuild}-isomorphic-start-i18n_use_router`;
                     const command = `koot-start --koot-test --config ${configFile}`;
 
-                    await fs.remove(dist);
+                    await emptyDist(dist);
                     await addCommand(commandName, command, dir);
 
                     const child = execSync(`npm run ${commandName}`, {
@@ -943,7 +1022,7 @@ describe('测试: React 同构项目', () => {
                     });
                     await terminate(child.pid);
 
-                    await fs.remove(dist);
+                    await emptyDist(dist);
                     await afterTest(
                         dir,
                         '[prod] 打包并运行生产模式 (i18n.use="router")'
@@ -1001,7 +1080,7 @@ describe('测试: React 同构项目', () => {
                     const commandName = `${commandTestBuild}-isomorphic-start-no_bundles_keep`;
                     const command = `koot-start --koot-test --config ${configFile}`;
 
-                    await fs.remove(dist);
+                    await emptyDist(dist);
                     await addCommand(commandName, command, dir);
 
                     const child = execSync(`npm run ${commandName}`, {
@@ -1024,7 +1103,7 @@ describe('测试: React 同构项目', () => {
                     });
                     await terminate(child.pid);
 
-                    await fs.remove(dist);
+                    await emptyDist(dist);
                     await afterTest(
                         dir,
                         '[prod] 打包并运行生产模式 (bundleVersionsKeep=false)'
@@ -1081,7 +1160,7 @@ describe('测试: React 同构项目', () => {
                     const commandName = `${commandTestBuild}-isomorphic-start-config_old_0.6`;
                     const command = `koot-start --koot-test --config ${configFile}`;
 
-                    await fs.remove(dist);
+                    await emptyDist(dist);
                     await addCommand(commandName, command, dir);
 
                     const child = execSync(`npm run ${commandName}`, {
@@ -1105,7 +1184,7 @@ describe('测试: React 同构项目', () => {
                     });
                     await terminate(child.pid);
 
-                    await fs.remove(dist);
+                    await emptyDist(dist);
                     await afterTest(
                         dir,
                         '[prod] 打包并运行生产模式 (0.6版配置)'

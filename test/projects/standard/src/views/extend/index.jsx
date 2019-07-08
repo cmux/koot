@@ -6,6 +6,8 @@ import {
     resetServerTimestamp
 } from '@store/infos/actions';
 
+if (__CLIENT__) console.log('!:!:! KOOT TEST VIEW: EXTEND PAGE !:!:!');
+
 // console.log((typeof Store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' Store in [PageExtend]')
 const check = props => {
     if (props.serverTimestamp) return true;
@@ -67,6 +69,8 @@ class PageExtend extends React.Component {
     render() {
         if (!check(this.props)) return <div>LOADING...</div>;
 
+        if (__CLIENT__)
+            console.log('!:!:! KOOT TEST VIEW: EXTEND PAGE | TEST 2 !:!:!');
         // console.log((typeof Store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' Store in [PageExtend] render')
         return (
             <div className={this.props.className}>

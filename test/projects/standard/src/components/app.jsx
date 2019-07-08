@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router';
 import { store, history, localeId, extend } from 'koot';
 
 // console.log('[App]', { store, history, localeId })
@@ -7,6 +8,10 @@ import Nav from './_layout/nav';
 import Main from './_layout/main';
 import Debug from './debug';
 import SSR from './ssr';
+
+import styles from './app.less';
+
+const { wrapper: componentClassName } = styles;
 
 let stateShowed = false;
 
@@ -18,7 +23,7 @@ let stateShowed = false;
         }
         return {};
     },
-    styles: require('./app.less'),
+    styles,
     name: 'App'
 })
 class App extends React.Component {
@@ -57,6 +62,9 @@ class App extends React.Component {
                 </div>
                 <Debug />
                 <SSR />
+                <div className={componentClassName + '-hidden-route-links'}>
+                    <Link to="/test-pageinfo-deep">_</Link>
+                </div>
             </React.StrictMode>
         );
     }
