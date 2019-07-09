@@ -1,3 +1,18 @@
+## 0.10.5
+
+**2019-07-09**
+
+核心
+
+-   更新依赖包
+    -   patch
+        -   `@babel/plugin-proposal-object-rest-spread` -> _7.5.2_
+        -   `@babel/preset-env` -> _7.5.2_
+        -   `@types/node` -> _12.6.1_
+        -   `redux` -> _4.0.2_
+        -   `typescript` -> _3.5.3_
+        -   `webpack` -> _4.35.3_
+
 ## 0.10.4
 
 **2019-07-08**
