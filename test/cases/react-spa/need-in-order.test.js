@@ -21,6 +21,7 @@ const {
 const terminate = require('../../libs/terminate-process');
 const waitForPort = require('../../libs/get-port-from-child-process');
 const testHtmlRenderedByKoot = require('../../general-tests/html/rendered-by-koot');
+const testFilesFromChunkmap = require('../../general-tests/bundle/check-files-from-chunkmap');
 const { requestHidden404: testRequestHidden404 } = require('../puppeteer-test');
 
 //
@@ -183,6 +184,8 @@ describe('测试: React SPA 项目', () => {
                 testFileFromFilelist(chunkNameExtractCss + '.css');
                 testFileFromFilelist(chunkNameExtractCssForImport + '.css');
 
+                await testFilesFromChunkmap(dist);
+
                 // TODO: 测试: 有 extract.all.[*].css
             });
 
@@ -256,6 +259,8 @@ describe('测试: React SPA 项目', () => {
                 await testSpaServer(dist).catch(e => {
                     errors.push(e);
                 });
+
+                // TODO: 在设置了 sw 时有 sw 注册且没有报错
 
                 await context.close();
                 await browser.close();

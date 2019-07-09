@@ -4,6 +4,8 @@
 
 核心
 
+-   **错误修正**
+    -   修正：SPA `index.html` 中没有加载 `service-worker`
 -   更新依赖包
     -   patch
         -   `@babel/plugin-proposal-object-rest-spread` -> _7.5.2_

@@ -36,6 +36,7 @@ const addCommand = require('../../libs/add-command-to-package-json');
 const terminate = require('../../libs/terminate-process');
 const waitForPort = require('../../libs/get-port-from-child-process');
 const testHtmlRenderedByKoot = require('../../general-tests/html/rendered-by-koot');
+const testFilesFromChunkmap = require('../../general-tests/bundle/check-files-from-chunkmap');
 
 //
 
@@ -173,6 +174,8 @@ const doTest = async (port, settings = {}) => {
     await puppeteerTestInjectScripts(page);
     await testRequestHidden404(origin, browser);
 
+    // TODO: 在设置了 sw 时有 sw 注册且没有报错
+
     // 测试: 没有失败的请求
     if (failedResponse.length) {
         console.log(
@@ -231,6 +234,11 @@ describe('测试: React 同构项目', () => {
             test(`ENV: prod`, async () => {
                 await beforeTest(dir);
 
+                const configFile = `koot.config.js`;
+                const dist = path.resolve(dir, 'dist');
+                if (fs.existsSync(dist)) fs.emptyDirSync(dist);
+                else fs.removeSync(dist);
+
                 const customEnv = {
                     aaaaa: '' + Math.floor(Math.random() * 10000),
                     bbbbb: 'a1b2c3'
@@ -253,7 +261,7 @@ describe('测试: React 同构项目', () => {
                 const errors = [];
 
                 await waitForPort(child);
-                const port = require(path.resolve(dir, 'koot.config.js')).port;
+                const port = require(path.resolve(dir, configFile)).port;
                 child.stderr.on('data', err => {
                     errors.push(err);
                 });
@@ -262,12 +270,13 @@ describe('测试: React 同构项目', () => {
 
                 // server-side 打包结果不应出现静态资源目录
                 expect(
-                    fs.existsSync(path.resolve(dir, 'dist/server/index.js'))
+                    fs.existsSync(path.resolve(dist, 'server/index.js'))
                 ).toBe(true);
-                expect(
-                    fs.existsSync(path.resolve(dir, 'dist/server/assets'))
-                ).toBe(false);
+                expect(fs.existsSync(path.resolve(dist, 'server/assets'))).toBe(
+                    false
+                );
 
+                await testFilesFromChunkmap(dist);
                 await doTest(port, {
                     customEnv
                 });
@@ -275,6 +284,10 @@ describe('测试: React 同构项目', () => {
                     enableJavascript: false,
                     customEnv
                 });
+
+                if (fs.existsSync(dist)) fs.emptyDirSync(dist);
+                else fs.removeSync(dist);
+
                 await terminate(child.pid);
                 await afterTest(dir, 'ENV: prod');
             });
@@ -363,6 +376,8 @@ describe('测试: React 同构项目', () => {
                         path.resolve(dist, 'public/service-worker.js')
                     )
                 ).toBe(true);
+
+                await testFilesFromChunkmap(dist);
 
                 await fs.remove(dist);
                 await afterTest(dir, '[config] bundleVersionsKeep: false');

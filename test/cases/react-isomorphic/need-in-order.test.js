@@ -56,8 +56,10 @@ const sleep = require('../../../packages/koot/utils/sleep');
 const addCommand = require('../../libs/add-command-to-package-json');
 const terminate = require('../../libs/terminate-process');
 const waitForPort = require('../../libs/get-port-from-child-process');
+const checkForChunkmap = require('../../libs/check-for-chunkmap');
 const filterState = require('../../../packages/koot/libs/filter-state');
 const testHtmlRenderedByKoot = require('../../general-tests/html/rendered-by-koot');
+const testFilesFromChunkmap = require('../../general-tests/bundle/check-files-from-chunkmap');
 
 //
 
@@ -702,6 +704,8 @@ const doTest = async (port, settings = {}) => {
 
     // TODO: 测试: 同一个通配路由，访问另一个URL，检查同构结果 (connect component 是否可用)
 
+    // TODO: 在设置了 sw 时有 sw 注册且没有报错
+
     // 其他公用测试
     await puppeteerTestInjectScripts(page);
     await testRequestHidden404(origin, browser);
@@ -723,6 +727,35 @@ const doTest = async (port, settings = {}) => {
     await context.close();
 
     return;
+};
+
+/**
+ * 测试代码分割
+ * @async
+ * @param {String} dist
+ */
+const testCodeSplitting = async dist => {
+    const check = chunkmap => {
+        const { '.files': files } = chunkmap;
+        const { 'client.js': client, 'PageHome.js': home } = files;
+
+        expect(
+            fs
+                .readFileSync(path.resolve(dist, client))
+                .includes('!:!:! KOOT TEST ROUTES CONFIG !:!:!')
+        ).toBe(true);
+        expect(
+            fs
+                .readFileSync(path.resolve(dist, client))
+                .includes('!:!:! KOOT TEST VIEW: WELCOME PAGE !:!:!')
+        ).toBe(false);
+        expect(
+            fs
+                .readFileSync(path.resolve(dist, home))
+                .includes('!:!:! KOOT TEST VIEW: WELCOME PAGE !:!:!')
+        ).toBe(true);
+    };
+    await checkForChunkmap(dist, check);
 };
 
 /**
@@ -778,6 +811,12 @@ describe('测试: React 同构项目', () => {
                 await beforeTest(dir);
                 await emptyDist(path.resolve(dir, 'dist'));
 
+                const configFile = `koot.config.js`;
+                const dist = path.resolve(
+                    dir,
+                    require(path.resolve(dir, configFile)).dist
+                );
+
                 const commandName = `${commandTestBuild}-isomorphic-build`;
                 const command = `koot-build --env prod --koot-test`;
                 await addCommand(commandName, command, dir);
@@ -795,22 +834,9 @@ describe('测试: React 同构项目', () => {
                 expect(typeof stderr).toBe('string');
                 expect(stderr).toBe('');
 
+                await testFilesFromChunkmap(dist);
+                await testCodeSplitting(dist);
                 await afterTest(dir, '[prod] 使用 koot-build 命令进行打包');
-            });
-            test(`[prod] 打包结果文件正确性测试`, async () => {
-                await beforeTest(dir);
-
-                // TODO: 依据 chunkmap，判断硬盘里是否有所有的文件，可考虑做成公用的生产环境打包结果测试
-
-                // TODO: 检查 client.js，应该没有拆分出去的代码特征
-                // '!:!:! KOOT TEST ROUTES CONFIG !:!:!'
-
-                // TODO: 检查特定的拆分出去的代码，应该有特征
-                // '!:!:! KOOT TEST VIEW: WELCOME PAGE !:!:!'
-                // '!:!:! KOOT TEST VIEW: EXTEND PAGE | TEST 2 !:!:!'
-
-                expect(' ').toBe('');
-                await afterTest(dir, '[prod] 打包结果文件正确性测试');
             });
             test(`[prod] 使用 koot-start (--no-build) 命令启动服务器并访问`, async () => {
                 await beforeTest(dir);
@@ -1016,6 +1042,8 @@ describe('测试: React 同构项目', () => {
 
                     expect(errors.length).toBe(0);
 
+                    await testFilesFromChunkmap(dist);
+                    await testCodeSplitting(dist);
                     await doTest(port, {
                         kootConfig: require(path.resolve(dir, configFile)),
                         i18nUseRouter: true
@@ -1098,6 +1126,8 @@ describe('测试: React 同构项目', () => {
 
                     expect(errors.length).toBe(0);
 
+                    await testFilesFromChunkmap(dist);
+                    await testCodeSplitting(dist);
                     await doTest(port, {
                         kootConfig: require(path.resolve(dir, configFile))
                     });
@@ -1179,6 +1209,8 @@ describe('测试: React 同构项目', () => {
 
                     expect(errors.length).toBe(0);
 
+                    await testFilesFromChunkmap(dist);
+                    await testCodeSplitting(dist);
                     await doTest(port, {
                         kootConfig: require(path.resolve(dir, configFile))
                     });

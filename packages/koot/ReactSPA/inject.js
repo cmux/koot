@@ -1,15 +1,17 @@
-const validateInject = require('../React/validate-inject')
+const validateInject = require('../React/validate-inject');
 
 module.exports = (options = {}) => {
     const {
+        injectCache,
         localeId,
         filemap,
         entrypoints,
         needInjectCritical,
-        compilation,
-    } = options
+        compilation
+    } = options;
 
     return validateInject({
+        injectCache,
         localeId,
 
         filemap,
@@ -22,6 +24,6 @@ module.exports = (options = {}) => {
         stylesHtml: '',
         reduxHtml: '',
 
-        needInjectCritical,
-    })
-}
+        needInjectCritical
+    });
+};

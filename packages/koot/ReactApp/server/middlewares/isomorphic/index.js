@@ -69,7 +69,7 @@ const middlewareIsomorphic = (options = {}) => {
             entrypoints.set(thisLocaleId, chunkmap[l]['.entrypoints']);
             filemap.set(thisLocaleId, chunkmap[l]['.files']);
             templateInjectCache.set(thisLocaleId, {
-                pathnameSW: getSWPathname(thisLocaleId)
+                pathnameSW: getSWPathname(chunkmap[l])
             });
             // styleMap.set(thisLocaleId, {})
         }
@@ -77,7 +77,7 @@ const middlewareIsomorphic = (options = {}) => {
         entrypoints.set('', chunkmap['.entrypoints']);
         filemap.set('', chunkmap['.files']);
         templateInjectCache.set('', {
-            pathnameSW: getSWPathname()
+            pathnameSW: getSWPathname(chunkmap)
         });
         // styleMap.set('', {})
     }

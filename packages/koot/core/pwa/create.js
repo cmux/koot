@@ -188,13 +188,11 @@ const parsePattern = pattern => {
             });
 
             // 修改 .public-chunkmap.json，添加 service-worker 文件信息
-            chunkmapCurrent['service-worker'] = [
-                `${
-                    chunkmapCurrent['.public']
-                        ? chunkmapCurrent['.public'].replace(/\/$/, '')
-                        : 'public'
-                }${pathnameSW}`
-            ];
+            const inChunkmap =
+                (chunkmapCurrent['.public']
+                    ? chunkmapCurrent['.public'].replace(/\/$/, '')
+                    : '') + pathnameSW;
+            chunkmapCurrent['service-worker'] = [inChunkmap.replace(/^\//, '')];
 
             await fs.writeFile(
                 pathnameChunkmap,
@@ -212,13 +210,11 @@ const parsePattern = pattern => {
         });
 
         // 修改 .public-chunkmap.json，添加 service-worker 文件信息
-        chunkmapFull['service-worker'] = [
-            `${
-                chunkmapFull['.public']
-                    ? chunkmapFull['.public'].replace(/\/$/, '')
-                    : 'public'
-            }${pathname}`
-        ];
+        const inChunkmap =
+            (chunkmapFull['.public']
+                ? chunkmapFull['.public'].replace(/\/$/, '')
+                : '') + pathname;
+        chunkmapFull['service-worker'] = [inChunkmap.replace(/^\//, '')];
 
         await fs.writeFile(
             pathnameChunkmap,

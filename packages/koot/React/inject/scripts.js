@@ -78,14 +78,19 @@ module.exports = ({
             typeof process.env.KOOT_PWA_AUTO_REGISTER === 'string'
                 ? JSON.parse(process.env.KOOT_PWA_AUTO_REGISTER)
                 : false;
-        if (pwaAuto && typeof injectCache.pathnameSW === 'string') {
+        if (
+            pwaAuto &&
+            (process.env.WEBPACK_BUILD_TYPE === 'spa' ||
+                typeof injectCache.pathnameSW === 'string')
+        ) {
             r += `<script id="__koot-pwa-register-sw" type="text/javascript">`;
             if (isProd) {
                 r +=
                     `if ('serviceWorker' in navigator) {` +
                     `window.addEventListener('load', function() {` +
                     // + `navigator.serviceWorker.register("${injectCache.pathnameSW}?koot=${process.env.KOOT_VERSION}",`
-                    `navigator.serviceWorker.register("${injectCache.pathnameSW}?koot=0.8",` +
+                    `navigator.serviceWorker.register("${injectCache.pathnameSW ||
+                        JSON.parse(process.env.KOOT_PWA_PATHNAME)}?koot=0.8",` +
                     `{scope: '/'}` +
                     `)` +
                     `.catch(err => {console.log('👩‍💻 Service Worker SUPPORTED. ERROR', err)})` +
