@@ -164,6 +164,9 @@ module.js
 ```js
     // 派发 action
     this.props.dispatch('SOME_ACTION_NAME')
+    
+    // or
+    this.props.dispatch('SOME_ACTION_NAME', payload)
 ```
 
 ### action函数及参数
