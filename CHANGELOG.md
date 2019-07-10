@@ -1,3 +1,19 @@
+## 0.11.0 (in-dev)
+
+**????-??-??**
+
+核心
+
+-   更新依赖包
+    -   patch
+        -   `@babel/core` -> _7.5.4_
+        -   `@babel/plugin-proposal-object-rest-spread` -> _7.5.4_
+        -   `@babel/preset-env` -> _7.5.4_
+        -   `@types/node` -> _12.6.2_
+        -   `copyfiles` -> _2.1.1_
+        -   `lodash` -> _4.17.13_
+        -   `redux` -> _4.0.3_
+
 ## 0.10.5
 
 **2019-07-09**
