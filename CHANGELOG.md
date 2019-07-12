@@ -5,14 +5,31 @@
 核心
 
 -   更新依赖包
+    -   minor
+        -   `inquirer` -> _6.5.0_
     -   patch
         -   `@babel/core` -> _7.5.4_
         -   `@babel/plugin-proposal-object-rest-spread` -> _7.5.4_
         -   `@babel/preset-env` -> _7.5.4_
         -   `@types/node` -> _12.6.2_
         -   `copyfiles` -> _2.1.1_
-        -   `lodash` -> _4.17.13_
-        -   `redux` -> _4.0.3_
+        -   `lodash` -> _4.17.14_
+        -   `react-hot-loader` -> _4.12.6_
+        -   `redux` -> _4.0.4_
+
+**koot-boilerplate**
+
+-   更新依赖包
+    -   minor
+        -   `lint-staged` -> _9.2.0_
+
+**koot-cli**
+
+-   更新依赖包
+    -   minor
+        -   `inquirer` -> _6.5.0_
+    -   patch
+        -   `isbinaryfile` -> _4.0.2_
 
 ## 0.10.5
 

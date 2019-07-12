@@ -52,6 +52,11 @@ interface extendPageinfoMeta {
     [metaKey: String]: string;
 }
 
+interface kootComponentStyleObject {
+    wrapper: string;
+    css: string;
+}
+
 type extendPageinfoFunction = (
     state: S = any,
     props: P = Object
