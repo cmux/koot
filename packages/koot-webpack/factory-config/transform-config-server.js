@@ -16,7 +16,7 @@ const transformOutputPublicpath = require('./transform-output-publicpath');
 
 const getCwd = require('koot/utils/get-cwd');
 const getDirDistPublic = require('koot/libs/get-dir-dist-public');
-const getDirDevTmp = require('koot/libs/get-dir-dev-tmp');
+// const getDirDevTmp = require('koot/libs/get-dir-dev-tmp');
 
 /**
  * Webpack 配置处理 - 服务器端配置
@@ -83,18 +83,22 @@ module.exports = async (kootBuildConfig = {}) => {
         ...result.plugins
     ];
 
-    if (ENV === 'dev') {
-        if (i18n && Array.isArray(i18n.locales) && i18n.locales.length > 0)
-            result.plugins.push(
-                new CopyWebpackPlugin(
-                    i18n.locales.map(arr => ({
+    if (i18n && Array.isArray(i18n.locales) && i18n.locales.length > 0) {
+        result.plugins.push(
+            new CopyWebpackPlugin(
+                i18n.locales.map(arr => {
+                    return {
                         from: arr[2],
+                        to: arr[3]
                         // to: '../.locales/'
-                        to: path.resolve(getDirDevTmp(), 'locales')
-                    }))
-                )
-            );
+                        // to: path.resolve(getDirDevTmp(), 'locales')
+                    };
+                })
+            )
+        );
+    }
 
+    if (ENV === 'dev') {
         result.watchOptions = {
             ignored: [
                 // /node_modules/,

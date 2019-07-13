@@ -76,7 +76,7 @@ module.exports = async (kootConfigForThisBuild = {}) => {
      * @async
      * @param {Object} options
      * @param {String} [options.localeId] 如果针对语种生成单一配置，请提供语种 ID
-     * @param {Object} [options.localesObj] 如果针对语种生成单一配置，请提供语言包对象
+     * @param {Object} [options.localeFile] 如果针对语种生成单一配置，请提供语言包文件地址
      * @param {Number} [options.index=0] 如果针对语种生成单一配置，请提供当前语种的位置 index
      * @param {Boolean} [options.isSPATemplateInject=false] 是否是针对 SPA 模板注入生成单一配置
      * @returns {Object} Webpack 配置
@@ -84,7 +84,7 @@ module.exports = async (kootConfigForThisBuild = {}) => {
     const createConfig = async (options = {}) => {
         const {
             localeId,
-            localesObj,
+            localeFile,
             isSPATemplateInject = false,
             index = 0
         } = options;
@@ -96,7 +96,7 @@ module.exports = async (kootConfigForThisBuild = {}) => {
         } = process.env;
 
         /** @type {Boolean} 是否为多语言分包模式 */
-        const isSeperateLocale = localeId && typeof localesObj === 'object';
+        const isSeperateLocale = localeId && typeof localeFile === 'string';
 
         /** @type {String} 打包结果基础目录 (最终的打包目录是该目录下的 defaultPublicDirName 目录) */
         const pathPublic = getDirDistPublic(dist, bundleVersionsKeep);
@@ -262,9 +262,9 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                             ? localeId
                             : undefined
                         : undefined,
-                    locales: i18n
+                    localeFile: i18n
                         ? isSeperateLocale
-                            ? localesObj
+                            ? localeFile
                             : undefined
                         : undefined
                 })
@@ -364,18 +364,19 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                 // 多语言拆包模式: 每个语种一次打包
                 const results = [];
                 let index = 0;
-                for (const [localeId, localesObj] of i18n.locales) {
+                for (const locale of i18n.locales) {
+                    const [localeId, , localeFile] = locale;
                     if (isSPANeedTemplateInject)
                         results.push(
                             await createConfig({
                                 localeId,
-                                localesObj,
+                                localeFile,
                                 index,
                                 isSPATemplateInject: true
                             })
                         );
                     results.push(
-                        await createConfig({ localeId, localesObj, index })
+                        await createConfig({ localeId, localeFile, index })
                     );
                     index++;
                 }
