@@ -12,9 +12,23 @@
 -   统一的 CSS 文件的文件内容会被自动写入到 `<head>` 标签内的 `<style>` 标签中
 -   虽然通常情况下已无需要，不过根据 Webpack 入口抽出的 CSS 文件仍可根据具体的需求独立使用
 
+```javascript
+// 在项目代码中引用全局 CSS
+
+// 引用 UI 库 Swiper 的 CSS 文件
+// 该 CSS 文件的内容会自动包含到打包结果的 `extract.all.[hash].css` 文件中
+// 上述文件的内容会在渲染时自动写入到 `<head>` 内
+import 'swiper/dist/css/swiper.min.css';
+
+import React from 'react';
+const SomeComponent = () => <div>{/* */}</div>;
+export default SomeComponent;
+```
+
 **组件 CSS**
 
 -   所有的组件 CSS 必须通过 `extend()` 高阶组件的 `styles` 属性调用
+    -   该高阶组件的具体使用方法请查阅 [React/高阶组件 extend](/react?id=高阶组件-extend)
 -   这些 CSS 文件内必须有一个名为 `.component` 或 `.[name]__component` 的 className
     -   该 className 会被更换为 hash 结果，如 `.a85c6k` 或 `.nav__bjj15a`
 -   `props.className` 会传入到对应的组件，其值为与上述结果对应的 hash 后的 className
@@ -25,7 +39,9 @@
 
 ```less
 // 组件 CSS 文件示例
-// /src/views/home/styles.component.less
+// /src/views/home/index.module.less
+
+// .component 会被自动替换为 hash 结果
 .component {
     .cover {
         width: 100%;
@@ -34,7 +50,28 @@
 }
 ```
 
-### 配置
+```javascript
+// 为 React 组件应用组件 CSS
+// /src/views/home/index.jsx
+
+import { extend } from 'koot';
+
+const PageHome = extend({
+    // ...
+    styles: require('./index.module.less')
+    // ...
+})(({ className }) => {
+    /**
+     * 如果父级组件传入了 `props.className`，该子组件的 `props.className` 会包含父级传入的值以及引用的组件 CSS 的样式名
+     * 如果父级组件没有传入 `props.className`，该子组件的 `props.className` 仅为引用的组件 CSS 的样式名
+     */
+    return <div className={className}>{/* */}</div>;
+});
+
+export default PageHome;
+```
+
+### 配置文件名规则
 
 配置文件 (默认为 `/koot.config.js`) 中的 `moduleCssFilenameTest` 项目为这 2 种 CSS 文件的不包含扩展名的基本文件名正则规则的设置。以下是默认设置:
 
@@ -52,9 +89,9 @@ _默认规则解释:_ 文件名以 `.component.css` `.view.css` 或 `.module.css
 
 原则上，所有以 `.component` 开头的 className 均会被 hash，`component` 之后的字段会原样保留，如：
 
--   ✅ `.component` -> `.adf3`
--   ✅ `.component-wrapper` -> `.adf3-wrapper`
--   ✅ `.component[data-tip="Open"]` -> `.adf3[data-tip="Open"]`
+-   `.component` -> `.adf3`
+-   `.component-wrapper` -> `.adf3-wrapper`
+-   `.component[data-tip="Open"]` -> `.adf3[data-tip="Open"]`
 
 如果是带有连接器的选择器，一般情况下所有以 `.component` 开头的 className 均会被 hash，但当满足以下条件时，没有任何非属性选择器后缀的非第一个的 `.component` 会被忽略
 

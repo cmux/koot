@@ -8,9 +8,11 @@ _Koot.js_ 自动生成的 _Webpack_ 配置会对 TS 文件进行翻译，无需�
 
 ### TSX 代码示例
 
+**函数组件 / Functional Component**
+
 ```typescript
 import React from 'react';
-import { extend, ExtendedProps } from 'koot';
+import { extend } from 'koot';
 import { Link } from 'react-router';
 
 import Icon from '@components/icon';
@@ -41,6 +43,16 @@ const TSFunctionalComponent: React.ComponentClass = extend({
 ));
 
 export default TSFunctionalComponent;
+```
+
+**组件类 / Component Class**
+
+```typescript
+import React from 'react';
+import { extend, ExtendedProps } from 'koot';
+import { Link } from 'react-router';
+
+import Icon from '@components/icon';
 
 // Component Class ============================================================
 
@@ -53,8 +65,9 @@ export default TSFunctionalComponent;
 })
 class TSComponentClass extends React.Component<ExtendedProps> {
     render() {
+        const { className, children } = this.props;
         return (
-            <div className={this.props.className} data-koot-test-page="page-ts">
+            <div className={className} data-koot-test-page="page-ts">
                 <img
                     src={require('@assets/typescript.svg')}
                     className="logo"
@@ -66,11 +79,11 @@ class TSComponentClass extends React.Component<ExtendedProps> {
                     <Icon className="icon" icon="circle-left3" />
                     {__('pages.ts.back')}
                 </Link>
-                {this.props.children}
+                {children}
             </div>
         );
     }
 }
 
-export { TSComponentClass };
+export default TSComponentClass;
 ```

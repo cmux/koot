@@ -45,9 +45,12 @@ _Function_ `connect`
 _Object_ `styles` 组件 CSS
 
 -   一般情况下，该属性为引用 `css` `less` 或 `sass` 文件。
--   为该组件提供或更新 `className`，包含引用的组件 CSS 的命名空间。
+-   为该组件提供或更新 `props.className`
+    -   如果父级组件传入了 `props.className`，该子组件的 `props.className` 会包含父级传入的值以及引用的组件 CSS 的样式名
+    -   如果父级组件没有传入 `props.className`，该子组件的 `props.className` 仅为引用的组件 CSS 的样式名
 -   该组件渲染时，这些 CSS 会作为 `<style>` 标签添加到 `<head>` 中。
 -   该对象需要提供以下属性：_String_ `wrapper` 和 _String_ `css`
+-   有关 CSS 的相关开发指南请查阅 [CSS](/css)
 
 `pageinfo` 修改页面 title 和 meta 标签
 
@@ -182,9 +185,9 @@ export default HomePage;
 
 **注** Koot.js 默认的热更新能力有以下限制：
 
--   仅影响扩展名为 `.jsx` 的文件
-    -   非 React 组件文件请勿以 `.jsx` 作为文件扩展名
--   仅影响 `.jsx` 文件中输出 (`export`) 的组件
+-   仅影响扩展名为 `.jsx` `.tsx` 的文件
+    -   非 React 组件文件请勿以 `.jsx` `.tsx` 作为文件扩展名
+-   仅影响文件中输出 (`export`) 的组件，没有输出的组件不会有热更新
 
 ### 同构对象
 
