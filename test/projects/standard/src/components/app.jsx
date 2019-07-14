@@ -1,6 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router';
-import { store, history, localeId, extend } from 'koot';
+import {
+    store,
+    history,
+    // localeId,
+    extend
+} from 'koot';
 
 // console.log('[App]', { store, history, localeId })
 
@@ -62,8 +67,13 @@ class App extends React.Component {
                 </div>
                 <Debug />
                 <SSR />
-                <div className={componentClassName + '-hidden-route-links'}>
-                    <Link to="/test-pageinfo-deep">_</Link>
+                <div className={componentClassName + '-hidden'}>
+                    <div id="__test-links">
+                        <Link to="/test-pageinfo-deep">_</Link>
+                    </div>
+                    <span id="__test-locales-export-object">
+                        {__('pages.home').title}
+                    </span>
                 </div>
             </React.StrictMode>
         );

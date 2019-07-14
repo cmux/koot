@@ -220,9 +220,11 @@ const doTest = async (port, settings = {}) => {
                 ? `${origin}/${localeId}/extend`
                 : `${origin}/extend?${changeLocaleQueryKey}=${localeId}`;
 
-            await page.goto(gotoUrl, {
+            const res = await page.goto(gotoUrl, {
                 waitUntil: 'networkidle0'
             });
+            const HTML = await res.text();
+            const $ = cheerio.load(HTML);
 
             // 测试语种 ID 正确
             const theLocaleId = await getLocaleId(page);
@@ -255,15 +257,29 @@ const doTest = async (port, settings = {}) => {
             );
             expect(typeof SSRState.infos.serverTimestamp).toBe('number');
             expect(SSRServerTime).toBe(SSRState.infos.serverTimestamp);
+
+            // 测试 __() 输出为对象的情况
+            expect($('#__test-locales-export-object').text()).toBe(
+                infos.exportObject
+            );
+            expect(
+                await page.evaluate(
+                    () =>
+                        document.querySelector('#__test-locales-export-object')
+                            .innerText
+                )
+            ).toBe(infos.exportObject);
         };
 
         await testTargetLocaleId('zh', {
             title: '组件扩展 - Koot.js 模板项目',
-            description: '简介：Koot.js 组件扩展'
+            description: '简介：Koot.js 组件扩展',
+            exportObject: '欢迎'
         });
         await testTargetLocaleId('en', {
             title: 'Component Extend - Koot.js boilerplate',
-            description: 'Summary information for Koot.js Component Extend.'
+            description: 'Summary information for Koot.js Component Extend.',
+            exportObject: 'Welcome'
         });
     }
 
