@@ -6,11 +6,12 @@
  * **store**
  * - 默认配置
  *     - 提供创建 store 的方法
- *     - 使用封装的 createStore 方法
+ *     - 使用 koot 封装的 createStore 方法
  *     - 提供的 reducer 是 Object
+ *     - 提供 enhancer
  * - i18n.use="router"
  *     - 提供创建 store 的方法
- *     - 使用封装的 createStore 方法
+ *     - 使用 koot 封装的 createStore 方法
  *     - 提供的 reducer 是 Function
  * - bundleVersionsKeep=false
  *     - 提供创建 store 的方法
@@ -134,7 +135,12 @@ beforeEach(() => (lastTime = Date.now()));
 const doTest = async (port, settings = {}) => {
     const context = await browser.createIncognitoBrowserContext();
     const origin = isNaN(port) ? port : `http://127.0.0.1:${port}`;
-    const { kootConfig = {}, i18nUseRouter = false, isDev = false } = settings;
+    const {
+        kootConfig = {},
+        i18nUseRouter = false,
+        isDev = false,
+        selectorForStoreEnhancer
+    } = settings;
 
     const getLocaleId = async page => {
         return await page.evaluate(() =>
@@ -702,6 +708,28 @@ const doTest = async (port, settings = {}) => {
         }
     }
 
+    // 测试: Store enhancer
+    if (typeof selectorForStoreEnhancer === 'string') {
+        const getValue = async () => {
+            const context = await browser.createIncognitoBrowserContext();
+            const page = await context.newPage();
+            const res = await page.goto(origin, {
+                waitUntil: 'domcontentloaded'
+            });
+            const HTML = await res.text();
+            const $ = cheerio.load(HTML);
+            const result = $(selectorForStoreEnhancer).text();
+            await page.close();
+            await context.close();
+            return result;
+        };
+        const value1 = await getValue();
+        await sleep(20);
+        const value2 = await getValue();
+        expect(!!value1).toBe(true);
+        expect(value1).toBe(value2);
+    }
+
     // TODO: 测试: 所有 Webpack 结果资源的访问
 
     // TODO: 测试: 有 extract.all.[*].css
@@ -895,7 +923,9 @@ describe('测试: React 同构项目', () => {
                 expect(errors.length).toBe(0);
 
                 await doTest(port, {
-                    kootConfig: require(path.resolve(dir, configFile))
+                    kootConfig: require(path.resolve(dir, configFile)),
+                    selectorForStoreEnhancer:
+                        '#__test-store-enhancer-server-persist'
                 });
                 await terminate(child.pid);
 
@@ -945,7 +975,9 @@ describe('测试: React 同构项目', () => {
                     expect(errors.length).toBe(0);
 
                     await doTest(port, {
-                        kootConfig: require(path.resolve(dir, configFile))
+                        kootConfig: require(path.resolve(dir, configFile)),
+                        selectorForStoreEnhancer:
+                            '#__test-store-enhancer-server-persist'
                     });
                     await terminate(child.pid);
 
@@ -982,7 +1014,9 @@ describe('测试: React 同构项目', () => {
                     expect(errors.length).toBe(0);
 
                     await doTest(port, {
-                        kootConfig: require(path.resolve(dir, configFile))
+                        kootConfig: require(path.resolve(dir, configFile)),
+                        selectorForStoreEnhancer:
+                            '#__test-store-enhancer-server-persist'
                     });
                     await terminate(child.pid);
 

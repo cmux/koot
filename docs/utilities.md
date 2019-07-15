@@ -22,6 +22,7 @@ import { extend, getLocaleId } from 'koot';
 | `getStore`    | 获取当前的 _Redux store_。有关在 _Koot.js_ 中使用 Redux 和 store 存储空间，详见 [Store](/store) |
 | `getHistory`  | 获取当前的 _History_ 对象                                                                       |
 | `getLocaleId` | 获取当前匹配的语种 ID。有关释义和在 _Koot.js_ 中开发多语言，详见 [多语言](/i18n)                |
+| `createStore` | 创建 _Redux store_。用途与用法详见 [Store/全局函数 createStore](/store?id=全局函数-createstore) |
 
 ---
 

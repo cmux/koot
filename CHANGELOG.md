@@ -6,6 +6,7 @@
 
 -   **优化**
     -   多语言翻译函数 (`__()`) 现支持返回一个对象或数组
+    -   `createStore()` 全局函数现允许传入 store 增强函数 (enhancer)。详情请参见文档 [Store/全局函数 createStore](https://koot.js.org/#/store?id=全局函数-createstore)
     -   SSR
         -   _服务器端_: 现支持有超大型语言包的项目
     -   开发环境

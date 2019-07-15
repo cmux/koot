@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router';
 import {
-    store,
+    getStore,
     history,
     // localeId,
     extend
@@ -34,7 +34,7 @@ let stateShowed = false;
 class App extends React.Component {
     componentDidMount() {
         if (__DEV__) {
-            console.log('redux store', store);
+            console.log('redux store', getStore());
             console.log('history', history);
         }
     }
@@ -59,6 +59,9 @@ class App extends React.Component {
         //     'in __KOOT_SSR__': __KOOT_SSR__.LocaleId
         // });
         // console.log((typeof Store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' Store in [App] render')
+
+        const serverStartTime = getStore().__kootTestServerStartTime;
+
         return (
             <React.StrictMode>
                 <div id="app" className={this.props.className}>
@@ -74,6 +77,11 @@ class App extends React.Component {
                     <span id="__test-locales-export-object">
                         {__('pages.home').title}
                     </span>
+                    {serverStartTime ? (
+                        <span id="__test-store-enhancer-server-persist">
+                            {serverStartTime}
+                        </span>
+                    ) : null}
                 </div>
             </React.StrictMode>
         );

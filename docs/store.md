@@ -23,9 +23,44 @@ _Koot.js_ 使用 _Redux_ 进行 _store_ 的管理。
 
 ### 创建 store
 
-项目中使用的 _Redux store_ 需要自行创建。
+如果项目有使用 _Redux_ 的需求，需要提供创建 `store` 的函数。推荐使用全局函数 `createStore()` 创建 _Redux store_。
 
 创建方式请查阅：[项目配置/store](/config?id=store)。
+
+---
+
+### 全局函数 `createStore`
+
+_Koot.js_ 提供全局函数 `createStore()` 用以便捷的创建 _Redux store_。
+
+`createStore([appReducer [, appMiddlewares [, appEnhancers] ] ])`
+
+TS 定义
+
+```typescript
+import {
+    Store,
+    Middleware,
+    Reducer,
+    StoreEnhancer,
+    ReducersMapObject
+} from 'redux';
+
+export const createStore: (
+    appReducer?: Reducer | ReducersMapObject,
+    appMiddlewares?: Array<Middleware>,
+    appEnhancers?: Array<StoreEnhancer>
+) => Store;
+```
+
+**参数**
+
+-   `appReducer`
+    <br>项目使用的 reducer，可为 `Reducer` (reducer 函数)，也可以为 `ReducersMapObject` (形式为 Object 的列表)
+-   `appMiddlewares`
+    <br>项目的中间件列表
+-   `appEnhancers`
+    <br>项目的 store 增强函数 (enhancer) 列表
 
 ---
 

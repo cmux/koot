@@ -1,7 +1,14 @@
 /// <reference path="global.d.ts" />
 
 import { ComponentType, ReactNode, Component } from 'react';
-import { Store, Dispatch, Middleware, Reducer } from 'redux';
+import {
+    Store,
+    Dispatch,
+    Middleware,
+    Reducer,
+    StoreEnhancer,
+    ReducersMapObject
+} from 'redux';
 import { connect } from 'react-redux';
 
 declare module 'koot';
@@ -95,16 +102,21 @@ interface renderProps {
 
 /** 创建 _Redux store_ */
 export const createStore: (
-    appReducer: Reducer | CombineReducersObject,
-    appMiddlewares: Array<Middleware>
+    appReducer?: AppReducer,
+    appMiddlewares?: AppMiddlewares,
+    appEnhancers?: Array<StoreEnhancer>
 ) => Store;
-interface CombineReducersObject {
-    [reducerName: String]: Reducer;
-}
+
+/** 项目使用的 reducer，可为 `Reducer` (reducer 函数)，也可以为 `ReducersMapObject` (形式为 Object 的列表) */
+type AppReducer = Reducer | ReducersMapObject;
+/** 项目的中间件列表 */
+type AppMiddlewares = Array<Middleware>;
+/** 项目的 store 增强函数 (enhancer) 列表 */
+type AppEnhancers = Array<StoreEnhancer>;
 
 /** 创建 _Redux store_ 时需要用到的内部数据 */
 export interface reduxForCreateStore {
-    reducers: CombineReducersObject;
+    reducers: ReducersMapObject;
     initialState: Object;
     middlewares: Array<Middleware>;
 }

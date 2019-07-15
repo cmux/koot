@@ -129,7 +129,7 @@ module.exports = {
 -   类型: `Pathname:Function`
 -   默认值: _无_
 
-生成 Redux store 的方法函数。
+生成 Redux store 的方法函数。推荐使用全局函数 `createStore()` 创建 _Redux store_。
 
 ```javascript
 /****************************
@@ -151,6 +151,8 @@ const appMiddlewares = require('./middlewares.js');
 
 module.exports = () => createStore(appReducers, appMiddlewares);
 ```
+
+有关 `createStore()` 全局函数的详细用法，请查阅 [Store/全局函数 createStore](/store?id=全局函数-createstore)。
 
 ### cookiesToStore
 
