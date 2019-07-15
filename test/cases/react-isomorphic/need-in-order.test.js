@@ -86,7 +86,7 @@ const projectsToUse = projects.filter(
 
 const commandTestBuild = 'koot-buildtest';
 /** @type {Boolean} 是否进行完整测试。如果为否，仅测试一次打包结果 */
-const fullTest = true;
+const fullTest = false;
 const headless = true;
 
 //
@@ -164,7 +164,7 @@ const doTest = async (port, settings = {}) => {
     {
         const res = await page
             .goto(origin, {
-                waitUntil: 'networkidle0'
+                waitUntil: 'domcontentloaded'
             })
             .catch();
         const pageContent = await page.content();
@@ -227,7 +227,7 @@ const doTest = async (port, settings = {}) => {
                 : `${origin}/extend?${changeLocaleQueryKey}=${localeId}`;
 
             const res = await page.goto(gotoUrl, {
-                waitUntil: 'networkidle0'
+                waitUntil: 'domcontentloaded'
             });
             const HTML = await res.text();
             const $ = cheerio.load(HTML);
@@ -301,7 +301,7 @@ const doTest = async (port, settings = {}) => {
                       urlAppend.includes('?') ? '&' : '?'
                   }${changeLocaleQueryKey}=${toLocaleId}`;
             await page.goto(gotoUrl, {
-                waitUntil: 'networkidle0'
+                waitUntil: 'domcontentloaded'
             });
 
             const localeId = await page.evaluate(() =>
@@ -362,7 +362,7 @@ const doTest = async (port, settings = {}) => {
                     ? `${origin}/${localeIdDelayed}/delayed`
                     : `${origin}/delayed?${changeLocaleQueryKey}=${localeIdDelayed}`;
                 await pageDelayed.goto(gotoUrlDelayed, {
-                    waitUntil: 'networkidle0'
+                    waitUntil: 'domcontentloaded'
                 });
                 const theLocaleId = await getLocaleId(pageDelayed);
                 expect(theLocaleId).toBe(localeIdDelayed);
@@ -374,7 +374,7 @@ const doTest = async (port, settings = {}) => {
                     ? `${origin}/${localeId}`
                     : `${origin}?${changeLocaleQueryKey}=${localeId}`;
                 await page.goto(gotoUrl, {
-                    waitUntil: 'networkidle0'
+                    waitUntil: 'domcontentloaded'
                 });
                 const theLocaleId = await getLocaleId(page);
                 expect(theLocaleId).toBe(localeId);
@@ -391,7 +391,7 @@ const doTest = async (port, settings = {}) => {
         const urlParent = `${origin}/static`;
         await page
             .goto(urlParent, {
-                waitUntil: 'networkidle0'
+                waitUntil: 'domcontentloaded'
             })
             .catch();
         const hasFeature = await page.evaluate(
@@ -564,7 +564,7 @@ const doTest = async (port, settings = {}) => {
     {
         const pageTS = origin + '/ts';
         await page.goto(pageTS, {
-            waitUntil: 'networkidle0'
+            waitUntil: 'domcontentloaded'
         });
         const el = await page.$('[data-koot-test-page="page-ts"]');
         expect(el).not.toBe(null);
@@ -724,10 +724,46 @@ const doTest = async (port, settings = {}) => {
             return result;
         };
         const value1 = await getValue();
-        await sleep(20);
+        await sleep(10 * 1000);
         const value2 = await getValue();
         expect(!!value1).toBe(true);
         expect(value1).toBe(value2);
+    }
+
+    // 测试: 服务器端公共缓存空间
+    {
+        // __test-server-cache
+        let expectG, expectL;
+        const values = {};
+        const getValue = async localeId => {
+            const gotoUrl = i18nUseRouter
+                ? `${origin}/${localeId}/test-server-cache`
+                : `${origin}/test-server-cache?${changeLocaleQueryKey}=${localeId}`;
+            const context = await browser.createIncognitoBrowserContext();
+            const page = await context.newPage();
+            const res = await page.goto(gotoUrl, {
+                waitUntil: 'domcontentloaded'
+            });
+            const HTML = await res.text();
+            const $ = cheerio.load(HTML);
+            const el = $('#__test-server-cache');
+            if (!expectG) expectG = el.attr('data-expect-g');
+            if (!expectL) expectL = el.attr('data-expect-l');
+            const result = el.text();
+            console.log(result);
+            await page.close();
+            await context.close();
+            return result;
+        };
+
+        values.zh1 = await getValue('zh');
+        values.en1 = await getValue('en');
+        await sleep(10 * 1000);
+        values.zh2 = await getValue('zh');
+
+        expect(values.zh1).toBe('');
+        expect(values.en1).toBe(expectG);
+        expect(values.zh2).toBe(expectG + expectL);
     }
 
     // TODO: 测试: 所有 Webpack 结果资源的访问
@@ -1057,7 +1093,9 @@ describe('测试: React 同构项目', () => {
 
                     await doTest(port, {
                         kootConfig: require(path.resolve(dir, configFile)),
-                        isDev: true
+                        isDev: true,
+                        selectorForStoreEnhancer:
+                            '#__test-store-enhancer-server-persist'
                     });
                     await terminate(child.pid);
 

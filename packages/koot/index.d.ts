@@ -26,6 +26,25 @@ export const getStore: () => Store;
 /** 获取封装后的 History 对象 */
 export const getHistory: () => Object;
 
+/**
+ * 获取公用缓存空间
+ * - 如果 `localeId` 为 `true`，返回对应当前语种的独立对象
+ * - 如果 `localeId` 为 string，返回对应语种的独立对象
+ * - 默认返回公用对象
+ *
+ * ---
+ *
+ * - _客户端_: 返回 `window` 上的一个对象
+ * - _服务器端_: 在 session 间共享的对象，服务器启动时创建
+ *
+ * ---
+ *
+ * ! 注1 ! 客户端与服务器端的结果不同，在编写同构逻辑时请注意
+ *
+ * ! 注2 ! 公用对象空间内不包含对应语种的对象，需要对应语种的结果时需要提供 `localeId`
+ */
+export const getCache: (localeId?: LocaleId | boolean) => Object;
+
 // HOC extend() ===============================================================
 
 export interface HOCExtend {

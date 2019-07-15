@@ -79,6 +79,18 @@ export default {
                         if (routeCheck(nextState)) cb(null, module.default);
                     });
                 }
+            },
+            {
+                path: 'test-server-cache',
+                name: 'Test: test-server-cache',
+                getComponent: (nextState, cb) => {
+                    import(
+                        /* webpackChunkName: "PageTestServerCache" */
+                        '@views/test-server-cache'
+                    ).then(module => {
+                        if (routeCheck(nextState)) cb(null, module.default);
+                    });
+                }
             }
         ];
         if (!__SPA__) {

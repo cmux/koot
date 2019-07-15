@@ -2,6 +2,8 @@ import React from 'react';
 import { Link } from 'react-router';
 import {
     getStore,
+    // getCache,
+    // getLocaleId,
     history,
     // localeId,
     extend

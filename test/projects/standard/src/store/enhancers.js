@@ -1,3 +1,5 @@
+import { getCache } from 'koot';
+
 const enhancerServerStartTime = createStore => (
     reducer,
     preloadedState,
@@ -6,7 +8,12 @@ const enhancerServerStartTime = createStore => (
     const store = createStore(reducer, preloadedState, enhancer);
 
     if (__SERVER__) {
-        store.__kootTestServerStartTime = Date.now();
+        const cache = getCache();
+        if (!cache.__kootTestServerStartTime) {
+            const ts = Date.now();
+            cache.__kootTestServerStartTime = ts;
+        }
+        store.__kootTestServerStartTime = cache.__kootTestServerStartTime;
     }
 
     return store;

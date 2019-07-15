@@ -1,7 +1,8 @@
 /* global
-    __KOOT_STORE__:false,
-    __KOOT_HISTORY__:false,
-    __KOOT_LOCALEID__:false,
+    __KOOT_SSR__: false,
+    __KOOT_STORE__: false,
+    __KOOT_HISTORY__: false,
+    __KOOT_LOCALEID__: false,
 */
 
 /**
@@ -52,6 +53,26 @@ export const getHistory = () => {
 };
 export const resetHistory = () => (history = getHistory());
 export let history = (() => getHistory())();
+
+//
+
+export const getCache = localeId => {
+    if (__CLIENT__) {
+        if (typeof window.__KOOT_CACHE__ !== 'object')
+            window.__KOOT_CACHE__ = {};
+        return window.__KOOT_CACHE__;
+    }
+    if (__SERVER__) {
+        const SSR = __DEV__ ? global.__KOOT_SSR__ : __KOOT_SSR__;
+        const cache = SSR.globalCache;
+        if (!cache) return {};
+        if (localeId === true) return cache.get(getLocaleId());
+        if (localeId) return cache.get(localeId) || {};
+        return cache.get('__');
+    }
+};
+
+//
 
 if (__DEV__) {
     global.__KOOT_SSR_SET__ = v => {
