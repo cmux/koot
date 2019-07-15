@@ -20,6 +20,7 @@
         -   `@types/node` -> _12.6.2_
         -   `copyfiles` -> _2.1.1_
         -   `lodash` -> _4.17.14_
+        -   `portfinder` -> _1.0.21_
         -   `react-hot-loader` -> _4.12.6_
         -   `redux` -> _4.0.4_
 
