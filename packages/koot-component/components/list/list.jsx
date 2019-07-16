@@ -325,7 +325,7 @@ class List extends Component {
             config.pagination = false;
         }
         config.size = config.size || 'middle';
-        config.bordered = config.bordered || true;
+        config.bordered = config.bordered === undefined ? true : config.bordered;
     }
 }
 
