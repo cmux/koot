@@ -1,6 +1,6 @@
 /// <reference path="global.d.ts" />
 
-import { ComponentType, ReactNode, Component } from 'react';
+import { ComponentType, ReactNode, FC } from 'react';
 import { Store, Dispatch, Middleware, Reducer } from 'redux';
 import { connect } from 'react-redux';
 
@@ -21,14 +21,22 @@ export const getHistory: () => Object;
 
 // HOC extend() ===============================================================
 
-export interface HOCExtend {
+export interface HOCExtend<ComponentProps> {
     /** React 高阶组件，可赋予目标组件CSS 命名空间、同构数据、更新页面信息等能力。 */
-    (options: extendOptions): (
-        WrappedComponent: ComponentType<ExtendedProps>
-    ) => HOC<ExternalProps>;
+    <ComponentProps = {}>(options: extendOptions): ExtendComponent<
+        ComponentProps
+    >;
 }
-class HOC extends Component {}
-export const extend: HOCExtend;
+interface ExtendComponent<ComponentProps> {
+    (WrappedComponent: FC<ComponentProps & ExtendedProps>): ComponentClass<
+        ComponentProps & ExtendedProps
+    >;
+
+    <P extends ComponentProps>(
+        WrappedComponent: ComponentType<P & ExtendedProps>
+    ): ComponentClass<ComponentProps & ExtendedProps>;
+}
+export const extend: HOCExtend<ComponentProps>;
 
 interface extendOptions {
     connect?: connect;
@@ -75,6 +83,7 @@ export interface ExtendedProps {
     className?: string;
     /** 排除父组件传入的 className 后 extend 高阶组件注入的 className（如果在 extend 高阶组件中传入了 `styles` 属性）*/
     'data-class-name'?: string;
+    // [prop: string]: any;
 }
 
 interface renderProps {
