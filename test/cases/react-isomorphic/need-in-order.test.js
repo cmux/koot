@@ -86,7 +86,7 @@ const projectsToUse = projects.filter(
 
 const commandTestBuild = 'koot-buildtest';
 /** @type {Boolean} 是否进行完整测试。如果为否，仅测试一次打包结果 */
-const fullTest = false;
+const fullTest = true;
 const headless = true;
 
 //
@@ -202,12 +202,19 @@ const doTest = async (port, settings = {}) => {
         // 测试：点击 Link 组件的路由跳转
         {
             let err;
-            await page.click('a[href$="/static"]');
-            await page
-                .waitFor(`#main > [data-koot-test-page="static"]`, {
-                    timeout: 5000
+            // await page.click('a[href$="/static"]');
+            await Promise.all([
+                page
+                    .waitFor(`#main > [data-koot-test-page="static"]`, {
+                        timeout: 5000
+                    })
+                    .catch(e => {
+                        throw e;
+                    }),
+                page.evaluate(() => {
+                    document.querySelector('a[href$="/static"]').click();
                 })
-                .catch(e => (err = e));
+            ]).catch(e => (err = e));
             expect(typeof err).toBe('undefined');
         }
     }
@@ -750,7 +757,7 @@ const doTest = async (port, settings = {}) => {
             if (!expectG) expectG = el.attr('data-expect-g');
             if (!expectL) expectL = el.attr('data-expect-l');
             const result = el.text();
-            console.log(result);
+            // console.log(result);
             await page.close();
             await context.close();
             return result;

@@ -6,15 +6,11 @@ const serverCacheStrings = {
     l: '++'
 };
 
-interface CacheObject {
-    __?: string;
-}
-
 const View: React.FC = () => {
     if (__CLIENT__) return null;
 
-    const globalCache: CacheObject = getCache();
-    const localeCache: CacheObject = getCache(true);
+    const globalCache = getCache();
+    const localeCache = getCache(true);
 
     const serverCache = {
         g: globalCache.__ || '',

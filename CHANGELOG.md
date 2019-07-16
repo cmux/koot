@@ -7,8 +7,8 @@
 -   **新特性**
     -   **新全局函数** `getCache()` - 获取公用缓存空间。具体用法请参见文档 [全局与工具函数/全局函数](https://koot.js.org/#/utilities?id=全局函数)
 -   **优化**
-    -   多语言翻译函数 (`__()`) 现支持返回一个对象或数组
     -   `createStore()` 全局函数现允许传入 store 增强函数 (enhancer)。详情请参见文档 [Store/全局函数 createStore](https://koot.js.org/#/store?id=全局函数-createstore)
+    -   多语言翻译函数 (`__()`) 现支持返回一个对象或数组
     -   SSR
         -   _服务器端_: 现支持有超大型语言包的项目
     -   开发环境
@@ -20,12 +20,13 @@
         -   `@babel/core` -> _7.5.4_
         -   `@babel/plugin-proposal-object-rest-spread` -> _7.5.4_
         -   `@babel/preset-env` -> _7.5.4_
-        -   `@types/node` -> _12.6.2_
+        -   `@types/node` -> _12.6.3_
         -   `copyfiles` -> _2.1.1_
         -   `lodash` -> _4.17.14_
         -   `portfinder` -> _1.0.21_
         -   `react-hot-loader` -> _4.12.6_
         -   `redux` -> _4.0.4_
+        -   `yargs` -> _13.3.0_
 
 **koot-boilerplate**
 
