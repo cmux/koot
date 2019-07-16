@@ -1,4 +1,4 @@
-import { ComponentType, ReactNode, FC } from 'react';
+import { ComponentType, ReactNode, FC, ComponentClass, Component } from 'react';
 import { Store, Dispatch } from 'redux';
 import { connect } from 'react-redux';
 
@@ -15,8 +15,9 @@ interface ExtendComponent<ComponentProps> {
 
     <P extends ComponentProps>(
         WrappedComponent: ComponentType<P & ExtendedProps>
-    ): ComponentClass<ComponentProps & ExtendedProps>;
+    ): HOC<ComponentProps & ExtendedProps>;
 }
+class HOC extends Component {}
 export const extend: HOCExtend<ComponentProps>;
 
 interface extendOptions {
