@@ -5,14 +5,17 @@
 核心
 
 -   **新特性**
-    -   **新全局函数** `getCache()` - 获取公用缓存空间。具体用法请参见文档 [全局与工具函数/全局函数](https://koot.js.org/#/utilities?id=全局函数)
+    -   **新全局函数** `getCache()` - 获取公用缓存空间。具体用法请参见文档 [全局与工具函数/全局函数](https://koot.js.org/#/utilities?id=全局函数) ([#143](https://github.com/cmux/koot/issues/143))
+    -   现在会自动为客户端打包结果中的部分资源文件生成 gzip 版本 (.gz 文件) ([#129](https://github.com/cmux/koot/issues/129))
 -   **优化**
-    -   `createStore()` 全局函数现允许传入 store 增强函数 (enhancer)。详情请参见文档 [Store/全局函数 createStore](https://koot.js.org/#/store?id=全局函数-createstore)
+    -   `createStore()` 全局函数现允许传入 store 增强函数 (enhancer)。详情请参见文档 [Store/全局函数 createStore](https://koot.js.org/#/store?id=全局函数-createstore) ([#144](https://github.com/cmux/koot/issues/144))
     -   多语言翻译函数 (`__()`) 现支持返回一个对象或数组
     -   SSR
-        -   _服务器端_: 现支持有超大型语言包的项目
+        -   _服务器端_: 现支持有超大型语言包的项目 ([#145](https://github.com/cmux/koot/issues/145))
     -   开发环境
         -   _客户端_：减少部分初始的日志输出
+-   添加依赖包
+    -   `compression-webpack-plugin`
 -   更新依赖包
     -   minor
         -   `inquirer` -> _6.5.0_

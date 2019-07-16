@@ -2,8 +2,9 @@ const fs = require('fs-extra');
 const path = require('path');
 const webpack = require('webpack');
 const DefaultWebpackConfig = require('webpack-config').default;
-const CopyWebpackPlugin = require('copy-webpack-plugin');
 
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const CompressionPlugin = require('compression-webpack-plugin');
 const KootI18nPlugin = require('../plugins/i18n');
 const DevModePlugin = require('../plugins/dev-mode');
 const SpaTemplatePlugin = require('../plugins/spa-template');
@@ -200,8 +201,8 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                 result.output.pathinfo = false;
             }
 
+            // 处理 entry
             {
-                // 处理 entry
                 if (typeof result.entry === 'object' && !result.entry.client) {
                     result.entry.client = defaultClientEntry;
                 } else if (typeof result.entry !== 'object') {
@@ -343,6 +344,11 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                         )
                     );
                 }
+            }
+
+            // 生产环境专用
+            if (ENV === 'prod') {
+                result.plugins.push(new CompressionPlugin());
             }
         }
 

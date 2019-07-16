@@ -66,7 +66,8 @@ const testFilesFromChunkmap = require('../../general-tests/bundle/check-files-fr
 
 const {
     injectScripts: puppeteerTestInjectScripts,
-    requestHidden404: testRequestHidden404
+    requestHidden404: testRequestHidden404,
+    criticalAssetsShouldBeGzip: testAssetsGzip
 } = require('../puppeteer-test');
 
 //
@@ -112,7 +113,153 @@ afterAll(() =>
 
 let lastTime;
 beforeEach(() => (lastTime = Date.now()));
+
 //
+
+/**
+ * 生产环境基准测试
+ * @param {string} name
+ * @param {string} dir
+ * @param {string} configFilename
+ * @param {string} script
+ * @param {Object} [extraConing]
+ */
+const testProduction = (
+    name,
+    dir,
+    configFilename,
+    script,
+    extraConing = {}
+) => {
+    const testName = `[prod] 打包并运行生产模式 (${name})`;
+    return test(testName, async () => {
+        await beforeTest(dir);
+
+        const config = require(path.resolve(dir, configFilename));
+        const dist = path.resolve(dir, config.dist);
+        const commandName = `${commandTestBuild}-${script}-production`;
+        const command = `koot-start --koot-test --config ${configFilename}`;
+
+        await emptyDist(dist);
+        await addCommand(commandName, command, dir);
+
+        const child = execSync(`npm run ${commandName}`, {
+            cwd: dir
+        });
+        const errors = [];
+
+        await waitForPort(child);
+        // const port = await getPortFromConfig(dir)
+        const port = require('../../../packages/koot/utils/get-port')(
+            config.port
+        );
+        child.stderr.on('data', err => {
+            errors.push(err);
+        });
+
+        expect(errors.length).toBe(0);
+
+        await testFilesFromChunkmap(dist);
+        await testCodeSplitting(dist);
+        await doPuppeteerTest(port, dist, {
+            kootConfig: config,
+            ...extraConing
+        });
+        await terminate(child.pid);
+
+        await emptyDist(dist);
+        await afterTest(dir, testName);
+    });
+};
+
+/**
+ * 开发环境基准测试
+ * @param {string} name
+ * @param {string} dir
+ * @param {string} configFilename
+ * @param {string} script
+ * @param {Object} [extraConing]
+ */
+const testDevelopment = (
+    name,
+    dir,
+    configFilename,
+    script,
+    extraConing = {}
+) => {
+    const testName = `[dev] 启动开发模式并访问 (${name})`;
+    test(testName, async () => {
+        await beforeTest(dir);
+
+        const config = require(path.resolve(dir, configFilename));
+        // const port = '8316'
+        const commandName = `${commandTestBuild}-${script}-development`;
+        const command = `koot-dev --no-open --koot-test --config ${configFilename}`;
+        await addCommand(commandName, command, dir);
+
+        const child = execSync(`npm run ${commandName}`, {
+            cwd: dir,
+            stdio: ['pipe', 'pipe', 'pipe', 'ipc']
+        });
+        const errors = [];
+
+        const port = await waitForPort(child, / on.*http:.*:([0-9]+)/);
+        child.stderr.on('data', err => {
+            errors.push(err);
+        });
+
+        // console.log({
+        //     port,
+        //     errors,
+        // })
+        expect(errors.length).toBe(0);
+
+        await doPuppeteerTest(port, undefined, {
+            kootConfig: config,
+            isDev: true,
+            ...extraConing
+        });
+        await terminate(child.pid);
+
+        await afterTest(dir, testName);
+    });
+};
+
+const testFull = (...args) => {
+    testProduction(...args);
+    testDevelopment(...args);
+};
+
+//
+
+/**
+ * 测试代码分割
+ * @async
+ * @param {String} dist
+ */
+const testCodeSplitting = async dist => {
+    const check = chunkmap => {
+        const { '.files': files } = chunkmap;
+        const { 'client.js': client, 'PageHome.js': home } = files;
+
+        expect(
+            fs
+                .readFileSync(path.resolve(dist, client))
+                .includes('!:!:! KOOT TEST ROUTES CONFIG !:!:!')
+        ).toBe(true);
+        expect(
+            fs
+                .readFileSync(path.resolve(dist, client))
+                .includes('!:!:! KOOT TEST VIEW: WELCOME PAGE !:!:!')
+        ).toBe(false);
+        expect(
+            fs
+                .readFileSync(path.resolve(dist, home))
+                .includes('!:!:! KOOT TEST VIEW: WELCOME PAGE !:!:!')
+        ).toBe(true);
+    };
+    await checkForChunkmap(dist, check);
+};
 
 /**
  * 从配置文件中分析服务器端口号
@@ -132,7 +279,7 @@ beforeEach(() => (lastTime = Date.now()));
  * @param {Object} [settings.kootConfig={}] Koot 配置对象
  * @param {Object} [settings.i18nUseRouter=false] 多语言使用路由模式
  */
-const doTest = async (port, settings = {}) => {
+const doPuppeteerTest = async (port, dist, settings = {}) => {
     const context = await browser.createIncognitoBrowserContext();
     const origin = isNaN(port) ? port : `http://127.0.0.1:${port}`;
     const {
@@ -796,6 +943,7 @@ const doTest = async (port, settings = {}) => {
     // 其他公用测试
     await puppeteerTestInjectScripts(page);
     await testRequestHidden404(origin, browser);
+    if (!isDev) await testAssetsGzip(origin, dist, browser);
 
     // 测试: 没有失败的请求
     if (failedResponse.length) {
@@ -814,35 +962,6 @@ const doTest = async (port, settings = {}) => {
     await context.close();
 
     return;
-};
-
-/**
- * 测试代码分割
- * @async
- * @param {String} dist
- */
-const testCodeSplitting = async dist => {
-    const check = chunkmap => {
-        const { '.files': files } = chunkmap;
-        const { 'client.js': client, 'PageHome.js': home } = files;
-
-        expect(
-            fs
-                .readFileSync(path.resolve(dist, client))
-                .includes('!:!:! KOOT TEST ROUTES CONFIG !:!:!')
-        ).toBe(true);
-        expect(
-            fs
-                .readFileSync(path.resolve(dist, client))
-                .includes('!:!:! KOOT TEST VIEW: WELCOME PAGE !:!:!')
-        ).toBe(false);
-        expect(
-            fs
-                .readFileSync(path.resolve(dist, home))
-                .includes('!:!:! KOOT TEST VIEW: WELCOME PAGE !:!:!')
-        ).toBe(true);
-    };
-    await checkForChunkmap(dist, check);
 };
 
 /**
@@ -928,6 +1047,7 @@ describe('测试: React 同构项目', () => {
             test(`[prod] 使用 koot-start (--no-build) 命令启动服务器并访问`, async () => {
                 await beforeTest(dir);
 
+                const dist = path.resolve(dir, 'dist');
                 const configFile = `koot.config.js`;
                 const commandName = `${commandTestBuild}-isomorphic-start-server`;
                 const command = `koot-start --no-build --koot-test`;
@@ -965,7 +1085,7 @@ describe('测试: React 同构项目', () => {
                 // })
                 expect(errors.length).toBe(0);
 
-                await doTest(port, {
+                await doPuppeteerTest(port, dist, {
                     kootConfig: require(path.resolve(dir, configFile)),
                     selectorForStoreEnhancer:
                         '#__test-store-enhancer-server-persist'
@@ -981,6 +1101,7 @@ describe('测试: React 同构项目', () => {
                 test(`[prod] 使用 koot-start (--no-build) 命令启动服务器并访问 (自定义端口号)`, async () => {
                     await beforeTest(dir);
 
+                    const dist = path.resolve(dir, 'dist');
                     const configFile = `koot.config.js`;
                     const port = '8316';
                     const commandName = `${commandTestBuild}-isomorphic-start-server-custom-port`;
@@ -1017,7 +1138,7 @@ describe('测试: React 同构项目', () => {
                     // })
                     expect(errors.length).toBe(0);
 
-                    await doTest(port, {
+                    await doPuppeteerTest(port, dist, {
                         kootConfig: require(path.resolve(dir, configFile)),
                         selectorForStoreEnhancer:
                             '#__test-store-enhancer-server-persist'
@@ -1056,7 +1177,7 @@ describe('测试: React 同构项目', () => {
                     // })
                     expect(errors.length).toBe(0);
 
-                    await doTest(port, {
+                    await doPuppeteerTest(port, cwd, {
                         kootConfig: require(path.resolve(dir, configFile)),
                         selectorForStoreEnhancer:
                             '#__test-store-enhancer-server-persist'
@@ -1069,294 +1190,41 @@ describe('测试: React 同构项目', () => {
                         '[prod] 使用打包后的执行文件启动服务器并访问'
                     );
                 });
-                test(`[dev] 启动开发模式并访问`, async () => {
-                    await beforeTest(dir);
 
-                    const configFile = `koot.config.js`;
-                    // const port = '8316'
-                    const commandName = `${commandTestBuild}-isomorphic-dev`;
-                    const command = `koot-dev --no-open --koot-test`;
-                    await addCommand(commandName, command, dir);
-
-                    const child = execSync(`npm run ${commandName}`, {
-                        cwd: dir,
-                        stdio: ['pipe', 'pipe', 'pipe', 'ipc']
-                    });
-                    const errors = [];
-
-                    const port = await waitForPort(
-                        child,
-                        / on.*http:.*:([0-9]+)/
-                    );
-                    child.stderr.on('data', err => {
-                        errors.push(err);
-                    });
-
-                    // console.log({
-                    //     port,
-                    //     errors,
-                    // })
-                    expect(errors.length).toBe(0);
-
-                    await doTest(port, {
-                        kootConfig: require(path.resolve(dir, configFile)),
-                        isDev: true,
+                testDevelopment(
+                    '标准',
+                    dir,
+                    'koot.config.js',
+                    'isomorphic-standard',
+                    {
                         selectorForStoreEnhancer:
                             '#__test-store-enhancer-server-persist'
-                    });
-                    await terminate(child.pid);
+                    }
+                );
 
-                    await afterTest(dir, '[dev] 启动开发模式并访问');
-                });
-                test(`[prod] 打包并运行生产模式 (i18n.use="router")`, async () => {
-                    await beforeTest(dir);
-
-                    const configFile = `koot.config.i18n-use-router.js`;
-                    const dist = path.resolve(
-                        dir,
-                        require(path.resolve(dir, configFile)).dist
-                    );
-                    const commandName = `${commandTestBuild}-isomorphic-start-i18n_use_router`;
-                    const command = `koot-start --koot-test --config ${configFile}`;
-
-                    await emptyDist(dist);
-                    await addCommand(commandName, command, dir);
-
-                    const child = execSync(`npm run ${commandName}`, {
-                        cwd: dir
-                    });
-                    const errors = [];
-
-                    await waitForPort(child);
-                    // const port = await getPortFromConfig(dir)
-                    const port = require(path.resolve(dir, 'koot.config.js'))
-                        .port;
-                    child.stderr.on('data', err => {
-                        errors.push(err);
-                    });
-
-                    expect(errors.length).toBe(0);
-
-                    await testFilesFromChunkmap(dist);
-                    await testCodeSplitting(dist);
-                    await doTest(port, {
-                        kootConfig: require(path.resolve(dir, configFile)),
+                testFull(
+                    'i18n.use="router"',
+                    dir,
+                    'koot.config.i18n-use-router.js',
+                    'isomorphic-i18n_use_router',
+                    {
                         i18nUseRouter: true
-                    });
-                    await terminate(child.pid);
+                    }
+                );
 
-                    await emptyDist(dist);
-                    await afterTest(
-                        dir,
-                        '[prod] 打包并运行生产模式 (i18n.use="router")'
-                    );
-                });
-                test(`[dev] 启动开发模式并访问 (i18n.use="router")`, async () => {
-                    await beforeTest(dir);
+                testFull(
+                    'bundleVersionsKeep=false',
+                    dir,
+                    'koot.config.no-bundles-keep.js',
+                    'isomorphic-no_bundles_keep'
+                );
 
-                    const configFile = `koot.config.i18n-use-router.js`;
-                    // const port = '8316'
-                    const commandName = `${commandTestBuild}-isomorphic-dev-i18n_use_router`;
-                    const command = `koot-dev --no-open --koot-test --config ${configFile}`;
-                    await addCommand(commandName, command, dir);
-
-                    const child = execSync(`npm run ${commandName}`, {
-                        cwd: dir,
-                        stdio: ['pipe', 'pipe', 'pipe', 'ipc']
-                    });
-                    const errors = [];
-
-                    const port = await waitForPort(
-                        child,
-                        / on.*http:.*:([0-9]+)/
-                    );
-                    child.stderr.on('data', err => {
-                        errors.push(err);
-                    });
-
-                    // console.log({
-                    //     port,
-                    //     errors,
-                    // })
-                    expect(errors.length).toBe(0);
-
-                    await doTest(port, {
-                        kootConfig: require(path.resolve(dir, configFile)),
-                        i18nUseRouter: true,
-                        isDev: true
-                    });
-                    await terminate(child.pid);
-
-                    await afterTest(
-                        dir,
-                        '[dev] 启动开发模式并访问 (i18n.use="router")'
-                    );
-                });
-                test(`[prod] 打包并运行生产模式 (bundleVersionsKeep=false)`, async () => {
-                    await beforeTest(dir);
-
-                    const configFile = `koot.config.no-bundles-keep.js`;
-                    const dist = path.resolve(
-                        dir,
-                        require(path.resolve(dir, configFile)).dist
-                    );
-                    const commandName = `${commandTestBuild}-isomorphic-start-no_bundles_keep`;
-                    const command = `koot-start --koot-test --config ${configFile}`;
-
-                    await emptyDist(dist);
-                    await addCommand(commandName, command, dir);
-
-                    const child = execSync(`npm run ${commandName}`, {
-                        cwd: dir
-                    });
-                    const errors = [];
-
-                    await waitForPort(child);
-                    // const port = await getPortFromConfig(dir)
-                    const port = require(path.resolve(dir, 'koot.config.js'))
-                        .port;
-                    child.stderr.on('data', err => {
-                        errors.push(err);
-                    });
-
-                    expect(errors.length).toBe(0);
-
-                    await testFilesFromChunkmap(dist);
-                    await testCodeSplitting(dist);
-                    await doTest(port, {
-                        kootConfig: require(path.resolve(dir, configFile))
-                    });
-                    await terminate(child.pid);
-
-                    await emptyDist(dist);
-                    await afterTest(
-                        dir,
-                        '[prod] 打包并运行生产模式 (bundleVersionsKeep=false)'
-                    );
-                });
-                test(`[dev] 启动开发模式并访问 (bundleVersionsKeep=false)`, async () => {
-                    await beforeTest(dir);
-
-                    const configFile = `koot.config.no-bundles-keep.js`;
-                    // const port = '8316'
-                    const commandName = `${commandTestBuild}-isomorphic-dev-no_bundles_keep`;
-                    const command = `koot-dev --no-open --koot-test --config ${configFile}`;
-                    await addCommand(commandName, command, dir);
-
-                    const child = execSync(`npm run ${commandName}`, {
-                        cwd: dir,
-                        stdio: ['pipe', 'pipe', 'pipe', 'ipc']
-                    });
-                    const errors = [];
-
-                    const port = await waitForPort(
-                        child,
-                        / on.*http:.*:([0-9]+)/
-                    );
-                    child.stderr.on('data', err => {
-                        errors.push(err);
-                    });
-
-                    // console.log({
-                    //     port,
-                    //     errors,
-                    // })
-                    expect(errors.length).toBe(0);
-
-                    await doTest(port, {
-                        kootConfig: require(path.resolve(dir, configFile)),
-                        isDev: true
-                    });
-                    await terminate(child.pid);
-
-                    await afterTest(
-                        dir,
-                        '[dev] 启动开发模式并访问 (bundleVersionsKeep=false)'
-                    );
-                });
-                test(`[prod] 打包并运行生产模式 (0.6版配置)`, async () => {
-                    await beforeTest(dir);
-
-                    const configFile = `koot.config.old-0.6.js`;
-                    const dist = path.resolve(
-                        dir,
-                        require(path.resolve(dir, configFile)).dist
-                    );
-                    const commandName = `${commandTestBuild}-isomorphic-start-config_old_0.6`;
-                    const command = `koot-start --koot-test --config ${configFile}`;
-
-                    await emptyDist(dist);
-                    await addCommand(commandName, command, dir);
-
-                    const child = execSync(`npm run ${commandName}`, {
-                        cwd: dir
-                    });
-                    const errors = [];
-
-                    await waitForPort(child);
-                    // const port = await getPortFromConfig(dir)
-                    const port = require('../../../packages/koot/utils/get-port')(
-                        require(path.resolve(dir, configFile)).port
-                    );
-                    child.stderr.on('data', err => {
-                        errors.push(err);
-                    });
-
-                    expect(errors.length).toBe(0);
-
-                    await testFilesFromChunkmap(dist);
-                    await testCodeSplitting(dist);
-                    await doTest(port, {
-                        kootConfig: require(path.resolve(dir, configFile))
-                    });
-                    await terminate(child.pid);
-
-                    await emptyDist(dist);
-                    await afterTest(
-                        dir,
-                        '[prod] 打包并运行生产模式 (0.6版配置)'
-                    );
-                });
-                test(`[dev] 启动开发模式并访问 (0.6版配置)`, async () => {
-                    await beforeTest(dir);
-
-                    const configFile = `koot.config.old-0.6.js`;
-                    // const port = '8316'
-                    const commandName = `${commandTestBuild}-isomorphic-dev-config_old_0.6`;
-                    const command = `koot-dev --no-open --koot-test --config ${configFile}`;
-                    await addCommand(commandName, command, dir);
-
-                    const child = execSync(`npm run ${commandName}`, {
-                        cwd: dir,
-                        stdio: ['pipe', 'pipe', 'pipe', 'ipc']
-                    });
-                    const errors = [];
-
-                    const port = await waitForPort(
-                        child,
-                        / on.*http:.*:([0-9]+)/
-                    );
-                    child.stderr.on('data', err => {
-                        errors.push(err);
-                    });
-
-                    // console.log({
-                    //     port,
-                    //     errors,
-                    // })
-                    expect(errors.length).toBe(0);
-
-                    await doTest(port, {
-                        kootConfig: require(path.resolve(dir, configFile)),
-                        isDev: true
-                    });
-                    await terminate(child.pid);
-
-                    await afterTest(
-                        dir,
-                        '[dev] 启动开发模式并访问 (0.6版配置)'
-                    );
-                });
+                testFull(
+                    '0.6版配置',
+                    dir,
+                    'koot.config.old-0.6.js',
+                    'isomorphic-config_old_0.6'
+                );
             }
         });
     }

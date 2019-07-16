@@ -30,7 +30,8 @@ const {
     styles: puppeteerTestStyles,
     customEnv: puppeteerTestCustomEnv,
     injectScripts: puppeteerTestInjectScripts,
-    requestHidden404: testRequestHidden404
+    requestHidden404: testRequestHidden404,
+    criticalAssetsShouldBeGzip: testAssetsGzip
 } = require('../puppeteer-test');
 const addCommand = require('../../libs/add-command-to-package-json');
 const terminate = require('../../libs/terminate-process');
@@ -89,9 +90,10 @@ afterEach(() => {});
  * 测试项目
  * @async
  * @param {Number} port
+ * @param {string} dist
  * @param {Object} settings
  */
-const doTest = async (port, settings = {}) => {
+const doTest = async (port, dist, settings = {}) => {
     const { isDev = false, enableJavascript = true, customEnv = {} } = settings;
     customEnv.notexist = undefined;
 
@@ -173,6 +175,7 @@ const doTest = async (port, settings = {}) => {
     await puppeteerTestCustomEnv(page, customEnv);
     await puppeteerTestInjectScripts(page);
     await testRequestHidden404(origin, browser);
+    if (!isDev) await testAssetsGzip(origin, dist, browser);
 
     // TODO: 在设置了 sw 时有 sw 注册且没有报错
 
@@ -277,10 +280,10 @@ describe('测试: React 同构项目', () => {
                 );
 
                 await testFilesFromChunkmap(dist);
-                await doTest(port, {
+                await doTest(port, dist, {
                     customEnv
                 });
-                await doTest(port, {
+                await doTest(port, dist, {
                     enableJavascript: false,
                     customEnv
                 });
@@ -296,6 +299,7 @@ describe('测试: React 同构项目', () => {
                 await beforeTest(dir);
 
                 // const port = '8316'
+                const dist = path.resolve(dir, 'dist');
                 const customEnv = {
                     aaaaa: '' + Math.floor(Math.random() * 10000),
                     bbbbb: 'a1b2c3'
@@ -324,11 +328,11 @@ describe('测试: React 同构项目', () => {
                 // })
                 expect(errors.length).toBe(0);
 
-                await doTest(port, {
+                await doTest(port, dist, {
                     isDev: true,
                     customEnv
                 });
-                await doTest(port, {
+                await doTest(port, dist, {
                     isDev: true,
                     customEnv,
                     enableJavascript: false

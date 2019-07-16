@@ -22,7 +22,10 @@ const terminate = require('../../libs/terminate-process');
 const waitForPort = require('../../libs/get-port-from-child-process');
 const testHtmlRenderedByKoot = require('../../general-tests/html/rendered-by-koot');
 const testFilesFromChunkmap = require('../../general-tests/bundle/check-files-from-chunkmap');
-const { requestHidden404: testRequestHidden404 } = require('../puppeteer-test');
+const {
+    requestHidden404: testRequestHidden404,
+    criticalAssetsShouldBeGzip: testAssetsGzip
+} = require('../puppeteer-test');
 
 //
 
@@ -195,6 +198,7 @@ describe('测试: React SPA 项目', () => {
 
                 const port = require(path.resolve(dir, 'koot.config.spa.js'))
                     .port;
+                const origin = isNaN(port) ? port : `http://127.0.0.1:${port}`;
                 const errors = [];
 
                 const browser = await puppeteer.launch({
@@ -217,9 +221,6 @@ describe('测试: React SPA 项目', () => {
 
                     await waitForPort(child);
 
-                    const origin = isNaN(port)
-                        ? port
-                        : `http://127.0.0.1:${port}`;
                     const page = await context.newPage();
                     const failedResponse = [];
                     require('../../libs/puppeteer/page-event-response-failed-response')(
@@ -247,6 +248,7 @@ describe('测试: React SPA 项目', () => {
 
                     await testHtmlRenderedByKoot(html);
                     await testRequestHidden404(origin, browser);
+                    await testAssetsGzip(origin, dist, browser);
 
                     // 结束测试
                     await page.close();
