@@ -1,3 +1,26 @@
+## 0.10.7
+
+**2019-07-16**
+
+核心
+
+-   **优化**
+    -   更新 TS 定义
+-   更新依赖包
+    -   minor
+        -   `inquirer` -> _6.5.0_
+        -   `yargs` -> _13.3.0_
+    -   patch
+        -   `@babel/core` -> _7.5.4_
+        -   `@babel/plugin-proposal-object-rest-spread` -> _7.5.4_
+        -   `@babel/preset-env` -> _7.5.4_
+        -   `@types/node` -> _12.6.3_
+        -   `copyfiles` -> _2.1.1_
+        -   `lodash` -> _4.17.14_
+        -   `portfinder` -> _1.0.21_
+        -   `react-hot-loader` -> _4.12.6_
+        -   `redux` -> _4.0.4_
+
 ## 0.10.6
 
 **2019-07-16**
