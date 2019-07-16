@@ -4,8 +4,8 @@ import { Link } from 'react-router';
 
 import Icon from '@components/icon';
 
-interface ComponentProps extends ExtendedProps {
-    customProps: string;
+interface ComponentProps {
+    customProps?: string;
 }
 
 // Functional Component =======================================================
@@ -52,7 +52,7 @@ export const UseTSFunctionalComponent: React.FC = () => (
     }),
     styles: require('./index.module.less')
 })
-class TSComponentClass extends React.Component<ComponentProps> {
+class TSComponentClass extends React.Component<ComponentProps & ExtendedProps> {
     render() {
         return (
             <div
