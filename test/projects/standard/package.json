@@ -42,7 +42,8 @@
         "koot-buildtest-isomorphic-no_bundles_keep-production": "koot-start --koot-test --config koot.config.no-bundles-keep.js",
         "koot-buildtest-isomorphic-no_bundles_keep-development": "koot-dev --no-open --koot-test --config koot.config.no-bundles-keep.js",
         "koot-buildtest-isomorphic-config_old_0.6-production": "koot-start --koot-test --config koot.config.old-0.6.js",
-        "koot-buildtest-isomorphic-config_old_0.6-development": "koot-dev --no-open --koot-test --config koot.config.old-0.6.js"
+        "koot-buildtest-isomorphic-config_old_0.6-development": "koot-dev --no-open --koot-test --config koot.config.old-0.6.js",
+        "koot-buildtest-spa-build": "koot-build --type react-spa --dest dist-spa-test --koot-test"
     },
     "dependencies": {
         "autoprefixer": "9.4.7",
@@ -79,6 +80,7 @@
         "classlist-polyfill": "1.2.0",
         "cli-spinners": "2.2.0",
         "commander": "2.20.0",
+        "compression-webpack-plugin": "3.0.0",
         "cookie": "0.4.0",
         "copy-webpack-plugin": "5.0.3",
         "copyfiles": "2.1.1",
