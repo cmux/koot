@@ -18,7 +18,10 @@
     -   `compression-webpack-plugin`
 -   更新依赖包
     -   minor
-        -   `inquirer` -> _6.5.0_
+        -   `mini-css-extract-plugin` -> _0.8.0_
+    -   patch
+        -   `@types/node` -> _12.6.6_
+        -   `react-hot-loader` -> _4.12.7_
 
 ## 0.10.7
 
