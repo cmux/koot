@@ -1,8 +1,12 @@
 const puppeteer = require('puppeteer');
 const cheerio = require('cheerio');
 
+/** 忽略的 HTTP code */
 const ignoredStatus = [302, 304];
+/** 大文件尺寸阈值 */
 const largeFileThreshold = 300 * 1024; // 300KB
+/** 相似地址次数阈值 */
+// const similarCountThreshold = 10;
 
 /**
  * 利用爬虫尝试访问站点内的所有链接，检测以下内容
@@ -12,28 +16,43 @@ const largeFileThreshold = 300 * 1024; // 300KB
  * -   页面载入过程中的报错
  * @async
  * @param {string} urlEntry
+ * @param {boolean} [debug=true]
  * @return {Promise<Array<Object>>}
  */
-const kootAnalyzeCrawler = async urlEntry => {
+const kootAnalyzeCrawler = async (urlEntry, debug = false) => {
     const errors = [];
     const errObj = {};
     const browser = await puppeteer.launch();
     const startUrl = new URL(urlEntry);
     const urls = {
         visited: [],
-        toVisit: [startUrl.href]
+        queue: [startUrl.href]
     };
 
     /**
-     * 将 URL 添加至访问队列中
+     * 将 URL 添加至访问队列中。外站地址会被忽略
      * @param {string} url
      * @void
      */
     const addUrl = _url => {
         const url = new URL(_url, startUrl.origin);
-        if (urls.visited.includes(url.href) || urls.toVisit.includes(url.href))
-            return;
-        urls.toVisit.push(url.href);
+        const allUrls = urls.visited.concat(urls.queue);
+
+        // 如果已经访问过或在访问队列中，忽略
+        if (allUrls.includes(url.href)) return;
+        // 如果是外站地址，忽略
+        if (url.origin !== startUrl.origin) return;
+        // 如果相似的地址出现过多次，忽略
+        // {
+        //     const segs = url.pathname.split('/');
+        //     const similarCount = allUrls.reduce((count, existUrl) => {
+        //         (new URL(existUrl)).pathname.split('/');
+        //         return count;
+        //     }, 0);
+        //     if (similarCount > similarCountThreshold) return;
+        // }
+
+        urls.queue.push(url.href);
     };
 
     /**
@@ -93,7 +112,8 @@ const kootAnalyzeCrawler = async urlEntry => {
                 }
                 case 'no gzip': {
                     return {
-                        msg: `request \`${res.url()}\` should be Gzip`
+                        msg: `request \`${res.url()}\` should be Gzip`,
+                        contentLength: infos.contentLength
                     };
                 }
                 case 'large file': {
@@ -104,33 +124,45 @@ const kootAnalyzeCrawler = async urlEntry => {
                         contentLength: infos.contentLength
                     };
                 }
+                case 'console error': {
+                    return {
+                        msg: infos.consoleMsg.text(),
+                        location: infos.consoleMsg.location()
+                    };
+                }
                 default: {
                     return '';
                 }
             }
         })();
         if (isErrorExist(type, msg)) return;
+        const url = res ? res.url() : pageUrl || undefined;
         errors.push(
             Object.assign(
                 new Error(msg),
                 {
                     type,
                     res,
-                    url: res.url(),
-                    pageUrl
+                    url,
+                    pageUrl: url !== pageUrl ? pageUrl : undefined
                 },
                 r
             )
         );
     };
 
-    const crawl = async (url = urls.toVisit[0]) => {
-        console.log(`visiting: ${url}`);
+    const crawl = async (url = urls.queue[0]) => {
+        if (debug) console.log(`visiting: ${url}`);
 
         const checkResponse = async res => {
             if (ignoredStatus.includes(res.status())) return;
+
+            const pageUrl = res.url() !== url ? url : undefined;
+
             if (!res.ok())
-                return addError('broken request', res, { pageUrl: url });
+                return addError('broken request', res, {
+                    pageUrl
+                });
 
             const headers = res.headers();
             const contentType =
@@ -146,13 +178,16 @@ const kootAnalyzeCrawler = async urlEntry => {
                 /\/css$/.test(contentType)
             ) {
                 if (!/gzip/.test(contentEncoding)) {
-                    addError('no gzip', res, { pageUrl: url });
+                    return addError('no gzip', res, {
+                        pageUrl,
+                        contentLength: parseInt(contentLength)
+                    });
                 }
             }
 
             if (contentLength && parseInt(contentLength) > largeFileThreshold) {
-                addError('large file', res, {
-                    pageUrl: url,
+                return addError('large file', res, {
+                    pageUrl,
                     contentLength: parseInt(contentLength)
                 });
             }
@@ -162,6 +197,14 @@ const kootAnalyzeCrawler = async urlEntry => {
         const page = await context.newPage();
         const res = await page
             .on('response', checkResponse)
+            .on('console', msg => {
+                if (['error', 'trace'].includes(msg.type())) {
+                    addError('console error', undefined, {
+                        consoleMsg: msg,
+                        pageUrl: url
+                    });
+                }
+            })
             .goto(url, {
                 waitUntil: 'networkidle2'
             })
@@ -197,11 +240,11 @@ const kootAnalyzeCrawler = async urlEntry => {
 
         await context.close();
 
-        // 将 url 从 toVisit 移动到 visited
+        // 将 url 从 queue 移动到 visited
         urls.visited.push(url);
-        urls.toVisit.splice(urls.toVisit.indexOf(url), 1);
+        urls.queue.splice(urls.queue.indexOf(url), 1);
 
-        if (urls.toVisit.length) return await crawl(urls.toVisit[0]);
+        if (urls.queue.length) return await crawl(urls.queue[0]);
         return errors;
     };
 

@@ -35,9 +35,7 @@ jspm_packages
 # Optional REPL history
 .node_repl_history
 
-# koot.js
+# koot
 node_modules/
-*.log
-.DS_Store
-/.vscode
-/.projects
+/logs/
+/dist/

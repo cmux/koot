@@ -27,6 +27,7 @@
         "node": ">=8.9.0"
     },
     "dependencies": {
+        "chalk": "2.4.2",
         "cheerio": "1.0.0-rc.3",
         "commander": "2.20.0",
         "puppeteer": "1.18.1"

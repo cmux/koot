@@ -1,4 +1,5 @@
 const program = require('commander');
+const chalk = require('chalk');
 
 //
 
@@ -14,18 +15,50 @@ program
     const { crawler } = program;
 
     if (crawler) {
-        console.log('\n');
-        const errors = await require('./cases/crawler')(crawler);
-        Object.keys(errors).forEach(type => {
-            errors[type].forEach((err, index) => {
-                const { message, ...infos } = err;
-                errors[type][index] = {
-                    message,
-                    ...infos
-                };
+        console.log('');
+        const errors = await require('./cases/crawler')(crawler, true);
+        console.log('\n' + chalk.bgRedBright(` ERROR `));
+        Object.entries(errors).forEach(([type, errors]) => {
+            console.log('❌ ' + chalk.underline(type));
+            errors.forEach(err => {
+                console.log(`● ${err.url}`);
+                if (err.pageUrl) console.log(`  pageUrl: ${err.pageUrl}`);
+                switch (type) {
+                    case 'no gzip':
+                    case 'large file': {
+                        let size = err.contentLength;
+                        if (size > 1024 * 1024) {
+                            size =
+                                (err.contentLength / 1024 / 1024).toFixed(2) +
+                                'MB';
+                        } else if (size > 1024) {
+                            size = (err.contentLength / 1024).toFixed(2) + 'KB';
+                        }
+                        console.log(`  contentLength: ${size}`);
+                        break;
+                    }
+                    case 'console error': {
+                        console.log(`  ${err.message}`);
+                        break;
+                    }
+                    default: {
+                    }
+                }
             });
         });
-        console.log('\nerrors', errors);
+        // Object.keys(errors).forEach(type => {
+        //     errors[type].forEach((err, index) => {
+        //         const { message, res, type, ...infos } = err;
+        //         const r = { ...infos };
+        //         if (type === 'console error') r.message = message;
+        //         errors[type][index] = r;
+        //     });
+        // });
+        // Object.entries(errors).forEach(([key, value]) => {
+        //     console.log(chalk.underline(key));
+        //     console.log(JSON.stringify(value, null, 2));
+        // });
+        console.log('');
         return;
     }
 
