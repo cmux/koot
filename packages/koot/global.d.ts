@@ -14,55 +14,55 @@ declare const __SPA__: Boolean;
 
 //
 
-interface kootComponentStyleObject {
+declare interface KootComponentStyleObject {
     wrapper: string;
     css: string;
 }
 declare module '*.module.css' {
-    const kootComponentStyleCSS: kootComponentStyleObject;
+    const kootComponentStyleCSS: KootComponentStyleObject;
     export = kootComponentStyleCSS;
 }
 declare module '*.component.css' {
-    const kootComponentStyleCSS: kootComponentStyleObject;
+    const kootComponentStyleCSS: KootComponentStyleObject;
     export = kootComponentStyleCSS;
 }
 declare module '*.view.css' {
-    const kootComponentStyleCSS: kootComponentStyleObject;
+    const kootComponentStyleCSS: KootComponentStyleObject;
     export = kootComponentStyleCSS;
 }
 declare module '*.module.sass' {
-    const kootComponentStyleSASS: kootComponentStyleObject;
+    const kootComponentStyleSASS: KootComponentStyleObject;
     export = kootComponentStyleSASS;
 }
 declare module '*.component.sass' {
-    const kootComponentStyleSASS: kootComponentStyleObject;
+    const kootComponentStyleSASS: KootComponentStyleObject;
     export = kootComponentStyleSASS;
 }
 declare module '*.view.sass' {
-    const kootComponentStyleSASS: kootComponentStyleObject;
+    const kootComponentStyleSASS: KootComponentStyleObject;
     export = kootComponentStyleSASS;
 }
 declare module '*.module.scss' {
-    const kootComponentStyleSCSS: kootComponentStyleObject;
+    const kootComponentStyleSCSS: KootComponentStyleObject;
     export = kootComponentStyleSCSS;
 }
 declare module '*.component.scss' {
-    const kootComponentStyleSCSS: kootComponentStyleObject;
+    const kootComponentStyleSCSS: KootComponentStyleObject;
     export = kootComponentStyleSCSS;
 }
 declare module '*.view.scss' {
-    const kootComponentStyleSCSS: kootComponentStyleObject;
+    const kootComponentStyleSCSS: KootComponentStyleObject;
     export = kootComponentStyleSCSS;
 }
 declare module '*.module.less' {
-    const kootComponentStyleLESS: kootComponentStyleObject;
+    const kootComponentStyleLESS: KootComponentStyleObject;
     export = kootComponentStyleLESS;
 }
 declare module '*.component.less' {
-    const kootComponentStyleLESS: kootComponentStyleObject;
+    const kootComponentStyleLESS: KootComponentStyleObject;
     export = kootComponentStyleLESS;
 }
 declare module '*.view.less' {
-    const kootComponentStyleLESS: kootComponentStyleObject;
+    const kootComponentStyleLESS: KootComponentStyleObject;
     export = kootComponentStyleLESS;
 }
