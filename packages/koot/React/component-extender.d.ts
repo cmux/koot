@@ -1,3 +1,5 @@
+/// <reference path="../global.d.ts" />
+
 import { ComponentType, ReactNode, FC, ComponentClass, Component } from 'react';
 import { Store, Dispatch } from 'redux';
 import { connect } from 'react-redux';
@@ -25,7 +27,7 @@ interface extendOptions {
     /** 提供页面的 title 和 meta 标签信息 */
     pageinfo?: extendPageinfoObject | extendPageinfoFunction;
     data?: extendDataFetch | extendData;
-    styles?: kootComponentStyleObject;
+    styles?: KootComponentStyleObject;
     /**
      * 控制 SSR 行为
      * @default true
@@ -40,11 +42,6 @@ interface extendPageinfoObject {
 
 interface extendPageinfoMeta {
     [metaKey: string]: string;
-}
-
-interface kootComponentStyleObject {
-    wrapper: string;
-    css: string;
 }
 
 function extendPageinfoFunction<S = any>(

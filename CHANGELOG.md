@@ -18,9 +18,16 @@
     -   `compression-webpack-plugin`
 -   更新依赖包
     -   minor
+        -   `@babel/register` -> _7.5.5_
         -   `mini-css-extract-plugin` -> _0.8.0_
+        -   `webpack` -> _4.36.1_
     -   patch
-        -   `@types/node` -> _12.6.6_
+        -   `@babel/core` -> _7.5.5_
+        -   `@babel/plugin-proposal-class-properties` -> _7.5.5_
+        -   `@babel/plugin-proposal-object-rest-spread` -> _7.5.5_
+        -   `@babel/plugin-transform-runtime` -> _7.5.5_
+        -   `@babel/preset-env` -> _7.5.5_
+        -   `@types/node` -> _12.6.8_
         -   `react-hot-loader` -> _4.12.7_
 
 ## 0.10.7
