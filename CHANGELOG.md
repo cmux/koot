@@ -10,6 +10,7 @@
 -   **优化**
     -   `createStore()` 全局函数现允许传入 store 增强函数 (enhancer)。详情请参见文档 [Store/全局函数 createStore](https://koot.js.org/#/store?id=全局函数-createstore) ([#144](https://github.com/cmux/koot/issues/144))
     -   多语言翻译函数 (`__()`) 现支持返回一个对象或数组
+    -   `service-worker` 对首页的缓存处理
     -   SSR
         -   _服务器端_: 现支持有超大型语言包的项目 ([#145](https://github.com/cmux/koot/issues/145))
     -   开发环境
