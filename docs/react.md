@@ -35,6 +35,20 @@ class HomePage extends React.Component {
 export default HomePage;
 ```
 
+**TypeScript**
+
+```typescript
+
+// 函数方式定义
+extend<ComponentProps>(extendOptions)(FunctionalComponent)
+
+// 装饰器方式定义
+@extend(extendOptions)
+ComponentClass
+```
+
+在 TypeScript 中的写法请参见 [TypeScript 开发/TSX 代码示例](/typescript?id=tsx-代码示例)
+
 ##### 参数对象属性
 
 _Function_ `connect`

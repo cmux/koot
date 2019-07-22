@@ -29,7 +29,18 @@
         -   `@babel/plugin-transform-runtime` -> _7.5.5_
         -   `@babel/preset-env` -> _7.5.5_
         -   `@types/node` -> _12.6.8_
-        -   `react-hot-loader` -> _4.12.7_
+        -   `cache-loader` -> _4.1.0_
+        -   `css-loader` -> _3.1.0_
+        -   `file-loader` -> _4.1.0_
+        -   `lodash` -> _4.17.15_
+        -   `react-hot-loader` -> _4.12.8_
+        -   `url-loader` -> _2.1.0_
+
+**koot-boilerplate**
+
+-   更新依赖包
+    -   minor
+        -   `husky` -> _3.0.1_
 
 ## 0.10.7
 
