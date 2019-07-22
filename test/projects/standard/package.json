@@ -37,13 +37,15 @@
         "koot-buildtest-isomorphic-start-server": "koot-start --no-build --koot-test",
         "koot-buildtest-isomorphic-start-server-custom-port": "koot-start --no-build --port 8316 --koot-test",
         "koot-buildtest-isomorphic-dev": "koot-dev --no-open --koot-test",
-        "koot-buildtest-spa-build": "koot-build --type react-spa --dest dist-spa-test --koot-test",
         "koot-buildtest-isomorphic-start-i18n_use_router": "koot-start --koot-test --config koot.config.i18n-use-router.js",
         "koot-buildtest-isomorphic-dev-i18n_use_router": "koot-dev --no-open --koot-test --config koot.config.i18n-use-router.js",
         "koot-buildtest-isomorphic-start-config_old_0.6": "koot-start --koot-test --config koot.config.old-0.6.js",
         "koot-buildtest-isomorphic-dev-config_old_0.6": "koot-dev --no-open --koot-test --config koot.config.old-0.6.js",
         "koot-buildtest-isomorphic-start-no_bundles_keep": "koot-start --koot-test --config koot.config.no-bundles-keep.js",
-        "koot-buildtest-isomorphic-dev-no_bundles_keep": "koot-dev --no-open --koot-test --config koot.config.no-bundles-keep.js"
+        "koot-buildtest-isomorphic-dev-no_bundles_keep": "koot-dev --no-open --koot-test --config koot.config.no-bundles-keep.js",
+        "koot-buildtest-spa-build-config-default": "koot-build --koot-test --type react-spa --dest dist-spa-test",
+        "koot-buildtest-spa-build-config-koot_build_spa-1_js": "koot-build --koot-test --config E:\\Projects\\koot\\0.10\\test\\projects\\standard\\koot.build.spa-1.js",
+        "koot-buildtest-spa-build-config-koot_build_spa-2_js": "koot-build --koot-test --config E:\\Projects\\koot\\0.10\\test\\projects\\standard\\koot.build.spa-2.js"
     },
     "dependencies": {
         "autoprefixer": "9.4.7",
