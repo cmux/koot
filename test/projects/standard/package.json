@@ -42,8 +42,7 @@
         "koot-buildtest-isomorphic-no_bundles_keep-production": "koot-start --koot-test --config koot.config.no-bundles-keep.js",
         "koot-buildtest-isomorphic-no_bundles_keep-development": "koot-dev --no-open --koot-test --config koot.config.no-bundles-keep.js",
         "koot-buildtest-isomorphic-config_old_0.6-production": "koot-start --koot-test --config koot.config.old-0.6.js",
-        "koot-buildtest-isomorphic-config_old_0.6-development": "koot-dev --no-open --koot-test --config koot.config.old-0.6.js",
-        "koot-buildtest-spa-build": "koot-build --type react-spa --dest dist-spa-test --koot-test"
+        "koot-buildtest-isomorphic-config_old_0.6-development": "koot-dev --no-open --koot-test --config koot.config.old-0.6.js"
     },
     "dependencies": {
         "autoprefixer": "9.4.7",
