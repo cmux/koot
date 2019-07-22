@@ -7,12 +7,13 @@ program
     .version(require('./package').version, '-v, --version')
     .usage('[options]')
     .option('--crawler <startURL>', 'Run Crawler, starting with URL startURL.')
+    .option('--memory <startURL>', 'Run Memory, starting with URL startURL.')
     .parse(process.argv);
 
 //
 
 (async () => {
-    const { crawler } = program;
+    const { crawler, memory } = program;
 
     if (crawler) {
         console.log('');
@@ -59,6 +60,13 @@ program
         //     console.log(JSON.stringify(value, null, 2));
         // });
         console.log('');
+        return;
+    } else if (memory) {
+        console.log('');
+        const startTS = Date.now();
+        await require('./cases/memory')(memory, 10, true);
+        const endTS = Date.now();
+        console.log(`Elapsed ${((endTS - startTS) / 1000).toFixed(3)}ms`);
         return;
     }
 
