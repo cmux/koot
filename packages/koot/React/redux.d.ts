@@ -12,7 +12,7 @@ import {
 export const createStore: (
     appReducer?: AppReducer,
     appMiddlewares?: AppMiddlewares,
-    appEnhancers?: Array<StoreEnhancer>
+    appEnhancers?: AppEnhancers
 ) => Store;
 
 /** 项目使用的 reducer，可为 `Reducer` (reducer 函数)，也可以为 `ReducersMapObject` (形式为 Object 的列表) */

@@ -69,32 +69,31 @@ function respondFromCacheThenNetwork(event) {
     );
 }
 
-function shouldHandleFetch(event) {
+//
+
+const shouldHandleFetch = event => {
     if (event.request.method.toLowerCase() !== 'get') return false;
-    if (event.request.url.indexOf(location.origin) < 0) return false;
-    if (event.request.url.indexOf('google-analytics.com') !== -1) return false;
-    if (event.request.url.indexOf(location.origin + '/api') > -1) return false;
+    if (!new RegExp(`^${location.origin}`).test(event.request.url))
+        return false;
+    if (/google-analytics\.com\//.test(event.request.url)) return false;
+    if (new RegExp(`^${location.origin}/api`).test(event.request.url))
+        return false;
     if (/\/service-worker(\.[a-z-_]+){0,1}\.js/i.test(event.request.url))
         return false;
 
     return true;
-}
+};
 
-function shouldRespondFromNetworkThenCache(event) {
-    return (
-        event.request.url.replace(new RegExp(`^${location.origin}`), '') ===
-            '/' || event.request.headers.get('Accept').indexOf('text/html') >= 0
-        // || /chunk.+\.js$/.test(event.request.url)
-    );
-}
+const shouldRespondFromNetworkThenCache = event =>
+    event.request.url === location.origin ||
+    event.request.url === location.origin + '/' ||
+    event.request.headers.get('Accept').includes('text/html');
 
-// Open cache and store assets
+//
+
 self.addEventListener('install', event => {
-    // console.log('Service Worker - INSTALL')
-    // Perform install steps
     event.waitUntil(
         caches.open(CACHE_NAME).then(cache => {
-            // console.log(urlsToCache)
             return cache.addAll(urlsToCache);
         })
     );
@@ -102,7 +101,6 @@ self.addEventListener('install', event => {
 
 self.addEventListener('fetch', event => {
     if (shouldHandleFetch(event)) {
-        // console.log('Service Worker - FETCH', event.request)
         if (shouldRespondFromNetworkThenCache(event)) {
             respondFromNetworkThenCache(event);
         } else {
@@ -112,18 +110,16 @@ self.addEventListener('fetch', event => {
 });
 
 self.addEventListener('activate', event => {
-    // console.log('Service Worker - ACTIVATE')
-    var cacheWhitelist = [CACHE_NAME];
-    // Clean up old cache versions
+    // 删除不属于当前的缓存空间
+    const cacheWhitelist = [CACHE_NAME];
     event.waitUntil(
-        caches.keys().then(function(cacheNames) {
-            return Promise.all(
-                cacheNames.map(function(cacheName) {
-                    if (cacheWhitelist.indexOf(cacheName) === -1) {
-                        return caches.delete(cacheName);
-                    }
+        caches.keys().then(cacheNames =>
+            Promise.all(
+                cacheNames.map(cacheName => {
+                    if (cacheWhitelist.includes(cacheName)) return true;
+                    return caches.delete(cacheName);
                 })
-            );
-        })
+            )
+        )
     );
 });

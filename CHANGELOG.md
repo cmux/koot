@@ -10,6 +10,7 @@
 -   **优化**
     -   `createStore()` 全局函数现允许传入 store 增强函数 (enhancer)。详情请参见文档 [Store/全局函数 createStore](https://koot.js.org/#/store?id=全局函数-createstore) ([#144](https://github.com/cmux/koot/issues/144))
     -   多语言翻译函数 (`__()`) 现支持返回一个对象或数组
+    -   `service-worker` 对首页的缓存处理
     -   SSR
         -   _服务器端_: 现支持有超大型语言包的项目 ([#145](https://github.com/cmux/koot/issues/145))
     -   开发环境
@@ -28,7 +29,18 @@
         -   `@babel/plugin-transform-runtime` -> _7.5.5_
         -   `@babel/preset-env` -> _7.5.5_
         -   `@types/node` -> _12.6.8_
-        -   `react-hot-loader` -> _4.12.7_
+        -   `cache-loader` -> _4.1.0_
+        -   `css-loader` -> _3.1.0_
+        -   `file-loader` -> _4.1.0_
+        -   `lodash` -> _4.17.15_
+        -   `react-hot-loader` -> _4.12.8_
+        -   `url-loader` -> _2.1.0_
+
+**koot-boilerplate**
+
+-   更新依赖包
+    -   minor
+        -   `husky` -> _3.0.1_
 
 ## 0.10.7
 

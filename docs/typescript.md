@@ -51,16 +51,6 @@ const TSFunctionalComponent = extend<ComponentProps>({
 });
 
 export default TSFunctionalComponent;
-```
-
-**组件类 / Component Class**
-
-```typescript
-import React from 'react';
-import { extend, ExtendedProps } from 'koot';
-import { Link } from 'react-router';
-
-import Icon from '@components/icon';
 
 // 使用
 export const UseTSFunctionalComponent: React.FC = () => (
