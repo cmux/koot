@@ -29,11 +29,9 @@ program
                     case 'large file': {
                         let size = err.contentLength;
                         if (size > 1024 * 1024) {
-                            size =
-                                (err.contentLength / 1024 / 1024).toFixed(2) +
-                                'MB';
+                            size = getSize(size);
                         } else if (size > 1024) {
-                            size = (err.contentLength / 1024).toFixed(2) + 'KB';
+                            size = getSize(size);
                         }
                         console.log(`  contentLength: ${size}`);
                         break;
@@ -62,13 +60,29 @@ program
         console.log('');
         return;
     } else if (memory) {
-        console.log('');
+        console.log('Running Memory test for 60s...');
         const startTS = Date.now();
-        await require('./cases/memory')(memory, 10, true);
+        const result = await require('./cases/memory')(memory, 60, true);
         const endTS = Date.now();
         console.log(`Elapsed ${((endTS - startTS) / 1000).toFixed(3)}ms`);
+        result.forEach(r => {
+            console.log(`● ${r.prevUrl}`);
+            console.log(`⇢ ${r.newUrl}`);
+            console.log(`   heap used:  ${getSize(r.JSHeapUsedSize)}`);
+            console.log(`   heap total: ${getSize(r.JSHeapTotalSize)}`);
+        });
         return;
     }
 
     program.help();
 })();
+
+//
+
+const getSize = size => {
+    if (size > 1024 * 1024) {
+        return (size / 1024 / 1024).toFixed(2) + 'MB';
+    } else if (size > 1024) {
+        return (size / 1024).toFixed(2) + 'KB';
+    }
+};

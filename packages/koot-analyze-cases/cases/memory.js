@@ -16,11 +16,12 @@ const kootAnalyzeMemory = async (urlEntry, timeSeconds, debug = false) => {
     const timeStart = Date.now();
     /** 最长运行时间 (ms) */
     const timeMax = timeSeconds * 1000;
+    const result = [];
 
-    const startUrl = new URL(urlEntry);
+    let startOrigin;
 
     const browser = await puppeteer.launch({
-        headless: false
+        headless: true
     });
     const context = await browser.createIncognitoBrowserContext();
     const page = await context.newPage();
@@ -29,33 +30,68 @@ const kootAnalyzeMemory = async (urlEntry, timeSeconds, debug = false) => {
         waitUntil: 'networkidle2'
     });
 
+    /** 进行随机点击 */
     const randomClick = async () => {
         if (Date.now() - timeStart > timeMax) return;
+        const currentUrl = page.url();
+        if (!startOrigin) startOrigin = new URL(page.url()).origin;
 
         let err;
         const [response] = await Promise.all([
             page.waitForNavigation({
-                timeout: 5000,
+                timeout: 50000,
                 waitUntil: 'networkidle2'
             }),
-            page.evaluate(urlEntry => {
-                const els = document.querySelectorAll('a[href], button');
+            page.evaluate(startOrigin => {
+                // const els = document.querySelectorAll('a[href], button');
+                const els = document.querySelectorAll('a[href]');
                 if (!els) throw new Error('NO_MATCH');
                 const e = [...els].filter(e => {
                     const href = e.getAttribute('href');
                     if (href) {
-                        const startUrl = new URL(urlEntry);
-                        const url = new URL(href, startUrl.origin);
-                        if (url.origin !== startUrl.origin) return false;
+                        const url = new URL(href, window.location.origin);
+                        console.log({
+                            href,
+                            origin: url.origin,
+                            startOrigin
+                        });
+                        if (url.origin !== startOrigin) return false;
+
+                        const target = e.getAttribute('target');
+                        if (target === '_blank') return false;
+
+                        const current = new URL(
+                            window.location.href,
+                            window.location.origin
+                        );
+                        if (url.href === current.href) return false;
                     }
                     return true;
                 });
                 console.log(e);
                 if (!e.length) throw new Error('NO_MATCH');
                 const index = Math.floor(Math.random() * Math.floor(e.length));
+                console.log(index, `! ${e[index].getAttribute('href')}`);
                 e[index].click();
-            }, urlEntry)
+            }, startOrigin),
+            new Promise(resolve => setTimeout(resolve, 100))
         ]).catch(e => (err = e));
+
+        // 如果出现错误，直接再次进行随机点击
+        // 如果正常的进入了新页面，进行统计后再进行随机点击
+
+        const getMetricsThenRandomClick = async () => {
+            const newUrl = page.url();
+            const { JSHeapUsedSize, JSHeapTotalSize } = await page.metrics();
+            result.push({
+                prevUrl: currentUrl,
+                newUrl,
+                JSHeapUsedSize,
+                JSHeapTotalSize
+            });
+
+            return await randomClick();
+        };
 
         if (err) {
             console.log(err);
@@ -63,7 +99,7 @@ const kootAnalyzeMemory = async (urlEntry, timeSeconds, debug = false) => {
         }
 
         if (!response) {
-            return await randomClick();
+            return await getMetricsThenRandomClick();
         }
 
         if (!response.ok() && !ignoredStatus.includes(response.status())) {
@@ -73,11 +109,13 @@ const kootAnalyzeMemory = async (urlEntry, timeSeconds, debug = false) => {
             return await randomClick();
         }
 
-        return await randomClick();
+        return await getMetricsThenRandomClick();
     };
     await randomClick();
 
     await browser.close();
+
+    return result;
 };
 
 //
