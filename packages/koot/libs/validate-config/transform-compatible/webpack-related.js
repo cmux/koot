@@ -13,26 +13,29 @@
  * @param {Object} config
  * @void
  */
-module.exports = async (config) => {
-
+module.exports = async config => {
     if (typeof config.moduleCssFilenameTest !== 'undefined') {
-        delete config.css
-    } else if (typeof config.css === 'object' &&
+        delete config.css;
+    } else if (
+        typeof config.css === 'object' &&
         typeof config.css.fileBasename === 'object' &&
         typeof config.css.fileBasename.component !== 'undefined'
     ) {
-        config.moduleCssFilenameTest = config.css.fileBasename.component
-        delete config.css
+        config.moduleCssFilenameTest = config.css.fileBasename.component;
+        delete config.css;
     }
 
     const transform = (key, keyInWebpack) => {
-        if (typeof config[key] !== 'undefined' && typeof config.webpack === 'object') {
-            delete config.webpack[keyInWebpack]
+        if (
+            typeof config[key] !== 'undefined' &&
+            typeof config.webpack === 'object'
+        ) {
+            delete config.webpack[keyInWebpack];
         } else if (typeof config.webpack === 'object') {
-            config[key] = config.webpack[keyInWebpack]
-            delete config.webpack[keyInWebpack]
+            config[key] = config.webpack[keyInWebpack];
+            delete config.webpack[keyInWebpack];
         }
-    }
+    };
 
     const keys = [
         ['aliases', 'aliases'],
@@ -42,25 +45,17 @@ module.exports = async (config) => {
         ['webpackAfter', 'afterBuild'],
         ['internalLoaderOptions', 'internalLoadersOptions'],
         ['devDll', 'dll'],
-        ['devHmr', 'hmr'],
-    ]
+        ['devHmr', 'hmr']
+    ];
 
-    keys.forEach(([key, keyInWebpack]) => transform(key, keyInWebpack))
+    keys.forEach(([key, keyInWebpack]) => transform(key, keyInWebpack));
 
     if (typeof config.classNameHashLength !== 'undefined') {
         if (isNaN(config.classNameHashLength)) {
-            delete config.classNameHashLength
+            delete config.classNameHashLength;
         } else {
-            const r = parseInt(config.classNameHashLength)
-            if (r <= 0)
-                delete config.classNameHashLength
+            const r = parseInt(config.classNameHashLength);
+            if (r <= 0) delete config.classNameHashLength;
         }
     }
-
-    if (process.env.WEBPACK_BUILD_ENV === 'dev' ||
-        process.env.WEBPACK_BUILD_TYPE === 'spa'
-    ) {
-        config.bundleVersionsKeep = false
-    }
-
-}
+};
