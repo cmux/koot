@@ -56,7 +56,7 @@
         "jest": "24.8.0",
         "jsdom": "15.1.1",
         "latest-version": "5.1.0",
-        "lerna": "3.16.1",
+        "lerna": "3.16.2",
         "lerna-wizard": "1.0.9",
         "lint-staged": "9.2.0",
         "prettier": "1.18.2",
