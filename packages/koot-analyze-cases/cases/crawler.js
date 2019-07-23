@@ -35,26 +35,24 @@ const kootAnalyzeCrawler = async (urlEntry, debug = false) => {
      * @void
      */
     const addUrl = _url => {
-        try {
-            const url = new URL(_url, startUrl.origin);
-            const allUrls = urls.visited.concat(urls.queue);
+        const url = new URL(_url, startUrl.origin);
+        const allUrls = urls.visited.concat(urls.queue);
 
-            // 如果已经访问过或在访问队列中，忽略
-            if (allUrls.includes(url.href)) return;
-            // 如果是外站地址，忽略
-            if (url.origin !== startUrl.origin) return;
-            // 如果相似的地址出现过多次，忽略
-            // {
-            //     const segs = url.pathname.split('/');
-            //     const similarCount = allUrls.reduce((count, existUrl) => {
-            //         (new URL(existUrl)).pathname.split('/');
-            //         return count;
-            //     }, 0);
-            //     if (similarCount > similarCountThreshold) return;
-            // }
+        // 如果已经访问过或在访问队列中，忽略
+        if (allUrls.includes(url.href)) return;
+        // 如果是外站地址，忽略
+        if (url.origin !== startUrl.origin) return;
+        // 如果相似的地址出现过多次，忽略
+        // {
+        //     const segs = url.pathname.split('/');
+        //     const similarCount = allUrls.reduce((count, existUrl) => {
+        //         (new URL(existUrl)).pathname.split('/');
+        //         return count;
+        //     }, 0);
+        //     if (similarCount > similarCountThreshold) return;
+        // }
 
-            urls.queue.push(url.href);
-        } catch (e) {}
+        urls.queue.push(url.href);
     };
 
     /**
@@ -231,7 +229,9 @@ const kootAnalyzeCrawler = async (urlEntry, debug = false) => {
             // add SSR links
             Object.values($(selector)).forEach(el => {
                 if (!el || !el.attribs) return;
-                addUrl(el.attribs.href);
+                addUrl(el.attribs.href).catch(e => {
+                    addError(e, { pageUrl: url });
+                });
             });
 
             // add CSR links
@@ -243,7 +243,11 @@ const kootAnalyzeCrawler = async (urlEntry, debug = false) => {
                         return href;
                     })
                     .filter(url => !!url)
-            )).forEach(addUrl);
+            )).forEach(href => {
+                addUrl(href).catch(e => {
+                    addError(e, { pageUrl: url });
+                });
+            });
         }
 
         await context.close();
