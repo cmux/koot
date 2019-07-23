@@ -67,7 +67,7 @@ const kootAnalyzeCrawler = async (urlEntry, debug = false) => {
             errors.some(e => e.message === msg && e.type === type);
         if (type instanceof Error) {
             const error = type;
-            infos = res;
+            infos = res || {};
             const { pageUrl } = infos;
             const { msg, type: _type, url } = (() => {
                 let matches;
