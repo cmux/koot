@@ -23,10 +23,10 @@ const kootAnalyzeCrawler = async (urlEntry, debug = false) => {
     const errors = [];
     const errObj = {};
     const browser = await puppeteer.launch();
-    const startUrl = new URL(urlEntry);
+    let startUrl;
     const urls = {
         visited: [],
-        queue: [startUrl.href]
+        queue: []
     };
 
     /**
@@ -212,6 +212,12 @@ const kootAnalyzeCrawler = async (urlEntry, debug = false) => {
                 addError(e);
             });
 
+        if (!startUrl) {
+            startUrl = new URL(url);
+            url = startUrl.href;
+            urls.queue.push(url);
+        }
+
         if (res) {
             await checkResponse(res);
 
@@ -248,7 +254,7 @@ const kootAnalyzeCrawler = async (urlEntry, debug = false) => {
         return errors;
     };
 
-    const result = await crawl(startUrl.href);
+    const result = await crawl(urlEntry);
     await browser.close();
 
     result.forEach(e => {
