@@ -213,7 +213,7 @@ const kootAnalyzeCrawler = async (urlEntry, debug = false) => {
             });
 
         if (!startUrl) {
-            startUrl = new URL(url);
+            startUrl = new URL(page.url());
             url = startUrl.href;
             urls.queue.push(url);
         }
