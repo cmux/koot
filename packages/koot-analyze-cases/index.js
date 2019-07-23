@@ -14,9 +14,11 @@ program
 
 (async () => {
     const { crawler, memory } = program;
+    const startTS = Date.now();
 
     if (crawler) {
-        console.log('');
+        console.log('Running Crawler test...');
+        console.log(' ');
         const errors = await require('./cases/crawler')(crawler, true);
         console.log('\n' + chalk.bgRedBright(` ERROR `));
         Object.entries(errors).forEach(([type, errors]) => {
@@ -58,23 +60,23 @@ program
         //     console.log(JSON.stringify(value, null, 2));
         // });
         console.log('');
-        return;
     } else if (memory) {
         console.log('Running Memory test for 60s...');
-        const startTS = Date.now();
+        console.log('');
         const result = await require('./cases/memory')(memory, 60, true);
-        const endTS = Date.now();
-        console.log(`Elapsed ${((endTS - startTS) / 1000).toFixed(3)}ms`);
         result.forEach(r => {
             console.log(`● ${r.prevUrl}`);
             console.log(`⇢ ${r.newUrl}`);
             console.log(`   heap used:  ${getSize(r.JSHeapUsedSize)}`);
             console.log(`   heap total: ${getSize(r.JSHeapTotalSize)}`);
         });
-        return;
+        console.log('');
     }
 
-    program.help();
+    const endTS = Date.now();
+    console.log(`Elapsed ${((endTS - startTS) / 1000).toFixed(3)}ms`);
+
+    // program.help();
 })();
 
 //
