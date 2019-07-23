@@ -229,9 +229,11 @@ const kootAnalyzeCrawler = async (urlEntry, debug = false) => {
             // add SSR links
             Object.values($(selector)).forEach(el => {
                 if (!el || !el.attribs) return;
-                addUrl(el.attribs.href).catch(e => {
+                try {
+                    addUrl(el.attribs.href);
+                } catch (e) {
                     addError(e, { pageUrl: url });
-                });
+                }
             });
 
             // add CSR links
@@ -244,9 +246,11 @@ const kootAnalyzeCrawler = async (urlEntry, debug = false) => {
                     })
                     .filter(url => !!url)
             )).forEach(href => {
-                addUrl(href).catch(e => {
+                try {
+                    addUrl(href);
+                } catch (e) {
                     addError(e, { pageUrl: url });
-                });
+                }
             });
         }
 
