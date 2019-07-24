@@ -1,5 +1,8 @@
+const fs = require('fs-extra');
+const path = require('path');
 const program = require('commander');
 const chalk = require('chalk');
+const { parse, stringify } = require('flatted/cjs');
 
 //
 
@@ -21,6 +24,15 @@ program
         console.log(' ');
         const errors = await require('./cases/crawler')(crawler, true);
         console.log('\n' + chalk.bgRedBright(` ERROR `));
+        const dir = path.resolve(__dirname, '../../logs/crawler/');
+        await fs.ensureDir(dir);
+        await fs.writeJson(
+            path.resolve(dir, `${encodeURIComponent(crawler)}.json`),
+            parse(stringify(errors)),
+            {
+                spaces: '\t'
+            }
+        );
         Object.entries(errors).forEach(([type, errors]) => {
             console.log('❌ ' + chalk.underline(type));
             errors.forEach(err => {

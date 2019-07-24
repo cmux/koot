@@ -2,7 +2,7 @@ const puppeteer = require('puppeteer');
 const cheerio = require('cheerio');
 
 /** 忽略的 HTTP code */
-const ignoredStatus = [302, 304];
+const ignoredStatus = [301, 302, 304];
 /** 大文件尺寸阈值 */
 const largeFileThreshold = 300 * 1024; // 300KB
 /** 相似地址次数阈值 */
@@ -22,8 +22,12 @@ const largeFileThreshold = 300 * 1024; // 300KB
 const kootAnalyzeCrawler = async (urlEntry, debug = false) => {
     const errors = [];
     const errObj = {};
-    const browser = await puppeteer.launch();
+    let browser = await puppeteer.launch();
+    let context;
+    let page;
     let startUrl;
+    let crawlCount = 0;
+    const crawlMax = debug ? 50 : undefined;
     const urls = {
         visited: [],
         queue: []
@@ -34,8 +38,8 @@ const kootAnalyzeCrawler = async (urlEntry, debug = false) => {
      * @param {string} url
      * @void
      */
-    const addUrl = _url => {
-        const url = new URL(_url, startUrl.origin);
+    const addUrl = (_url, base = startUrl.origin) => {
+        const url = new URL(_url, base);
         const allUrls = urls.visited.concat(urls.queue);
 
         // 如果已经访问过或在访问队列中，忽略
@@ -94,11 +98,17 @@ const kootAnalyzeCrawler = async (urlEntry, debug = false) => {
             })();
             if (isErrorExist(_type, msg)) return;
             errors.push(
-                Object.assign(new Error(msg), {
+                // Object.assign(new Error(msg), {
+                //     type: _type,
+                //     url,
+                //     pageUrl
+                // })
+                {
+                    message: msg,
                     type: _type,
                     url,
                     pageUrl
-                })
+                }
             );
             return;
         }
@@ -139,10 +149,11 @@ const kootAnalyzeCrawler = async (urlEntry, debug = false) => {
         const url = res ? res.url() : pageUrl || undefined;
         errors.push(
             Object.assign(
-                new Error(msg),
+                // new Error(msg),
                 {
+                    message: msg,
                     type,
-                    res,
+                    // res,
                     url,
                     pageUrl: url !== pageUrl ? pageUrl : undefined
                 },
@@ -153,16 +164,24 @@ const kootAnalyzeCrawler = async (urlEntry, debug = false) => {
 
     const crawl = async (url = urls.queue[0]) => {
         if (debug) console.log(`visiting: ${url}`);
+        try {
+            await page.close();
+            await context.close();
+        } catch (e) {}
 
         const checkResponse = async res => {
             if (ignoredStatus.includes(res.status())) return;
 
-            const pageUrl = res.url() !== url ? url : undefined;
+            const thisUrl = res.url();
+            const pageUrl = thisUrl !== url ? url : undefined;
 
             if (!res.ok())
                 return addError('broken request', res, {
                     pageUrl
                 });
+
+            if (new URL(thisUrl).origin !== new URL(pageUrl || url).origin)
+                return;
 
             const headers = res.headers();
             const contentType =
@@ -193,81 +212,94 @@ const kootAnalyzeCrawler = async (urlEntry, debug = false) => {
             }
         };
 
-        const context = await browser.createIncognitoBrowserContext();
-        const page = await context.newPage();
-        const res = await page
-            .on('response', checkResponse)
-            .on('console', msg => {
-                if (['error', 'trace'].includes(msg.type())) {
-                    addError('console error', undefined, {
-                        consoleMsg: msg,
-                        pageUrl: url
-                    });
-                }
-            })
-            .goto(url, {
-                waitUntil: 'networkidle2'
-            })
-            .catch(e => {
-                addError(e);
-            });
+        context = await browser.createIncognitoBrowserContext();
+        try {
+            page = await context.newPage();
+            const res = await page
+                .on('response', checkResponse)
+                .on('console', msg => {
+                    if (['error', 'trace'].includes(msg.type())) {
+                        addError('console error', undefined, {
+                            consoleMsg: msg,
+                            pageUrl: url
+                        });
+                    }
+                })
+                .goto(url, {
+                    waitUntil: 'networkidle2'
+                })
+                .catch(e => {
+                    addError(e);
+                    return context.close();
+                });
 
-        if (!startUrl) {
-            startUrl = new URL(page.url());
-            url = startUrl.href;
-            urls.queue.push(url);
+            if (!startUrl) {
+                startUrl = new URL(page.url());
+                url = startUrl.href;
+                urls.queue.push(url);
+            }
+
+            if (res) {
+                await checkResponse(res);
+
+                const HTML = await res.text();
+                const $ = cheerio.load(HTML);
+
+                const selector = 'body a[href]';
+
+                // add SSR links
+                Object.values($(selector)).forEach(el => {
+                    if (!el || !el.attribs) return;
+                    try {
+                        addUrl(el.attribs.href, page.url());
+                    } catch (e) {
+                        addError(e, { pageUrl: url });
+                    }
+                });
+
+                // add CSR links
+                (await page.$$eval(selector, links =>
+                    links
+                        .map(link => {
+                            if (!link) return undefined;
+                            const href = link.getAttribute('href');
+                            return href;
+                        })
+                        .filter(url => !!url)
+                )).forEach(href => {
+                    try {
+                        addUrl(href, page.url());
+                    } catch (e) {
+                        addError(e, { pageUrl: url });
+                    }
+                });
+            }
+
+            await page.close();
+            await context.close();
+
+            // 将 url 从 queue 移动到 visited
+            urls.visited.push(url);
+            urls.queue.splice(urls.queue.indexOf(url), 1);
+        } catch (e) {
+            await page.close();
+            await context.close();
         }
 
-        if (res) {
-            await checkResponse(res);
-
-            const HTML = await res.text();
-            const $ = cheerio.load(HTML);
-
-            const selector = 'body a[href]';
-
-            // add SSR links
-            Object.values($(selector)).forEach(el => {
-                if (!el || !el.attribs) return;
-                try {
-                    addUrl(el.attribs.href);
-                } catch (e) {
-                    addError(e, { pageUrl: url });
-                }
-            });
-
-            // add CSR links
-            (await page.$$eval(selector, links =>
-                links
-                    .map(link => {
-                        if (!link) return undefined;
-                        const href = link.getAttribute('href');
-                        return href;
-                    })
-                    .filter(url => !!url)
-            )).forEach(href => {
-                try {
-                    addUrl(href);
-                } catch (e) {
-                    addError(e, { pageUrl: url });
-                }
-            });
-        }
-
-        await context.close();
-
-        // 将 url 从 queue 移动到 visited
-        urls.visited.push(url);
-        urls.queue.splice(urls.queue.indexOf(url), 1);
-
-        if (urls.queue.length) return await crawl(urls.queue[0]);
-        return errors;
+        // if (urls.queue.length) return await crawl(urls.queue[0]);
+        // return errors;
     };
 
-    const result = await crawl(urlEntry);
+    await crawl(urlEntry);
+
+    while (urls.queue.length && (!crawlMax || crawlCount < crawlMax)) {
+        await crawl();
+        crawlCount++;
+    }
+
     await browser.close();
 
-    result.forEach(e => {
+    errors.forEach(e => {
         const { type } = e;
         if (!errObj[type]) errObj[type] = [];
         errObj[type].push(e);
