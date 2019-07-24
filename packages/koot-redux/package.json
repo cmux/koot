@@ -1,6 +1,6 @@
 {
     "name": "koot-redux",
-    "version": "1.0.14",
+    "version": "1.0.15-alpha.0",
     "description": "模块化的redux, redux版本的vuex",
     "author": "zrain <zrainma@sina.com>",
     "homepage": "https://github.com/cmux/koot/tree/master/packages/koot-redux#readme",
@@ -24,7 +24,7 @@
         "url": "https://github.com/cmux/koot/issues"
     },
     "peerDependencies": {
-        "redux": ">=4.0.0",
-        "koot": "^0.10.8"
+        "koot": "^0.10.8",
+        "redux": ">=4.0.0"
     }
 }
