@@ -1,6 +1,6 @@
 {
   "name": "koot-component",
-  "version": "1.0.88",
+  "version": "1.0.93",
   "description": "",
   "main": "index.js",
   "sideEffect": false,
