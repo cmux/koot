@@ -33,7 +33,7 @@ const selectPropsHandler = (props) => {
     props.getPopupContainer = ( triggerNode ) => {
         return triggerNode;
     };
-    props.allowClear = true;
+    // props.allowClear = true;
     if( props.multiple === true ){
         props.mode = 'multiple';
         delete props.multiple;
