@@ -22,7 +22,14 @@ program
     if (crawler) {
         console.log('Running Crawler test...');
         console.log(' ');
-        const errors = await require('./cases/crawler')(crawler, true);
+        const errors = await require('./cases/crawler')(crawler, {
+            debug: true,
+            // maxCrawl: 100,
+            cluster: {
+                maxConcurrency: 5,
+                monitor: true
+            }
+        });
         console.log('\n' + chalk.bgRedBright(` ERROR `));
         const dir = path.resolve(__dirname, '../../logs/crawler/');
         await fs.ensureDir(dir);

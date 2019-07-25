@@ -1,5 +1,6 @@
-const puppeteer = require('puppeteer');
+// const puppeteer = require('puppeteer');
 const cheerio = require('cheerio');
+const { Cluster } = require('puppeteer-cluster');
 
 /** 忽略的 HTTP code */
 const ignoredStatus = [301, 302, 304];
@@ -16,22 +17,33 @@ const largeFileThreshold = 300 * 1024; // 300KB
  * -   页面载入过程中的报错
  * @async
  * @param {string} urlEntry
- * @param {boolean} [debug=true]
+ * @param {Object} [options={}]
+ * @param {Number} [options.maxCrawl] 最多访问的页面数量
+ * @param {Object} [options.cluster] puppeteer-cluster 选项
  * @return {Promise<Array<Object>>}
  */
-const kootAnalyzeCrawler = async (urlEntry, debug = false) => {
+const kootAnalyzeCrawler = async (urlEntry, options = {}) => {
+    const {
+        debug = false,
+        maxCrawl = undefined,
+        cluster: clusterOptions = {}
+    } = options;
     const errors = [];
     const errObj = {};
-    let browser = await puppeteer.launch();
-    let context;
-    let page;
+    // let browser = await puppeteer.launch();
+    // let context;
+    // let page;
     let startUrl;
     let crawlCount = 0;
-    const crawlMax = debug ? 50 : undefined;
     const urls = {
         visited: [],
         queue: []
     };
+    const cluster = await Cluster.launch({
+        concurrency: Cluster.CONCURRENCY_CONTEXT,
+        maxConcurrency: 2,
+        ...clusterOptions
+    });
 
     /**
      * 将 URL 添加至访问队列中。外站地址会被忽略
@@ -56,7 +68,11 @@ const kootAnalyzeCrawler = async (urlEntry, debug = false) => {
         //     if (similarCount > similarCountThreshold) return;
         // }
 
-        urls.queue.push(url.href);
+        if (!maxCrawl || crawlCount < maxCrawl) {
+            crawlCount++;
+            urls.queue.push(url.href);
+            cluster.queue(url.href);
+        }
     };
 
     /**
@@ -91,6 +107,7 @@ const kootAnalyzeCrawler = async (urlEntry, debug = false) => {
                 switch (error.message) {
                     default: {
                         return {
+                            type: `common error`,
                             msg: error.message
                         };
                     }
@@ -162,12 +179,12 @@ const kootAnalyzeCrawler = async (urlEntry, debug = false) => {
         );
     };
 
-    const crawl = async (url = urls.queue[0]) => {
-        if (debug) console.log(`visiting: ${url}`);
-        try {
-            await page.close();
-            await context.close();
-        } catch (e) {}
+    const crawl = async (page, url = urls.queue[0]) => {
+        // if (debug) console.log(`visiting: ${url}`);
+        // try {
+        //     await page.close();
+        //     await context.close();
+        // } catch (e) {}
 
         const checkResponse = async res => {
             if (ignoredStatus.includes(res.status())) return;
@@ -212,9 +229,9 @@ const kootAnalyzeCrawler = async (urlEntry, debug = false) => {
             }
         };
 
-        context = await browser.createIncognitoBrowserContext();
+        // context = await browser.createIncognitoBrowserContext();
         try {
-            page = await context.newPage();
+            // page = await context.newPage();
             const res = await page
                 .on('response', checkResponse)
                 .on('console', msg => {
@@ -230,7 +247,7 @@ const kootAnalyzeCrawler = async (urlEntry, debug = false) => {
                 })
                 .catch(e => {
                     addError(e);
-                    return context.close();
+                    // return context.close();
                 });
 
             if (!startUrl) {
@@ -275,29 +292,44 @@ const kootAnalyzeCrawler = async (urlEntry, debug = false) => {
                 });
             }
 
-            await page.close();
-            await context.close();
+            // await page.close();
+            // await context.close();
 
             // 将 url 从 queue 移动到 visited
             urls.visited.push(url);
             urls.queue.splice(urls.queue.indexOf(url), 1);
         } catch (e) {
-            await page.close();
-            await context.close();
+            console.error(e);
+            // await page.close();
+            // await context.close();
         }
 
         // if (urls.queue.length) return await crawl(urls.queue[0]);
         // return errors;
     };
 
-    await crawl(urlEntry);
+    await cluster.task(async ({ page, data: url }) => {
+        await crawl(page, url);
+        // const screen = await page.screenshot();
+        // Store screenshot, do something else
+    });
 
-    while (urls.queue.length && (!crawlMax || crawlCount < crawlMax)) {
-        await crawl();
-        crawlCount++;
-    }
+    // await crawl(urlEntry);
 
-    await browser.close();
+    crawlCount++;
+    cluster.queue(urlEntry);
+
+    // await browser.close();
+    await cluster.idle();
+
+    // console.log(urls.queue);
+    // while (urls.queue.length && (!maxCrawl || crawlCount < maxCrawl)) {
+    //     urls.queue.forEach(url => cluster.queue(url));
+    //     crawlCount++;
+    //     await cluster.idle();
+    // }
+
+    await cluster.close();
 
     errors.forEach(e => {
         const { type } = e;
