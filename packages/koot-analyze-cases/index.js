@@ -22,7 +22,7 @@ program
     if (crawler) {
         console.log('Running Crawler test...');
         console.log(' ');
-        const errors = await require('./cases/crawler')(crawler, {
+        const errors = await require('./crawler')(crawler, {
             debug: true,
             // maxCrawl: 100,
             cluster: {
@@ -82,7 +82,7 @@ program
     } else if (memory) {
         console.log('Running Memory test for 60s...');
         console.log('');
-        const result = await require('./cases/memory')(memory, 60, true);
+        const result = await require('./memory')(memory, 60, true);
         result.forEach(r => {
             console.log(`● ${r.prevUrl}`);
             console.log(`⇢ ${r.newUrl}`);

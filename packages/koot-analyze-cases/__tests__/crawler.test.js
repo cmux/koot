@@ -6,7 +6,7 @@ jest.setTimeout(5 * 60 * 1 * 1000);
 const fs = require('fs-extra');
 const path = require('path');
 const execSync = require('child_process').exec;
-const crawler = require('../cases/crawler');
+const crawler = require('../crawler');
 const waitForPort = require('../../../test/libs/get-port-from-child-process');
 const terminate = require('../../../test/libs/terminate-process');
 

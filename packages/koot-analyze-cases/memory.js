@@ -1,5 +1,5 @@
 const puppeteer = require('puppeteer');
-const sleep = require('../commons/sleep');
+const sleep = require('./commons/sleep');
 
 /** 忽略的 HTTP code */
 const ignoredStatus = [302, 304];

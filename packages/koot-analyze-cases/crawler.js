@@ -24,7 +24,7 @@ const largeFileThreshold = 300 * 1024; // 300KB
  */
 const kootAnalyzeCrawler = async (urlEntry, options = {}) => {
     const {
-        debug = false,
+        // debug = false,
         maxCrawl = undefined,
         cluster: clusterOptions = {}
     } = options;
