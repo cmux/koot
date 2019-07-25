@@ -90,7 +90,7 @@ module.exports = ({
                     `window.addEventListener('load', function() {` +
                     // + `navigator.serviceWorker.register("${injectCache.pathnameSW}?koot=${process.env.KOOT_VERSION}",`
                     `navigator.serviceWorker.register("${injectCache.pathnameSW ||
-                        JSON.parse(process.env.KOOT_PWA_PATHNAME)}?koot=0.8",` +
+                        JSON.parse(process.env.KOOT_PWA_PATHNAME)}?koot=0.11",` +
                     `{scope: '/'}` +
                     `)` +
                     `.catch(err => {console.log('👩‍💻 Service Worker SUPPORTED. ERROR', err)})` +

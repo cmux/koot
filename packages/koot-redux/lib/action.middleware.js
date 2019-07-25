@@ -108,13 +108,13 @@ const createActionMiddleware = function( moduleInstance = {} ){
 
     __STATIC_DATA__['moduleInstance'] = moduleInstance;
 
-    const actionCollection = moduleInstance.actionCollection;
+    // const actionCollection = moduleInstance.actionCollection;
 
-    if( Object.keys(actionCollection).length === 0 ){
-        throw new Error(
-            `A valid actions collection was not received!`
-        )
-    }
+    // if( Object.keys(actionCollection).length === 0 ){
+    //     throw new Error(
+    //         `A valid actions collection was not received!`
+    //     )
+    // }
 
     /**
      * 中间件主体函数
