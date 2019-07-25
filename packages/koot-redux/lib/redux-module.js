@@ -6,7 +6,7 @@ import { isFunction, isObject } from './utils.js';
  */
 class ReduxModule {
 
-    constructor( module, moduleName ) {
+    constructor( module, moduleName, preloadedState ) {
 
         const { state, reducers, actions, modules } = module;
         // 
@@ -28,12 +28,25 @@ class ReduxModule {
         //
         this.__external_reducers = this.getExternalModuleReducers( this.__state );
 
+        // 合并preloadedState到state
+        if (preloadedState) {
+            Object.keys(preloadedState).forEach(itemKey => {
+                if (!modules || !modules[itemKey]) {
+                    state[itemKey] = preloadedState[itemKey];
+                }
+            });
+        }
+
         // 实例化所有子模块并存储在 __children 下
         // this.__children[key] = new ReduxModule(this.__modules[key])
         if( Object.keys(this.__modules).length ){
             Object.keys(this.__modules).forEach(moduleName => {
                 const moduleItem = this.__modules[moduleName];
-                this.__children[moduleName] = new ReduxModule(moduleItem, moduleName);
+                let preloadedStateItem;
+                if (preloadedState && preloadedState[moduleName]) {
+                    preloadedStateItem = preloadedState[moduleName];
+                }
+                this.__children[moduleName] = new ReduxModule(moduleItem, moduleName, preloadedStateItem);
             })
         }
     }
@@ -75,7 +88,7 @@ class ReduxModule {
             const p = path[index];
             result = result[p]
             if( !result ){
-                return null;
+                return result;
             }
         }
         return result;
@@ -98,7 +111,7 @@ class ReduxModule {
                 reference = reference[p]
             }
             if( !reference ){
-                return null;
+                return undefined;
             }
         }
         return result;
@@ -224,39 +237,46 @@ class ReduxModule {
     createReducer() {
         return ( moduleState = this.__initState, action ) => {
             const { type, payload } = action;
-            
             const reducerHandler = this.__reducers[type];
+            let finalState;
 
-            let finaState;
-
-            // 执行当前 module 里引入的外部 reducer
-            // 不论执行结果如何都合并入 finaState 
-            const externalStateResult = this.currentExternalReducerHandler(moduleState, action);
-            finaState = Object.assign({}, this.__state, moduleState, externalStateResult)
-            this.__state = finaState;
             if( reducerHandler ){
                 // 执行当前 module 的 reducer
                 const moduleStateResult = reducerHandler(moduleState, payload);
-
-                finaState = Object.assign({}, this.__state, moduleState, finaState, moduleStateResult);
-                this.__state = finaState;
+                finalState = Object.assign({}, moduleStateResult);
+                this.__state = finalState;
             }else{
                 // 把 action 和对应的 state 传给 子元素的 reducer
                 const childrenModuleNames = Object.keys(this.__children);
                 if( childrenModuleNames.length ){
-                    let childrenFinalState = {};
+                    let childrenFinalState;
                     childrenModuleNames.map(childrenModuleName => {
                         const childrenModuleItem = this.__children[childrenModuleName];
                         // 执行所有模块的 reducer
                         const result = childrenModuleItem.createReducer()(moduleState[childrenModuleName], action);
                         if( result !== moduleState[childrenModuleName] ){
+                            if( !childrenFinalState ){
+                                childrenFinalState = {}
+                            }
                             childrenFinalState[childrenModuleName] = result;
                         }
                     })
-                    finaState =  Object.assign({}, this.__state, moduleState, finaState, childrenFinalState);
+                    finalState = Object.assign({}, moduleState, childrenFinalState);
                 }
             }
-            return finaState;
+
+            // 执行当前 module 里引入的外部 reducer
+            // 不论执行结果如何都合并入 finalState 
+            if( 
+                this.__external_reducers && 
+                this.__external_reducers.length > 0 
+            ){
+                const externalStateResult = this.currentExternalReducerHandler(this.__state, action);
+                finalState = Object.assign({}, finalState, externalStateResult);
+                this.__state = Object.assign({}, this.__state, externalStateResult);
+            }
+
+            return finalState || moduleState;
         }
     }
 }
