@@ -84,6 +84,25 @@ export default {
 };
 ```
 
+### 注入函数
+
+注入的变量可以是函数 (如上例的 `performanceInfos`)。在服务器渲染页面 (同构/SSR 项目) 或生成模板文件 (SPA 项目) 时，对应的函数会自动执行。
+
+注入函数有以下特征和要求
+
+-   必须是同步函数，同时函数逻辑中不允许出现异步方法。异步方法和异步函数暂不支持
+-   必须返回 `string`
+-   对于同构/SSR 项目，会传入 3 个参数：
+    -   `template`
+        _string_ EJS 模板文件源代码
+    -   `state`
+        _Object_ 当前的 store state
+    -   `ctx`
+        _Object_ 此次访问的 KOA `ctx` 对象
+-   对于 SPA 项目，会传入 1 个参数：
+    -   `template`
+        _string_ EJS 模板文件源代码
+
 ### 默认注入项
 
 以下注入项会默认启用，只要模板中有对应的 `inject.[*]` 即会自动替换为对应结果

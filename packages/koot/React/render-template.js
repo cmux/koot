@@ -1,7 +1,7 @@
-const ejs = require('ejs')
+const ejs = require('ejs');
 
-const readClientFile = require('../utils/read-client-file')
-const getClientFilePath = require('../utils/get-client-file-path')
+const readClientFile = require('../utils/read-client-file');
+const getClientFilePath = require('../utils/get-client-file-path');
 
 /**
  * 渲染 ejs 模板
@@ -15,44 +15,51 @@ const getClientFilePath = require('../utils/get-client-file-path')
 module.exports = ({
     template = DEFAULT_TEMPLATE,
     inject = {},
-    store, state,
+    store,
+    state,
     compilation,
+    ctx
 }) => {
-
-    if (typeof state !== 'object' && typeof store === 'object' && typeof store.getState === 'function')
-        state = store.getState()
+    if (
+        typeof state !== 'object' &&
+        typeof store === 'object' &&
+        typeof store.getState === 'function'
+    )
+        state = store.getState();
     else if (typeof state === 'object' && typeof state.getState === 'function')
-        state = state.getState()
+        state = state.getState();
 
     try {
         for (let key in inject) {
             if (typeof inject[key] === 'function')
-                inject[key] = inject[key](template, state)
+                inject[key] = inject[key](template, state, ctx);
         }
     } catch (e) {
-        console.log(e)
+        console.log(e);
     }
 
     // 开发环境: 将 content('critical.js') 转为 pathname() 方式
     if (process.env.WEBPACK_BUILD_ENV === 'dev')
-        template = template
-            .replace(
-                /<script(.*?)><%(.*?)content\(['"]critical\.js['"]\)(.*?)%><\/script>/,
-                `<script$1 src="<%$2pathname('critical.js')$3%>"></script>`
-            )
+        template = template.replace(
+            /<script(.*?)><%(.*?)content\(['"]critical\.js['"]\)(.*?)%><\/script>/,
+            `<script$1 src="<%$2pathname('critical.js')$3%>"></script>`
+        );
 
     // console.log(template)
 
-    const localeId = typeof state === 'object' ? state.localeId : undefined
+    const localeId = typeof state === 'object' ? state.localeId : undefined;
 
     return ejs.render(
-        template, {
+        template,
+        {
             inject,
-            content: (filename) => readClientFile(filename, localeId, compilation),
-            pathname: (filename) => getClientFilePath(filename, localeId),
-        }, {}
-    )
-}
+            content: filename =>
+                readClientFile(filename, localeId, compilation),
+            pathname: filename => getClientFilePath(filename, localeId)
+        },
+        {}
+    );
+};
 
 const DEFAULT_TEMPLATE = `<!DOCTYPE html>
 <html>
@@ -96,4 +103,4 @@ const DEFAULT_TEMPLATE = `<!DOCTYPE html>
     <%- inject.scripts %>
 </body>
 
-</html>`
+</html>`;

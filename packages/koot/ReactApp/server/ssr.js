@@ -242,7 +242,8 @@ const ssr = async (options = {}) => {
             ...inject,
             ...templateInject
         }),
-        store: Store
+        store: Store,
+        ctx
     });
 
     // 结果写入缓存
