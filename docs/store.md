@@ -98,3 +98,11 @@ const actionUpdateUser = data =>
         data
     });
 ```
+
+---
+
+### 刷新页面后还原 store
+
+利用 `sessionStore` 配置，可实现将全部或部分 store 对象同步到浏览器/客户端的 sessionStore 中，在用户刷新页面后，这些值会被还原到 store，以确保和刷新前一致。
+
+具体配置方式请查阅：[项目配置](/config?id=sessionStore)。
