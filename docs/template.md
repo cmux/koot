@@ -92,11 +92,13 @@ export default {
 
 -   必须是同步函数，同时函数逻辑中不允许出现异步方法。异步方法和异步函数暂不支持
 -   必须返回 `string`
--   对于同构/SSR 项目，会传入 2 个参数：
+-   对于同构/SSR 项目，会传入 3 个参数：
     -   `template`
         _string_ EJS 模板文件源代码
     -   `state`
         _Object_ 当前的 store state
+    -   `ctx`
+        _Object_ 此次访问的 KOA `ctx` 对象
 -   对于 SPA 项目，会传入 1 个参数：
     -   `template`
         _string_ EJS 模板文件源代码
