@@ -204,6 +204,15 @@ const doTest = async (port, settings = {}) => {
                 .catch(e => (err = e));
             expect(typeof err).toBe('undefined');
         }
+
+        // 测试: inject 传入 ctx
+        {
+            const value = await page.evaluate(
+                () => document.getElementById('inject-ctx-test').innerText
+            );
+            if (i18nUseRouter) expect(/^\/.+?\//.test(value)).toBe(true);
+            else expect(value).toBe('/');
+        }
     }
 
     // 测试: 利用 URL 可切换到对应语种，并且 SSR 数据正确
@@ -255,6 +264,16 @@ const doTest = async (port, settings = {}) => {
             );
             expect(typeof SSRState.infos.serverTimestamp).toBe('number');
             expect(SSRServerTime).toBe(SSRState.infos.serverTimestamp);
+
+            // 测试: inject 传入 ctx
+            {
+                const value = await page.evaluate(
+                    () => document.getElementById('inject-ctx-test').innerText
+                );
+                expect(value).toBe(
+                    i18nUseRouter ? `/${localeId}/extend` : '/extend'
+                );
+            }
         };
 
         await testTargetLocaleId('zh', {
