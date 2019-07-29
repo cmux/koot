@@ -21,7 +21,7 @@
     -   minor
         -   `@babel/register` -> _7.5.5_
         -   `mini-css-extract-plugin` -> _0.8.0_
-        -   `webpack` -> _4.37.0_
+        -   `webpack` -> _4.38.0_
     -   patch
         -   `@babel/core` -> _7.5.5_
         -   `@babel/plugin-proposal-class-properties` -> _7.5.5_
@@ -31,10 +31,11 @@
         -   `@types/node` -> _12.6.8_
         -   `@types/react-dom` -> _16.8.5_
         -   `cache-loader` -> _4.1.0_
+        -   `copy-webpack-plugin` -> _5.0.4_
         -   `css-loader` -> _3.1.0_
         -   `file-loader` -> _4.1.0_
         -   `lodash` -> _4.17.15_
-        -   `react-hot-loader` -> _4.12.9_
+        -   `react-hot-loader` -> _4.12.10_
         -   `url-loader` -> _2.1.0_
 
 **koot-boilerplate**

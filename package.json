@@ -58,10 +58,10 @@
         "latest-version": "5.1.0",
         "lerna": "3.16.4",
         "lerna-wizard": "1.0.9",
-        "lint-staged": "9.2.0",
+        "lint-staged": "9.2.1",
         "prettier": "1.18.2",
         "puppeteer": "1.19.0",
-        "simple-git": "1.122.0"
+        "simple-git": "1.124.0"
     },
     "eslintIgnore": [
         "node_modules/**/*"
