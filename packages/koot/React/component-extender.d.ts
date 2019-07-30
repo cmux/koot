@@ -33,6 +33,8 @@ interface extendOptions {
      * @default true
      */
     ssr?: ReactNode | boolean;
+    /** 组件名 (仅供调试用) */
+    name?: string;
 }
 
 interface extendPageinfoObject {
