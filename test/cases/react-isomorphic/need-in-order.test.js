@@ -362,6 +362,7 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
                     document.querySelector('a[href$="/static"]').click();
                 })
             ]).catch(e => (err = e));
+            if (err) console.log(err);
             expect(typeof err).toBe('undefined');
         }
 

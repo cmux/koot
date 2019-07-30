@@ -22,6 +22,7 @@ import {
 } from './styles';
 import clientUpdatePageInfo from './client-update-page-info';
 import { RESET_CERTAIN_STATE } from './redux';
+import isRenderSafe from './is-render-safe';
 
 //
 
@@ -73,6 +74,8 @@ let devSSRConnectIndex = 0;
  * @returns {Promise}
  */
 const doFetchData = (store, renderProps, dataFetch) => {
+    if (!isRenderSafe()) return new Promise(resolve => resolve(result));
+
     const result = dataFetch(store.getState(), renderProps, store.dispatch);
     // if (result === true) {
     //     isDataPreloaded = true
@@ -92,6 +95,8 @@ const doFetchData = (store, renderProps, dataFetch) => {
  * @returns {Array} infos.metas
  */
 const doPageinfo = (store, props, pageinfo) => {
+    if (!isRenderSafe()) return {};
+
     const defaultPageInfo = {
         title: '',
         metas: []
@@ -261,6 +266,8 @@ export default (options = {}) => WrappedComponent => {
                     connectedComponents.unshift(KootComponent);
                 }
             }
+
+            if (!isRenderSafe()) return;
 
             if (hasStyles) {
                 this.kootClassNames = styles.map(obj => obj.wrapper);

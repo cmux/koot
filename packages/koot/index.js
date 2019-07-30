@@ -5,6 +5,8 @@
     __KOOT_LOCALEID__: false,
 */
 
+import isRenderSafe from './React/is-render-safe';
+
 /**
  * 手动创建 Redux Store 时需要的相关对象
  * @type {Object}
@@ -57,6 +59,7 @@ export let history = (() => getHistory())();
 //
 
 export const getCache = localeId => {
+    if (!isRenderSafe()) return {};
     if (__CLIENT__) {
         if (typeof window.__KOOT_CACHE__ !== 'object')
             window.__KOOT_CACHE__ = {};
