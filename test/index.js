@@ -46,6 +46,11 @@ const run = async () => {
             },
             new inquirer.Separator(),
             {
+                name: 'Package: koot-analyze-cases',
+                value:
+                    './packages/koot-analyze-cases/__tests__/.+\\.test\\.[jt]sx?$'
+            },
+            {
                 name: 'Package: koot-cli',
                 value: './test/cases/package/cli'
             },

@@ -1,0 +1,72 @@
+{
+    "name": "project-full-of-shits",
+    "private": true,
+    "version": "1.0.0",
+    "description": "A test project that full of shits",
+    "author": {
+        "name": "diablohu",
+        "email": "diablohudream@gmail.com"
+    },
+    "homepage": "https://github.com/cmux/koot#readme",
+    "license": "none",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/cmux/koot.git"
+    },
+    "scripts": {
+        "start": "koot-start",
+        "start:server": "koot-start --no-build",
+        "build": "koot-build",
+        "build:spa": "koot-build --type spa",
+        "dev": "koot-dev",
+        "dev:no-open": "koot-dev --no-open",
+        "dev:spa": "koot-dev --type spa",
+        "analyze": "koot-analyze",
+        "eslint": "eslint \"src/**/*.+(js|jsx)\"",
+        "check-types": "tsc"
+    },
+    "dependencies": {
+        "axios": "0.19.0",
+        "classnames": "2.2.6",
+        "koot": "^0.10.7"
+    },
+    "devDependencies": {
+        "autoprefixer": "9.6.1",
+        "babel-eslint": "10.0.2",
+        "cssnano": "4.1.10",
+        "eslint": "5.16.0",
+        "eslint-config-koot": "0.2.0",
+        "husky": "3.0.0",
+        "jest": "24.8.0",
+        "lint-staged": "9.1.0",
+        "normalize.css": "8.0.1",
+        "prettier": "1.18.2",
+        "redux-logger": "3.0.6",
+        "svg-url-loader": "3.0.0"
+    },
+    "bugs": {
+        "url": "https://github.com/cmux/koot/issues"
+    },
+    "eslintIgnore": [
+        "node_modules/**/*"
+    ],
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged"
+        }
+    },
+    "lint-staged": {
+        "*.{js,jsx,ts,tsx,cjs,mjs}": [
+            "eslint --fix",
+            "prettier --write",
+            "git add"
+        ],
+        "*.{json,md,css,less,sass,scss}": [
+            "prettier --write",
+            "git add"
+        ]
+    },
+    "koot": {
+        "baseVersion": "0.10.7"
+    }
+}
