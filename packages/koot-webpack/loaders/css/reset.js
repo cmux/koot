@@ -1,8 +1,10 @@
-const stats = require('./stats')
+const stats = require('./stats');
 
 module.exports = () => {
-    stats.sameIndex = 0
-    stats.collection = []
+    console.log(stats);
 
-    return stats
-}
+    stats.sameIndex = 0;
+    stats.collection = [];
+
+    return stats;
+};
