@@ -20,7 +20,8 @@
 -   更新依赖包
     -   minor
         -   `@babel/register` -> _7.5.5_
-        -   `mini-css-extract-plugin` -> _0.8.0_
+        -   `mini-css-extract-plugin` -> _0.8.0
+            _
         -   `webpack` -> _4.38.0_
         -   `webpack-bundle-analyzer` -> _3.4.1_
     -   patch
@@ -51,6 +52,16 @@
     -   minor
         -   `package-json` -> _6.5.0_
         -   `semver` -> _6.3.0_
+
+## 0.10.11
+
+**2019-07-30**
+
+核心
+
+-   **优化**
+    -   调整同构/SSR 服务器逻辑，现在在 `beforeDataToStore` 周期运行之前，会有一次 `renderToString` 操作，用以获取当前匹配的组件
+        -   取消上一版本针对同构/SSR 项目的改动
 
 ## 0.10.10
 

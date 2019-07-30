@@ -939,6 +939,39 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
         expect(values.zh2).toBe(expectG + expectL);
     }
 
+    // 测试: 非匹配的组件，其相 store 关函数不应运行
+    {
+        const context = await browser.createIncognitoBrowserContext();
+        const page = await context.newPage();
+        const test = async (url = origin, toHasValue = false) => {
+            await page.goto(url, {
+                waitUntil: 'domcontentloaded'
+            });
+
+            const SSRState = await page.evaluate(() => {
+                const scripts = [...document.querySelectorAll('script')];
+                const regex = /^window.__REDUX_STATE__\s*=\s*(.+?)[;$]/m;
+                const s = scripts.filter(el => regex.test(el.innerText));
+                if (!s.length) return '';
+
+                const str = s[0].innerText;
+                const match = regex.exec(str);
+
+                if (match.length < 2) return '';
+
+                return JSON.parse(match[1]);
+            });
+
+            expect(!!SSRState.testModifyState).toBe(toHasValue);
+        };
+
+        await test(origin, false);
+        await test(origin + `/test-modify-state`, true);
+        await test(origin, false);
+
+        await context.close();
+    }
+
     // TODO: 测试: 所有 Webpack 结果资源的访问
 
     // TODO: 测试: 有 extract.all.[*].css
