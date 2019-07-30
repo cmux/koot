@@ -12,8 +12,8 @@ import getPathnameDevServerStart from '../../utils/get-pathname-dev-server-start
 import createKoaApp from '../../libs/create-koa-app';
 import errorMsg from '../../libs/error-msg';
 import log from '../../libs/log';
-import getDist from '../../utils/get-dist-path';
-import sleep from '../../utils/sleep';
+// import getDist from '../../utils/get-dist-path';
+// import sleep from '../../utils/sleep';
 
 import validatePort from '../../libs/validate-port';
 import createRenderCacheMap from './validate/create-render-cache-map';
@@ -29,7 +29,8 @@ import middlewareStatic from './middlewares/static';
 // require('@babel/polyfill')
 require('isomorphic-fetch');
 const fs = require('fs-extra');
-const path = require('path');
+// const path = require('path');
+const chalk = require('chalk');
 
 //
 
@@ -123,15 +124,24 @@ const startKootIsomorphicServer = async () => {
     log(' ', 'server', `init \x1b[32m${'OK'}\x1b[0m!`);
 
     // [开发环境] 中间件: 请求完成后，触发 server/index.js 保存，让 PM2 重启服务器
-    app.use(async (ctx, next) => {
-        await next();
-        const fileServer = path.resolve(getDist(), 'server/index.js');
-        if (fs.existsSync(fileServer)) {
-            await sleep(200);
-            const content = await fs.readFile(fileServer, 'utf-8');
-            await fs.writeFile(fileServer, content, 'utf-8');
-        }
-    });
+    if (__DEV__) {
+        app.use(async (ctx, next) => {
+            await next();
+            console.log('  ');
+            log('success', 'server', 'render success');
+            console.log('  ');
+            console.log('  ');
+            console.log('  ');
+            console.log('  ');
+            console.log('  ');
+            //     const fileServer = path.resolve(getDist(), 'server/index.js');
+            //     if (fs.existsSync(fileServer)) {
+            //         await sleep(200);
+            //         const content = await fs.readFile(fileServer, 'utf-8');
+            //         await fs.writeFile(fileServer, content, 'utf-8');
+            //     }
+        });
+    }
 
     // 启动服务器
     await new Promise(resolve => {

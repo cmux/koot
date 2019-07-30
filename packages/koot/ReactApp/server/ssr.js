@@ -18,6 +18,7 @@ import { resetStore, resetHistory } from '../../';
 import RootIsomorphic from './root-isomorphic';
 
 import { publicPathPrefix } from '../../defaults/webpack-dev-server';
+import { needConnectComponents } from '../../defaults/defines-server';
 import { CHANGE_LANGUAGE } from '../action-types';
 
 import validateRouterConfig from '../../React/validate/router-config';
@@ -25,6 +26,7 @@ import validateInject from '../../React/validate-inject';
 import validateReduxConfig from '../../React/validate/redux-config';
 import isNeedInjectCritical from '../../React/inject/is-need-inject-critical';
 import renderTemplate from '../../React/render-template';
+import { default as clearStore } from '../../React/redux/reset-store';
 
 import beforeRouterMatch from './middlewares/isomorphic/lifecycle/before-router-match';
 import beforeDataToStore from './middlewares/isomorphic/lifecycle/before-data-to-store';
@@ -164,6 +166,15 @@ const ssr = async (options = {}) => {
         });
         return;
     }
+
+    // 确定当前访问匹配到的组件
+    SSR[needConnectComponents] = true;
+    SSR.connectedComponents = [];
+    renderToString(<RootIsomorphic store={Store} {...renderProps} />);
+    SSR[needConnectComponents] = false;
+
+    // 重置 state
+    clearStore(Store);
 
     // 渲染生命周期: beforeDataToStore
     await beforeDataToStore({

@@ -50,6 +50,7 @@ interface extendOptions {
      * @default true
      */
     ssr?: ReactNode | boolean;
+    name?: string;
 }
 
 interface extendPageinfoObject {

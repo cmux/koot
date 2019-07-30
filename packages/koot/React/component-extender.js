@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import hoistStatics from 'hoist-non-react-statics';
 
 import { getStore } from '../';
+import { needConnectComponents } from '../defaults/defines-server';
 
 //
 
@@ -244,6 +245,23 @@ export default (options = {}) => WrappedComponent => {
         constructor(props /*, context*/) {
             super(props /*, context*/);
 
+            /**
+             * _服务器端_
+             * 将组件注册到同构渲染对象中
+             */
+            if (__SERVER__) {
+                const SSR = __DEV__ ? global.__KOOT_SSR__ : __KOOT_SSR__;
+                if (SSR[needConnectComponents]) {
+                    if (__DEV__) {
+                        // console.log(options.name || '__');
+                        KootComponent.id = devSSRConnectIndex++;
+                        // KootComponent.pageinfo = pageinfo;
+                    }
+                    const { connectedComponents = [] } = SSR;
+                    connectedComponents.unshift(KootComponent);
+                }
+            }
+
             if (hasStyles) {
                 this.kootClassNames = styles.map(obj => obj.wrapper);
                 appendStyle(this.getStyleMap(/*context*/), styles);
@@ -396,21 +414,6 @@ export default (options = {}) => WrappedComponent => {
         KootComponent = connect(_connect)(KootComponent);
     } else if (Array.isArray(_connect)) {
         KootComponent = connect(..._connect)(KootComponent);
-    }
-
-    /**
-     * _服务器端_
-     * 将组件注册到同构渲染对象中
-     */
-    if (__SERVER__) {
-        if (__DEV__) {
-            KootComponent.id = devSSRConnectIndex++;
-            // KootComponent.pageinfo = pageinfo;
-        }
-        const { connectedComponents = [] } = __DEV__
-            ? global.__KOOT_SSR__
-            : __KOOT_SSR__;
-        connectedComponents.unshift(KootComponent);
     }
 
     return KootComponent;
