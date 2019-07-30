@@ -21,7 +21,7 @@
     -   minor
         -   `@babel/register` -> _7.5.5_
         -   `mini-css-extract-plugin` -> _0.8.0_
-        -   `webpack` -> _4.37.0_
+        -   `webpack` -> _4.38.0_
     -   patch
         -   `@babel/core` -> _7.5.5_
         -   `@babel/plugin-proposal-class-properties` -> _7.5.5_
@@ -31,10 +31,11 @@
         -   `@types/node` -> _12.6.8_
         -   `@types/react-dom` -> _16.8.5_
         -   `cache-loader` -> _4.1.0_
+        -   `copy-webpack-plugin` -> _5.0.4_
         -   `css-loader` -> _3.1.0_
         -   `file-loader` -> _4.1.0_
         -   `lodash` -> _4.17.15_
-        -   `react-hot-loader` -> _4.12.9_
+        -   `react-hot-loader` -> _4.12.10_
         -   `url-loader` -> _2.1.0_
 
 **koot-boilerplate**
@@ -50,14 +51,23 @@
         -   `package-json` -> _6.5.0_
         -   `semver` -> _6.3.0_
 
+## 0.10.9
+
+**2019-07-26**
+
+核心
+
+-   **错误修正**
+    -   修正：某些情况下 SPA 打包结果会被自动清空的问题
+
 ## 0.10.8
 
 **2019-07-22**
 
 核心
 
--   **错误修正**
-    -   修正：某些情况下 SPA 打包结果会被自动清空的问题
+-   **优化**
+    -   同构/SSR 项目中的模板注入函数现在会传入第 3 个参数: `ctx` - KOA 的 `ctx` 对象
 
 ## 0.10.7
 
