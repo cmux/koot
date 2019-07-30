@@ -5,6 +5,8 @@
 import routeCheck from 'koot/React/route-check';
 import Root from '@components/app';
 
+import PageTestModifyState from '@views/test-modify-state';
+
 if (__CLIENT__) console.log('!:!:! KOOT TEST ROUTES CONFIG !:!:!');
 
 // console.log((typeof Store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' Store in [routes]')
@@ -79,6 +81,11 @@ export default {
                         if (routeCheck(nextState)) cb(null, module.default);
                     });
                 }
+            },
+            {
+                path: 'test-modify-state',
+                name: 'Test: test-modify-state',
+                component: PageTestModifyState
             }
         ];
         if (!__SPA__) {
