@@ -10,5 +10,5 @@ export default {
             );
         }
     },
-    testInjectCTX: (template, state, ctx) => ctx.path
+    testInjectCTX: (template, state, ctx) => (__DEV__ ? '' : ctx.path)
 };
