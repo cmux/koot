@@ -1,6 +1,6 @@
 {
     "name": "koot-analyze-cases",
-    "version": "0.11.0-alpha.4",
+    "version": "0.11.0-alpha.6",
     "description": "Automate test cases for any website, webapp, HTML5 page and more",
     "main": "index.js",
     "sideEffects": false,
