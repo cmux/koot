@@ -1,5 +1,5 @@
 {
-    "name": "koot-analyze-cases",
+    "name": "koot-diagnose",
     "version": "0.11.0-alpha.6",
     "description": "Automate test cases for any website, webapp, HTML5 page and more",
     "main": "index.js",
@@ -22,7 +22,7 @@
     "bugs": {
         "url": "https://github.com/cmux/koot/issues"
     },
-    "homepage": "https://github.com/cmux/koot/tree/master/packages/koot-analyze-cases#readme",
+    "homepage": "https://github.com/cmux/koot/tree/master/packages/koot-diagnose#readme",
     "engines": {
         "node": ">=8.9.0"
     },

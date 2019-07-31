@@ -1,8 +1,8 @@
-# koot-analyze-cases
+# koot-diagnose
 
-Automate test cases for any website, webapp, HTML5 page and more. Uses by _Koot.js_ project's `koot-analyze` script. Each analyze/test case can run through CLI.
+Automate test cases for any website, webapp, HTML5 page and more. Uses by _Koot.js_ project's `koot-analyze` script. Each diagnose/test case can run programmably or through CLI.
 
-## Analyze/Test Cases
+## Diagnose/Test Cases
 
 **lighthouse**
 
