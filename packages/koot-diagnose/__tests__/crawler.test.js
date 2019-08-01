@@ -12,7 +12,7 @@ const terminate = require('../../../test/libs/terminate-process');
 
 //
 
-describe('koot-analyze-cases', () => {
+describe('koot-diagnose', () => {
     const dir = path.resolve(__dirname, './project-full-of-shits');
 
     test('crawler', async () => {

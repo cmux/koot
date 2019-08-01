@@ -30,6 +30,7 @@
         -   `@babel/plugin-transform-runtime` -> _7.5.5_
         -   `@babel/preset-env` -> _7.5.5_
         -   `@types/node` -> _12.6.8_
+        -   `@types/react` -> _16.8.24_
         -   `@types/react-dom` -> _16.8.5_
         -   `cache-loader` -> _4.1.0_
         -   `copy-webpack-plugin` -> _5.0.4_

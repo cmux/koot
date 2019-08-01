@@ -13,7 +13,7 @@ const run = async () => {
         reactIsomorphic: `./test/cases/react-isomorphic`,
         reactSPA: `./test/cases/react-spa`,
         analyze: {
-            all: './packages/koot-analyze-cases/__tests__/.+\\.test\\.[jt]sx?$'
+            all: './packages/koot-diagnose/__tests__/.+\\.test\\.[jt]sx?$'
         }
     };
 
@@ -49,12 +49,12 @@ const run = async () => {
             },
             new inquirer.Separator(),
             {
-                name: 'Package: koot-analyze-cases',
-                value: jestScript.analyze.all
-            },
-            {
                 name: 'Package: koot-cli',
                 value: './test/cases/package/cli'
+            },
+            {
+                name: 'Package: koot-diagnose',
+                value: jestScript.analyze.all
             },
             new inquirer.Separator(),
             {
