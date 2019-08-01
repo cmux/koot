@@ -2,15 +2,15 @@
 /// <reference types="react" />
 /// <reference types="react-dom" />
 
-declare function __(...translateKeys: Array<string>): String;
+declare function __(...translateKeys: Array<string>): string;
 /** 当前是否为客户端 */
-declare const __CLIENT__: Boolean;
+declare const __CLIENT__: boolean;
 /** 当前是否为服务器端 */
-declare const __SERVER__: Boolean;
+declare const __SERVER__: boolean;
 /** 当前是否为开发环境 */
-declare const __DEV__: Boolean;
+declare const __DEV__: boolean;
 /** 当前是否为 SPA 模式 */
-declare const __SPA__: Boolean;
+declare const __SPA__: boolean;
 
 //
 
