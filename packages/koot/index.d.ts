@@ -59,7 +59,7 @@ interface extendPageinfoObject {
 }
 
 interface extendPageinfoMeta {
-    [metaKey: String]: string;
+    [metaKey: string]: string;
 }
 
 type extendPageinfoFunction = (
@@ -73,7 +73,7 @@ type extendDataFetch = (
     dispatch: Dispatch
 ) => Promise<any>;
 
-type extendDataCheck = (state: S = any, renderProps: renderProps) => Boolean;
+type extendDataCheck = (state: S = any, renderProps: renderProps) => boolean;
 
 interface extendData {
     fetch?: extendDataFetch;
@@ -105,7 +105,7 @@ export const createStore: (
     appMiddlewares: Array<Middleware>
 ) => Store;
 interface CombineReducersObject {
-    [reducerName: String]: Reducer;
+    [reducerName: string]: Reducer;
 }
 
 /** 创建 _Redux store_ 时需要用到的内部数据 */
