@@ -6,6 +6,7 @@
 
 -   **新特性**
     -   **新全局函数** `getCache()` - 获取公用缓存空间。具体用法请参见文档 [全局与工具函数/全局函数](https://koot.js.org/#/utilities?id=全局函数) ([#143](https://github.com/cmux/koot/issues/143))
+    -   **新服务器端生命周期** `beforePreRender()` - 在预渲染之前之情。具体用法请参见文档 [生命周期/服务器端](https://koot.js.org/#/life-cycle?id=服务器端)
     -   现在会自动为客户端打包结果中的部分资源文件生成 gzip 版本 (.gz 文件) ([#129](https://github.com/cmux/koot/issues/129))
 -   **优化**
     -   `createStore()` 全局函数现允许传入 store 增强函数 (enhancer)。详情请参见文档 [Store/全局函数 createStore](https://koot.js.org/#/store?id=全局函数-createstore) ([#144](https://github.com/cmux/koot/issues/144))

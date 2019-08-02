@@ -29,6 +29,7 @@ import renderTemplate from '../../React/render-template';
 import { default as clearStore } from '../../React/redux/reset-store';
 
 import beforeRouterMatch from './middlewares/isomorphic/lifecycle/before-router-match';
+import beforePreRender from './middlewares/isomorphic/lifecycle/before-pre-render';
 import beforeDataToStore from './middlewares/isomorphic/lifecycle/before-data-to-store';
 import afterDataToStore from './middlewares/isomorphic/lifecycle/after-data-to-store';
 import executeComponentsLifecycle from './middlewares/isomorphic/execute-components-lifecycle';
@@ -166,6 +167,14 @@ const ssr = async (options = {}) => {
         });
         return;
     }
+
+    // 渲染生命周期: beforePreRender
+    await beforePreRender({
+        ctx,
+        store: Store,
+        localeId: LocaleId,
+        callback: lifecycle.beforePreRender
+    });
 
     // 确定当前访问匹配到的组件
     SSR[needConnectComponents] = true;

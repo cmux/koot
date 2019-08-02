@@ -84,6 +84,11 @@ class App extends React.Component {
                             {serverStartTime}
                         </span>
                     ) : null}
+                    {__SERVER__ && (
+                        <span id="__test-ssr-lifecycle-before-pre-render">
+                            {getStore().__TEST_BEFORE_PRE_RENDER__.__TEST__}
+                        </span>
+                    )}
                 </div>
             </React.StrictMode>
         );

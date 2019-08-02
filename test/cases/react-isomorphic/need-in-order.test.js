@@ -449,6 +449,11 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
                     i18nUseRouter ? `/${localeId}/extend` : '/extend'
                 );
             }
+
+            // 测试: SSR beforePreRender() 生命周期
+            expect($('#__test-ssr-lifecycle-before-pre-render').text()).toBe(
+                '__TEST_BEFORE_PRE_RENDER__'
+            );
         };
 
         await testTargetLocaleId('zh', {

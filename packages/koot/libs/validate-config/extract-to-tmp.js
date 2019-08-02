@@ -1,6 +1,6 @@
-const path = require('path')
-const { typesSPA } = require('../../defaults/before-build')
-const validatePathname = require('../../libs/validate-pathname')
+const path = require('path');
+const { typesSPA } = require('../../defaults/before-build');
+const validatePathname = require('../../libs/validate-pathname');
 
 /**
  * 从配置中抽取代码中引用的配置文件 (这些文件将存放到临时目录中)
@@ -10,7 +10,6 @@ const validatePathname = require('../../libs/validate-pathname')
  * @returns {Object}
  */
 module.exports = async (projectDir, config) => {
-
     /** @type {Object} 引用配置的配置对象 */
     const tmpConfig = (() => {
         const obj = {
@@ -19,41 +18,48 @@ module.exports = async (projectDir, config) => {
             template: config.template,
             router: config.routes,
             redux: (() => {
-                const redux = {}
+                const redux = {};
 
-                if (config.store) redux.store = config.store
-                else if (config.reducers) redux.combineReducers = config.reducers
+                if (config.store) redux.store = config.store;
+                else if (config.reducers)
+                    redux.combineReducers = config.reducers;
 
-                if (config.cookiesToStore) redux.syncCookie = config.cookiesToStore
+                if (config.cookiesToStore)
+                    redux.syncCookie = config.cookiesToStore;
 
-                return redux
+                return redux;
             })(),
             client: (() => {
-                const client = {}
-                if (config.historyType) client.historyType = config.historyType
-                if (config.before) client.before = config.before
-                if (config.after) client.after = config.after
-                if (config.onRouterUpdate) client.onRouterUpdate = config.onRouterUpdate
-                if (config.onHistoryUpdate) client.onHistoryUpdate = config.onHistoryUpdate
-                return client
+                const client = {};
+                if (config.historyType) client.historyType = config.historyType;
+                if (config.before) client.before = config.before;
+                if (config.after) client.after = config.after;
+                if (config.onRouterUpdate)
+                    client.onRouterUpdate = config.onRouterUpdate;
+                if (config.onHistoryUpdate)
+                    client.onHistoryUpdate = config.onHistoryUpdate;
+                return client;
             })()
-        }
+        };
 
         // SPA
         if (typesSPA.includes(config.type)) {
             // if (config.templateInject) obj.inject = config.templateInject
         } else {
             obj.server = (() => {
-                const server = {}
-                if (config.koaStatic) server.koaStatic = config.koaStatic
-                if (config.renderCache) server.renderCache = config.renderCache
-                if (config.proxyRequestOrigin) server.proxyRequestOrigin = config.proxyRequestOrigin
-                if (config.templateInject) server.inject = config.templateInject
-                if (config.serverBefore) server.before = config.serverBefore
-                if (config.serverAfter) server.after = config.serverAfter
-                if (config.serverOnRender) server.onRender = config.serverOnRender
-                return server
-            })()
+                const server = {};
+                if (config.koaStatic) server.koaStatic = config.koaStatic;
+                if (config.renderCache) server.renderCache = config.renderCache;
+                if (config.proxyRequestOrigin)
+                    server.proxyRequestOrigin = config.proxyRequestOrigin;
+                if (config.templateInject)
+                    server.inject = config.templateInject;
+                if (config.serverBefore) server.before = config.serverBefore;
+                if (config.serverAfter) server.after = config.serverAfter;
+                if (config.serverOnRender)
+                    server.onRender = config.serverOnRender;
+                return server;
+            })();
         }
 
         // 将所有 Pathname 字符串转为 require()
@@ -70,71 +76,77 @@ module.exports = async (projectDir, config) => {
             'server.before',
             'server.after',
             'server.onRender',
+            'server.onRender.beforeRouterMatch',
+            'server.onRender.beforePreRender',
             'server.onRender.beforeDataToStore',
             'server.onRender.afterDataToStore',
-            'inject',
-        ]
+            'inject'
+        ];
         optionsNeedImport.forEach(key => {
             try {
                 if (eval(`typeof obj.${key} === 'string' && obj.${key}`)) {
-                    const value = eval(`obj.${key}`)
+                    const value = eval(`obj.${key}`);
                     const pathname = path.isAbsolute(value)
                         ? value
-                        : validatePathname(value, projectDir).replace(/\\/g, '\\\\')
+                        : validatePathname(value, projectDir).replace(
+                              /\\/g,
+                              '\\\\'
+                          );
                     const result = path.isAbsolute(pathname)
                         ? pathname
-                        : ('../../../' + pathname.replace(/^\.\//, ''))
-                    eval(`obj.${key} = \`require('${result}').default\``)
+                        : '../../../' + pathname.replace(/^\.\//, '');
+                    eval(`obj.${key} = \`require('${result}').default\``);
                 }
-            } catch (e) { }
-        })
+            } catch (e) {}
+        });
 
-        return obj
-    })()
+        return obj;
+    })();
 
     /** @type {String[]} 引用配置 (部分) 需要的配置项 */
-    const propertiesPortion = [
-        'template',
-        'redux',
-        'server'
-    ]
+    const propertiesPortion = ['template', 'redux', 'server'];
 
     /** @type {Object} 引用配置 (部分) 的配置对象 */
-    const tmpConfigPortionServer = {}
+    const tmpConfigPortionServer = {};
     propertiesPortion.forEach(key => {
         if (typeof tmpConfig[key] === 'object')
-            tmpConfigPortionServer[key] = { ...tmpConfig[key] }
-        else if (tmpConfig[key])
-            tmpConfigPortionServer[key] = tmpConfig[key]
-    })
+            tmpConfigPortionServer[key] = { ...tmpConfig[key] };
+        else if (tmpConfig[key]) tmpConfigPortionServer[key] = tmpConfig[key];
+    });
     if (typeof tmpConfigPortionServer.server === 'object')
-        delete tmpConfigPortionServer.server.onRender
+        delete tmpConfigPortionServer.server.onRender;
 
-    const tmpConfigPortionClient = { ...tmpConfigPortionServer }
-    delete tmpConfigPortionServer.redux
-    delete tmpConfigPortionClient.server
+    const tmpConfigPortionClient = { ...tmpConfigPortionServer };
+    delete tmpConfigPortionServer.redux;
+    delete tmpConfigPortionClient.server;
 
     /**
      * 将对象结果转为字符串
-     * @param {Object} config 
+     * @param {Object} config
      * @returns {String}
      */
-    const transform = (config) => {
+    const transform = config => {
         return Object.keys(config)
             .map(key => {
                 if (key === 'server')
-                    return `export const ${key} = __SERVER__ ? ${JSON.stringify(config[key])} : {};`
+                    return `export const ${key} = __SERVER__ ? ${JSON.stringify(
+                        config[key]
+                    )} : {};`;
                 // if (key === 'router' && process.env.WEBPACK_BUILD_ENV === 'dev')
                 //     return `export const ${key} = () => {console.log(123); return ${JSON.stringify(config[key])}};`
-                return `export const ${key} = ${JSON.stringify(config[key])};`
+                return `export const ${key} = ${JSON.stringify(config[key])};`;
             })
             .join('\n')
-            .replace(/"require\((.+?)\).default"/g, `require($1).default`)
-    }
+            .replace(/"require\((.+?)\).default"/g, `require($1).default`);
+    };
 
     return {
         tmpConfig: '// 核心代码中引用的配置文件\n\n' + transform(tmpConfig),
-        tmpConfigPortionServer: '// 核心代码中引用的配置文件 (部分)\n\n' + transform(tmpConfigPortionServer),
-        tmpConfigPortionClient: '// 核心代码中引用的配置文件 (部分)\n\n' + transform(tmpConfigPortionClient)
-    }
-}
+        tmpConfigPortionServer:
+            '// 核心代码中引用的配置文件 (部分)\n\n' +
+            transform(tmpConfigPortionServer),
+        tmpConfigPortionClient:
+            '// 核心代码中引用的配置文件 (部分)\n\n' +
+            transform(tmpConfigPortionClient)
+    };
+};
