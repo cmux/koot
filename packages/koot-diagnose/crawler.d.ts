@@ -1,4 +1,4 @@
-interface CrawlerOptions {
+export interface CrawlerOptions {
     /** 最多访问的页面数量 */
     maxCrawl?: number;
     /** `puppeteer-cluster` 选项 */
@@ -6,7 +6,10 @@ interface CrawlerOptions {
         [option: string]: any;
     };
 }
-interface CrawlerError {
+export interface CrawlerResult {
+    [errorType: string]: CrawlerError[];
+}
+export interface CrawlerError {
     /** 错误信息 */
     message?: string;
     /** 错误类型 */
@@ -32,8 +35,6 @@ interface CrawlerError {
 async function crawler(
     entryURL: string,
     options?: CrawlerOptions
-): Promise<{
-    [errorType: string]: CrawlerError[];
-}>;
+): Promise<CrawlerResult>;
 
 export default crawler;
