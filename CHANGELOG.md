@@ -21,7 +21,7 @@
     -   minor
         -   `@babel/register` -> _7.5.5_
         -   `mini-css-extract-plugin` -> _0.8.0_
-        -   `webpack` -> _4.38.0_
+        -   `webpack` -> _4.39.0_
         -   `webpack-bundle-analyzer` -> _3.4.1_
     -   patch
         -   `@babel/core` -> _7.5.5_
@@ -29,7 +29,7 @@
         -   `@babel/plugin-proposal-object-rest-spread` -> _7.5.5_
         -   `@babel/plugin-transform-runtime` -> _7.5.5_
         -   `@babel/preset-env` -> _7.5.5_
-        -   `@types/node` -> _12.6.8_
+        -   `@types/node` -> _12.6.9_
         -   `@types/react` -> _16.8.24_
         -   `@types/react-dom` -> _16.8.5_
         -   `cache-loader` -> _4.1.0_
