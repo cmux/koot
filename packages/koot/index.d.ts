@@ -1,6 +1,7 @@
 /// <reference path="global.d.ts" />
 
 import { Store } from 'redux';
+import { History } from 'history';
 
 declare module 'koot';
 
@@ -16,10 +17,6 @@ export const getStore: () => Store;
 
 /** 获取封装后的 History 对象 */
 export const getHistory: () => History;
-// TODO: add History definition
-interface History {
-    [key: string]: any;
-}
 
 /**
  * 获取公用缓存空间
