@@ -41,3 +41,4 @@ node_modules/
 .DS_Store
 /.vscode
 /.projects
+/__tests__

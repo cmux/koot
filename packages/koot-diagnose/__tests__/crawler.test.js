@@ -1,5 +1,5 @@
 // jest configuration
-jest.setTimeout(5 * 60 * 1 * 1000);
+jest.setTimeout(10 * 60 * 1 * 1000);
 
 //
 
@@ -12,6 +12,22 @@ const terminate = require('../../../test/libs/terminate-process');
 
 //
 
+const spawn = async (cmd, o = {}) => {
+    const chunks = cmd.split(' ');
+    await new Promise(resolve => {
+        const child = require('child_process').spawn(chunks.shift(), chunks, {
+            stdio: 'inherit',
+            shell: true,
+            ...o
+        });
+        child.on('close', () => {
+            resolve();
+        });
+    });
+};
+
+//
+
 describe('koot-diagnose', () => {
     const dir = path.resolve(__dirname, './project-full-of-shits');
 
@@ -20,6 +36,11 @@ describe('koot-diagnose', () => {
         const dist = path.resolve(dir, 'dist');
         if (fs.existsSync(dist)) fs.emptyDirSync(dist);
         else fs.removeSync(dist);
+
+        await spawn('npm i --no-save', {
+            stdio: false,
+            cwd: dir
+        });
 
         const child = execSync(`npm run start`, {
             cwd: dir
@@ -50,14 +71,14 @@ describe('koot-diagnose', () => {
         expect(
             consoleError.some(
                 e =>
-                    e instanceof Error &&
+                    typeof e === 'object' &&
                     e.message &&
                     /\/this-is-a-non-exist-css-file\.css/.test(e.message)
             )
         ).toBe(true);
         expect(
             consoleError.some(
-                e => e instanceof Error && e.message && /404/.test(e.message)
+                e => typeof e === 'object' && e.message && /404/.test(e.message)
             )
         ).toBe(true);
 
@@ -65,7 +86,7 @@ describe('koot-diagnose', () => {
         expect(
             brokenRequest.some(
                 e =>
-                    e instanceof Error &&
+                    typeof e === 'object' &&
                     e.url &&
                     /\/this-is-a-non-exist-js-file\.js/.test(e.url)
             )
@@ -73,7 +94,9 @@ describe('koot-diagnose', () => {
         expect(
             brokenRequest.some(
                 e =>
-                    e instanceof Error && e.url && /\/this-is-a-404/.test(e.url)
+                    typeof e === 'object' &&
+                    e.url &&
+                    /\/this-is-a-404/.test(e.url)
             )
         ).toBe(true);
 
@@ -81,7 +104,7 @@ describe('koot-diagnose', () => {
         expect(
             largeFile.some(
                 e =>
-                    e instanceof Error &&
+                    typeof e === 'object' &&
                     e.url &&
                     /\/this-is-a-large-file\.png/.test(e.url) &&
                     e.threshold < e.contentLength

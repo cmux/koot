@@ -20,9 +20,9 @@ const largeFileThreshold = 300 * 1024; // 300KB
  * @param {Object} [options={}]
  * @param {Number} [options.maxCrawl] 最多访问的页面数量
  * @param {Object} [options.cluster] puppeteer-cluster 选项
- * @return {Promise<Array<Object>>}
+ * @return {Promise<Object>}
  */
-const kootAnalyzeCrawler = async (urlEntry, options = {}) => {
+const crawler = async (urlEntry, options = {}) => {
     const {
         // debug = false,
         maxCrawl = undefined,
@@ -340,4 +340,4 @@ const kootAnalyzeCrawler = async (urlEntry, options = {}) => {
     return errObj;
 };
 
-module.exports = kootAnalyzeCrawler;
+module.exports = crawler;
