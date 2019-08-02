@@ -16,36 +16,37 @@ declare const __SPA__: boolean;
 // ============================================================================
 
 interface TranslateReplaces {
-    [metaKey: string]: string;
+    [key: string]: string;
 }
+type translateResult = any;
 
 /** 多语言翻译函数 */
-declare function __(...keys: string[]): string;
-declare function __(key: string, replaces: TranslateReplaces): string;
+declare function __(...keys: string[]): translateResult;
+declare function __(key: string, replaces: TranslateReplaces): translateResult;
 declare function __(
     key1: string,
     key2: string,
     replaces: TranslateReplaces
-): string;
-declare function __(
-    key1: string,
-    key2: string,
-    key3: string,
-    replaces: TranslateReplaces
-): string;
+): translateResult;
 declare function __(
     key1: string,
     key2: string,
     key3: string,
     replaces: TranslateReplaces
-): string;
+): translateResult;
+declare function __(
+    key1: string,
+    key2: string,
+    key3: string,
+    replaces: TranslateReplaces
+): translateResult;
 declare function __(
     key1: string,
     key2: string,
     key3: string,
     key4: string,
     replaces: TranslateReplaces
-): string;
+): translateResult;
 declare function __(
     key1: string,
     key2: string,
@@ -53,7 +54,7 @@ declare function __(
     key4: string,
     key5: string,
     replaces: TranslateReplaces
-): string;
+): translateResult;
 declare function __(
     key1: string,
     key2: string,
@@ -62,7 +63,7 @@ declare function __(
     key5: string,
     key6: string,
     replaces: TranslateReplaces
-): string;
+): translateResult;
 declare function __(
     key1: string,
     key2: string,
@@ -72,7 +73,7 @@ declare function __(
     key6: string,
     key7: string,
     replaces: TranslateReplaces
-): string;
+): translateResult;
 declare function __(
     key1: string,
     key2: string,
@@ -83,7 +84,7 @@ declare function __(
     key7: string,
     key8: string,
     replaces: TranslateReplaces
-): string;
+): translateResult;
 declare function __(
     key1: string,
     key2: string,
@@ -95,7 +96,7 @@ declare function __(
     key8: string,
     key9: string,
     replaces: TranslateReplaces
-): string;
+): translateResult;
 declare function __(
     key1: string,
     key2: string,
@@ -108,7 +109,7 @@ declare function __(
     key9: string,
     key10: string,
     replaces: TranslateReplaces
-): string;
+): translateResult;
 
 // ============================================================================
 
