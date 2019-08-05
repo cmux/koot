@@ -44,8 +44,8 @@
         "koot-buildtest-isomorphic-config_old_0.6-production": "koot-start --koot-test --config koot.config.old-0.6.js",
         "koot-buildtest-isomorphic-config_old_0.6-development": "koot-dev --no-open --koot-test --config koot.config.old-0.6.js",
         "koot-buildtest-spa-build-config-default": "koot-build --koot-test --type react-spa --dest dist-spa-test",
-        "koot-buildtest-spa-build-config-koot_build_spa-1_js": "koot-build --koot-test --config L:\\Projects\\koot\\next\\test\\projects\\standard\\koot.build.spa-1.js",
-        "koot-buildtest-spa-build-config-koot_build_spa-2_js": "koot-build --koot-test --config L:\\Projects\\koot\\next\\test\\projects\\standard\\koot.build.spa-2.js"
+        "koot-buildtest-spa-build-config-koot_build_spa-1_js": "koot-build --koot-test --config E:\\Projects\\koot\\next\\test\\projects\\standard\\koot.build.spa-1.js",
+        "koot-buildtest-spa-build-config-koot_build_spa-2_js": "koot-build --koot-test --config E:\\Projects\\koot\\next\\test\\projects\\standard\\koot.build.spa-2.js"
     },
     "dependencies": {
         "autoprefixer": "9.4.7",
@@ -144,7 +144,7 @@
         "typescript": "3.5.3",
         "universal-alias-loader": "1.2.2",
         "url-loader": "2.1.0",
-        "webpack": "4.39.0",
+        "webpack": "4.39.1",
         "webpack-bundle-analyzer": "3.4.1",
         "webpack-config": "7.5.0",
         "webpack-dev-middleware": "3.7.0",

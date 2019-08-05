@@ -22,7 +22,7 @@
     -   minor
         -   `@babel/register` -> _7.5.5_
         -   `mini-css-extract-plugin` -> _0.8.0_
-        -   `webpack` -> _4.39.0_
+        -   `webpack` -> _4.39.1_
         -   `webpack-bundle-analyzer` -> _3.4.1_
     -   patch
         -   `@babel/core` -> _7.5.5_

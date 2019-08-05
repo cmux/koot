@@ -32,6 +32,6 @@
         "commander": "2.20.0",
         "lighthouse": "5.2.0",
         "puppeteer": "1.19.0",
-        "puppeteer-cluster": "0.16.0"
+        "puppeteer-cluster": "0.17.0"
     }
 }
