@@ -19,8 +19,13 @@
 -   添加依赖包
     -   `compression-webpack-plugin`
 -   更新依赖包
+    -   major
+        -   `style-loader` -> _1.0.0_
     -   minor
         -   `@babel/register` -> _7.5.5_
+        -   `@types/node` -> _12.7.1_
+        -   `css-loader` -> _3.2.0_
+        -   `file-loader` -> _4.2.0_
         -   `mini-css-extract-plugin` -> _0.8.0_
         -   `webpack` -> _4.39.1_
         -   `webpack-bundle-analyzer` -> _3.4.1_
@@ -30,13 +35,11 @@
         -   `@babel/plugin-proposal-object-rest-spread` -> _7.5.5_
         -   `@babel/plugin-transform-runtime` -> _7.5.5_
         -   `@babel/preset-env` -> _7.5.5_
-        -   `@types/node` -> _12.6.9_
-        -   `@types/react` -> _16.8.24_
+        -   `@types/react` -> _16.8.25_
         -   `@types/react-dom` -> _16.8.5_
         -   `cache-loader` -> _4.1.0_
         -   `copy-webpack-plugin` -> _5.0.4_
-        -   `css-loader` -> _3.1.0_
-        -   `file-loader` -> _4.1.0_
+        -   `js-cookie` -> _2.2.1_
         -   `lodash` -> _4.17.15_
         -   `react-hot-loader` -> _4.12.10_
         -   `url-loader` -> _2.1.0_
