@@ -11,15 +11,15 @@ export interface CrawlerResult {
 }
 export interface CrawlerError {
     /** 错误信息 */
-    message?: string;
+    readonly message?: string;
     /** 错误类型 */
-    type?: string;
+    readonly type?: string;
     /** 错误关联的 URL */
-    url: string;
+    readonly url: string;
     /** 当前页面 URL (和错误 URL 不同时) */
-    pageUrl?: string;
+    readonly pageUrl?: string;
     /** 此次请求的长度 (单位: 字节) */
-    contentLength?: number;
+    readonly contentLength?: number;
     [key: string]: any;
 }
 
