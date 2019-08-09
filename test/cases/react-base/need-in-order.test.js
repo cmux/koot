@@ -4,6 +4,10 @@
  * - ❌ 多语言
  * - ❌ 延迟渲染
  * - ❌ 空路由
+ *
+ * TODO:
+ * - store 里应有 router 相关项而且完全 `locationBeforeTransitions`
+ * - 路由关联组件的 props 里应有 router 相关项而且完全 (包含对 ? URL 的处理)
  */
 
 // jest configuration
