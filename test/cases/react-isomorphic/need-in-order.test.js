@@ -374,6 +374,12 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
             if (i18nUseRouter) expect(/^\/.+?\//.test(value)).toBe(true);
             else expect(value).toBe('/');
         }
+
+        // 测试: SSR state 转义与自动反转义
+        {
+            const SSRState = await getSSRState(page);
+            expect(SSRState.kootTest.testNeedEncode).toBe('test</script>');
+        }
     }
 
     // 测试: 利用 URL 可切换到对应语种，并且 SSR 数据正确
@@ -965,7 +971,13 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
 
                 if (match.length < 2) return '';
 
-                return JSON.parse(match[1]);
+                let result;
+                try {
+                    result = JSON.parse(match[1]);
+                } catch (e) {
+                    result = eval(match[1]);
+                }
+                return result;
             });
 
             expect(!!SSRState.testModifyState).toBe(toHasValue);
