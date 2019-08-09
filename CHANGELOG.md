@@ -20,13 +20,17 @@
     -   `compression-webpack-plugin`
 -   更新依赖包
     -   major
+        -   `commander` -> _3.0.0_
         -   `style-loader` -> _1.0.0_
     -   minor
         -   `@babel/register` -> _7.5.5_
         -   `@types/node` -> _12.7.1_
+        -   `@types/react` -> _16.9.0_
         -   `css-loader` -> _3.2.0_
         -   `file-loader` -> _4.2.0_
         -   `mini-css-extract-plugin` -> _0.8.0_
+        -   `react` -> _16.9.0_
+        -   `react-dom` -> _16.9.0_
         -   `webpack` -> _4.39.1_
         -   `webpack-bundle-analyzer` -> _3.4.1_
     -   patch
@@ -35,20 +39,20 @@
         -   `@babel/plugin-proposal-object-rest-spread` -> _7.5.5_
         -   `@babel/plugin-transform-runtime` -> _7.5.5_
         -   `@babel/preset-env` -> _7.5.5_
-        -   `@types/react` -> _16.8.25_
         -   `@types/react-dom` -> _16.8.5_
         -   `cache-loader` -> _4.1.0_
         -   `copy-webpack-plugin` -> _5.0.4_
         -   `js-cookie` -> _2.2.1_
         -   `lodash` -> _4.17.15_
         -   `react-hot-loader` -> _4.12.10_
+        -   `thread-loader` -> _2.1.3_
         -   `url-loader` -> _2.1.0_
 
 **koot-boilerplate**
 
 -   更新依赖包
     -   minor
-        -   `husky` -> _3.0.1_
+        -   `husky` -> _3.0.3_
 
 **koot-cli**
 
