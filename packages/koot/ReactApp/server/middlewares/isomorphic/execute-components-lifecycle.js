@@ -1,4 +1,5 @@
 /* global __KOOT_SSR__:false */
+const getSSRStateString = require('../../../../libs/get-ssr-state-string');
 
 /** @type {String} 同步数据到 store 的静态方法名 */
 const LIFECYCLE_DATA_TO_STORE = 'onServerRenderStoreExtend';
@@ -129,7 +130,7 @@ const executeComponentLifecycle = async ({ store, renderProps, ctx }) => {
     const result = {
         title: process.env.KOOT_PROJECT_NAME || '',
         metaHtml: '',
-        reduxHtml: `window.__REDUX_STATE__ = ${JSON.stringify(
+        reduxHtml: `window.__REDUX_STATE__ = ${getSSRStateString(
             store.getState()
         )};`
     };
