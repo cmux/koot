@@ -298,6 +298,19 @@ describe('测试: React 同构项目', () => {
                     customEnv
                 });
 
+                // 测试: 项目 package.json 里应有 koot 属性对象
+                {
+                    const {
+                        version: kootVersion
+                    } = require('koot/package.json');
+                    const { koot: result } = require(path.resolve(
+                        dir,
+                        'package.json'
+                    ));
+                    expect(typeof result).toBe('object');
+                    expect(result.version).toBe(kootVersion);
+                }
+
                 if (fs.existsSync(dist)) fs.emptyDirSync(dist);
                 else fs.removeSync(dist);
 
