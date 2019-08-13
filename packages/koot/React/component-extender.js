@@ -299,12 +299,12 @@ export default (options = {}) => WrappedComponent => {
         //
 
         componentDidUpdate(prevProps) {
-            if (
-                typeof prevProps.location === 'object' &&
-                typeof this.props.location === 'object' &&
-                prevProps.location.pathname !== this.props.location.pathname
-            )
-                this.clientUpdatePageInfo();
+            // if (
+            //     typeof prevProps.location === 'object' &&
+            //     typeof this.props.location === 'object' &&
+            //     prevProps.location.pathname !== this.props.location.pathname
+            // )
+            this.clientUpdatePageInfo();
         }
 
         componentDidMount() {
