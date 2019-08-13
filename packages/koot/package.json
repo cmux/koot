@@ -12,7 +12,8 @@
     },
     "scripts": {
         "check-updates": "ncu -x react-router,koa-body,koa-compress,koa-json,koa-onerror,koa-static,koa-compose,koa-helmet,koa-mount",
-        "test": "echo \"Run tests from root\" && exit 1"
+        "test": "echo \"Run tests from root\" && exit 1",
+        "check-types": "tsc --noEmit"
     },
     "repository": {
         "type": "git",
@@ -64,6 +65,7 @@
         "@types/react-dom": "16.8.5",
         "@types/react-redux": "7.1.1",
         "@types/react-router": "3.0.8",
+        "@types/webpack": "4.32.1",
         "babel-loader": "8.0.6",
         "cache-loader": "4.1.0",
         "chalk": "2.4.2",

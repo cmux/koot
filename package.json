@@ -79,10 +79,12 @@
             "git add"
         ],
         "*.{ts,tsx}": [
-            "tsc --noEmit",
             "eslint --fix",
             "prettier --write",
             "git add"
+        ],
+        "*.{xxxxxx}": [
+            "tsc --noEmit"
         ],
         "*.{json,md,css,less,sass,scss}": [
             "prettier --write",

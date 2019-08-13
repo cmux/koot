@@ -10,7 +10,7 @@ declare module 'koot';
 /** 获取当前请求对应到项目的语种ID */
 export const getLocaleId: () => LocaleId;
 /** 当前请求对应到项目的语种ID */
-type LocaleId = string;
+export type LocaleId = string;
 
 /** 获取 _Redux store_ 对象 */
 export const getStore: () => Store;

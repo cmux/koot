@@ -2,7 +2,7 @@
 
 import { ComponentType, ReactNode, FC, ComponentClass, Component } from 'react';
 import { Store, Dispatch } from 'redux';
-import { connect } from 'react-redux';
+import { Connect } from 'react-redux';
 
 export interface HOCExtend<ComponentProps> {
     /** React 高阶组件，可赋予目标组件CSS 命名空间、同构数据、更新页面信息等能力。 */
@@ -23,7 +23,7 @@ class HOC extends Component {}
 export const extend: HOCExtend<ComponentProps>;
 
 interface extendOptions {
-    connect?: connect;
+    connect?: Connect;
     /** 提供页面的 title 和 meta 标签信息 */
     pageinfo?: extendPageinfoObject | extendPageinfoFunction;
     data?: extendDataFetch | extendData;

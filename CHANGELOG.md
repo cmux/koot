@@ -19,6 +19,7 @@
     -   开发环境
         -   _客户端_：减少部分初始的日志输出
 -   添加依赖包
+    -   `@types/webpack`
     -   `compression-webpack-plugin`
 -   更新依赖包
     -   major
