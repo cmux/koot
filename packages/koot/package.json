@@ -1,6 +1,6 @@
 {
     "name": "koot",
-    "version": "0.10.13",
+    "version": "0.10.14",
     "description": "Koot.js - React isomorphic framework created by CMUX",
     "main": "index.js",
     "sideEffects": false,
@@ -99,7 +99,7 @@
         "koa-proxies": "0.8.1",
         "koa-router": "7.4.0",
         "koa-static": "5.0.0",
-        "koot-webpack": "^0.10.13",
+        "koot-webpack": "^0.10.14",
         "less": "3.9.0",
         "less-loader": "5.0.0",
         "lodash": "4.17.14",
