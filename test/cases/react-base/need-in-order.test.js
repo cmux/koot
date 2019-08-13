@@ -8,6 +8,12 @@
  * TODO:
  * - store 里应有 router 相关项而且完全 `locationBeforeTransitions`
  * - 路由关联组件的 props 里应有 router 相关项而且完全 (包含对 ? URL 的处理)
+ *  - location
+ *  - params
+ *  - route
+ *  - routeParams
+ *  - router: alias for History
+ *  - routes
  */
 
 // jest configuration
