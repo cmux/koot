@@ -112,6 +112,7 @@ module.exports = async (kootBuildConfig = {}) => {
     // entry / 入口
     const entryIndex = [
         // '@babel/register',
+        '@babel/polyfill',
         // 'core-js/stable',
         // path.resolve(__dirname, '../../../defaults/server-stage-0.js'),
         require('../libs/get-koot-file')(`${appType}/server`)

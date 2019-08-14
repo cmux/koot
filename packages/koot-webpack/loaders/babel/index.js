@@ -67,16 +67,25 @@ module.exports = require('babel-loader').custom(babel => {
             //     return preset
             // })
 
-            const newPlugins = plugins.filter(
-                plugin =>
-                    !(
-                        typeof plugin.file === 'object' &&
-                        (/extract-hoc(\/|\\)babel/.test(plugin.file.request) ||
-                            /react-hot-loader(\/|\\)babel/.test(
-                                plugin.file.request
-                            ))
-                    )
-            );
+            const newPlugins = plugins.filter(plugin => {
+                if (
+                    typeof plugin.file === 'object' &&
+                    (/extract-hoc(\/|\\)babel/.test(plugin.file.request) ||
+                        /react-hot-loader(\/|\\)babel/.test(
+                            plugin.file.request
+                        ))
+                )
+                    return false;
+                // if (
+                //     process.env.WEBPACK_BUILD_STAGE === 'server' &&
+                //     typeof plugin.file === 'object' &&
+                //     /@babel(\/|\\)plugin-transform-regenerator/.test(
+                //         plugin.file.request
+                //     )
+                // )
+                //     return false;
+                return true;
+            });
 
             if (
                 !__createDll &&
