@@ -1,26 +1,32 @@
-const util = require('util')
-const exec = util.promisify(require('child_process').exec)
+global.KOOT_DIST_DIR = __dirname;
 
-global.KOOT_DIST_DIR = __dirname
+const printTitle = title => {
+    console.log('\n');
+    console.log(`\x1b[43m \x1b[0m` + `\x1b[33m ` + title + `\x1b[0m`);
+    console.log('');
+};
+
+const spawn = async (cmd, title) => {
+    if (title) printTitle(title);
+
+    const chunks = cmd.split(' ');
+    await new Promise(resolve => {
+        const child = require('child_process').spawn(chunks.shift(), chunks, {
+            stdio: 'inherit',
+            shell: true,
+            cwd: __dirname
+        });
+        child.on('close', () => {
+            resolve();
+        });
+    });
+};
 
 const run = async () => {
-    console.log('> npm install --no-save')
+    await spawn('npm install --no-save', 'Installing dependencies');
 
-    const { stdout, stderr } = await exec(
-        'npm install --no-save',
-        {
-            cwd: __dirname,
-        }
-    )
+    printTitle('Starting server');
+    require('./server');
+};
 
-    console.log('\x1b[46m' + ' stdout ' + '\x1b[0m')
-    console.log(stdout)
-    console.log('\x1b[41m' + ' stderr ' + '\x1b[0m')
-    console.log(stderr)
-
-    console.log(' ')
-    console.log('> Starting server')
-    require('./server')
-}
-
-run().catch(err => console.trace(err))
+run().catch(err => console.trace(err));
