@@ -219,14 +219,16 @@ export default (options = {}) => WrappedComponent => {
 
         //
 
-        clientUpdatePageInfo() {
+        clientUpdatePageInfo(to) {
             if (!hasPageinfo) return;
 
-            const { title, metas } = doPageinfo(
-                getStore(),
-                getRenderPropsFromComponentProps(this.props),
-                pageinfo
-            );
+            const { title, metas } =
+                to ||
+                doPageinfo(
+                    getStore(),
+                    getRenderPropsFromComponentProps(this.props),
+                    pageinfo
+                );
 
             clientUpdatePageInfo(title, metas);
         }
@@ -370,7 +372,8 @@ export default (options = {}) => WrappedComponent => {
                     .trim(),
                 'data-class-name': this.kootClassNames.join(' ').trim()
             });
-            if (hasPageinfo)
+            // if (hasPageinfo)
+            if (__CLIENT__)
                 props.updatePageinfo = this.clientUpdatePageInfo.bind(this);
 
             // if (__SERVER__) console.log('extender this.state.loaded', this.state.loaded)

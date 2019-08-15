@@ -4,16 +4,6 @@
  * - ❌ 多语言
  * - ❌ 延迟渲染
  * - ❌ 空路由
- *
- * TODO:
- * - store 里应有 router 相关项而且完全 `locationBeforeTransitions`
- * - 路由关联组件的 props 里应有 router 相关项而且完全 (包含对 ? URL 的处理)
- *  - location
- *  - params
- *  - route
- *  - routeParams
- *  - router: alias for History
- *  - routes
  */
 
 // jest configuration
@@ -179,6 +169,134 @@ const doTest = async (port, dist, settings = {}) => {
         };
         await test(1.5);
         await test(2);
+    }
+
+    // 测试: react-router v3 兼容相关的属性
+    {
+        const context = await browser.createIncognitoBrowserContext();
+        const page = await context.newPage();
+        const testLocation = {
+            pathname: '/route-test/123',
+            search: '?test=aaa',
+            hash: '#bbb'
+        };
+        await page.goto(
+            origin +
+                testLocation.pathname +
+                testLocation.search +
+                testLocation.hash,
+            {
+                waitUntil: 'networkidle2'
+            }
+        );
+        const testResults = await page.evaluate(testLocation => {
+            const results = {};
+            const {
+                props = {},
+                propsInConnect = {},
+                stateInConnect = {}
+            } = window.__KOOT_TEST_ROUTE__;
+
+            const isPropsValid = (props = {}) => {
+                const {
+                    location = {},
+                    params = {},
+                    route = {},
+                    routeParams = {},
+                    router = {},
+                    routes
+                } = props;
+
+                return (
+                    location.hash === testLocation.hash &&
+                    location.pathname === testLocation.pathname &&
+                    location.search === testLocation.search &&
+                    params.testId === '123' &&
+                    typeof route.component === 'function' &&
+                    route.path === '/route-test/:testId' &&
+                    routeParams.testId === '123' &&
+                    typeof router.createHref === 'function' &&
+                    typeof router.createKey === 'function' &&
+                    typeof router.createLocation === 'function' &&
+                    typeof router.createPath === 'function' &&
+                    typeof router.getCurrentLocation === 'function' &&
+                    typeof router.go === 'function' &&
+                    typeof router.goBack === 'function' &&
+                    typeof router.goForward === 'function' &&
+                    typeof router.isActive === 'function' &&
+                    typeof router.listen === 'function' &&
+                    typeof router.listenBefore === 'function' &&
+                    typeof router.location === 'object' &&
+                    router.location.hash === testLocation.hash &&
+                    router.location.pathname === testLocation.pathname &&
+                    router.location.search === testLocation.search &&
+                    typeof router.params === 'object' &&
+                    router.params.testId === '123' &&
+                    typeof router.push === 'function' &&
+                    typeof router.replace === 'function' &&
+                    Array.isArray(router.routes) &&
+                    typeof router.setRouteLeaveHook === 'function' &&
+                    typeof router.transitionTo === 'function' &&
+                    typeof router.unsubscribe === 'function' &&
+                    Array.isArray(routes)
+                );
+            };
+
+            results.validLocationBeforeTransitionsInState =
+                typeof stateInConnect.routing === 'object' &&
+                typeof stateInConnect.routing.locationBeforeTransitions ===
+                    'object' &&
+                stateInConnect.routing.locationBeforeTransitions.hash ===
+                    testLocation.hash &&
+                stateInConnect.routing.locationBeforeTransitions.pathname ===
+                    testLocation.pathname &&
+                stateInConnect.routing.locationBeforeTransitions.search ===
+                    testLocation.search;
+            results.validPropsInConnect = isPropsValid(propsInConnect);
+            results.validProps = isPropsValid(props);
+
+            return results;
+        }, testLocation);
+        await context.close();
+
+        expect(typeof testResults).toBe('object');
+        expect(testResults.validLocationBeforeTransitionsInState).toBe(true);
+        expect(testResults.validPropsInConnect).toBe(true);
+        expect(testResults.validProps).toBe(true);
+    }
+
+    // 测试: 组件内手动 updatePageinfo
+    {
+        const context = await browser.createIncognitoBrowserContext();
+        const page = await context.newPage();
+        await page.goto(origin + '/route-test/123?test=aaa#bbb', {
+            waitUntil: 'networkidle2'
+        });
+
+        await page.evaluate(() => {
+            const button = document.querySelector(
+                '#__test-manually-update-pageinfo'
+            );
+            if (!button) return {};
+            button.click();
+        });
+        await sleep(1000);
+        const { title, metaTestRoute } = await page.evaluate(() => {
+            const title = document.title;
+            const metaTestRoute = document.querySelector('meta[test-route]');
+
+            if (!metaTestRoute) return { title };
+
+            return {
+                title,
+                metaTestRoute: metaTestRoute.getAttribute('test-route')
+            };
+        });
+
+        await context.close();
+
+        expect(title).toBe('TEST ROUTE');
+        expect(metaTestRoute).toBe('test-route');
     }
 
     await puppeteerTestStyles(page);
