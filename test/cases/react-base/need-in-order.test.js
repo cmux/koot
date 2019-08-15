@@ -146,29 +146,55 @@ const doTest = async (port, dist, settings = {}) => {
 
     {
         // base 图片应该引用打包结果的文件
-        const resultBase = await page.evaluate(() => {
+        const { base, baseRelative } = await page.evaluate(() => {
             const el = document.querySelector('[data-bg-type="base"]');
-            if (!el) return '';
-            return window.getComputedStyle(el).backgroundImage;
+            if (!el) return {};
+            const elRelative = document.querySelector(
+                '[data-bg-type="base-relative"]'
+            );
+            if (!elRelative) return {};
+            return {
+                base: window.getComputedStyle(el).backgroundImage,
+                baseRelative: window.getComputedStyle(elRelative)
+                    .backgroundImage
+            };
         });
-        expect(checkBackgroundResult(resultBase)).toBe(true);
+        expect(checkBackgroundResult(base)).toBe(true);
+        expect(checkBackgroundResult(baseRelative)).toBe(true);
     }
 
     {
         // respoinsive 图片应该引用打包结果的文件
+        const result = {};
+        const resultNative = {};
         const test = async scale => {
             await setScaleFactor(scale);
-            const result = await page.evaluate(() => {
+            const { value, valueNative } = await page.evaluate(() => {
                 const el = document.querySelector(
                     '[data-bg-type="responsive"]'
                 );
-                if (!el) return '';
-                return window.getComputedStyle(el).backgroundImage;
+                if (!el) return {};
+                const elNative = document.querySelector(
+                    '[data-bg-type="responsive-native"]'
+                );
+                if (!elNative) return {};
+                return {
+                    value: window.getComputedStyle(el).backgroundImage,
+                    valueNative: window.getComputedStyle(elNative)
+                        .backgroundImage
+                };
             });
-            expect(checkBackgroundResult(result)).toBe(true);
+            expect(checkBackgroundResult(value)).toBe(true);
+            expect(checkBackgroundResult(valueNative)).toBe(true);
+            result[scale] = value;
+            resultNative[scale] = valueNative;
         };
+        await test(1);
         await test(1.5);
         await test(2);
+        // expect(result[1]).not.toBe(result[1.5]);
+        // expect(result[1.5]).not.toBe(result[2]);
+        // expect(resultNative[1]).not.toBe(resultNative[2]);
     }
 
     // 测试: react-router v3 兼容相关的属性

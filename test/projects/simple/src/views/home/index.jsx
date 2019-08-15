@@ -17,7 +17,9 @@ const PageHome = ({ className }) => {
 
             <div className="bg-container">
                 <Bg className="bg" type="base" />
+                <Bg className="bg" type="base-relative" />
                 <Bg className="bg" type="responsive" />
+                <Bg className="bg" type="responsive-native" />
             </div>
 
             <h3>Issue tests</h3>

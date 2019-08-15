@@ -22,6 +22,8 @@
         -   _服务器端_: 现支持有超大型语言包的项目 ([#145](https://github.com/cmux/koot/issues/145))
     -   开发环境
         -   _客户端_：减少部分初始的日志输出
+    -   Webpack
+        -   `koot-css-loader` 现支持更多的 URL 引用写法
 -   添加依赖包
     -   `@types/webpack`
     -   `compression-webpack-plugin`

@@ -143,7 +143,8 @@ module.exports = function(content) {
             });
         });
 
-        handleBackground(root);
+        // handleBackground(root);
+        transformer(root);
 
         // 导出md5的class名字和处理后的css文本
         // 把单引号统一处理成双引号 "" -> ''
@@ -168,36 +169,33 @@ module.exports = function(content) {
     }
 };
 
-function handleBackground(root) {
-    // 处理背景图片
-    root.walkDecls(/^(background|border|mask|src|cursor)/, decl => {
-        // decl.value = decl.value.replace(/url\(([ '"]*)(.+?)([ '"]*)\)/g, `url("${require("$2")}")`)
+/** 进行一些必要的转换 */
+const transformer = root => {
+    /** 处理所有属性中的 `url()` 和 `image-set()` 的引用地址 */
+    const regExpURL = /url\([ '"]*(.+?)[ '"]*\)/g;
+    const regExpImageSet = /(\s|^)image-set\((.+?)\)/g;
+    root.walkDecls(decl => {
         decl.value = decl.value.replace(
-            /url\(([ '"]*)(.+?)([ '"]*)\)/g,
-            (...args) => {
-                // console.log(args[2])
-                return `url("' + require('${args[2]}') + '")`;
-            }
+            regExpURL,
+            (...args) => `url("' + require('${args[1]}') + '")`
         );
-        // decl.value = decl.value.replace(/url\(([ '"]*)(.+?)([ '"]*)\)/g, `url("${'require(' + "$2" + ')'}")`)
 
-        // 旧代码
-        // 匹配到background中的url()
-        // let matches = decl.value.match(/url\((.*?)\)/)
+        const matchesImageSet = regExpImageSet.exec(decl.value);
+        if (Array.isArray(matchesImageSet) && matchesImageSet.length > 2) {
+            decl.value = matchesImageSet[2]
+                .split(',')
+                .map(value =>
+                    value
+                        .trim()
+                        .replace(
+                            /['"](.+?)['"]/g,
+                            (...args) => `"' + require('${args[1]}') + '"`
+                        )
+                )
+                .join(', ');
+        }
 
-        // if (matches && matches.length > 1) {
-        //     let v = matches[1]
-
-        //     decl.value = decl.value.replace(v, (m) => {
-
-        //         // 双引号变单引号
-        //         m = m.replace(/"/g, '\'')
-        //         if (m.indexOf('\'') < 0) {
-        //             m = `'${m}'`
-        //         }
-
-        //         return "' +  require(" + m + ") + '"
-        //     })
-        // }
+        // console.log(' ');
+        // console.log(decl.value);
     });
-}
+};
