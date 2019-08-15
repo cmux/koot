@@ -27,9 +27,11 @@
     -   major
         -   `commander` -> _3.0.0_
         -   `koa-helmet` -> _5.0.0_
+        -   `rimraf` -> _3.0.0_
         -   `style-loader` -> _1.0.0_
     -   minor
         -   `@babel/register` -> _7.5.5_
+        -   `@hot-loader/react-dom` -> _16.9.0_
         -   `@types/node` -> _12.7.1_
         -   `@types/react` -> _16.9.1_
         -   `css-loader` -> _3.2.0_
@@ -37,7 +39,6 @@
         -   `mini-css-extract-plugin` -> _0.8.0_
         -   `react` -> _16.9.0_
         -   `react-dom` -> _16.9.0_
-        -   `rimraf` -> _2.7.0_
         -   `sass-loader` -> _7.2.0_
         -   `webpack` -> _4.39.2_
         -   `webpack-bundle-analyzer` -> _3.4.1_
