@@ -36,10 +36,11 @@
     -   minor
         -   `@babel/register` -> _7.5.5_
         -   `@hot-loader/react-dom` -> _16.9.0_
-        -   `@types/node` -> _12.7.1_
-        -   `@types/react` -> _16.9.1_
+        -   `@types/node` -> _12.7.2_
+        -   `@types/react` -> _16.9.2_
         -   `css-loader` -> _3.2.0_
         -   `file-loader` -> _4.2.0_
+        -   `koa-helmet` -> _5.1.0_
         -   `mini-css-extract-plugin` -> _0.8.0_
         -   `react` -> _16.9.0_
         -   `react-dom` -> _16.9.0_
@@ -56,6 +57,7 @@
         -   `@types/react-dom` -> _16.8.5_
         -   `cache-loader` -> _4.1.0_
         -   `copy-webpack-plugin` -> _5.0.4_
+        -   `execa` -> _2.0.4_
         -   `inquirer` -> _6.5.1_
         -   `js-cookie` -> _2.2.1_
         -   `koa-body` -> _4.1.1_

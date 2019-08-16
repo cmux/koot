@@ -54,7 +54,7 @@
         "husky": "3.0.3",
         "inquirer": "6.5.1",
         "is-valid-path": "0.1.1",
-        "jest": "24.8.0",
+        "jest": "24.9.0",
         "jsdom": "15.1.1",
         "latest-version": "5.1.0",
         "lerna": "3.16.4",

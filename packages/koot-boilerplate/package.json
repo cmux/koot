@@ -38,7 +38,6 @@
         "eslint": "5.16.0",
         "eslint-config-koot": "0.2.0",
         "husky": "3.0.3",
-        "jest": "24.8.0",
         "lint-staged": "9.2.1",
         "normalize.css": "8.0.1",
         "prettier": "1.18.2",
