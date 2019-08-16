@@ -169,34 +169,3 @@ module.exports = function(content) {
         // 暂无实现
     }
 };
-
-/** 进行一些必要的转换 */
-const transformer = root => {
-    /** 处理所有属性中的 `url()` 和 `image-set()` 的引用地址 */
-    const regExpURL = /url\([ '"]*(.+?)[ '"]*\)/g;
-    const regExpImageSet = /(\s|^)image-set\((.+?)\)/g;
-    root.walkDecls(decl => {
-        decl.value = decl.value.replace(
-            regExpURL,
-            (...args) => `url("' + require('${args[1]}') + '")`
-        );
-
-        const matchesImageSet = regExpImageSet.exec(decl.value);
-        if (Array.isArray(matchesImageSet) && matchesImageSet.length > 2) {
-            decl.value = matchesImageSet[2]
-                .split(',')
-                .map(value =>
-                    value
-                        .trim()
-                        .replace(
-                            /['"](.+?)['"]/g,
-                            (...args) => `"' + require('${args[1]}') + '"`
-                        )
-                )
-                .join(', ');
-        }
-
-        // console.log(' ');
-        // console.log(decl.value);
-    });
-};

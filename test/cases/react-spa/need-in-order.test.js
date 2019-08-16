@@ -12,6 +12,7 @@ const execSync = require('child_process').exec;
 const JSDOM = require('jsdom').JSDOM;
 const puppeteer = require('puppeteer');
 const chalk = require('chalk');
+const postcss = require('postcss');
 
 //
 
@@ -32,6 +33,7 @@ const {
 
 const removeTempProjectConfig = require('../../../packages/koot/libs/remove-temp-project-config');
 const sleep = require('../../../packages/koot/utils/sleep');
+const postcssTransformDeclUrls = require('../../../packages/koot-webpack/postcss/transform-decl-urls');
 
 //
 
@@ -150,12 +152,24 @@ const testFull = (dir, configFileName) => {
             expect(typeof files).toBe('object');
 
             // 根据 key 测试 chunkmap 中的文件
-            const testFileFromFilelist = key => {
+            const testFileFromFilelist = (key, shouldHasPublicPath = false) => {
                 const pathname = files[key];
                 expect(typeof pathname).toBe('string');
 
                 const file = path.resolve(dist, pathname);
                 expect(fs.existsSync(file)).toBe(true);
+
+                const content = fs.readFileSync(file, 'utf-8');
+
+                // 测试 CSS 内容
+                const root = postcss.parse(content);
+                const regExpPublicPath = /^includes\//g;
+                postcssTransformDeclUrls(root, url => {
+                    expect(regExpPublicPath.test(url)).toBe(
+                        shouldHasPublicPath
+                    );
+                    return url;
+                });
             };
 
             // 测试文件: /index.html
@@ -191,12 +205,10 @@ const testFull = (dir, configFileName) => {
             }
 
             // 测试文件: 全局 CSS
-            testFileFromFilelist(chunkNameExtractCss + '.css');
-            testFileFromFilelist(chunkNameExtractCssForImport + '.css');
+            testFileFromFilelist(chunkNameExtractCss + '.css', true);
+            testFileFromFilelist(chunkNameExtractCssForImport + '.css', false);
 
             await testFilesFromChunkmap(dist);
-
-            // TODO: 测试: 有 extract.all.[*].css
         });
 
         test(`[prod] 简易服务器可用`, async () => {
