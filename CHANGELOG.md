@@ -23,7 +23,9 @@
     -   开发环境
         -   _客户端_：减少部分初始的日志输出
     -   Webpack
-        -   `koot-css-loader` 现支持更多的 URL 引用写法
+        -   `koot-css-loader`
+            -   现支持更多的 URL 引用写法
+            -   针对相对路径的引用进行优化
 -   添加依赖包
     -   `@types/webpack`
     -   `compression-webpack-plugin`
