@@ -11,6 +11,7 @@ const replaceSelector = require('./replace-selector');
 const {
     classNameHashLength: defaultClassNameHashLength
 } = require('koot/defaults/koot-config');
+const postcssTransformDeclUrls = require('../../postcss/transform-decl-urls');
 
 module.exports = function(content) {
     this.cacheable && this.cacheable();
@@ -143,8 +144,8 @@ module.exports = function(content) {
             });
         });
 
-        // handleBackground(root);
-        transformer(root);
+        // transformer(root);
+        postcssTransformDeclUrls(root, url => `' + require('${url}') + '`);
 
         // 导出md5的class名字和处理后的css文本
         // 把单引号统一处理成双引号 "" -> ''

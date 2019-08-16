@@ -73,12 +73,14 @@ class App extends React.Component {
                 <Debug />
                 <SSR />
                 <div className={componentClassName + '-hidden'}>
-                    <img
-                        id="__test-translate-in-require"
-                        // src={require(__('test_img'))}
-                        src={__('test_img')}
-                        alt="test-img"
-                    />
+                    {!__SPA__ && (
+                        <img
+                            id="__test-translate-in-require"
+                            // src={require(__('test_img'))}
+                            src={__('test_img')}
+                            alt="test-img"
+                        />
+                    )}
                     <div id="__test-links">
                         <Link to="/test-pageinfo-deep">_</Link>
                     </div>
