@@ -85,15 +85,16 @@ class CreateGeneralCssBundlePlugin {
                 compilation.chunks.push(chunk);
 
                 const root = postcss.parse(content);
-                postcssTransformDeclUrls(root, url =>
-                    url.replace(
-                        new RegExp(
-                            `^${stats.compilation.outputOptions.publicPath}`,
-                            'g'
-                        ),
-                        ''
-                    )
-                );
+                postcssTransformDeclUrls(root, {
+                    transformer: url =>
+                        url.replace(
+                            new RegExp(
+                                `^${stats.compilation.outputOptions.publicPath}`,
+                                'g'
+                            ),
+                            ''
+                        )
+                });
 
                 // 写入 Webpack 文件流
                 newCompilationFileDependency(
