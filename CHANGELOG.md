@@ -6,8 +6,6 @@
 
 -   **重大改动**
     -   SSR 流程和生命周期调整，原则上对已有项目不会造成影响。如果升级 _Koot.js_ 后 SSR 出现异常，请查阅: [升级指南: 0.10 -> 0.11](https://koot.js.org/#/migration/0.10-to-0.11)
-    -   移除依赖包
-        -   `@babel/polyfill`
 -   **新特性**
     -   **新全局函数** `getCache()` - 获取公用缓存空间。具体用法请参见文档 [全局与工具函数/全局函数](https://koot.js.org/#/utilities?id=全局函数) ([#143](https://github.com/cmux/koot/issues/143))
     -   **新服务器端生命周期** `beforePreRender()` - 在预渲染之前之情。具体用法请参见文档 [生命周期/服务器端](https://koot.js.org/#/life-cycle?id=服务器端)
