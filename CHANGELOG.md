@@ -6,12 +6,11 @@
 
 -   **重大改动**
     -   SSR 流程和生命周期调整，原则上对已有项目不会造成影响。如果升级 _Koot.js_ 后 SSR 出现异常，请查阅: [升级指南: 0.10 -> 0.11](https://koot.js.org/#/migration/0.10-to-0.11)
+    -   通过 `connect()` 高阶组件封装的组件，`props` 中会获得新的函数 `updatePageinfo`，可用来手动触发页面信息更新，用法详见 [React](https://koot.js.org/#/react?id=组件获得新的-props)
 -   **新特性**
     -   **新全局函数** `getCache()` - 获取公用缓存空间。具体用法请参见文档 [全局与工具函数/全局函数](https://koot.js.org/#/utilities?id=全局函数) ([#143](https://github.com/cmux/koot/issues/143))
     -   **新服务器端生命周期** `beforePreRender()` - 在预渲染之前之情。具体用法请参见文档 [生命周期/服务器端](https://koot.js.org/#/life-cycle?id=服务器端)
     -   现在会自动为客户端打包结果中的部分资源文件生成 gzip 版本 (.gz 文件) ([#129](https://github.com/cmux/koot/issues/129))
-    -   客户端环境
-        -   通过 `connect()` 高阶组件封装的组件，会获得新的函数 `props.updatePageinfo`，可用来手动触发页面信息更新，语法与 `connect()` 高阶组件的 `pageinfo` 的函数用法相同
 -   **优化**
     -   `createStore()` 全局函数现允许传入 store 增强函数 (enhancer)。详情请参见文档 [Store/全局函数 createStore](https://koot.js.org/#/store?id=全局函数-createstore) ([#144](https://github.com/cmux/koot/issues/144))
     -   多语言翻译函数 (`__()`) 现支持返回一个对象或数组

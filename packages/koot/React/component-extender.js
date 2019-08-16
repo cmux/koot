@@ -220,15 +220,22 @@ export default (options = {}) => WrappedComponent => {
         //
 
         clientUpdatePageInfo(to) {
+            if (!__CLIENT__) return;
             if (!hasPageinfo) return;
 
             const { title, metas } =
-                to ||
-                doPageinfo(
-                    getStore(),
-                    getRenderPropsFromComponentProps(this.props),
-                    pageinfo
-                );
+                typeof to === 'function'
+                    ? doPageinfo(
+                          getStore(),
+                          getRenderPropsFromComponentProps(this.props),
+                          to
+                      )
+                    : to ||
+                      doPageinfo(
+                          getStore(),
+                          getRenderPropsFromComponentProps(this.props),
+                          pageinfo
+                      );
 
             clientUpdatePageInfo(title, metas);
         }
@@ -373,8 +380,8 @@ export default (options = {}) => WrappedComponent => {
                 'data-class-name': this.kootClassNames.join(' ').trim()
             });
             // if (hasPageinfo)
-            if (__CLIENT__)
-                props.updatePageinfo = this.clientUpdatePageInfo.bind(this);
+            // if (__CLIENT__)
+            props.updatePageinfo = this.clientUpdatePageInfo.bind(this);
 
             // if (__SERVER__) console.log('extender this.state.loaded', this.state.loaded)
             if (
