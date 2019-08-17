@@ -187,7 +187,9 @@ export default HomePage;
     <br>经过 hash 后本组件的 className
     <br>注: 与 `props.className` 不同，`props['data-class-name']` 仅为本组件 CSS 的 className
 -   _Function_ `updatePageinfo`
-    <br>可用来手动触发页面信息更新，可传入 _Object_ 或 _Function_，语法与 `connect()` 高阶组件的 `pageinfo` 的用法相同
+    <br>可用来手动触发页面信息更新
+    <br>可传入 _Object_ 或 _Function_，语法与 `connect()` 高阶组件的 `pageinfo` 的用法相同
+    <br>如果没有传入参数，会使用 `extend()` 高阶组件中的 `pageinfo` 的值
     <br>注: 仅在客户端环境下使用才有意义
 
 ---

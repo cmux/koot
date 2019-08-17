@@ -46,8 +46,8 @@ interface extendPageinfoMeta {
     [metaKey: string]: string;
 }
 
-function extendPageinfoFunction<S = any>(
-    state: S,
+function extendPageinfoFunction(
+    state: any,
     props: P = Object
 ): extendPageinfoObject;
 
@@ -76,8 +76,12 @@ export interface ExtendedProps {
     /** extend() 高阶组件注入的 className（如果在 extend 高阶组件中传入了 `styles` 属性）（排除父组件传入的 className）*/
     readonly 'data-class-name'?: string;
     /** 可用来手动触发页面信息更新，语法与 connect() 高阶组件的 pageinfo 的函数用法相同 */
-    readonly updatePageinfo: extendPageinfoFunction;
+    readonly updatePageinfo: ExtendedPropsUpdatePageinfo;
 }
+
+function ExtendedPropsUpdatePageinfo(
+    newPageinfo?: extendPageinfoObject | extendPageinfoFunction
+): void;
 
 interface RenderProps {
     readonly location?: Object;
