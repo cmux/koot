@@ -1,5 +1,7 @@
 /// <reference path="global.d.ts" />
 
+// ============================================================================
+
 import { Store } from 'redux';
 import { History } from 'history';
 
