@@ -975,6 +975,7 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
                 try {
                     result = JSON.parse(match[1]);
                 } catch (e) {
+                    // eslint-disable-next-line no-eval
                     result = eval(match[1]);
                 }
                 return result;

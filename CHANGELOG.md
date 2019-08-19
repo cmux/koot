@@ -38,7 +38,9 @@
         -   `@types/react` -> _16.9.2_
         -   `css-loader` -> _3.2.0_
         -   `file-loader` -> _4.2.0_
+        -   `koa` -> _2.8.0_
         -   `koa-helmet` -> _5.1.0_
+        -   `less` -> _3.10.1_
         -   `mini-css-extract-plugin` -> _0.8.0_
         -   `react` -> _16.9.0_
         -   `react-dom` -> _16.9.0_
@@ -53,6 +55,7 @@
         -   `@babel/plugin-transform-runtime` -> _7.5.5_
         -   `@babel/preset-env` -> _7.5.5_
         -   `@types/react-dom` -> _16.8.5_
+        -   `@types/webpack` -> _4.32.2_
         -   `cache-loader` -> _4.1.0_
         -   `copy-webpack-plugin` -> _5.0.4_
         -   `execa` -> _2.0.4_
@@ -60,6 +63,7 @@
         -   `js-cookie` -> _2.2.1_
         -   `koa-body` -> _4.1.1_
         -   `lodash` -> _4.17.15_
+        -   `portfinder` -> _1.0.22_
         -   `react-hot-loader` -> _4.12.11_
         -   `thread-loader` -> _2.1.3_
         -   `url-loader` -> _2.1.0_
@@ -68,7 +72,8 @@
 
 -   更新依赖包
     -   minor
-        -   `husky` -> _3.0.3_
+        -   `husky` -> _3.0.4_
+        -   `lint-staged` -> _9.2.3_
 
 **koot-cli**
 
