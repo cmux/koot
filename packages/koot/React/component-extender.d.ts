@@ -41,14 +41,13 @@ interface ExtendOptions {
     name?: string;
 }
 
-interface Pageinfo {
+type Pageinfo = {
     title?: string;
-    metas?: Array<extendPageinfoMeta>;
-}
-
-interface extendPageinfoMeta {
+    metas?: Array<MetaObject>;
+};
+export type MetaObject = {
     [metaKey: string]: string;
-}
+};
 
 type ExtendPageinfoFunction = (state: any, props: RenderProps) => Pageinfo;
 
@@ -60,10 +59,10 @@ type DataFetchFunction = (
 
 type DataCheckFunction = (state: any, renderProps: RenderProps) => boolean;
 
-interface ExtendData {
+type ExtendData = {
     fetch?: DataFetchFunction;
     check?: DataCheckFunction;
-}
+};
 
 //
 

@@ -325,6 +325,79 @@ const doTest = async (port, dist, settings = {}) => {
         expect(metaTestRoute).toBe('test-route');
     }
 
+    // 测试: 使用工具函数手动更新 pageinfo
+    {
+        const test = async (changedTitle, changedMetas) => {
+            const context = await browser.createIncognitoBrowserContext();
+            const page = await context.newPage();
+            await page.goto(origin, {
+                waitUntil: 'networkidle2'
+            });
+
+            let { result, oldTitle } = await page.evaluate(
+                (changedTitle, changedMetas) => {
+                    const r = {
+                        oldTitle: document.title
+                    };
+
+                    const $button = document.querySelector(
+                        `#__test-client_update_pageinfo > button[data-change-title="${
+                            changedTitle ? 'true' : 'false'
+                        }"][data-change-metas="${
+                            changedMetas ? 'true' : 'false'
+                        }"]`
+                    );
+                    if (!$button) {
+                        r.result = `no matched button`;
+                        return r;
+                    }
+
+                    $button.click();
+
+                    return r;
+                },
+                changedTitle,
+                changedMetas
+            );
+
+            if (typeof result === 'string') {
+                await context.close();
+                return result;
+            }
+
+            await sleep(1000);
+
+            result = await page.evaluate(
+                (oldTitle, changedTitle, changedMetas) => {
+                    if (changedTitle && document.title === oldTitle)
+                        return 'title has not changed';
+                    if (!changedTitle && document.title !== oldTitle)
+                        return 'title has changed';
+
+                    const hasOldMeta = !!document.querySelector(
+                        'meta[page-name="home"]'
+                    );
+                    if (changedMetas && hasOldMeta)
+                        return 'meta has not changed';
+                    if (!changedMetas && !hasOldMeta) return 'meta has changed';
+
+                    return true;
+                },
+                oldTitle,
+                changedTitle,
+                changedMetas
+            );
+
+            await context.close();
+
+            return result;
+        };
+
+        expect(await test(true, false)).toBe(true);
+        expect(await test(false, true)).toBe(true);
+        expect(await test(true, true)).toBe(true);
+    }
+
     await puppeteerTestStyles(page);
     await puppeteerTestCustomEnv(page, customEnv);
     await puppeteerTestInjectScripts(page);

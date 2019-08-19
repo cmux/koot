@@ -63,7 +63,7 @@ _Object_ `styles` 组件 CSS
     -   如果父级组件传入了 `props.className`，该子组件的 `props.className` 会包含父级传入的值以及引用的组件 CSS 的样式名
     -   如果父级组件没有传入 `props.className`，该子组件的 `props.className` 仅为引用的组件 CSS 的样式名
 -   该组件渲染时，这些 CSS 会作为 `<style>` 标签添加到 `<head>` 中。
--   该对象需要提供以下属性：_String_ `wrapper` 和 _String_ `css`
+-   该对象需要提供以下属性：_string_ `wrapper` 和 _string_ `css`
 -   有关 CSS 的相关开发指南请查阅 [CSS](/css)
 
 `pageinfo` 修改页面 title 和 meta 标签
@@ -71,15 +71,15 @@ _Object_ `styles` 组件 CSS
 -   该组件渲染时，这些信息会更新到 `<head>` 中。
 -   该属性有两种用法：
     -   _Object_ `pageinfo`
-        -   _String_ `pageinfo.title`
-        -   _Array_ `pageinfo.metas`
+        -   _string_ `pageinfo.title`
+        -   _Array<MetaObject>_ `pageinfo.metas`
     -   _Function_ `pageinfo`
         <br>`pageinfo(state, renderProps)`
         -   参数
             -   _Object_ `state` 当前 Redux state
             -   _Object_ `renderProps` 同构对象
         -   返回值：_Object_
-            -   _String_ `title` 新的页面标题
+            -   _string_ `title` 新的页面标题
             -   _Array_ `metas` 新的页面 meta 标签信息
 
 `data` 同构数据相关
@@ -109,7 +109,7 @@ _Object_ `styles` 组件 CSS
 -   _Boolean_ `ssr`
     <br>该组件是否需要 SSR。
     <br>`false` 时，SSR 阶段不会渲染该组件，最终在 HTML 结果中不会出现相应的 HTML 代码。
--   _String_|_ReactComponent_ `ssr`
+-   _string_|_ReactComponent_ `ssr`
     <br>在 SSR 时渲染指定的内容或组件
 
 ##### 示例：使用所有参数
@@ -181,9 +181,9 @@ export default HomePage;
 
 使用 _extend()_ 高阶组件封装后，目标组件将会获得以下新的 `props`
 
--   _String_ `className`
+-   _string_ `className`
     <br>包含父组件传入的 `className` 以及过 hash 后本组件的 className
--   _String_ `data-class-name`
+-   _string_ `data-class-name`
     <br>经过 hash 后本组件的 className
     <br>注: 与 `props.className` 不同，`props['data-class-name']` 仅为本组件 CSS 的 className
 -   _Function_ `updatePageinfo`

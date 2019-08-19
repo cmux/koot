@@ -63,9 +63,23 @@ import getClientFilePath from 'koot/utils/get-client-file-path';
 
 目前提供以下全局函数
 
--   `koot/utils/get-client-file-path(filename)`
-    -   _仅服务器端_
-    -   获取目标文件的访问地址
--   `koot/utils/read-client-file(filename)`
-    -   _仅服务器端_
-    -   读取目标文件的内容
+##### 客户端
+
+`clientUpdatePageinfo(title?: string, metas?: Array<MetaObject>) => void`
+
+-   引用地址: `koot/utils/client-update-pageinfo`
+-   更新页面标题 `<title>` 和 `<meta>` 标签
+
+##### 服务器端
+
+`getClientFilePath(filename: string) => string | string[]`
+
+-   引用地址: `koot/utils/get-client-file-path`
+-   获指定文件在客户端中的可访问路径，其结果可直接用于浏览器中的资源请求
+-   返回的结果可能是数组
+
+`readClientFile(filename: string)`
+
+-   引用地址: `koot/utils/read-client-file`
+-   读取目标文件的内容
+-   该文件必须为客户端打包结果

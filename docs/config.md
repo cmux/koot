@@ -30,7 +30,7 @@ module.exports = {
 
 ### name
 
--   类型: `String`
+-   类型: `string`
 -   默认值: `package.json` 中的 `name` 属性
 
 项目名称。以下情况会使用该名称作为默认值：
@@ -40,7 +40,7 @@ module.exports = {
 
 ### type
 
--   类型: `String`
+-   类型: `string`
 -   默认值: `react`
 
 项目类型。
@@ -111,7 +111,7 @@ module.exports = {
 
 ### historyType
 
--   类型: `String`
+-   类型: `string`
 -   默认值: 自动匹配 (同构项目使用 `browserHistory`，SPA 项目使用 `hashHistory`)
 -   **仅针对**: 客户端
 
@@ -156,7 +156,7 @@ module.exports = () => createStore(appReducers, appMiddlewares);
 
 ### cookiesToStore
 
--   类型: `Boolean` `String` 或 `String[]`
+-   类型: `boolean` `string` 或 `string[]`
 -   默认值: `true`
 -   **仅针对**: SSR 项目
 
@@ -183,11 +183,11 @@ module.exports = {
 
 ### sessionStore
 
--   类型: `Boolean` 或 `Object`
+-   类型: `boolean` 或 `Object`
 -   默认值: `false`
 -   **仅针对**: 客户端环境
 
-将全部或部分 _store_ 对象同步到浏览器/客户端的 `sessionStore` 中，在用户刷新页面后，这些值会被还原到 _store_，以确保和刷新前一致。
+将全部或部分 _store_ 对象同步到浏览器/客户端的 `sessionStorage` 中，在用户刷新页面后，这些值会被还原到 _store_，以确保和刷新前一致。
 
 ```javascript
 module.exports = {
@@ -213,7 +213,7 @@ module.exports = {
 
 ### i18n
 
--   类型: `Boolean` `Object` 或 `Array[]`
+-   类型: `boolean` `Object` 或 `Array[]`
 -   默认值: `false`
 
 多语言配置。
@@ -242,7 +242,7 @@ module.exports = {
      */
     i18n: {
         /** `i18n.type`
-         * - 类型: `String`
+         * - 类型: `string`
          * - 默认值: `default`
          *
          * 多语言打包模式
@@ -260,7 +260,7 @@ module.exports = {
         type: 'default',
 
         /** `i18n.use`
-         * - 类型: `String`
+         * - 类型: `string`
          * - 默认值: `query`
          *
          * 使用 URL 切换语种的方式
@@ -282,7 +282,7 @@ module.exports = {
         use: 'query',
 
         /** `i18n.expr`
-         * - 类型: `String`
+         * - 类型: `string`
          * - 默认值: `__`
          *
          * JavaScript 代码中多语言翻译方法名
@@ -290,7 +290,7 @@ module.exports = {
         expr: '__',
 
         /** `i18n.domain`
-         * - 类型: `String`
+         * - 类型: `string`
          * - 默认值: _无_
          *
          * Cookie 影响的域
@@ -298,7 +298,7 @@ module.exports = {
         domain: undefined,
 
         /** `i18n.cookieKey`
-         * - 类型: `String`
+         * - 类型: `string`
          * - 默认值: `spLocaleId`
          *
          * 语种ID存储于 Cookie 中的字段名
@@ -318,7 +318,7 @@ module.exports = {
 
 ### pwa
 
--   类型: `Boolean` 或 `Object`
+-   类型: `boolean` 或 `Object`
 -   默认值: `true`
 
 自动生成 `service-worker` 脚本文件的设置。
@@ -455,7 +455,7 @@ module.exports = {
  * @param {Object} options
  * @param {Object} [options.ctx] 本次请求的 Koa ctx 对象
  * @param {Object} [options.history] History 对象
- * @param {String} [options.localeId] 本次请求的语种 ID
+ * @param {string} [options.localeId] 本次请求的语种 ID
  * @returns {undefined|Promise}
  */
 export default ({ store, history, localeId }) => {
@@ -486,7 +486,7 @@ module.exports = {
  * @param {Object} options
  * @param {Object} [options.ctx] 本次请求的 Koa ctx 对象
  * @param {Object} [options.history] History 对象
- * @param {String} [options.localeId] 本次请求的语种 ID
+ * @param {string} [options.localeId] 本次请求的语种 ID
  * @returns {undefined|Promise}
  */
 export default ({ store, history, localeId }) => {
@@ -575,7 +575,7 @@ export default (...args) => {
 
 ### renderCache
 
--   类型: `Object` 或 `Boolean`
+-   类型: `Object` 或 `boolean`
 -   默认值: `{ maxAge: 5000, maxCount: 50 }`
 -   **仅针对**: 服务器端，生产环境
 
@@ -626,8 +626,8 @@ module.exports = {
          *
          * 自定义缓存检查与吐出方法。存在时, maxAge 和 maxCount 设置将被忽略
          *
-         * @param {String} url 请求的完整的 URL
-         * @returns {Boolean|String} 返回 false 时，表示该 URL 没有缓存结果
+         * @param {string} url 请求的完整的 URL
+         * @returns {boolean|string} 返回 false 时，表示该 URL 没有缓存结果
          */
         get: url => {
             // 自实现的缓存结果获取逻辑
@@ -641,8 +641,8 @@ module.exports = {
          *
          * 自定义缓存存储方法。存在时, maxAge 和 maxCount 设置将被忽略
          *
-         * @param {String} url 请求的完整的 URL
-         * @param {String} html 服务器渲染结果
+         * @param {string} url 请求的完整的 URL
+         * @param {string} html 服务器渲染结果
          * @void
          */
         set: (url, html) => {
@@ -668,7 +668,7 @@ module.exports = {
     // 详细设置
     proxyRequestOrigin: {
         /** `proxyRequestOrigin.protocol`
-         * - 类型: `String`
+         * - 类型: `string`
          * 协议名
          */
         protocol: 'https'
@@ -764,7 +764,7 @@ module.exports = {
      * @param {Object} options
      * @param {Object} [options.ctx] 本次请求的 Koa ctx 对象
      * @param {Object} [options.store] redux store 对象
-     * @param {String} [options.localeId] 本次请求的语种 ID
+     * @param {string} [options.localeId] 本次请求的语种 ID
      * @void
      */
     serverOnRender: async ({ ctx, store, localeId }) => {
@@ -798,7 +798,7 @@ module.exports = {
          * @param {Object} options
          * @param {Object} [options.ctx] 本次请求的 Koa ctx 对象
          * @param {Object} [options.store] redux store 对象
-         * @param {String} [options.localeId] 本次请求的语种 ID
+         * @param {string} [options.localeId] 本次请求的语种 ID
          * @void
          */
         beforeDataToStore: async ({ ctx, store, localeId }) => {
@@ -814,7 +814,7 @@ module.exports = {
          * @param {Object} options
          * @param {Object} [options.ctx] 本次请求的 Koa ctx 对象
          * @param {Object} [options.store] redux store 对象
-         * @param {String} [options.localeId] 本次请求的语种 ID
+         * @param {string} [options.localeId] 本次请求的语种 ID
          * @void
          */
         afterDataToStore: async ({ ctx, store, localeId }) => {

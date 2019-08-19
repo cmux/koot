@@ -1,5 +1,6 @@
 import React from 'react';
 import { extend } from 'koot';
+import clientUpdatePageinfo from 'koot/utils/client-update-pageinfo';
 
 import Issue68 from '@components/issue-68';
 
@@ -24,6 +25,17 @@ const PageHome = ({ className }) => {
 
             <h3>Issue tests</h3>
             <IssueTest children={<Issue68 />} />
+
+            <h3>Test: clientUpdatePageinfo()</h3>
+            <div id="__test-client_update_pageinfo">
+                <ButtonTestUpdatePageinfo children="Only Title" title={true} />
+                <ButtonTestUpdatePageinfo children="Only Metas" metas={true} />
+                <ButtonTestUpdatePageinfo
+                    children="All"
+                    title={true}
+                    metas={true}
+                />
+            </div>
         </div>
     );
 };
@@ -40,6 +52,37 @@ const IssueTest = ({ className = '', ...props }) => (
         {...props}
     />
 );
+
+//
+
+const ButtonTestUpdatePageinfo = ({
+    children,
+    title = false,
+    metas = false
+}) => (
+    <button
+        type="button"
+        data-change-title={title ? 'true' : 'false'}
+        data-change-metas={metas ? 'true' : 'false'}
+        data-role={children}
+        onClick={() =>
+            clientUpdatePageinfo({
+                title: title ? 'test-client_update_pageinfo' : undefined,
+                metas: metas
+                    ? [
+                        {
+                            'test-client_update_pageinfo': 'success'
+                        }
+                    ]
+                    : undefined
+            })
+        }
+    >
+        {children}
+    </button>
+);
+
+//
 
 export default extend({
     connect: true,
