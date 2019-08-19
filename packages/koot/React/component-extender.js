@@ -56,7 +56,7 @@ let devSSRConnectIndex = 0;
  * @callback callbackCheckLoaded
  * @param {Object} state 当前 state
  * @param {Object} renderProps 封装的同构 props
- * @returns {Boolean}
+ * @returns {boolean}
  */
 
 /**
@@ -145,7 +145,7 @@ const doPageinfo = (store, props, pageinfo) => {
 /**
  * 高阶组件/组件装饰器：组件扩展
  * @param {Object} options 选项
- * @param {Boolean|Function} [options.connect] react-redux 的 connect() 的参数。如果为 true，表示使用 connect()，但不连接任何数据
+ * @param {boolean|Function} [options.connect] react-redux 的 connect() 的参数。如果为 true，表示使用 connect()，但不连接任何数据
  * @param {Object|callbackGetPageInfo} [options.pageinfo]
  * @param {Object} [options.data] 同构数据相关
  * @param {callbackFetchData} [options.data.fetch]
@@ -180,17 +180,17 @@ export default (options = {}) => WrappedComponent => {
         obj => typeof obj === 'object' && typeof obj.wrapper === 'string'
     );
 
-    /** @type {Boolean} 是否有上述结果对象 */
+    /** @type {boolean} 是否有上述结果对象 */
     const hasStyles = Array.isArray(styles) && styles.length > 0;
     // console.log({ ttt, hasStyles, styles })
 
-    /** @type {Boolean} 是否有 pageinfo 对象 */
+    /** @type {boolean} 是否有 pageinfo 对象 */
     const hasPageinfo =
         typeof pageinfo === 'function' || typeof pageinfo === 'object';
 
     // 同构数据相关
 
-    /** @type {Boolean} 同构数据是否已经获取成功 */
+    /** @type {boolean} 同构数据是否已经获取成功 */
     // let isDataPreloaded = false
 
     /** @type {Function} 获取同构数据 */
