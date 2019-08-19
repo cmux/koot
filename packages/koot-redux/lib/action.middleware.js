@@ -1,6 +1,6 @@
 import { isObject, isString } from './utils.js';
 
-const __STATIC_DATA__ = {};
+// const __STATIC_DATA__ = {};
 
 /**
  * 从 action 中获取 name
@@ -36,9 +36,9 @@ const getObjectActionPayload = action => {
     return payload;
 };
 
-const commitHandler = store => (action, payload) => {
+const commitHandler = (store, moduleInstance) => (action, payload) => {
     const reducerName = getName(action);
-    const reducerFn = getReducerFnByName(reducerName);
+    const reducerFn = getReducerFnByName(reducerName, moduleInstance);
 
     if (isObject(action)) {
         payload = getObjectActionPayload(action);
@@ -66,17 +66,16 @@ const commitHandler = store => (action, payload) => {
  * @param  {[type]} options.payload    [description]
  * @return {[type]}                    [description]
  */
-const actionHandler = ({ actionName, actionFn, store, payload }) => {
+const actionHandler = (
+    { actionName, actionFn, store, payload },
+    moduleInstance
+) => {
     const getScopeState = () => {
-        return (
-            __STATIC_DATA__['moduleInstance'].getStateByActionName(
-                actionName
-            ) || {}
-        );
+        return moduleInstance.getStateByActionName(actionName) || {};
     };
     return actionFn(
         {
-            commit: commitHandler(store),
+            commit: commitHandler(store, moduleInstance),
             rootState: Object.assign(store.getState()),
             state: getScopeState(),
             dispatch: store.dispatch
@@ -93,14 +92,13 @@ const actionHandler = ({ actionName, actionFn, store, payload }) => {
     // }
 };
 
-const getActionFnByName = actionName => {
-    const actionCollection = __STATIC_DATA__['moduleInstance'].actionCollection;
+const getActionFnByName = (actionName, moduleInstance) => {
+    const actionCollection = moduleInstance.actionCollection;
     return actionCollection[actionName];
 };
 
-const getReducerFnByName = reducerName => {
-    const reducerCollection =
-        __STATIC_DATA__['moduleInstance'].reducerCollection;
+const getReducerFnByName = (reducerName, moduleInstance) => {
+    const reducerCollection = moduleInstance.reducerCollection;
     return reducerCollection[reducerName];
 };
 
@@ -111,7 +109,7 @@ const getReducerFnByName = reducerName => {
  * @return {[type]}                [description]
  */
 const createActionMiddleware = function(moduleInstance = {}) {
-    __STATIC_DATA__['moduleInstance'] = moduleInstance;
+    // __STATIC_DATA__['moduleInstance'] = moduleInstance;
 
     // const actionCollection = moduleInstance.actionCollection;
 
@@ -130,7 +128,7 @@ const createActionMiddleware = function(moduleInstance = {}) {
     const actionMiddleware = store => next => (action, payload) => {
         const actionName = getName(action);
 
-        const actionFn = getActionFnByName(actionName);
+        const actionFn = getActionFnByName(actionName, moduleInstance);
 
         // 判断 是否为我们定义的 action
         if (actionFn) {
@@ -149,12 +147,15 @@ const createActionMiddleware = function(moduleInstance = {}) {
                 });
                 return;
             } else {
-                return actionHandler({
-                    actionName,
-                    actionFn,
-                    store,
-                    payload
-                });
+                return actionHandler(
+                    {
+                        actionName,
+                        actionFn,
+                        store,
+                        payload
+                    },
+                    moduleInstance
+                );
             }
         } else {
             // 不是我们的 action 且为传统 action 对象
@@ -166,7 +167,7 @@ const createActionMiddleware = function(moduleInstance = {}) {
                     return;
                 }
                 // 检查是否为我们的reducers
-                const reducer = getReducerFnByName(actionName);
+                const reducer = getReducerFnByName(actionName, moduleInstance);
                 if (reducer) {
                     throw new Error(
                         `ActionMiddlewareError: You Must call the reducer '${actionName}' in a Action`
