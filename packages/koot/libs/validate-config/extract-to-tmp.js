@@ -48,16 +48,17 @@ module.exports = async (projectDir, config) => {
         } else {
             obj.server = (() => {
                 const server = {};
-                if (config.koaStatic) server.koaStatic = config.koaStatic;
-                if (config.renderCache) server.renderCache = config.renderCache;
-                if (config.proxyRequestOrigin)
-                    server.proxyRequestOrigin = config.proxyRequestOrigin;
-                if (config.templateInject)
-                    server.inject = config.templateInject;
-                if (config.serverBefore) server.before = config.serverBefore;
-                if (config.serverAfter) server.after = config.serverAfter;
-                if (config.serverOnRender)
-                    server.onRender = config.serverOnRender;
+                const extract = (keyInConfig, keyInServer) => {
+                    if (typeof config[keyInConfig] !== 'undefined')
+                        server[keyInServer] = config[keyInConfig];
+                };
+                extract('koaStatic', 'koaStatic');
+                extract('renderCache', 'renderCache');
+                extract('proxyRequestOrigin', 'proxyRequestOrigin');
+                extract('templateInject', 'inject');
+                extract('serverBefore', 'before');
+                extract('serverAfter', 'after');
+                extract('serverOnRender', 'onRender');
                 return server;
             })();
         }
