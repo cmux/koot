@@ -37,7 +37,7 @@
         "cssnano": "4.1.10",
         "eslint": "5.16.0",
         "eslint-config-koot": "0.2.0",
-        "husky": "3.0.3",
+        "husky": "3.0.4",
         "lint-staged": "9.2.3",
         "normalize.css": "8.0.1",
         "prettier": "1.18.2",

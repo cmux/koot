@@ -6,6 +6,14 @@ _Koot.js_ 使用 _Redux_ 进行 _store_ 的管理。
 
 ---
 
+### 有关 react-redux 的版本
+
+当前 _Koot.js_ 使用 `react-redux` 较旧的 v5 版本，该版本用到了 _React_ 计划弃用的一些生命周期 (如 `componentWillMount`)。
+
+目前我们计划在今年会将 `react-redux` 升级到最新版本，同时确保已有项目的兼容性，敬请期待。
+
+---
+
 ### 相关配置
 
 以下是和 _store_ 相关的配置项目：

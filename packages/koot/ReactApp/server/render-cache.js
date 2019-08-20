@@ -19,13 +19,14 @@ const defaults = require('../../defaults/render-cache');
  */
 class KootReactRenderCache {
     /**
-     * @param {Object} options
-     * @param {Number} [options.maxAge] 缓存存在时间
-     * @param {Number} [options.maxCount] 最多缓存的 URL 的数量
+     * @param {Object} [options={}]
+     * @param {number} [options.maxAge] 缓存存在时间
+     * @param {number} [options.maxCount] 最多缓存的 URL 的数量
      * @param {cacheGet} [options.get] 自定义缓存检查与吐出方法。存在时, maxAge 和 maxCount 设置将被忽略
      * @param {cacheSet} [options.set] 自定义缓存存储方法。存在时, maxAge 和 maxCount 设置将被忽略
      */
     constructor(options = {}) {
+        if (options === true) options = {};
         const {
             maxAge = defaults.maxAge,
             maxCount = defaults.maxCount
@@ -37,6 +38,11 @@ class KootReactRenderCache {
         this.maxCount = maxCount;
         this.customGet = options.get;
         this.customSet = options.set;
+
+        // console.log({
+        //     maxAge: this.maxAge,
+        //     maxCount: this.maxCount
+        // });
     }
 
     /**

@@ -5,7 +5,9 @@
 核心
 
 -   **重大改动**
-    -   SSR 流程和生命周期调整，原则上对已有项目不会造成影响。如果升级 _Koot.js_ 后 SSR 出现异常，请查阅: [升级指南: 0.10 -> 0.11](https://koot.js.org/#/migration/0.10-to-0.11)
+    -   同构/SSR 项目
+        -   SSR 流程和生命周期调整，原则上对已有项目不会造成影响。如果升级 _Koot.js_ 后 SSR 出现异常，请查阅: [升级指南: 0.10 -> 0.11](https://koot.js.org/#/migration/0.10-to-0.11)
+        -   渲染缓存 (RenderCache) 默认禁用，如需继续使用，请配置 `renderCache`，配置方式请查阅 [项目配置/renderCache](https://koot.js.org/#/config?id=renderCache)
 -   **新特性**
     -   **新全局函数** `getCache()` - 获取公用缓存空间。具体用法请参见文档 [全局与工具函数/全局函数](https://koot.js.org/#/utilities?id=全局函数) ([#143](https://github.com/cmux/koot/issues/143))
     -   **新工具函数** `clientUpdatePageinfo()` - 更新页面标题 `<title>` 和 `<meta>` 标签。具体用法请参见文档 [全局与工具函数/工具函数](https://koot.js.org/#/utilities?id=工具函数) ([#143](https://github.com/cmux/koot/issues/163))
@@ -32,14 +34,17 @@
         -   `koa-helmet` -> _5.0.0_
         -   `rimraf` -> _3.0.0_
         -   `style-loader` -> _1.0.0_
+        -   `yargs` -> _14.0.0_
     -   minor
         -   `@babel/register` -> _7.5.5_
         -   `@hot-loader/react-dom` -> _16.9.0_
         -   `@types/node` -> _12.7.2_
         -   `@types/react` -> _16.9.2_
+        -   `@types/react-dom` -> _16.9.0_
+        -   `@types/webpack` -> _4.39.0_
         -   `css-loader` -> _3.2.0_
         -   `file-loader` -> _4.2.0_
-        -   `koa` -> _2.8.0_
+        -   `koa` -> _2.8.1_
         -   `koa-helmet` -> _5.1.0_
         -   `less` -> _3.10.1_
         -   `mini-css-extract-plugin` -> _0.8.0_
@@ -55,8 +60,7 @@
         -   `@babel/plugin-proposal-object-rest-spread` -> _7.5.5_
         -   `@babel/plugin-transform-runtime` -> _7.5.5_
         -   `@babel/preset-env` -> _7.5.5_
-        -   `@types/react-dom` -> _16.8.5_
-        -   `@types/webpack` -> _4.32.2_
+        -   `@types/react-redux` -> _7.1.2_
         -   `cache-loader` -> _4.1.0_
         -   `copy-webpack-plugin` -> _5.0.4_
         -   `execa` -> _2.0.4_
@@ -64,7 +68,7 @@
         -   `js-cookie` -> _2.2.1_
         -   `koa-body` -> _4.1.1_
         -   `lodash` -> _4.17.15_
-        -   `portfinder` -> _1.0.22_
+        -   `portfinder` -> _1.0.23_
         -   `react-hot-loader` -> _4.12.11_
         -   `thread-loader` -> _2.1.3_
         -   `url-loader` -> _2.1.0_

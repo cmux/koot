@@ -23,6 +23,7 @@ module.exports = {
     staticCopyFrom: path.resolve(__dirname, './public'),
 
     port: 8081,
+    // renderCache: true,
 
     webpackConfig: async () => {
         const ENV = process.env.WEBPACK_BUILD_ENV;

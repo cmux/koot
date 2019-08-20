@@ -576,75 +576,44 @@ export default (...args) => {
 ### renderCache
 
 -   类型: `Object` 或 `boolean`
--   默认值: `{ maxAge: 5000, maxCount: 50 }`
+-   默认值: `false`
 -   **仅针对**: 服务器端，生产环境
 
 生产环境下服务器渲染缓存相关设置。
 
-默认的缓存规则比较基础:
-
--   根据**完整的** URL 进行缓存，即每个 URL 有各自的结果缓存
-    -   `/page-a/` 和 `/page-a/?a=b` 有不同的缓存
--   仅保留最近 **50** 个 URL 的结果
--   每条结果最多保存 **5 秒**
--   **没有**考虑 _Redux store_ 内的数据
-    -   如：相同的 URL 根据 _store_ 数据有不同结果，如针对当前登录的用户显示欢迎信息。该默认规则下，不同的用户在 5 秒内先后访问，后访问的用户会得到上一个用户访问的结果，这显然不是我们想要的
-    -   如有类似需求，请**禁用**默认的缓存规则，自行编写缓存规则
-
 ```javascript
 module.exports = {
-    // 默认值
-    renderCache: {
-        maxAge: 5000,
-        maxCount: 50
-    },
-
-    // 完全禁用渲染缓存
+    // 默认值：完全禁用
     renderCache: false,
 
-    // 详细设置
+    // 开启
+    renderCache: true,
+
+    /**
+     * 详细设置
+     * @typedef renderCache
+     * @type {Object}
+     * @property {number} [maxAge=5000]
+     *           每条结果最多保存时间, 单位: 毫秒 (ms)
+     * @property {number} [maxCount=50]
+     *           根据 URL 保留的结果条目数
+     * @property {(url)=>string|boolean} [get]
+     *           自定义缓存检查与吐出方法。存在时, maxAge 和 maxCount 设置将被忽略
+     *           参数 url - 请求的完整的 URL
+     *           返回 false 时，表示该 URL 没有缓存结果
+     * @property {(url,html)=>void} [set]
+     *           自定义缓存存储方法。存在时, maxAge 和 maxCount 设置将被忽略
+     *           参数 url - 请求的完整的 URL
+     *           参数 html - 服务器渲染结果
+     */
     renderCache: {
-        /** `renderCache.maxAge`
-         * - 类型: `Number`
-         * - 默认值: `5000`
-         *
-         * 每条结果最多保存时间, 单位: 毫秒 (ms)
-         */
         maxAge: 5000,
-
-        /** `renderCache.maxCount`
-         * - 类型: `Number`
-         * - 默认值: `50`
-         *
-         * 根据 URL 保留的结果条目数
-         */
         maxCount: 50,
-
-        /** `renderCache.get`
-         * - 类型: `Function`
-         * - 默认值: `undefined`
-         *
-         * 自定义缓存检查与吐出方法。存在时, maxAge 和 maxCount 设置将被忽略
-         *
-         * @param {string} url 请求的完整的 URL
-         * @returns {boolean|string} 返回 false 时，表示该 URL 没有缓存结果
-         */
         get: url => {
             // 自实现的缓存结果获取逻辑
             // return false
             return '完整渲染结果';
         },
-
-        /** `renderCache.set`
-         * - 类型: `Function`
-         * - 默认值: `undefined`
-         *
-         * 自定义缓存存储方法。存在时, maxAge 和 maxCount 设置将被忽略
-         *
-         * @param {string} url 请求的完整的 URL
-         * @param {string} html 服务器渲染结果
-         * @void
-         */
         set: (url, html) => {
             // 自实现的缓存结果存储逻辑
         }
