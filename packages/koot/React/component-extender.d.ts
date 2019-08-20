@@ -42,11 +42,13 @@ interface ExtendOptions {
 }
 
 type Pageinfo = {
+    /** 要设置的页面标题 */
     title?: string;
+    /** 要设置的 `<meta>` 标签列表，需要元素为 `{[name]: value}` 对象的数组 */
     metas?: Array<MetaObject>;
 };
 export type MetaObject = {
-    [metaKey: string]: string;
+    [metaKey: string]: string | undefined;
 };
 
 type ExtendPageinfoFunction = (state: any, props: RenderProps) => Pageinfo;

@@ -113,7 +113,7 @@ declare function __(
 
 // ============================================================================
 
-declare interface KootComponentStyleObject {
+declare type KootComponentStyleObject = {
     /**
      * 组件 `className`
      * - 仅为本组件 CSS 的 `className`，不包含父组件通过 `props` 传入的
@@ -123,7 +123,7 @@ declare interface KootComponentStyleObject {
      * 组件 CSS 代码内容
      */
     css: string;
-}
+};
 declare module '*.module.css' {
     const kootComponentStyleCSS: KootComponentStyleObject;
     export = kootComponentStyleCSS;
