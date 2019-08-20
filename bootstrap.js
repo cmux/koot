@@ -1,3 +1,6 @@
+const fs = require('fs');
+const path = require('path');
+
 // const ignore = "koot-@(cli|boilerplate|boilerplate-*)"
 const ignore = 'koot-cli';
 
@@ -21,7 +24,12 @@ const runCmd = async cmd => {
 };
 
 const run = async () => {
-    await runCmd(`lerna clean --yes --ignore "${ignore}"`);
+    // 检查 `lerna` 是否安装到本地依赖
+    const lernaInstalled = fs.existsSync(
+        path.resolve(__dirname, 'node_modules/lerna')
+    );
+
+    if (lernaInstalled) await runCmd(`lerna clean --yes --ignore "${ignore}"`);
     await runCmd('npm install --no-save');
     await runCmd(`lerna bootstrap --hoist --ignore "${ignore}"`);
 
