@@ -46,11 +46,11 @@
         -   `file-loader` -> _4.2.0_
         -   `koa` -> _2.8.1_
         -   `koa-helmet` -> _5.1.0_
-        -   `less` -> _3.10.1_
+        -   `less` -> _3.10.2_
         -   `mini-css-extract-plugin` -> _0.8.0_
         -   `react` -> _16.9.0_
         -   `react-dom` -> _16.9.0_
-        -   `sass-loader` -> _7.2.0_
+        -   `sass-loader` -> _7.3.1_
         -   `webpack` -> _4.39.2_
         -   `webpack-bundle-analyzer` -> _3.4.1_
         -   `webpack-dev-server` -> _3.8.0_
