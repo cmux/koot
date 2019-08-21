@@ -85,7 +85,9 @@ module.exports = async (projectDir, config) => {
         ];
         optionsNeedImport.forEach(key => {
             try {
+                // eslint-disable-next-line no-eval
                 if (eval(`typeof obj.${key} === 'string' && obj.${key}`)) {
+                    // eslint-disable-next-line no-eval
                     const value = eval(`obj.${key}`);
                     const pathname = path.isAbsolute(value)
                         ? value
@@ -96,6 +98,7 @@ module.exports = async (projectDir, config) => {
                     const result = path.isAbsolute(pathname)
                         ? pathname
                         : '../../../' + pathname.replace(/^\.\//, '');
+                    // eslint-disable-next-line no-eval
                     eval(`obj.${key} = \`require('${result}').default\``);
                 }
             } catch (e) {}
