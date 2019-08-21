@@ -83,7 +83,7 @@ export const createStore: (
 -   `server`
     <br>本次请求的相关服务器信息，包括：
     -   `cookie`
-        <br>本次请求的全部 cookie 内容
+        <br>本次请求的 cookie 内容，由 `cookiesToStore` 配置决定其内容
     -   `lang`
         <br>当前渲染的语种。与 `localeId` 相同
     -   `origin`

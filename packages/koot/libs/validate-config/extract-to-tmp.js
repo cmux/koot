@@ -24,7 +24,7 @@ module.exports = async (projectDir, config) => {
                 else if (config.reducers)
                     redux.combineReducers = config.reducers;
 
-                if (config.cookiesToStore)
+                if (typeof config.cookiesToStore !== 'undefined')
                     redux.syncCookie = config.cookiesToStore;
 
                 return redux;

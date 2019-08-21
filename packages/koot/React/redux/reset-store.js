@@ -1,8 +1,9 @@
 /**
  * 重置 store，清空所有 state
  * @param {Object} store
+ * @param {string[]} [keysToPreserve]
  */
-const resetStore = store => {
+const resetStore = (store, keysToPreserve = defaultKeysToPreserve) => {
     const state = store.getState();
     Object.keys(state)
         .filter(key => !keysToPreserve.includes(key))
@@ -19,8 +20,8 @@ const resetStore = store => {
     return store;
 };
 
-/** @type {Array} 需要保留（不需要进行删除操作）的 redux store state 项名 */
-const keysToPreserve = [
+/** @type {Array} 需要保留（不需要进行删除操作）的 redux store state 属性名 */
+export const defaultKeysToPreserve = [
     'localeId',
     'locales'
     // 'server'

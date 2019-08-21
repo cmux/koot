@@ -26,7 +26,7 @@ module.exports = {
     // historyType: 'hash',
 
     store: './src/store/create-method-1',
-    cookiesToStore: 'all',
+    cookiesToStore: true,
     sessionStore: true,
 
     // i18n: {

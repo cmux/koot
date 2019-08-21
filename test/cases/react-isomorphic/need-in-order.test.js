@@ -4,27 +4,33 @@
  * 不同的 Koot 配置会分别使用不同的配置，用以测试多种结果。以下是已有的案例
  *
  * **store**
- * - 默认配置
+ * - 默认
  *     - 提供创建 store 的方法
  *     - 使用 koot 封装的 createStore 方法
  *     - 提供的 reducer 是 Object
  *     - 提供 enhancer
- * - i18n.use="router"
+ * - 二号
  *     - 提供创建 store 的方法
  *     - 使用 koot 封装的 createStore 方法
  *     - 提供的 reducer 是 Function
- * - bundleVersionsKeep=false
+ * - 三号
  *     - 提供创建 store 的方法
  *     - 使用自定函数
  * - 0.6版配置
  *     - 仅提供 reducer 列表
  *
+ * **cookiesToStore**
+ * - 默认: `true`
+ * - 二号: `"all"`
+ * - 三号: `['kootTest2']`
+ * - 0.6版配置: `false`
+ *
  * **sessionStore**
- * - 默认配置
+ * - 默认
  *     - `true` (全部开启)
- * - i18n.use="router"
- *     - `all` (全部开启)
- * - bundleVersionsKeep=false
+ * - 二号
+ *     - `"all"` (全部开启)
+ * - 三号
  *     - 部分开启，同时混入无效设置
  * - 0.6版配置
  *     - 禁用
@@ -286,7 +292,8 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
         kootConfig = {},
         i18nUseRouter = false,
         isDev = false,
-        selectorForStoreEnhancer
+        selectorForStoreEnhancer,
+        cookiesToStore
     } = settings;
 
     const getLocaleId = async page => {
@@ -299,6 +306,28 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
 
     const getSSRState = async page =>
         await page.evaluate(() => window.__REDUX_STATE__);
+
+    const getSSRStateFromScriptTag = async page =>
+        await page.evaluate(() => {
+            const scripts = [...document.querySelectorAll('script')];
+            const regex = /^window.__REDUX_STATE__\s*=\s*(.+?)[;$]/m;
+            const s = scripts.filter(el => regex.test(el.innerText));
+            if (!s.length) return '';
+
+            const str = s[0].innerText;
+            const match = regex.exec(str);
+
+            if (match.length < 2) return '';
+
+            let result;
+            try {
+                result = JSON.parse(match[1]);
+            } catch (e) {
+                // eslint-disable-next-line no-eval
+                result = eval(match[1]);
+            }
+            return result;
+        });
 
     const page = await context.newPage();
     const failedResponse = [];
@@ -960,26 +989,7 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
                 waitUntil: 'domcontentloaded'
             });
 
-            const SSRState = await page.evaluate(() => {
-                const scripts = [...document.querySelectorAll('script')];
-                const regex = /^window.__REDUX_STATE__\s*=\s*(.+?)[;$]/m;
-                const s = scripts.filter(el => regex.test(el.innerText));
-                if (!s.length) return '';
-
-                const str = s[0].innerText;
-                const match = regex.exec(str);
-
-                if (match.length < 2) return '';
-
-                let result;
-                try {
-                    result = JSON.parse(match[1]);
-                } catch (e) {
-                    // eslint-disable-next-line no-eval
-                    result = eval(match[1]);
-                }
-                return result;
-            });
+            const SSRState = await getSSRStateFromScriptTag(page);
 
             expect(!!SSRState.testModifyState).toBe(toHasValue);
         };
@@ -989,6 +999,54 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
         await test(origin, false);
 
         await context.close();
+    }
+
+    // 测试: cookiesToStore
+    if (typeof cookiesToStore !== 'undefined') {
+        /**
+         *
+         * - 默认: `true`
+         * - 二号: `"all"`
+         * - 三号: `['kootTest2']`
+         * - 0.6版配置: `false`
+         */
+        await page.goto(origin, {
+            waitUntil: 'domcontentloaded'
+        });
+
+        const { server: SSRStateServer = {} } = await getSSRStateFromScriptTag(
+            page
+        );
+        const { cookie: result } = SSRStateServer;
+        const validResult = {
+            kootTest: 'valueForKootTest',
+            kootTest2: 'valueForKootTest2'
+        };
+
+        if (cookiesToStore === true) {
+            expect(typeof result).toBe('string');
+            for (const [key, value] of Object.entries(validResult)) {
+                const regexp = new RegExp(
+                    `(^|\\s|;)${key}\\s*=\\s*${value}`,
+                    'g'
+                );
+                expect(regexp.test(result)).toBe(true);
+            }
+        } else if (cookiesToStore === false) {
+            expect(typeof result).toBe('undefined');
+        } else {
+            expect(typeof result).toBe('object');
+            if (Array.isArray(cookiesToStore)) {
+                for (const key of cookiesToStore) {
+                    expect(typeof result[key]).not.toBe('undefined');
+                    expect(result[key]).toBe(validResult[key]);
+                }
+            } else if (cookiesToStore === 'all') {
+                for (const [key, value] of Object.entries(validResult)) {
+                    expect(result[key]).toBe(value);
+                }
+            }
+        }
     }
 
     // TODO: 测试: 所有 Webpack 结果资源的访问
@@ -1159,7 +1217,8 @@ describe('测试: React 同构项目', () => {
                 await doPuppeteerTest(port, dist, {
                     kootConfig: require(path.resolve(dir, configFile)),
                     selectorForStoreEnhancer:
-                        '#__test-store-enhancer-server-persist'
+                        '#__test-store-enhancer-server-persist',
+                    cookiesToStore: true
                 });
                 await terminate(child.pid);
 
@@ -1212,7 +1271,8 @@ describe('测试: React 同构项目', () => {
                     await doPuppeteerTest(port, dist, {
                         kootConfig: require(path.resolve(dir, configFile)),
                         selectorForStoreEnhancer:
-                            '#__test-store-enhancer-server-persist'
+                            '#__test-store-enhancer-server-persist',
+                        cookiesToStore: true
                     });
                     await terminate(child.pid);
 
@@ -1251,7 +1311,8 @@ describe('测试: React 同构项目', () => {
                     await doPuppeteerTest(port, cwd, {
                         kootConfig: require(path.resolve(dir, configFile)),
                         selectorForStoreEnhancer:
-                            '#__test-store-enhancer-server-persist'
+                            '#__test-store-enhancer-server-persist',
+                        cookiesToStore: true
                     });
                     await terminate(child.pid);
 
@@ -1269,32 +1330,40 @@ describe('测试: React 同构项目', () => {
                     'isomorphic-standard',
                     {
                         selectorForStoreEnhancer:
-                            '#__test-store-enhancer-server-persist'
+                            '#__test-store-enhancer-server-persist',
+                        cookiesToStore: true
                     }
                 );
 
                 testFull(
-                    'i18n.use="router"',
+                    '二号 / i18n.use="router"',
                     dir,
                     'koot.config.i18n-use-router.js',
                     'isomorphic-i18n_use_router',
                     {
-                        i18nUseRouter: true
+                        i18nUseRouter: true,
+                        cookiesToStore: 'all'
                     }
                 );
 
                 testFull(
-                    'bundleVersionsKeep=false',
+                    '三号 / bundleVersionsKeep=false',
                     dir,
                     'koot.config.no-bundles-keep.js',
-                    'isomorphic-no_bundles_keep'
+                    'isomorphic-no_bundles_keep',
+                    {
+                        cookiesToStore: ['kootTest2']
+                    }
                 );
 
                 testFull(
                     '0.6版配置',
                     dir,
                     'koot.config.old-0.6.js',
-                    'isomorphic-config_old_0.6'
+                    'isomorphic-config_old_0.6',
+                    {
+                        cookiesToStore: false
+                    }
                 );
             }
         });

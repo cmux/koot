@@ -26,7 +26,10 @@ import validateInject from '../../React/validate-inject';
 import validateReduxConfig from '../../React/validate/redux-config';
 import isNeedInjectCritical from '../../React/inject/is-need-inject-critical';
 import renderTemplate from '../../React/render-template';
-import { default as clearStore } from '../../React/redux/reset-store';
+import {
+    default as clearStore,
+    defaultKeysToPreserve
+} from '../../React/redux/reset-store';
 
 import beforeRouterMatch from './middlewares/isomorphic/lifecycle/before-router-match';
 import beforePreRender from './middlewares/isomorphic/lifecycle/before-pre-render';
@@ -183,7 +186,7 @@ const ssr = async (options = {}) => {
     SSR[needConnectComponents] = false;
 
     // 重置 state
-    clearStore(Store);
+    clearStore(Store, [...defaultKeysToPreserve, 'server']);
 
     // 渲染生命周期: beforeDataToStore
     await beforeDataToStore({
