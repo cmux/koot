@@ -2,11 +2,11 @@
 
 项目根目录中的 `/koot.config.js` 为 koot 项目总配置文件，所有的 koot.js 项目必须提供该配置文件。
 
-该文件需要输出 _**Object**_。下面列出的配置项均为该对象的第一级属性。
+-   可通过 NPM 命令指定配置文件的路径，请参见 [命令](/task)。
+-   该文件需要输出 _**Object**_。下面列出的配置项均为该对象的第一级属性。
+-   如无特殊说明，所有配置项目均为**可选项**。
 
-如无特殊说明，所有配置项目均为**可选项**。
-
-**特殊类型**
+**特殊类型: Pathname**
 
 `Pathname` 类型表示到对应文件的路径名，支持绝对路径和相对路径，相对路径必须以 `.` 开头。
 
@@ -144,9 +144,15 @@ module.exports = {
  ***************************/
 const { createStore } = require('koot');
 
-/** @type {Object|Function} 项目使用的 reducer，可以是形式为 Object 的列表，也可以是 reducer 函数 */
+/**
+ * @type {Reducer | ReducersMapObject}
+ * 项目使用的 reducer，可以是形式为 Object 的列表，也可以是 reducer 函数
+ */
 const appReducers = require('./reducers.js');
-/** @type {Array} 项目使用的 middleware 列表 */
+/**
+ * @type {Array<Middleware>}
+ * 项目使用的 middleware 列表
+ */
 const appMiddlewares = require('./middlewares.js');
 
 module.exports = () => createStore(appReducers, appMiddlewares);
@@ -322,10 +328,9 @@ module.exports = {
 -   类型: `Object`
 -   默认值: `{}` (空对象)
 
-定义文件、路径别名。可在任何经过 Webpack 处理的 JavaScript 和 CSS 相关文件中使用。
+定义文件、路径别名。可在任何项目代码中使用。该功能使用 `webpack.resolve.alias` 实现。
 
--   一般情况下，所有 React 相关代码均会经过 Webpack 处理
--   使用 `webpack.resolve.alias` 实现
+> 项目代码指所有经过 _Webpack_ 处理的 _JavaScript_ 文件的代码。通常来说，除了 _Koot.js_ 项目配置文件 (`koot.config.js`)、_Babel_ 配置文件 (`babel.config.js`) 等配置文件外，其他所有的代码文件都会经过 _Webpack_ 处理。
 
 ```javascript
 const path = require('path');
@@ -357,10 +362,9 @@ import '~base.less';
 -   类型: `Object`
 -   默认值: `{}` (空对象)
 
-定义 JavaScript 代码中的常量。可在任何经过 Webpack 处理的 JavaScript 相关文件中使用。
+定义 JavaScript 代码中的常量。可在任何 JavaScript 项目代码中使用。使用 Webpack 插件 `DefinePlugin` 实现。
 
--   一般情况下，所有 React 相关代码均会经过 Webpack 处理
--   使用 Webpack 插件 `DefinePlugin` 实现
+> 项目代码指所有经过 _Webpack_ 处理的 _JavaScript_ 文件的代码。通常来说，除了 _Koot.js_ 项目配置文件 (`koot.config.js`)、_Babel_ 配置文件 (`babel.config.js`) 等配置文件外，其他所有的代码文件都会经过 _Webpack_ 处理。
 
 ```javascript
 module.exports = {
@@ -434,7 +438,7 @@ module.exports = {
  * @param {Object} [options.ctx] 本次请求的 Koa ctx 对象
  * @param {Object} [options.history] History 对象
  * @param {string} [options.localeId] 本次请求的语种 ID
- * @returns {undefined|Promise}
+ * @returns {undefined|Promise<any>}
  */
 export default ({ store, history, localeId }) => {
     // ...
@@ -465,7 +469,7 @@ module.exports = {
  * @param {Object} [options.ctx] 本次请求的 Koa ctx 对象
  * @param {Object} [options.history] History 对象
  * @param {string} [options.localeId] 本次请求的语种 ID
- * @returns {undefined|Promise}
+ * @returns {undefined|Promise<any>}
  */
 export default ({ store, history, localeId }) => {
     // ...
@@ -482,7 +486,7 @@ export default ({ store, history, localeId }) => {
 
 -   该回调发生在 `onRouterUpdate` 之前
 -   如果路由对应组件进行了代码分割，则会按顺序进行以下行为
-    1. 客户端/浏览器 URL 或历史记录改变之后即刻触发 `onHistoryUpdate`
+    1. **客户端/浏览器 URL 或历史记录改变之后即刻触发 `onHistoryUpdate`**
     2. 载入对应组件的代码 (如果已载入则跳过该步骤)
     3. 渲染相应组件
     4. 触发 `onRouterUpdate`
@@ -521,7 +525,7 @@ export default (location, store) => {
     1. 客户端/浏览器 URL 或历史记录改变之后即刻触发 `onHistoryUpdate`
     2. 载入对应组件的代码 (如果已载入则跳过该步骤)
     3. 渲染相应组件
-    4. 触发 `onRouterUpdate`
+    4. **触发 `onRouterUpdate`**
 
 ```javascript
 /****************************
@@ -612,12 +616,14 @@ module.exports = {
     // 默认值
     proxyRequestOrigin: {},
 
-    // 详细设置
+    /**
+     * 详细设置
+     * @typedef proxyRequestOrigin
+     * @type {Object}
+     * @property {string} [protocol]
+     *           协议名
+     */
     proxyRequestOrigin: {
-        /** `proxyRequestOrigin.protocol`
-         * - 类型: `string`
-         * 协议名
-         */
         protocol: 'https'
     }
 };
@@ -699,7 +705,7 @@ module.exports = {
 -   默认值: _无_
 -   **仅针对**: SSR 项目的服务器端
 
-在服务器端计算 React 渲染结果时运行的方法。
+在服务器端计算 React 渲染结果时运行的方法。有关 SSR 时的流程和生命周期顺序，请参见 [生命周期/服务器端渲染流程](/life-cycle?id=服务器端渲染流程)
 
 ```javascript
 module.exports = {
@@ -735,10 +741,26 @@ module.exports = {
             // ...
         },
 
+        /** `serverOnRender.beforePreRender`
+         * - 类型: `Function`
+         *
+         * 在路由 (`react-router`) 匹配之后、进行预渲染之前，运行的方法
+         *
+         * @async
+         * @param {Object} options
+         * @param {Object} [options.ctx] 本次请求的 Koa ctx 对象
+         * @param {Object} [options.store] redux store 对象
+         * @param {string} [options.localeId] 本次请求的语种 ID
+         * @void
+         */
+        beforePreRender: async ({ ctx, store, localeId }) => {
+            // ...
+        },
+
         /** `serverOnRender.beforeDataToStore`
          * - 类型: `Function`
          *
-         * 在路由 (`react-router`) 匹配之后、进行 store 相关数据计算之前，运行的方法
+         * 在预渲染之后、进行 store 相关数据计算之前，运行的方法
          * - 同 `serverOnRender` 为 `Function` 的情况
          *
          * @async

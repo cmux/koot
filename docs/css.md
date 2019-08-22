@@ -71,9 +71,22 @@ const PageHome = extend({
 export default PageHome;
 ```
 
-### 配置文件名规则
+上述 _LESS_ 文件会被转换为
 
-配置文件 (默认为 `/koot.config.js`) 中的 `moduleCssFilenameTest` 项目为这 2 种 CSS 文件的不包含扩展名的基本文件名正则规则的设置。以下是默认设置:
+```css
+.a85c6k .cover {
+    width: 100%;
+    height: 100vh;
+}
+```
+
+### 相关配置
+
+以下是和 _CSS_ 相关的配置项目：
+
+**文件名规则**
+
+通过配置项 `moduleCssFilenameTest` 可为这 2 种 CSS 文件设定文件名规则，该规则为**不包含扩展名的**基本文件名正则表达式。以下是默认设置:
 
 ```javascript
 module.exports = {
@@ -84,6 +97,28 @@ module.exports = {
 ```
 
 _默认规则解释:_ 文件名以 `.component.css` `.view.css` 或 `.module.css` (扩展名可为 `css` `less` `sass`) 为结尾的文件会当作组件 CSS，其他文件会被当做全局 CSS。
+
+**组件 CSS hash 字符串长度**
+
+通过配置项 `classNameHashLength` 可设定组件 CSS hash 字符串长度。
+
+**扩展 less-loader 的配置**
+
+通过配置项 `internalLoaderOptions` 可扩展几乎无法修改的内置 Webpack loader 的配置，比如 `less-loader`。
+
+```javascript
+module.exports = {
+    // ...
+    internalLoaderOptions: {
+        'less-loader': {
+            modifyVars: {
+                'base-font-size': '40px'
+            }
+        }
+    }
+    // ...
+};
+```
 
 ### 组件 CSS 的 className hash 规则
 
