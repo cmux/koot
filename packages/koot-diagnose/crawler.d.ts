@@ -1,3 +1,5 @@
+declare module 'kootDiagnoseCrawler';
+
 export interface CrawlerOptions {
     /** 最多访问的页面数量 */
     maxCrawl?: number;
@@ -6,9 +8,9 @@ export interface CrawlerOptions {
         [option: string]: any;
     };
 }
-export interface CrawlerResult {
+export type CrawlerResult = {
     [errorType: string]: CrawlerError[];
-}
+};
 export interface CrawlerError {
     /** 错误信息 */
     readonly message?: string;

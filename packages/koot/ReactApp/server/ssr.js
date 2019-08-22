@@ -182,7 +182,9 @@ const ssr = async (options = {}) => {
     // 确定当前访问匹配到的组件
     SSR[needConnectComponents] = true;
     SSR.connectedComponents = [];
-    renderToString(<RootIsomorphic store={Store} {...renderProps} />);
+    try {
+        renderToString(<RootIsomorphic store={Store} {...renderProps} />);
+    } catch (e) {}
     SSR[needConnectComponents] = false;
 
     // 重置 state
