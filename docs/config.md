@@ -2,11 +2,11 @@
 
 项目根目录中的 `/koot.config.js` 为 koot 项目总配置文件，所有的 koot.js 项目必须提供该配置文件。
 
-该文件需要输出 _**Object**_。下面列出的配置项均为该对象的第一级属性。
+-   可通过 NPM 命令指定配置文件的路径，请参见 [命令](/task)。
+-   该文件需要输出 _**Object**_。下面列出的配置项均为该对象的第一级属性。
+-   如无特殊说明，所有配置项目均为**可选项**。
 
-如无特殊说明，所有配置项目均为**可选项**。
-
-**特殊类型**
+**特殊类型: Pathname**
 
 `Pathname` 类型表示到对应文件的路径名，支持绝对路径和相对路径，相对路径必须以 `.` 开头。
 
@@ -30,7 +30,7 @@ module.exports = {
 
 ### name
 
--   类型: `String`
+-   类型: `string`
 -   默认值: `package.json` 中的 `name` 属性
 
 项目名称。以下情况会使用该名称作为默认值：
@@ -40,7 +40,7 @@ module.exports = {
 
 ### type
 
--   类型: `String`
+-   类型: `string`
 -   默认值: `react`
 
 项目类型。
@@ -111,7 +111,7 @@ module.exports = {
 
 ### historyType
 
--   类型: `String`
+-   类型: `string`
 -   默认值: 自动匹配 (同构项目使用 `browserHistory`，SPA 项目使用 `hashHistory`)
 -   **仅针对**: 客户端
 
@@ -129,7 +129,7 @@ module.exports = {
 -   类型: `Pathname:Function`
 -   默认值: _无_
 
-生成 Redux store 的方法函数。
+生成 Redux store 的方法函数。推荐使用全局函数 `createStore()` 创建 _Redux store_。
 
 ```javascript
 /****************************
@@ -144,17 +144,25 @@ module.exports = {
  ***************************/
 const { createStore } = require('koot');
 
-/** @type {Object|Function} 项目使用的 reducer，可以是形式为 Object 的列表，也可以是 reducer 函数 */
+/**
+ * @type {Reducer | ReducersMapObject}
+ * 项目使用的 reducer，可以是形式为 Object 的列表，也可以是 reducer 函数
+ */
 const appReducers = require('./reducers.js');
-/** @type {Array} 项目使用的 middleware 列表 */
+/**
+ * @type {Array<Middleware>}
+ * 项目使用的 middleware 列表
+ */
 const appMiddlewares = require('./middlewares.js');
 
 module.exports = () => createStore(appReducers, appMiddlewares);
 ```
 
+有关 `createStore()` 全局函数的详细用法，请查阅 [Store/全局函数 createStore](/store?id=全局函数-createstore)。
+
 ### cookiesToStore
 
--   类型: `Boolean` `String` 或 `String[]`
+-   类型: `boolean` `string` 或 `string[]`
 -   默认值: `true`
 -   **仅针对**: SSR 项目
 
@@ -181,11 +189,11 @@ module.exports = {
 
 ### sessionStore
 
--   类型: `Boolean` 或 `Object`
+-   类型: `boolean` 或 `Object`
 -   默认值: `false`
 -   **仅针对**: 客户端环境
 
-将全部或部分 _store_ 对象同步到浏览器/客户端的 `sessionStore` 中，在用户刷新页面后，这些值会被还原到 _store_，以确保和刷新前一致。
+将全部或部分 _store_ 对象同步到浏览器/客户端的 `sessionStorage` 中，在用户刷新页面后，这些值会被还原到 _store_，以确保和刷新前一致。
 
 ```javascript
 module.exports = {
@@ -211,7 +219,7 @@ module.exports = {
 
 ### i18n
 
--   类型: `Boolean` `Object` 或 `Array[]`
+-   类型: `boolean` `Object` 或 `Array[]`
 -   默认值: `false`
 
 多语言配置。
@@ -238,77 +246,55 @@ module.exports = {
      * - 当前列出的均为默认值
      * - 除 `locales` 外均为**可选项**
      */
+    /**
+     * 详细配置
+     * - 当前列出的均为默认值
+     * - 除 `locales` 外均为**可选项**
+     * @typedef renderCache
+     * @type {Object}
+     * @property {string} [type="default"]
+     *           多语言打包模式
+     *           - **仅针对**: 生产环境
+     *
+     *           目前支持:
+     *           - `default` (默认值)
+     *             客户端按语种分别打包，语言包内容会直接打入到代码中，代码结果中不存在“语言包对象”
+     *             适合所有项目使用，推荐语言包较大的项目使用
+     *           - `store`
+     *             服务器输出 HTML 时，当前语种的语言包对象会写入 Redux store
+     *             适合语言包较小，或对文件/请求体积不敏感的 WebApp 项目使用
+     *             开发环境下会强制使用这一模式
+     * @property {string} [use="query"]
+     *           使用 URL 切换语种的方式
+     *
+     *           目前支持:
+     *           - `query` (默认值)
+     *             一般情况下，URL 中不会存在有关语种的字段。
+     *             切换语种时使用名为 hl 的 URL 参数，如：
+     *               `https://some.project.com/?hl=zh-cn`
+     *               `https://some.project.com/list/articles/?page=10&hl=ja-jp`
+     *           - `router`
+     *             规定路由的第一层为语种ID。
+     *             如果访问的 URL 的路由第一层不是项目设定的已知的语种 ID，则会自动跳转到最近一次访问的语种或默认语种对应的页面。
+     *               `https://some.project.com/` 自动跳转到 `https://some.project.com/zh-cn/`
+     *             URL 示例：
+     *               `https://some.project.com/zh-cn/`
+     *               `https://some.project.com/ja-jp/list/articles/?page=10`
+     * @property {string} [expr="__"]
+     *           JavaScript 代码中多语言翻译方法名
+     * @property {string} [domain]
+     *           Cookie 影响的域
+     * @property {string} [cookieKey="spLocaleId"]
+     *           语种ID存储于 Cookie 中的字段名
+     * @property {Array<LocaleConfig>} locales
+     *           语种ID和语言包。参见上文简易配置
+     */
     i18n: {
-        /** `i18n.type`
-         * - 类型: `String`
-         * - 默认值: `default`
-         *
-         * 多语言打包模式
-         * **仅针对**: 生产环境
-         *
-         * 目前支持:
-         * - `default` (默认值)
-         *   客户端按语种分别打包，语言包内容会直接打入到代码中，代码结果中不存在“语言包对象”
-         *   适合所有项目使用，推荐语言包较大的项目使用
-         * - `store`
-         *   服务器输出 HTML 时，当前语种的语言包对象会写入 Redux store
-         *   适合语言包较小，或对文件/请求体积不敏感的 WebApp 项目使用
-         *   开发环境下会强制使用这一模式
-         */
         type: 'default',
-
-        /** `i18n.use`
-         * - 类型: `String`
-         * - 默认值: `query`
-         *
-         * 使用 URL 切换语种的方式
-         *
-         * 目前支持:
-         * - `query` (默认值)
-         *   一般情况下，URL 中不会存在有关语种的字段。
-         *   切换语种时使用名为 hl 的 URL 参数，如：
-         *     `https://some.project.com/?hl=zh-cn`
-         *     `https://some.project.com/list/articles/?page=10&hl=ja-jp`
-         * `router`
-         *   规定路由的第一层为语种ID。
-         *   如果访问的 URL 的路由第一层不是项目设定的已知的语种 ID，则会自动跳转到最近一次访问的语种或默认语种对应的页面。
-         *     `https://some.project.com/` 自动跳转到 `https://some.project.com/zh-cn/`
-         *   URL 示例：
-         *     `https://some.project.com/zh-cn/`
-         *     `https://some.project.com/ja-jp/list/articles/?page=10`
-         */
         use: 'query',
-
-        /** `i18n.expr`
-         * - 类型: `String`
-         * - 默认值: `__`
-         *
-         * JavaScript 代码中多语言翻译方法名
-         */
         expr: '__',
-
-        /** `i18n.domain`
-         * - 类型: `String`
-         * - 默认值: _无_
-         *
-         * Cookie 影响的域
-         */
         domain: undefined,
-
-        /** `i18n.cookieKey`
-         * - 类型: `String`
-         * - 默认值: `spLocaleId`
-         *
-         * 语种ID存储于 Cookie 中的字段名
-         */
         cookieKey: 'spLocaleId',
-
-        /** `i18n.locales`
-         * - 类型: `Array[]`
-         * - 默认值: `[]`
-         *
-         * 语种ID和语言包。参见上文简易配置
-         */
         locales: []
     }
 };
@@ -316,7 +302,7 @@ module.exports = {
 
 ### pwa
 
--   类型: `Boolean` 或 `Object`
+-   类型: `boolean` 或 `Object`
 -   默认值: `true`
 
 自动生成 `service-worker` 脚本文件的设置。
@@ -342,10 +328,9 @@ module.exports = {
 -   类型: `Object`
 -   默认值: `{}` (空对象)
 
-定义文件、路径别名。可在任何经过 Webpack 处理的 JavaScript 和 CSS 相关文件中使用。
+定义文件、路径别名。可在任何项目代码中使用。该功能使用 `webpack.resolve.alias` 实现。
 
--   一般情况下，所有 React 相关代码均会经过 Webpack 处理
--   使用 `webpack.resolve.alias` 实现
+> 项目代码指所有经过 _Webpack_ 处理的 _JavaScript_ 文件的代码。通常来说，除了 _Koot.js_ 项目配置文件 (`koot.config.js`)、_Babel_ 配置文件 (`babel.config.js`) 等配置文件外，其他所有的代码文件都会经过 _Webpack_ 处理。
 
 ```javascript
 const path = require('path');
@@ -377,10 +362,9 @@ import '~base.less';
 -   类型: `Object`
 -   默认值: `{}` (空对象)
 
-定义 JavaScript 代码中的常量。可在任何经过 Webpack 处理的 JavaScript 相关文件中使用。
+定义 JavaScript 代码中的常量。可在任何 JavaScript 项目代码中使用。使用 Webpack 插件 `DefinePlugin` 实现。
 
--   一般情况下，所有 React 相关代码均会经过 Webpack 处理
--   使用 Webpack 插件 `DefinePlugin` 实现
+> 项目代码指所有经过 _Webpack_ 处理的 _JavaScript_ 文件的代码。通常来说，除了 _Koot.js_ 项目配置文件 (`koot.config.js`)、_Babel_ 配置文件 (`babel.config.js`) 等配置文件外，其他所有的代码文件都会经过 _Webpack_ 处理。
 
 ```javascript
 module.exports = {
@@ -453,8 +437,8 @@ module.exports = {
  * @param {Object} options
  * @param {Object} [options.ctx] 本次请求的 Koa ctx 对象
  * @param {Object} [options.history] History 对象
- * @param {String} [options.localeId] 本次请求的语种 ID
- * @returns {undefined|Promise}
+ * @param {string} [options.localeId] 本次请求的语种 ID
+ * @returns {undefined|Promise<any>}
  */
 export default ({ store, history, localeId }) => {
     // ...
@@ -484,8 +468,8 @@ module.exports = {
  * @param {Object} options
  * @param {Object} [options.ctx] 本次请求的 Koa ctx 对象
  * @param {Object} [options.history] History 对象
- * @param {String} [options.localeId] 本次请求的语种 ID
- * @returns {undefined|Promise}
+ * @param {string} [options.localeId] 本次请求的语种 ID
+ * @returns {undefined|Promise<any>}
  */
 export default ({ store, history, localeId }) => {
     // ...
@@ -502,7 +486,7 @@ export default ({ store, history, localeId }) => {
 
 -   该回调发生在 `onRouterUpdate` 之前
 -   如果路由对应组件进行了代码分割，则会按顺序进行以下行为
-    1. 客户端/浏览器 URL 或历史记录改变之后即刻触发 `onHistoryUpdate`
+    1. **客户端/浏览器 URL 或历史记录改变之后即刻触发 `onHistoryUpdate`**
     2. 载入对应组件的代码 (如果已载入则跳过该步骤)
     3. 渲染相应组件
     4. 触发 `onRouterUpdate`
@@ -541,7 +525,7 @@ export default (location, store) => {
     1. 客户端/浏览器 URL 或历史记录改变之后即刻触发 `onHistoryUpdate`
     2. 载入对应组件的代码 (如果已载入则跳过该步骤)
     3. 渲染相应组件
-    4. 触发 `onRouterUpdate`
+    4. **触发 `onRouterUpdate`**
 
 ```javascript
 /****************************
@@ -573,76 +557,45 @@ export default (...args) => {
 
 ### renderCache
 
--   类型: `Object` 或 `Boolean`
--   默认值: `{ maxAge: 5000, maxCount: 50 }`
+-   类型: `Object` 或 `boolean`
+-   默认值: `false`
 -   **仅针对**: 服务器端，生产环境
 
 生产环境下服务器渲染缓存相关设置。
 
-默认的缓存规则比较基础:
-
--   根据**完整的** URL 进行缓存，即每个 URL 有各自的结果缓存
-    -   `/page-a/` 和 `/page-a/?a=b` 有不同的缓存
--   仅保留最近 **50** 个 URL 的结果
--   每条结果最多保存 **5 秒**
--   **没有**考虑 _Redux store_ 内的数据
-    -   如：相同的 URL 根据 _store_ 数据有不同结果，如针对当前登录的用户显示欢迎信息。该默认规则下，不同的用户在 5 秒内先后访问，后访问的用户会得到上一个用户访问的结果，这显然不是我们想要的
-    -   如有类似需求，请**禁用**默认的缓存规则，自行编写缓存规则
-
 ```javascript
 module.exports = {
-    // 默认值
-    renderCache: {
-        maxAge: 5000,
-        maxCount: 50
-    },
-
-    // 完全禁用渲染缓存
+    // 默认值：完全禁用
     renderCache: false,
 
-    // 详细设置
+    // 开启
+    renderCache: true,
+
+    /**
+     * 详细设置
+     * @typedef renderCache
+     * @type {Object}
+     * @property {number} [maxAge=5000]
+     *           每条结果最多保存时间, 单位: 毫秒 (ms)
+     * @property {number} [maxCount=50]
+     *           根据 URL 保留的结果条目数
+     * @property {(url)=>string|boolean} [get]
+     *           自定义缓存检查与吐出方法。存在时, maxAge 和 maxCount 设置将被忽略
+     *           参数 url - 请求的完整的 URL
+     *           返回 false 时，表示该 URL 没有缓存结果
+     * @property {(url,html)=>void} [set]
+     *           自定义缓存存储方法。存在时, maxAge 和 maxCount 设置将被忽略
+     *           参数 url - 请求的完整的 URL
+     *           参数 html - 服务器渲染结果
+     */
     renderCache: {
-        /** `renderCache.maxAge`
-         * - 类型: `Number`
-         * - 默认值: `5000`
-         *
-         * 每条结果最多保存时间, 单位: 毫秒 (ms)
-         */
         maxAge: 5000,
-
-        /** `renderCache.maxCount`
-         * - 类型: `Number`
-         * - 默认值: `50`
-         *
-         * 根据 URL 保留的结果条目数
-         */
         maxCount: 50,
-
-        /** `renderCache.get`
-         * - 类型: `Function`
-         * - 默认值: `undefined`
-         *
-         * 自定义缓存检查与吐出方法。存在时, maxAge 和 maxCount 设置将被忽略
-         *
-         * @param {String} url 请求的完整的 URL
-         * @returns {Boolean|String} 返回 false 时，表示该 URL 没有缓存结果
-         */
         get: url => {
             // 自实现的缓存结果获取逻辑
             // return false
             return '完整渲染结果';
         },
-
-        /** `renderCache.set`
-         * - 类型: `Function`
-         * - 默认值: `undefined`
-         *
-         * 自定义缓存存储方法。存在时, maxAge 和 maxCount 设置将被忽略
-         *
-         * @param {String} url 请求的完整的 URL
-         * @param {String} html 服务器渲染结果
-         * @void
-         */
         set: (url, html) => {
             // 自实现的缓存结果存储逻辑
         }
@@ -663,12 +616,14 @@ module.exports = {
     // 默认值
     proxyRequestOrigin: {},
 
-    // 详细设置
+    /**
+     * 详细设置
+     * @typedef proxyRequestOrigin
+     * @type {Object}
+     * @property {string} [protocol]
+     *           协议名
+     */
     proxyRequestOrigin: {
-        /** `proxyRequestOrigin.protocol`
-         * - 类型: `String`
-         * 协议名
-         */
         protocol: 'https'
     }
 };
@@ -750,7 +705,7 @@ module.exports = {
 -   默认值: _无_
 -   **仅针对**: SSR 项目的服务器端
 
-在服务器端计算 React 渲染结果时运行的方法。
+在服务器端计算 React 渲染结果时运行的方法。有关 SSR 时的流程和生命周期顺序，请参见 [生命周期/服务器端渲染流程](/life-cycle?id=服务器端渲染流程)
 
 ```javascript
 module.exports = {
@@ -762,7 +717,7 @@ module.exports = {
      * @param {Object} options
      * @param {Object} [options.ctx] 本次请求的 Koa ctx 对象
      * @param {Object} [options.store] redux store 对象
-     * @param {String} [options.localeId] 本次请求的语种 ID
+     * @param {string} [options.localeId] 本次请求的语种 ID
      * @void
      */
     serverOnRender: async ({ ctx, store, localeId }) => {
@@ -786,17 +741,33 @@ module.exports = {
             // ...
         },
 
+        /** `serverOnRender.beforePreRender`
+         * - 类型: `Function`
+         *
+         * 在路由 (`react-router`) 匹配之后、进行预渲染之前，运行的方法
+         *
+         * @async
+         * @param {Object} options
+         * @param {Object} [options.ctx] 本次请求的 Koa ctx 对象
+         * @param {Object} [options.store] redux store 对象
+         * @param {string} [options.localeId] 本次请求的语种 ID
+         * @void
+         */
+        beforePreRender: async ({ ctx, store, localeId }) => {
+            // ...
+        },
+
         /** `serverOnRender.beforeDataToStore`
          * - 类型: `Function`
          *
-         * 在路由 (`react-router`) 匹配之后、进行 store 相关数据计算之前，运行的方法
+         * 在预渲染之后、进行 store 相关数据计算之前，运行的方法
          * - 同 `serverOnRender` 为 `Function` 的情况
          *
          * @async
          * @param {Object} options
          * @param {Object} [options.ctx] 本次请求的 Koa ctx 对象
          * @param {Object} [options.store] redux store 对象
-         * @param {String} [options.localeId] 本次请求的语种 ID
+         * @param {string} [options.localeId] 本次请求的语种 ID
          * @void
          */
         beforeDataToStore: async ({ ctx, store, localeId }) => {
@@ -812,7 +783,7 @@ module.exports = {
          * @param {Object} options
          * @param {Object} [options.ctx] 本次请求的 Koa ctx 对象
          * @param {Object} [options.store] redux store 对象
-         * @param {String} [options.localeId] 本次请求的语种 ID
+         * @param {string} [options.localeId] 本次请求的语种 ID
          * @void
          */
         afterDataToStore: async ({ ctx, store, localeId }) => {

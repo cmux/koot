@@ -45,4 +45,3 @@ package-lock.json
 test/cases/config/samples
 logs
 dist
-/playground.js

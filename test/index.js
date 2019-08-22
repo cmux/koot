@@ -11,7 +11,10 @@ const run = async () => {
     const jestScript = {
         reactBase: `./test/cases/react-base`,
         reactIsomorphic: `./test/cases/react-isomorphic`,
-        reactSPA: `./test/cases/react-spa`
+        reactSPA: `./test/cases/react-spa`,
+        analyze: {
+            all: './packages/koot-diagnose/__tests__/.+\\.test\\.[jt]sx?$'
+        }
     };
 
     const { value } = await inquirer.prompt({
@@ -49,6 +52,10 @@ const run = async () => {
                 name: 'Package: koot-cli',
                 value: './test/cases/package/cli'
             },
+            {
+                name: 'Package: koot-diagnose',
+                value: jestScript.analyze.all
+            },
             new inquirer.Separator(),
             {
                 name: 'Lib: validate-pathname',
@@ -76,18 +83,16 @@ const run = async () => {
             `jest ${jestScript.reactIsomorphic}`
         ];
 
-        if (value === 'FULL')
-            return [
-                `node ./test/pre-test.js`,
-                `jest "^((?!need-in-order).)*\\.js$"`,
-                ...jestReactAll
-            ].join(' && ');
+        const jestAll = [
+            `jest "test/((?!need-in-order).)*\\.test\\.[jt]sx?$"`,
+            ...jestReactAll,
+            `jest ${jestScript.analyze.all}`
+        ];
 
-        if (value === 'FULL-QUICK')
-            return [
-                `jest "^((?!need-in-order).)*\\.js$"`,
-                ...jestReactAll
-            ].join(' && ');
+        if (value === 'FULL')
+            return [`node ./test/pre-test.js`, ...jestAll].join(' && ');
+
+        if (value === 'FULL-QUICK') return [...jestAll].join(' && ');
 
         if (value === 'REACT') return [...jestReactAll].join(' && ');
 

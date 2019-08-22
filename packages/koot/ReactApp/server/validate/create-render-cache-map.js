@@ -12,6 +12,7 @@ import availableLocaleIds from '../../../i18n/locale-ids';
  * @returns {Map}
  */
 const createRenderCacheMap = async (renderCacheConfig = {}) => {
+    // console.log({ renderCacheConfig });
     if (renderCacheConfig === false) return false;
 
     const renderCache = new Map();

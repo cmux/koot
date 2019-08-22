@@ -21,6 +21,8 @@ module.exports = {
     welcome_exist_current_super_project:
         'Koot CLI tool need [koot] to run while this project is using [super-project]. Do you want to upgrade to [koot]?',
 
+    current_version: 'Current CLI version: ',
+
     'koot-cli_updated': 'koot-cli has updated',
     'koot-cli_updated_description':
         'Please upgrade koot-cli to latest version. Use following command to upgrade:',

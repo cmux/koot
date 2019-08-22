@@ -21,6 +21,8 @@ module.exports = {
     welcome_exist_current_super_project:
         'Koot CLI 工具需要 [koot] 才能运行，但当前项目目前使用 [super-project]。是否升级到 [koot]？',
 
+    current_version: '当前 CLI 版本: ',
+
     'koot-cli_updated': 'koot-cli 已更新',
     'koot-cli_updated_description':
         '请升级 koot-cli 到最新版本后再执行相关命令。可使用以下命令进行更新:',

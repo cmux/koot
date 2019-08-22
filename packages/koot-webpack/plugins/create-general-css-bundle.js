@@ -1,11 +1,13 @@
 const isHotUpdate = require('../libs/is-compilation-hot-update-only');
 const newCompilationFileDependency = require('../libs/new-compilation-file-dependency');
 const md5 = require('md5');
+const postcss = require('postcss');
 const Chunk = require('webpack/lib/Chunk');
 const {
     chunkNameExtractCss,
     chunkNameExtractCssForImport
 } = require('koot/defaults/before-build');
+const postcssTransformDeclUrls = require('../postcss/transform-decl-urls');
 
 /**
  * Webpack 插件 - 将抽取的 CSS 文件整合为一个文件，并修改 chunkmap
@@ -70,13 +72,6 @@ class CreateGeneralCssBundlePlugin {
 
             // 针对 SPA 类型: 输出额外的版本，其内的资源引用相对路径不会包含 publicPath
             if (process.env.WEBPACK_BUILD_TYPE === 'spa') {
-                const thisContent = content.replace(
-                    new RegExp(
-                        `url\\(${stats.compilation.outputOptions.publicPath}`,
-                        'g'
-                    ),
-                    'url('
-                );
                 const thisFilename = `extract.all.${md5(
                     content
                 )}.url-no-public-path.css`;
@@ -89,11 +84,23 @@ class CreateGeneralCssBundlePlugin {
                 chunk.ids = [id];
                 compilation.chunks.push(chunk);
 
+                const root = postcss.parse(content);
+                postcssTransformDeclUrls(root, {
+                    transformer: url =>
+                        url.replace(
+                            new RegExp(
+                                `^${stats.compilation.outputOptions.publicPath}`,
+                                'g'
+                            ),
+                            ''
+                        )
+                });
+
                 // 写入 Webpack 文件流
                 newCompilationFileDependency(
                     compilation,
                     thisFilename,
-                    thisContent
+                    root.toString()
                 );
             }
 

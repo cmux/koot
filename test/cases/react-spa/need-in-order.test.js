@@ -12,6 +12,7 @@ const execSync = require('child_process').exec;
 const JSDOM = require('jsdom').JSDOM;
 const puppeteer = require('puppeteer');
 const chalk = require('chalk');
+const postcss = require('postcss');
 
 //
 
@@ -23,12 +24,16 @@ const terminate = require('../../libs/terminate-process');
 const waitForPort = require('../../libs/get-port-from-child-process');
 const testHtmlRenderedByKoot = require('../../general-tests/html/rendered-by-koot');
 const testFilesFromChunkmap = require('../../general-tests/bundle/check-files-from-chunkmap');
-const { requestHidden404: testRequestHidden404 } = require('../puppeteer-test');
+const {
+    requestHidden404: testRequestHidden404,
+    criticalAssetsShouldBeGzip: testAssetsGzip
+} = require('../puppeteer-test');
 
 //
 
 const removeTempProjectConfig = require('../../../packages/koot/libs/remove-temp-project-config');
 const sleep = require('../../../packages/koot/utils/sleep');
+const postcssTransformDeclUrls = require('../../../packages/koot-webpack/postcss/transform-decl-urls');
 
 //
 
@@ -147,12 +152,24 @@ const testFull = (dir, configFileName) => {
             expect(typeof files).toBe('object');
 
             // 根据 key 测试 chunkmap 中的文件
-            const testFileFromFilelist = key => {
+            const testFileFromFilelist = (key, shouldHasPublicPath = false) => {
                 const pathname = files[key];
                 expect(typeof pathname).toBe('string');
 
                 const file = path.resolve(dist, pathname);
                 expect(fs.existsSync(file)).toBe(true);
+
+                const content = fs.readFileSync(file, 'utf-8');
+
+                // 测试 CSS 内容
+                const root = postcss.parse(content);
+                const regExpPublicPath = /^includes\//g;
+                postcssTransformDeclUrls(root, url => {
+                    expect(regExpPublicPath.test(url)).toBe(
+                        shouldHasPublicPath
+                    );
+                    return url;
+                });
             };
 
             // 测试文件: /index.html
@@ -188,19 +205,17 @@ const testFull = (dir, configFileName) => {
             }
 
             // 测试文件: 全局 CSS
-            testFileFromFilelist(chunkNameExtractCss + '.css');
-            testFileFromFilelist(chunkNameExtractCssForImport + '.css');
+            testFileFromFilelist(chunkNameExtractCss + '.css', true);
+            testFileFromFilelist(chunkNameExtractCssForImport + '.css', false);
 
             await testFilesFromChunkmap(dist);
-
-            // TODO: 测试: 有 extract.all.[*].css
         });
 
         test(`[prod] 简易服务器可用`, async () => {
             const fileServerJS = path.resolve(dist, './.server/index.js');
             expect(fs.existsSync(fileServerJS)).toBe(true);
 
-            const port = require(path.resolve(dir, 'koot.config.spa.js')).port;
+            const port = config.port;
             const errors = [];
 
             const browser = await puppeteer.launch({
@@ -224,6 +239,8 @@ const testFull = (dir, configFileName) => {
                 await waitForPort(child);
 
                 const origin = isNaN(port) ? port : `http://127.0.0.1:${port}`;
+                const context = await browser.createIncognitoBrowserContext();
+
                 const page = await context.newPage();
                 const failedResponse = [];
                 require('../../libs/puppeteer/page-event-response-failed-response')(
@@ -251,6 +268,7 @@ const testFull = (dir, configFileName) => {
 
                 await testHtmlRenderedByKoot(html);
                 await testRequestHidden404(origin, browser);
+                await testAssetsGzip(origin, dist, browser);
 
                 // 结束测试
                 await page.close();

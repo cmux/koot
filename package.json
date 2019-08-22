@@ -9,7 +9,8 @@
         "test": "node ./test/index.js",
         "reset": "node ./reset.js",
         "lerna:changed": "lerna changed",
-        "eslint:koot": "eslint \"packages/koot/!(node_modules|logs|dist|dist*|test)/**/*.+(js|jsx)\""
+        "eslint:koot": "eslint \"packages/koot/!(node_modules|logs|dist|dist*|test)/**/*.+(js|jsx)\"",
+        "check-types": "tsc --noEmit"
     },
     "repository": {
         "type": "git",
@@ -50,18 +51,18 @@
         "eslint": "5.16.0",
         "eslint-config-koot": "0.2.0",
         "fs-extra": "8.1.0",
-        "husky": "3.0.0",
-        "inquirer": "6.4.1",
+        "husky": "3.0.4",
+        "inquirer": "6.5.1",
         "is-valid-path": "0.1.1",
-        "jest": "24.8.0",
+        "jest": "24.9.0",
         "jsdom": "15.1.1",
         "latest-version": "5.1.0",
-        "lerna": "3.15.0",
+        "lerna": "3.16.4",
         "lerna-wizard": "1.0.9",
-        "lint-staged": "9.1.0",
+        "lint-staged": "9.2.3",
         "prettier": "1.18.2",
-        "puppeteer": "1.18.1",
-        "simple-git": "1.118.0"
+        "puppeteer": "1.19.0",
+        "simple-git": "1.124.0"
     },
     "eslintIgnore": [
         "node_modules/**/*"
@@ -72,10 +73,18 @@
         }
     },
     "lint-staged": {
-        "*.{js,jsx,ts,tsx,cjs,mjs}": [
+        "*.{js,jsx,cjs,mjs}": [
             "eslint --fix",
             "prettier --write",
             "git add"
+        ],
+        "*.{ts,tsx}": [
+            "eslint --fix",
+            "prettier --write",
+            "git add"
+        ],
+        "*.{xxxxxx}": [
+            "tsc --noEmit"
         ],
         "*.{json,md,css,less,sass,scss}": [
             "prettier --write",

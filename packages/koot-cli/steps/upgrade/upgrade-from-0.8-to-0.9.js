@@ -9,8 +9,6 @@ module.exports = async (cwd = process.cwd(), prevVersion = '0.8.0') => {
     const spinnerUpgrading = spinner(msgUpgrading + '...');
     const filesChanged = ['package.json'];
 
-    // TODO: 添加 config: bundleVersionsKeep = false
-
     await updateVersionInPackagejson(cwd, '0.9.0');
 
     // 结束

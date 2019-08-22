@@ -1,3 +1,94 @@
+## 0.11.0
+
+**2019-08-22**
+
+核心
+
+-   **重大改动**
+    -   同构/SSR 项目
+        -   SSR 流程和生命周期调整，原则上对已有项目不会造成影响。如果升级 _Koot.js_ 后 SSR 出现异常，请查阅: [升级指南: 0.10 -> 0.11](https://koot.js.org/#/migration/0.10-to-0.11)
+        -   渲染缓存 (RenderCache) 默认禁用，如需继续使用，请配置 `renderCache`，配置方式请查阅 [项目配置/renderCache](https://koot.js.org/#/config?id=renderCache)
+-   **新特性**
+    -   **新全局函数** `getCache()` - 获取公用缓存空间。具体用法请参见文档 [全局与工具函数/全局函数](https://koot.js.org/#/utilities?id=全局函数) ([#143](https://github.com/cmux/koot/issues/143))
+    -   **新工具函数** `clientUpdatePageinfo()` - 更新页面标题 `<title>` 和 `<meta>` 标签。具体用法请参见文档 [全局与工具函数/工具函数](https://koot.js.org/#/utilities?id=工具函数) ([#143](https://github.com/cmux/koot/issues/163))
+    -   **新服务器端生命周期** `beforePreRender()` - 在预渲染之前之情。具体用法请参见文档 [生命周期/服务器端](https://koot.js.org/#/life-cycle?id=服务器端)
+    -   现在会自动为客户端打包结果中的部分资源文件生成 gzip 版本 (.gz 文件) ([#129](https://github.com/cmux/koot/issues/129))
+-   **优化**
+    -   `createStore()` 全局函数现允许传入 store 增强函数 (enhancer)。详情请参见文档 [Store/全局函数 createStore](https://koot.js.org/#/store?id=全局函数-createstore) ([#144](https://github.com/cmux/koot/issues/144))
+    -   多语言翻译函数 (`__()`) 现支持返回一个对象或数组
+    -   `service-worker` 对首页的缓存处理
+    -   SSR
+        -   _服务器端_: 现支持有超大型语言包的项目 ([#145](https://github.com/cmux/koot/issues/145))
+    -   开发环境
+        -   _客户端_: 减少部分初始的日志输出
+    -   Webpack
+        -   `koot-css-loader`
+            -   现支持更多的 URL 引用写法
+            -   针对相对路径的引用进行优化
+-   添加依赖包
+    -   `@types/webpack`
+    -   `compression-webpack-plugin`
+-   更新依赖包
+    -   major
+        -   `commander` -> _3.0.0_
+        -   `koa-helmet` -> _5.0.0_
+        -   `rimraf` -> _3.0.0_
+        -   `style-loader` -> _1.0.0_
+        -   `yargs` -> _14.0.0_
+    -   minor
+        -   `@babel/register` -> _7.5.5_
+        -   `@hot-loader/react-dom` -> _16.9.0_
+        -   `@types/node` -> _12.7.2_
+        -   `@types/react` -> _16.9.2_
+        -   `@types/react-dom` -> _16.9.0_
+        -   `@types/webpack` -> _4.39.0_
+        -   `css-loader` -> _3.2.0_
+        -   `file-loader` -> _4.2.0_
+        -   `koa` -> _2.8.1_
+        -   `koa-helmet` -> _5.1.0_
+        -   `less` -> _3.10.2_
+        -   `mini-css-extract-plugin` -> _0.8.0_
+        -   `react` -> _16.9.0_
+        -   `react-dom` -> _16.9.0_
+        -   `sass-loader` -> _7.3.1_
+        -   `webpack` -> _4.39.2_
+        -   `webpack-bundle-analyzer` -> _3.4.1_
+        -   `webpack-dev-server` -> _3.8.0_
+    -   patch
+        -   `@babel/core` -> _7.5.5_
+        -   `@babel/plugin-proposal-class-properties` -> _7.5.5_
+        -   `@babel/plugin-proposal-object-rest-spread` -> _7.5.5_
+        -   `@babel/plugin-transform-runtime` -> _7.5.5_
+        -   `@babel/preset-env` -> _7.5.5_
+        -   `@types/react-redux` -> _7.1.2_
+        -   `cache-loader` -> _4.1.0_
+        -   `copy-webpack-plugin` -> _5.0.4_
+        -   `execa` -> _2.0.4_
+        -   `inquirer` -> _6.5.1_
+        -   `js-cookie` -> _2.2.1_
+        -   `koa-body` -> _4.1.1_
+        -   `lodash` -> _4.17.15_
+        -   `portfinder` -> _1.0.23_
+        -   `react-hot-loader` -> _4.12.11_
+        -   `thread-loader` -> _2.1.3_
+        -   `url-loader` -> _2.1.0_
+
+**koot-boilerplate**
+
+-   更新依赖包
+    -   minor
+        -   `husky` -> _3.0.4_
+        -   `lint-staged` -> _9.2.3_
+
+**koot-cli**
+
+-   更新依赖包
+    -   minor
+        -   `package-json` -> _6.5.0_
+        -   `semver` -> _6.3.0_
+    -   patch
+        -   `inquirer` -> _6.5.1_
+
 ## 0.10.15
 
 **2019-08-20**
@@ -95,6 +186,20 @@
         -   `portfinder` -> _1.0.21_
         -   `react-hot-loader` -> _4.12.6_
         -   `redux` -> _4.0.4_
+
+**koot-boilerplate**
+
+-   更新依赖包
+    -   minor
+        -   `lint-staged` -> _9.2.0_
+
+**koot-cli**
+
+-   更新依赖包
+    -   minor
+        -   `inquirer` -> _6.5.0_
+    -   patch
+        -   `isbinaryfile` -> _4.0.2_
 
 ## 0.10.6
 

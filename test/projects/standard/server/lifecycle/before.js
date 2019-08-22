@@ -1,9 +1,10 @@
-import serverRouter from '../router'
+import serverRouter from '../router';
 
-export default async (app) => {
-    serverRouter(app)
-    // await app.use(async (ctx, next) => {
-    //     if (!__DEV__) __webpack_server_public_path__ = `/includes/` // TODO: 移动到配置里
-    //     await next()
-    // })
-}
+export default async app => {
+    app.use(async (ctx, next) => {
+        ctx.cookies.set('kootTest', 'valueForKootTest', { maxAge: 0 });
+        ctx.cookies.set('kootTest2', 'valueForKootTest2', { maxAge: 0 });
+        return await next();
+    });
+    serverRouter(app);
+};

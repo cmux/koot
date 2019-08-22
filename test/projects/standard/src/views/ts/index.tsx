@@ -1,12 +1,14 @@
 import React from 'react';
 import { extend } from 'koot';
 
+import styles from './index.module.less';
+
 const TSComponentExample: React.ComponentClass = extend({
     pageinfo: (/*state, renderProps*/) => ({
         title: `TypeScript - ${__('title')}`,
         metas: [{ description: 'TypeScript' }, { 'page-name': 'ts' }]
     }),
-    styles: require('./index.module.less')
+    styles
 })(({ className }) => (
     <div className={className} data-koot-test-page="page-ts">
         <img

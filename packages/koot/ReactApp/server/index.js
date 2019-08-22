@@ -1,2 +1,3 @@
-import run from './run'
-export default run
+import run from './run';
+
+export default run;

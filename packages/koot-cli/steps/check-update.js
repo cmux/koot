@@ -12,7 +12,7 @@ const _ = require('../lib/translate');
 /**
  * 检查 koot-cli 是否需要升级
  * @async
- * @returns {Boolean} 是否需要更新
+ * @returns {boolean} 是否需要更新
  */
 module.exports = async () => {
     const waiting = spinner('');

@@ -1,5 +1,6 @@
 {
     "title": "Koot.js boilerplate",
+    "test_img": "/test-img-en.png",
     "pages": {
         "home": {
             "title": "Welcome"

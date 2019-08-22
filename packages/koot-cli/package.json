@@ -1,6 +1,6 @@
 {
     "name": "koot-cli",
-    "version": "0.10.2",
+    "version": "0.11.0-alpha.14",
     "description": "CLI for creating and upgrading Koot.js project",
     "main": "index.js",
     "sideEffects": false,
@@ -54,13 +54,13 @@
         "gitignore-globs": "0.1.1",
         "glob": "7.1.4",
         "glob-promise": "3.4.0",
-        "inquirer": "6.4.1",
-        "isbinaryfile": "4.0.1",
+        "inquirer": "6.5.1",
+        "isbinaryfile": "4.0.2",
         "latest-version": "5.1.0",
         "npm-email": "3.2.0",
         "ora": "3.4.0",
         "os-locale": "4.0.0",
-        "package-json": "6.4.0",
-        "semver": "6.2.0"
+        "package-json": "6.5.0",
+        "semver": "6.3.0"
     }
 }

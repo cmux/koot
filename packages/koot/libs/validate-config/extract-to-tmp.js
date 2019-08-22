@@ -24,7 +24,7 @@ module.exports = async (projectDir, config) => {
                 else if (config.reducers)
                     redux.combineReducers = config.reducers;
 
-                if (config.cookiesToStore)
+                if (typeof config.cookiesToStore !== 'undefined')
                     redux.syncCookie = config.cookiesToStore;
 
                 return redux;
@@ -77,13 +77,17 @@ module.exports = async (projectDir, config) => {
             'server.before',
             'server.after',
             'server.onRender',
+            'server.onRender.beforeRouterMatch',
+            'server.onRender.beforePreRender',
             'server.onRender.beforeDataToStore',
             'server.onRender.afterDataToStore',
             'inject'
         ];
         optionsNeedImport.forEach(key => {
             try {
+                // eslint-disable-next-line no-eval
                 if (eval(`typeof obj.${key} === 'string' && obj.${key}`)) {
+                    // eslint-disable-next-line no-eval
                     const value = eval(`obj.${key}`);
                     const pathname = path.isAbsolute(value)
                         ? value
@@ -94,6 +98,7 @@ module.exports = async (projectDir, config) => {
                     const result = path.isAbsolute(pathname)
                         ? pathname
                         : '../../../' + pathname.replace(/^\.\//, '');
+                    // eslint-disable-next-line no-eval
                     eval(`obj.${key} = \`require('${result}').default\``);
                 }
             } catch (e) {}

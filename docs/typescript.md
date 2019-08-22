@@ -82,6 +82,7 @@ interface ComponentProps {
 })
 class TSComponentClass extends React.Component<ComponentProps & ExtendedProps> {
     render() {
+        const { className, children } = this.props;
         return (
             <div
                 className={this.props.className}
@@ -100,7 +101,7 @@ class TSComponentClass extends React.Component<ComponentProps & ExtendedProps> {
                     <Icon className="icon" icon="circle-left3" />
                     {__('pages.ts.back')}
                 </Link>
-                {this.props.children}
+                {children}
             </div>
         );
     }

@@ -72,7 +72,7 @@ module.exports = async (kootConfig = {}) => {
     // ========================================================================
 
     kootBuildConfig.dist = await transformDist(kootBuildConfig.dist);
-    kootBuildConfig.i18n = await transformI18n(kootBuildConfig.i18n);
+    kootBuildConfig.i18n = await transformI18n(kootBuildConfig);
     kootBuildConfig.pwa = await transformPWA(kootBuildConfig.pwa);
     kootBuildConfig.template = await transformTemplate(
         kootBuildConfig.template
