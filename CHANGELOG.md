@@ -46,7 +46,7 @@
         -   `file-loader` -> _4.2.0_
         -   `koa` -> _2.8.1_
         -   `koa-helmet` -> _5.1.0_
-        -   `less` -> _3.10.2_
+        -   `less` -> _3.10.3_
         -   `mini-css-extract-plugin` -> _0.8.0_
         -   `react` -> _16.9.0_
         -   `react-dom` -> _16.9.0_
