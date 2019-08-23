@@ -1,12 +1,19 @@
 {
-    "version": "0.11.0-beta.1",
-    "packages": ["packages/*"],
+    "version": "0.11.0",
+    "packages": [
+        "packages/*"
+    ],
     "command": {
         "bootstrap": {
-            "npmClientArgs": ["--no-package-lock"]
+            "npmClientArgs": [
+                "--no-package-lock"
+            ]
         },
         "publish": {
-            "ignoreChanges": ["**/__tests__/**", "**/*.md"]
+            "ignoreChanges": [
+                "**/__tests__/**",
+                "**/*.md"
+            ]
         }
     }
 }
