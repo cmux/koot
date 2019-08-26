@@ -333,6 +333,14 @@ export default (options = {}) => WrappedComponent => {
             }
 
             this.clientUpdatePageInfo();
+            if (hasPageinfo && this.mounted) {
+                setTimeout(() => {
+                    if (this && this.mounted) {
+                        this.clientUpdatePageInfo();
+                    }
+                }, 500);
+            }
+
             if (everMounted) {
             } else {
                 everMounted = true;
