@@ -41,7 +41,7 @@ interface ExtendOptions {
     name?: string;
 }
 
-type Pageinfo = {
+export type Pageinfo = {
     /** 要设置的页面标题 */
     title?: string;
     /** 要设置的 `<meta>` 标签列表，需要元素为 `{[name]: value}` 对象的数组 */
