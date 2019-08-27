@@ -8,13 +8,12 @@
     "javascript.format.insertSpaceBeforeFunctionParenthesis": true,
     "javascript.implicitProjectConfig.experimentalDecorators": true,
     "javascript.validate.enable": true,
-    "prettier.eslintIntegration": false,
     "eslint.autoFixOnSave": true,
     "eslint.validate": [
         "javascript",
-        "javascriptreact"
-        // { "language": "typescript", "autoFix": true },
-        // { "language": "typescriptreact", "autoFix": true }
+        "javascriptreact",
+        { "language": "typescript", "autoFix": true },
+        { "language": "typescriptreact", "autoFix": true }
     ],
     "[json]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"

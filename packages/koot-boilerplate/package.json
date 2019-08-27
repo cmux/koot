@@ -41,6 +41,7 @@
         "lint-staged": "9.2.3",
         "normalize.css": "8.0.1",
         "prettier": "1.18.2",
+        "prettier-eslint": "^9.0.0",
         "redux-logger": "3.0.6",
         "svg-url-loader": "3.0.0"
     },
