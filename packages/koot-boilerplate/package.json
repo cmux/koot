@@ -27,23 +27,23 @@
         "check-types": "tsc --noEmit"
     },
     "dependencies": {
-        "axios": "0.19.0",
-        "classnames": "2.2.6",
+        "axios": "^0.19.0",
+        "classnames": "^2.2.6",
         "koot": "^0.11.2"
     },
     "devDependencies": {
-        "autoprefixer": "9.6.1",
-        "babel-eslint": "10.0.2",
-        "cssnano": "4.1.10",
-        "eslint": "5.16.0",
-        "eslint-config-koot": "0.2.0",
-        "husky": "3.0.4",
-        "lint-staged": "9.2.3",
-        "normalize.css": "8.0.1",
-        "prettier": "1.18.2",
+        "autoprefixer": "^9.6.1",
+        "babel-eslint": "^10.0.2",
+        "cssnano": "^4.1.10",
+        "eslint": "^6.2.2",
+        "eslint-config-koot": "^1.0.1",
+        "husky": "^3.0.4",
+        "lint-staged": "^9.2.3",
+        "normalize.css": "^8.0.1",
+        "prettier": "^1.18.2",
         "prettier-eslint": "^9.0.0",
-        "redux-logger": "3.0.6",
-        "svg-url-loader": "3.0.0"
+        "redux-logger": "^3.0.6",
+        "svg-url-loader": "^3.0.0"
     },
     "bugs": {
         "url": "https://github.com/cmux/koot/issues"
@@ -57,13 +57,7 @@
         }
     },
     "lint-staged": {
-        "*.{js,jsx,cjs,mjs}": [
-            "eslint --fix",
-            "prettier --write",
-            "git add"
-        ],
-        "*.{ts,tsx}": [
-            "tsc --noEmit",
+        "*.{js,jsx,cjs,mjs,ts,tsx}": [
             "eslint --fix",
             "prettier --write",
             "git add"
