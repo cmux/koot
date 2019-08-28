@@ -4,7 +4,7 @@
 
 import { ComponentType, ReactNode, FC, ComponentClass, Component } from 'react';
 import { Store, Dispatch } from 'redux';
-import { Connect } from 'react-redux';
+import { MapStateToPropsParam } from 'react-redux';
 
 declare module 'kootExtendHOC';
 
@@ -27,7 +27,8 @@ class HOC extends Component {}
 export const extend: HOCExtend<ComponentProps>;
 
 interface ExtendOptions {
-    connect?: Connect;
+    // connect?: Connect;
+    connect?: MapStateToPropsParam<{}, {}, {}>;
     /** 提供页面的 title 和 meta 标签信息 */
     pageinfo?: Pageinfo | ExtendPageinfoFunction;
     data?: DataFetchFunction | ExtendData;
