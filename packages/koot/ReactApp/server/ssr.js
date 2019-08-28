@@ -188,7 +188,7 @@ const ssr = async (options = {}) => {
     SSR[needConnectComponents] = false;
 
     // 重置 state
-    clearStore(Store, [...defaultKeysToPreserve, 'server']);
+    clearStore(Store, [...defaultKeysToPreserve, 'server', 'routing']);
 
     // 渲染生命周期: beforeDataToStore
     await beforeDataToStore({
