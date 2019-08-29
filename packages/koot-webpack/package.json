@@ -29,7 +29,7 @@
         "koot": "^0.11.3"
     },
     "peerDependencies": {
-        "koot": ">= 0.10.0"
+        "koot": ">= 0.11"
     },
     "gitHead": "2c40d0d15861c83c7fff0db2557df6890abd084c"
 }

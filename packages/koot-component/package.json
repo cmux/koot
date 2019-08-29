@@ -9,13 +9,13 @@
     "author": "zrainma (zrainma@sina.com)",
     "license": "ISC",
     "peerDependencies": {
-        "antd": ">=3.0.0",
+        "antd": ">=3.22.2",
         "koot": ">=0.7"
     },
     "dependencies": {
-        "echarts": "^4.2.0-rc.2",
+        "echarts": "^4.2.1",
         "classnames": "^2.2.6",
         "mini-store": "^2.0.0",
-        "prop-types": "^15.6.2"
+        "prop-types": "^15.7.2"
     }
 }

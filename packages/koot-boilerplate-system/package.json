@@ -10,7 +10,7 @@
     "author": "zrainma (zrainma@sina.com)",
     "license": "ISC",
     "peerDependencies": {
-        "antd": ">=3.0.0",
+        "antd": ">=3.22.2",
         "koot": ">=0.7"
     },
     "dependencies": {

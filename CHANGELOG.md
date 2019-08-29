@@ -1,3 +1,25 @@
+## 0.11.4
+
+**2019-08-29**
+
+核心
+
+-   更新依赖包
+    -   major
+        -   `inquirer` -> _7.0.0_
+    -   minor
+        -   `typescript` -> _3.6.2_
+    -   patch
+        -   `@types/webpack` -> _4.39.1_
+        -   `react-hot-loader` -> _4.12.12_
+        -   `webpack` -> _4.39.3_
+
+**koot-cli**
+
+-   更新依赖包
+    -   major
+        -   `inquirer` -> _7.0.0_
+
 ## 0.11.3
 
 **2019-08-29**
