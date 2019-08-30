@@ -16,6 +16,7 @@ import { extend } from 'koot';
 import { Link } from 'react-router';
 
 import Icon from '@components/icon';
+import styles from './index.module.less';
 
 // Functional Component =======================================================
 
@@ -28,32 +29,39 @@ const TSFunctionalComponent = extend<ComponentProps>({
         title: `${__('pages.ts.title')} - ${__('title')}`,
         metas: [{ description: __('pages.ts.description') }]
     }),
-    styles: require('./index.module.less')
-})(({ className, children, customProps, 'data-class-name': dataClassName }) => {
-    return (
-        <div className={className} data-koot-test-page="page-ts">
-            <img
-                src={require('@assets/typescript.svg')}
-                className="logo"
-                alt="TypeScript LOGO"
-                data-custom-props={customProps}
-                data-class-name={dataClassName}
-            />
-            <p className="msg-big">{__('pages.ts.msg')}</p>
-            <p className="msg-small">{__('pages.ts.msgCheckFile')}</p>
-            <Link to="/start" className="back">
-                <Icon className="icon" icon="circle-left3" />
-                {__('pages.ts.back')}
-            </Link>
-            {children}
-        </div>
-    );
-});
+    styles
+})(
+    ({
+        className,
+        children,
+        customProps,
+        'data-class-name': dataClassName
+    }): JSX.Element => {
+        return (
+            <div className={className} data-koot-test-page="page-ts">
+                <img
+                    src={require('@assets/typescript.svg')}
+                    className="logo"
+                    alt="TypeScript LOGO"
+                    data-custom-props={customProps}
+                    data-class-name={dataClassName}
+                />
+                <p className="msg-big">{__('pages.ts.msg')}</p>
+                <p className="msg-small">{__('pages.ts.msgCheckFile')}</p>
+                <Link to="/start" className="back">
+                    <Icon className="icon" icon="circle-left3" />
+                    {__('pages.ts.back')}
+                </Link>
+                {children}
+            </div>
+        );
+    }
+);
 
 export default TSFunctionalComponent;
 
 // 使用
-export const UseTSFunctionalComponent: React.FC = () => (
+export const UseTSFunctionalComponent: React.FC = (): JSX.Element => (
     <TSFunctionalComponent customProps="B" />
 );
 ```
@@ -66,6 +74,7 @@ import { extend, ExtendedProps } from 'koot';
 import { Link } from 'react-router';
 
 import Icon from '@components/icon';
+import styles from './index.module.less';
 
 // Component Class ============================================================
 
@@ -78,10 +87,10 @@ interface ComponentProps {
         title: `${__('pages.ts.title')} - ${__('title')}`,
         metas: [{ description: __('pages.ts.description') }]
     }),
-    styles: require('./index.module.less')
+    styles
 })
 class TSComponentClass extends React.Component<ComponentProps & ExtendedProps> {
-    render() {
+    render(): JSX.Element {
         const { className, children } = this.props;
         return (
             <div
@@ -110,7 +119,7 @@ class TSComponentClass extends React.Component<ComponentProps & ExtendedProps> {
 export default TSComponentClass;
 
 // 使用
-export const UseTSComponentClass: React.FC = () => (
+export const UseTSComponentClass: React.FC = (): JSX.Element => (
     <TSComponentClass customProps="B" />
 );
 ```

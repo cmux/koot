@@ -56,15 +56,15 @@ export type MetaObject = {
     [metaKey: string]: string | undefined;
 };
 
-type ExtendPageinfoFunction = (state: any, props: RenderProps) => Pageinfo;
+type ExtendPageinfoFunction = (state: any, props: any) => Pageinfo;
 
 type DataFetchFunction = (
     store: Store,
-    renderProps: RenderProps,
+    renderProps: any,
     dispatch: Dispatch
 ) => Promise<any>;
 
-type DataCheckFunction = (state: any, renderProps: RenderProps) => boolean;
+type DataCheckFunction = (state: any, renderProps: any) => boolean;
 
 type ExtendData = {
     fetch?: DataFetchFunction;
