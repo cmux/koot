@@ -1,12 +1,16 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference path="../global.d.ts" />
-
-// ============================================================================
 
 import { ComponentType, ReactNode, FC, ComponentClass, Component } from 'react';
 import { Store, Dispatch } from 'redux';
 import { MapStateToPropsParam } from 'react-redux';
 
+// ============================================================================
+
 declare module 'kootExtendHOC';
+
+// ============================================================================
 
 export interface HOCExtend<ComponentProps> {
     /** React 高阶组件，可赋予目标组件CSS 命名空间、同构数据、更新页面信息等能力。 */
@@ -91,10 +95,10 @@ type ExtendedPropsUpdatePageinfo = (
 ) => void;
 
 interface RenderProps extends ExtendedProps {
-    readonly location?: Object;
-    readonly params?: Object;
-    readonly route?: Object;
-    readonly routeParams?: Object;
-    readonly router?: Object;
-    readonly routes?: Array<Object>;
+    readonly location?: Record<string, any>;
+    readonly params?: Record<string, any>;
+    readonly route?: Record<string, any>;
+    readonly routeParams?: Record<string, any>;
+    readonly router?: Record<string, any>;
+    readonly routes?: Array<Record<string, any>>;
 }

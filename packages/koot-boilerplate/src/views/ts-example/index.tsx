@@ -4,6 +4,10 @@ import { Link } from 'react-router';
 
 import Icon from '@components/icon';
 
+import styles from './index.module.less';
+
+// ============================================================================
+
 interface ComponentProps {
     customProps?: string;
 }
@@ -15,7 +19,7 @@ const TSFunctionalComponent = extend<ComponentProps>({
         title: `${__('pages.ts.title')} - ${__('title')}`,
         metas: [{ description: __('pages.ts.description') }]
     }),
-    styles: require('./index.module.less')
+    styles
 })(({ className, children, customProps, 'data-class-name': dataClassName }) => {
     return (
         <div className={className} data-koot-test-page="page-ts">
@@ -50,10 +54,10 @@ export const UseTSFunctionalComponent: React.FC = () => (
         title: `${__('pages.ts.title')} - ${__('title')}`,
         metas: [{ description: __('pages.ts.description') }]
     }),
-    styles: require('./index.module.less')
+    styles
 })
 class TSComponentClass extends React.Component<ComponentProps & ExtendedProps> {
-    render() {
+    render(): JSX.Element {
         return (
             <div
                 className={this.props.className}

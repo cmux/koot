@@ -1,15 +1,17 @@
 ## 0.11.4
 
-**2019-08-29**
+**2019-08-30**
 
 核心
 
 -   更新依赖包
     -   major
         -   `inquirer` -> _7.0.0_
+        -   `sass-loader` -> _8.0.0_
     -   minor
         -   `typescript` -> _3.6.2_
     -   patch
+        -   `@types/node` -> _12.7.3_
         -   `@types/webpack` -> _4.39.1_
         -   `react-hot-loader` -> _4.12.12_
         -   `webpack` -> _4.39.3_

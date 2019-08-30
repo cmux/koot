@@ -1,9 +1,10 @@
+// eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference path="global.d.ts" />
-
-// ============================================================================
 
 import { Store } from 'redux';
 import { History } from 'history';
+
+// ============================================================================
 
 declare module 'koot';
 
@@ -39,6 +40,7 @@ export const getHistory: () => History;
  */
 export function getCache(localeId?: LocaleId | boolean): Cache;
 interface Cache {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [key: string]: any;
 }
 
