@@ -22,84 +22,38 @@ const getName = action => {
  * @param  {[type]} _action [description]
  * @return {[type]}         [description]
  */
-const getObjectActionPayload = action => {
-    let payload = {};
-    if (isObject(action)) {
-        if ('payload' in action) {
-            payload = action.payload;
-        } else {
-            let tempObject = Object.assign({}, action);
-            delete tempObject.type;
-            payload = tempObject;
-        }
+const getPayload = action => {
+    if ('payload' in action) {
+        return action.payload;
     }
-    return payload;
+    const { type, ...rest } = action;
+    return rest;
 };
 
-const commitHandler = (store, moduleInstance) => (action, payload) => {
+const commitHandler = (next, moduleInstance) => (action, payload) => {
     const reducerName = getName(action);
-    const reducerFn = getReducerFnByName(reducerName, moduleInstance);
+    const reducerFn = moduleInstance.reducerCollection[reducerName];
 
-    if (isObject(action)) {
-        payload = getObjectActionPayload(action);
-    }
-
-    if (reducerFn) {
-        store.dispatch({
-            type: reducerName,
-            payload,
-            isModuleReducer: true
-        });
-    } else {
+    if (isString(action)) {
+        if (reducerFn) {
+            return next({
+                type: reducerName,
+                payload
+            });
+        }
         throw new Error(
             `ActionMiddlewareError: The reducer function '${reducerName}' is not registered!`
         );
     }
-};
 
-/**
- * Action的执行处理函数
- *
- * @param  {[type]} options.actionName [description]
- * @param  {[type]} options.actionFn   [description]
- * @param  {[type]} options.store      [description]
- * @param  {[type]} options.payload    [description]
- * @return {[type]}                    [description]
- */
-const actionHandler = (
-    { actionName, actionFn, store, payload },
-    moduleInstance
-) => {
-    const getScopeState = () => {
-        return moduleInstance.getStateByActionName(actionName) || {};
-    };
-    return actionFn(
-        {
-            commit: commitHandler(store, moduleInstance),
-            rootState: Object.assign(store.getState()),
-            state: getScopeState(),
-            dispatch: store.dispatch
-        },
-        payload
-    );
-    // {
-    //   state,      // same as `store.state`, or local state if in modules
-    //   rootState,  // same as `store.state`, only in modules
-    //   commit,     // same as `store.commit`
-    //   dispatch,   // same as `store.dispatch`
-    //   getters,    // same as `store.getters`, or local getters if in modules
-    //   rootGetters // same as `store.getters`, only in modules
-    // }
-};
+    if (reducerFn) {
+        return next({
+            type: reducerName,
+            payload: getPayload(action)
+        });
+    }
 
-const getActionFnByName = (actionName, moduleInstance) => {
-    const actionCollection = moduleInstance.actionCollection;
-    return actionCollection[actionName];
-};
-
-const getReducerFnByName = (reducerName, moduleInstance) => {
-    const reducerCollection = moduleInstance.reducerCollection;
-    return reducerCollection[reducerName];
+    return next(action);
 };
 
 /**
@@ -108,79 +62,41 @@ const getReducerFnByName = (reducerName, moduleInstance) => {
  * @param  {Object} moduleInstance [description]
  * @return {[type]}                [description]
  */
-const createActionMiddleware = function(moduleInstance = {}) {
-    // __STATIC_DATA__['moduleInstance'] = moduleInstance;
-
-    // const actionCollection = moduleInstance.actionCollection;
-
-    // if( Object.keys(actionCollection).length === 0 ){
-    //     throw new Error(
-    //         `A valid actions collection was not received!`
-    //     )
-    // }
-
+const createActionMiddleware = function(moduleInstance) {
     /**
      * 中间件主体函数
      *
      * @param  {[type]} store [description]
      * @return {[type]}       [description]
      */
-    const actionMiddleware = store => next => (action, payload) => {
-        const actionName = getName(action);
-
-        const actionFn = getActionFnByName(actionName, moduleInstance);
-
-        // 判断 是否为我们定义的 action
-        if (actionFn) {
-            // 判断 是否为传统对象形式参数
-            if (isObject(action)) {
-                const { isModuleReducer } = action;
-                if (isModuleReducer) {
-                    delete action.isModuleReducer;
-                    next(action);
-                    return;
-                }
-                payload = getObjectActionPayload(action);
-                next({
-                    type: actionName,
-                    payload
-                });
-                return;
-            } else {
-                return actionHandler(
+    const actionMiddleware = api => next => (action, payload) => {
+        if (isString(action)) {
+            const actionName = getName(action);
+            const actionFn = moduleInstance.actionCollection[actionName];
+            const reducerFn = moduleInstance.reducerCollection[actionName];
+            const { getState, dispatch } = api;
+            if (actionFn) {
+                return actionFn(
                     {
-                        actionName,
-                        actionFn,
-                        store,
-                        payload
+                        commit: commitHandler(next, moduleInstance),
+                        rootState: getState(),
+                        state: moduleInstance.getStateByActionName(actionName),
+                        dispatch
                     },
-                    moduleInstance
+                    payload
                 );
             }
-        } else {
-            // 不是我们的 action 且为传统 action 对象
-            if (isObject(action)) {
-                const { isModuleReducer } = action;
-                if (isModuleReducer) {
-                    delete action.isModuleReducer;
-                    next(action);
-                    return;
-                }
-                // 检查是否为我们的reducers
-                const reducer = getReducerFnByName(actionName, moduleInstance);
-                if (reducer) {
-                    throw new Error(
-                        `ActionMiddlewareError: You Must call the reducer '${actionName}' in a Action`
-                    );
-                }
-                next(action);
-                return;
-            } else {
+            if (reducerFn) {
                 throw new Error(
-                    `ActionMiddlewareError: The Action function '${actionName}' is not registered!`
+                    `ActionMiddlewareError: You Must call the reducer '${actionName}' in a Action`
                 );
             }
+            throw new Error(
+                `ActionMiddlewareError: The Action function '${actionName}' is not registered!`
+            );
         }
+
+        return next(action);
     };
 
     return actionMiddleware;
