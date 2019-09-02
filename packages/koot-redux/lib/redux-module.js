@@ -256,7 +256,7 @@ class ReduxModule {
                 }
             });
         }
-        this.__reducerCollection = finalActions;
+        this.__actionCollection = finalActions;
         return finalActions;
     }
 
