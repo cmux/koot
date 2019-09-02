@@ -7,19 +7,24 @@ import { doc as urlDoc } from '@constants/urls';
 import Center from '@components/center';
 import Icon from '@components/icon';
 
-//
+import styles from './index.module.less';
+
+// ============================================================================
+
+const listBasic = __SPA__ ? [] : __('pages.start.listBasic');
+const listAdvanced = __SPA__ ? [] : __('pages.start.listAdvanced');
 
 const PageStart = extend({
     pageinfo: () => ({
         title: `${__('pages.start.title')} - ${__('title')}`,
         metas: [{ description: __('pages.start.description') }]
     }),
-    styles: require('./index.module.less')
+    styles
 })(({ className }) => (
     <Center className={className}>
         <h2 className="title">{__('pages.start.title')}</h2>
         <ol className="list">
-            {__('pages.start.listBasic').map((item, index) => (
+            {listBasic.map((item, index) => (
                 <ListItem key={index} {...item} />
             ))}
         </ol>
@@ -27,7 +32,7 @@ const PageStart = extend({
             {__('pages.start.titles.learnMore')}
         </h4>
         <ul className="list list-advanced">
-            {__('pages.start.listAdvanced').map((item, index) => (
+            {listAdvanced.map((item, index) => (
                 <ListItem key={index} {...item} />
             ))}
         </ul>
