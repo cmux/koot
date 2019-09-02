@@ -11,7 +11,10 @@ import styles from './index.module.less';
 
 // ============================================================================
 
+// ! i18n is disabled in SPA mode
 const intros = __SPA__ ? [] : __('intro');
+
+// ============================================================================
 
 const PageHome = extend({
     pageinfo: () => ({

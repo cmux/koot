@@ -4,10 +4,12 @@ import classNames from 'classnames';
 
 import Nav from '@components/nav';
 
-// ----------------------------------------------------------------------------
+import styles from './index.module.less';
+
+// ============================================================================
 
 const App = extend({
-    styles: require('./app.module.less')
+    styles
 })(({ className, children, location, ...props }) => (
     <React.StrictMode>
         <div
@@ -26,6 +28,6 @@ const App = extend({
 ));
 export default App;
 
-// ----------------------------------------------------------------------------
+// ============================================================================
 
 const Main = props => <main {...props} />;

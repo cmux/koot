@@ -5,7 +5,7 @@ import { Link, IndexLink } from 'react-router';
 import Icon from '@components/icon';
 
 const NavItem = ({ to, className, ...otherProps }) => {
-    let route, name, Component;
+    let route, name;
 
     if (Array.isArray(to)) {
         route = to[0];
@@ -36,10 +36,7 @@ const NavItem = ({ to, className, ...otherProps }) => {
     props.to = route;
     props.children = __('navs', name);
 
-    Component = (() => {
-        if (route === '/') return IndexLink;
-        return Link;
-    })();
+    const Component = route === '/' ? IndexLink : Link;
 
     return <Component {...props} />;
 };
