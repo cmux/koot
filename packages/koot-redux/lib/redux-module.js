@@ -181,27 +181,39 @@ class ReduxModule {
      * @return {[type]} [description]
      */
     get reducerCollection() {
-        let finalReducers = {};
-        // 整合当前 modules 内 actions
-        if (this.__reducers) {
-            finalReducers = Object.assign({}, finalReducers, this.__reducers);
+        if (this.__reducerCollection) {
+            return this.__reducerCollection;
         }
-        // 整合 children 内的 actions
+        let finalReducers = {};
+        // 整合当前 modules 内 reducers
+        if (this.__reducers) {
+            finalReducers = Object.assign({}, this.__reducers);
+        }
+        // 整合 children 内的 reducers
         const childrenModuleNames = Object.keys(this.__children);
         if (childrenModuleNames.length) {
-            let childrenActions = [];
+            let childrenReducers = [];
             childrenModuleNames.forEach(childrenModuleName => {
                 const childrenModuleItem = this.__children[childrenModuleName];
-                childrenActions.push(childrenModuleItem.reducerCollection);
+                childrenReducers.push(childrenModuleItem.reducerCollection);
             });
-            // 合并最终全部 actions
-            finalReducers = childrenActions.reduce((p, childrenAction) => {
-                return {
-                    ...p,
-                    ...childrenAction
-                };
-            }, finalReducers);
+            // 合并最终全部 reducers
+            childrenReducers.forEach(childrenReducer => {
+                for (let key in childrenReducer) {
+                    const currentReducer = childrenReducer[key];
+                    const prevReducer = finalReducers[key];
+                    if (key in finalReducers) {
+                        finalReducers[key] = (...arg) => {
+                            prevReducer(...arg);
+                            currentReducer(...arg);
+                        };
+                    } else {
+                        finalReducers[key] = currentReducer;
+                    }
+                }
+            });
         }
+        this.__reducerCollection = finalReducers;
         return finalReducers;
     }
 
@@ -211,6 +223,9 @@ class ReduxModule {
      * @return {[type]} [description]
      */
     get actionCollection() {
+        if (this.__actionCollection) {
+            return this.__actionCollection;
+        }
         let finalActions = {};
         // 整合当前 modules 内 actions
         if (this.__actions) {
@@ -225,13 +240,23 @@ class ReduxModule {
                 childrenActions.push(childrenModuleItem.actionCollection);
             });
             // 合并最终全部 actions
-            finalActions = childrenActions.reduce((p, childrenAction) => {
-                return {
-                    ...p,
-                    ...childrenAction
-                };
-            }, finalActions);
+            // 支持action在多个module都可以触发
+            childrenActions.forEach(childrenAction => {
+                for (let key in childrenAction) {
+                    const currentAction = childrenAction[key];
+                    const prevAction = finalActions[key];
+                    if (key in finalActions) {
+                        finalActions[key] = (...arg) => {
+                            prevAction(...arg);
+                            currentAction(...arg);
+                        };
+                    } else {
+                        finalActions[key] = currentAction;
+                    }
+                }
+            });
         }
+        this.__reducerCollection = finalActions;
         return finalActions;
     }
 
@@ -260,7 +285,7 @@ class ReduxModule {
                 const childrenModuleNames = Object.keys(this.__children);
                 if (childrenModuleNames.length) {
                     let childrenFinalState;
-                    childrenModuleNames.map(childrenModuleName => {
+                    childrenModuleNames.forEach(childrenModuleName => {
                         const childrenModuleItem = this.__children[
                             childrenModuleName
                         ];
