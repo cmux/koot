@@ -4,7 +4,7 @@ import classNames from 'classnames';
 
 import Nav from '@components/nav';
 
-import styles from './index.module.less';
+import styles from './app.module.less';
 
 // ============================================================================
 
