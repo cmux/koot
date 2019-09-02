@@ -8,7 +8,6 @@
     "javascript.format.insertSpaceBeforeFunctionParenthesis": true,
     "javascript.implicitProjectConfig.experimentalDecorators": true,
     "javascript.validate.enable": false,
-    "prettier.eslintIntegration": true,
     "eslint.autoFixOnSave": true,
     "eslint.validate": [
         "javascript",
