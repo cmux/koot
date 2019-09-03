@@ -32,7 +32,7 @@ export const extend: HOCExtend<ComponentProps>;
 
 interface ExtendOptions {
     // connect?: Connect;
-    connect?: MapStateToPropsParam<{}, {}, {}>;
+    connect?: MapStateToPropsParam<any, any, any>;
     /** 提供页面的 title 和 meta 标签信息 */
     pageinfo?: Pageinfo | ExtendPageinfoFunction;
     data?: DataFetchFunction | ExtendData;
