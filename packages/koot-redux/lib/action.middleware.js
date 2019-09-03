@@ -1,21 +1,15 @@
 import { isObject, isString } from './utils.js';
 
-const commitHandler = next => (action, payload, extra) => {
+const commitHandler = next => (action, payload) => {
     if (isString(action)) {
         return next({
             type: action,
-            payload,
-            extra
+            payload
         });
     }
 
     if (isObject(action) && action.type) {
-        const { type, payload, ...extra } = action;
-        return next({
-            type,
-            payload: payload || extra,
-            extra
-        });
+        return next(action);
     }
 
     throw new Error(
@@ -36,35 +30,28 @@ const createActionMiddleware = function(moduleInstance) {
      * @param  {[type]} store [description]
      * @return {[type]}       [description]
      */
-    const actionMiddleware = api => next => (action, payload, ...extra) => {
+    const actionMiddleware = api => next => (action, payload) => {
         if (isString(action)) {
             const { getState, dispatch } = api;
             const actions = moduleInstance.getActionsByAction(action);
-            const promiseArray = actions
-                .map(({ actionFn, moduleState }) => {
-                    return actionFn(
-                        {
-                            state: moduleState,
-                            rootState: getState(),
-                            commit: commitHandler(next),
-                            dispatch
-                        },
-                        action,
-                        payload,
-                        extra
-                    );
-                })
-                .filter(e => e);
+            const promiseArray = actions.map(({ actionFn, moduleState }) => {
+                const commitAPI = {
+                    state: moduleState,
+                    rootState: getState(),
+                    commit: commitHandler(next),
+                    dispatch
+                };
+                const res = actionFn(commitAPI, payload);
+                return Promise.resolve(res);
+            });
+            if (promiseArray.length === 1) {
+                return promiseArray[0];
+            }
             return Promise.all(promiseArray);
         }
         // 直接触发reducer
         if (isObject(action) && action.type) {
-            const { type, payload, ...extra } = action;
-            return next({
-                type,
-                payload: payload || extra,
-                extra
-            });
+            return next(action);
         }
 
         throw new Error(

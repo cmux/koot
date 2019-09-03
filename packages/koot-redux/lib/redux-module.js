@@ -119,7 +119,8 @@ class ReduxModule {
         if (this.__actions && this.__actions[action]) {
             result.push({
                 actionFn: this.__actions[action],
-                moduleState: this.__state
+                moduleState: this.__state,
+                moduleName: this.__moduleName
             });
         }
         const childrenModuleNames = Object.keys(this.__children);
