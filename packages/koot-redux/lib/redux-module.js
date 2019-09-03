@@ -1,4 +1,4 @@
-import { isFunction, isObject } from './utils.js';
+import { isFunction, isObject, getDataByPath, setDataByPath } from './utils.js';
 
 /**
  * 模块化管理 redux
@@ -26,20 +26,25 @@ class ReduxModule {
         //
         this.__external_reducers = this.getExternalModuleReducers(this.__state);
 
+        this.initState(preloadedState);
+    }
+
+    initState(preloadedState) {
+        const modules = this.__modules;
         // 合并preloadedState到state
         if (preloadedState) {
             Object.keys(preloadedState).forEach(itemKey => {
                 if (!modules || !modules[itemKey]) {
-                    state[itemKey] = preloadedState[itemKey];
+                    this.__state[itemKey] = preloadedState[itemKey];
                 }
             });
         }
 
         // 实例化所有子模块并存储在 __children 下
-        // this.__children[key] = new ReduxModule(this.__modules[key])
-        if (Object.keys(this.__modules).length) {
-            Object.keys(this.__modules).forEach(moduleName => {
-                const moduleItem = this.__modules[moduleName];
+        // this.__children[key] = new ReduxModule(modules[key])
+        if (Object.keys(modules).length) {
+            Object.keys(modules).forEach(moduleName => {
+                const moduleItem = modules[moduleName];
                 let preloadedStateItem;
                 if (preloadedState && preloadedState[moduleName]) {
                     preloadedStateItem = preloadedState[moduleName];
@@ -60,7 +65,7 @@ class ReduxModule {
      * @return {[Array]}     [外部注入进来的reducer的 “特殊对象” 集合]
      */
     getExternalModuleReducers(obj) {
-        const result = [];
+        let result = [];
         Object.keys(obj).forEach(key => {
             const item = obj[key];
             const path = [];
@@ -72,50 +77,10 @@ class ReduxModule {
                 });
             }
             if (isObject(item)) {
-                result.push(...this.getExternalModuleReducers(item));
+                const res = this.getExternalModuleReducers(item);
+                result = result.concat(res);
             }
         });
-        return result;
-    }
-
-    /**
-     * [getDataByPath description]
-     * @param  {[type]} obj  [description]
-     * @param  {[type]} path [description]
-     * @return {[type]}      [description]
-     */
-    getDataByPath(obj, path) {
-        let result = Object.assign({}, obj);
-        for (let index = 0; index < path.length; index++) {
-            const p = path[index];
-            result = result[p];
-            if (!result) {
-                return result;
-            }
-        }
-        return result;
-    }
-
-    /**
-     * [setDataByPath description]
-     * @param {[type]} obj   [description]
-     * @param {[type]} path  [description]
-     * @param {[type]} value [description]
-     */
-    setDataByPath(obj, path, value) {
-        let result = Object.assign({}, obj);
-        let reference = result;
-        for (let index = 0; index < path.length; index++) {
-            const p = path[index];
-            if (index === path.length - 1) {
-                reference[p] = value;
-            } else {
-                reference = reference[p];
-            }
-            if (!reference) {
-                return undefined;
-            }
-        }
         return result;
     }
 
@@ -131,133 +96,40 @@ class ReduxModule {
         let finalState = moduleState || {};
         externalReducers.forEach(item => {
             const { path, reducer } = item;
-            const currentState = this.getDataByPath(finalState, path);
+            const currentState = getDataByPath(finalState, path);
             const resultState = reducer(
                 isFunction(currentState) ? undefined : currentState,
                 action
             );
-            const resultModuleState = this.setDataByPath(
+            const resultModuleState = setDataByPath(
                 finalState,
                 path,
                 resultState
             );
-            finalState = Object.assign({}, finalState, resultModuleState);
+            finalState = {
+                ...finalState,
+                ...resultModuleState
+            };
         });
         return finalState;
     }
 
-    /**
-     * [getStateByActionName description]
-     *
-     * @param  {[type]} actionName [description]
-     * @return {[type]}            [description]
-     */
-    getStateByActionName(actionName) {
-        if (this.__actions[actionName]) {
-            return this.__state;
-        } else {
-            const childrenModuleNames = Object.keys(this.__children);
-            if (childrenModuleNames.length) {
-                let result;
-                childrenModuleNames.forEach(childrenModuleName => {
-                    const childrenModuleItem = this.__children[
-                        childrenModuleName
-                    ];
-                    const scopedState = childrenModuleItem.getStateByActionName(
-                        actionName
-                    );
-                    if (scopedState) {
-                        result = scopedState;
-                    }
-                });
-                return result;
-            }
+    getActionsByAction(action) {
+        let result = [];
+        if (this.__actions && this.__actions[action]) {
+            result.push({
+                actionFn: this.__actions[action],
+                moduleState: this.__state
+            });
         }
-    }
-
-    /**
-     * 获取当前 module 及所有子 module 的所有的 reducer 的集合
-     *
-     * @return {[type]} [description]
-     */
-    get reducerCollection() {
-        if (this.__reducerCollection) {
-            return this.__reducerCollection;
-        }
-        let finalReducers = {};
-        // 整合当前 modules 内 reducers
-        if (this.__reducers) {
-            finalReducers = Object.assign({}, this.__reducers);
-        }
-        // 整合 children 内的 reducers
         const childrenModuleNames = Object.keys(this.__children);
         if (childrenModuleNames.length) {
-            let childrenReducers = [];
-            childrenModuleNames.forEach(childrenModuleName => {
-                const childrenModuleItem = this.__children[childrenModuleName];
-                childrenReducers.push(childrenModuleItem.reducerCollection);
-            });
-            // 合并最终全部 reducers
-            childrenReducers.forEach(childrenReducer => {
-                for (let key in childrenReducer) {
-                    const currentReducer = childrenReducer[key];
-                    const prevReducer = finalReducers[key];
-                    if (key in finalReducers) {
-                        finalReducers[key] = (...arg) => {
-                            prevReducer(...arg);
-                            currentReducer(...arg);
-                        };
-                    } else {
-                        finalReducers[key] = currentReducer;
-                    }
-                }
+            childrenModuleNames.forEach(name => {
+                const res = this.__children[name].getActionsByAction(action);
+                result = result.concat(res);
             });
         }
-        this.__reducerCollection = finalReducers;
-        return finalReducers;
-    }
-
-    /**
-     * 获取当前 module 及所有子 module 的所有的 action 的集合
-     *
-     * @return {[type]} [description]
-     */
-    get actionCollection() {
-        if (this.__actionCollection) {
-            return this.__actionCollection;
-        }
-        let finalActions = {};
-        // 整合当前 modules 内 actions
-        if (this.__actions) {
-            finalActions = Object.assign({}, finalActions, this.__actions);
-        }
-        // 整合 children 内的 actions
-        const childrenModuleNames = Object.keys(this.__children);
-        if (childrenModuleNames.length) {
-            let childrenActions = [];
-            childrenModuleNames.forEach(childrenModuleName => {
-                const childrenModuleItem = this.__children[childrenModuleName];
-                childrenActions.push(childrenModuleItem.actionCollection);
-            });
-            // 合并最终全部 actions
-            // 支持action在多个module都可以触发
-            childrenActions.forEach(childrenAction => {
-                for (let key in childrenAction) {
-                    const currentAction = childrenAction[key];
-                    const prevAction = finalActions[key];
-                    if (key in finalActions) {
-                        finalActions[key] = (...arg) => {
-                            prevAction(...arg);
-                            currentAction(...arg);
-                        };
-                    } else {
-                        finalActions[key] = currentAction;
-                    }
-                }
-            });
-        }
-        this.__actionCollection = finalActions;
-        return finalActions;
+        return result;
     }
 
     /**
@@ -278,7 +150,7 @@ class ReduxModule {
             if (reducerHandler) {
                 // 执行当前 module 的 reducer
                 const moduleStateResult = reducerHandler(moduleState, payload);
-                finalState = Object.assign({}, moduleStateResult);
+                finalState = { ...moduleStateResult };
                 this.__state = finalState;
             } else {
                 // 把 action 和对应的 state 传给 子元素的 reducer
@@ -301,11 +173,10 @@ class ReduxModule {
                             childrenFinalState[childrenModuleName] = result;
                         }
                     });
-                    finalState = Object.assign(
-                        {},
-                        moduleState,
-                        childrenFinalState
-                    );
+                    finalState = {
+                        ...moduleState,
+                        ...childrenFinalState
+                    };
                 }
             }
 
@@ -319,12 +190,14 @@ class ReduxModule {
                     this.__state,
                     action
                 );
-                finalState = Object.assign({}, finalState, externalStateResult);
-                this.__state = Object.assign(
-                    {},
-                    this.__state,
-                    externalStateResult
-                );
+                finalState = {
+                    ...finalState,
+                    ...externalStateResult
+                };
+                this.__state = {
+                    ...this.__state,
+                    ...externalStateResult
+                };
             }
 
             return finalState || moduleState;

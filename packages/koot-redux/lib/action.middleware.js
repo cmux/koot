@@ -1,59 +1,26 @@
 import { isObject, isString } from './utils.js';
 
-// const __STATIC_DATA__ = {};
-
-/**
- * 从 action 中获取 name
- * @param  {[type]} _action [description]
- * @return {[type]}         [description]
- */
-const getName = action => {
-    if (isObject(action)) {
-        return action.type;
-    }
+const commitHandler = next => (action, payload, extra) => {
     if (isString(action)) {
-        return action;
-    }
-    return null;
-};
-
-/**
- * 获取对象类型的 action 的 payload
- * @param  {[type]} _action [description]
- * @return {[type]}         [description]
- */
-const getPayload = action => {
-    if ('payload' in action) {
-        return action.payload;
-    }
-    const { type, ...rest } = action;
-    return rest;
-};
-
-const commitHandler = (next, moduleInstance) => (action, payload) => {
-    const reducerName = getName(action);
-    const reducerFn = moduleInstance.reducerCollection[reducerName];
-
-    if (isString(action)) {
-        if (reducerFn) {
-            return next({
-                type: reducerName,
-                payload
-            });
-        }
-        throw new Error(
-            `ActionMiddlewareError: The reducer function '${reducerName}' is not registered!`
-        );
-    }
-
-    if (reducerFn) {
         return next({
-            type: reducerName,
-            payload: getPayload(action)
+            type: action,
+            payload,
+            extra
         });
     }
 
-    return next(action);
+    if (isObject(action) && action.type) {
+        const { type, payload, ...extra } = action;
+        return next({
+            type,
+            payload: payload || extra,
+            extra
+        });
+    }
+
+    throw new Error(
+        "commit first argument should be string or object: {type: 'string', ...}"
+    );
 };
 
 /**
@@ -69,34 +36,40 @@ const createActionMiddleware = function(moduleInstance) {
      * @param  {[type]} store [description]
      * @return {[type]}       [description]
      */
-    const actionMiddleware = api => next => (action, payload) => {
+    const actionMiddleware = api => next => (action, payload, ...extra) => {
         if (isString(action)) {
-            const actionName = getName(action);
-            const actionFn = moduleInstance.actionCollection[actionName];
-            const reducerFn = moduleInstance.reducerCollection[actionName];
             const { getState, dispatch } = api;
-            if (actionFn) {
-                return actionFn(
-                    {
-                        commit: commitHandler(next, moduleInstance),
-                        rootState: getState(),
-                        state: moduleInstance.getStateByActionName(actionName),
-                        dispatch
-                    },
-                    payload
-                );
-            }
-            if (reducerFn) {
-                throw new Error(
-                    `ActionMiddlewareError: You Must call the reducer '${actionName}' in a Action`
-                );
-            }
-            throw new Error(
-                `ActionMiddlewareError: The Action function '${actionName}' is not registered!`
-            );
+            const actions = moduleInstance.getActionsByAction(action);
+            const promiseArray = actions
+                .map(({ actionFn, moduleState }) => {
+                    return actionFn(
+                        {
+                            state: moduleState,
+                            rootState: getState(),
+                            commit: commitHandler(next),
+                            dispatch
+                        },
+                        action,
+                        payload,
+                        extra
+                    );
+                })
+                .filter(e => e);
+            return Promise.all(promiseArray);
+        }
+        // 直接触发reducer
+        if (isObject(action) && action.type) {
+            const { type, payload, ...extra } = action;
+            return next({
+                type,
+                payload: payload || extra,
+                extra
+            });
         }
 
-        return next(action);
+        throw new Error(
+            "dispatch first argument should be string or object: {type: 'string', ...}"
+        );
     };
 
     return actionMiddleware;
