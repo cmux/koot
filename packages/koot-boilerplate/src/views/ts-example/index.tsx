@@ -4,6 +4,7 @@ import { Link } from 'react-router';
 
 import Icon from '@components/icon';
 
+import svgTS from '@assets/typescript.svg';
 import styles from './index.module.less';
 
 // ============================================================================
@@ -72,11 +73,7 @@ class TSComponentClass extends React.Component<ComponentProps & ExtendedProps> {
                 data-class-name={this.props['data-class-name']}
                 data-koot-test-page="page-ts"
             >
-                <img
-                    src={require('@assets/typescript.svg')}
-                    className="logo"
-                    alt="TypeScript LOGO"
-                />
+                <img src={svgTS} className="logo" alt="TypeScript LOGO" />
                 <p className="msg-big">{__('pages.ts.msg')}</p>
                 <p className="msg-small">{__('pages.ts.msgCheckFile')}</p>
                 <Link to="/start" className="back">

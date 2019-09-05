@@ -33,8 +33,10 @@
             "@server/*": ["./src/server/*"],
             "~Assets": ["./src/assets"],
             "~Assets/*": ["./src/assets/*"],
-            "~/*": ["./src/*"]
+            "~/*": ["./src/*"],
+            "@types": ["./types"],
+            "@types/*": ["./types/*"]
         }
     },
-    "include": ["src"]
+    "include": ["src", "types/**/*.ts"]
 }

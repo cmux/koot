@@ -118,7 +118,7 @@ declare function __(
 
 // ============================================================================
 
-declare type KootComponentStyleObject = {
+declare interface KootModularStyleObject {
     /**
      * 组件 `className`
      * - 仅为本组件 CSS 的 `className`，不包含父组件通过 `props` 传入的
@@ -128,52 +128,64 @@ declare type KootComponentStyleObject = {
      * 组件 CSS 代码内容
      */
     css: string;
-};
+}
+/** _Koot.js_ 组件 CSS 对象 */
 declare module '*.module.css' {
-    const kootComponentStyleCSS: KootComponentStyleObject;
+    const kootComponentStyleCSS: KootModularStyleObject;
     export = kootComponentStyleCSS;
 }
+/** _Koot.js_ 组件 CSS 对象 */
 declare module '*.component.css' {
-    const kootComponentStyleCSS: KootComponentStyleObject;
+    const kootComponentStyleCSS: KootModularStyleObject;
     export = kootComponentStyleCSS;
 }
+/** _Koot.js_ 组件 CSS 对象 */
 declare module '*.view.css' {
-    const kootComponentStyleCSS: KootComponentStyleObject;
+    const kootComponentStyleCSS: KootModularStyleObject;
     export = kootComponentStyleCSS;
 }
+/** _Koot.js_ 组件 CSS 对象 */
 declare module '*.module.sass' {
-    const kootComponentStyleSASS: KootComponentStyleObject;
+    const kootComponentStyleSASS: KootModularStyleObject;
     export = kootComponentStyleSASS;
 }
+/** _Koot.js_ 组件 CSS 对象 */
 declare module '*.component.sass' {
-    const kootComponentStyleSASS: KootComponentStyleObject;
+    const kootComponentStyleSASS: KootModularStyleObject;
     export = kootComponentStyleSASS;
 }
+/** _Koot.js_ 组件 CSS 对象 */
 declare module '*.view.sass' {
-    const kootComponentStyleSASS: KootComponentStyleObject;
+    const kootComponentStyleSASS: KootModularStyleObject;
     export = kootComponentStyleSASS;
 }
+/** _Koot.js_ 组件 CSS 对象 */
 declare module '*.module.scss' {
-    const kootComponentStyleSCSS: KootComponentStyleObject;
+    const kootComponentStyleSCSS: KootModularStyleObject;
     export = kootComponentStyleSCSS;
 }
+/** _Koot.js_ 组件 CSS 对象 */
 declare module '*.component.scss' {
-    const kootComponentStyleSCSS: KootComponentStyleObject;
+    const kootComponentStyleSCSS: KootModularStyleObject;
     export = kootComponentStyleSCSS;
 }
+/** _Koot.js_ 组件 CSS 对象 */
 declare module '*.view.scss' {
-    const kootComponentStyleSCSS: KootComponentStyleObject;
+    const kootComponentStyleSCSS: KootModularStyleObject;
     export = kootComponentStyleSCSS;
 }
+/** _Koot.js_ 组件 CSS 对象 */
 declare module '*.module.less' {
-    const kootComponentStyleLESS: KootComponentStyleObject;
+    const kootComponentStyleLESS: KootModularStyleObject;
     export = kootComponentStyleLESS;
 }
+/** _Koot.js_ 组件 CSS 对象 */
 declare module '*.component.less' {
-    const kootComponentStyleLESS: KootComponentStyleObject;
+    const kootComponentStyleLESS: KootModularStyleObject;
     export = kootComponentStyleLESS;
 }
+/** _Koot.js_ 组件 CSS 对象 */
 declare module '*.view.less' {
-    const kootComponentStyleLESS: KootComponentStyleObject;
+    const kootComponentStyleLESS: KootModularStyleObject;
     export = kootComponentStyleLESS;
 }

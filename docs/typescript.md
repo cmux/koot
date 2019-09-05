@@ -94,7 +94,7 @@ class TSComponentClass extends React.Component<ComponentProps & ExtendedProps> {
         const { className, children } = this.props;
         return (
             <div
-                className={this.props.className}
+                className={className}
                 data-custom-props={this.props.customProps}
                 data-class-name={this.props['data-class-name']}
                 data-koot-test-page="page-ts"
