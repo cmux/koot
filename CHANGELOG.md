@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+**koot-boilerplate**
+
+-   调整默认字体 `font-family`
+
 ## [0.11.7] - 2019-09-10
 
 核心
