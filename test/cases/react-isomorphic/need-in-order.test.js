@@ -37,7 +37,7 @@
  */
 
 // jest configuration
-jest.setTimeout(5 * 60 * 1 * 1000);
+jest.setTimeout(6 * 60 * 1 * 1000);
 
 //
 
@@ -336,11 +336,19 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
         failedResponse
     );
 
+    /** 等待开发服务器喘息 */
+    const breath = async () => {
+        if (isDev) return await sleep(2 * 1000);
+        else return;
+    };
+
+    const defaultWaitUtil = isDev ? 'networkidle2' : 'domcontentloaded';
+
     // 测试: 页面基本结构
     {
         const res = await page
             .goto(origin, {
-                waitUntil: 'domcontentloaded'
+                waitUntil: defaultWaitUtil
             })
             .catch();
         const pageContent = await page.content();
@@ -413,6 +421,8 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
 
     // 测试: 利用 URL 可切换到对应语种，并且 SSR 数据正确
     {
+        await breath();
+
         /**
          * 测试目标语种
          * @param {String} localeId 语种ID
@@ -426,7 +436,7 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
                 : `${origin}/extend?${changeLocaleQueryKey}=${localeId}`;
 
             const res = await page.goto(gotoUrl, {
-                waitUntil: 'domcontentloaded'
+                waitUntil: defaultWaitUtil
             });
             const HTML = await res.text();
             const $ = cheerio.load(HTML);
@@ -505,6 +515,8 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
 
     // 测试: 到其他语种的链接
     {
+        await breath();
+
         const testLinksToOtherLang = async (
             toLocaleId = '',
             urlAppend = ''
@@ -515,7 +527,7 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
                       urlAppend.includes('?') ? '&' : '?'
                   }${changeLocaleQueryKey}=${toLocaleId}`;
             await page.goto(gotoUrl, {
-                waitUntil: 'domcontentloaded'
+                waitUntil: defaultWaitUtil
             });
 
             const localeId = await page.evaluate(() =>
@@ -568,6 +580,8 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
 
     // 测试: 并发请求 state 是否正确
     if (!isDev) {
+        await breath();
+
         await Promise.all([
             new Promise(async resolve => {
                 const pageDelayed = await context.newPage();
@@ -576,7 +590,7 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
                     ? `${origin}/${localeIdDelayed}/delayed`
                     : `${origin}/delayed?${changeLocaleQueryKey}=${localeIdDelayed}`;
                 await pageDelayed.goto(gotoUrlDelayed, {
-                    waitUntil: 'domcontentloaded'
+                    waitUntil: defaultWaitUtil
                 });
                 const theLocaleId = await getLocaleId(pageDelayed);
                 expect(theLocaleId).toBe(localeIdDelayed);
@@ -588,7 +602,7 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
                     ? `${origin}/${localeId}`
                     : `${origin}?${changeLocaleQueryKey}=${localeId}`;
                 await page.goto(gotoUrl, {
-                    waitUntil: 'domcontentloaded'
+                    waitUntil: defaultWaitUtil
                 });
                 const theLocaleId = await getLocaleId(page);
                 expect(theLocaleId).toBe(localeId);
@@ -599,13 +613,15 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
 
     // 测试: 访问没有指定组件的路由
     {
+        await breath();
+
         const name = 'testtesttest';
 
         // 先测试父级路由
         const urlParent = `${origin}/static`;
         await page
             .goto(urlParent, {
-                waitUntil: 'domcontentloaded'
+                waitUntil: defaultWaitUtil
             })
             .catch();
         const hasFeature = await page.evaluate(
@@ -635,6 +651,8 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
 
     // 测试: 利用 staticCopyFrom 配置复制的文件可访问
     {
+        await breath();
+
         const testUrl = `${origin}/__test.txt`;
         const testContent = 'TEST';
         const res = await page.goto(testUrl, {
@@ -647,6 +665,8 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
 
     // 测试：sessionStore
     {
+        await breath();
+
         const context = await browser.createIncognitoBrowserContext();
         const page = await context.newPage();
         await page.goto(origin, {
@@ -776,9 +796,11 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
 
     // 测试：使用 TypeScript 编写的组件
     {
+        await breath();
+
         const pageTS = origin + '/ts';
         await page.goto(pageTS, {
-            waitUntil: 'domcontentloaded'
+            waitUntil: defaultWaitUtil
         });
         const el = await page.$('[data-koot-test-page="page-ts"]');
         expect(el).not.toBe(null);
@@ -786,6 +808,8 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
 
     // 测试：extend 高阶组件的 SSR 控制
     {
+        await breath();
+
         const context = await browser.createIncognitoBrowserContext();
         const page = await context.newPage();
 
@@ -817,6 +841,8 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
 
     // 测试：页面信息应来自深部组件，而非外部父级
     {
+        await breath();
+
         const specialMetaKey = 'koot-test-meta-aaa';
 
         // 直接访问 /ts
@@ -924,11 +950,13 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
 
     // 测试: Store enhancer
     if (typeof selectorForStoreEnhancer === 'string') {
+        await breath();
+
         const getValue = async () => {
             const context = await browser.createIncognitoBrowserContext();
             const page = await context.newPage();
             const res = await page.goto(origin, {
-                waitUntil: 'domcontentloaded'
+                waitUntil: defaultWaitUtil
             });
             const HTML = await res.text();
             const $ = cheerio.load(HTML);
@@ -946,6 +974,8 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
 
     // 测试: 服务器端公共缓存空间
     {
+        await breath();
+
         // __test-server-cache
         let expectG, expectL;
         const values = {};
@@ -956,7 +986,7 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
             const context = await browser.createIncognitoBrowserContext();
             const page = await context.newPage();
             const res = await page.goto(gotoUrl, {
-                waitUntil: 'domcontentloaded'
+                waitUntil: defaultWaitUtil
             });
             const HTML = await res.text();
             const $ = cheerio.load(HTML);
@@ -982,11 +1012,13 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
 
     // 测试: 非匹配的组件，其相 store 关函数不应运行
     {
+        await breath();
+
         const context = await browser.createIncognitoBrowserContext();
         const page = await context.newPage();
         const test = async (url = origin, toHasValue = false) => {
             await page.goto(url, {
-                waitUntil: 'domcontentloaded'
+                waitUntil: defaultWaitUtil
             });
 
             const SSRState = await getSSRStateFromScriptTag(page);
@@ -1003,6 +1035,8 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
 
     // 测试: cookiesToStore
     if (typeof cookiesToStore !== 'undefined') {
+        await breath();
+
         /**
          *
          * - 默认: `true`
@@ -1011,7 +1045,7 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
          * - 0.6版配置: `false`
          */
         await page.goto(origin, {
-            waitUntil: 'domcontentloaded'
+            waitUntil: defaultWaitUtil
         });
 
         const { server: SSRStateServer = {} } = await getSSRStateFromScriptTag(

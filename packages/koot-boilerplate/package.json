@@ -35,7 +35,7 @@
         "autoprefixer": "^9.6.1",
         "babel-eslint": "^10.0.3",
         "cssnano": "^4.1.10",
-        "eslint": "^6.3.0",
+        "eslint": "^6.4.0",
         "eslint-config-koot": "^1.3.0",
         "husky": "^3.0.5",
         "lint-staged": "^9.2.5",

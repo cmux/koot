@@ -1,7 +1,7 @@
 const fs = require('fs-extra');
 const Koa = require('koa');
 const mount = require('koa-mount');
-// const proxy = require('koa-better-http-proxy')
+const betterProxy = require('koa-better-http-proxy');
 const proxy = require('koa-proxies');
 
 const { publicPathPrefix } = require('../../defaults/webpack-dev-server');
@@ -44,7 +44,7 @@ const run = async () => {
     const portWebpackDevServer = getWDSport();
 
     proxyWebpackDevServer.use(
-        require('koa-better-http-proxy')('localhost', {
+        betterProxy('localhost', {
             port: portWebpackDevServer,
             // 修改代理服务器请求返回结果
             userResDecorator: function(proxyRes, proxyResData, ctx) {
@@ -88,6 +88,15 @@ const run = async () => {
         })
     );
     app.use(mount(proxyMain));
+
+    // console.log({
+    //     portWebpackDevServer,
+    //     portServer,
+    //     port,
+    //     publicPathPrefix,
+    //     mount,
+    //     app
+    // });
 
     app.listen(port);
 

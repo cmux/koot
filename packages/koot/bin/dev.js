@@ -181,7 +181,7 @@ const run = async () => {
     const processes = [];
 
     /** @type {Boolean} 全局等待提示 */
-    let waitingSpinner = false;
+    const waitingSpinner = false;
 
     // 清理遗留的临时文件
     await removeTempBuild(dist);
@@ -224,7 +224,8 @@ const run = async () => {
         process.removeListener('uncaughtException', exitHandler);
     };
     const exitHandler = async (options = {}) => {
-        let { silent = false, error = false } = options;
+        let { silent = false } = options;
+        const { error = false } = options;
 
         if (error) silent = true;
 
@@ -247,7 +248,7 @@ const run = async () => {
                         ) +
                         '\n\n'
                 );
-            for (let process of processes) {
+            for (const process of processes) {
                 await new Promise((resolve, reject) => {
                     // console.log(process)
                     pm2.delete(process.name, (err, proc) => {
@@ -440,7 +441,7 @@ const run = async () => {
                 cwd: cwd,
                 output: pathLogOut,
                 error: pathLogErr,
-                autorestart: false
+                autorestart: true
             };
 
             switch (stage) {
@@ -483,11 +484,16 @@ const run = async () => {
                     break;
                 }
                 case 'main': {
+                    const mainScript = path.resolve(
+                        __dirname,
+                        '../ReactApp/server/index-dev.js'
+                    );
                     Object.assign(config, {
-                        script: path.resolve(
-                            __dirname,
-                            '../ReactApp/server/index-dev.js'
-                        )
+                        script: mainScript,
+                        watch: path.dirname(mainScript)
+                        // env: {
+                        //     DEBUG: 'koa-mount'
+                        // }
                     });
                     delete config.args;
                     break;

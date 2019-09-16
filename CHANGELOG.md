@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+**koot**
+
+-   优化
+    -   开发环境服务器现在会尝试自动重启
+-   更新依赖包 minor 和 patch 版本号
+
 **koot-boilerplate**
 
 -   调整默认字体 `font-family`
