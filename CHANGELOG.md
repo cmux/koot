@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+**koot-boilerplate**
+
+-   添加 `.eslintignore` 和 `.prettierignore`
+
 ## [0.11.8] - 2019-09-17
 
 **koot**
