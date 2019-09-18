@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+**koot**
+
+-   优化
+    -   调整开发环境的关闭流程
+
 **koot-boilerplate**
 
 -   添加 `.eslintignore` 和 `.prettierignore`

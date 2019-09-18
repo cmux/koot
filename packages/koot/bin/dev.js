@@ -229,71 +229,91 @@ const run = async () => {
 
         if (error) silent = true;
 
-        await removeTempProjectConfig();
-        await removeTempBuild(dist);
-        await fs.emptyDir(getDirDevTmp(cwd));
-        // 清理临时目录
-        await fs.remove(getDirTemp());
-
         if (Array.isArray(processes) && processes.length) {
             if (waitingSpinner) waitingSpinner.stop();
-            await sleep(300);
+            // await sleep(300);
             // 清屏
-            if (!silent) process.stdout.write('\x1B[2J\x1B[0f');
-            if (!silent)
-                console.log(
-                    '\n\n\n' +
-                        chalk.redBright(
-                            '!! Please wait for killing processes !!'
-                        ) +
-                        '\n\n'
-                );
-            for (const process of processes) {
-                await new Promise((resolve, reject) => {
-                    // console.log(process)
-                    pm2.delete(process.name, (err, proc) => {
-                        // console.log('err', err)
-                        // console.log('proc', proc)
-                        if (
-                            Array.isArray(proc) &&
-                            proc.every(p => p.status === 'stopped')
-                        )
-                            return resolve(proc);
-                        if (err) return reject(err);
-                        reject('stop failed');
-                    });
-                });
-            }
+            // if (!silent) process.stdout.write('\x1B[2J\x1B[0f');
+            if (!silent) console.log('\n\n');
+            // if (!silent)
+            //     console.log(
+            //         '\n\n\n' +
+            //             chalk.redBright(
+            //                 '!! Please wait for killing processes !!'
+            //             ) +
+            //             '\n\n'
+            //     );
+            // for (const process of processes) {
+            //     await new Promise((resolve, reject) => {
+            //         // console.log(process)
+            //         pm2.delete(process.name, (err, proc) => {
+            //             // console.log('err', err)
+            //             // console.log('proc', proc)
+            //             if (
+            //                 Array.isArray(proc) &&
+            //                 proc.every(p => p.status === 'stopped')
+            //             )
+            //                 return resolve(proc);
+            //             if (err) return reject(err);
+            //             reject('stop failed');
+            //         });
+            //     });
+            // }
+            await Promise.all([
+                processes.filter(
+                    process =>
+                        new Promise((resolve, reject) => {
+                            // console.log(process)
+                            pm2.delete(process.name, (err, proc) => {
+                                // console.log('err', err)
+                                // console.log('proc', proc)
+                                if (
+                                    Array.isArray(proc) &&
+                                    proc.every(p => p.status === 'stopped')
+                                )
+                                    return resolve(proc);
+                                if (err) return reject(err);
+                                reject('stop failed');
+                            });
+                        })
+                )
+            ]);
             pm2.disconnect();
             await sleep(300);
             // w.stop()
-            try {
-                // console.log(process.pid)
-                removeAllExitListeners();
-                if (!error)
-                    console.log(
-                        '\n\n\n' +
-                            chalk.cyanBright('Press CTRL+C again to exit.') +
-                            '\n\n'
-                    );
-                // process.kill(process.pid)
-                process.exit(1);
-            } catch (e) {
-                // console.log(e)
-            }
-        } else {
-            removeAllExitListeners();
-            // 清屏
-            // process.stdout.write('\x1B[2J\x1B[0f')
-            if (!error) console.log('Press CTRL+C again to exit.');
+        }
 
-            // 发送信息
+        await Promise.all([
+            removeTempProjectConfig(),
+            removeTempBuild(dist),
+            fs.emptyDir(getDirDevTmp(cwd)),
+            // 清理临时目录
+            fs.remove(getDirTemp())
+        ]);
+        // await removeTempProjectConfig();
+        // await removeTempBuild(dist);
+        // await fs.emptyDir(getDirDevTmp(cwd));
+        // await fs.remove(getDirTemp());
+        removeAllExitListeners();
+
+        try {
+            // if (!silent)
+            //     console.log(
+            //         '\n\n\n' + chalk.redBright('!! TERMINATED !!') + '\n\n'
+            //     );
             if (process.send) {
                 process.send('Koot dev mode exit successfully');
             }
-
-            // 退出
+            process.kill(process.pid);
+            if (!error)
+                console.log(
+                    '\n\n\n' +
+                        chalk.cyanBright('Press CTRL+C again to exit.') +
+                        '\n\n'
+                );
             process.exit(1);
+        } catch (e) {
+            console.error(e);
         }
     };
     // 在脚本进程关闭/结束时，同时关闭打开的 PM2 进程
