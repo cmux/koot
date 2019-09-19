@@ -4,6 +4,8 @@
 
 -   优化
     -   调整开发环境的关闭流程
+-   错误修正
+    -   开发环境 _source map_ 不正确的问题 ([#175](https://github.com/cmux/koot/issues/175))
 
 **koot-boilerplate**
 

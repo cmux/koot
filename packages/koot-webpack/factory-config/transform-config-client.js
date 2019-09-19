@@ -211,7 +211,7 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                     };
                 }
                 if (ENV === 'dev') {
-                    for (let key in result.entry) {
+                    for (const key in result.entry) {
                         if (!Array.isArray(result.entry[key]))
                             result.entry[key] = [result.entry[key]];
                         result.entry[key].unshift(

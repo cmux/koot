@@ -43,9 +43,11 @@ const getCwd = require('../utils/get-cwd');
 const getPathnameDevServerStart = require('../utils/get-pathname-dev-server-start');
 const getLogMsg = require('../libs/get-log-msg');
 const log = require('../libs/log');
-// const terminate = require('../utils/terminate')
+// const terminate = require('../utils/terminate');
 
 const kootWebpackBuildVendorDll = require('koot-webpack/build-vendor-dll');
+
+let exiting = false;
 
 program
     .version(require('../package').version, '-v, --version')
@@ -224,17 +226,23 @@ const run = async () => {
         process.removeListener('uncaughtException', exitHandler);
     };
     const exitHandler = async (options = {}) => {
+        if (exiting) return;
+
+        exiting = true;
+
         let { silent = false } = options;
         const { error = false } = options;
 
         if (error) silent = true;
 
+        const PromiseAll = Promise.allSettled
+            ? Promise.allSettled.bind(Promise)
+            : Promise.all.bind(Promise);
+
         if (Array.isArray(processes) && processes.length) {
             if (waitingSpinner) waitingSpinner.stop();
-            // await sleep(300);
-            // 清屏
-            // if (!silent) process.stdout.write('\x1B[2J\x1B[0f');
-            if (!silent) console.log('\n\n');
+            if (!silent) console.log(' ');
+
             // if (!silent)
             //     console.log(
             //         '\n\n\n' +
@@ -243,57 +251,52 @@ const run = async () => {
             //             ) +
             //             '\n\n'
             //     );
-            // for (const process of processes) {
-            //     await new Promise((resolve, reject) => {
-            //         // console.log(process)
-            //         pm2.delete(process.name, (err, proc) => {
-            //             // console.log('err', err)
-            //             // console.log('proc', proc)
-            //             if (
-            //                 Array.isArray(proc) &&
-            //                 proc.every(p => p.status === 'stopped')
-            //             )
-            //                 return resolve(proc);
-            //             if (err) return reject(err);
-            //             reject('stop failed');
-            //         });
-            //     });
+            const kill = p => {
+                // if (!silent) {
+                //     console.log(
+                //         `TERMINATING: ${p.pm2_env.pm_id} | ${p.pid} | ${p.name}`
+                //     );
+                // }
+                return new Promise((resolve, reject) => {
+                    // console.log(JSON.stringify(p));
+                    // console.log(pm2, pm2.delete);
+                    pm2.delete(p.pm2_env.pm_id, (err, proc) => {
+                        // console.log('err', err);
+                        // console.log('proc', proc.map(p => p.status));
+                        if (err) return reject(err);
+                        // processes.splice(processes.indexOf(p), 1);
+                        resolve(proc);
+                    });
+                });
+            };
+            // for (const p of processes) {
+            //     await kill(p);
             // }
-            await Promise.all([
-                processes.filter(
-                    process =>
-                        new Promise((resolve, reject) => {
-                            // console.log(process)
-                            pm2.delete(process.name, (err, proc) => {
-                                // console.log('err', err)
-                                // console.log('proc', proc)
-                                if (
-                                    Array.isArray(proc) &&
-                                    proc.every(p => p.status === 'stopped')
-                                )
-                                    return resolve(proc);
-                                if (err) return reject(err);
-                                reject('stop failed');
-                            });
-                        })
-                )
-            ]);
+            await PromiseAll(processes.map(kill)).catch(console.error);
             pm2.disconnect();
-            await sleep(300);
             // w.stop()
         }
 
-        await Promise.all([
-            removeTempProjectConfig(),
-            removeTempBuild(dist),
-            fs.emptyDir(getDirDevTmp(cwd)),
-            // 清理临时目录
-            fs.remove(getDirTemp())
-        ]);
-        // await removeTempProjectConfig();
-        // await removeTempBuild(dist);
-        // await fs.emptyDir(getDirDevTmp(cwd));
-        // await fs.remove(getDirTemp());
+        // console.log(
+        //     '> status',
+        //     processes.map(p => {
+        //         const { pm2_env, stderr, stdio, stdout, stdin, ...proc } = p;
+        //         console.log(proc);
+        //         return proc.status;
+        //     })
+        // );
+        // await sleep(1000);
+
+        try {
+            await PromiseAll([
+                removeTempProjectConfig(),
+                removeTempBuild(dist),
+                fs.emptyDir(getDirDevTmp(cwd)),
+                // 清理临时目录
+                fs.remove(getDirTemp())
+            ]);
+        } catch (e) {}
+
         removeAllExitListeners();
 
         try {
@@ -304,7 +307,9 @@ const run = async () => {
             if (process.send) {
                 process.send('Koot dev mode exit successfully');
             }
-            process.kill(process.pid);
+            try {
+                process.kill(process.pid);
+            } catch (e) {}
             if (!error)
                 console.log(
                     '\n\n\n' +
@@ -315,6 +320,8 @@ const run = async () => {
         } catch (e) {
             console.error(e);
         }
+
+        // exiting = false;
     };
     // 在脚本进程关闭/结束时，同时关闭打开的 PM2 进程
     process.stdin.resume();
@@ -527,18 +534,17 @@ const run = async () => {
             pm2.start(config, (err, proc) => {
                 // console.log(err)
                 if (err) return reject(err);
-                processes.push({
-                    ...proc,
-                    name: config.name
+                proc.forEach(p => {
+                    processes.push({
+                        ...p,
+                        name: config.name,
+                        pid: p.pid || p.process.pid
+                    });
                 });
                 // console.log(JSON.stringify(proc))
-                // fs.writeJsonSync(
-                //     path.resolve(__dirname, '../2.json'),
-                //     proc,
-                //     {
-                //         spaces: 4
-                //     }
-                // )
+                // fs.writeJsonSync(path.resolve(__dirname, '../2.json'), proc, {
+                //     spaces: 4
+                // });
                 resolve(proc);
             });
         });

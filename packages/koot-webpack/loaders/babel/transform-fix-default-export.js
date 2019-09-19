@@ -1,5 +1,3 @@
-const { getOptions } = require('loader-utils');
-
 /**
  * For some reason, `default` export may be missing after babel compiling,
  * expecially for TSX file.
@@ -7,12 +5,6 @@ const { getOptions } = require('loader-utils');
  * Here's a hacky fix
  */
 module.exports = function(source) {
-    if (process.env.WEBPACK_BUILD_ENV !== 'dev') return source;
-
-    const { __react = false } = getOptions(this) || {};
-
-    if (!__react) return source;
-
     const expExportDefault = `export default _default`;
     source = source.replace(
         /(var _default = .+?;\n*)(;\n\n\(function \(\) \{\n[ ]*var reactHotLoader = )/gm,
