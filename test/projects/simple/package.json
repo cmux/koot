@@ -145,6 +145,6 @@
     "private": true,
     "sideEffects": false,
     "koot": {
-        "version": "0.11.8"
+        "version": "0.11.9"
     }
 }

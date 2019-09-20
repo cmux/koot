@@ -144,8 +144,8 @@ const doTest = async (port, dist, settings = {}) => {
 
     await testHtmlRenderedByKoot(await res.text());
 
+    // base 图片应该引用打包结果的文件
     {
-        // base 图片应该引用打包结果的文件
         const { base, baseRelative } = await page.evaluate(() => {
             const el = document.querySelector('[data-bg-type="base"]');
             if (!el) return {};
@@ -163,8 +163,8 @@ const doTest = async (port, dist, settings = {}) => {
         expect(checkBackgroundResult(baseRelative)).toBe(true);
     }
 
+    // respoinsive 图片应该引用打包结果的文件
     {
-        // respoinsive 图片应该引用打包结果的文件
         const result = {};
         const resultNative = {};
         const test = async scale => {
@@ -396,6 +396,19 @@ const doTest = async (port, dist, settings = {}) => {
         expect(await test(true, false)).toBe(true);
         expect(await test(false, true)).toBe(true);
         expect(await test(true, true)).toBe(true);
+    }
+
+    // 测试: WDS proxy
+    if (isDev) {
+        const context = await browser.createIncognitoBrowserContext();
+        const page = await context.newPage();
+        await page.goto(origin + '/proxy-1/policies?hl=en', {
+            waitUntil: 'networkidle2'
+        });
+        const title = await page.evaluate(() => document.title);
+        await context.close();
+
+        expect(title.includes('Policies')).toBe(true);
     }
 
     await puppeteerTestStyles(page);

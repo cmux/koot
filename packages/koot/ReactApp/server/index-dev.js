@@ -19,6 +19,10 @@ const getPathnameDevServerStart = require('../../utils/get-pathname-dev-server-s
  */
 const run = async () => {
     const { port, portServer } = await fs.readJson(getPathnameDevServerStart());
+    const portWebpackDevServer = getWDSport();
+
+    /** 代理到其他地点的路由 */
+    const routesProxy = [publicPathPrefix];
 
     if (
         global.kootTest ||
@@ -40,55 +44,80 @@ const run = async () => {
     const app = new Koa();
 
     // 代理服务器 -> webpack dev server
-    const proxyWebpackDevServer = new Koa();
-    const portWebpackDevServer = getWDSport();
+    {
+        const proxyWebpackDevServer = new Koa();
 
-    proxyWebpackDevServer.use(
-        betterProxy('localhost', {
-            port: portWebpackDevServer,
-            // 修改代理服务器请求返回结果
-            userResDecorator: function(proxyRes, proxyResData, ctx) {
-                const data = proxyResData.toString('utf8');
+        proxyWebpackDevServer.use(
+            betterProxy('localhost', {
+                port: portWebpackDevServer,
+                // 修改代理服务器请求返回结果
+                userResDecorator: function(proxyRes, proxyResData, ctx) {
+                    const data = proxyResData.toString('utf8');
 
-                if (/\ufffd/.test(data) === true) return proxyResData;
+                    if (/\ufffd/.test(data) === true) return proxyResData;
 
-                const origin = ctx.origin.split('://')[1];
+                    const origin = ctx.origin.split('://')[1];
 
-                // 替换 localhost 请求地址为当前代理服务器地址
-                // 替换代理服务器地址的 sockjs-node 为 localhost 原始地址
-                return data
-                    .replace(
-                        /:\/\/localhost:([0-9]+)/gm,
-                        `://${origin}/${publicPathPrefix}`
-                    )
-                    .replace(
-                        new RegExp(
-                            `://${origin}/${publicPathPrefix}/sockjs-node/`,
-                            'mg'
-                        ),
-                        `://localhost:${portWebpackDevServer}/sockjs-node/`
-                    )
-                    .replace(
-                        /(socketUrl\s*=\s*url.format\({\s*protocol:\s*protocol,\s*auth:\s*urlParts.auth,\s*hostname:\s*hostname,\s*port:\s*)(port)/gm,
-                        `$1${portWebpackDevServer}`
-                    );
+                    // 替换 localhost 请求地址为当前代理服务器地址
+                    // 替换代理服务器地址的 sockjs-node 为 localhost 原始地址
+                    return data
+                        .replace(
+                            /:\/\/localhost:([0-9]+)/gm,
+                            `://${origin}/${publicPathPrefix}`
+                        )
+                        .replace(
+                            new RegExp(
+                                `://${origin}/${publicPathPrefix}/sockjs-node/`,
+                                'mg'
+                            ),
+                            `://localhost:${portWebpackDevServer}/sockjs-node/`
+                        )
+                        .replace(
+                            /(socketUrl\s*=\s*url.format\({\s*protocol:\s*protocol,\s*auth:\s*urlParts.auth,\s*hostname:\s*hostname,\s*port:\s*)(port)/gm,
+                            `$1${portWebpackDevServer}`
+                        );
+                }
+            })
+        );
+        app.use(mount(`/${publicPathPrefix}`, proxyWebpackDevServer));
+    }
+
+    // 代理服务器 -> WSD 代理服务器
+    {
+        const { proxy: proxyConfig } = JSON.parse(
+            process.env.KOOT_DEV_WDS_EXTEND_CONFIG
+        );
+        if (typeof proxyConfig === 'object') {
+            for (const route of Object.keys(proxyConfig)) {
+                const { changeOrigin = false } = proxyConfig[route];
+                // console.log(route, changeOrigin);
+                routesProxy.push(
+                    route.substr(0, 1) === '/' ? route.substr(1) : route
+                );
+                app.use(
+                    proxy(route, {
+                        target: `http://localhost:${portWebpackDevServer}`,
+                        changeOrigin
+                    })
+                );
             }
-        })
-    );
-    app.use(mount(`/${publicPathPrefix}`, proxyWebpackDevServer));
+        }
+    }
 
-    // 代理服务器 -> 服务器端环境
-    const proxyMain = new Koa();
-    const regex = new RegExp(`^/((?!${publicPathPrefix}).*)`);
-    proxyMain.use(
-        proxy(regex, {
-            target: `http://localhost:${portServer}`,
-            changeOrigin: false,
-            logs: false
-        })
-    );
-    app.use(mount(proxyMain));
-
+    // 代理服务器 -> SSR server
+    {
+        const proxyMain = new Koa();
+        const regex = new RegExp(`^/((?!${routesProxy.join('|')}).*)`);
+        // console.log({ regex });
+        proxyMain.use(
+            proxy(regex, {
+                target: `http://localhost:${portServer}`,
+                changeOrigin: false,
+                logs: false
+            })
+        );
+        app.use(mount(proxyMain));
+    }
     // console.log({
     //     portWebpackDevServer,
     //     portServer,

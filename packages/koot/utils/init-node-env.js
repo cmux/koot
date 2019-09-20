@@ -99,6 +99,9 @@ module.exports = () => {
         // KOOT_DEV_DLL_FILE_CLIENT: '',
         // KOOT_DEV_DLL_FILE_SERVER: '',
 
+        // 开发环境: webpack-dev-server 扩展配置对象
+        KOOT_DEV_WDS_EXTEND_CONFIG: JSON.stringify({}),
+
         // 定制的环境变量键值
         KOOT_CUSTOM_ENV_KEYS: JSON.stringify([]),
 
@@ -108,7 +111,7 @@ module.exports = () => {
         // 配置: sessionStore
         KOOT_SESSION_STORE: JSON.stringify(false)
     };
-    for (let key in defaults) {
+    for (const key in defaults) {
         if (typeof process.env[key] === 'undefined') {
             process.env[key] = defaults[key];
         }

@@ -39,8 +39,11 @@ module.exports = async (projectDir, config) => {
                 if (config.onHistoryUpdate)
                     client.onHistoryUpdate = config.onHistoryUpdate;
                 return client;
-            })()
+            })(),
+            devServer: config.devServer
         };
+
+        if (!obj.devServer) delete obj.devServer;
 
         // SPA
         if (typesSPA.includes(config.type)) {
@@ -122,7 +125,9 @@ module.exports = async (projectDir, config) => {
 
     const tmpConfigPortionClient = { ...tmpConfigPortionServer };
     delete tmpConfigPortionServer.redux;
+    delete tmpConfigPortionServer.devServer;
     delete tmpConfigPortionClient.server;
+    delete tmpConfigPortionClient.devServer;
 
     /**
      * 将对象结果转为字符串

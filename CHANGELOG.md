@@ -1,5 +1,12 @@
 ## [Unreleased]
 
+## [0.11.10] - 2019-09-20
+
+**koot**
+
+-   优化
+    -   通过配置 `devServer.proxy`，SSR 项目的开发环境中，现在可以使用 _webpack-dev-server_ 的 `proxy` 能力了 ([#176](https://github.com/cmux/koot/issues/176))
+
 ## [0.11.9] - 2019-09-19
 
 **koot**

@@ -127,12 +127,12 @@ module.exports = async (kootConfig = {}) => {
     let isClientDevServerLaunched = false;
 
     // 抽取配置
-    let {
+    let { [keyConfigQuiet]: quietMode = false } = kootConfig;
+    const {
         webpackBefore: beforeBuild,
         webpackAfter: afterBuild,
         analyze = false,
         bundleVersionsKeep,
-        [keyConfigQuiet]: quietMode = false,
         [keyConfigBuildDll]: createDll = false
     } = kootConfig;
 
@@ -802,7 +802,7 @@ module.exports = async (kootConfig = {}) => {
                     }
                 }
             };
-            for (let config of webpackConfig) {
+            for (const config of webpackConfig) {
                 if (errorEncountered) break;
                 console.log(' ');
 
