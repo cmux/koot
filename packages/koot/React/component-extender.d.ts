@@ -76,7 +76,7 @@ type ExtendData = {
 /** extend 高阶组件向目标组件注入的 props */
 export interface ExtendedProps {
     /** 包含父组件传入的 `className` 和 `extend()` 高阶组件注入的 `className`（如果在 `extend()` 高阶组件中传入了 `styles` 属性）*/
-    readonly className?: string;
+    className?: string;
     /**
      * `extend()` 高阶组件注入的 `className`
      * - 不包含父组件传入的 `className`
