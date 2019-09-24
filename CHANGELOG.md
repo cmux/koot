@@ -1,6 +1,13 @@
 ## [Unreleased]
 
+## [0.11.11] - 2019-09-24
+
 -   更新依赖包 minor 和 patch 版本号
+
+**koot**
+
+-   更新 TS 定义
+    -   注：所有类组件 (_Class Component_) 的 `render()` 方法返回值类型需更改为 `React.ReactNode`
 
 ## [0.11.10] - 2019-09-20
 

@@ -89,8 +89,8 @@ interface ComponentProps {
     }),
     styles
 })
-class TSComponentClass extends React.Component<ComponentProps & ExtendedProps> {
-    render(): JSX.Element {
+class TSComponentClass extends React.Component<ExtendedProps & ComponentProps> {
+    render(): React.ReactNode {
         const { className, children } = this.props;
         return (
             <div
