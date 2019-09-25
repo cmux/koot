@@ -3,7 +3,7 @@
 /// <reference path="../global.d.ts" />
 
 import {
-    ComponentType,
+    // ComponentType,
     ReactNode,
     FC,
     ComponentClass,
@@ -20,27 +20,32 @@ declare module 'kootExtendHOC';
 // ============================================================================
 
 interface ExtendComponent<P, S> {
-    (
-        WrappedComponent:
-            | FC<ExtendedProps & P>
-            | ComponentClass
-            | ComponentClass<ExtendedProps & P>
-    ): ComponentClass<ExtendedProps & P>;
-
-    (WrappedComponent: ComponentClass<ExtendedProps & P, S>): ComponentClass<
-        ExtendedProps & P,
-        S
+    (wrappedComponent: FC<ExtendedProps & P>): ComponentClass<
+        ExtendedProps & P
     >;
+    (wrappedComponent: ComponentClass<any, any>): HOC<ExtendedProps & P, S>;
+    // (wrappedComponent: FC<ExtendedProps & P>): ComponentClass<
+    //     ExtendedProps & P
+    // >;
 
-    <P extends ComponentProps>(
-        WrappedComponent: ComponentType<P & ExtendedProps>
-    ): HOC<ComponentProps & ExtendedProps>;
+    // (
+    //     wrappedComponent:
+    //         | FC<ExtendedProps & P>
+    //         | ComponentClass
+    //         | ComponentClass<ExtendedProps & P>
+    // ): ComponentClass<ExtendedProps & P>;
+
+    // (wrappedComponent: ComponentType<any>): HOC<ExtendedProps & P, S>;
+    // (wrappedComponent: ComponentClass<any, any>): ComponentClass<
+    //     JSX.LibraryManagedAttributes<wrappedComponent, P> & ExtendedProps & P,
+    //     S
+    // >;
 }
 class HOC extends Component {}
 
 export function extend<P = {}, S = ComponentState>(options: {
     // connect?: Connect;
-    connect?: MapStateToPropsParam<any, any, any>;
+    connect?: MapStateToPropsParam<any, P, any>;
     /** 提供页面的 title 和 meta 标签信息 */
     pageinfo?: Pageinfo | ExtendPageinfoFunction;
     data?: DataFetchFunction | ExtendData;

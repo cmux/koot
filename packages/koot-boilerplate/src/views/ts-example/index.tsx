@@ -57,7 +57,7 @@ export const UseTSFunctionalComponent: React.FC = (): JSX.Element => (
 
 // Component Class ============================================================
 
-@extend({
+@extend<ExtendedProps & ComponentProps>({
     pageinfo: () => ({
         title: `${__('pages.ts.title')} - ${__('title')}`,
         metas: [{ description: __('pages.ts.description') }]
@@ -65,6 +65,11 @@ export const UseTSFunctionalComponent: React.FC = (): JSX.Element => (
     styles
 })
 class TSComponentClass extends React.Component<ExtendedProps & ComponentProps> {
+    testProperty(): number {
+        let a = 1;
+        a++;
+        return a;
+    }
     render(): React.ReactNode {
         return (
             <div
