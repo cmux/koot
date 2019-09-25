@@ -26,11 +26,15 @@ body {
 }
 html {
     box-sizing: border-box;
+    color: @color-base;
+    font-size: @root-font-size;
     font-family: Roboto, 'SF Pro Display', 'SF Pro Icons', 'Helvetica Neue',
         'Helvetica', 'Arial', 'Microsoft YaHei UI', 'Microsoft YaHei',
         'Hiragino Sans GB', sans-serif;
-    font-size: @root-font-size;
-    color: @color-base;
+    &[lang^='ja'] {
+        font-family: 'Noto Sans JP', 'Lucida Grande',
+            'Hiragino Kaku Gothic ProN', Meiryo, Roboto, sans-serif;
+    }
 }
 body {
     font-size: @base-font-size;
