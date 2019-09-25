@@ -57,7 +57,7 @@ export const UseTSFunctionalComponent: React.FC = (): JSX.Element => (
 
 // Component Class ============================================================
 
-@extend<ExtendedProps & ComponentProps>({
+@extend({
     pageinfo: () => ({
         title: `${__('pages.ts.title')} - ${__('title')}`,
         metas: [{ description: __('pages.ts.description') }]
