@@ -64,8 +64,13 @@ export const UseTSFunctionalComponent: React.FC = (): JSX.Element => (
     }),
     styles
 })
-class TSComponentClass extends React.Component<ComponentProps & ExtendedProps> {
-    render(): JSX.Element {
+class TSComponentClass extends React.Component<ExtendedProps & ComponentProps> {
+    testProperty(): number {
+        let a = 1;
+        a++;
+        return a;
+    }
+    render(): React.ReactNode {
         return (
             <div
                 className={this.props.className}

@@ -171,6 +171,13 @@ const ssr = async (options = {}) => {
         return;
     }
 
+    // 强制更新 store: state.routing.locationBeforeTransitions
+    console.log(Store.getState());
+    Object.assign(Store.getState().routing.locationBeforeTransitions, {
+        pathname: ctx.path,
+        search: ctx.search
+    });
+
     // 渲染生命周期: beforePreRender
     await beforePreRender({
         ctx,

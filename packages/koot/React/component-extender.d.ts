@@ -2,7 +2,14 @@
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference path="../global.d.ts" />
 
-import { ComponentType, ReactNode, FC, ComponentClass, Component } from 'react';
+import {
+    // ComponentType,
+    ReactNode,
+    FC,
+    ComponentClass,
+    Component,
+    ComponentState
+} from 'react';
 import { Store, Dispatch } from 'redux';
 import { MapStateToPropsParam } from 'react-redux';
 
@@ -12,27 +19,33 @@ declare module 'kootExtendHOC';
 
 // ============================================================================
 
-export interface HOCExtend<ComponentProps> {
-    /** React 高阶组件，可赋予目标组件CSS 命名空间、同构数据、更新页面信息等能力。 */
-    <ComponentProps = {}>(options: ExtendOptions): ExtendComponent<
-        ComponentProps
+interface ExtendComponent<P, S> {
+    (wrappedComponent: FC<ExtendedProps & P>): ComponentClass<
+        ExtendedProps & P
     >;
-}
-interface ExtendComponent<ComponentProps> {
-    (WrappedComponent: FC<ComponentProps & ExtendedProps>): ComponentClass<
-        ComponentProps & ExtendedProps
-    >;
+    (wrappedComponent: ComponentClass<any, any>): HOC<ExtendedProps & P, S>;
+    // (wrappedComponent: FC<ExtendedProps & P>): ComponentClass<
+    //     ExtendedProps & P
+    // >;
 
-    <P extends ComponentProps>(
-        WrappedComponent: ComponentType<P & ExtendedProps>
-    ): HOC<ComponentProps & ExtendedProps>;
+    // (
+    //     wrappedComponent:
+    //         | FC<ExtendedProps & P>
+    //         | ComponentClass
+    //         | ComponentClass<ExtendedProps & P>
+    // ): ComponentClass<ExtendedProps & P>;
+
+    // (wrappedComponent: ComponentType<any>): HOC<ExtendedProps & P, S>;
+    // (wrappedComponent: ComponentClass<any, any>): ComponentClass<
+    //     JSX.LibraryManagedAttributes<wrappedComponent, P> & ExtendedProps & P,
+    //     S
+    // >;
 }
 class HOC extends Component {}
-export const extend: HOCExtend<ComponentProps>;
 
-interface ExtendOptions {
+export function extend<P = {}, S = ComponentState>(options: {
     // connect?: Connect;
-    connect?: MapStateToPropsParam<any, any, any>;
+    connect?: MapStateToPropsParam<any, P, any>;
     /** 提供页面的 title 和 meta 标签信息 */
     pageinfo?: Pageinfo | ExtendPageinfoFunction;
     data?: DataFetchFunction | ExtendData;
@@ -44,7 +57,7 @@ interface ExtendOptions {
     ssr?: ReactNode | boolean;
     /** 组件名 (仅供调试用) */
     name?: string;
-}
+}): ExtendComponent<P, S>;
 
 export type Pageinfo = {
     /** 要设置的页面标题 */

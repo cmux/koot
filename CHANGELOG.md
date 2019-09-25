@@ -1,5 +1,24 @@
 ## [Unreleased]
 
+-   更新依赖包 minor 和 patch 版本号
+
+## [0.11.12] - 2019-09-25
+
+**koot**
+
+-   更新 TS 定义
+-   错误修正
+    -   SSR 服务器环境 _Store_ 中的有关路由信息错误 ([#178](https://github.com/cmux/koot/issues/178))
+
+## [0.11.11] - 2019-09-24
+
+-   更新依赖包 minor 和 patch 版本号
+
+**koot**
+
+-   更新 TS 定义
+    -   注：所有类组件 (_Class Component_) 的 `render()` 方法返回值类型需更改为 `React.ReactNode`
+
 ## [0.11.10] - 2019-09-20
 
 **koot**
