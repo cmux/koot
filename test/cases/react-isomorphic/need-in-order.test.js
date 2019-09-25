@@ -1083,6 +1083,33 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
         }
     }
 
+    // 测试: SSR Store 路由信息
+    {
+        const pathname = '/extend';
+        const search = '?a=1';
+
+        const context = await browser.createIncognitoBrowserContext();
+        const page = await context.newPage();
+        await page.goto(`${origin}${pathname}${search}`, {
+            waitUntil: defaultWaitUtil
+        });
+
+        const {
+            routing: { locationBeforeTransitions: L }
+        } = await getSSRStateFromScriptTag(page);
+
+        expect(
+            i18nUseRouter
+                ? '/' +
+                      L.pathname
+                          .split('/')
+                          .slice(2)
+                          .join('/')
+                : L.pathname
+        ).toBe(pathname);
+        expect(L.search).toBe(search);
+    }
+
     // TODO: 测试: 所有 Webpack 结果资源的访问
 
     // TODO: 测试: 有 extract.all.[*].css

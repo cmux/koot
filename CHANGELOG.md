@@ -3,6 +3,8 @@
 **koot**
 
 -   更新 TS 定义
+-   错误修正
+    -   SSR 服务器环境 _Store_ 中的有关路由信息错误 ([#178](https://github.com/cmux/koot/issues/178))
 
 ## [0.11.11] - 2019-09-24
 
