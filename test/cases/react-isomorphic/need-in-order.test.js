@@ -22,7 +22,7 @@
  * **cookiesToStore**
  * - 默认: `true`
  * - 二号: `"all"`
- * - 三号: `['kootTest2']`
+ * - 三号: `['kootTest2', 'kootTest3']`
  * - 0.6版配置: `false`
  *
  * **sessionStore**
@@ -399,7 +399,7 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
                     document.querySelector('a[href$="/static"]').click();
                 })
             ]).catch(e => (err = e));
-            if (err) console.log(err);
+            if (err) console.error(err);
             expect(typeof err).toBe('undefined');
         }
 
@@ -1054,7 +1054,8 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
         const { cookie: result } = SSRStateServer;
         const validResult = {
             kootTest: 'valueForKootTest',
-            kootTest2: 'valueForKootTest2'
+            kootTest2: 'valueForKootTest2',
+            kootTest3: 'koot=koot==koot==='
         };
 
         if (cookiesToStore === true) {
@@ -1137,7 +1138,7 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
 
     // 测试: 没有失败的请求
     if (failedResponse.length) {
-        console.log(
+        console.error(
             'failedResponse',
             failedResponse.map(res => ({
                 status: res.status(),
@@ -1178,6 +1179,7 @@ const afterTest = async (cwd, title) => {
     // 移除临时项目配置文件
     await removeTempProjectConfig(cwd);
 
+    // eslint-disable-next-line no-console
     console.log(
         chalk.green('√ ') +
             chalk.green(`${(Date.now() - lastTime) / 1000}s `) +
@@ -1413,7 +1415,7 @@ describe('测试: React 同构项目', () => {
                     'koot.config.no-bundles-keep.js',
                     'isomorphic-no_bundles_keep',
                     {
-                        cookiesToStore: ['kootTest2']
+                        cookiesToStore: ['kootTest2', 'kootTest3']
                     }
                 );
 

@@ -2,6 +2,11 @@
 
 -   更新依赖包 minor 和 patch 版本号
 
+**koot**
+
+-   错误修正
+    -   `cookiesToStore` 为 `'all'` 时，部分带有 `=` 的值处理错误 ([#177](https://github.com/cmux/koot/issues/177))
+
 **koot-boilerplate**
 
 -   为日文添加更合适的字体

@@ -49,7 +49,7 @@
         "cheerio": "^1.0.0-rc.3",
         "crlf": "^1.1.1",
         "eslint": "^6.4.0",
-        "eslint-config-koot": "^1.4.0",
+        "eslint-config-koot": "^1.5.0",
         "fs-extra": "^8.1.0",
         "husky": "^3.0.5",
         "inquirer": "^7.0.0",

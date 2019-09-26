@@ -30,7 +30,8 @@ const beforeRouterMatch = async ({ store, ctx, syncCookie, callback }) => {
                 theCookies.split(';').forEach(str => {
                     const crumbs = str.split('=');
                     if (crumbs.length > 1) {
-                        data[crumbs[0].trim()] = crumbs[1].trim();
+                        const [key, ...values] = crumbs;
+                        data[key.trim()] = values.join('=').trim();
                     }
                 });
             } else {

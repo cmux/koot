@@ -10,7 +10,7 @@
 
 `Pathname` 类型表示到对应文件的路径名，支持绝对路径和相对路径，相对路径必须以 `.` 开头。
 
-`Pathname:[type]` 类型表示到对应文件的路径名，对应的文件必须是 `.js` `.jsx` 或 `.mjs` 文件，同时输出对应类型的结果。如 `Pathname:Object` 表示对应到 js 文件，该文件需要输出 `Object` 类型。
+`Pathname:[type]` 类型表示到对应文件的路径名，对应的文件必须是 `.js` `.jsx` `.mjs` `.cjs` `.ts` 或 `.tsx` 文件，同时输出对应类型的结果。如 `Pathname:Object` 表示对应到 js 文件，该文件需要输出 `Object` 类型。
 
 **简单配置示例**
 

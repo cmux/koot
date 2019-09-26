@@ -19,6 +19,6 @@ module.exports = {
         __KOOT_PROJECT_CONFIG_PATHNAME__: 'readonly'
     },
     rules: {
-        'no-console': 0
+        // 'no-console': 0
     }
 };

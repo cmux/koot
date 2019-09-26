@@ -17,7 +17,7 @@ module.exports = Object.assign({}, baseConfig, {
         return;
     },
 
-    cookiesToStore: ['kootTest2'],
+    cookiesToStore: ['kootTest2', 'kootTest3'],
     sessionStore: {
         app: {
             name: true
