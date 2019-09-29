@@ -11,10 +11,13 @@ module.exports = {
         '__FILE_PROJECT_CONFIG_TEMP_PORTION_SERVER__',
     keyFileProjectConfigTempPortionClient:
         '__FILE_PROJECT_CONFIG_TEMP_PORTION_CLIENT__',
+    keyFileProjectConfigTempPortionOtherClient:
+        '__FILE_PROJECT_CONFIG_TEMP_PORTION_OTHER_CLIENT__',
     dirConfigTemp: 'logs/tmp/config',
     filenameProjectConfigTempFull: 'full.*.js',
     filenameProjectConfigTempPortionServer: 'portion.server.*.js',
     filenameProjectConfigTempPortionClient: 'portion.client.*.js',
+    filenameProjectConfigTempPortionOtherClient: 'portion.client-other.*.js',
     propertiesToExtract: [
         ['name', ''],
         ['type', 'react'],

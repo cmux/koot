@@ -15,6 +15,12 @@ module.exports = (portion = false) => {
             ? process.env.KOOT_PROJECT_CONFIG_PORTION_CLIENT_PATHNAME
             : path.resolve(getCwd(), 'koot.js');
     }
+    if (portion === 'client-other') {
+        return typeof process.env
+            .KOOT_PROJECT_CONFIG_PORTION_OTHER_CLIENT_PATHNAME === 'string'
+            ? process.env.KOOT_PROJECT_CONFIG_PORTION_OTHER_CLIENT_PATHNAME
+            : path.resolve(getCwd(), 'koot.js');
+    }
     if (portion) {
         return typeof process.env
             .KOOT_PROJECT_CONFIG_PORTION_SERVER_PATHNAME === 'string'

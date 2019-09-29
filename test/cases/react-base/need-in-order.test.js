@@ -334,7 +334,7 @@ const doTest = async (port, dist, settings = {}) => {
                 waitUntil: 'networkidle2'
             });
 
-            let { result, oldTitle } = await page.evaluate(
+            const { result, oldTitle } = await page.evaluate(
                 (changedTitle, changedMetas) => {
                     const r = {
                         oldTitle: document.title
@@ -367,7 +367,7 @@ const doTest = async (port, dist, settings = {}) => {
 
             await sleep(1000);
 
-            result = await page.evaluate(
+            const result2 = await page.evaluate(
                 (oldTitle, changedTitle, changedMetas) => {
                     if (changedTitle && document.title === oldTitle)
                         return 'title has not changed';
@@ -390,7 +390,7 @@ const doTest = async (port, dist, settings = {}) => {
 
             await context.close();
 
-            return result;
+            return result2;
         };
 
         expect(await test(true, false)).toBe(true);
@@ -411,6 +411,23 @@ const doTest = async (port, dist, settings = {}) => {
         expect(title.includes('Policies')).toBe(true);
     }
 
+    // 测试: store 文件只会引用一次
+    {
+        const context = await browser.createIncognitoBrowserContext();
+        const page = await context.newPage();
+        await page.goto(origin, {
+            waitUntil: 'networkidle2'
+        });
+
+        const count = await page.evaluate(
+            () => window.__REDUX_STOER_RUN_COUNT__
+        );
+
+        await context.close();
+
+        expect(count).toBe(1);
+    }
+
     await puppeteerTestStyles(page);
     await puppeteerTestCustomEnv(page, customEnv);
     await puppeteerTestInjectScripts(page);
@@ -421,6 +438,7 @@ const doTest = async (port, dist, settings = {}) => {
 
     // 测试: 没有失败的请求
     if (failedResponse.length) {
+        // eslint-disable-next-line no-console
         console.log(
             'failedResponse',
             failedResponse.map(res => ({
@@ -459,6 +477,7 @@ const afterTest = async (cwd, title) => {
     // 移除临时项目配置文件
     await removeTempProjectConfig(cwd);
 
+    // eslint-disable-next-line no-console
     console.log(
         chalk.green('√ ') +
             chalk.green(`${(Date.now() - lastTime) / 1000}s `) +

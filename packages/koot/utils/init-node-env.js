@@ -52,6 +52,7 @@ module.exports = () => {
         // KOOT_PROJECT_CONFIG_FULL_PATHNAME: ...,
         // KOOT_PROJECT_CONFIG_PORTION_SERVER_PATHNAME: ...,
         // KOOT_PROJECT_CONFIG_PORTION_CLIENT_PATHNAME: ...,
+        // KOOT_PROJECT_CONFIG_PORTION_OTHER_CLIENT_PATHNAME: ...,
 
         // Koot 打包配置文件路径 (./koot.build.js)。默认不存在。如果存在则默认使用
         // KOOT_BUILD_CONFIG_PATHNAME: ...,

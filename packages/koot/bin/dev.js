@@ -15,6 +15,7 @@ const {
     keyFileProjectConfigTempFull,
     keyFileProjectConfigTempPortionServer,
     keyFileProjectConfigTempPortionClient,
+    keyFileProjectConfigTempPortionOtherClient,
     filenameWebpackDevServerPortTemp,
     filenameBuilding
     // filenameBuildFail,
@@ -158,7 +159,8 @@ const run = async () => {
         devPort,
         [keyFileProjectConfigTempFull]: fileProjectConfigTempFull,
         [keyFileProjectConfigTempPortionServer]: fileProjectConfigTempPortionServer,
-        [keyFileProjectConfigTempPortionClient]: fileProjectConfigTempPortionClient
+        [keyFileProjectConfigTempPortionClient]: fileProjectConfigTempPortionClient,
+        [keyFileProjectConfigTempPortionOtherClient]: fileProjectConfigTempPortionOtherClient
     } = kootConfig;
     const [devMemoryAllocationClient, devMemoryAllocationServer] = (() => {
         const { devMemoryAllocation } = kootConfig;
@@ -195,6 +197,8 @@ const run = async () => {
         process.env.KOOT_PROJECT_CONFIG_PORTION_SERVER_PATHNAME = fileProjectConfigTempPortionServer;
     if (fileProjectConfigTempPortionClient)
         process.env.KOOT_PROJECT_CONFIG_PORTION_CLIENT_PATHNAME = fileProjectConfigTempPortionClient;
+    if (fileProjectConfigTempPortionOtherClient)
+        process.env.KOOT_PROJECT_CONFIG_PORTION_OTHER_CLIENT_PATHNAME = fileProjectConfigTempPortionOtherClient;
 
     // 如果为 SPA，强制设置 STAGE
     if (process.env.WEBPACK_BUILD_TYPE === 'spa') {
@@ -245,6 +249,7 @@ const run = async () => {
 
         if (Array.isArray(processes) && processes.length) {
             if (waitingSpinner) waitingSpinner.stop();
+            // eslint-disable-next-line no-console
             if (!silent) console.log(' ');
 
             // if (!silent)
@@ -314,12 +319,14 @@ const run = async () => {
             try {
                 process.kill(process.pid);
             } catch (e) {}
-            if (!error)
+            if (!error) {
+                // eslint-disable-next-line no-console
                 console.log(
                     '\n\n\n' +
                         chalk.cyanBright('Press CTRL+C again to exit.') +
                         '\n\n'
                 );
+            }
             process.exit(1);
         } catch (e) {
             console.error(e);
@@ -382,6 +389,7 @@ const run = async () => {
         const cmd = `koot-build --stage ${stage} ${buildCmdArgs}`;
         const child = npmRunScript(cmd, {});
         child.once('error', error => {
+            // eslint-disable-next-line no-console
             console.trace(error);
             process.exit(1);
         });
@@ -413,14 +421,18 @@ const run = async () => {
             await new Promise(resolve => {
                 setTimeout(() => {
                     log('success', 'dev', __('dev.spa_success'));
+                    // eslint-disable-next-line no-console
                     console.log(
                         '           @ ' +
                             chalk.green(
                                 `http://localhost:${process.env.SERVER_PORT}/`
                             )
                     );
+                    // eslint-disable-next-line no-console
                     console.log(' ');
+                    // eslint-disable-next-line no-console
                     console.log('------------------------------');
+                    // eslint-disable-next-line no-console
                     console.log(' ');
                     resolve();
                 }, 500);
@@ -575,6 +587,7 @@ const run = async () => {
                 process.exit(2);
             }
 
+            // eslint-disable-next-line no-console
             console.log(
                 `  ` +
                     chalk.yellowBright('[koot/build] ') +
@@ -607,6 +620,7 @@ const run = async () => {
             //         .then(encounterError)
             // ])
             // waitingSpinner.succeed()
+            // eslint-disable-next-line no-console
             console.log(
                 chalk.green('√ ') +
                     chalk.yellowBright('[koot/build] ') +
@@ -630,6 +644,7 @@ const run = async () => {
             //         env: chalk.green('dev'),
             //     })
             // )
+            // eslint-disable-next-line no-console
             console.log(
                 `  ` +
                     chalk.yellowBright('[koot/build] ') +
@@ -652,6 +667,7 @@ const run = async () => {
             // )
 
             await sleep(500);
+            // eslint-disable-next-line no-console
             console.log(
                 chalk.green('√ ') +
                     chalk.yellowBright('[koot/build] ') +
@@ -694,8 +710,11 @@ const run = async () => {
                 errServerRun
             ) {
                 // 出错
+                // eslint-disable-next-line no-console
                 console.log(' ');
+                // eslint-disable-next-line no-console
                 console.log(chalk.redBright(errServerRun));
+                // eslint-disable-next-line no-console
                 console.log(' ');
                 return await exitHandler({
                     silent: true

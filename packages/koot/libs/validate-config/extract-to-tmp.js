@@ -124,10 +124,15 @@ module.exports = async (projectDir, config) => {
         delete tmpConfigPortionServer.server.onRender;
 
     const tmpConfigPortionClient = { ...tmpConfigPortionServer };
+    const tmpConfigPortionOtherClient = { ...tmpConfig };
     delete tmpConfigPortionServer.redux;
     delete tmpConfigPortionServer.devServer;
     delete tmpConfigPortionClient.server;
     delete tmpConfigPortionClient.devServer;
+    delete tmpConfigPortionOtherClient.redux;
+    delete tmpConfigPortionOtherClient.template;
+    delete tmpConfigPortionOtherClient.server;
+    delete tmpConfigPortionOtherClient.devServer;
 
     /**
      * 将对象结果转为字符串
@@ -156,6 +161,9 @@ module.exports = async (projectDir, config) => {
             transform(tmpConfigPortionServer),
         tmpConfigPortionClient:
             '// 核心代码中引用的配置文件 (部分)\n\n' +
-            transform(tmpConfigPortionClient)
+            transform(tmpConfigPortionClient),
+        tmpConfigPortionOtherClient:
+            '// 核心代码中引用的配置文件 (部分其他)\n\n' +
+            transform(tmpConfigPortionOtherClient)
     };
 };

@@ -1,4 +1,4 @@
-import * as fullConfig from '__KOOT_PROJECT_CONFIG_FULL_PATHNAME__';
+import * as fullConfig from '__KOOT_PROJECT_CONFIG_PORTION_OTHER_CLIENT_PATHNAME__';
 
 import React from 'react';
 import { hydrate } from 'react-dom';
@@ -78,6 +78,7 @@ const routes = validateRouterConfig(routerConfig);
 const routerProps = {
     onUpdate: (...args) => {
         if (__DEV__ && logCountRouterUpdate < 2) {
+            // eslint-disable-next-line no-console
             console.log(`🚩 [koot/client] callback: onRouterUpdate`, ...args);
             logCountRouterUpdate++;
         }
@@ -91,6 +92,7 @@ i18nRegister();
 
 // 客户端流程正式开始
 // 生命周期: 客户端流程正式开始前
+// eslint-disable-next-line no-console
 if (__DEV__) console.log(`🚩 [koot/client] callback: before`);
 parseLifecycleMethod(before)
     .then(() => {
@@ -105,6 +107,7 @@ parseLifecycleMethod(before)
             Store.dispatch(actionUpdate(location));
 
             if (__DEV__ && logCountHistoryUpdate < 2) {
+                // eslint-disable-next-line no-console
                 console.log(`🚩 [koot/client] callback: onHistoryUpdate`, [
                     location,
                     Store
@@ -180,6 +183,7 @@ parseLifecycleMethod(before)
         ])
             .then(doHydrate)
             .catch(err => {
+                // eslint-disable-next-line no-console
                 console.log(
                     '\n⚛️Page may flash blank due to `react-router` match failed!'
                 );
@@ -190,6 +194,7 @@ parseLifecycleMethod(before)
     .then(() => {
         // 生命周期: 客户端流程结束
         if (__DEV__) {
+            // eslint-disable-next-line no-console
             console.log(`🚩 [koot/client] callback: after`);
         }
     })

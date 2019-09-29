@@ -86,7 +86,7 @@ const plugins = async (
         defines
     );
 
-    for (let key in thisDefines) {
+    for (const key in thisDefines) {
         if (typeof thisDefines[key] === 'function')
             thisDefines[key] = thisDefines[key]();
     }
@@ -154,6 +154,10 @@ const plugins = async (
         [
             /^__KOOT_PROJECT_CONFIG_PORTION_CLIENT_PATHNAME__$/,
             getPathnameProjectConfigFile('client')
+        ],
+        [
+            /^__KOOT_PROJECT_CONFIG_PORTION_OTHER_CLIENT_PATHNAME__$/,
+            getPathnameProjectConfigFile('client-other')
         ],
         [
             /^__KOOT_HOC_EXTEND__$/,

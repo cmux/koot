@@ -7,9 +7,11 @@ const {
     keyFileProjectConfigTempFull,
     keyFileProjectConfigTempPortionServer,
     keyFileProjectConfigTempPortionClient,
+    keyFileProjectConfigTempPortionOtherClient,
     filenameProjectConfigTempFull,
     filenameProjectConfigTempPortionServer,
     filenameProjectConfigTempPortionClient,
+    filenameProjectConfigTempPortionOtherClient,
     propertiesToExtract: _propertiesToExtract,
     dirConfigTemp: _dirConfigTemp,
     WEBPACK_OUTPUT_PATH
@@ -29,6 +31,7 @@ const __ = require('../../utils/translate');
  * - `KOOT_PROJECT_CONFIG_FULL_PATHNAME` 项目配置文件路径，包含所有需要引用的内容 (临时使用)
  * - `KOOT_PROJECT_CONFIG_PORTION_SERVER_PATHNAME` 项目配置文件路径，包含部分需要引用的内容 (服务器端临时使用)
  * - `KOOT_PROJECT_CONFIG_PORTION_CLIENT_PATHNAME` 项目配置文件路径，包含部分需要引用的内容 (客户端临时使用)
+ * - `KOOT_PROJECT_CONFIG_PORTION_OTHER_CLIENT_PATHNAME` 项目配置文件路径，包含部分其他需要引用的内容 (客户端临时使用)
  *
  * 兼容情况
  * - _0.8_: 当前版本
@@ -46,7 +49,7 @@ const validateConfig = async (projectDir = getCwd(), options = {}) => {
     const { configFilename = 'koot.config.js', tmpDir } = options;
 
     /** @type {String} 配置文件路径名 */
-    let fileConfig =
+    const fileConfig =
         typeof process.env.KOOT_BUILD_CONFIG_PATHNAME === 'string'
             ? process.env.KOOT_BUILD_CONFIG_PATHNAME
             : path.resolve(projectDir, configFilename);
@@ -120,7 +123,9 @@ const validateConfig = async (projectDir = getCwd(), options = {}) => {
             [keyFileProjectConfigTempPortionServer]:
                 process.env.KOOT_PROJECT_CONFIG_PORTION_SERVER_PATHNAME,
             [keyFileProjectConfigTempPortionClient]:
-                process.env.KOOT_PROJECT_CONFIG_PORTION_CLIENT_PATHNAME
+                process.env.KOOT_PROJECT_CONFIG_PORTION_CLIENT_PATHNAME,
+            [keyFileProjectConfigTempPortionOtherClient]:
+                process.env.KOOT_PROJECT_CONFIG_PORTION_OTHER_CLIENT_PATHNAME
         };
     }
 
@@ -128,7 +133,8 @@ const validateConfig = async (projectDir = getCwd(), options = {}) => {
     const {
         tmpConfig,
         tmpConfigPortionServer,
-        tmpConfigPortionClient
+        tmpConfigPortionClient,
+        tmpConfigPortionOtherClient
     } = await require('./extract-to-tmp')(projectDir, kootConfig);
 
     // 写入项目配置文件 (临时)
@@ -170,11 +176,26 @@ const validateConfig = async (projectDir = getCwd(), options = {}) => {
         'utf-8'
     );
 
+    const pathTmpConfigPortionOtherClient = path.resolve(
+        dirConfigTemp,
+        filenameProjectConfigTempPortionOtherClient.replace(
+            /\*/g,
+            process.env.KOOT_DEV_START_TIME
+        )
+    );
+    process.env.KOOT_PROJECT_CONFIG_PORTION_OTHER_CLIENT_PATHNAME = pathTmpConfigPortionOtherClient;
+    await fs.writeFile(
+        pathTmpConfigPortionOtherClient,
+        tmpConfigPortionOtherClient,
+        'utf-8'
+    );
+
     return {
         ...(await finalValidate(kootConfig)),
         [keyFileProjectConfigTempFull]: pathTmpConfig,
         [keyFileProjectConfigTempPortionServer]: pathTmpConfigPortionServer,
-        [keyFileProjectConfigTempPortionClient]: pathTmpConfigPortionClient
+        [keyFileProjectConfigTempPortionClient]: pathTmpConfigPortionClient,
+        [keyFileProjectConfigTempPortionOtherClient]: pathTmpConfigPortionOtherClient
     };
 };
 
