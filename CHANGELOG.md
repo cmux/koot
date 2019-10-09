@@ -1,5 +1,12 @@
 ## [Unreleased]
 
+-   更新依赖包 minor 和 patch 版本号
+
+**koot**
+
+-   错误修正
+    -   SPA 项目无法使用 `analyze` 命令的问题
+
 ## [0.11.14] - 2019-09-29
 
 -   更新依赖包 minor 和 patch 版本号

@@ -1,8 +1,10 @@
+/* eslint-disable no-console */
+
 const fs = require('fs');
 const path = require('path');
 
 // const ignore = "koot-@(cli|boilerplate|boilerplate-*)"
-const ignore = 'koot-cli';
+const ignore = 'koot-@(cli|boilerplate-legacy)';
 
 const runCmd = async cmd => {
     // print name

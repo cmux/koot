@@ -148,3 +148,8 @@ export const getInjectedMetaTags = () => {
 
     return injectedMetaTags;
 };
+
+/** _仅针对客户端_ 标记已初始化 */
+export const markInited = () => {
+    inited = true;
+};
