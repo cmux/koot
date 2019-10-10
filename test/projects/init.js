@@ -5,12 +5,12 @@ const path = require('path');
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 const chalk = require('chalk');
+const symlinkDir = require('symlink-dir');
 
 const spinner = require('../../packages/koot/utils/spinner');
 const getProjects = require('./get');
 
-const kootDirRelative = '../../packages/koot';
-const kootWebpackDirRelative = '../../packages/koot-webpack';
+const internalPackages = ['koot', 'koot-webpack'];
 
 /**
  * 初始化所有测试项目
@@ -33,10 +33,10 @@ const initProject = async name => {
     const cwd = path.resolve(__dirname, name);
     const filePackagejson = path.resolve(cwd, 'package.json');
     const pkgKoot = await fs.readJson(
-        path.resolve(__dirname, kootDirRelative, 'package.json')
+        path.resolve(__dirname, '../../packages/koot/package.json')
     );
     const pkgKootWebpack = await fs.readJson(
-        path.resolve(__dirname, kootWebpackDirRelative, 'package.json')
+        path.resolve(__dirname, '../../packages/koot-webpack/package.json')
     );
     // const title = `测试项目 ${name}`
     const titleInTerminal = '测试项目 ' + chalk.yellow(name);
@@ -52,8 +52,6 @@ const initProject = async name => {
 
         // koot -> 本地
         if (typeof pkg.dependencies !== 'object') pkg.dependencies = {};
-        pkg.dependencies.koot = `file:../${kootDirRelative}`;
-        pkg.dependencies['koot-webpack'] = `file:../${kootWebpackDirRelative}`;
 
         // 清空 devDependencies
         delete pkg.devDependencies;
@@ -63,21 +61,16 @@ const initProject = async name => {
             ...pkgKoot.dependencies,
             ...pkgKootWebpack.dependencies
         };
-        delete pkg.devDependencies.koot;
-        delete pkg.devDependencies['koot-webpack'];
 
-        // 将所有 devDependencies 指向到项目根层的 node_modules
-        // for (const name of Object.keys(pkg.devDependencies)) {
-        //     if (
-        //         fs.existsSync(
-        //             path.resolve(__dirname, '../../node_modules', name)
-        //         )
-        //     ) {
-        //         pkg.devDependencies[
-        //             name
-        //         ] = `file:../../../node_modules/${name}`;
-        //     }
-        // }
+        // 移除所有内部包依赖
+        for (const internalPackage of internalPackages) {
+            // if (typeof pkg.dependencies === 'object')
+            //     delete pkg.dependencies[internalPackage];
+            pkg.dependencies[
+                internalPackage
+            ] = `file:../../../packages/${internalPackage}`;
+            delete pkg.devDependencies[internalPackage];
+        }
 
         // 添加命令
         const commands = [
@@ -112,23 +105,30 @@ const initProject = async name => {
         );
         waiting.stop();
         if (stderr) {
-            if (!/^npm WARN/.test(stderr)) return error(stderr);
+            if (!/^npm WARN/.test(stderr)) {
+                console.warn(stderr);
+            } else {
+                error(stderr);
+            }
         } else {
         }
     }
 
-    // symlink node_modules -> 根层
-    // {
-    //     // await fs.remove(path.resolve(cwd, 'node_modules'));
-    //     await fs
-    //         .ensureLink(
-    //             path.resolve(__dirname, '../../node_modules'),
-    //             path.resolve(cwd, 'node_modules')
-    //         )
-    //         .catch(err => {
-    //             console.error(err);
-    //         });
-    // }
+    // symlink 内部包
+    for (const name of internalPackages) {
+        // await fs.remove(path.resolve(cwd, 'node_modules', name));
+        await symlinkDir(
+            path.resolve(__dirname, '../../packages', name),
+            path.resolve(cwd, 'node_modules', name)
+        ).catch(err => {
+            console.error(err);
+        });
+        // console.log(
+        //     path.resolve(__dirname, '../../packages', name),
+        //     path.resolve(cwd, 'node_modules', name),
+        //     r
+        // );
+    }
 
     // 标记成功
     spinner(titleInTerminal).succeed();

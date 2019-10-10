@@ -32,7 +32,7 @@ const run = async () => {
     );
 
     if (lernaInstalled) await runCmd(`lerna clean --yes --ignore "${ignore}"`);
-    await runCmd('npm install --no-save');
+    await runCmd('npm install --no-package-lock');
     await runCmd(`lerna bootstrap --hoist --ignore "${ignore}"`);
 
     //
