@@ -35,6 +35,7 @@ const getDirTemp = require('koot/libs/get-dir-tmp');
 const getFilenameSPATemplateInject = require('koot/libs/get-filename-spa-template-inject');
 const validatePathname = require('koot/libs/validate-pathname');
 const isI18nEnabled = require('koot/i18n/is-enabled');
+const getModuleVersion = require('koot/utils/get-module-version');
 
 /**
  * Webpack 配置处理 - 客户端配置
@@ -134,6 +135,22 @@ module.exports = async (kootConfigForThisBuild = {}) => {
             );
 
         if (isSPATemplateInject) {
+            const optimization = {
+                splitChunks: false,
+                removeAvailableModules: false,
+                removeEmptyChunks: false,
+                mergeDuplicateChunks: false,
+                // occurrenceOrder: false,
+                concatenateModules: false,
+                minimize: false
+            };
+            try {
+                if (parseInt(getModuleVersion('webpack')) < 5) {
+                    optimization.occurrenceOrder = false;
+                }
+            } catch (e) {
+                optimization.occurrenceOrder = false;
+            }
             Object.assign(result, {
                 target: 'async-node',
                 entry: validatePathname(templateInject, getCwd()),
@@ -141,15 +158,7 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                     filename: getFilenameSPATemplateInject(localeId),
                     path: getDirTemp()
                 },
-                optimization: {
-                    splitChunks: false,
-                    removeAvailableModules: false,
-                    removeEmptyChunks: false,
-                    mergeDuplicateChunks: false,
-                    occurrenceOrder: false,
-                    concatenateModules: false,
-                    minimize: false
-                },
+                optimization,
                 [keyConfigWebpackSPATemplateInject]: true,
                 stats: 'errors-only'
             });
@@ -279,7 +288,17 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                         ...webpackCompilerHook
                     })
                 );
-                result.plugins.push(new webpack.NamedModulesPlugin());
+                try {
+                    if (parseInt(getModuleVersion('webpack')) >= 5) {
+                        if (typeof result.optimization !== 'object')
+                            result.optimization = {};
+                        result.optimization.moduleIds = 'named';
+                    } else {
+                        result.plugins.push(new webpack.NamedModulesPlugin());
+                    }
+                } catch (e) {
+                    result.plugins.push(new webpack.NamedModulesPlugin());
+                }
                 result.plugins.push(
                     new webpack.HotModuleReplacementPlugin(
                         Object.assign({}, hmrOptions, webpackHmr)

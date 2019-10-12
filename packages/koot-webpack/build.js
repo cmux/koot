@@ -773,6 +773,8 @@ module.exports = async (kootConfig = {}) => {
                         }
 
                         setTimeout(() => resolve(), 100);
+
+                        compiler.close();
                     });
                 });
             } catch (e) {
