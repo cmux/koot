@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 process.env.DO_WEBPACK = true;
 
 //
