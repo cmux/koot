@@ -26,7 +26,8 @@
         "node": ">= 8.9.0"
     },
     "dependencies": {
-        "webpack": "^4.41.0",
+        "@types/webpack": "^4.39.3",
+        "webpack": "^4.41.1",
         "webpack-bundle-analyzer": "^3.5.2",
         "webpack-config": "^7.5.0",
         "webpack-dev-middleware": "^3.7.2",
