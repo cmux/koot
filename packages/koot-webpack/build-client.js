@@ -18,7 +18,7 @@ const webpackBuildClient = async (config = {}) => {
     return new Promise((resolve, reject) => {
         try {
             compiler.run((...args) => {
-                compiler.close();
+                if (typeof compiler.close === 'function') compiler.close();
                 resolve(...args);
             });
         } catch (err) {

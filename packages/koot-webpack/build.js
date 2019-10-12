@@ -774,7 +774,8 @@ module.exports = async (kootConfig = {}) => {
 
                         setTimeout(() => resolve(), 100);
 
-                        compiler.close();
+                        if (typeof compiler.close === 'function')
+                            compiler.close();
                     });
                 });
             } catch (e) {
