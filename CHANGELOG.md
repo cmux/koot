@@ -1,11 +1,13 @@
 ## [Unreleased]
 
+## [0.11.15] - 2019-10-15
+
 -   更新依赖包 minor 和 patch 版本号
 
 **koot**
 
 -   优化
-    -   现在可零配置正常使用 _SASS_ 了
+    -   现在可零配置正常使用 _SASS_ 了 ([#179](https://github.com/cmux/koot/issues/179))
 -   错误修正
     -   SPA 项目无法使用 `analyze` 命令的问题
 
