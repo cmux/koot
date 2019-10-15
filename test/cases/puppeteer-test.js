@@ -131,7 +131,7 @@ const injectScripts = async page => {
  * 访问隐藏文件返回 404
  */
 const requestHidden404 = async (origin, browser) => {
-    let needToClose = !browser;
+    const needToClose = !browser;
 
     if (!browser)
         browser = await puppeteer.launch({
@@ -162,7 +162,7 @@ const requestHidden404 = async (origin, browser) => {
  * @returns {Promise}
  */
 const criticalAssetsShouldBeGzip = async (origin, dist, browser) => {
-    let needToClose = !browser;
+    const needToClose = !browser;
 
     if (!browser)
         browser = await puppeteer.launch({

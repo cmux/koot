@@ -428,6 +428,33 @@ const doTest = async (port, dist, settings = {}) => {
         expect(count).toBe(1);
     }
 
+    // 测试: SASS
+    {
+        const context = await browser.createIncognitoBrowserContext();
+        const page = await context.newPage();
+        await page.goto(origin + '/sass-test', {
+            waitUntil: 'networkidle2'
+        });
+
+        const { container, nested } = await page.evaluate(() => {
+            const container = document.getElementById('__test-sass');
+            if (!container) return {};
+            const nested = container.querySelector('.nested');
+            if (!nested) return {};
+            return {
+                container: parseInt(
+                    window.getComputedStyle(container).fontSize
+                ),
+                nested: parseInt(window.getComputedStyle(nested).fontSize)
+            };
+        });
+
+        await context.close();
+
+        expect(container).toBe(20);
+        expect(nested).toBe(40);
+    }
+
     await puppeteerTestStyles(page);
     await puppeteerTestCustomEnv(page, customEnv);
     await puppeteerTestInjectScripts(page);
