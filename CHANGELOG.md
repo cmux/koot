@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+-   更新依赖包 minor 和 patch 版本号
+
 ## [0.11.15] - 2019-10-15
 
 -   更新依赖包 minor 和 patch 版本号

@@ -1,6 +1,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 const webpack = require('webpack');
+
 const {
     keyConfigBuildDll,
     filenameDll,
@@ -9,6 +10,8 @@ const {
     WEBPACK_OUTPUT_PATH
 } = require('koot/defaults/before-build');
 const getDirDevDll = require('koot/libs/get-dir-dev-dll');
+
+const forWebpackVersion = require('../libs/for-webpack-version');
 
 /**
  * Webpack 配置处理 - 最终处理
@@ -101,7 +104,7 @@ const transform = async (config, kootConfigForThisBuild = {}) => {
 const validate = (config, kootConfigForThisBuild) => {
     // try to fix a pm2 bug that will currupt [name] value
     if (typeof config.output === 'object') {
-        for (let key in config.output) {
+        for (const key in config.output) {
             if (typeof config.output[key] === 'string')
                 config.output[key] = config.output[key].replace(
                     /-_-_-_-_-_-(.+?)-_-_-_-_-_-/g,
@@ -131,6 +134,27 @@ const validate = (config, kootConfigForThisBuild) => {
     delete config.analyzer;
     delete config.htmlPath;
     delete config[keyConfigOutputPathShouldBe];
+
+    // 针对 Webpack 4 处理
+    forWebpackVersion('4.x', () => {
+        // 这些选项会在 Webpack 5 中移除，对应 Webpack 4 的 false 配置
+        if (typeof config.node !== 'object') config.node = {};
+        config.node.Buffer = false;
+        config.node.process = false;
+    });
+
+    // 针对 Webpack 5 处理
+    forWebpackVersion('>= 5.0.0', () => {
+        // 确保 `mode` 存在
+        if (typeof config.mode === 'undefined') {
+            config.mode = 'production';
+        }
+        // 移除已删除的选项
+        if (typeof config.node === 'object') {
+            delete config.node.Buffer;
+            delete config.node.process;
+        }
+    });
 
     // 修改本次打包的 Koot 完整配置对象
     kootConfigForThisBuild[WEBPACK_OUTPUT_PATH] = config.output.path;
