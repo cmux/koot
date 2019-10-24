@@ -26,13 +26,13 @@
         "node": ">= 8.9.0"
     },
     "dependencies": {
-        "@types/webpack": "^4.39.3",
+        "@types/webpack": "^4.39.5",
         "semver": "^6.3.0",
         "webpack": "^4.41.2",
-        "webpack-bundle-analyzer": "^3.5.2",
+        "webpack-bundle-analyzer": "^3.6.0",
         "webpack-config": "^7.5.0",
         "webpack-dev-middleware": "^3.7.2",
-        "webpack-dev-server": "^3.8.2",
+        "webpack-dev-server": "^3.9.0",
         "webpack-hot-middleware": "^2.25.0"
     },
     "devDependencies": {

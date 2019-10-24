@@ -60,7 +60,7 @@
         "jest": "^24.9.0",
         "jsdom": "^15.2.0",
         "latest-version": "^5.1.0",
-        "lerna": "^3.18.1",
+        "lerna": "^3.18.3",
         "lerna-wizard": "^1.1.1",
         "lint-staged": "^9.4.2",
         "prettier": "^1.18.2",
