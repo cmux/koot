@@ -89,8 +89,10 @@ const getExtracted = (localeId, compilation) => {
         // }" />`;
     }
 
-    return `<style id="__koot-extracted-styles" type="text/css">${content}</style>`;
+    return `<style id="__koot-extracted-styles" type="text/css" ${__STYLE_TAG_GLOBAL_ATTR_NAME__}>${content}</style>`;
 };
+
+// const functionNameLinkOnLoad = '__KOOT_GLOBAL_STYLE_ON_LOAD__';
 
 /**
  * 返回 link 标签
@@ -104,7 +106,7 @@ const combineFilePaths = (...args) => {
     return pathnames
         .map(
             pathname =>
-                `<link id="__koot-extracted-styles" media="all" rel="stylesheet" href="${pathname}" />`
+                `<link id="__koot-extracted-styles" media="all" rel="stylesheet" href="${pathname}" ${__STYLE_TAG_GLOBAL_ATTR_NAME__} />`
         )
         .join('');
 };

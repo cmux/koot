@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // jest configuration
 jest.setTimeout(5 * 60 * 1 * 1000);
 
