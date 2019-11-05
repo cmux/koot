@@ -71,20 +71,22 @@ module.exports = require('babel-loader').custom(babel => {
             //     return preset
             // })
             if (stage === 'server') {
-                newPresets.map(preset => {
+                newPresets.forEach((preset, index) => {
                     if (
                         typeof preset.file === 'object' &&
                         /^@babel\/preset-env$/.test(preset.file.request)
                     ) {
-                        if (!preset.options) preset.options = {};
-                        preset.options.modules = false;
-                        preset.options.exclude = [
+                        const thisPreset = newPresets[index];
+                        if (typeof thisPreset.options !== 'object')
+                            thisPreset.options = {};
+                        thisPreset.options.modules = false;
+                        thisPreset.options.exclude = [
                             '@babel/plugin-transform-regenerator',
                             '@babel/plugin-transform-async-to-generator'
                         ];
-                        return preset;
+                        thisPreset.options.ignoreBrowserslistConfig = true;
+                        // console.log(thisPreset);
                     }
-                    return preset;
                 });
             }
 
