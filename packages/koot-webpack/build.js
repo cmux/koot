@@ -8,6 +8,7 @@ const path = require('path');
 const chalk = require('chalk');
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
+const findCacheDir = require('find-cache-dir');
 
 const resetCssLoader = require('./loaders/css/reset');
 
@@ -211,6 +212,13 @@ module.exports = async (kootConfig = {}) => {
 
         // 服务器环境
         if (STAGE === 'server') {
+            // 清理缓存
+            fs.removeSync(
+                findCacheDir({
+                    name: 'koot-webpack-server'
+                })
+            );
+
             // 清理已有的打包结果
             fs.ensureDirSync(path.resolve(dist, `server`));
             fs.emptyDirSync(path.resolve(dist, `server`));

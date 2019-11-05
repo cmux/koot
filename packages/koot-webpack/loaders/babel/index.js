@@ -10,11 +10,18 @@ module.exports = require('babel-loader').custom(babel => {
 
     return {
         // Passed the loader options.
-        customOptions({ __createDll, __react, __typescript, ...loader }) {
+        customOptions({
+            __createDll,
+            __react,
+            __typescript,
+            __server,
+            ...loader
+        }) {
             Object.assign(customOptions, {
                 __createDll,
                 __react,
-                __typescript
+                __typescript,
+                __server
             });
             // Pull out any custom options that the loader might have.
             return {
@@ -33,10 +40,12 @@ module.exports = require('babel-loader').custom(babel => {
             const {
                 __createDll,
                 __react,
-                __typescript = false
+                __typescript = false,
+                __server = false
             } = customOptions;
             const { presets, plugins, ...options } = cfg.options;
-            const stage = process.env.WEBPACK_BUILD_STAGE;
+            const isServer =
+                __server || process.env.WEBPACK_BUILD_STAGE === 'server';
             // console.log({ options });
 
             // presets ========================================================
@@ -70,25 +79,25 @@ module.exports = require('babel-loader').custom(babel => {
             //     }
             //     return preset
             // })
-            if (stage === 'server') {
-                newPresets.forEach((preset, index) => {
-                    if (
-                        typeof preset.file === 'object' &&
-                        /^@babel\/preset-env$/.test(preset.file.request)
-                    ) {
-                        const thisPreset = newPresets[index];
-                        if (typeof thisPreset.options !== 'object')
-                            thisPreset.options = {};
-                        thisPreset.options.modules = false;
-                        thisPreset.options.exclude = [
-                            '@babel/plugin-transform-regenerator',
-                            '@babel/plugin-transform-async-to-generator'
-                        ];
-                        thisPreset.options.ignoreBrowserslistConfig = true;
-                        // console.log(thisPreset);
-                    }
-                });
-            }
+            // if (isServer) {
+            //     newPresets.forEach((preset, index) => {
+            //         if (
+            //             typeof preset.file === 'object' &&
+            //             /^@babel\/preset-env$/.test(preset.file.request)
+            //         ) {
+            //             const thisPreset = newPresets[index];
+            //             if (typeof thisPreset.options !== 'object')
+            //                 thisPreset.options = {};
+            //             thisPreset.options.modules = false;
+            //             thisPreset.options.exclude = [
+            //                 '@babel/plugin-transform-regenerator',
+            //                 '@babel/plugin-transform-async-to-generator'
+            //             ];
+            //             thisPreset.options.ignoreBrowserslistConfig = true;
+            //             // console.log(thisPreset);
+            //         }
+            //     });
+            // }
 
             // plugins ========================================================
             const newPlugins = plugins.filter(plugin => {
@@ -101,14 +110,14 @@ module.exports = require('babel-loader').custom(babel => {
                 )
                     return false;
 
-                if (
-                    stage === 'server' &&
-                    typeof plugin.file === 'object' &&
-                    /@babel(\/|\\)plugin-transform-regenerator/.test(
-                        plugin.file.request
-                    )
-                )
-                    return false;
+                // if (
+                //     isServer &&
+                //     typeof plugin.file === 'object' &&
+                //     /@babel(\/|\\)plugin-transform-regenerator/.test(
+                //         plugin.file.request
+                //     )
+                // )
+                //     return false;
 
                 return true;
             });
@@ -145,12 +154,15 @@ module.exports = require('babel-loader').custom(babel => {
             // )
             // console.log('')
 
-            return {
+            const thisOptions = {
                 ...options,
                 // presets: presets,
                 presets: newPresets,
                 plugins: newPlugins
             };
+            // console.log(isServer);
+
+            return thisOptions;
         },
 
         result(result) {
