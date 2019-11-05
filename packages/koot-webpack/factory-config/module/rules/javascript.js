@@ -165,7 +165,7 @@ module.exports = (kootBuildConfig = {}) => {
             {
                 test: /\.(js|mjs|cjs|jsx)$/,
                 use: [
-                    ...ruleUseLoaders(),
+                    ...ruleUseLoaders({}),
                     require.resolve('../../../loaders/koot-dev-ssr.js')
                 ]
             },
@@ -184,11 +184,13 @@ module.exports = (kootBuildConfig = {}) => {
     return [
         {
             test: /\.(js|mjs|cjs|jsx)$/,
-            use: ruleUseBabelLoader()
+            use: ruleUseBabelLoader({})
         },
         {
             test: /\.(ts|tsx)$/,
-            use: ruleUseBabelLoader({ __typescript: true })
+            use: ruleUseBabelLoader({
+                __typescript: true
+            })
         }
     ];
 };

@@ -36,8 +36,10 @@ module.exports = require('babel-loader').custom(babel => {
                 __typescript = false
             } = customOptions;
             const { presets, plugins, ...options } = cfg.options;
+            const stage = process.env.WEBPACK_BUILD_STAGE;
             // console.log({ options });
 
+            // presets ========================================================
             const newPresets = [...presets];
             if (__typescript) {
                 newPresets.unshift([
@@ -68,7 +70,25 @@ module.exports = require('babel-loader').custom(babel => {
             //     }
             //     return preset
             // })
+            if (stage === 'server') {
+                newPresets.map(preset => {
+                    if (
+                        typeof preset.file === 'object' &&
+                        /^@babel\/preset-env$/.test(preset.file.request)
+                    ) {
+                        if (!preset.options) preset.options = {};
+                        preset.options.modules = false;
+                        preset.options.exclude = [
+                            '@babel/plugin-transform-regenerator',
+                            '@babel/plugin-transform-async-to-generator'
+                        ];
+                        return preset;
+                    }
+                    return preset;
+                });
+            }
 
+            // plugins ========================================================
             const newPlugins = plugins.filter(plugin => {
                 if (
                     typeof plugin.file === 'object' &&
@@ -78,14 +98,16 @@ module.exports = require('babel-loader').custom(babel => {
                         ))
                 )
                     return false;
-                // if (
-                //     process.env.WEBPACK_BUILD_STAGE === 'server' &&
-                //     typeof plugin.file === 'object' &&
-                //     /@babel(\/|\\)plugin-transform-regenerator/.test(
-                //         plugin.file.request
-                //     )
-                // )
-                //     return false;
+
+                if (
+                    stage === 'server' &&
+                    typeof plugin.file === 'object' &&
+                    /@babel(\/|\\)plugin-transform-regenerator/.test(
+                        plugin.file.request
+                    )
+                )
+                    return false;
+
                 return true;
             });
 
