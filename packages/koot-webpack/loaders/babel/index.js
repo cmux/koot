@@ -62,25 +62,28 @@ module.exports = require('babel-loader').custom(babel => {
                 ]);
                 // console.log(newPresets);
             }
-            // if (isServer) {
-            //     newPresets.forEach((preset, index) => {
-            //         if (
-            //             typeof preset.file === 'object' &&
-            //             /^@babel\/preset-env$/.test(preset.file.request)
-            //         ) {
-            //             const thisPreset = newPresets[index];
-            //             if (typeof thisPreset.options !== 'object')
-            //                 thisPreset.options = {};
-            //             thisPreset.options.modules = false;
-            //             thisPreset.options.exclude = [
-            //                 '@babel/plugin-transform-regenerator',
-            //                 '@babel/plugin-transform-async-to-generator'
-            //             ];
-            //             thisPreset.options.ignoreBrowserslistConfig = true;
-            //             // console.log(thisPreset);
-            //         }
-            //     });
-            // }
+            newPresets.forEach((preset, index) => {
+                if (
+                    typeof preset.file === 'object' &&
+                    /^@babel\/preset-env$/.test(preset.file.request)
+                ) {
+                    const thisPreset = newPresets[index];
+                    if (typeof thisPreset.options !== 'object')
+                        thisPreset.options = {};
+                    thisPreset.options.modules = false;
+                    if (isServer) {
+                        thisPreset.options.targets = {
+                            node: true
+                        };
+                        thisPreset.options.exclude = [
+                            '@babel/plugin-transform-regenerator',
+                            '@babel/plugin-transform-async-to-generator'
+                        ];
+                        thisPreset.options.ignoreBrowserslistConfig = true;
+                    }
+                    console.log(thisPreset);
+                }
+            });
 
             // plugins ========================================================
             const newPlugins = plugins.filter(plugin => {

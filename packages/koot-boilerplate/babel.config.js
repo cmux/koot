@@ -15,7 +15,6 @@ module.exports = function(api) {
         compact: 'auto',
         plugins: [
             // transform
-            '@babel/plugin-transform-regenerator',
 
             // proposal
             ['@babel/plugin-proposal-decorators', { legacy: true }],

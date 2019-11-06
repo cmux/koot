@@ -60,7 +60,8 @@ module.exports = {
     // [生产环境] 文件名
     filenameCurrentBundle: '.koot-current',
 
-    // CSS 相关
+    // 标签属性
     styleTagGlobalAttributeName: 'data-koot-global',
-    styleTagModuleAttributeName: 'data-koot-module'
+    styleTagModuleAttributeName: 'data-koot-module',
+    scriptTagEntryAttributeName: 'data-koot-entry'
 };

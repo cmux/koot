@@ -51,6 +51,14 @@ const ssr = async (options = {}) => {
         SSR = __DEV__ ? global.__KOOT_SSR__ : __KOOT_SSR__
     } = options;
 
+    const {
+        /** @type {Object} KOA Context */
+        ctx
+    } = SSR;
+
+    /** @type {string} 本次请求的 URL */
+    const url = ctx.path + ctx.search;
+
     // ========================================================================
 
     const { redux: reduxConfigRaw = {} } = kootConfig;
@@ -102,7 +110,6 @@ const ssr = async (options = {}) => {
     const i18nEnabled = Boolean(LocaleId);
 
     const {
-        ctx,
         thisTemplateInjectCache,
         thisEntrypoints,
         thisFilemap, //thisStyleMap,
@@ -120,9 +127,6 @@ const ssr = async (options = {}) => {
     ctx.hrefTrue = proxyRequestOrigin.protocol
         ? ctx.href.replace(/^http:\/\//, `${proxyRequestOrigin.protocol}://`)
         : ctx.href;
-
-    /** @type {String} 本次请求的 URL */
-    const url = ctx.path + ctx.search;
 
     const { lifecycle, routerConfig: routes } = await initConfig(i18nEnabled);
 
