@@ -62,23 +62,6 @@ module.exports = require('babel-loader').custom(babel => {
                 ]);
                 // console.log(newPresets);
             }
-            // .filter(preset => {
-            //     if (typeof preset.file === 'object' &&
-            //         /^@babel\/preset-env$/.test(preset.file.request) &&
-            //         process.env.WEBPACK_BUILD_STAGE === 'server'
-            //     ) return false
-            //     return true
-            // })
-            // .map(preset => {
-            //     if (typeof preset.file === 'object' &&
-            //         /^@babel\/preset-env$/.test(preset.file.request)
-            //     ) {
-            //         if (!preset.options)
-            //             preset.options = {}
-            //         return preset
-            //     }
-            //     return preset
-            // })
             // if (isServer) {
             //     newPresets.forEach((preset, index) => {
             //         if (
@@ -131,32 +114,8 @@ module.exports = require('babel-loader').custom(babel => {
                 newPlugins.push(require('react-hot-loader/babel'));
             }
 
-            // console.log('')
-            // presets.forEach(preset => {
-            //     console.log('')
-            //     console.log('options', preset.options)
-            //     console.log('file', preset.file)
-            // })
-            // console.log({
-            //     'plugin[].file': newPlugins
-            //         // .filter(plugin => !!plugin.file)
-            //         .map(plugin => {
-            //             return plugin
-            //             // return plugin.file
-            //         })
-            // })
-            // console.log(
-            //     {
-            //         ...options,
-            //         presets: newPresets,
-            //         plugins: newPlugins,
-            //     }
-            // )
-            // console.log('')
-
             const thisOptions = {
                 ...options,
-                // presets: presets,
                 presets: newPresets,
                 plugins: newPlugins
             };

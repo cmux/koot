@@ -2,6 +2,8 @@
 
 const findCacheDir = require('find-cache-dir');
 
+const cacheFolderName = 'koot-webpack-server';
+
 /**
  * Loader 规则 - Javascript
  * @param {Object} options
@@ -35,7 +37,7 @@ module.exports = (kootBuildConfig = {}) => {
 
         if (stageServer) {
             options.cacheDirectory = findCacheDir({
-                name: 'koot-webpack-server'
+                name: cacheFolderName
             });
             options.cacheIdentifier = 'koot-webpack-server-bundling';
             options.babelrc = false;

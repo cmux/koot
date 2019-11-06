@@ -122,7 +122,7 @@ const run = async () => {
 
     // 如过没有提供 stage，自动相继打包 client 和 server
     await kootWebpackBuild({ ...kootConfig });
-    await sleep(500);
+    await sleep(100);
 
     if (!fromCommandStart) console.log('\n' + ''.padEnd(60, '=') + '\n');
     process.env.WEBPACK_BUILD_STAGE = 'server';
