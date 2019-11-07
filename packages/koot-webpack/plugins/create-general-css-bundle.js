@@ -28,7 +28,7 @@ class CreateGeneralCssBundlePlugin {
             /** @type {Array} 已打包输出的 CSS 文件 */
             const cssFiles = [];
 
-            for (let chunkId in stats.compilation.chunks) {
+            for (const chunkId in stats.compilation.chunks) {
                 const chunk = stats.compilation.chunks[chunkId];
                 if (Array.isArray(chunk.files)) {
                     chunk.files

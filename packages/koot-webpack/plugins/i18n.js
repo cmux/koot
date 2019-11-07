@@ -31,7 +31,7 @@ class I18nPlugin {
 
         if (stage === 'client') {
             const loop = (obj, prefix) => {
-                for (let _key in obj) {
+                for (const _key in obj) {
                     const value = obj[_key];
                     const key = prefix ? `${prefix}.${_key}` : _key;
                     definitions[key] = value;

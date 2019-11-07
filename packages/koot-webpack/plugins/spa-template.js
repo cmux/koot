@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // https://github.com/jantimon/html-webpack-plugin
 
 const fs = require('fs-extra');

@@ -81,7 +81,7 @@ module.exports = require('babel-loader').custom(babel => {
                         ];
                         thisPreset.options.ignoreBrowserslistConfig = true;
                     }
-                    console.log(thisPreset);
+                    // console.log(thisPreset);
                 }
             });
 

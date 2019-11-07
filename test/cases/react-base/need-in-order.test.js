@@ -463,8 +463,6 @@ const doTest = async (port, dist, settings = {}) => {
 
     // 测试: getStyles()
     {
-        const context = await browser.createIncognitoBrowserContext();
-        const page = await context.newPage();
         await page.goto(origin, {
             waitUntil: 'networkidle2'
         });
@@ -483,10 +481,37 @@ const doTest = async (port, dist, settings = {}) => {
             };
         });
 
-        await context.close();
-
         expect(hasGlobal).toBe(true);
         expect(hasModule).toBe(true);
+    }
+
+    // 测试: 客户端使用 async/await
+    {
+        await page.goto(origin, {
+            waitUntil: 'networkidle2'
+        });
+
+        const { valueHasChanged } = await page.evaluate(async () => {
+            const container = document.querySelector('#__test-async_await');
+            const button = container.querySelector(
+                'button[data-role="button"]'
+            );
+            const value = container.querySelector('[data-role="value"]');
+
+            const currentValue = value.innerHTML;
+
+            button.click();
+
+            await new Promise(resolve => setTimeout(resolve, 1500));
+
+            return {
+                oldValue: currentValue,
+                newValue: value.innerHTML,
+                valueHasChanged: Boolean(currentValue !== value.innerHTML)
+            };
+        });
+
+        expect(valueHasChanged).toBe(true);
     }
 
     await puppeteerTestStyles(page);

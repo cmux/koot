@@ -3,6 +3,7 @@ import { extend } from 'koot';
 import clientUpdatePageinfo from 'koot/utils/client-update-pageinfo';
 
 import Issue68 from '@components/issue-68';
+import TestAsyncFunction from './test-async-function';
 
 const PageHome = ({ className }) => {
     return (
@@ -36,6 +37,8 @@ const PageHome = ({ className }) => {
                     metas={true}
                 />
             </div>
+
+            <TestAsyncFunction />
         </div>
     );
 };
@@ -53,7 +56,7 @@ const IssueTest = ({ className = '', ...props }) => (
     />
 );
 
-//
+// ============================================================================
 
 const ButtonTestUpdatePageinfo = ({
     children,
@@ -85,7 +88,7 @@ const ButtonTestUpdatePageinfo = ({
     );
 };
 
-//
+// ============================================================================
 
 export default extend({
     connect: true,
