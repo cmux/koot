@@ -79,6 +79,9 @@ module.exports = {
      *************************************************************************/
 
     webpackConfig: async () => {
+        // ! 请查阅文档中有关 Webpack 设定的注意事项
+        // ! https://koot.js.org/#/config?id=webpackconfig
+
         /** @type {Object} 基础配置 */
         const configBase = {
             entry: {

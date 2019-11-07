@@ -2,6 +2,9 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
     .BundleAnalyzerPlugin;
 
 // Libs & Utilities
+const {
+    keyConfigClientAssetsPublicPath
+} = require('koot/defaults/before-build');
 const getAppType = require('koot/utils/get-app-type');
 // const getPort = require('koot/utils/get-port')
 const getChunkmapPathname = require('koot/utils/get-chunkmap-path');
@@ -37,20 +40,21 @@ module.exports = async (kootConfig = {}) => {
         // SERVER_PORT,
     } = process.env;
 
-    const defaultPublicDirName = 'includes';
-    const defaultPublicPathname = (() => {
+    const distClientAssetsDirName =
+        kootConfig.distClientAssetsDirName || defaults.distClientAssetsDirName;
+    const clientAssetsPublicPath = (() => {
         if (TYPE === 'spa' && ENV === 'dev') return `/`;
         if (TYPE === 'spa' && /^browser/.test(process.env.KOOT_HISTORY_TYPE))
-            return `/${defaultPublicDirName}/`;
-        if (TYPE === 'spa') return `${defaultPublicDirName}/`;
-        return `/${defaultPublicDirName}/`;
+            return `/${distClientAssetsDirName}/`;
+        if (TYPE === 'spa') return `${distClientAssetsDirName}/`;
+        return `/${distClientAssetsDirName}/`;
     })();
 
     // 抽取配置
     const kootBuildConfig = Object.assign({}, defaults, kootConfig, {
         appType: await getAppType(),
-        defaultPublicDirName,
-        defaultPublicPathname
+        distClientAssetsDirName,
+        [keyConfigClientAssetsPublicPath]: clientAssetsPublicPath
     });
     const { analyze = false } = kootBuildConfig;
 

@@ -43,6 +43,7 @@ module.exports = {
     keyConfigQuiet: '__QUIET__',
     keyConfigOutputPathShouldBe: '__OUTPUT_PATH_SHOULD_BE__',
     keyConfigWebpackSPATemplateInject: '__SPA_TEMPLATE_INJECT__',
+    keyConfigClientAssetsPublicPath: '__CLIENT_ASSETS_PUBLIC_PATH__',
     WEBPACK_OUTPUT_PATH: '__WEBPACK_OUTPUT_PATH',
     CLIENT_ROOT_PATH: '__CLIENT_ROOT_PATH',
 

@@ -13,5 +13,6 @@ module.exports = Object.assign({}, baseConfig, {
     },
 
     cookiesToStore: 'all',
-    sessionStore: 'all'
+    sessionStore: 'all',
+    distClientAssetsDirName: '__assets__'
 });
