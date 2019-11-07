@@ -463,6 +463,8 @@ const doTest = async (port, dist, settings = {}) => {
 
     // 测试: getStyles()
     {
+        const context = await browser.createIncognitoBrowserContext();
+        const page = await context.newPage();
         await page.goto(origin, {
             waitUntil: 'networkidle2'
         });
@@ -481,12 +483,16 @@ const doTest = async (port, dist, settings = {}) => {
             };
         });
 
+        await context.close();
+
         expect(hasGlobal).toBe(true);
         expect(hasModule).toBe(true);
     }
 
     // 测试: 客户端使用 async/await
     {
+        const context = await browser.createIncognitoBrowserContext();
+        const page = await context.newPage();
         await page.goto(origin, {
             waitUntil: 'networkidle2'
         });
@@ -510,6 +516,8 @@ const doTest = async (port, dist, settings = {}) => {
                 valueHasChanged: Boolean(currentValue !== value.innerHTML)
             };
         });
+
+        await context.close();
 
         expect(valueHasChanged).toBe(true);
     }
