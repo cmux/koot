@@ -36,10 +36,7 @@
  *     - 禁用
  */
 
-// jest configuration
-jest.setTimeout(6 * 60 * 1 * 1000);
-
-//
+// Import modules =============================================================
 
 const fs = require('fs-extra');
 const path = require('path');
@@ -51,7 +48,7 @@ const chalk = require('chalk');
 const get = require('lodash/get');
 const cheerio = require('cheerio');
 
-//
+// Import local scripts =======================================================
 
 const {
     changeLocaleQueryKey,
@@ -67,8 +64,7 @@ const checkForChunkmap = require('../../libs/check-for-chunkmap');
 const filterState = require('../../../packages/koot/libs/filter-state');
 const testHtmlRenderedByKoot = require('../../general-tests/html/rendered-by-koot');
 const testFilesFromChunkmap = require('../../general-tests/bundle/check-files-from-chunkmap');
-
-//
+const getProjects = require('../../projects/get');
 
 const {
     injectScripts: puppeteerTestInjectScripts,
@@ -76,15 +72,12 @@ const {
     criticalAssetsShouldBeGzip: testAssetsGzip
 } = require('../puppeteer-test');
 
-//
+// Constants ==================================================================
 
 global.kootTest = true;
 process.env.KOOT_TEST_MODE = JSON.stringify(true);
 
-//
-
-const projects = require('../../projects/get')();
-
+const projects = getProjects();
 const projectsToUse = projects.filter(
     project =>
         // Array.isArray(project.type) && project.type.includes('react-isomorphic')
@@ -96,9 +89,13 @@ const commandTestBuild = 'koot-buildtest';
 const fullTest = true;
 const headless = true;
 
-//
+// Jest configuration =========================================================
+
+jest.setTimeout(6 * 60 * 1 * 1000);
 
 let browser;
+let lastTime;
+
 beforeAll(() =>
     puppeteer
         .launch({
@@ -114,13 +111,9 @@ afterAll(() =>
         .then(() => (browser = undefined))
         .then(() => exec(`pm2 kill`))
 );
-
-//
-
-let lastTime;
 beforeEach(() => (lastTime = Date.now()));
 
-//
+// Wrapped test function ======================================================
 
 /**
  * 生产环境基准测试
@@ -137,7 +130,7 @@ const testProduction = (
     script,
     extraConing = {}
 ) => {
-    const testName = `[prod] 打包并运行生产模式 (${name})`;
+    const testName = `[prod] 打包并运行生产环境 (${name})`;
     return test(testName, async () => {
         await beforeTest(dir);
 
@@ -193,7 +186,7 @@ const testDevelopment = (
     script,
     extraConing = {}
 ) => {
-    const testName = `[dev] 启动开发模式并访问 (${name})`;
+    const testName = `[dev] 启动开发环境并访问 (${name})`;
     test(testName, async () => {
         await beforeTest(dir);
 
@@ -237,6 +230,50 @@ const testFull = (...args) => {
 };
 
 //
+
+/**
+ * 测试项目开始前
+ * @async
+ * @param {String} cwd
+ */
+const beforeTest = async cwd => {
+    // 重置
+    await exec(`pm2 kill`);
+    await removeTempProjectConfig(cwd);
+};
+
+/**
+ * 测试项目结束后
+ * @async
+ * @param {String} cwd
+ * @param {String} title
+ */
+const afterTest = async (cwd, title) => {
+    // await fs.remove(path.resolve(cwd, 'logs'));
+    await sleep(2 * 1000);
+    await exec(`pm2 kill`);
+    // 移除临时项目配置文件
+    await removeTempProjectConfig(cwd);
+
+    // eslint-disable-next-line no-console
+    console.log(
+        chalk.green('√ ') +
+            chalk.green(`${(Date.now() - lastTime) / 1000}s `) +
+            title
+    );
+};
+
+const emptyDist = async dir => {
+    if (!fs.existsSync(dir)) return;
+    const files = await fs.readdir(dir);
+    for (const filename of files) {
+        const file = path.resolve(dir, filename);
+        const lstat = fs.lstatSync(file);
+        if (!(filename === 'node_modules' && lstat.isDirectory())) {
+            await fs.remove(file);
+        }
+    }
+};
 
 /**
  * 测试代码分割
@@ -1108,6 +1145,7 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
                           .join('/')
                 : L.pathname
         ).toBe(pathname);
+        // expect(L.pathname).toBe(pathname);
         expect(L.search).toBe(search);
     }
 
@@ -1153,50 +1191,6 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
     await context.close();
 
     return;
-};
-
-/**
- * 测试项目开始前
- * @async
- * @param {String} cwd
- */
-const beforeTest = async cwd => {
-    // 重置
-    await exec(`pm2 kill`);
-    await removeTempProjectConfig(cwd);
-};
-
-/**
- * 测试项目结束后
- * @async
- * @param {String} cwd
- * @param {String} title
- */
-const afterTest = async (cwd, title) => {
-    // await fs.remove(path.resolve(cwd, 'logs'));
-    await sleep(2 * 1000);
-    await exec(`pm2 kill`);
-    // 移除临时项目配置文件
-    await removeTempProjectConfig(cwd);
-
-    // eslint-disable-next-line no-console
-    console.log(
-        chalk.green('√ ') +
-            chalk.green(`${(Date.now() - lastTime) / 1000}s `) +
-            title
-    );
-};
-
-const emptyDist = async dir => {
-    if (!fs.existsSync(dir)) return;
-    const files = await fs.readdir(dir);
-    for (const filename of files) {
-        const file = path.resolve(dir, filename);
-        const lstat = fs.lstatSync(file);
-        if (!(filename === 'node_modules' && lstat.isDirectory())) {
-            await fs.remove(file);
-        }
-    }
 };
 
 //

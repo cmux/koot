@@ -177,10 +177,13 @@ const ssr = async (options = {}) => {
     }
 
     // 强制更新 store: state.routing.locationBeforeTransitions
-    Object.assign(Store.getState().routing.locationBeforeTransitions, {
-        pathname: ctx.path,
-        search: ctx.search
-    });
+    const state = Store.getState();
+    const currentPathname = state.routing.locationBeforeTransitions.pathname;
+    if (currentPathname.split(0, 1) !== '/')
+        Object.assign(Store.getState().routing.locationBeforeTransitions, {
+            pathname: ctx.path
+            // search: ctx.search
+        });
 
     // 渲染生命周期: beforePreRender
     await beforePreRender({

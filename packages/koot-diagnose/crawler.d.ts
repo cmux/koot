@@ -5,6 +5,7 @@ export interface CrawlerOptions {
     maxCrawl?: number;
     /** `puppeteer-cluster` 选项 */
     cluster?: {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         [option: string]: any;
     };
 }
@@ -22,6 +23,7 @@ export interface CrawlerError {
     readonly pageUrl?: string;
     /** 此次请求的长度 (单位: 字节) */
     readonly contentLength?: number;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [key: string]: any;
 }
 
