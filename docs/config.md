@@ -387,7 +387,7 @@ const apiBase = __QA__
 
 ### staticCopyFrom
 
--   类型: `Pathname`
+-   类型: `Pathname` 或 `Pathname[]`
 -   默认值: **无**
 
 将目标目录内的所有文件复制到打包结果内的静态服务器目录中。
@@ -401,8 +401,14 @@ module.exports = {
     // 默认值
     staticCopyFrom: undefined,
 
-    // 示例
-    staticCopyFrom: path.resolve(__dirname, './src/assets/public')
+    // 示例 #1 - 复制一个目录
+    staticCopyFrom: path.resolve(__dirname, './src/assets/public'),
+
+    // 示例 #2 - 复制多个目录
+    staticCopyFrom: [
+        path.resolve(__dirname, './src/assets/public'),
+        path.resolve(__dirname, './.data-generated/public')
+    ]
 };
 ```
 
