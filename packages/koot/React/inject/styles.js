@@ -1,6 +1,7 @@
 const {
     chunkNameExtractCss,
-    chunkNameExtractCssForImport
+    chunkNameExtractCssForImport,
+    styleTagGlobalAttributeName
 } = require('../../defaults/before-build');
 const readClientFile = require('../../utils/read-client-file');
 const getClientFilePath = require('../../utils/get-client-file-path');
@@ -89,8 +90,10 @@ const getExtracted = (localeId, compilation) => {
         // }" />`;
     }
 
-    return `<style id="__koot-extracted-styles" type="text/css">${content}</style>`;
+    return `<style id="__koot-extracted-styles" type="text/css" ${styleTagGlobalAttributeName}>${content}</style>`;
 };
+
+// const functionNameLinkOnLoad = '__KOOT_GLOBAL_STYLE_ON_LOAD__';
 
 /**
  * 返回 link 标签
@@ -104,7 +107,7 @@ const combineFilePaths = (...args) => {
     return pathnames
         .map(
             pathname =>
-                `<link id="__koot-extracted-styles" media="all" rel="stylesheet" href="${pathname}" />`
+                `<link id="__koot-extracted-styles" media="all" rel="stylesheet" href="${pathname}" ${styleTagGlobalAttributeName} />`
         )
         .join('');
 };

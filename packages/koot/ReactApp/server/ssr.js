@@ -236,8 +236,14 @@ const ssr = async (options = {}) => {
     //     .map(id => `<style id="${id}">${thisStyleMap[id].css}</style>`)
     //     .join('')
     const stylesHtml = Object.keys(styleMap)
-        .filter(id => typeof styleMap[id].css === 'string')
-        .map(id => `<style id="${id}">${styleMap[id].css}</style>`)
+        .filter(
+            id =>
+                typeof styleMap[id].css === 'string' && styleMap[id].css !== ''
+        )
+        .map(
+            id =>
+                `<style ${__STYLE_TAG_MODULE_ATTR_NAME__}="${id}">${styleMap[id].css}</style>`
+        )
         .join('');
     // console.log('result thisStyleMap', thisStyleMap)
 

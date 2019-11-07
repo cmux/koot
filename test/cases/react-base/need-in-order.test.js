@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * React SSR 基础测试，主要用于测试打包结果的正确性。这些测试*不包括*
  * - ❌ SSR 数据
@@ -94,7 +95,12 @@ afterEach(() => {});
  * @param {Object} settings
  */
 const doTest = async (port, dist, settings = {}) => {
-    const { isDev = false, enableJavascript = true, customEnv = {} } = settings;
+    const {
+        isDev = false,
+        enableJavascript = true,
+        customEnv = {}
+        // childProcess
+    } = settings;
     customEnv.notexist = undefined;
 
     const checkBackgroundResult = styleValue => {
@@ -455,6 +461,34 @@ const doTest = async (port, dist, settings = {}) => {
         expect(nested).toBe(40);
     }
 
+    // 测试: getStyles()
+    {
+        const context = await browser.createIncognitoBrowserContext();
+        const page = await context.newPage();
+        await page.goto(origin, {
+            waitUntil: 'networkidle2'
+        });
+
+        const { hasGlobal, hasModule } = await page.evaluate(() => {
+            const { _global, ...modules } = window.__KOOT_TEXT_GET_STYLES__();
+            const isPropValid = obj =>
+                typeof obj === 'object' &&
+                typeof obj.text === 'string' &&
+                obj.rules instanceof CSSRuleList;
+            return {
+                hasGlobal: isPropValid(_global),
+                hasModule:
+                    Object.keys(modules).length > 0 &&
+                    Object.values(modules).every(isPropValid)
+            };
+        });
+
+        await context.close();
+
+        expect(hasGlobal).toBe(true);
+        expect(hasModule).toBe(true);
+    }
+
     await puppeteerTestStyles(page);
     await puppeteerTestCustomEnv(page, customEnv);
     await puppeteerTestInjectScripts(page);
@@ -629,12 +663,14 @@ describe('测试: React 同构项目', () => {
 
                 await doTest(port, dist, {
                     isDev: true,
-                    customEnv
+                    customEnv,
+                    childProcess: child
                 });
                 await doTest(port, dist, {
                     isDev: true,
                     customEnv,
-                    enableJavascript: false
+                    enableJavascript: false,
+                    childProcess: child
                 });
                 await terminate(child.pid);
                 await afterTest(dir, 'ENV: dev');

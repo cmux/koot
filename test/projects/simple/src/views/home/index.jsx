@@ -59,28 +59,31 @@ const ButtonTestUpdatePageinfo = ({
     children,
     title = false,
     metas = false
-}) => (
-    <button
-        type="button"
-        data-change-title={title ? 'true' : 'false'}
-        data-change-metas={metas ? 'true' : 'false'}
-        data-role={children}
-        onClick={() =>
-            clientUpdatePageinfo({
-                title: title ? 'test-client_update_pageinfo' : undefined,
-                metas: metas
-                    ? [
-                        {
-                            'test-client_update_pageinfo': 'success'
-                        }
-                    ]
-                    : undefined
-            })
-        }
-    >
-        {children}
-    </button>
-);
+}) => {
+    function onClick() {
+        clientUpdatePageinfo({
+            title: title ? 'test-client_update_pageinfo' : undefined,
+            metas: metas
+                ? [
+                      {
+                          'test-client_update_pageinfo': 'success'
+                      }
+                  ]
+                : undefined
+        });
+    }
+    return (
+        <button
+            type="button"
+            data-change-title={title ? 'true' : 'false'}
+            data-change-metas={metas ? 'true' : 'false'}
+            data-role={children}
+            onClick={onClick}
+        >
+            {children}
+        </button>
+    );
+};
 
 //
 

@@ -70,6 +70,14 @@ import getClientFilePath from 'koot/utils/get-client-file-path';
 -   引用地址: `koot/utils/client-update-pageinfo`
 -   更新页面标题 `<title>` 和 `<meta>` 标签
 
+#### `clientGetStyles(): {_global: R, [moduleId]: R}`
+
+-   引用地址: `koot/utils/client-get-styles`
+-   获取当前全局 CSS 和所有组件 CSS
+-   返回值中的 `R` 为对象，包含属性:
+    -   _string_ `text` CSS 字符串值
+    -   _CSSRuleList_ `rules`
+
 #### 服务器端
 
 #### `getClientFilePath(filename: string): string | string[]`

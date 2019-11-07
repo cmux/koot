@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* __KOOT_DEV_SSR__ */
 
 // import koaCompress from 'koa-compress';

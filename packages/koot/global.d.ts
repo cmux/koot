@@ -120,7 +120,7 @@ declare function __(
 
 declare interface KootModularStyleObject {
     /**
-     * 组件 `className`
+     * 组件 ID，也即 `className`
      * - 仅为本组件 CSS 的 `className`，不包含父组件通过 `props` 传入的
      */
     wrapper: string;

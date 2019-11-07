@@ -7,6 +7,7 @@ const proxy = require('koa-proxies');
 const { publicPathPrefix } = require('../../defaults/webpack-dev-server');
 const getWDSport = require('../../utils/get-webpack-dev-server-port');
 const getPathnameDevServerStart = require('../../utils/get-pathname-dev-server-start');
+// const log = require('../../libs/log');
 
 /**
  * @async
@@ -28,6 +29,7 @@ const run = async () => {
         global.kootTest ||
         (process.env.KOOT_TEST_MODE && JSON.parse(process.env.KOOT_TEST_MODE))
     ) {
+        // eslint-disable-next-line no-console
         console.log(
             JSON.stringify({
                 'koot-test': true,
@@ -94,12 +96,23 @@ const run = async () => {
                 routesProxy.push(
                     route.substr(0, 1) === '/' ? route.substr(1) : route
                 );
-                app.use(
-                    proxy(route, {
-                        target: `http://localhost:${portWebpackDevServer}`,
-                        changeOrigin
-                    })
-                );
+                const wdsProxy = new Koa();
+                const R = route.substr(0, 1) === '/' ? route : `/${route}`;
+                wdsProxy.use(async ctx => {
+                    return proxy('/', {
+                        target: `http://localhost:${portWebpackDevServer}${R}`,
+                        changeOrigin,
+                        logs: true
+                    })(ctx);
+                });
+                // wdsProxy.use(async () => {
+                //     log(
+                //         'success',
+                //         'server',
+                //         `webpack-dev-server proxy matched: ${route}`
+                //     );
+                // });
+                app.use(mount(R, wdsProxy));
             }
         }
     }
