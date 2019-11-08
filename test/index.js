@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const inquirer = require('inquirer');
 
 const runScript = require('../libs/run-script');
@@ -11,10 +12,7 @@ const run = async () => {
     const jestScript = {
         reactBase: `./test/cases/react-base`,
         reactIsomorphic: `./test/cases/react-isomorphic`,
-        reactSPA: `./test/cases/react-spa`,
-        analyze: {
-            all: './packages/koot-diagnose/__tests__/.+\\.test\\.[jt]sx?$'
-        }
+        reactSPA: `./test/cases/react-spa`
     };
 
     const { value } = await inquirer.prompt({
@@ -52,10 +50,6 @@ const run = async () => {
                 name: 'Package: koot-cli',
                 value: './test/cases/package/cli'
             },
-            {
-                name: 'Package: koot-diagnose',
-                value: jestScript.analyze.all
-            },
             new inquirer.Separator(),
             {
                 name: 'Lib: validate-pathname',
@@ -85,8 +79,7 @@ const run = async () => {
 
         const jestAll = [
             `jest "test/((?!need-in-order).)*\\.test\\.[jt]sx?$"`,
-            ...jestReactAll,
-            `jest ${jestScript.analyze.all}`
+            ...jestReactAll
         ];
 
         if (value === 'FULL')

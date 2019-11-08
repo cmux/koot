@@ -1,1 +1,2 @@
 /test/projects/*/dist*/**/*
+node_modules/**/*

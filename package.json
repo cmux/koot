@@ -46,7 +46,6 @@
         "docsify-cli": "^4.3.0"
     },
     "devDependencies": {
-        "babel-eslint": "^10.0.3",
         "camelcase": "^5.3.1",
         "chalk": "^2.4.2",
         "cheerio": "^1.0.0-rc.3",
@@ -69,9 +68,6 @@
         "simple-git": "^1.126.0",
         "symlink-dir": "^3.1.1"
     },
-    "eslintIgnore": [
-        "node_modules/**/*"
-    ],
     "husky": {
         "hooks": {
             "pre-commit": "lint-staged"
