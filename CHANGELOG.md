@@ -12,6 +12,7 @@
         -   特殊 JS 入口 _CLIENT_RUN_FIRST_ 如果文件尺寸大于 10KB，会改为引用请求的方式加载
         -   特殊 JS 入口 _CLIENT_RUN_FIRST_ 现默认引入 `regenerator-runtime/runtime`
             -   现在 _Koot.js_ 项目默认支持在浏览器环境中使用 _async_ / _await_ 开发
+    -   现在会忽略 _Babel_ 插件 `@babel/plugin-transform-regenerator`
 -   **新特性**
     -   **新配置项** `distClientAssetsDirName` - 设定客户端打包结果中静态资源存放路径的目录名。详情请参见文档 [配置/distClientAssetsDirName](https://koot.js.org/#/config?id=distClientAssetsDirName) ([#181](https://github.com/cmux/koot/issues/181))
     -   **新工具函数** `koot/utils/client-get-styles` - 获取当前全局 CSS 和所有组件 CSS。具体用法请参见文档 [全局与工具函数/工具函数/客户端](https://koot.js.org/#/utilities?id=客户端) ([#185](https://github.com/cmux/koot/issues/185))

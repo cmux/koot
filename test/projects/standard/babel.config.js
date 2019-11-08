@@ -15,15 +15,17 @@ module.exports = function(api) {
         compact: 'auto',
         plugins: [
             // transform
+            '@babel/plugin-transform-regenerator',
 
             // proposal
             ['@babel/plugin-proposal-decorators', { legacy: true }],
             '@babel/plugin-proposal-class-properties',
 
             // syntax
-            '@babel/plugin-syntax-dynamic-import'
+            '@babel/plugin-syntax-dynamic-import',
 
             // other
+            'react-hot-loader/babel'
         ]
     };
 };

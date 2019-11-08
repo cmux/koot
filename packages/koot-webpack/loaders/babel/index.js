@@ -1,5 +1,27 @@
 const transformFixDefaultExport = require('./transform-fix-default-export');
 
+/**
+ * 检查 Plugin 对象的请求文件的名字
+ * @param {Object} plugin Babel 处理过程中的 Plugin 对象
+ * @param {string|regExp} name
+ * @return {boolean}
+ */
+const testPluginName = (pluginObject, regExp) => {
+    regExp =
+        regExp instanceof RegExp
+            ? regExp
+            : new RegExp(
+                  `^@babel(\\/|\\\\)${
+                      /^plugin-/.test(regExp) ? regExp : `plugin-${regExp}`
+                  }$`
+              );
+
+    return (
+        typeof pluginObject.file === 'object' &&
+        regExp.test(pluginObject.file.request)
+    );
+};
+
 module.exports = require('babel-loader').custom(babel => {
     // function myPlugin() {
     //     return {
@@ -71,14 +93,14 @@ module.exports = require('babel-loader').custom(babel => {
                     if (typeof thisPreset.options !== 'object')
                         thisPreset.options = {};
                     thisPreset.options.modules = false;
+                    thisPreset.options.exclude = [
+                        '@babel/plugin-transform-regenerator',
+                        '@babel/plugin-transform-async-to-generator'
+                    ];
                     if (isServer) {
                         thisPreset.options.targets = {
                             node: true
                         };
-                        thisPreset.options.exclude = [
-                            '@babel/plugin-transform-regenerator',
-                            '@babel/plugin-transform-async-to-generator'
-                        ];
                         thisPreset.options.ignoreBrowserslistConfig = true;
                     }
                     // console.log(thisPreset);
@@ -86,27 +108,22 @@ module.exports = require('babel-loader').custom(babel => {
             });
 
             // plugins ========================================================
-            const newPlugins = plugins.filter(plugin => {
-                if (
-                    typeof plugin.file === 'object' &&
-                    (/extract-hoc(\/|\\)babel/.test(plugin.file.request) ||
-                        /react-hot-loader(\/|\\)babel/.test(
-                            plugin.file.request
-                        ))
-                )
-                    return false;
+            // console.log('\n ');
+            // console.log('before', plugins.map(plugin => plugin.file.request));
 
-                // if (
-                //     isServer &&
-                //     typeof plugin.file === 'object' &&
-                //     /@babel(\/|\\)plugin-transform-regenerator/.test(
-                //         plugin.file.request
-                //     )
-                // )
-                //     return false;
+            const newPlugins = plugins.filter(plugin => {
+                // console.log(plugin.file.request);
+                if (testPluginName(plugin, /^extract-hoc(\/|\\)babel$/))
+                    return false;
+                if (testPluginName(plugin, /^react-hot-loader(\/|\\)babel$/))
+                    return false;
+                if (testPluginName(plugin, 'transform-regenerator'))
+                    return false;
 
                 return true;
             });
+
+            // console.log('after', newPlugins.map(plugin => plugin.file.request));
 
             if (
                 !__createDll &&
