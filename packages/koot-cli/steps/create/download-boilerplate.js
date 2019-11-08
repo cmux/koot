@@ -3,6 +3,7 @@ const path = require('path');
 const os = require('os');
 const download = require('download-git-repo');
 const chalk = require('chalk');
+const glob = require('glob-promise');
 
 const _ = require('../../lib/translate');
 const spinner = require('../../lib/spinner');
@@ -23,7 +24,7 @@ module.exports = async (project, dest) => {
     const msg =
         chalk.whiteBright(_('downloading_boilerplate')) +
         (isNext ? ` (next)` : '');
-    const downloadTo = path.resolve(os.tmpdir(), `sp-${Date.now()}`);
+    const downloadTo = path.resolve(os.tmpdir(), `koot-${Date.now()}`);
     const waitingDownloading = spinner(msg + '...');
     await new Promise((resolve, reject) => {
         download(repo + (isNext ? `#next` : ''), downloadTo, err => {
@@ -96,11 +97,28 @@ module.exports = async (project, dest) => {
             );
         }
     }
+
+    // 移除部分文件
     await fs.remove(path.resolve(tmp, 'package-lock.json'));
+    await fs.remove(path.resolve(tmp, 'yarn.lock'));
+
+    // 写入新的 package.json
     await fs.writeJson(pathPackage, p, {
         spaces: 4
     });
-    await fs.move(tmp, dest, { overwrite: true });
+
+    // 合并目录
+    const files = await glob(path.resolve(tmp, '**/*'));
+    for (const from of files) {
+        const relativePath = path.relative(tmp, from);
+        const to = path.resolve(dest, relativePath);
+        await fs.copy(from, to, { overwrite: true });
+    }
+
+    // 删除下载的临时文件
+    if (fs.existsSync(downloadTo)) await fs.remove(downloadTo);
+
+    // 标记完成
     waitingCopying.stop();
     spinner(chalk.whiteBright(_('copying_boilerplate'))).finish();
 };

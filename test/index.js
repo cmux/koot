@@ -12,7 +12,10 @@ const run = async () => {
     const jestScript = {
         reactBase: `./test/cases/react-base`,
         reactIsomorphic: `./test/cases/react-isomorphic`,
-        reactSPA: `./test/cases/react-spa`
+        reactSPA: `./test/cases/react-spa`,
+        cli: {
+            all: './packages/koot-cli/__tests__/.+\\.test\\.[jt]sx?$'
+        }
     };
 
     const { value } = await inquirer.prompt({
@@ -48,7 +51,7 @@ const run = async () => {
             new inquirer.Separator(),
             {
                 name: 'Package: koot-cli',
-                value: './test/cases/package/cli'
+                value: jestScript.cli.all
             },
             new inquirer.Separator(),
             {
@@ -79,6 +82,7 @@ const run = async () => {
 
         const jestAll = [
             `jest "test/((?!need-in-order).)*\\.test\\.[jt]sx?$"`,
+            `jest ${jestScript.cli.all}`,
             ...jestReactAll
         ];
 

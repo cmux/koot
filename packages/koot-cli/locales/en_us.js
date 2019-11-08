@@ -43,8 +43,9 @@ module.exports = {
     project_mode_spa: 'Single Page App (SPA)',
 
     confirm_remove_exist_dir: 'Target directory exists.',
-    confirm_remove_exist_dir_remove: 'Remove existing direcotry',
-    confirm_remove_exist_dir_overwrite: 'Overwrite existing files',
+    confirm_remove_exist_dir_remove: 'Remove and replace existing directory',
+    confirm_remove_exist_dir_overwrite:
+        'Use existing directory. Overwrite existing files',
     confirm_remove_exist_dir_input: 'Select another directory',
     removing_exist_dir: 'Removing target directory',
     input_dir: 'Input a directory (*)',
