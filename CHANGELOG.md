@@ -19,11 +19,15 @@
 -   优化
     -   [服务器] 优化服务器代码的文件尺寸 ([#172](https://github.com/cmux/koot/issues/172), [#186](https://github.com/cmux/koot/issues/186))
     -   [SSR & 客户端渲染 & SPA 模板生成] 所有注入/插入的 `<script>` 标签现在均会新增 `[data-koot-entry]` 属性
+-   更新依赖包 major 版本号
+    -   `chalk` -> _^3.0.0_
 
 **koot-cli**
 
 -   错误修正
     -   新建项目时的“覆盖”模式会删除原有文件的问题 ([#180](https://github.com/cmux/koot/issues/180))
+-   更新依赖包 major 版本号
+    -   `chalk` -> _^3.0.0_
 
 ## [0.11.15] - 2019-10-15
 

@@ -41,7 +41,7 @@
         "husky": "^3.0.9",
         "lint-staged": "^9.4.2",
         "normalize.css": "^8.0.1",
-        "prettier": "^1.18.2",
+        "prettier": "^1.19.1",
         "prettier-eslint": "^9.0.0",
         "redux-logger": "^3.0.6",
         "svg-url-loader": "^3.0.2"
