@@ -1,6 +1,6 @@
 {
     "name": "koot-webpack",
-    "version": "0.12.0-alpha.1",
+    "version": "0.12.0-alpha.3",
     "description": "Webpack related resources for Koot.js",
     "sideEffects": false,
     "scripts": {},
@@ -68,7 +68,7 @@
         "webpack-hot-middleware": "^2.25.0"
     },
     "devDependencies": {
-        "koot": "^0.12.0-alpha.1"
+        "koot": "^0.12.0-alpha.3"
     },
     "peerDependencies": {
         "koot": ">= 0.11"
