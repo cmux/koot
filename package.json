@@ -7,7 +7,7 @@
         "bootstrap": "node bootstrap.js",
         "publish": "node ./publish.js",
         "test": "node ./test/index.js",
-        "reset": "node ./reset.js",
+        "reset": "npm i fs-extra --no-save && node ./reset.js && node bootstrap.js",
         "lerna:changed": "lerna changed",
         "eslint:koot": "eslint \"packages/koot/!(node_modules|logs|dist|dist*|test)/**/*.+(js|jsx)\"",
         "check-types": "tsc --noEmit"
@@ -61,7 +61,7 @@
         "latest-version": "^5.1.0",
         "lerna": "^3.18.4",
         "lerna-wizard": "^1.1.1",
-        "lint-staged": "^9.4.2",
+        "lint-staged": "^9.4.3",
         "prettier": "^1.19.1",
         "prettier-eslint": "^9.0.0",
         "puppeteer": "^2.0.0",

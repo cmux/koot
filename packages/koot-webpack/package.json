@@ -54,7 +54,7 @@
         "node-sass": "^4.13.0",
         "postcss": "^7.0.21",
         "postcss-loader": "^3.0.0",
-        "react-hot-loader": "^4.12.16",
+        "react-hot-loader": "^4.12.17",
         "sass-loader": "^8.0.0",
         "semver": "^6.3.0",
         "style-loader": "^1.0.0",
