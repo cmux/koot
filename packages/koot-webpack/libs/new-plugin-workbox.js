@@ -12,10 +12,7 @@ module.exports = (kootConfigForThisBuild, localeId) => {
     if (!kootConfigForThisBuild) throw new Error('NO_KOOT_BUILD_CONFIG');
 
     let { pwa } = kootConfigForThisBuild;
-    const {
-        name: projectName,
-        distClientAssetsDirName
-    } = kootConfigForThisBuild;
+    const { distClientAssetsDirName } = kootConfigForThisBuild;
 
     if (pwa === true) pwa = {};
     if (pwa === false) return;
@@ -64,7 +61,7 @@ module.exports = (kootConfigForThisBuild, localeId) => {
         importWorkboxFrom: isDev ? 'cdn' : 'local',
         include: [/\.js$/, /\.css$/, ...initialCacheAppend],
         exclude: [/extract\.\d+\..+?\.css$/, ...initialCacheIgonre],
-        importsDirectory: isDev ? '' : `__workbox-assets`,
-        cacheId: `${projectName}-sw`
+        importsDirectory: isDev ? '' : `__workbox-assets`
+        // cacheId: `${projectName}-sw`
     });
 };
