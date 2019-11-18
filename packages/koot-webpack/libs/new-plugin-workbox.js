@@ -11,8 +11,11 @@ const getSWFilename = require('koot/utils/get-sw-filename');
 module.exports = (kootConfigForThisBuild, localeId) => {
     if (!kootConfigForThisBuild) throw new Error('NO_KOOT_BUILD_CONFIG');
 
-    let { name: projectName, pwa } = kootConfigForThisBuild;
-    const { distClientAssetsDirName } = kootConfigForThisBuild;
+    let { pwa } = kootConfigForThisBuild;
+    const {
+        name: projectName,
+        distClientAssetsDirName
+    } = kootConfigForThisBuild;
 
     if (pwa === true) pwa = {};
     if (pwa === false) return;
@@ -63,19 +66,5 @@ module.exports = (kootConfigForThisBuild, localeId) => {
         exclude: [/extract\.\d+\..+?\.css$/, ...initialCacheIgonre],
         importsDirectory: isDev ? '' : `__workbox-assets`,
         cacheId: `${projectName}-sw`
-        // runtimeCaching: [
-        //     {
-        //         urlPattern: /(^|\/)api\//,
-        //         handler: 'NetworkOnly'
-        //     },
-        //     {
-        //         urlPattern: new RegExp(`(^|/)${distClientAssetsDirName}/`),
-        //         handler: 'CacheFirst'
-        //     },
-        //     {
-        //         urlPattern: /.+/,
-        //         handler: 'NetworkFirst'
-        //     }
-        // ]
     });
 };
