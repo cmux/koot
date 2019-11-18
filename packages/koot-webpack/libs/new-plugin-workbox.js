@@ -61,7 +61,7 @@ module.exports = (kootConfigForThisBuild, localeId) => {
         importWorkboxFrom: isDev ? 'cdn' : 'local',
         include: [/\.js$/, /\.css$/, ...initialCacheAppend],
         exclude: [/extract\.\d+\..+?\.css$/, ...initialCacheIgonre],
-        importsDirectory: isDev ? '' : `../__workbox-assets`
+        importsDirectory: isDev ? '' : `__workbox-assets`
         // runtimeCaching: [
         //     {
         //         urlPattern: /(^|\/)api\//,

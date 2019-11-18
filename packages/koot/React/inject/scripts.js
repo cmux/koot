@@ -119,10 +119,10 @@ module.exports = ({
             typeof process.env.KOOT_PWA_AUTO_REGISTER === 'string'
                 ? JSON.parse(process.env.KOOT_PWA_AUTO_REGISTER)
                 : false;
-        console.log({
-            pwaAuto,
-            'injectCache[uriServiceWorker]': injectCache[uriServiceWorker]
-        });
+        // console.log({
+        //     pwaAuto,
+        //     'injectCache[uriServiceWorker]': injectCache[uriServiceWorker]
+        // });
         if (
             pwaAuto &&
             (process.env.WEBPACK_BUILD_TYPE === 'spa' ||
