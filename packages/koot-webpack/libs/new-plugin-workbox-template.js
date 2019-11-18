@@ -31,7 +31,7 @@ workbox.routing.registerRoute(
     new workbox.strategies.CacheFirst({
         cacheName: 'koot-sw-cache',
         fetchOptions: {
-            mode: 'no-cors'
+            mode: 'same-origin'
         }
     }),
     'GET'
@@ -41,7 +41,7 @@ workbox.routing.registerRoute(
     new workbox.strategies.NetworkFirst({
         cacheName: 'koot-sw-cache',
         fetchOptions: {
-            mode: 'no-cors'
+            mode: 'same-origin'
         }
     }),
     'GET'
