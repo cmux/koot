@@ -11,7 +11,7 @@ const getSWFilename = require('koot/utils/get-sw-filename');
 module.exports = (kootConfigForThisBuild, localeId) => {
     if (!kootConfigForThisBuild) throw new Error('NO_KOOT_BUILD_CONFIG');
 
-    let { pwa } = kootConfigForThisBuild;
+    let { name: projectName, pwa } = kootConfigForThisBuild;
     const { distClientAssetsDirName } = kootConfigForThisBuild;
 
     if (pwa === true) pwa = {};
@@ -23,8 +23,8 @@ module.exports = (kootConfigForThisBuild, localeId) => {
         filename,
         template,
         // initialCache,
-        initialCacheAppend,
-        initialCacheIgonre
+        initialCacheAppend = [],
+        initialCacheIgonre = []
     } = Object.assign({}, defaults, pwa);
 
     const isDev = process.env.WEBPACK_BUILD_ENV === 'dev';
@@ -61,7 +61,8 @@ module.exports = (kootConfigForThisBuild, localeId) => {
         importWorkboxFrom: isDev ? 'cdn' : 'local',
         include: [/\.js$/, /\.css$/, ...initialCacheAppend],
         exclude: [/extract\.\d+\..+?\.css$/, ...initialCacheIgonre],
-        importsDirectory: isDev ? '' : `__workbox-assets`
+        importsDirectory: isDev ? '' : `__workbox-assets`,
+        cacheId: `${projectName}-sw`
         // runtimeCaching: [
         //     {
         //         urlPattern: /(^|\/)api\//,

@@ -4,6 +4,7 @@ const {
     chunkNameClientRunFirst,
     scriptTagEntryAttributeName
 } = require('../../defaults/before-build');
+const { publicPathPrefix } = require('../../defaults/webpack-dev-server');
 const defaultEntrypoints = require('../../defaults/entrypoints');
 const readClientFile = require('../../utils/read-client-file');
 const getClientFilePath = require('../../utils/get-client-file-path');
@@ -137,7 +138,7 @@ module.exports = ({
                 `navigator.serviceWorker.register("${injectCache[
                     uriServiceWorker
                 ] || JSON.parse(process.env.KOOT_PWA_PATHNAME)}?koot=0.12",` +
-                `{scope: '/'}` +
+                `{scope: '${isDev ? `/${publicPathPrefix}/dist/` : '/'}'}` +
                 `)` +
                 `.catch(err => {console.log('👩‍💻 Service Worker SUPPORTED. ERROR', err)})` +
                 `});` +

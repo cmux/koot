@@ -45,6 +45,25 @@ const run = async () => {
     // 创建 KOA 服务器
     const app = new Koa();
 
+    // 代理服务器 -> Service Worker
+    // if (process.env.KOOT_PWA_PATHNAME) {
+    //     const pathname = JSON.parse(process.env.KOOT_PWA_PATHNAME);
+    //     const R = pathname.substr(0, 1) === '/' ? pathname : `/${pathname}`;
+    //     const proxyServer = new Koa();
+    //     proxyServer.use(async ctx => {
+    //         console.log({
+    //             publicPathPrefix,
+    //             __: `http://localhost:${portWebpackDevServer}/${publicPathPrefix}`
+    //         });
+    //         return proxy('', {
+    //             target: `http://localhost:${portWebpackDevServer}/${publicPathPrefix}/dist`,
+    //             changeOrigin: false,
+    //             logs: true
+    //         })(ctx);
+    //     });
+    //     app.use(mount(R, proxyServer));
+    // }
+
     // 代理服务器 -> webpack dev server
     {
         const proxyWebpackDevServer = new Koa();
