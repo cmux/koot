@@ -62,6 +62,6 @@ module.exports = (kootConfigForThisBuild, localeId) => {
         include: [/\.js$/, /\.css$/, ...initialCacheAppend],
         exclude: [/extract\.\d+\..+?\.css$/, ...initialCacheIgonre],
         importsDirectory: isDev ? '' : `__workbox-assets`
-        // cacheId: `${projectName}-sw`
+        // cacheId: `koot-sw-cache`
     });
 };

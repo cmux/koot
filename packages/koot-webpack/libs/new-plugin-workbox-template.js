@@ -1,6 +1,11 @@
 // ============================================================================
 
 workbox.setConfig({ debug: false });
+workbox.core.setCacheNameDetails({
+    prefix: 'koot',
+    suffix: 'cache',
+    precache: 'sw'
+});
 
 self.addEventListener('message', event => {
     if (event.data && event.data.type === 'SKIP_WAITING') {
@@ -23,11 +28,15 @@ workbox.routing.registerRoute(
 );
 workbox.routing.registerRoute(
     /(^|\/)__DIST_CLIENT_ASSETS_DIRNAME__\//,
-    new workbox.strategies.CacheFirst(),
+    new workbox.strategies.CacheFirst({
+        cacheName: 'koot-sw-cache'
+    }),
     'GET'
 );
 workbox.routing.registerRoute(
     /./,
-    new workbox.strategies.NetworkFirst(),
+    new workbox.strategies.NetworkFirst({
+        cacheName: 'koot-sw-cache'
+    }),
     'GET'
 );
