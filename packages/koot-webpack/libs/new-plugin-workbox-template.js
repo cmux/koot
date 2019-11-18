@@ -29,14 +29,20 @@ workbox.routing.registerRoute(
 workbox.routing.registerRoute(
     /(^|\/)__DIST_CLIENT_ASSETS_DIRNAME__\//,
     new workbox.strategies.CacheFirst({
-        cacheName: 'koot-sw-cache'
+        cacheName: 'koot-sw-cache',
+        fetchOptions: {
+            mode: 'no-cors'
+        }
     }),
     'GET'
 );
 workbox.routing.registerRoute(
     /./,
     new workbox.strategies.NetworkFirst({
-        cacheName: 'koot-sw-cache'
+        cacheName: 'koot-sw-cache',
+        fetchOptions: {
+            mode: 'no-cors'
+        }
     }),
     'GET'
 );
