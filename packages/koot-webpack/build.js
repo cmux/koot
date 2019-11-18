@@ -49,7 +49,7 @@ const removeBuildFlagFiles = require('koot/libs/remove-build-flag-files');
 const updateKootInPackageJson = require('koot/libs/update-koot-in-package-json');
 const kootPackageJson = require('koot/package.json');
 
-const createPWAsw = require('koot/core/pwa/create');
+// const createPWAsw = require('koot/core/pwa/create');
 
 const buildClient = require('./build-client');
 
@@ -250,10 +250,10 @@ module.exports = async (kootConfig = {}) => {
 
         if (!quietMode) console.log(' ');
 
-        if (!analyze && pwa && STAGE === 'client' && ENV === 'prod') {
-            // 生成 service-worker.js
-            await createPWAsw(pwa, i18n, bundleVersionsKeep);
-        }
+        // if (!analyze && pwa && STAGE === 'client' && ENV === 'prod') {
+        //     // 生成 service-worker.js
+        //     await createPWAsw(pwa, i18n, bundleVersionsKeep);
+        // }
 
         if (
             !analyze &&
@@ -421,7 +421,13 @@ module.exports = async (kootConfig = {}) => {
     ).catch(err => {
         console.error('生成打包配置时发生错误! \n', err);
     });
-    const { webpackConfig, pwa, i18n, devServer = {}, pathnameChunkmap } = data;
+    const {
+        webpackConfig,
+        // pwa,
+        i18n,
+        devServer = {},
+        pathnameChunkmap
+    } = data;
 
     if (TYPE === 'spa' && typeof !!kootConfig.i18n) {
         log(

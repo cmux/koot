@@ -8,11 +8,14 @@ class GenerateChunkmap {
     constructor(settings = {}) {
         this.localeId = settings.localeId;
         this.pathPublic = settings.pathPublic;
+        this.serviceWorkerPathname = settings.serviceWorkerPathname;
     }
 
     apply(compiler) {
         const localeId = this.localeId;
         const pathPublic = this.pathPublic;
+        const serviceWorkerPathname = this.serviceWorkerPathname;
+
         const TYPE = process.env.WEBPACK_BUILD_TYPE;
         const STAGE = process.env.WEBPACK_BUILD_STAGE;
 
@@ -30,7 +33,12 @@ class GenerateChunkmap {
             if (isHotUpdate(stats)) return callback();
 
             if (TYPE !== 'spa')
-                await writeChunkmap(compilation, localeId, pathPublic);
+                await writeChunkmap(
+                    compilation,
+                    localeId,
+                    pathPublic,
+                    serviceWorkerPathname
+                );
 
             callback();
         });

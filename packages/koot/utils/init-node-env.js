@@ -88,7 +88,7 @@ module.exports = () => {
         // PWA Service-Worker 脚本是否自动注册
         KOOT_PWA_AUTO_REGISTER: JSON.stringify(defaultsPWA.auto),
         // PWA Service-Worker 访问路径
-        KOOT_PWA_PATHNAME: JSON.stringify(defaultsPWA.pathname),
+        KOOT_PWA_PATHNAME: JSON.stringify(`/${defaultsPWA.filename}`),
 
         // 当前是否是测试模式
         KOOT_TEST_MODE: JSON.stringify(false),

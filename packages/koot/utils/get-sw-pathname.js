@@ -1,7 +1,7 @@
 const getPublic = require('./get-public-dir');
 
 /**
- * 获取 service-worker 文件名
+ * 获取 service-worker 访问 URI
  * @param {String} [localeId] 如果提供，则会返回 [NAME].[localeId].js
  * @returns {String}
  */

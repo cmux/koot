@@ -16,7 +16,8 @@ const {
     keyConfigOutputPathShouldBe,
     keyConfigWebpackSPATemplateInject,
     keyConfigClientAssetsPublicPath,
-    chunkNameClientRunFirst
+    chunkNameClientRunFirst,
+    keyConfigClientServiceWorkerPathname
 } = require('koot/defaults/before-build');
 const { hmrOptions } = require('koot/defaults/webpack-dev-server');
 
@@ -28,6 +29,7 @@ const createTargetDefaultConfig = require('./create-target-default');
 const transformConfigExtendDefault = require('./transform-config-extend-default');
 const transformConfigLast = require('./transform-config-last');
 const transformOutputPublicpath = require('./transform-output-publicpath');
+const newPluginWorkbox = require('../libs/new-plugin-workbox');
 
 const getCwd = require('koot/utils/get-cwd');
 const getWDSport = require('koot/utils/get-webpack-dev-server-port');
@@ -322,6 +324,13 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                     })
                 );
 
+                result.plugins.push(
+                    newPluginWorkbox(
+                        kootConfigForThisBuild,
+                        isSeperateLocale ? localeId : undefined
+                    )
+                );
+
                 if (TYPE === 'spa') {
                     result.plugins.push(
                         new SpaTemplatePlugin({
@@ -331,14 +340,22 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                             inject: path.resolve(
                                 getDirTemp(),
                                 getFilenameSPATemplateInject(localeId)
-                            )
+                            ),
+                            serviceWorkerPathname:
+                                kootConfigForThisBuild[
+                                    keyConfigClientServiceWorkerPathname
+                                ]
                         })
                     );
                 } else {
                     result.plugins.push(
                         await new GenerateChunkmapPlugin({
                             localeId: isSeperateLocale ? localeId : undefined,
-                            pathPublic
+                            pathPublic,
+                            serviceWorkerPathname:
+                                kootConfigForThisBuild[
+                                    keyConfigClientServiceWorkerPathname
+                                ]
                         })
                     );
                 }
