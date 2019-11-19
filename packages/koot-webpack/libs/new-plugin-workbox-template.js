@@ -55,7 +55,7 @@ workbox.routing.registerRoute(
 );
 workbox.routing.registerRoute(
     getRoute('favicon.ico', true),
-    new workbox.strategies.CacheOnly({
+    new workbox.strategies.CacheFirst({
         cacheName: self.__koot['__baseVersion_lt_0.12']
             ? 'koot-sw-cache'
             : undefined
