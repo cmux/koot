@@ -53,7 +53,7 @@
         "eslint": "^6.6.0",
         "eslint-config-koot": "^1.5.0",
         "fs-extra": "^8.1.0",
-        "husky": "^3.0.9",
+        "husky": "^3.1.0",
         "inquirer": "^7.0.0",
         "is-valid-path": "^0.1.1",
         "jest": "^24.9.0",
@@ -63,7 +63,7 @@
         "lerna-wizard": "^1.1.1",
         "lint-staged": "^9.4.3",
         "prettier": "^1.19.1",
-        "prettier-eslint": "^9.0.0",
+        "prettier-eslint": "^9.0.1",
         "puppeteer": "^2.0.0",
         "simple-git": "^1.126.0",
         "symlink-dir": "^3.1.1"

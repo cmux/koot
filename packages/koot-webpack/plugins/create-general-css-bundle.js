@@ -5,7 +5,8 @@ const postcss = require('postcss');
 const Chunk = require('webpack/lib/Chunk');
 const {
     chunkNameExtractCss,
-    chunkNameExtractCssForImport
+    chunkNameExtractCssForImport,
+    thresholdExtractedStyles
 } = require('koot/defaults/before-build');
 const postcssTransformDeclUrls = require('../postcss/transform-decl-urls');
 
@@ -57,7 +58,10 @@ class CreateGeneralCssBundlePlugin {
                           .join('\n\n')
                     : '';
 
-            const filename = `extract.all.${md5(content)}.css`;
+            const size = content.length;
+            const filename = `extract.all.${md5(content)}${
+                size > thresholdExtractedStyles ? '.large' : '.small'
+            }.css`;
 
             // 添加 chunk
             const chunk = new Chunk(chunkNameExtractCss);
@@ -74,7 +78,9 @@ class CreateGeneralCssBundlePlugin {
             if (process.env.WEBPACK_BUILD_TYPE === 'spa') {
                 const thisFilename = `extract.all.${md5(
                     content
-                )}.url-no-public-path.css`;
+                )}.url-no-public-path${
+                    size > thresholdExtractedStyles ? '.large' : '.small'
+                }.css`;
 
                 // 添加 chunk
                 const chunk = new Chunk(chunkNameExtractCssForImport);

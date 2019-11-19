@@ -1,7 +1,8 @@
 const {
     chunkNameExtractCss,
     chunkNameExtractCssForImport,
-    styleTagGlobalAttributeName
+    styleTagGlobalAttributeName,
+    thresholdExtractedStyles
 } = require('../../defaults/before-build');
 const readClientFile = require('../../utils/read-client-file');
 const getClientFilePath = require('../../utils/get-client-file-path');
@@ -71,7 +72,7 @@ const getExtracted = (localeId, compilation) => {
     const content = readClientFile(filename, localeId, compilation);
 
     // 如果内容大于 50k
-    if (content.length > 50 * 1000) {
+    if (content.length > thresholdExtractedStyles) {
         if (process.env.WEBPACK_BUILD_TYPE === 'spa') {
             return combineFilePaths(
                 `${chunkNameExtractCssForImport}.css`,

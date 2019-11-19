@@ -65,8 +65,12 @@ module.exports = async (kootConfigForThisBuild, localeId) => {
         swDest,
         swSrc,
         importWorkboxFrom: isDev ? 'cdn' : 'local',
-        include: [/\.js$/, /\.css$/, ...initialCacheAppend],
-        exclude: [/extract\.\d+\..+?\.css$/, ...initialCacheIgonre],
+        include: [
+            /\.js$/,
+            /extract\.all\..+?\.large\.css$/,
+            ...initialCacheAppend
+        ],
+        exclude: [...initialCacheIgonre],
         importsDirectory: isDev ? '' : `__workbox-assets`
     });
 };
