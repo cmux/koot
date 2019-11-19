@@ -4,7 +4,8 @@ workbox.setConfig({ debug: false });
 workbox.core.setCacheNameDetails({
     prefix: 'koot',
     suffix: 'cache',
-    precache: 'sw'
+    precache: self.__koot['__baseVersion_lt_0.12'] ? 'sw' : 'pre',
+    runtime: self.__koot['__baseVersion_lt_0.12'] ? 'sw' : 'rt'
 });
 
 self.addEventListener('message', event => {
@@ -21,28 +22,35 @@ self.addEventListener('message', event => {
 self.__precacheManifest = [].concat(self.__precacheManifest || []);
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
+const host = (location.host || location.hostname)
+    .split('.')
+    .reverse()
+    .slice(0, 1)
+    .reverse()
+    .join('.');
+
 workbox.routing.registerRoute(
-    /(^|\/)api\//,
+    new RegExp(`^[a-z]+:\\/\\/[^\/]*?${host}[:]*[0-9]*\\/api(\\/|$)`),
     new workbox.strategies.NetworkOnly(),
     'GET'
 );
 workbox.routing.registerRoute(
-    /(^|\/)__DIST_CLIENT_ASSETS_DIRNAME__\//,
+    new RegExp(
+        `^[a-z]+:\\/\\/[^\/]*?${host}[:]*[0-9]*\\/${self.__koot.distClientAssetsDirName}(\\/|$)`
+    ),
     new workbox.strategies.CacheFirst({
-        cacheName: 'koot-sw-cache',
-        fetchOptions: {
-            mode: 'same-origin'
-        }
+        cacheName: self.__koot['__baseVersion_lt_0.12']
+            ? 'koot-sw-cache'
+            : undefined
     }),
     'GET'
 );
 workbox.routing.registerRoute(
-    /./,
+    new RegExp(`^[a-z]+:\\/\\/[^\/]*?${host}[:]*[0-9]*(\\/|$)`),
     new workbox.strategies.NetworkFirst({
-        cacheName: 'koot-sw-cache',
-        fetchOptions: {
-            mode: 'same-origin'
-        }
+        cacheName: self.__koot['__baseVersion_lt_0.12']
+            ? 'koot-sw-cache'
+            : undefined
     }),
     'GET'
 );

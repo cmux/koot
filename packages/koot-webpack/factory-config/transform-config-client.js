@@ -325,7 +325,7 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                 );
 
                 result.plugins.push(
-                    newPluginWorkbox(
+                    await newPluginWorkbox(
                         kootConfigForThisBuild,
                         isSeperateLocale ? localeId : undefined
                     )

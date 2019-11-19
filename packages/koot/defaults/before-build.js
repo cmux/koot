@@ -14,6 +14,7 @@ module.exports = {
         '__FILE_PROJECT_CONFIG_TEMP_PORTION_CLIENT__',
     keyFileProjectConfigTempPortionOtherClient:
         '__FILE_PROJECT_CONFIG_TEMP_PORTION_OTHER_CLIENT__',
+    keyKootBaseVersion: '__KOOT_BASE_VERSION__',
     dirConfigTemp: 'logs/tmp/config',
     filenameProjectConfigTempFull: 'full.*.js',
     filenameProjectConfigTempPortionServer: 'portion.server.*.js',

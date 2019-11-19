@@ -1,21 +1,26 @@
 const fs = require('fs-extra');
 const path = require('path');
+const semver = require('semver');
 const { InjectManifest } = require('workbox-webpack-plugin');
 
 const {
+    keyKootBaseVersion,
     keyConfigClientServiceWorkerPathname
 } = require('koot/defaults/before-build');
 const defaults = require('koot/defaults/pwa');
 const getSWFilename = require('koot/utils/get-sw-filename');
 
-module.exports = (kootConfigForThisBuild, localeId) => {
+// ============================================================================
+
+module.exports = async (kootConfigForThisBuild, localeId) => {
     if (!kootConfigForThisBuild) throw new Error('NO_KOOT_BUILD_CONFIG');
 
     let { pwa } = kootConfigForThisBuild;
-    const { distClientAssetsDirName } = kootConfigForThisBuild;
 
     if (pwa === true) pwa = {};
     if (pwa === false) return;
+
+    const { distClientAssetsDirName } = kootConfigForThisBuild;
 
     const {
         // auto,
@@ -31,7 +36,7 @@ module.exports = (kootConfigForThisBuild, localeId) => {
 
     const swDest = `${isDev ? '' : '../'}${getSWFilename(filename, localeId)}`;
 
-    const swSrc = (() => {
+    const swSrc = await (async () => {
         if (template) return template;
 
         const filename = 'new-plugin-workbox-template.js';
@@ -41,12 +46,13 @@ module.exports = (kootConfigForThisBuild, localeId) => {
         fs.ensureDirSync(path.dirname(file));
         fs.writeFileSync(
             file,
-            fs
-                .readFileSync(path.resolve(__dirname, filename), 'utf-8')
-                .replace(
-                    /__DIST_CLIENT_ASSETS_DIRNAME__/,
-                    distClientAssetsDirName
-                ),
+            (await inject(kootConfigForThisBuild)) +
+                fs
+                    .readFileSync(path.resolve(__dirname, filename), 'utf-8')
+                    .replace(
+                        /__DIST_CLIENT_ASSETS_DIRNAME__/,
+                        distClientAssetsDirName
+                    ),
             'utf-8'
         );
 
@@ -62,6 +68,24 @@ module.exports = (kootConfigForThisBuild, localeId) => {
         include: [/\.js$/, /\.css$/, ...initialCacheAppend],
         exclude: [/extract\.\d+\..+?\.css$/, ...initialCacheIgonre],
         importsDirectory: isDev ? '' : `__workbox-assets`
-        // cacheId: `koot-sw-cache`
     });
+};
+
+// ============================================================================
+
+const inject = async kootConfigForThisBuild => {
+    const {
+        [keyKootBaseVersion]: kootBaseVersion,
+        distClientAssetsDirName
+    } = kootConfigForThisBuild;
+
+    const obj = {
+        distClientAssetsDirName,
+        '__baseVersion_lt_0.12': semver.lt(kootBaseVersion, '0.12.0'),
+        env: {
+            WEBPACK_BUILD_ENV: process.env.WEBPACK_BUILD_ENV
+        }
+    };
+
+    return `\rself.__koot = ${JSON.stringify(obj, undefined, 4)}\r\r`;
 };
