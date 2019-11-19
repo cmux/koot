@@ -1,6 +1,6 @@
 {
     "name": "koot-webpack",
-    "version": "0.12.0-alpha.8",
+    "version": "0.12.0-alpha.9",
     "description": "Webpack related resources for Koot.js",
     "sideEffects": false,
     "scripts": {},
@@ -69,7 +69,7 @@
         "workbox-webpack-plugin": "^4.3.1"
     },
     "devDependencies": {
-        "koot": "^0.12.0-alpha.8"
+        "koot": "^0.12.0-alpha.9"
     },
     "peerDependencies": {
         "koot": ">= 0.11"
