@@ -26,9 +26,10 @@ module.exports = {
     store: './src/store',
     cookiesToStore: true,
 
-    i18n: [['zh', './src/locales/zh.json'], ['en', './src/locales/en.json']],
-
-    pwa: true,
+    i18n: [
+        ['zh', './src/locales/zh.json'],
+        ['en', './src/locales/en.json']
+    ],
 
     aliases: {
         '@src': path.resolve('./src'),

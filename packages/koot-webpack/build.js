@@ -414,13 +414,7 @@ module.exports = async (kootConfig = {}) => {
     ).catch(err => {
         console.error('生成打包配置时发生错误! \n', err);
     });
-    const {
-        webpackConfig,
-        // pwa,
-        i18n,
-        devServer = {},
-        pathnameChunkmap
-    } = data;
+    const { webpackConfig, i18n, devServer = {}, pathnameChunkmap } = data;
 
     if (TYPE === 'spa' && typeof !!kootConfig.i18n) {
         log(

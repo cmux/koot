@@ -90,7 +90,7 @@ describe('测试: 验证配置 (生成临时的核心代码引用文件，返回
             expect(typeof kootConfig.dist).toBe('string');
             expect(typeof kootConfig.cookiesToStore !== 'undefined').toBe(true);
             expect(typeof kootConfig.i18n !== 'undefined').toBe(true);
-            expect(typeof kootConfig.pwa !== 'undefined').toBe(true);
+            expect(typeof kootConfig.serviceWorker !== 'undefined').toBe(true);
             expect(
                 typeof kootConfig.aliases === 'object' &&
                     !Array.isArray(kootConfig.aliases)

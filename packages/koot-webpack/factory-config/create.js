@@ -13,7 +13,7 @@ const initNodeEnv = require('koot/utils/init-node-env');
 // Transformers
 const transformDist = require('./transform-dist');
 const transformI18n = require('./transform-i18n');
-const transformPWA = require('./transform-pwa');
+const transformServiceWorker = require('./transform-service-worker');
 const transformTemplate = require('./transform-template');
 const transformConfigClient = require('./transform-config-client');
 const transformConfigServer = require('./transform-config-server');
@@ -77,7 +77,9 @@ module.exports = async (kootConfig = {}) => {
 
     kootBuildConfig.dist = await transformDist(kootBuildConfig.dist);
     kootBuildConfig.i18n = await transformI18n(kootBuildConfig);
-    kootBuildConfig.pwa = await transformPWA(kootBuildConfig.pwa);
+    kootBuildConfig.serviceWorker = await transformServiceWorker(
+        kootBuildConfig.serviceWorker
+    );
     kootBuildConfig.template = await transformTemplate(
         kootBuildConfig.template
     );

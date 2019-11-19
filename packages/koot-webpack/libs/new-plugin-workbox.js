@@ -7,7 +7,7 @@ const {
     keyKootBaseVersion,
     keyConfigClientServiceWorkerPathname
 } = require('koot/defaults/before-build');
-const defaults = require('koot/defaults/pwa');
+const defaults = require('koot/defaults/service-worker');
 const getSWFilename = require('koot/utils/get-sw-filename');
 
 // ============================================================================
@@ -15,29 +15,26 @@ const getSWFilename = require('koot/utils/get-sw-filename');
 module.exports = async (kootConfigForThisBuild, localeId) => {
     if (!kootConfigForThisBuild) throw new Error('NO_KOOT_BUILD_CONFIG');
 
-    let { pwa } = kootConfigForThisBuild;
+    let { serviceWorker } = kootConfigForThisBuild;
 
-    if (pwa === true) pwa = {};
-    if (pwa === false) return;
+    if (serviceWorker === true) serviceWorker = {};
+    if (serviceWorker === false) return;
 
     const { distClientAssetsDirName } = kootConfigForThisBuild;
 
     const {
-        // auto,
-        // pathname,
         filename,
-        template,
-        // initialCache,
-        initialCacheAppend = [],
-        initialCacheIgonre = []
-    } = Object.assign({}, defaults, pwa);
+        swSrc: _swSrc,
+        include = [],
+        exclude = []
+    } = Object.assign({}, defaults, serviceWorker);
 
     const isDev = process.env.WEBPACK_BUILD_ENV === 'dev';
 
     const swDest = `${isDev ? '' : '../'}${getSWFilename(filename, localeId)}`;
 
     const swSrc = await (async () => {
-        if (template) return template;
+        if (_swSrc) return _swSrc;
 
         const filename = 'new-plugin-workbox-template.js';
         const file = path.resolve(__dirname, '.tmp', filename);
@@ -65,12 +62,8 @@ module.exports = async (kootConfigForThisBuild, localeId) => {
         swDest,
         swSrc,
         importWorkboxFrom: isDev ? 'cdn' : 'local',
-        include: [
-            /\.js$/,
-            /extract\.all\..+?\.large\.css$/,
-            ...initialCacheAppend
-        ],
-        exclude: [/\.map$/, /^manifest.*\.js$/, ...initialCacheIgonre],
+        include: [/\.js$/, /extract\.all\..+?\.large\.css$/, ...include],
+        exclude: [/\.map$/, /^manifest.*\.js$/, ...exclude],
         importsDirectory: isDev ? '' : `__workbox-assets`
     });
 };

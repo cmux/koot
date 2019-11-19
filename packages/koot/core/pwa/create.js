@@ -130,7 +130,7 @@ const parsePattern = pattern => {
         );
 
         // 读取 service-worker 模板文件内容
-        let content = await fs.readFile(template, { encoding: 'utf8' });
+        const content = await fs.readFile(template, { encoding: 'utf8' });
 
         // 写入
         await fs.writeFile(
@@ -148,7 +148,7 @@ const parsePattern = pattern => {
     const chunkmapFull = await fs.readJson(pathnameChunkmap, 'utf-8');
 
     if (isI18nDefault && Array.isArray(i18n.locales)) {
-        for (let arr of i18n.locales) {
+        for (const arr of i18n.locales) {
             const [localeId] = arr;
             const chunksCurrent = [];
             const chunksIgnore = [];
@@ -161,7 +161,7 @@ const parsePattern = pattern => {
                 extname;
 
             // 暂存当前语言下的所有 chunk
-            for (let chunkname in chunkmapCurrent) {
+            for (const chunkname in chunkmapCurrent) {
                 if (Array.isArray(chunkmapCurrent[chunkname]))
                     chunkmapCurrent[chunkname].forEach(pathname =>
                         chunksCurrent.push(pathname)
@@ -169,9 +169,9 @@ const parsePattern = pattern => {
             }
 
             // 遍历其他所有语言的 chunk，当前语言中不存在的加入 ignore 列表
-            for (let dotLocale in chunkmapFull) {
+            for (const dotLocale in chunkmapFull) {
                 if (dotLocale === `.${localeId}`) continue;
-                for (let chunkname in chunkmapFull[dotLocale]) {
+                for (const chunkname in chunkmapFull[dotLocale]) {
                     const arr = chunkmapFull[dotLocale][chunkname];
                     if (!Array.isArray(arr)) continue;
                     arr.forEach(pathname => {

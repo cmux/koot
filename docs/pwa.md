@@ -7,6 +7,7 @@
 _Koot.js_ 会自动生成 _Service-Worker_ 文件并安装。可通过配置调节相应行为，或使用自行编写的 _Service-Worker_ 文件。
 
 ```javascript
+// Koot.js App 配置文件
 module.exports = {
     /**
      * **默认配置**

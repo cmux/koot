@@ -7,7 +7,7 @@ module.exports = {
     config: {},
     aliases: {},
     i18n: false,
-    pwa: true,
+    serviceWorker: true,
     devServer: {},
     beforeBuild: () => {},
     afterBuild: () => {},
