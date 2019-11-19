@@ -324,12 +324,14 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                     })
                 );
 
-                result.plugins.push(
-                    await newPluginWorkbox(
-                        kootConfigForThisBuild,
-                        isSeperateLocale ? localeId : undefined
-                    )
-                );
+                if (!analyze) {
+                    result.plugins.push(
+                        await newPluginWorkbox(
+                            kootConfigForThisBuild,
+                            isSeperateLocale ? localeId : undefined
+                        )
+                    );
+                }
 
                 if (TYPE === 'spa') {
                     result.plugins.push(

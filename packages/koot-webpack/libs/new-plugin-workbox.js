@@ -70,7 +70,7 @@ module.exports = async (kootConfigForThisBuild, localeId) => {
             /extract\.all\..+?\.large\.css$/,
             ...initialCacheAppend
         ],
-        exclude: [...initialCacheIgonre],
+        exclude: [/\.map$/, /^manifest.*\.js$/, ...initialCacheIgonre],
         importsDirectory: isDev ? '' : `__workbox-assets`
     });
 };
@@ -85,7 +85,9 @@ const inject = async kootConfigForThisBuild => {
 
     const obj = {
         distClientAssetsDirName,
-        '__baseVersion_lt_0.12': semver.lt(kootBaseVersion, '0.12.0'),
+        '__baseVersion_lt_0.12': kootBaseVersion
+            ? semver.lt(kootBaseVersion, '0.12.0')
+            : false,
         env: {
             WEBPACK_BUILD_ENV: process.env.WEBPACK_BUILD_ENV
         }

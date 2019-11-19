@@ -224,7 +224,7 @@ module.exports = {
 
 多语言配置。
 
-关于多语言的使用、语言包规则等，请查阅 [多语言 (i18n)](/i18n)。
+关于详细配置、多语言的使用、语言包规则等内容，请查阅 [多语言 (i18n)](/i18n)。
 
 ```javascript
 module.exports = {
@@ -242,60 +242,9 @@ module.exports = {
         ['en', './src/locales/en.json']
     ],
 
-    /** 完整配置
-     * - 当前列出的均为默认值
-     * - 除 `locales` 外均为**可选项**
-     */
-    /**
-     * 详细配置
-     * - 当前列出的均为默认值
-     * - 除 `locales` 外均为**可选项**
-     * @typedef renderCache
-     * @type {Object}
-     * @property {string} [type="default"]
-     *           多语言打包模式
-     *           - **仅针对**: 生产环境
-     *
-     *           目前支持:
-     *           - `default` (默认值)
-     *             客户端按语种分别打包，语言包内容会直接打入到代码中，代码结果中不存在“语言包对象”
-     *             适合所有项目使用，推荐语言包较大的项目使用
-     *           - `store`
-     *             服务器输出 HTML 时，当前语种的语言包对象会写入 Redux store
-     *             适合语言包较小，或对文件/请求体积不敏感的 WebApp 项目使用
-     *             开发环境下会强制使用这一模式
-     * @property {string} [use="query"]
-     *           使用 URL 切换语种的方式
-     *
-     *           目前支持:
-     *           - `query` (默认值)
-     *             一般情况下，URL 中不会存在有关语种的字段。
-     *             切换语种时使用名为 hl 的 URL 参数，如：
-     *               `https://some.project.com/?hl=zh-cn`
-     *               `https://some.project.com/list/articles/?page=10&hl=ja-jp`
-     *           - `router`
-     *             规定路由的第一层为语种ID。
-     *             如果访问的 URL 的路由第一层不是项目设定的已知的语种 ID，则会自动跳转到最近一次访问的语种或默认语种对应的页面。
-     *               `https://some.project.com/` 自动跳转到 `https://some.project.com/zh-cn/`
-     *             URL 示例：
-     *               `https://some.project.com/zh-cn/`
-     *               `https://some.project.com/ja-jp/list/articles/?page=10`
-     * @property {string} [expr="__"]
-     *           JavaScript 代码中多语言翻译方法名
-     * @property {string} [domain]
-     *           Cookie 影响的域
-     * @property {string} [cookieKey="spLocaleId"]
-     *           语种ID存储于 Cookie 中的字段名
-     * @property {Array<LocaleConfig>} locales
-     *           语种ID和语言包。参见上文简易配置
-     */
+    // 详细配置。配置项及其说明详见多语言章节 (链接见上文)
     i18n: {
-        type: 'default',
-        use: 'query',
-        expr: '__',
-        domain: undefined,
-        cookieKey: 'spLocaleId',
-        locales: []
+        [option]: 'value'
     }
 };
 ```

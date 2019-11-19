@@ -10,7 +10,7 @@
     -   [项目配置](/config)
     -   [模板](/template)
     -   [Webpack](/webpack)
-    -   [PWA](/pwa)
+    -   [Servie-Worker & PWA](/pwa)
 
 -   **环境**
 

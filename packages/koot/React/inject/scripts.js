@@ -2,7 +2,8 @@ const path = require('path');
 
 const {
     chunkNameClientRunFirst,
-    scriptTagEntryAttributeName
+    scriptTagEntryAttributeName,
+    thresholdScriptRunFirst
 } = require('../../defaults/before-build');
 const { publicPathPrefix } = require('../../defaults/webpack-dev-server');
 const defaultEntrypoints = require('../../defaults/entrypoints');
@@ -14,13 +15,6 @@ const {
     scriptsInBody,
     uriServiceWorker
 } = require('./_cache-keys');
-
-/**
- * @type {number} run-first 入口的文件尺寸阈值
- * - 如果超过这个值，会采用 <script> 引用的方式
- * - 如果小于等于这个值，直接将文件内容写入 HTML
- */
-const thresholdRunFirst = 10 * 1000;
 
 /**
  * 注入: JavaScript 代码
@@ -65,7 +59,7 @@ module.exports = ({
                 localeId,
                 compilation
             );
-            if (content.length > thresholdRunFirst) {
+            if (content.length > thresholdScriptRunFirst) {
                 injectCache[scriptsRunFirst] = combineFilePaths(
                     name,
                     filename,

@@ -74,5 +74,11 @@ module.exports = {
      * - 如果超过这个值，会采用 <link> 引用的方式
      * - 如果小于等于这个值，直接将文件内容写入 HTML
      */
-    thresholdExtractedStyles: 50 * 1000
+    thresholdStylesExtracted: 50 * 1000,
+    /**
+     * @type {number} run-first 入口的文件尺寸阈值
+     * - 如果超过这个值，会采用 <script> 引用的方式
+     * - 如果小于等于这个值，直接将文件内容写入 HTML
+     */
+    thresholdScriptRunFirst: 10 * 1000
 };
