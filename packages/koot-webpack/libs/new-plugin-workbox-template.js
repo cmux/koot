@@ -22,15 +22,22 @@ self.addEventListener('message', event => {
 self.__precacheManifest = [].concat(self.__precacheManifest || []);
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
-const getRoute = pathname =>
-    new RegExp(
-        `^[a-z]+:\\/\\/[^\/]*?${(location.host || location.hostname)
-            .split('.')
-            .reverse()
-            .slice(0, 2)
-            .reverse()
-            .join('.')}[:]*[0-9]*${pathname ? `\\/${pathname}` : ''}(\\/|$)`
+const getRoute = (pathname, isNotPath) => {
+    const host = (location.host || location.hostname)
+        .split('.')
+        .reverse()
+        .slice(0, 2)
+        .reverse()
+        .join('.');
+    const p = pathname
+        ? `\\/${pathname.substr(0, 1) === '/' ? pathname.substr(1) : pathname}`
+        : '';
+    const suffix = isNotPath ? `\\?.*` : '\\/';
+
+    return new RegExp(
+        `^[a-z]+:\\/\\/[^\/]*?${host}[:]*[0-9]*${p}(${suffix}|$)`
     );
+};
 
 workbox.routing.registerRoute(
     getRoute('api'),
@@ -40,6 +47,15 @@ workbox.routing.registerRoute(
 workbox.routing.registerRoute(
     getRoute(self.__koot.distClientAssetsDirName),
     new workbox.strategies.CacheFirst({
+        cacheName: self.__koot['__baseVersion_lt_0.12']
+            ? 'koot-sw-cache'
+            : undefined
+    }),
+    'GET'
+);
+workbox.routing.registerRoute(
+    getRoute('favicon.ico', true),
+    new workbox.strategies.CacheOnly({
         cacheName: self.__koot['__baseVersion_lt_0.12']
             ? 'koot-sw-cache'
             : undefined
