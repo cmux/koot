@@ -22,22 +22,23 @@ self.addEventListener('message', event => {
 self.__precacheManifest = [].concat(self.__precacheManifest || []);
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
-const host = (location.host || location.hostname)
-    .split('.')
-    .reverse()
-    .slice(0, 1)
-    .reverse()
-    .join('.');
+const getRoute = pathname =>
+    new RegExp(
+        `^[a-z]+:\\/\\/[^\/]*?${(location.host || location.hostname)
+            .split('.')
+            .reverse()
+            .slice(0, 2)
+            .reverse()
+            .join('.')}[:]*[0-9]*${pathname ? `\\/${pathname}` : ''}(\\/|$)`
+    );
 
 workbox.routing.registerRoute(
-    new RegExp(`^[a-z]+:\\/\\/[^\/]*?${host}[:]*[0-9]*\\/api(\\/|$)`),
+    getRoute('api'),
     new workbox.strategies.NetworkOnly(),
     'GET'
 );
 workbox.routing.registerRoute(
-    new RegExp(
-        `^[a-z]+:\\/\\/[^\/]*?${host}[:]*[0-9]*\\/${self.__koot.distClientAssetsDirName}(\\/|$)`
-    ),
+    getRoute(self.__koot.distClientAssetsDirName),
     new workbox.strategies.CacheFirst({
         cacheName: self.__koot['__baseVersion_lt_0.12']
             ? 'koot-sw-cache'
@@ -46,7 +47,7 @@ workbox.routing.registerRoute(
     'GET'
 );
 workbox.routing.registerRoute(
-    new RegExp(`^[a-z]+:\\/\\/[^\/]*?${host}[:]*[0-9]*(\\/|$)`),
+    getRoute(),
     new workbox.strategies.NetworkFirst({
         cacheName: self.__koot['__baseVersion_lt_0.12']
             ? 'koot-sw-cache'
