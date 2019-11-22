@@ -46,7 +46,7 @@
         "node": ">=8.12.0"
     },
     "dependencies": {
-        "@types/node": "^12.12.9",
+        "@types/node": "^12.12.11",
         "@types/react": "^16.9.11",
         "@types/react-dom": "^16.9.4",
         "@types/react-redux": "^7.1.5",
@@ -58,7 +58,7 @@
         "cookie": "^0.4.0",
         "copyfiles": "^2.1.1",
         "debug": "^4.1.1",
-        "ejs": "^2.7.3",
+        "ejs": "^2.7.4",
         "es5-shim": "^4.5.13",
         "execa": "^3.3.0",
         "fs-extra": "^8.1.0",
@@ -103,7 +103,7 @@
         "typescript": "^3.7.2",
         "universal-alias-loader": "^1.2.2",
         "xmlify": "^1.1.0",
-        "yargs": "^15.0.1"
+        "yargs": "^15.0.2"
     },
     "gitHead": "2c40d0d15861c83c7fff0db2557df6890abd084c"
 }

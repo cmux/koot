@@ -108,8 +108,9 @@ module.exports = {
                      */
                     {
                         test: /\.(ico|gif|jpg|jpeg|png|webp)$/,
-                        loader: 'file-loader',
+                        loader: 'url-loader',
                         options: {
+                            limit: 2 * 1024,
                             context: 'static',
                             name: 'assets/[hash:32].[ext]',
                             emitFile: Boolean(
@@ -122,7 +123,8 @@ module.exports = {
                         loader: 'svg-url-loader',
                         exclude: /node_modules/,
                         options: {
-                            noquotes: true
+                            noquotes: true,
+                            limit: 5 * 1024
                         }
                     }
                 ]
