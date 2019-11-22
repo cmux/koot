@@ -1,7 +1,7 @@
 {
     "name": "koot-webpack",
     "version": "0.12.0-alpha.14",
-    "description": "Webpack related resources for Koot.js",
+    "description": "Creates Webpack configuration for Koot.js app.",
     "sideEffects": false,
     "scripts": {},
     "repository": {
@@ -70,9 +70,6 @@
     },
     "devDependencies": {
         "koot": "^0.12.0-alpha.14"
-    },
-    "peerDependencies": {
-        "koot": ">= 0.11"
     },
     "gitHead": "2c40d0d15861c83c7fff0db2557df6890abd084c"
 }

@@ -2,7 +2,7 @@
     "name": "koot-boilerplate",
     "private": true,
     "version": "0.12.0-alpha.14",
-    "description": "Tech-demo boilerplate for koot.js.",
+    "description": "Boilerplate project for koot.js app.",
     "author": {
         "name": "diablohu",
         "email": "diablohudream@gmail.com",
