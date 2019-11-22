@@ -10,8 +10,6 @@
         -   组件 CSS 的 `<style>` 标签上不再有 `id` 属性，以避免和元素冲突
             -   如果项目中有用到根据 `id` 选择 `<style>` 标签的场景，可改为选择标签属性 `[data-koot-module]`
         -   特殊 JS 入口 _CLIENT_RUN_FIRST_ 如果文件尺寸大于 10KB，会改为引用请求的方式加载
-        -   特殊 JS 入口 _CLIENT_RUN_FIRST_ 现默认引入 `regenerator-runtime/runtime`
-            -   现在 _Koot.js_ 项目默认支持在浏览器环境中使用 _async_ / _await_ 开发
     -   默认的 _Service Worker_ 文件现在使用 _Workbox_ 生成
         -   如果原有项目中有使用自定的 _Service Worker_ 模板，升级后需要更新该模板。详情请参见文档 [Service Worker](https://koot.js.org/#/pwa)
     -   现在会忽略 _Babel_ 插件 `@babel/plugin-transform-regenerator`
@@ -23,8 +21,11 @@
     -   **新配置项** `distClientAssetsDirName` - 设定客户端打包结果中静态资源存放路径的目录名。详情请参见文档 [配置/distClientAssetsDirName](https://koot.js.org/#/config?id=distClientAssetsDirName) ([#181](https://github.com/cmux/koot/issues/181))
     -   **新工具函数** `koot/utils/client-get-styles` - 获取当前全局 CSS 和所有组件 CSS。具体用法请参见文档 [全局与工具函数/工具函数/客户端](https://koot.js.org/#/utilities?id=客户端) ([#185](https://github.com/cmux/koot/issues/185))
 -   优化
+    -   现在默认支持在浏览器环境中使用 _async_ / _await_ 开发
     -   [服务器] 优化服务器代码的文件尺寸 ([#172](https://github.com/cmux/koot/issues/172), [#186](https://github.com/cmux/koot/issues/186))
-    -   [SSR & 客户端渲染 & SPA 模板生成] 所有注入/插入的 `<script>` 标签现在均会新增 `[data-koot-entry]` 属性
+    -   SSR & 客户端渲染 & SPA 模板生成
+        -   所有注入/插入的 `<script>` 标签现在均会新增 `[data-koot-entry]` 属性
+        -   特殊 JS 入口 _CLIENT_RUN_FIRST_ 现默认引入 `regenerator-runtime/runtime`
     -   现在开发环境下会默认启用 _Service Worker_
 
 **koot-boilerplate**
