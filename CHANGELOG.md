@@ -15,6 +15,7 @@
     -   现在会忽略 _Babel_ 插件 `@babel/plugin-transform-regenerator`
     -   更新依赖包 **major** 版本号
         -   `chalk` -> _^3.0.0_
+        -   `ejs` -> _^3.0.1_
         -   `ora` -> _^4.0.3_
         -   `webpack` -> _^5.0.0_
 -   **新特性**
