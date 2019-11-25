@@ -74,17 +74,21 @@ const middlewareIsomorphic = (options = {}) => {
             const thisLocaleId = l.substr(0, 1) === '.' ? l.substr(1) : l;
             entrypoints.set(thisLocaleId, chunkmap[l]['.entrypoints']);
             filemap.set(thisLocaleId, chunkmap[l]['.files']);
-            templateInjectCache.set(thisLocaleId, {
-                [uriServiceWorker]: getSWPathname(chunkmap[l])
-            });
+            const cache = {};
+            if (!__DEV__) {
+                cache[uriServiceWorker] = getSWPathname(chunkmap[l]);
+            }
+            templateInjectCache.set(thisLocaleId, cache);
             // styleMap.set(thisLocaleId, {})
         }
     } else {
         entrypoints.set('', chunkmap['.entrypoints']);
         filemap.set('', chunkmap['.files']);
-        templateInjectCache.set('', {
-            [uriServiceWorker]: getSWPathname(chunkmap)
-        });
+        const cache = {};
+        if (!__DEV__) {
+            cache[uriServiceWorker] = getSWPathname(chunkmap);
+        }
+        templateInjectCache.set('', cache);
         // styleMap.set('', {})
     }
 
@@ -138,6 +142,13 @@ const middlewareIsomorphic = (options = {}) => {
             /** @type {Object} 本次请求的 (当前语言的) CSS 对照表 */
             const styleMap = {};
             // const thisStyleMap = styleMap.get(i18nType === 'default' ? LocaleId : '')
+
+            console.log({ thisTemplateInjectCache });
+            if (__DEV__) {
+                thisTemplateInjectCache[uriServiceWorker] = getSWPathname(
+                    i18nType === 'default' ? chunkmap[LocaleId] : chunkmap
+                );
+            }
 
             // 生成/清理 Store
             // console.log('\x1b[36m⚑\x1b[0m' + ' Store created')

@@ -1,7 +1,7 @@
-const injectHtmlLang = require('./inject/htmlLang')
-const injectMetas = require('./inject/metas')
-const injectStyles = require('./inject/styles')
-const injectScripts = require('./inject/scripts')
+const injectHtmlLang = require('./inject/htmlLang');
+const injectMetas = require('./inject/metas');
+const injectStyles = require('./inject/styles');
+const injectScripts = require('./inject/scripts');
 
 /**
  * 生成 ejs 使用的模板替换对象
@@ -40,12 +40,11 @@ module.exports = (options = {}) => {
 
         needInjectCritical = {
             styles: false,
-            scripts: false,
-        },
-    } = options
+            scripts: false
+        }
+    } = options;
 
     return {
-
         htmlLang: injectHtmlLang(localeId),
         title,
         metas: injectMetas({ metaHtml, localeId, compilation }),
@@ -55,7 +54,7 @@ module.exports = (options = {}) => {
             filemap,
             stylesHtml,
             localeId,
-            compilation,
+            compilation
         }),
 
         react: reactHtml,
@@ -68,7 +67,6 @@ module.exports = (options = {}) => {
             reduxHtml,
             SSRState,
             compilation
-        }),
-
-    }
-}
+        })
+    };
+};

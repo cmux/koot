@@ -6,6 +6,7 @@ const {
 } = require('../../defaults/before-build');
 const readClientFile = require('../../utils/read-client-file');
 const getClientFilePath = require('../../utils/get-client-file-path');
+const { styles } = require('./_cache-keys');
 
 /**
  * 注入: CSS 代码
@@ -26,11 +27,11 @@ module.exports = ({
     localeId,
     compilation
 }) => {
-    if (typeof injectCache.styles === 'undefined') {
-        injectCache.styles = getExtracted(localeId, compilation);
+    if (typeof injectCache[styles] === 'undefined') {
+        injectCache[styles] = getExtracted(localeId, compilation);
 
         if (process.env.WEBPACK_BUILD_ENV === 'dev') {
-            injectCache.styles +=
+            injectCache[styles] +=
                 `<style id="__koot-react-hot-loader-error-overlay">` +
                 `.react-hot-loader-error-overlay div {` +
                 `    z-index: 99999;` +
@@ -45,7 +46,7 @@ module.exports = ({
     //     injectCache.styles += getCritical()
     // }
 
-    return injectCache.styles + stylesHtml;
+    return (injectCache[styles] || '') + stylesHtml;
 };
 
 // const getCritical = () => {

@@ -294,17 +294,14 @@ const ssr = async (options = {}) => {
 
     // 结果写入缓存
     if (__DEV__) {
-        // 将结果中指向 webpack-dev-server 的 URL 转换为指向本服务器的代理地址
-        // 替换 localhost 为 origin，以允许外部请求访问
-        // delete thisTemplateInjectCache.styles;
-        // delete thisTemplateInjectCache.scriptsInBody;
-        // delete thisTemplateInjectCache.pathnameSW
         if (injectCacheKeys) {
             for (const k of Object.values(injectCacheKeys)) {
                 delete thisTemplateInjectCache[k];
             }
         }
 
+        // 将结果中指向 webpack-dev-server 的 URL 转换为指向本服务器的代理地址
+        // 替换 localhost 为 origin，以允许外部请求访问
         const origin = ctx.originTrue.split('://')[1];
         // origin = origin.split(':')[0]
         body = body.replace(
