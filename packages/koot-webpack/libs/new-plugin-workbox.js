@@ -8,6 +8,9 @@ const {
     keyConfigClientServiceWorkerPathname
 } = require('koot/defaults/before-build');
 const defaults = require('koot/defaults/service-worker');
+const {
+    serviceWorker: devRequestServiceWorker
+} = require('koot/defaults/dev-request-uri');
 const getSWFilename = require('koot/utils/get-sw-filename');
 
 // ============================================================================
@@ -31,7 +34,11 @@ module.exports = async (kootConfigForThisBuild, localeId) => {
 
     const isDev = process.env.WEBPACK_BUILD_ENV === 'dev';
 
-    const swDest = `${isDev ? '' : '../'}${getSWFilename(filename, localeId)}`;
+    const swDest = isDev
+        ? devRequestServiceWorker.substr(0, 1) === '/'
+            ? devRequestServiceWorker.substr(1)
+            : devRequestServiceWorker
+        : `../${getSWFilename(filename, localeId)}`;
 
     const swSrc = await (async () => {
         if (_swSrc) return _swSrc;

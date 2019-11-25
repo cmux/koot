@@ -2,6 +2,7 @@
 // import createMemoryHistory from 'history/lib/createMemoryHistory'
 // import { syncHistoryWithStore } from 'react-router-redux'
 
+import { serviceWorker as devRequestServiceWorker } from '../../../../defaults/dev-request-uri';
 import { uriServiceWorker } from '../../../../React/inject/_cache-keys';
 
 import getChunkmap from '../../../../utils/get-chunkmap';
@@ -76,7 +77,7 @@ const middlewareIsomorphic = (options = {}) => {
             filemap.set(thisLocaleId, chunkmap[l]['.files']);
             const cache = {};
             if (!__DEV__) {
-                cache[uriServiceWorker] = getSWPathname(chunkmap[l]);
+                extendCacheObject(cache, chunkmap, l);
             }
             templateInjectCache.set(thisLocaleId, cache);
             // styleMap.set(thisLocaleId, {})
@@ -86,7 +87,7 @@ const middlewareIsomorphic = (options = {}) => {
         filemap.set('', chunkmap['.files']);
         const cache = {};
         if (!__DEV__) {
-            cache[uriServiceWorker] = getSWPathname(chunkmap);
+            extendCacheObject(cache, chunkmap);
         }
         templateInjectCache.set('', cache);
         // styleMap.set('', {})
@@ -143,10 +144,11 @@ const middlewareIsomorphic = (options = {}) => {
             const styleMap = {};
             // const thisStyleMap = styleMap.get(i18nType === 'default' ? LocaleId : '')
 
-            console.log({ thisTemplateInjectCache });
             if (__DEV__) {
-                thisTemplateInjectCache[uriServiceWorker] = getSWPathname(
-                    i18nType === 'default' ? chunkmap[LocaleId] : chunkmap
+                extendCacheObject(
+                    thisTemplateInjectCache,
+                    chunkmap,
+                    i18nType === 'default' ? LocaleId : undefined
                 );
             }
 
@@ -232,3 +234,16 @@ const middlewareIsomorphic = (options = {}) => {
 };
 
 export default middlewareIsomorphic;
+
+// ============================================================================
+
+const extendCacheObject = (cache, chunkmap, localeId) => {
+    const serviceWorker = getSWPathname(
+        localeId ? chunkmap[localeId] : chunkmap
+    );
+    if (serviceWorker) {
+        cache[uriServiceWorker] = __DEV__
+            ? devRequestServiceWorker
+            : serviceWorker;
+    }
+};

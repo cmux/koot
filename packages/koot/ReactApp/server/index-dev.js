@@ -5,6 +5,9 @@ const betterProxy = require('koa-better-http-proxy');
 const proxy = require('koa-proxies');
 
 const { publicPathPrefix } = require('../../defaults/webpack-dev-server');
+const {
+    serviceWorker: devRequestServiceWorker
+} = require('../../defaults/dev-request-uri');
 const getWDSport = require('../../utils/get-webpack-dev-server-port');
 const getPathnameDevServerStart = require('../../utils/get-pathname-dev-server-start');
 // const log = require('../../libs/log');
@@ -46,20 +49,22 @@ const run = async () => {
     const app = new Koa();
 
     // 代理服务器 -> Service Worker
-    // if (process.env.KOOT_PWA_PATHNAME) {
-    //     const pathname = JSON.parse(process.env.KOOT_PWA_PATHNAME);
-    //     const R = pathname.substr(0, 1) === '/' ? pathname : `/${pathname}`;
+    // {
+    //     const R =
+    //         devRequestServiceWorker.substr(0, 1) === '/'
+    //             ? devRequestServiceWorker
+    //             : `/${devRequestServiceWorker}`;
     //     const proxyServer = new Koa();
-    //     proxyServer.use(async ctx => {
+    //     proxyServer.use(async (...args) => {
     //         console.log({
     //             publicPathPrefix,
-    //             __: `http://localhost:${portWebpackDevServer}/${publicPathPrefix}`
+    //             __: `http://localhost:${portWebpackDevServer}`
     //         });
     //         return proxy('', {
-    //             target: `http://localhost:${portWebpackDevServer}/${publicPathPrefix}/dist`,
-    //             changeOrigin: false,
+    //             target: `http://localhost:${portWebpackDevServer}/dist`,
+    //             changeOrigin: true,
     //             logs: true
-    //         })(ctx);
+    //         })(...args);
     //     });
     //     app.use(mount(R, proxyServer));
     // }
