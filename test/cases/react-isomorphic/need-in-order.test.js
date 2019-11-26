@@ -1181,16 +1181,19 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
     if (!isDev) await testAssetsGzip(origin, dist, browser);
 
     // 测试: 没有失败的请求
-    if (failedResponse.length) {
+    const failedResponseFiltered = failedResponse.filter(
+        res => !/\/sockjs-node\//.test(res.url())
+    );
+    if (failedResponseFiltered.length) {
         console.error(
             'failedResponse',
-            failedResponse.map(res => ({
+            failedResponseFiltered.map(res => ({
                 status: res.status(),
                 url: res.url()
             }))
         );
     }
-    expect(failedResponse.length).toBe(0);
+    expect(failedResponseFiltered.length).toBe(0);
 
     // 结束测试
     await page.close();
