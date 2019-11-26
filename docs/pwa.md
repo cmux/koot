@@ -49,7 +49,7 @@ _Koot.js_ 采用 `workbox-webpack-plugin` 提供的 `InjectManifest` 插件生�
     -   `self.__koot.distClientAssetsDirName` - 客户端打包结果中静态资源存放路径的目录名 (默认: `includes`)
     -   `self.__koot.env.WEBPACK_BUILD_ENV` - 当前环境 (`prod` 或 `dev`)
 
-参考: [Koot.js 自带的模板文件](https://github.com/cmux/koot/blob/master/packages/koot-webpack/libs/new-plugin-workbox.js)
+参考: [Koot.js 的默认模板文件](https://github.com/cmux/koot/blob/master/packages/koot-webpack/libs/new-plugin-workbox.js)
 
 ---
 

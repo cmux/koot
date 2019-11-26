@@ -39,27 +39,31 @@ const getRoute = (pathname, isNotPath) => {
     );
 };
 
+// Caching Strategy ===========================================================
+
+const cacheRoutes = [
+    getRoute(self.__koot.distClientAssetsDirName),
+    getRoute('favicon.ico', true)
+];
+const cacheName = self.__koot['__baseVersion_lt_0.12']
+    ? 'koot-sw-cache'
+    : undefined;
+const cacheStrategy =
+    self.__koot.env.WEBPACK_BUILD_ENV === 'dev' ? 'NetworkFirst' : 'CacheFirst';
+
+cacheRoutes.forEach(route => {
+    workbox.routing.registerRoute(
+        route,
+        new workbox.strategies[cacheStrategy]({ cacheName }),
+        'GET'
+    );
+});
+
+// Others =====================================================================
+
 workbox.routing.registerRoute(
     getRoute('api'),
     new workbox.strategies.NetworkOnly(),
-    'GET'
-);
-workbox.routing.registerRoute(
-    getRoute(self.__koot.distClientAssetsDirName),
-    new workbox.strategies.CacheFirst({
-        cacheName: self.__koot['__baseVersion_lt_0.12']
-            ? 'koot-sw-cache'
-            : undefined
-    }),
-    'GET'
-);
-workbox.routing.registerRoute(
-    getRoute('favicon.ico', true),
-    new workbox.strategies.CacheFirst({
-        cacheName: self.__koot['__baseVersion_lt_0.12']
-            ? 'koot-sw-cache'
-            : undefined
-    }),
     'GET'
 );
 workbox.routing.registerRoute(
