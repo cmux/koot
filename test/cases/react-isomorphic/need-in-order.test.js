@@ -1177,7 +1177,9 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
         const $ = cheerio.load(HTML);
 
         {
-            const selector = 'h1 ~ a[href="/"]';
+            const selector = `h1 ~ a[href="${
+                i18nUseRouter ? `/${toLocaleId}` : ''
+            }/"]`;
             const result = '欢迎';
             expect($(selector).text()).toBe(result);
             expect(
