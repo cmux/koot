@@ -23,22 +23,4 @@ router.get(serviceWorker, async ctx => {
     ctx.type = 'application/javascript';
 });
 
-// const R =
-// devRequestServiceWorker.substr(0, 1) === '/'
-//     ? devRequestServiceWorker
-//     : `/${devRequestServiceWorker}`;
-// const proxyServer = new Koa();
-// proxyServer.use(async (...args) => {
-// console.log({
-//     publicPathPrefix,
-//     __: `http://localhost:${portWebpackDevServer}/${publicPathPrefix}`
-// });
-// return proxy('', {
-//     target: `http://localhost:${portWebpackDevServer}/${publicPathPrefix}/dist`,
-//     changeOrigin: true,
-//     logs: true
-// })(...args);
-// });
-// app.use(mount(R, proxyServer));
-
 export default router.routes();

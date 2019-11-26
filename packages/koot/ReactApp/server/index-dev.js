@@ -5,9 +5,6 @@ const betterProxy = require('koa-better-http-proxy');
 const proxy = require('koa-proxies');
 
 const { publicPathPrefix } = require('../../defaults/webpack-dev-server');
-const {
-    serviceWorker: devRequestServiceWorker
-} = require('../../defaults/dev-request-uri');
 const getWDSport = require('../../utils/get-webpack-dev-server-port');
 const getPathnameDevServerStart = require('../../utils/get-pathname-dev-server-start');
 // const log = require('../../libs/log');
@@ -47,27 +44,6 @@ const run = async () => {
 
     // 创建 KOA 服务器
     const app = new Koa();
-
-    // 代理服务器 -> Service Worker
-    // {
-    //     const R =
-    //         devRequestServiceWorker.substr(0, 1) === '/'
-    //             ? devRequestServiceWorker
-    //             : `/${devRequestServiceWorker}`;
-    //     const proxyServer = new Koa();
-    //     proxyServer.use(async (...args) => {
-    //         console.log({
-    //             publicPathPrefix,
-    //             __: `http://localhost:${portWebpackDevServer}`
-    //         });
-    //         return proxy('', {
-    //             target: `http://localhost:${portWebpackDevServer}/dist`,
-    //             changeOrigin: true,
-    //             logs: true
-    //         })(...args);
-    //     });
-    //     app.use(mount(R, proxyServer));
-    // }
 
     // 代理服务器 -> webpack dev server
     {

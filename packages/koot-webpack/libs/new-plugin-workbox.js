@@ -9,6 +9,9 @@ const {
 } = require('koot/defaults/before-build');
 const defaults = require('koot/defaults/service-worker');
 const {
+    publicPathPrefix: devPublicPathPrefix
+} = require('koot/defaults/webpack-dev-server');
+const {
     serviceWorker: devRequestServiceWorker
 } = require('koot/defaults/dev-request-uri');
 const getSWFilename = require('koot/utils/get-sw-filename');
@@ -78,18 +81,21 @@ module.exports = async (kootConfigForThisBuild, localeId) => {
 // ============================================================================
 
 const inject = async kootConfigForThisBuild => {
+    const ENV = process.env.WEBPACK_BUILD_ENV;
+
     const {
         [keyKootBaseVersion]: kootBaseVersion,
         distClientAssetsDirName
     } = kootConfigForThisBuild;
 
     const obj = {
-        distClientAssetsDirName,
+        distClientAssetsDirName:
+            ENV === 'dev' ? devPublicPathPrefix : distClientAssetsDirName,
         '__baseVersion_lt_0.12': kootBaseVersion
             ? semver.lt(kootBaseVersion, '0.12.0')
             : false,
         env: {
-            WEBPACK_BUILD_ENV: process.env.WEBPACK_BUILD_ENV
+            WEBPACK_BUILD_ENV: ENV
         }
     };
 

@@ -132,7 +132,7 @@ module.exports = ({
                 `navigator.serviceWorker.register("${injectCache[
                     uriServiceWorker
                 ] || JSON.parse(process.env.KOOT_PWA_PATHNAME)}?koot=0.12",` +
-                `{scope: '${isDev ? `/${publicPathPrefix}/dist/` : '/'}'}` +
+                `{scope: '/'}` +
                 `)` +
                 `.catch(err => {console.log('👩‍💻 Service Worker SUPPORTED. ERROR', err)})` +
                 `});` +
