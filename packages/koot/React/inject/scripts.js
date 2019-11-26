@@ -5,7 +5,6 @@ const {
     scriptTagEntryAttributeName,
     thresholdScriptRunFirst
 } = require('../../defaults/before-build');
-const { publicPathPrefix } = require('../../defaults/webpack-dev-server');
 const defaultEntrypoints = require('../../defaults/entrypoints');
 const readClientFile = require('../../utils/read-client-file');
 const getClientFilePath = require('../../utils/get-client-file-path');
