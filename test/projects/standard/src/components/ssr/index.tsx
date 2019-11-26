@@ -8,7 +8,7 @@ import Controled from './controled-ssr';
     styles: require('./index.module.less')
 })
 class SSRSamples extends React.Component<ExtendedProps> {
-    render() {
+    render(): React.ReactNode {
         return (
             <div className={this.props.className} id="koot-test-ssr">
                 <NoSSR />

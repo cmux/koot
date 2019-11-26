@@ -11,7 +11,13 @@ import {
     ComponentState
 } from 'react';
 import { Store, Dispatch } from 'redux';
-import { MapStateToPropsParam } from 'react-redux';
+import {
+    MapStateToPropsParam,
+    MapDispatchToPropsNonObject,
+    MapDispatchToPropsParam,
+    MergeProps,
+    Options as ReactReduxOptions
+} from 'react-redux';
 
 // ============================================================================
 
@@ -45,7 +51,39 @@ class HOC extends Component {}
 
 export function extend<P = {}, S = ComponentState>(options: {
     // connect?: Connect;
-    connect?: MapStateToPropsParam<any, P, any>;
+    connect?:
+        | MapStateToPropsParam<any, P, S>
+        | [null | undefined | MapStateToPropsParam<any, P, S>]
+        | [
+              null | undefined | MapStateToPropsParam<any, P, S>,
+              (
+                  | null
+                  | undefined
+                  | MapDispatchToPropsNonObject<any, P>
+                  | MapDispatchToPropsParam<any, P>
+              )
+          ]
+        | [
+              null | undefined | MapStateToPropsParam<any, P, S>,
+              (
+                  | null
+                  | undefined
+                  | MapDispatchToPropsNonObject<any, P>
+                  | MapDispatchToPropsParam<any, P>
+              ),
+              null | undefined | MergeProps<any, any, P, any>
+          ]
+        | [
+              null | undefined | MapStateToPropsParam<any, P, S>,
+              (
+                  | null
+                  | undefined
+                  | MapDispatchToPropsNonObject<any, P>
+                  | MapDispatchToPropsParam<any, P>
+              ),
+              null | undefined | MergeProps<any, any, P, any>,
+              null | undefined | ReactReduxOptions<S, any, P>
+          ];
     /** 提供页面的 title 和 meta 标签信息 */
     pageinfo?: Pageinfo | ExtendPageinfoFunction;
     data?: DataFetchFunction | ExtendData;

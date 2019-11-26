@@ -28,6 +28,7 @@
         -   所有注入/插入的 `<script>` 标签现在均会新增 `[data-koot-entry]` 属性
         -   特殊 JS 入口 _CLIENT_RUN_FIRST_ 现默认引入 `regenerator-runtime/runtime`
     -   现在开发环境下会默认启用 _Service Worker_
+    -   更新 TS 定义 ([#191](https://github.com/cmux/koot/issues/191))
 
 **koot-boilerplate**
 
@@ -40,9 +41,6 @@
 
 -   错误修正
     -   新建项目时的“覆盖”模式会删除原有文件的问题 ([#180](https://github.com/cmux/koot/issues/180))
--   更新依赖包 **major** 版本号
-    -   `chalk` -> _^3.0.0_
-    -   `ora` -> _^4.0.3_
 
 ## [0.11.15] - 2019-10-15
 
