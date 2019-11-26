@@ -39,6 +39,11 @@ class App extends React.Component {
             console.log('redux store', getStore());
             console.log('history', history);
         }
+        console.log(
+            `__KOOT_TEST_LOCALE_TRANSLATE_FUNCTION_ONLY_RESULT__||${__(
+                'test_img'
+            )}||__`
+        );
     }
     componentDidCatch(error, info) {
         console.log('ERROR', error, info);
@@ -47,9 +52,9 @@ class App extends React.Component {
         // You can also log the error to an error reporting service
         // logErrorToMyService(error, info);
     }
-    componentDidUpdate() {
-        // console.log(this.props)
-    }
+    // componentDidUpdate() {
+    //     console.log(this.props)
+    // }
     render() {
         // console.log({
         //     'process.env.KOOT_SESSION_STORE': JSON.parse(

@@ -1,26 +1,8 @@
-// ============================================================================
+// Koot.js specific ===========================================================
 
-workbox.setConfig({ debug: false });
-workbox.core.setCacheNameDetails({
-    prefix: 'koot',
-    suffix: 'cache',
-    precache: self.__koot['__baseVersion_lt_0.12'] ? 'sw' : 'pre',
-    runtime: self.__koot['__baseVersion_lt_0.12'] ? 'sw' : 'rt'
-});
+const isKootAppDevEnv = self.__koot.env.WEBPACK_BUILD_ENV === 'dev';
 
-self.addEventListener('message', event => {
-    if (event.data && event.data.type === 'SKIP_WAITING') {
-        self.skipWaiting();
-    }
-});
-
-/**
- * The workboxSW.precacheAndRoute() method efficiently caches and responds to
- * requests for URLs in the manifest.
- * See https://goo.gl/S9QRab
- */
-self.__precacheManifest = [].concat(self.__precacheManifest || []);
-workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
+// Commons ====================================================================
 
 const getRoute = (pathname, isNotPath) => {
     const host = (location.host || location.hostname)
@@ -39,6 +21,35 @@ const getRoute = (pathname, isNotPath) => {
     );
 };
 
+// Workbox Configuration ======================================================
+
+workbox.setConfig({ debug: false });
+workbox.core.setCacheNameDetails({
+    prefix: 'koot',
+    suffix: self.__koot['__baseVersion_lt_0.12']
+        ? 'cache'
+        : `cache${self.__koot.localeId ? `-${self.__koot.localeId}` : ''}`,
+    precache: self.__koot['__baseVersion_lt_0.12'] ? 'sw' : 'pre',
+    runtime: self.__koot['__baseVersion_lt_0.12'] ? 'sw' : 'rt'
+});
+
+self.addEventListener('message', event => {
+    if (event.data && event.data.type === 'SKIP_WAITING') {
+        self.skipWaiting();
+    }
+});
+
+// Pre-caching ================================================================
+
+/**
+ * The workboxSW.precacheAndRoute() method efficiently caches and responds to
+ * requests for URLs in the manifest.
+ * See https://goo.gl/S9QRab
+ */
+self.__precacheManifest = [].concat(self.__precacheManifest || []);
+if (!isKootAppDevEnv)
+    workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
+
 // Caching Strategy ===========================================================
 
 const cacheRoutes = [
@@ -48,10 +59,10 @@ const cacheRoutes = [
 const cacheName = self.__koot['__baseVersion_lt_0.12']
     ? 'koot-sw-cache'
     : undefined;
-const cacheStrategy =
-    self.__koot.env.WEBPACK_BUILD_ENV === 'dev' ? 'NetworkFirst' : 'CacheFirst';
+const cacheStrategy = isKootAppDevEnv ? 'NetworkOnly' : 'CacheFirst';
 
 cacheRoutes.forEach(route => {
+    // console.log({ route, cacheStrategy });
     workbox.routing.registerRoute(
         route,
         new workbox.strategies[cacheStrategy]({ cacheName }),

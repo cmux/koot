@@ -23,12 +23,13 @@
     -   **新工具函数** `koot/utils/client-get-styles` - 获取当前全局 CSS 和所有组件 CSS。具体用法请参见文档 [全局与工具函数/工具函数/客户端](https://koot.js.org/#/utilities?id=客户端) ([#185](https://github.com/cmux/koot/issues/185))
 -   优化
     -   现在默认支持在浏览器环境中使用 _async_ / _await_ 开发
-    -   [服务器] 优化服务器代码的文件尺寸 ([#172](https://github.com/cmux/koot/issues/172), [#186](https://github.com/cmux/koot/issues/186))
     -   SSR & 客户端渲染 & SPA 模板生成
         -   所有注入/插入的 `<script>` 标签现在均会新增 `[data-koot-entry]` 属性
         -   特殊 JS 入口 _CLIENT_RUN_FIRST_ 现默认引入 `regenerator-runtime/runtime`
     -   现在开发环境下会默认启用 _Service Worker_
     -   更新 TS 定义 ([#191](https://github.com/cmux/koot/issues/191))
+    -   多语言 / i18n: 如果翻译函数 (`__()`) 获得了确定的结果，函数会被自动转换成字符串 ([#187](https://github.com/cmux/koot/issues/187))
+    -   服务器: 优化服务器代码的文件尺寸 ([#172](https://github.com/cmux/koot/issues/172), [#186](https://github.com/cmux/koot/issues/186))
 
 **koot-boilerplate**
 

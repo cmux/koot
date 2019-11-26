@@ -49,7 +49,7 @@ module.exports = async (kootConfigForThisBuild, localeId) => {
         fs.ensureDirSync(path.dirname(file));
         fs.writeFileSync(
             file,
-            (await inject(kootConfigForThisBuild)) +
+            (await inject(kootConfigForThisBuild, localeId)) +
                 fs
                     .readFileSync(path.resolve(__dirname, filename), 'utf-8')
                     .replace(
@@ -76,7 +76,7 @@ module.exports = async (kootConfigForThisBuild, localeId) => {
 
 // ============================================================================
 
-const inject = async kootConfigForThisBuild => {
+const inject = async (kootConfigForThisBuild, localeId) => {
     const ENV = process.env.WEBPACK_BUILD_ENV;
 
     const {
@@ -94,6 +94,8 @@ const inject = async kootConfigForThisBuild => {
             WEBPACK_BUILD_ENV: ENV
         }
     };
+
+    if (localeId) obj.localeId = localeId;
 
     return `\rself.__koot = ${JSON.stringify(obj, undefined, 4)}\r\r`;
 };

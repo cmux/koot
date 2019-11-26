@@ -1142,6 +1142,8 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
             routing: { locationBeforeTransitions: L }
         } = await getSSRStateFromScriptTag(page);
 
+        await context.close();
+
         expect(
             i18nUseRouter
                 ? '/' +
@@ -1153,6 +1155,56 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
         ).toBe(pathname);
         // expect(L.pathname).toBe(pathname);
         expect(L.search).toBe(search);
+    }
+
+    // 测试: i18n / 多语言
+    {
+        await breath();
+
+        const toLocaleId = 'zh';
+        const gotoUrl = i18nUseRouter
+            ? `${origin}/${toLocaleId}`
+            : `${origin}?${changeLocaleQueryKey}=${toLocaleId}`;
+
+        const context = await browser.createIncognitoBrowserContext();
+        const page = await context.newPage();
+
+        const res = await page.goto(gotoUrl, {
+            waitUntil: 'networkidle0'
+        });
+
+        const HTML = await res.text();
+        const $ = cheerio.load(HTML);
+
+        {
+            const selector = 'h1 ~ a[href="/"]';
+            const result = '欢迎';
+            expect($(selector).text()).toBe(result);
+            expect(
+                await page.evaluate(
+                    selector => document.querySelector(selector).innerText,
+                    selector
+                )
+            ).toBe(result);
+        }
+
+        if (!isDev) {
+            const chunkmap = await fs.readJson(
+                path.resolve(dist, '.public-chunkmap.json')
+            );
+            const pathname = path.resolve(
+                dist,
+                chunkmap[`.${toLocaleId}`]['.files']['client.js']
+            );
+            const content = await fs.readFile(pathname, 'utf-8');
+            expect(
+                /__KOOT_TEST_LOCALE_TRANSLATE_FUNCTION_ONLY_RESULT__\|\|[^(]+?\(['"]\/test-img-zh\.png['"]/.test(
+                    content
+                )
+            ).toBe(true);
+        }
+
+        await context.close();
     }
 
     // TODO: 测试: 所有 Webpack 结果资源的访问
