@@ -661,6 +661,8 @@ describe('测试: React 同构项目', () => {
                 await afterTest(dir, 'ENV: prod');
             });
 
+            return;
+
             test(`ENV: dev`, async () => {
                 await beforeTest(dir);
 

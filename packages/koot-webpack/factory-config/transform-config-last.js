@@ -250,7 +250,9 @@ const validateModuleRules = (config, kootConfigForThisBuild = {}) => {
                 });
             }
             switch (loader) {
-                case 'file-loader': {
+                case 'file-loader':
+                case 'url-loader':
+                case 'svg-url-loader': {
                     if (process.env.WEBPACK_BUILD_STAGE === 'server') {
                         options.emitFile = false;
                     }

@@ -1,6 +1,7 @@
 import React from 'react';
 import { extend } from 'koot';
 
+import svg from '@assets/typescript.svg';
 import styles from './index.module.less';
 
 const TSComponentExample: React.ComponentClass = extend({
@@ -11,11 +12,7 @@ const TSComponentExample: React.ComponentClass = extend({
     styles
 })(({ className }) => (
     <div className={className} data-koot-test-page="page-ts">
-        <img
-            src={require('@assets/typescript.svg')}
-            className="logo"
-            alt="TypeScript LOGO"
-        />
+        <img src={svg} className="logo" alt="TypeScript LOGO" />
         <p>{__('pages.ts.msg')}</p>
         <A />
     </div>

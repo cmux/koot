@@ -16,6 +16,7 @@ import { extend } from 'koot';
 import { Link } from 'react-router';
 
 import Icon from '@components/icon';
+import svgTS from '@assets/typescript.svg';
 import styles from './index.module.less';
 
 // Functional Component =======================================================
@@ -40,7 +41,7 @@ const TSFunctionalComponent = extend<ComponentProps>({
         return (
             <div className={className} data-koot-test-page="page-ts">
                 <img
-                    src={require('@assets/typescript.svg')}
+                    src={svgTS}
                     className="logo"
                     alt="TypeScript LOGO"
                     data-custom-props={customProps}
@@ -74,6 +75,7 @@ import { extend, ExtendedProps } from 'koot';
 import { Link } from 'react-router';
 
 import Icon from '@components/icon';
+import svgTS from '@assets/typescript.svg';
 import styles from './index.module.less';
 
 // Component Class ============================================================
@@ -99,11 +101,7 @@ class TSComponentClass extends React.Component<ExtendedProps & ComponentProps> {
                 data-class-name={this.props['data-class-name']}
                 data-koot-test-page="page-ts"
             >
-                <img
-                    src={require('@assets/typescript.svg')}
-                    className="logo"
-                    alt="TypeScript LOGO"
-                />
+                <img src={svgTS} className="logo" alt="TypeScript LOGO" />
                 <p className="msg-big">{__('pages.ts.msg')}</p>
                 <p className="msg-small">{__('pages.ts.msgCheckFile')}</p>
                 <Link to="/start" className="back">

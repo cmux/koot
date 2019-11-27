@@ -30,6 +30,7 @@ module.exports = async () => {
                     options: {
                         context: 'static',
                         name: 'assets/[hash:32].[ext]'
+                        // esModule: false
                         // emitFile: Boolean(
                         //     process.env.WEBPACK_BUILD_STAGE === 'client'
                         // )
@@ -43,6 +44,7 @@ module.exports = async () => {
                     exclude: /node_modules/,
                     options: {
                         noquotes: true
+                        // esModule: false
                     }
                 }
             ]

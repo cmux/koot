@@ -44,28 +44,29 @@
         "koot-buildtest-isomorphic-config_old_0.6-production": "koot-start --koot-test --config koot.config.old-0.6.js",
         "koot-buildtest-isomorphic-config_old_0.6-development": "koot-dev --no-open --koot-test --config koot.config.old-0.6.js",
         "koot-buildtest-spa-build-config-default": "koot-build --koot-test --type react-spa --dest dist-spa-test",
-        "koot-buildtest-spa-build-config-koot_build_spa-1_js": "koot-build --koot-test --config E:\\Projects\\koot\\next\\test\\projects\\standard\\koot.build.spa-1.js",
-        "koot-buildtest-spa-build-config-koot_build_spa-2_js": "koot-build --koot-test --config E:\\Projects\\koot\\next\\test\\projects\\standard\\koot.build.spa-2.js"
+        "koot-buildtest-spa-build-config-koot_build_spa-1_js": "koot-build --koot-test --config L:\\Projects\\koot\\next\\test\\projects\\standard\\koot.build.spa-1.js",
+        "koot-buildtest-spa-build-config-koot_build_spa-2_js": "koot-build --koot-test --config L:\\Projects\\koot\\next\\test\\projects\\standard\\koot.build.spa-2.js"
     },
     "dependencies": {
-        "autoprefixer": "9.4.7",
-        "normalize.css": "8.0.0",
-        "cssnano": "4.1.7",
-        "svg-url-loader": "2.3.2",
+        "autoprefixer": "9.7.2",
+        "normalize.css": "8.0.1",
+        "cssnano": "4.1.10",
+        "svg-url-loader": "3.0.3",
         "axios": "0.19.0",
         "koot": "file:../../../packages/koot",
-        "koot-webpack": "file:../../../packages/koot-webpack"
+        "koot-webpack": "file:../../../packages/koot-webpack",
+        "file-loader": "^5.0.2"
     },
     "engines": {
-        "node": ">=8.0.0"
+        "node": ">=10.12.0"
     },
     "private": true,
     "sideEffects": false,
     "koot": {
-        "version": "0.12.0-alpha.16"
+        "version": "0.12.0-alpha.17"
     },
     "devDependencies": {
-        "@types/node": "^12.12.12",
+        "@types/node": "^12.12.14",
         "@types/react": "^16.9.13",
         "@types/react-dom": "^16.9.4",
         "@types/react-redux": "^7.1.5",
@@ -142,12 +143,8 @@
         "copy-webpack-plugin": "^5.0.5",
         "css-loader": "^3.2.0",
         "extract-hoc": "^0.0.5",
-        "file-loader": "^4.3.0",
-        "html-webpack-plugin": "^3.2.0",
-        "json-loader": "^0.5.7",
         "less-loader": "^5.0.0",
         "mini-css-extract-plugin": "^0.8.0",
-        "node-sass": "^4.13.0",
         "postcss": "^7.0.23",
         "postcss-loader": "^3.0.0",
         "react-hot-loader": "^4.12.18",
@@ -155,7 +152,6 @@
         "semver": "^6.3.0",
         "style-loader": "^1.0.0",
         "thread-loader": "^2.1.3",
-        "url-loader": "^2.3.0",
         "webpack": "^4.41.2",
         "webpack-bundle-analyzer": "^3.6.0",
         "webpack-config": "^7.5.0",

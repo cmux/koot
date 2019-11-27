@@ -2,7 +2,7 @@
     "name": "koot-boilerplate",
     "private": true,
     "version": "0.12.0-alpha.17",
-    "description": "Boilerplate project for koot.js app.",
+    "description": "Boilerplate project for koot.js app",
     "author": {
         "name": "diablohu",
         "email": "diablohudream@gmail.com",
@@ -13,6 +13,9 @@
     "repository": {
         "type": "git",
         "url": "https://github.com/cmux/koot.git"
+    },
+    "engines": {
+        "node": ">=10.13.0"
     },
     "scripts": {
         "start": "koot-start",
@@ -38,13 +41,13 @@
         "eslint": "^6.7.1",
         "eslint-config-koot": "^1.5.0",
         "husky": "^3.1.0",
-        "lint-staged": "^9.4.3",
+        "lint-staged": "^9.5.0",
         "normalize.css": "^8.0.1",
         "prettier": "^1.19.1",
         "prettier-eslint": "^9.0.1",
         "redux-logger": "^3.0.6",
         "svg-url-loader": "^3.0.3",
-        "url-loader": "^2.3.0"
+        "url-loader": "^3.0.0"
     },
     "bugs": {
         "url": "https://github.com/cmux/koot/issues"

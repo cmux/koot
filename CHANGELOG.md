@@ -13,6 +13,11 @@
     -   默认的 _Service Worker_ 文件现在使用 _Workbox_ 生成
         -   如果原有项目中有使用自定的 _Service Worker_ 模板，升级后需要更新该模板。详情请参见文档 [Service Worker](https://koot.js.org/#/pwa)
     -   现在会忽略 _Babel_ 插件 `@babel/plugin-transform-regenerator`
+    -   现在默认不会安装以下依赖包，如有使用需要，请在项目中自行安装
+        -   `file-loader`
+        -   `html-webpack-plugin`
+        -   `json-loader`
+        -   `url-loader`
     -   更新依赖包 **major** 版本号
         -   `chalk` -> _^3.0.0_
         -   `ejs` -> _^3.0.1_
@@ -30,6 +35,8 @@
     -   更新 TS 定义 ([#191](https://github.com/cmux/koot/issues/191))
     -   多语言 / i18n: 如果翻译函数 (`__()`) 获得了确定的结果，函数会被自动转换成字符串 ([#187](https://github.com/cmux/koot/issues/187))
     -   服务器: 优化服务器代码的文件尺寸 ([#172](https://github.com/cmux/koot/issues/172), [#186](https://github.com/cmux/koot/issues/186))
+    -   `node-sass` 现在改为 `optionalDependencies`，如果安装失败，不会影响 _Koot.js_ 的安装
+    -   组件 CSS 文件现在会按照 ES Module 格式输出，同时支持 ES Module 格式的文件引用
 
 **koot-boilerplate**
 

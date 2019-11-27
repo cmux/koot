@@ -5,6 +5,8 @@ import clientGetStyles from 'koot/utils/client-get-styles';
 import Nav from './_layout/nav';
 import Main from './_layout/main';
 
+import styles from './app.component.less';
+
 let stateShowed = false;
 
 @extend({
@@ -15,7 +17,7 @@ let stateShowed = false;
         }
         return {};
     },
-    styles: require('./app.component.less')
+    styles
 })
 class App extends React.Component {
     componentDidMount() {

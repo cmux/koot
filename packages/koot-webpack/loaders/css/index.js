@@ -54,10 +54,10 @@ module.exports = function(content) {
     let customNameMd5 = '';
 
     // 强制第一位是字母
-    let firstChat = md5Name.match(/[a-zA-Z]{1}/)[0];
+    const firstChat = md5Name.match(/[a-zA-Z]{1}/)[0];
 
     // md5 后去掉length-1个字符
-    let otherChats = md5Name.substr(0, length - 1);
+    const otherChats = md5Name.substr(0, length - 1);
 
     // 以字符开通的class名
     md5Name = firstChat + otherChats;
@@ -83,7 +83,11 @@ module.exports = function(content) {
         // 暂无实现
     } else if (mode === 'replace') {
         // postcss 处理每一个class名字
-        let root = postcss.parse(content);
+        const root = postcss.parse(content);
+        /** 引用资源列表，会基于这个列表生成顶部的 `import` 代码 */
+        const imports = {};
+        /** 引用资源 index */
+        let importIndex = 0;
         // let once = true // 处理名字只处理1次
         root.walkRules((rule /*, i*/) => {
             // 排除@keyframe
@@ -98,11 +102,11 @@ module.exports = function(content) {
                 // eg: .app_3fea
                 if (~selector.indexOf(`__${keyword}`)) {
                     // 可读性处理
-                    let readablePatten = new RegExp(
+                    const readablePatten = new RegExp(
                         `.[^ ^+^~^>]+?__${keyword}`
                     );
                     if (readable) {
-                        let name = selector.match(readablePatten)[0];
+                        const name = selector.match(readablePatten)[0];
 
                         // 去下划线前部分
                         customName = name.split('__')[0];
@@ -113,8 +117,8 @@ module.exports = function(content) {
 
                         // 可读class名拼接md5字符串
                         customNameMd5 = customName + '_' + md5Name;
-                        let patten = new RegExp(name, 'g');
-                        let result = selector.replace(
+                        const patten = new RegExp(name, 'g');
+                        const result = selector.replace(
                             patten,
                             '.' + customNameMd5
                         );
@@ -146,17 +150,30 @@ module.exports = function(content) {
 
         // transformer(root);
         postcssTransformDeclUrls(root, {
-            transformer: url => `' + require('${url}') + '`,
+            transformer: url => {
+                const resName = `__RES${importIndex}`;
+                importIndex++;
+                imports[resName] = url;
+                return `' + ${resName} + '`;
+            },
             context: this.context
         });
 
         // 导出md5的class名字和处理后的css文本
         // 把单引号统一处理成双引号 "" -> ''
 
-        let fileId = customNameMd5 || md5Name;
-        let result = `module.exports = {
-            wrapper: '${fileId}',
-            css: '${root.toString()}'
+        const fileId = customNameMd5 || md5Name;
+
+        let result =
+            Object.entries(imports)
+                .map(([name, res]) => `import ${name} from "${res}";`)
+                .join('\n') +
+            '\n' +
+            `export const wrapper = '${fileId}';\n` +
+            `export const css = '${root.toString()}';\n` +
+            `export default {
+            wrapper,
+            css
         }`;
 
         // result = result.replace(/\r\n/gi, '').replace(/\n/gi, '')

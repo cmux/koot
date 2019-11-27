@@ -5,6 +5,8 @@ import clientUpdatePageinfo from 'koot/utils/client-update-pageinfo';
 import Issue68 from '@components/issue-68';
 import TestAsyncFunction from './test-async-function';
 
+import styles from './styles.component.less';
+
 const PageHome = ({ className }) => {
     return (
         <div className={className}>
@@ -99,5 +101,5 @@ export default extend({
             { 'page-name': 'home' }
         ]
     }),
-    styles: require('./styles.component.less')
+    styles
 })(PageHome);

@@ -118,6 +118,8 @@ _Object_ `styles` 组件 CSS
 import { extend } from 'koot';
 import { fetchUser } from '@api/user';
 
+import styles from './styles.less';
+
 @extend({
     // connect 仅传入第一个参数
     connect: state => ({
@@ -135,7 +137,7 @@ import { fetchUser } from '@api/user';
     ],
 
     //
-    styles: require('./styles.less'),
+    styles,
 
     // pageinfo 使用 Object 方式
     pageinfo: {

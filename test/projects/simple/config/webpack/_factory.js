@@ -23,16 +23,18 @@ module.exports = async () => {
             rules: [
                 {
                     test: /\.(ico|gif|jpg|jpeg|png|webp)$/,
-                    // loader: 'file-loader',
-                    // options: {
-                    //     context: 'static',
-                    //     name: 'assets/[hash:32].[ext]',
-                    //     emitFile: Boolean(
-                    //         process.env.WEBPACK_BUILD_STAGE === 'client'
-                    //     )
-                    // }
-                    loader:
-                        'file-loader?context=static&name=assets/[hash:32].[ext]&aaa=bbb'
+                    loader: 'file-loader',
+                    options: {
+                        context: 'static',
+                        name: 'assets/[hash:32].[ext]',
+                        aaa: 'bbb'
+                        // emitFile: Boolean(
+                        //     process.env.WEBPACK_BUILD_STAGE === 'client'
+                        // ),
+                        // esModule: false
+                    }
+                    // loader:
+                    //     'file-loader?context=static&name=assets/[hash:32].[ext]&aaa=bbb'
                 },
                 {
                     test: /\.svg$/,
@@ -40,6 +42,7 @@ module.exports = async () => {
                     exclude: /node_modules/,
                     options: {
                         noquotes: true
+                        // esModule: false
                     }
                 }
             ]
