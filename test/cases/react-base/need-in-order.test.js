@@ -522,6 +522,22 @@ const doTest = async (port, dist, settings = {}) => {
         expect(valueHasChanged).toBe(true);
     }
 
+    // 测试: 服务器跳转多余 /
+    if (!isDev) {
+        const context = await browser.createIncognitoBrowserContext();
+        const page = await context.newPage();
+        await page.goto(origin, {
+            waitUntil: 'networkidle2'
+        });
+        const title = await page.evaluate(async () => {
+            return document.title;
+        });
+
+        await context.close();
+
+        expect(title).toBe('Koot Boilerplate (Simple)');
+    }
+
     await puppeteerTestStyles(page);
     await puppeteerTestCustomEnv(page, customEnv);
     await puppeteerTestInjectScripts(page);
@@ -660,8 +676,6 @@ describe('测试: React 同构项目', () => {
                 await terminate(child.pid);
                 await afterTest(dir, 'ENV: prod');
             });
-
-            return;
 
             test(`ENV: dev`, async () => {
                 await beforeTest(dir);
