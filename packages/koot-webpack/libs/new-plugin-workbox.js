@@ -42,7 +42,9 @@ module.exports = async (kootConfigForThisBuild, localeId) => {
     const swSrc = await (async () => {
         if (_swSrc) return _swSrc;
 
-        const filename = 'new-plugin-workbox-template.js';
+        const filename = `new-plugin-workbox-template.${
+            localeId ? `.${localeId}` : ''
+        }js`;
         const file = path.resolve(__dirname, '.tmp', filename);
 
         if (fs.existsSync(file)) fs.removeSync(file);
