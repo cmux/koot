@@ -42,18 +42,23 @@ module.exports = async (kootConfigForThisBuild, localeId) => {
     const swSrc = await (async () => {
         if (_swSrc) return _swSrc;
 
-        const filename = `new-plugin-workbox-template.${
-            localeId ? `${localeId}.` : ''
-        }js`;
-        const file = path.resolve(__dirname, '.tmp', filename);
+        const templateBase = path.resolve(
+            __dirname,
+            `new-plugin-workbox-template.js`
+        );
+        const templateTemp = path.resolve(
+            __dirname,
+            '.tmp',
+            `new-plugin-workbox-template${localeId ? `.${localeId}` : ''}.js`
+        );
 
-        if (fs.existsSync(file)) fs.removeSync(file);
-        fs.ensureDirSync(path.dirname(file));
+        if (fs.existsSync(templateTemp)) fs.removeSync(templateTemp);
+        fs.ensureDirSync(path.dirname(templateTemp));
         fs.writeFileSync(
-            file,
+            templateTemp,
             (await inject(kootConfigForThisBuild, localeId)) +
                 fs
-                    .readFileSync(path.resolve(__dirname, filename), 'utf-8')
+                    .readFileSync(templateBase, 'utf-8')
                     .replace(
                         /__DIST_CLIENT_ASSETS_DIRNAME__/,
                         distClientAssetsDirName
@@ -61,7 +66,7 @@ module.exports = async (kootConfigForThisBuild, localeId) => {
             'utf-8'
         );
 
-        return file;
+        return templateTemp;
     })();
 
     kootConfigForThisBuild[keyConfigClientServiceWorkerPathname] = swDest;
