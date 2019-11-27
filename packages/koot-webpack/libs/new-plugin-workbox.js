@@ -43,7 +43,7 @@ module.exports = async (kootConfigForThisBuild, localeId) => {
         if (_swSrc) return _swSrc;
 
         const filename = `new-plugin-workbox-template.${
-            localeId ? `.${localeId}` : ''
+            localeId ? `${localeId}.` : ''
         }js`;
         const file = path.resolve(__dirname, '.tmp', filename);
 
