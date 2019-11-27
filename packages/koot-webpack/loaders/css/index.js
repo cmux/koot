@@ -171,10 +171,7 @@ module.exports = function(content) {
             '\n' +
             `export const wrapper = '${fileId}';\n` +
             `export const css = '${root.toString()}';\n` +
-            `export default {
-            wrapper,
-            css
-        }`;
+            `export default { wrapper, css }`;
 
         // result = result.replace(/\r\n/gi, '').replace(/\n/gi, '')
         result = result
