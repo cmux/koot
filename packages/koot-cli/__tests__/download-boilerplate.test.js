@@ -4,6 +4,7 @@ jest.setTimeout(5 * 60 * 1 * 1000); // 5mins
 const fs = require('fs-extra');
 const path = require('path');
 const os = require('os');
+const glob = require('glob-promise');
 
 const downloadBoilerplate = require('../steps/create/download-boilerplate');
 
@@ -15,11 +16,19 @@ describe('测试: 下载模板', () => {
     test(`向已存在的目录中新建项目`, async () => {
         let error;
 
+        const dirOriginal = path.resolve(__dirname, '../../koot-boilerplate');
         const target = path.resolve(os.tmpdir(), `koot-cli-test-${Date.now()}`);
         const readme = path.resolve(target, 'README.md');
         const readmeContent = `KOOT CLI TEST`;
         const junk = path.resolve(target, 'junk.junk');
         const junkContent = `KOOT CLI JUNK`;
+        const dotFiles = (
+            await glob(
+                path.relative(dirOriginal, path.resolve(dirOriginal, '.*'))
+            )
+        )
+            .filter(filename => filename !== '.git')
+            .map(filename => path.resolve(target, filename));
 
         await fs.ensureDir(target);
         await fs.emptyDir(target);
@@ -32,6 +41,7 @@ describe('测试: 下载模板', () => {
         const readmeNewContent = await fs.readFile(readme, 'utf-8');
         const junkExists = fs.existsSync(junk);
         const junkNewContent = await fs.readFile(junk, 'utf-8');
+        const dotFilesExist = dotFiles.every(file => fs.existsSync(file));
 
         await fs.remove(target);
 
@@ -40,5 +50,6 @@ describe('测试: 下载模板', () => {
         expect(readmeNewContent).not.toBe(readmeContent);
         expect(junkExists).toBe(true);
         expect(junkNewContent).toBe(junkContent);
+        expect(dotFilesExist).toBe(true);
     });
 });

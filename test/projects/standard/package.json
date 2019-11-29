@@ -44,8 +44,8 @@
         "koot-buildtest-isomorphic-config_old_0.6-production": "koot-start --koot-test --config koot.config.old-0.6.js",
         "koot-buildtest-isomorphic-config_old_0.6-development": "koot-dev --no-open --koot-test --config koot.config.old-0.6.js",
         "koot-buildtest-spa-build-config-default": "koot-build --koot-test --type react-spa --dest dist-spa-test",
-        "koot-buildtest-spa-build-config-koot_build_spa-1_js": "koot-build --koot-test --config L:\\Projects\\koot\\next\\test\\projects\\standard\\koot.build.spa-1.js",
-        "koot-buildtest-spa-build-config-koot_build_spa-2_js": "koot-build --koot-test --config L:\\Projects\\koot\\next\\test\\projects\\standard\\koot.build.spa-2.js"
+        "koot-buildtest-spa-build-config-koot_build_spa-1_js": "koot-build --koot-test --config E:\\Projects\\koot\\next\\test\\projects\\standard\\koot.build.spa-1.js",
+        "koot-buildtest-spa-build-config-koot_build_spa-2_js": "koot-build --koot-test --config E:\\Projects\\koot\\next\\test\\projects\\standard\\koot.build.spa-2.js"
     },
     "dependencies": {
         "autoprefixer": "9.7.2",
@@ -63,7 +63,7 @@
     "private": true,
     "sideEffects": false,
     "koot": {
-        "version": "0.12.0-alpha.17"
+        "version": "0.12.0-alpha.21"
     },
     "devDependencies": {
         "@types/node": "^12.12.14",

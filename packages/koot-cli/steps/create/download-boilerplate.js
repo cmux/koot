@@ -108,7 +108,9 @@ module.exports = async (project, dest) => {
     });
 
     // 合并目录
-    const files = await glob(path.resolve(tmp, '**/*'));
+    const files = await glob(path.resolve(tmp, '**/*'), {
+        dot: true
+    });
     for (const from of files) {
         const relativePath = path.relative(tmp, from);
         const to = path.resolve(dest, relativePath);

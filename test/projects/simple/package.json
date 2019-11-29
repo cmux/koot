@@ -49,7 +49,7 @@
     "private": true,
     "sideEffects": false,
     "koot": {
-        "version": "0.12.0-alpha.17"
+        "version": "0.12.0-alpha.21"
     },
     "devDependencies": {
         "@types/node": "^12.12.14",
