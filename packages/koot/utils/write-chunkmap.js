@@ -17,18 +17,18 @@ const times = n => f => {
 
 const isNotSourcemap = filename => !/\.(js|css)\.map$/i.test(filename);
 
-const log = (obj, spaceCount = 1, deep = 2) => {
-    if (typeof obj === 'object') {
-        let spaces = '';
-        times(spaceCount)(() => {
-            spaces += '    ';
-        });
-        for (const key in obj) {
-            console.log(spaces + key);
-            if (spaceCount < deep) log(obj[key], spaceCount + 1, deep);
-        }
-    }
-};
+// const log = (obj, spaceCount = 1, deep = 2) => {
+//     if (typeof obj === 'object') {
+//         let spaces = '';
+//         times(spaceCount)(() => {
+//             spaces += '    ';
+//         });
+//         for (const key in obj) {
+//             console.log(spaces + key);
+//             if (spaceCount < deep) log(obj[key], spaceCount + 1, deep);
+//         }
+//     }
+// };
 
 /**
  * 写入打包文件对应表 (chunkmap)
@@ -69,14 +69,19 @@ module.exports = async (
 
     fs.ensureFileSync(filepathname);
 
-    const getFilePathname = (dirname, file) => {
+    const getFilePathname = file => {
         if (process.env.WEBPACK_BUILD_ENV === 'dev') return file;
+        // const r = path
+        //     .relative(
+        //         path.resolve(getDistPath(), '..'),
+        //         path.resolve(dirname, file)
+        //     )
+        //     .replace(/\\/g, '/');
+        // console.log('\n', getDistPath(), stats.outputPath, {dirname, file, r})
         return path
-            .relative(
-                path.resolve(getDistPath(), '..'),
-                path.resolve(dirname, file)
-            )
+            .relative(getDistPath(), path.resolve(stats.outputPath, file))
             .replace(/\\/g, '/');
+        // return r
     };
 
     // for (let key in stats.compilation) {
@@ -107,9 +112,7 @@ module.exports = async (
             assets
                 .filter(filename => isNotSourcemap(filename))
                 .forEach(filename =>
-                    entryChunks[key].push(
-                        getFilePathname(dirRelative, filename)
-                    )
+                    entryChunks[key].push(getFilePathname(filename))
                 );
         });
         chunkmap['.entrypoints'] = entryChunks;
@@ -131,15 +134,13 @@ module.exports = async (
             if (Array.isArray(o.files))
                 chunkmap[o.name] = o.files
                     .filter(filename => isNotSourcemap(filename))
-                    .map(filename => getFilePathname(dirRelative, filename));
+                    .map(filename => getFilePathname(filename));
         }
     }
 
     // 添加 service-worker
     if (serviceWorkerPathname) {
-        chunkmap['service-worker'] = [
-            getFilePathname(dirRelative, serviceWorkerPathname)
-        ];
+        chunkmap['service-worker'] = [getFilePathname(serviceWorkerPathname)];
     }
 
     let json = {};
