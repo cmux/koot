@@ -46,6 +46,7 @@
     -   图片资源改用 `url-loader` 处理
         -   大于 **2KB** 的文件会继续使用 `file-loader` 处理
     -   大于 **5KB** 的 _SVG_ 的文件会改用 `file-loader` 处理
+-   新命令 `yarn up` - 使用 _Yarn_ 检查本地依赖版本并选择更新
 
 **koot-cli**
 

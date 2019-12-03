@@ -27,7 +27,8 @@
         "dev:spa": "koot-dev --type spa",
         "analyze": "koot-analyze",
         "eslint": "eslint \"src/**/*.+(js|jsx)\"",
-        "check-types": "tsc --noEmit"
+        "check-types": "tsc --noEmit",
+        "up": "yarn upgrade-interactive --latest"
     },
     "dependencies": {
         "axios": "^0.19.0",
