@@ -1,9 +1,31 @@
 const fs = require('fs-extra');
 const path = require('path');
-const ParserHelpers = require('webpack/lib/ParserHelpers');
+// const {
+//     toConstantDependency
+// } = require('webpack/lib/javascript/JavascriptParserHelpers');
+const {
+    addParsedVariableToModule,
+    toConstantDependency
+} = require('webpack/lib/ParserHelpers');
 const ConstDependency = require('webpack/lib/dependencies/ConstDependency');
 const NullFactory = require('webpack/lib/NullFactory');
 const getCwd = require('koot/utils/get-cwd');
+
+// const addParsedVariableToModule = (parser, name, expression) => {
+//     if (!parser.state.current.addVariable) return false;
+//     const deps = [];
+//     parser.parse(expression, {
+//         current: {
+//             addDependency: dep => {
+//                 dep.userRequest = name;
+//                 deps.push(dep);
+//             }
+//         },
+//         module: parser.state.module
+//     });
+//     parser.state.current.addVariable(name, expression, deps);
+//     return true;
+// };
 
 class I18nPlugin {
     constructor({
@@ -77,7 +99,7 @@ class I18nPlugin {
                                     .map(r => `[${JSON.stringify(r)}]`)
                                     .join('');
                             }
-                            ParserHelpers.addParsedVariableToModule(
+                            addParsedVariableToModule(
                                 parser,
                                 functionName,
                                 expression
@@ -104,7 +126,7 @@ class I18nPlugin {
                                     !!localeId &&
                                     node.arguments.length === 1
                                 ) {
-                                    return ParserHelpers.toConstantDependency(
+                                    return toConstantDependency(
                                         parser,
                                         code
                                     )(node);

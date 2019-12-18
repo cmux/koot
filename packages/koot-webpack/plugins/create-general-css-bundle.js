@@ -65,11 +65,17 @@ class CreateGeneralCssBundlePlugin {
 
             // 添加 chunk
             const chunk = new Chunk(chunkNameExtractCss);
-            const id = compilation.chunks.length;
+            const id = Array.isArray(compilation.chunks)
+                ? compilation.chunks.length
+                : compilation.chunks.size;
             chunk.files = [filename];
             chunk.id = id;
             chunk.ids = [id];
-            compilation.chunks.push(chunk);
+            if (Array.isArray(compilation.chunks)) {
+                compilation.chunks.push(chunk);
+            } else {
+                compilation.chunks.add(chunk);
+            }
 
             // 写入 Webpack 文件流
             newCompilationFileDependency(compilation, filename, content);
