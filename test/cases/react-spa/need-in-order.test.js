@@ -27,7 +27,8 @@ const testHtmlRenderedByKoot = require('../../general-tests/html/rendered-by-koo
 const testFilesFromChunkmap = require('../../general-tests/bundle/check-files-from-chunkmap');
 const {
     requestHidden404: testRequestHidden404,
-    criticalAssetsShouldBeGzip: testAssetsGzip
+    criticalAssetsShouldBeGzip: testAssetsGzip,
+    clientLifecycles: testClientLifecycles
 } = require('../puppeteer-test');
 
 //
@@ -212,7 +213,7 @@ const testFull = (dir, configFileName) => {
             await testFilesFromChunkmap(dist);
         });
 
-        test(`[prod] 简易服务器可用`, async () => {
+        test(`[prod] 简易服务器可用 & JS 执行正确`, async () => {
             const fileServerJS = path.resolve(dist, './.server/index.js');
             expect(fs.existsSync(fileServerJS)).toBe(true);
 
@@ -254,6 +255,13 @@ const testFull = (dir, configFileName) => {
                 });
                 const html = await res.text();
 
+                await testHtmlRenderedByKoot(html);
+                await testRequestHidden404(origin, browser);
+                await testAssetsGzip(origin, dist);
+                await testClientLifecycles(origin, browser);
+
+                await page.close();
+
                 // 测试: 没有失败的请求
                 if (failedResponse.length) {
                     console.log(
@@ -267,12 +275,7 @@ const testFull = (dir, configFileName) => {
                 expect(failedResponse.length).toBe(0);
                 expect(errors.length).toBe(0);
 
-                await testHtmlRenderedByKoot(html);
-                await testRequestHidden404(origin, browser);
-                await testAssetsGzip(origin, dist, browser);
-
                 // 结束测试
-                await page.close();
                 await terminate(child.pid);
             };
 

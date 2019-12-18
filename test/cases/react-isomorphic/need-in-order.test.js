@@ -75,7 +75,8 @@ const getProjects = require('../../projects/get');
 const {
     injectScripts: puppeteerTestInjectScripts,
     requestHidden404: testRequestHidden404,
-    criticalAssetsShouldBeGzip: testAssetsGzip
+    criticalAssetsShouldBeGzip: testAssetsGzip,
+    clientLifecycles: testClientLifecycles
 } = require('../puppeteer-test');
 
 // Constants ==================================================================
@@ -1233,6 +1234,7 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
     await puppeteerTestInjectScripts(page);
     await testRequestHidden404(origin, browser);
     if (!isDev) await testAssetsGzip(origin, dist, browser);
+    await testClientLifecycles(origin, browser);
 
     // 测试: 没有失败的请求
     const failedResponseFiltered = failedResponse.filter(

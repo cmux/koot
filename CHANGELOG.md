@@ -39,6 +39,8 @@
         -   如果 URL 中开头的斜线 `/` 过多，现在会自动跳转到正确的 URL ([#157](https://github.com/cmux/koot/issues/157))
     -   `node-sass` 现在改为 `optionalDependencies`，如果安装失败，不会影响 _Koot.js_ 的安装
     -   组件 CSS 文件现在会按照 ES Module 格式输出，同时支持 ES Module 格式的文件引用
+-   错误修正
+    -   客户端生命周期 `before()` 和 `after()` 现在会传入正确的参数 ([#198](https://github.com/cmux/koot/issues/198))
 
 **koot-boilerplate**
 
