@@ -141,29 +141,31 @@ module.exports = {
         // `entry` 项仅针对：客户端
         return {
             ...configBase,
-            entry: {
-                commons: [
-                    'react',
-                    'react-dom',
-                    'redux',
-                    'redux-thunk',
-                    'react-redux',
-                    'react-router',
-                    'react-router-redux',
-                    'js-cookie',
-                    'classnames',
-                    'axios'
-                ],
-                ...configBase.entry
-            },
             optimization: {
                 splitChunks: {
                     cacheGroups: {
                         commons: {
                             name: 'commons',
-                            chunks: 'initial',
-                            minChunks: 2,
-                            reuseExistingChunk: true
+                            chunks: 'all',
+                            minChunks: 1,
+                            reuseExistingChunk: true,
+                            test: new RegExp(
+                                `[\\\\/]node_modules[\\\\/](${[
+                                    'react',
+                                    'react-dom',
+                                    'react-redux',
+                                    'react-router',
+                                    'react-router-redux',
+                                    'redux',
+                                    'redux-thunk',
+
+                                    'classnames',
+                                    'js-cookie',
+                                    'lodash',
+                                    'regenerator-runtime',
+                                    'axios'
+                                ].join('|')})[\\\\/]`
+                            )
                         }
                     }
                 }

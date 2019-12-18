@@ -6,6 +6,8 @@ module.exports = async () => {
     // 针对生产环境的定制配置
     const config = {
         output: {
+            // path: path.resolve(__dirname, '../../dist/public/aaa'),
+            // publicPath: "/aaa/",
             filename: `core.[chunkhash].js`,
             chunkFilename: `chunk.[chunkhash].js`
         },
@@ -18,25 +20,22 @@ module.exports = async () => {
                         chunks: 'all',
                         minChunks: 1,
                         reuseExistingChunk: true,
-                        test: module =>
-                            [
+                        test: new RegExp(
+                            `[\\\\/]node_modules[\\\\/](${[
                                 'react',
                                 'react-dom',
-
-                                'redux',
-                                'redux-thunk',
                                 'react-redux',
-
                                 'react-router',
                                 'react-router-redux',
+                                'redux',
+                                'redux-thunk',
 
-                                // 'react-transition-group',
-
-                                // 'localforage',
-                                // 'metas',
-                                // 'classnames',
-                                'js-cookie'
-                            ].includes(module.name)
+                                'classnames',
+                                'js-cookie',
+                                'lodash',
+                                'regenerator-runtime'
+                            ].join('|')})[\\\\/]`
+                        )
                     }
                 }
             }
