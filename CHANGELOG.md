@@ -13,6 +13,8 @@
     -   默认的 _Service Worker_ 文件现在使用 _Workbox_ 生成
         -   如果原有项目中有使用自定的 _Service Worker_ 模板，升级后需要更新该模板。详情请参见文档 [Service Worker](https://koot.js.org/#/pwa)
     -   现在会忽略 _Babel_ 插件 `@babel/plugin-transform-regenerator`
+    -   为迎接 _Webpack 5_ 重大更新，生成的 Webpack 配置做出以下调整
+        -   移除选项 `node.Buffer` 和 `node.process`
     -   现在默认不会安装以下依赖包，如有使用需要，请在项目中自行安装
         -   `file-loader`
         -   `html-webpack-plugin`
@@ -22,7 +24,6 @@
         -   `chalk` -> _^3.0.0_
         -   `ejs` -> _^3.0.1_
         -   `ora` -> _^4.0.3_
-        -   `webpack` -> _^5.0.0_
 -   **新特性**
     -   **新配置项** `distClientAssetsDirName` - 设定客户端打包结果中静态资源存放路径的目录名。详情请参见文档 [配置/distClientAssetsDirName](https://koot.js.org/#/config?id=distClientAssetsDirName) ([#181](https://github.com/cmux/koot/issues/181))
     -   **新工具函数** `koot/utils/client-get-styles` - 获取当前全局 CSS 和所有组件 CSS。具体用法请参见文档 [全局与工具函数/工具函数/客户端](https://koot.js.org/#/utilities?id=客户端) ([#185](https://github.com/cmux/koot/issues/185))

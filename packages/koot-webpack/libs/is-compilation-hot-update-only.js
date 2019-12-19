@@ -33,7 +33,7 @@ module.exports = compilation => {
     const chunks = stats.compilation.entrypoints.get('client').chunks;
 
     // 如果 client chunks 为空，判断为热更新
-    if (!Array.isArray(chunks) || !chunks instanceof Set) return true;
+    if (!Array.isArray(chunks) && !chunks instanceof Set) return true;
 
     // 如果某一个 chunk 的文件列表中所有的文件的文件名均有 .hot-update. 字段，判断为热更新
     return [...chunks].some(chunk => {

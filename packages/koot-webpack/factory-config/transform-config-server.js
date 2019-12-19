@@ -37,6 +37,7 @@ module.exports = async (kootBuildConfig = {}) => {
         i18n,
         staticCopyFrom: staticAssets,
         template,
+        aliases = {},
         [keyConfigBuildDll]: createDll = false
     } = kootBuildConfig;
 
@@ -62,6 +63,11 @@ module.exports = async (kootBuildConfig = {}) => {
     await transformConfigExtendDefault(result, kootBuildConfig);
 
     Object.assign(result.output, configTargetDefault.output);
+
+    result.resolve.alias = {
+        ...(result.resolve.alias || {}),
+        ...aliases
+    };
 
     // 如果用户自己配置了服务端打包路径，则覆盖默认的
     if (dist) result.output.path = path.resolve(dist, './server');

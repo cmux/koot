@@ -22,6 +22,9 @@ const { wrapper: componentClassName } = styles;
 
 let stateShowed = false;
 
+// eslint-disable-next-line no-undef
+// console.log(AAAAAA);
+
 @extend({
     connect: state => {
         if (__CLIENT__ && __DEV__ && !stateShowed) {

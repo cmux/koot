@@ -52,6 +52,12 @@ module.exports = async () => {
 
         plugins: [
             undefined // Koot.js: 处理 webpack 配置时会自动过滤掉 null、undefined 等无意义的项
-        ]
+        ],
+
+        resolve: {
+            alias: {
+                AAAAAA: JSON.stringify('bbbbbb')
+            }
+        }
     };
 };
