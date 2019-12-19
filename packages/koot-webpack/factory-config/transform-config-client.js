@@ -61,8 +61,7 @@ module.exports = async (kootConfigForThisBuild = {}) => {
         analyze = false,
         devHmr: webpackHmr = {},
         [keyConfigBuildDll]: createDll = false,
-        webpackCompilerHook = {},
-        aliases = {}
+        webpackCompilerHook = {}
     } = kootConfigForThisBuild;
 
     /** @type {String} 默认入口文件 */
@@ -119,11 +118,6 @@ module.exports = async (kootConfigForThisBuild = {}) => {
         };
 
         const thisConfig = new DefaultWebpackConfig().merge(config);
-
-        thisConfig.resolve.alias = {
-            ...(thisConfig.resolve.alias || {}),
-            ...aliases
-        };
 
         // 跟进打包环境和用户自定义配置，扩展webpack配置
         if (thisConfig.__ext) {

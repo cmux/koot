@@ -103,6 +103,18 @@ module.exports = async (kootConfig = {}) => {
         if (STAGE === 'server')
             config = await transformConfigServer(kootBuildConfig);
 
+        const extendConfig = config => {
+            if (Array.isArray(config)) return config.map(c => extendConfig(c));
+
+            if (typeof config.resolve !== 'object') config.resolve = {};
+            config.resolve.alias = {
+                ...(config.resolve.alias || {}),
+                ...(kootBuildConfig.aliases || {})
+            };
+            return config;
+        };
+        extendConfig(config);
+
         // ====================================================================
         //
         // SPA 生产环境

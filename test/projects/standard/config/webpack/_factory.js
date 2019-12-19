@@ -56,7 +56,7 @@ module.exports = async () => {
 
         resolve: {
             alias: {
-                AAAAAA: JSON.stringify('bbbbbb')
+                __AAA__: 'aaa'
             }
         }
     };
