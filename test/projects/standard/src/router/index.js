@@ -98,6 +98,17 @@ export default {
                 path: 'test-modify-state',
                 name: 'Test: test-modify-state',
                 component: PageTestModifyState
+            },
+            {
+                path: 'test-server-ctx-redirect',
+                getComponent: (nextState, cb) => {
+                    import(
+                        /* webpackChunkName: "PageTestServerCache" */
+                        '@views/test-server-ctx-redirect'
+                    ).then(module => {
+                        if (routeCheck(nextState)) cb(null, module.default);
+                    });
+                }
             }
         ];
         if (!__SPA__) {

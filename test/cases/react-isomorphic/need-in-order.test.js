@@ -71,6 +71,7 @@ const filterState = require('../../../packages/koot/libs/filter-state');
 const testHtmlRenderedByKoot = require('../../general-tests/html/rendered-by-koot');
 const testFilesFromChunkmap = require('../../general-tests/bundle/check-files-from-chunkmap');
 const getProjects = require('../../projects/get');
+const ensureUrlTrailingSlash = require('../../../packages/koot/utils/ensure-url-trailing-slash');
 
 const {
     injectScripts: puppeteerTestInjectScripts,
@@ -98,7 +99,7 @@ const headless = true;
 
 // Jest configuration =========================================================
 
-jest.setTimeout(6 * 60 * 1 * 1000);
+jest.setTimeout(10 * 60 * 1 * 1000);
 
 let browser;
 let lastTime;
@@ -1208,6 +1209,32 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
         }
 
         await context.close();
+    }
+
+    // 测试: 服务器端获取 koa ctx
+    {
+        const context = await browser.createIncognitoBrowserContext();
+        const page = await context.newPage();
+        const gotoUrl = i18nUseRouter
+            ? `${origin}/zh/test-server-ctx-redirect`
+            : `${origin}/test-server-ctx-redirect`;
+
+        await page.goto(gotoUrl, {
+            waitUntil: 'networkidle0'
+        });
+        const result = await page.evaluate(() => window.location.href);
+
+        await context.close();
+
+        if (i18nUseRouter) {
+            expect(ensureUrlTrailingSlash(origin + '/zh')).toBe(
+                ensureUrlTrailingSlash(result)
+            );
+        } else {
+            expect(ensureUrlTrailingSlash(origin)).toBe(
+                ensureUrlTrailingSlash(result)
+            );
+        }
     }
 
     // TODO: 测试: 所有 Webpack 结果资源的访问

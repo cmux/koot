@@ -3,6 +3,7 @@
     __KOOT_STORE__: false,
     __KOOT_HISTORY__: false,
     __KOOT_LOCALEID__: false,
+    __KOOT_CTX__: false,
 */
 
 import isRenderSafe from './React/is-render-safe';
@@ -84,6 +85,15 @@ export const getCache = localeId => {
 
 // ============================================================================
 
+export const getCtx = () => {
+    if (__CLIENT__) return undefined;
+    if (__DEV__) return global.__KOOT_CTX__;
+    if (typeof __KOOT_CTX__ === 'undefined') return undefined;
+    return __KOOT_CTX__;
+};
+
+// ============================================================================
+
 if (__DEV__) {
     global.__KOOT_SSR_SET__ = v => {
         global.__KOOT_SSR__ = v;
@@ -99,6 +109,9 @@ if (__DEV__) {
     global.__KOOT_SSR_SET_HISTORY__ = v => {
         global.__KOOT_HISTORY__ = v;
         history = v;
+    };
+    global.__KOOT_SSR_SET_CTX__ = v => {
+        global.__KOOT_CTX__ = v;
     };
     // if (__CLIENT__) {
     //     window.__DEV_KOOT_GET_STYLES__ = getStyles;

@@ -26,6 +26,7 @@
         -   `ora` -> _^4.0.3_
 -   **新特性**
     -   **新配置项** `distClientAssetsDirName` - 设定客户端打包结果中静态资源存放路径的目录名。详情请参见文档 [配置/distClientAssetsDirName](https://koot.js.org/#/config?id=distClientAssetsDirName) ([#181](https://github.com/cmux/koot/issues/181))
+    -   **新全局函数** `getCtx` - 获取服务器的 _Koa ctx_ 对象。具体用法请参见文档 [全局与工具函数/全局函数](https://koot.js.org/#/utilities?id=全局函数) ([#196](https://github.com/cmux/koot/issues/196))
     -   **新工具函数** `koot/utils/client-get-styles` - 获取当前全局 CSS 和所有组件 CSS。具体用法请参见文档 [全局与工具函数/工具函数/客户端](https://koot.js.org/#/utilities?id=客户端) ([#185](https://github.com/cmux/koot/issues/185))
 -   优化
     -   现在默认支持在浏览器环境中使用 _async_ / _await_ 开发

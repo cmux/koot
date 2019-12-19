@@ -3,6 +3,7 @@
 
 import { Store } from 'redux';
 import { History } from 'history';
+import Koa from 'koa';
 
 // ============================================================================
 
@@ -43,6 +44,19 @@ declare namespace Koot {
      * ! 注2 ! 公用对象空间内不包含对应语种的对象，需要对应语种的结果时需要提供 `localeId`
      */
     export function getCache(localeId?: LocaleId | boolean): Cache;
+
+    /**
+     * _仅针对服务器端_
+     *
+     * 获取 Koa ctx 对象
+     *
+     * ---
+     *
+     * ! 注 ! 客户端返回 undefined
+     */
+    export function getCtx():
+        | Koa<Koa.DefaultState, Koa.DefaultContext>
+        | undefined;
 }
 export = Koot;
 export as namespace Koot;

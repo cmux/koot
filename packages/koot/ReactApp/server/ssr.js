@@ -1,6 +1,7 @@
 /* global
     __KOOT_SSR_SET_STORE__:false,
     __KOOT_SSR_SET_HISTORY__:false,
+    __KOOT_SSR_SET_CTX__: false,
     __KOOT_LOCALEID__:false,
     __KOOT_SSR__:false
 */
@@ -91,9 +92,11 @@ const ssr = async (options = {}) => {
         // global.__KOOT_HISTORY__ = History
         global.__KOOT_SSR_SET_STORE__(Store);
         global.__KOOT_SSR_SET_HISTORY__(History);
+        global.__KOOT_SSR_SET_CTX__(ctx);
     } else {
         __KOOT_SSR_SET_STORE__(Store);
         __KOOT_SSR_SET_HISTORY__(History);
+        __KOOT_SSR_SET_CTX__(ctx);
         resetStore();
         resetHistory();
     }
