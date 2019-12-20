@@ -54,11 +54,11 @@
 
 ## 开源许可
 
-Koot.js 使用 _Apache 2.0_ 开源许可证
+_Koot.js_ 使用 _Apache 2.0_ 开源许可证
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-yellowgreen.svg)](https://opensource.org/licenses/Apache-2.0)
 
-## 客户
+---
 
 <p align="center">
     <a href="https://www.cmcm.com">
@@ -67,13 +67,5 @@ Koot.js 使用 _Apache 2.0_ 开源许可证
     &nbsp;
     <a href="https://www.photogrid.app/">
         <img alt="PhotoGrid" src="./docs/assets/logos/photogrid.png" width="150" height="75" style="vertical-align:middle;object-fit:contain">
-    </a>
-    &nbsp;
-    <a href="https://www.bitrue.com/">
-        <img alt="Bitrue" src="./docs/assets/logos/bitrue.png" width="150" height="75" style="vertical-align:middle;object-fit:contain">
-    </a>
-    &nbsp;
-    <a href="https://www.ratingtoken.net/">
-        <img alt="RatingToken" src="./docs/assets/logos/ratingtoken.png" width="150" height="75" style="vertical-align:middle;object-fit:contain">
     </a>
 </p>

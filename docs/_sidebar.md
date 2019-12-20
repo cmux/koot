@@ -1,7 +1,7 @@
 -   **上手**
 
     -   [开始使用](/?id=开始使用)
-    -   [客户](/clients)
+    -   [服务于](/clients)
     -   [模板项目结构](/boilerplate)
     -   [技术术语](/glossary)
     -   [FAQ/疑难解答](/faq)
