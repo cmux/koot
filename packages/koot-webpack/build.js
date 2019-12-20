@@ -473,9 +473,6 @@ module.exports = async (kootConfig = {}) => {
      * @param {Error|String} err
      */
     const buildingError = err => {
-        // 移除过程中创建的临时文件
-        emptyTempConfigDir();
-
         // 如果有打包版本子目录，删除
         if (
             typeof process.env.KOOT_CLIENT_BUNDLE_SUBFOLDER === 'string' &&
@@ -500,6 +497,9 @@ module.exports = async (kootConfig = {}) => {
         // 移除标记文件
         const fileBuilding = path.resolve(data.dist, filenameBuilding);
         if (fs.existsSync(fileBuilding)) fs.removeSync(fileBuilding);
+
+        // 移除过程中创建的临时文件
+        emptyTempConfigDir();
 
         if (ENV === 'prod') throw err;
 

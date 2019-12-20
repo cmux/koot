@@ -47,6 +47,9 @@ const isFromCommandStart = () =>
     process.env.KOOT_COMMAND_START &&
     JSON.parse(process.env.KOOT_COMMAND_START);
 
+/** Building result */
+let result;
+
 /**
  * 执行打包
  */
@@ -108,25 +111,27 @@ const run = async () => {
         kootConfig[keyConfigQuiet] = true;
     }
 
+    // Building process =======================================================
+
     // 如果提供了 stage，仅针对该 stage 执行打包
     // SPA: 强制仅打包 client
     if (process.env.WEBPACK_BUILD_TYPE === 'spa' || stage) {
         // if (stage === 'server' && !hasServer) {
         //     console.log(chalk.redBright('× '))
         // }
-        await kootWebpackBuild(kootConfig);
+        result = await kootWebpackBuild(kootConfig);
         await after(kootConfig);
         if (!fromCommandStart) console.log(' ');
         return;
     }
 
     // 如过没有提供 stage，自动相继打包 client 和 server
-    await kootWebpackBuild({ ...kootConfig });
+    result = await kootWebpackBuild({ ...kootConfig });
     await sleep(100);
 
     if (!fromCommandStart) console.log('\n' + ''.padEnd(60, '=') + '\n');
     process.env.WEBPACK_BUILD_STAGE = 'server';
-    await kootWebpackBuild({ ...kootConfig });
+    result = await kootWebpackBuild({ ...kootConfig });
     await sleep(100);
 
     if (!fromCommandStart) console.log('\n' + ''.padEnd(60, '=') + '\n');
@@ -164,10 +169,14 @@ const after = async (config = {}) => {
 };
 
 run().catch(err => {
-    if (isFromCommandStart()) {
-        // throw err
-        return console.error(err);
+    if (!isFromCommandStart())
+        spinner(chalk.yellowBright('[koot/build] ')).fail();
+
+    if (Array.isArray(result.errors) && result.errors.length) {
+        result.errors.forEach(e => console.error(e));
+    } else {
+        console.error(err);
     }
-    spinner(chalk.yellowBright('[koot/build] ')).fail();
-    console.trace(err);
+
+    process.exit();
 });
