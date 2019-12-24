@@ -116,6 +116,7 @@
         "redux": "^4.0.5",
         "redux-thunk": "^2.3.0",
         "rimraf": "^3.0.0",
+        "sanitize-filename": "1.6.3",
         "sp-koa-views": "^1.0.1",
         "sync-request": "^6.1.0",
         "terminate": "^2.1.2",

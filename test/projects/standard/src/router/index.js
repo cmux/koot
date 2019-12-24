@@ -25,7 +25,7 @@ export default {
     indexRoute: {
         getComponent: (nextState, cb) => {
             import(
-                /* webpackChunkName: "Page|Home" */
+                /* webpackChunkName: "PageHome" */
                 '@views/home'
             ).then(module => {
                 if (routeCheck(nextState)) cb(null, module.default);
