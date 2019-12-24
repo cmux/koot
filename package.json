@@ -50,7 +50,7 @@
         "chalk": "^3.0.0",
         "cheerio": "^1.0.0-rc.3",
         "crlf": "^1.1.1",
-        "eslint": "^6.7.2",
+        "eslint": "^6.8.0",
         "eslint-config-koot": "^1.6.0",
         "fs-extra": "^8.1.0",
         "husky": "^3.1.0",

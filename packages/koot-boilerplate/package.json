@@ -40,7 +40,7 @@
         "babel-eslint": "^10.0.3",
         "bind-event": "^1.1.2",
         "cssnano": "^4.1.10",
-        "eslint": "^6.7.2",
+        "eslint": "^6.8.0",
         "eslint-config-koot": "^1.6.0",
         "husky": "^3.1.0",
         "lint-staged": "^9.5.0",

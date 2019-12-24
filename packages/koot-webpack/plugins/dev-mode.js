@@ -94,25 +94,26 @@ class DevModePlugin {
         });
 
         // done - 执行 after 回调
-        compiler.hooks.done.tapAsync.bind(compiler.hooks.done, 'DevModePlugin')(
-            (compilation, callback) => {
-                // console.log('\n\n\nhotUpdate', hotUpdate)
+        compiler.hooks.done.tapAsync.bind(
+            compiler.hooks.done,
+            'DevModePlugin'
+        )((compilation, callback) => {
+            // console.log('\n\n\nhotUpdate', hotUpdate)
 
-                // 如果当前为热更新，取消流程
-                if (hotUpdate) return callback();
+            // 如果当前为热更新，取消流程
+            if (hotUpdate) return callback();
 
-                if (typeof done === 'function') {
-                    done();
-                    // setTimeout(() => {
-                    //     if (!TYPE === 'spa') {
-                    //         console.log('\n')
-                    //     }
-                    // })
-                }
-
-                callback();
+            if (typeof done === 'function') {
+                done();
+                // setTimeout(() => {
+                //     if (!TYPE === 'spa') {
+                //         console.log('\n')
+                //     }
+                // })
             }
-        );
+
+            callback();
+        });
     }
 }
 

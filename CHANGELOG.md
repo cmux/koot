@@ -13,8 +13,8 @@
     -   默认的 _Service Worker_ 文件现在使用 _Workbox_ 生成
         -   如果原有项目中有使用自定的 _Service Worker_ 模板，升级后需要更新该模板。详情请参见文档 [Service Worker](https://koot.js.org/#/pwa)
     -   现在会忽略 _Babel_ 插件 `@babel/plugin-transform-regenerator`
-    -   为迎接 _Webpack 5_ 重大更新，生成的 Webpack 配置做出以下调整
-        -   移除选项 `node.Buffer` 和 `node.process`
+    -   为准备 _Webpack 5_ 重大更新，生成的 Webpack 配置做出以下调整
+        -   强制移除选项 `node.Buffer` 和 `node.process`
     -   现在默认不会安装以下依赖包，如有使用需要，请在项目中自行安装
         -   `file-loader`
         -   `html-webpack-plugin`
@@ -40,18 +40,23 @@
         -   优化服务器代码的文件尺寸 ([#172](https://github.com/cmux/koot/issues/172), [#186](https://github.com/cmux/koot/issues/186))
         -   如果 URL 中开头的斜线 `/` 过多，现在会自动跳转到正确的 URL ([#157](https://github.com/cmux/koot/issues/157))
     -   `node-sass` 现在改为 `optionalDependencies`，如果安装失败，不会影响 _Koot.js_ 的安装
-    -   组件 CSS 文件现在会按照 ES Module 格式输出，同时支持 ES Module 格式的文件引用
+    -   组件 CSS 文件现在会按照 _ES Module_ 格式输出
+        -   现在同时支持 _ES Module_ 和 _CommonJS_ 引用方式
+    -   优化打包和进入开发环境时的错误日志显示
+    -   使用 `import()` 时，如果 `webpackChunkName` 注释选项中包含特殊字符，现在会自动转换为文件名安全的字符 ([#190](https://github.com/cmux/koot/issues/190))
 -   错误修正
     -   客户端生命周期 `before()` 和 `after()` 现在会传入正确的参数 ([#198](https://github.com/cmux/koot/issues/198))
 
 **koot-boilerplate**
 
+-   _Node.js_ 最低版本要求提升到 `10.13.0`
 -   _Webpack_ 配置
     -   图片资源改用 `url-loader` 处理
         -   大于 **2KB** 的文件会继续使用 `file-loader` 处理
     -   大于 **5KB** 的 _SVG_ 的文件会改用 `file-loader` 处理
     -   优化生产环境的代码分割规则
 -   新命令 `yarn up` - 使用 _Yarn_ 检查本地依赖版本并选择更新
+    -   该命令要求使用 _Yarn_ 进行本地包管理
 
 **koot-cli**
 

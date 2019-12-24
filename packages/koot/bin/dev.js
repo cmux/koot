@@ -67,6 +67,7 @@ program
     .option('--no-open', "Don't open browser automatically")
     .option('--no-dll', "Don't use Webpack's DLL plugin")
     .option('--koot-test', 'Koot test mode')
+    .option('--koot-development', 'Koot development mode')
     .parse(process.argv);
 
 /**
@@ -104,7 +105,8 @@ const run = async () => {
         open = true,
         port,
         dll = true,
-        kootTest = false
+        kootTest = false,
+        kootDevelopment = false
     } = program;
 
     initNodeEnv();
@@ -130,6 +132,7 @@ const run = async () => {
         (typeof config === 'string' ? ` --config ${config}` : '') +
         (typeof type === 'string' ? ` --type ${type}` : '') +
         (kootTest ? ` --koot-test` : '') +
+        (kootDevelopment ? ` --koot-development` : '') +
         ' --koot-dev';
 
     // ========================================================================

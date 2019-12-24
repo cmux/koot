@@ -1,3 +1,6 @@
+const fs = require('fs-extra');
+const path = require('path');
+const getCwd = require('koot/utils/get-cwd');
 const transformFixDefaultExport = require('./transform-fix-default-export');
 
 /**
@@ -37,13 +40,15 @@ module.exports = require('babel-loader').custom(babel => {
             __react,
             __typescript,
             __server,
+            __routes,
             ...loader
         }) {
             Object.assign(customOptions, {
                 __createDll,
                 __react,
                 __typescript,
-                __server
+                __server,
+                __routes
             });
             // Pull out any custom options that the loader might have.
             return {
@@ -63,7 +68,8 @@ module.exports = require('babel-loader').custom(babel => {
                 __createDll,
                 __react,
                 __typescript = false,
-                __server = false
+                __server = false,
+                __routes
             } = customOptions;
             const { presets, plugins, ...options } = cfg.options;
             const isServer =
@@ -132,6 +138,33 @@ module.exports = require('babel-loader').custom(babel => {
             ) {
                 newPlugins.push(require('extract-hoc/babel'));
                 newPlugins.push(require('react-hot-loader/babel'));
+            }
+
+            if (
+                !__createDll &&
+                !isServer &&
+                process.env.WEBPACK_BUILD_ENV === 'dev'
+            ) {
+                let pathname = path.resolve(getCwd(), __routes);
+                if (fs.lstatSync(pathname).isDirectory()) pathname += '/index';
+                if (!fs.existsSync(pathname)) {
+                    const exts = ['.js', '.ts'];
+                    exts.some(ext => {
+                        const newPathname = path.resolve(pathname + ext);
+                        if (fs.existsSync(newPathname)) {
+                            pathname = newPathname;
+                            return true;
+                        }
+                        return false;
+                    });
+                }
+                newPlugins.push([
+                    path.resolve(__dirname, './plugins/client-dev.js'),
+                    {
+                        routesConfigFile: pathname
+                    }
+                ]);
+                // console.log(newPlugins);
             }
 
             const thisOptions = {

@@ -38,6 +38,7 @@ program
     .option('--type <project-type>', 'Set project type')
     .option('--koot-dev', 'Koot dev env')
     .option('--koot-test', 'Koot test mode')
+    .option('--koot-development', 'Koot development mode')
     .parse(process.argv);
 
 /** 判断是否是通过 koot-start 命令启动
@@ -63,7 +64,8 @@ const run = async () => {
         type,
         dest,
         kootDev = false,
-        kootTest = false
+        kootTest = false,
+        kootDevelopment = false
     } = program;
 
     initNodeEnv();
@@ -85,6 +87,7 @@ const run = async () => {
     );
 
     process.env.KOOT_TEST_MODE = JSON.stringify(kootTest);
+    process.env.KOOT_DEVELOPMENT_MODE = JSON.stringify(kootDevelopment);
 
     const stage = (() => {
         if (_stage) return _stage;

@@ -24,6 +24,10 @@ module.exports = async (options = {}) => {
     {
         const keys = [];
         args.forEach(arg => {
+            // if (arg === 'inspect') {
+            //     process.env.__INSPECT = JSON.stringify(true);
+            //     return;
+            // }
             const segs = arg.split('=');
             // envs[segs.shift()] = segs.join('=')
             const key = segs.shift();

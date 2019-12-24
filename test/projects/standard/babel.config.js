@@ -1,5 +1,6 @@
 module.exports = function(api) {
-    api.cache(true);
+    // api.cache(true);
+    api.cache(false);
 
     return {
         presets: [

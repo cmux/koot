@@ -14,12 +14,13 @@ module.exports = (kootBuildConfig = {}) => {
     const stage = process.env.WEBPACK_BUILD_STAGE;
     const stageServer = stage === 'server';
 
-    const { createDll = false } = kootBuildConfig;
+    const { createDll = false, routes } = kootBuildConfig;
 
     //
 
     const ruleUseBabelLoader = (options = {}) => {
         options.__server = stageServer;
+        options.__routes = routes;
 
         if (typeof options.cacheDirectory === 'undefined')
             options.cacheDirectory = true;
@@ -29,7 +30,11 @@ module.exports = (kootBuildConfig = {}) => {
                 options.__createDll = true;
                 options.sourceMaps = false;
             } else {
-                // options.cacheDirectory = false
+                if (
+                    process.env.KOOT_DEVELOPMENT_MODE &&
+                    JSON.parse(process.env.KOOT_DEVELOPMENT_MODE)
+                )
+                    options.cacheDirectory = false;
             }
             options.compact = false;
             options.cacheCompression = false;
