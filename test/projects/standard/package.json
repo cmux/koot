@@ -24,10 +24,12 @@
         "build:spa:use-config-file": "koot-build --config koot.config.spa.js",
         "dev": "koot-dev",
         "dev:0.8:full": "koot-dev --config koot.config.0.8-full.js",
-        "dev:client": "koot-dev -c --koot-development",
+        "dev:client": "koot-dev -c",
+        "dev:client:dev": "koot-dev -c --koot-development",
         "dev:server": "koot-dev -s",
+        "dev:dev": "koot-dev --no-open --koot-development",
         "dev:global-pm2": "koot-dev -g",
-        "dev:no-open": "koot-dev --no-open --koot-development",
+        "dev:no-open": "koot-dev --no-open",
         "dev:spa": "koot-dev --type spa --dest dist-spa",
         "dev:spa:no-open": "koot-dev --type spa --dest dist-spa --no-open",
         "analyze": "koot-analyze",
@@ -63,7 +65,7 @@
     "private": true,
     "sideEffects": false,
     "koot": {
-        "version": "0.12.0-alpha.26"
+        "version": "0.12.0-alpha.27"
     },
     "devDependencies": {
         "@types/node": "^13.1.0",

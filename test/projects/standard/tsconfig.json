@@ -14,7 +14,29 @@
         "resolveJsonModule": true,
         "isolatedModules": true,
         "noEmit": true,
-        "jsx": "preserve"
+        "jsx": "preserve",
+        "baseUrl": ".",
+        "paths": {
+            "@src": ["./src"],
+            "@src/*": ["./src/*"],
+            "@assets": ["./src/assets"],
+            "@assets/*": ["./src/assets/*"],
+            "@components": ["./src/components"],
+            "@components/*": ["./src/components/*"],
+            "@constants": ["./src/constants"],
+            "@constants/*": ["./src/constants/*"],
+            "@store": ["./src/store"],
+            "@store/*": ["./src/store/*"],
+            "@views": ["./src/views"],
+            "@views/*": ["./src/views/*"],
+            "@server": ["./src/server"],
+            "@server/*": ["./src/server/*"],
+            "~Assets": ["./src/assets"],
+            "~Assets/*": ["./src/assets/*"],
+            "~/*": ["./src/*"],
+            "@types": ["./types"],
+            "@types/*": ["./types/*"]
+        }
     },
-    "include": ["src"]
+    "include": ["src", "types/**/*.ts"]
 }
