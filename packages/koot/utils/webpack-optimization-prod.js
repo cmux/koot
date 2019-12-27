@@ -7,65 +7,74 @@
  */
 module.exports = (options = {}) => {
     const { extraLibs = [] } = options;
+    const cacheGroups = {
+        libs: {
+            name: 'libs',
+            priority: 100,
+            chunks: 'all',
+            minChunks: 1,
+            reuseExistingChunk: true,
+            test: new RegExp(
+                `[\\\\/]node_modules[\\\\/](${[
+                    // react
+                    'react',
+                    'react-dom',
+                    'react-redux',
+                    'react-router',
+                    'react-router-redux',
+                    'redux',
+                    'redux-thunk',
+
+                    // // babel, webpack & other tools
+                    // 'regenerator-runtime',
+
+                    // // common libraries
+                    // 'axios',
+                    // 'classnames',
+                    // 'history',
+                    // 'js-cookie',
+                    // 'lodash',
+                    // 'underscore'
+
+                    ...extraLibs
+                ].join('|')})[\\\\/]`
+            )
+        },
+        libsAntd: {
+            name: 'libs-ant-design-related',
+            priority: 90,
+            chunks: 'all',
+            minChunks: 1,
+            reuseExistingChunk: true,
+            test: new RegExp(
+                `[\\\\/]node_modules[\\\\/](${[
+                    'antd',
+                    'moments',
+                    '@antd\\\\/icons'
+                ].join('|')})[\\\\/]`
+            )
+        },
+        libsOthers: {
+            name: 'libs-others',
+            chunks: 'all',
+            minChunks: 2,
+            reuseExistingChunk: true
+        }
+    };
+
+    // const isKootTest =
+    //     global.kootTest ||
+    //     (process.env.KOOT_TEST_MODE && JSON.parse(process.env.KOOT_TEST_MODE));
+    // if (isKootTest) {
+    //     delete cacheGroups.libsOthers
+    // }
+
     return {
         splitChunks: {
             maxAsyncRequests: 8,
             maxInitialRequests: 6,
 
-            cacheGroups: {
-                libs: {
-                    name: 'libs',
-                    priority: 100,
-                    chunks: 'all',
-                    minChunks: 1,
-                    reuseExistingChunk: true,
-                    test: new RegExp(
-                        `[\\\\/]node_modules[\\\\/](${[
-                            // react
-                            'react',
-                            'react-dom',
-                            'react-redux',
-                            'react-router',
-                            'react-router-redux',
-                            'redux',
-                            'redux-thunk',
-
-                            // // babel, webpack & other tools
-                            // 'regenerator-runtime',
-
-                            // // common libraries
-                            // 'axios',
-                            // 'classnames',
-                            // 'history',
-                            // 'js-cookie',
-                            // 'lodash',
-                            // 'underscore'
-
-                            ...extraLibs
-                        ].join('|')})[\\\\/]`
-                    )
-                },
-                libsAntd: {
-                    name: 'libs-ant-design-related',
-                    priority: 90,
-                    chunks: 'all',
-                    minChunks: 1,
-                    reuseExistingChunk: true,
-                    test: new RegExp(
-                        `[\\\\/]node_modules[\\\\/](${[
-                            'antd',
-                            'moments',
-                            '@antd\\\\/icons'
-                        ].join('|')})[\\\\/]`
-                    )
-                },
-                libsOthers: {
-                    name: 'libs-others',
-                    chunks: 'all',
-                    minChunks: 2,
-                    reuseExistingChunk: true
-                }
-            }
+            cacheGroups
         }
     };
 };

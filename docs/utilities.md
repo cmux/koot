@@ -99,3 +99,10 @@ import getClientFilePath from 'koot/utils/get-client-file-path';
 -   引用地址: `koot/utils/read-client-file`
 -   读取目标文件的内容
 -   该文件必须为客户端打包结果
+
+##### 仅打包
+
+##### `webpackOptimizationProd(): WebpackConfigOptimization`
+
+-   引用地址: `koot/utils/webpack-optimization-prod`
+-   生成 Webpack `optimization` 配置，用于拆分代码

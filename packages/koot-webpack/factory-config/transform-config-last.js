@@ -138,9 +138,9 @@ const validate = (config, kootConfigForThisBuild) => {
     // 针对 Webpack 4 处理
     forWebpackVersion('4.x', () => {
         // 这些选项会在 Webpack 5 中移除，对应 Webpack 4 的 false 配置
-        if (typeof config.node !== 'object') config.node = {};
-        config.node.Buffer = false;
-        config.node.process = false;
+        // if (typeof config.node !== 'object') config.node = {};
+        // config.node.Buffer = false;
+        // config.node.process = false;
     });
 
     // 针对 Webpack 5 处理
