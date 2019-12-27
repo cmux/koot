@@ -1,7 +1,7 @@
 {
     "name": "koot-boilerplate-system",
     "private": true,
-    "version": "0.12.0-alpha.27",
+    "version": "0.12.0-beta.0",
     "description": "",
     "main": "index.js",
     "scripts": {
@@ -15,6 +15,6 @@
     },
     "dependencies": {
         "antd": "^3.10.8",
-        "koot": "^0.12.0-alpha.27"
+        "koot": "^0.12.0-beta.0"
     }
 }
