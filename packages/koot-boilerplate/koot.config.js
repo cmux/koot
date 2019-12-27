@@ -8,6 +8,7 @@
 
 const fs = require('fs-extra');
 const path = require('path');
+const webpackOptimizationProd = require('koot/utils/webpack-optimization-prod');
 
 module.exports = {
     /**************************************************************************
@@ -141,35 +142,7 @@ module.exports = {
         // `entry` 项仅针对：客户端
         return {
             ...configBase,
-            optimization: {
-                splitChunks: {
-                    cacheGroups: {
-                        commons: {
-                            name: 'commons',
-                            chunks: 'all',
-                            minChunks: 1,
-                            reuseExistingChunk: true,
-                            test: new RegExp(
-                                `[\\\\/]node_modules[\\\\/](${[
-                                    'react',
-                                    'react-dom',
-                                    'react-redux',
-                                    'react-router',
-                                    'react-router-redux',
-                                    'redux',
-                                    'redux-thunk',
-
-                                    'classnames',
-                                    'js-cookie',
-                                    'lodash',
-                                    'regenerator-runtime',
-                                    'axios'
-                                ].join('|')})[\\\\/]`
-                            )
-                        }
-                    }
-                }
-            }
+            optimization: webpackOptimizationProd()
         };
     },
     // 更多选项请查阅文档...

@@ -1,4 +1,5 @@
 const factoryConfig = require('./_factory');
+const webpackOptimizationProd = require('koot/utils/webpack-optimization-prod');
 
 module.exports = async () => {
     const defaults = await factoryConfig();
@@ -12,34 +13,7 @@ module.exports = async () => {
             chunkFilename: `chunk.[chunkhash].js`
         },
 
-        optimization: {
-            splitChunks: {
-                cacheGroups: {
-                    commons: {
-                        name: 'commons',
-                        chunks: 'all',
-                        minChunks: 1,
-                        reuseExistingChunk: true,
-                        test: new RegExp(
-                            `[\\\\/]node_modules[\\\\/](${[
-                                'react',
-                                'react-dom',
-                                'react-redux',
-                                'react-router',
-                                'react-router-redux',
-                                'redux',
-                                'redux-thunk',
-
-                                'classnames',
-                                'js-cookie',
-                                'lodash',
-                                'regenerator-runtime'
-                            ].join('|')})[\\\\/]`
-                        )
-                    }
-                }
-            }
-        }
+        optimization: webpackOptimizationProd()
     };
 
     return Object.assign({}, defaults, config);
