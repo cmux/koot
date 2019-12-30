@@ -59,7 +59,7 @@
         "jest": "^24.9.0",
         "jsdom": "^15.2.1",
         "latest-version": "^5.1.0",
-        "lerna": "^3.19.0",
+        "lerna": "^3.20.1",
         "lerna-wizard": "^1.1.1",
         "lint-staged": "^9.5.0",
         "prettier": "^1.19.1",
