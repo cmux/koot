@@ -7,7 +7,7 @@
         "lerna": "lerna-wizard",
         "lerna:bootstrap": "lerna bootstrap --hoist",
         "lerna:publish": "lerna publish",
-        "lerna:publish:only-core": "lerna publish --ignore-changes \"packages/!(koot|koot-webpack)/**\"",
+        "lerna:publish:only-core": "lerna publish --ignore-changes \"packages/!(koot|koot-webpack)/**\" --dist-tag 0.7",
         "lerna:version": "lerna version",
         "lerna:version:only-core": "lerna version --ignore-changes \"packages/!(koot|koot-webpack)/**\"",
         "pretest": "node ./test/pre-test.js",
