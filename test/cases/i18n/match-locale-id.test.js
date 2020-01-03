@@ -46,6 +46,8 @@ describe(`测试: i18n/根据输入的语种或语言列表，匹配项目语言
         expect(parseLocaleId('zh', ['en-US', 'zh-CN', 'zh-TW'])).toBe('zh-CN');
         expect(parseLocaleId('zh', ['zh_TW', 'zh-CN', 'en-US'])).toBe('zh_TW');
         expect(parseLocaleId('zh-CN', ['en-US', 'zh'])).toBe('zh');
+        expect(parseLocaleId('zh-CN', ['en-US', 'zh', 'zh-TW'])).toBe('zh');
+        expect(parseLocaleId('zh-CN', ['en-US', 'zh-TW', 'zh'])).toBe('zh');
         expect(parseLocaleId('zh-CN', ['zh', 'en-US'])).toBe('zh');
         expect(parseLocaleId('zh-CN', ['zh'])).toBe('zh');
         expect(parseLocaleId('zh-CN', ['en-US', 'zh-TW'])).toBe('zh-TW');
