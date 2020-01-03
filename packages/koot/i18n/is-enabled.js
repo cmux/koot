@@ -3,8 +3,8 @@
  * @returns {Boolean}
  */
 const isI18nEnabled = () => {
-    if (!JSON.parse(process.env.KOOT_I18N))
-        return false
-    return true
-}
-module.exports = isI18nEnabled
+    if (!process.env.KOOT_I18N || !JSON.parse(process.env.KOOT_I18N))
+        return false;
+    return true;
+};
+module.exports = isI18nEnabled;

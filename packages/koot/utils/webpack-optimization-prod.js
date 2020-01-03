@@ -25,10 +25,10 @@ module.exports = (options = {}) => {
                     'redux',
                     'redux-thunk',
 
-                    // // babel, webpack & other tools
+                    // babel, webpack & other tools
                     // 'regenerator-runtime',
 
-                    // // common libraries
+                    // common libraries
                     // 'axios',
                     // 'classnames',
                     // 'history',
@@ -48,9 +48,25 @@ module.exports = (options = {}) => {
             reuseExistingChunk: true,
             test: new RegExp(
                 `[\\\\/]node_modules[\\\\/](${[
+                    '@ant-design',
                     'antd',
-                    'moments',
-                    '@antd\\\\/icons'
+                    'moment',
+                    'rc-align',
+                    'rc-animate',
+                    'rc-calendar',
+                    'rc-checkbox',
+                    'rc-form',
+                    'rc-menu',
+                    'rc-notification',
+                    'rc-pagination',
+                    'rc-progress',
+                    'rc-resize-observer',
+                    'rc-select',
+                    'rc-tabs',
+                    'rc-tooltip',
+                    'rc-trigger',
+                    'rc-upload',
+                    'rc-util'
                 ].join('|')})[\\\\/]`
             )
         },

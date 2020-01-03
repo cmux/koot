@@ -66,6 +66,11 @@ const run = async () => {
                 name: 'Lib: koot-css-loader',
                 value: './test/cases/libs/koot-css-loader'
             },
+            new inquirer.Separator(),
+            {
+                name: 'Functions: koot/i18n',
+                value: './test/cases/i18n'
+            },
             new inquirer.Separator()
         ],
         default: 'full'
