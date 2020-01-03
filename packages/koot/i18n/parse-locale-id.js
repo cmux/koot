@@ -44,7 +44,7 @@ const parseLocaleId = (input, localeIds = availableLocaleIds) => {
     return localeIds[0];
 };
 
-module.exports = parseLocaleId;
+export default parseLocaleId;
 
 // ============================================================================
 
