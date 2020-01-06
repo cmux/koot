@@ -16,6 +16,9 @@ const getSWFilename = require('koot/utils/get-sw-filename');
 
 // ============================================================================
 
+/**
+ * 生成 Webpack Plugin: InjectManifest 所用配置
+ */
 module.exports = async (kootConfigForThisBuild, localeId) => {
     if (!kootConfigForThisBuild) throw new Error('NO_KOOT_BUILD_CONFIG');
 

@@ -35,7 +35,7 @@
     -   现在开发环境下会默认启用 _Service Worker_
     -   更新 TS 定义 ([#191](https://github.com/cmux/koot/issues/191))
     -   多语言 / i18n
-        -   优化语言包匹配逻辑 ([#203](https://github.com/cmux/koot/issues/203))
+        -   优化语言包匹配逻辑 ([#201](https://github.com/cmux/koot/issues/201)) ([#203](https://github.com/cmux/koot/issues/203))
         -   如果翻译函数 (`__()`) 获得了确定的结果，函数会被自动转换成字符串 ([#187](https://github.com/cmux/koot/issues/187))
     -   服务器
         -   优化服务器代码的文件尺寸 ([#172](https://github.com/cmux/koot/issues/172), [#186](https://github.com/cmux/koot/issues/186))

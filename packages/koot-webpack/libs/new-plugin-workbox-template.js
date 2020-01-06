@@ -1,5 +1,12 @@
 // Koot.js specific ===========================================================
 
+if (typeof self.__koot !== 'object') {
+    self.__koot = {
+        env: {
+            WEBPACK_BUILD_ENV: 'prod'
+        }
+    };
+}
 const isKootAppDevEnv = self.__koot.env.WEBPACK_BUILD_ENV === 'dev';
 
 // Commons ====================================================================
