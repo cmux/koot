@@ -9,8 +9,12 @@
         "test": "node ./test/index.js",
         "reset": "node ./reset.js",
         "lerna:changed": "lerna changed",
-        "eslint:koot": "eslint \"packages/koot/!(node_modules|logs|dist|dist*|test)/**/*.+(js|jsx)\""
+        "eslint:koot": "eslint \"packages/koot/!(node_modules|logs|dist|dist*|test)/**/*.+(js|jsx)\"",
+        "check-types": "tsc --noEmit"
     },
+    "workspaces": [
+        "packages/*"
+    ],
     "repository": {
         "type": "git",
         "url": "https://github.com/cmux/koot"
@@ -39,29 +43,31 @@
     },
     "license": "Apache-2.0",
     "dependencies": {
-        "docsify-cli": "4.3.0"
+        "docsify-cli": "^4.3.0"
     },
     "devDependencies": {
-        "babel-eslint": "10.0.2",
-        "camelcase": "5.3.1",
-        "chalk": "2.4.2",
-        "cheerio": "1.0.0-rc.3",
-        "crlf": "1.1.1",
-        "eslint": "5.16.0",
-        "eslint-config-koot": "0.2.0",
-        "fs-extra": "8.1.0",
-        "husky": "3.0.0",
-        "inquirer": "6.4.1",
-        "is-valid-path": "0.1.1",
-        "jest": "24.8.0",
-        "jsdom": "15.1.1",
-        "latest-version": "5.1.0",
-        "lerna": "3.15.0",
-        "lerna-wizard": "1.0.9",
-        "lint-staged": "9.1.0",
-        "prettier": "1.18.2",
-        "puppeteer": "1.18.1",
-        "simple-git": "1.118.0"
+        "babel-eslint": "^10.0.3",
+        "camelcase": "^5.3.1",
+        "chalk": "^2.4.2",
+        "cheerio": "^1.0.0-rc.3",
+        "crlf": "^1.1.1",
+        "eslint": "^6.6.0",
+        "eslint-config-koot": "^1.5.0",
+        "fs-extra": "^8.1.0",
+        "husky": "^3.0.9",
+        "inquirer": "^7.0.0",
+        "is-valid-path": "^0.1.1",
+        "jest": "^24.9.0",
+        "jsdom": "^15.2.1",
+        "latest-version": "^5.1.0",
+        "lerna": "^3.18.3",
+        "lerna-wizard": "^1.1.1",
+        "lint-staged": "^9.4.2",
+        "prettier": "^1.18.2",
+        "prettier-eslint": "^9.0.0",
+        "puppeteer": "^2.0.0",
+        "simple-git": "^1.126.0",
+        "symlink-dir": "^3.1.1"
     },
     "eslintIgnore": [
         "node_modules/**/*"
@@ -72,10 +78,18 @@
         }
     },
     "lint-staged": {
-        "*.{js,jsx,ts,tsx,cjs,mjs}": [
+        "*.{js,jsx,cjs,mjs}": [
             "eslint --fix",
             "prettier --write",
             "git add"
+        ],
+        "*.{ts,tsx}": [
+            "eslint --fix",
+            "prettier --write",
+            "git add"
+        ],
+        "*.{xxxxxx}": [
+            "tsc --noEmit"
         ],
         "*.{json,md,css,less,sass,scss}": [
             "prettier --write",

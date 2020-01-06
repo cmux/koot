@@ -1,107 +1,124 @@
-const fs = require('fs-extra')
-const path = require('path')
-const ParserHelpers = require("webpack/lib/ParserHelpers")
-const ConstDependency = require('webpack/lib/dependencies/ConstDependency')
-const NullFactory = require("webpack/lib/NullFactory")
-const getCwd = require('koot/utils/get-cwd')
+const fs = require('fs-extra');
+const path = require('path');
+const ParserHelpers = require('webpack/lib/ParserHelpers');
+const ConstDependency = require('webpack/lib/dependencies/ConstDependency');
+const NullFactory = require('webpack/lib/NullFactory');
+const getCwd = require('koot/utils/get-cwd');
 
 class I18nPlugin {
     constructor({
         stage = process.env.WEBPACK_BUILD_STAGE,
         functionName = '__',
         localeId,
-        locales = {},
+        localeFile
     }) {
-        this.stage = stage
-        // this.stage = 'client'
-        this.functionName = functionName
-        this.localeId = localeId
-        this.locales = locales
+        this.stage = stage;
+        this.functionName = functionName;
+        this.localeId = localeId;
 
-        if (typeof locales === 'string') {
-            if (locales.substr(0, 2) === './') {
-                this.locales = fs.readJsonSync(path.resolve(getCwd(), locales))
-            } else if (path.isAbsolute(locales)) {
-                this.locales = fs.readJsonSync(path.resolve(locales))
-            }
-        }
+        if (localeFile)
+            this.locales = fs.readJsonSync(
+                path.isAbsolute(localeFile)
+                    ? localeFile
+                    : path.resolve(getCwd(), localeFile)
+            );
     }
 
     apply(compiler) {
-        const stage = this.stage
-        const functionName = this.functionName
-        const definitions = {}
+        const stage = this.stage;
+        const functionName = this.functionName;
+        const definitions = {};
 
-        if (stage == 'client') {
+        if (stage === 'client') {
             const loop = (obj, prefix) => {
                 for (let _key in obj) {
-                    const value = obj[_key]
-                    const key = prefix ? `${prefix}.${_key}` : _key
-                    definitions[key] = value
+                    const value = obj[_key];
+                    const key = prefix ? `${prefix}.${_key}` : _key;
+                    definitions[key] = value;
                     if (typeof value === 'object') {
-                        loop(value, key)
+                        loop(value, key);
                     }
                 }
-            }
-            loop(this.locales)
+            };
+            loop(this.locales);
         }
 
         compiler.hooks.compilation.tap(
-            "I18nPlugin",
+            'I18nPlugin',
             (compilation, { normalModuleFactory }) => {
-                compilation.dependencyFactories.set(ConstDependency, new NullFactory())
+                compilation.dependencyFactories.set(
+                    ConstDependency,
+                    new NullFactory()
+                );
                 compilation.dependencyTemplates.set(
                     ConstDependency,
                     new ConstDependency.Template()
-                )
+                );
 
                 const handler = parser => {
                     // for (let key in parser.hooks) console.log(key)
 
                     parser.hooks.call
                         .for(functionName)
-                        .tap("I18nPlugin", function (expr) {
-                            const request = [].concat(['koot/i18n/translate', 'default'])
+                        .tap('I18nPlugin', function(expr) {
+                            const request = [].concat([
+                                'koot/i18n/translate',
+                                'default'
+                            ]);
                             // const nameIdentifier = tempFunctionName
-                            let expression = `require(${JSON.stringify(request[0])})`
+                            let expression = `require(${JSON.stringify(
+                                request[0]
+                            )})`;
                             if (request.length > 1) {
                                 expression += request
                                     .slice(1)
                                     .map(r => `[${JSON.stringify(r)}]`)
-                                    .join("");
+                                    .join('');
                             }
                             ParserHelpers.addParsedVariableToModule(
                                 parser,
                                 functionName,
                                 expression
-                            )
+                            );
 
-                            if (Array.isArray(expr.arguments) && expr.arguments[0].type === 'Literal') {
-                                const arg = expr.arguments[0]
-                                const key = arg.value
-                                const code = stage === 'client'
-                                    ? JSON.stringify(typeof definitions[key] === 'undefined' ? key : definitions[key])
-                                    : JSON.stringify(key)//.replace(/\./g, '","')
+                            if (
+                                Array.isArray(expr.arguments) &&
+                                expr.arguments[0].type === 'Literal'
+                            ) {
+                                const arg = expr.arguments[0];
+                                const key = arg.value;
+                                const code =
+                                    stage === 'client'
+                                        ? JSON.stringify(
+                                              typeof definitions[key] ===
+                                                  'undefined'
+                                                  ? key
+                                                  : definitions[key]
+                                          )
+                                        : JSON.stringify(key); //.replace(/\./g, '","')
                                 // console.log(key, code)
-                                const dep = new ConstDependency(code, arg.range)
-                                dep.loc = arg.loc
-                                return parser.state.current.addDependency(dep)
+                                const dep = new ConstDependency(
+                                    code,
+                                    arg.range
+                                );
+                                dep.loc = arg.loc;
+                                return parser.state.current.addDependency(dep);
                             }
-                        })
-                }
+                        });
+                };
 
                 normalModuleFactory.hooks.parser
-                    .for("javascript/auto")
-                    .tap("I18nPlugin", handler)
+                    .for('javascript/auto')
+                    .tap('I18nPlugin', handler);
                 normalModuleFactory.hooks.parser
-                    .for("javascript/dynamic")
-                    .tap("I18nPlugin", handler)
+                    .for('javascript/dynamic')
+                    .tap('I18nPlugin', handler);
                 normalModuleFactory.hooks.parser
-                    .for("javascript/esm")
-                    .tap("I18nPlugin", handler)
+                    .for('javascript/esm')
+                    .tap('I18nPlugin', handler);
             }
-        )
+        );
     }
 }
 
-module.exports = I18nPlugin
+module.exports = I18nPlugin;

@@ -1,5 +1,6 @@
 {
     "title": "Koot.js 模板项目",
+    "test_img": "/test-img-zh.png",
     "pages": {
         "home": {
             "title": "欢迎"

@@ -1,7 +1,7 @@
-const webpack = require('webpack')
+const webpack = require('webpack');
 const {
-    keyConfigWebpackSPATemplateInject,
-} = require('koot/defaults/before-build')
+    keyConfigWebpackSPATemplateInject
+} = require('koot/defaults/before-build');
 
 /**
  * 执行打包: client
@@ -10,20 +10,21 @@ const {
  * @returns {Promise}
  */
 const webpackBuildClient = async (config = {}) => {
+    delete config[keyConfigWebpackSPATemplateInject];
 
-    delete config[keyConfigWebpackSPATemplateInject]
-
-    const compiler = webpack(config)
+    const compiler = webpack(config);
     // console.log('compiler')
 
     return new Promise((resolve, reject) => {
         try {
-            compiler.run(resolve)
+            compiler.run((...args) => {
+                if (typeof compiler.close === 'function') compiler.close();
+                resolve(...args);
+            });
         } catch (err) {
-            reject(err)
+            reject(err);
         }
-    })
+    });
+};
 
-}
-
-module.exports = webpackBuildClient
+module.exports = webpackBuildClient;

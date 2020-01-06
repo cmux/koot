@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 process.env.DO_WEBPACK = true;
 
 //
@@ -8,6 +10,12 @@ const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
 
 const resetCssLoader = require('./loaders/css/reset');
+
+const createWebpackConfig = require('./factory-config/create');
+const validateWebpackDevServerPort = require('./factory-config/validate-webpack-dev-server-port');
+// const validateDist = require('./factory-config/validate-dist')
+const afterServerProd = require('./factory-config/_lifecyle/after-server-prod');
+const cleanAndWriteLogFiles = require('./libs/write-log-and-clean-old-files');
 
 const {
     filenameWebpackDevServerPortTemp,
@@ -26,7 +34,7 @@ const spinner = require('koot/utils/spinner');
 const getDistPath = require('koot/utils/get-dist-path');
 const getAppType = require('koot/utils/get-app-type');
 const readBaseConfig = require('koot/utils/read-base-config');
-// const getCwd = require('koot/utils/get-cwd')
+// const getCwd = require('koot/utils/get-cwd');
 // const sleep = require('koot/utils/sleep')
 
 const _log = require('koot/libs/log');
@@ -36,14 +44,9 @@ const getHistoryTypeFromConfig = require('koot/libs/get-history-type-from-config
 const getDirDevTmp = require('koot/libs/get-dir-dev-tmp');
 const getDirDistPublic = require('koot/libs/get-dir-dist-public');
 const getDirDistPublicFoldername = require('koot/libs/get-dir-dist-public-foldername');
-
-const createWebpackConfig = require('./factory-config/create');
-const validateWebpackDevServerPort = require('./factory-config/validate-webpack-dev-server-port');
-// const validateDist = require('./factory-config/validate-dist')
-
-const afterServerProd = require('./factory-config/_lifecyle/after-server-prod');
-const cleanAndWriteLogFiles = require('./libs/write-log-and-clean-old-files');
 const removeBuildFlagFiles = require('koot/libs/remove-build-flag-files');
+const updateKootInPackageJson = require('koot/libs/update-koot-in-package-json');
+const kootPackageJson = require('koot/package.json');
 
 const createPWAsw = require('koot/core/pwa/create');
 
@@ -126,12 +129,12 @@ module.exports = async (kootConfig = {}) => {
     let isClientDevServerLaunched = false;
 
     // 抽取配置
-    let {
+    let { [keyConfigQuiet]: quietMode = false } = kootConfig;
+    const {
         webpackBefore: beforeBuild,
         webpackAfter: afterBuild,
         analyze = false,
         bundleVersionsKeep,
-        [keyConfigQuiet]: quietMode = false,
         [keyConfigBuildDll]: createDll = false
     } = kootConfig;
 
@@ -389,6 +392,11 @@ module.exports = async (kootConfig = {}) => {
 
     // 确定 history 类型
     process.env.KOOT_HISTORY_TYPE = await getHistoryTypeFromConfig(kootConfig);
+
+    // 将当前 koot.js 版本号写入 package.json
+    await updateKootInPackageJson({
+        version: kootPackageJson.version
+    });
 
     // ========================================================================
     //
@@ -767,6 +775,9 @@ module.exports = async (kootConfig = {}) => {
                         }
 
                         setTimeout(() => resolve(), 100);
+
+                        if (typeof compiler.close === 'function')
+                            compiler.close();
                     });
                 });
             } catch (e) {
@@ -796,7 +807,7 @@ module.exports = async (kootConfig = {}) => {
                     }
                 }
             };
-            for (let config of webpackConfig) {
+            for (const config of webpackConfig) {
                 if (errorEncountered) break;
                 console.log(' ');
 

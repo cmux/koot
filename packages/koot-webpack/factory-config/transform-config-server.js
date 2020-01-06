@@ -16,7 +16,8 @@ const transformOutputPublicpath = require('./transform-output-publicpath');
 
 const getCwd = require('koot/utils/get-cwd');
 const getDirDistPublic = require('koot/libs/get-dir-dist-public');
-const getDirDevTmp = require('koot/libs/get-dir-dev-tmp');
+// const getDirDevTmp = require('koot/libs/get-dir-dev-tmp');
+const getModuleVersion = require('koot/utils/get-module-version');
 
 /**
  * Webpack 配置处理 - 服务器端配置
@@ -83,18 +84,22 @@ module.exports = async (kootBuildConfig = {}) => {
         ...result.plugins
     ];
 
-    if (ENV === 'dev') {
-        if (i18n && Array.isArray(i18n.locales) && i18n.locales.length > 0)
-            result.plugins.push(
-                new CopyWebpackPlugin(
-                    i18n.locales.map(arr => ({
+    if (i18n && Array.isArray(i18n.locales) && i18n.locales.length > 0) {
+        result.plugins.push(
+            new CopyWebpackPlugin(
+                i18n.locales.map(arr => {
+                    return {
                         from: arr[2],
+                        to: arr[3]
                         // to: '../.locales/'
-                        to: path.resolve(getDirDevTmp(), 'locales')
-                    }))
-                )
-            );
+                        // to: path.resolve(getDirDevTmp(), 'locales')
+                    };
+                })
+            )
+        );
+    }
 
+    if (ENV === 'dev') {
         result.watchOptions = {
             ignored: [
                 // /node_modules/,
@@ -109,6 +114,7 @@ module.exports = async (kootBuildConfig = {}) => {
     const entryIndex = [
         // '@babel/register',
         '@babel/polyfill',
+        // 'core-js/stable',
         // path.resolve(__dirname, '../../../defaults/server-stage-0.js'),
         require('../libs/get-koot-file')(`${appType}/server`)
     ];
@@ -142,9 +148,16 @@ module.exports = async (kootBuildConfig = {}) => {
         removeAvailableModules: false,
         removeEmptyChunks: false,
         mergeDuplicateChunks: false,
-        occurrenceOrder: false,
+        // occurrenceOrder: false,
         concatenateModules: false
     };
+    try {
+        if (parseInt(getModuleVersion('webpack')) < 5) {
+            result.optimization.occurrenceOrder = false;
+        }
+    } catch (e) {
+        result.optimization.occurrenceOrder = false;
+    }
 
     // webpack stats
     if (isSPAProd) {

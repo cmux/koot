@@ -84,10 +84,6 @@ module.exports = (kootBuildConfig = {}) => {
         const use = [ruleUseBabelLoader(options)];
 
         if (!createDll && env === 'dev' && stage === 'client') {
-            use.unshift({
-                loader: require.resolve('../../../loaders/koot-dev-client.js'),
-                options
-            });
             use.push({
                 loader: require.resolve('../../../loaders/react-hot'),
                 options
@@ -140,6 +136,7 @@ module.exports = (kootBuildConfig = {}) => {
                 test: /\.jsx$/,
                 use: [
                     ...ruleUseLoaders({
+                        // sourceMaps: 'both',
                         __react: true
                     })
                     // require.resolve('../../../loaders/react-hot')

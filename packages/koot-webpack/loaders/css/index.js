@@ -11,6 +11,7 @@ const replaceSelector = require('./replace-selector');
 const {
     classNameHashLength: defaultClassNameHashLength
 } = require('koot/defaults/koot-config');
+const postcssTransformDeclUrls = require('../../postcss/transform-decl-urls');
 
 module.exports = function(content) {
     this.cacheable && this.cacheable();
@@ -143,7 +144,11 @@ module.exports = function(content) {
             });
         });
 
-        handleBackground(root);
+        // transformer(root);
+        postcssTransformDeclUrls(root, {
+            transformer: url => `' + require('${url}') + '`,
+            context: this.context
+        });
 
         // 导出md5的class名字和处理后的css文本
         // 把单引号统一处理成双引号 "" -> ''
@@ -167,37 +172,3 @@ module.exports = function(content) {
         // 暂无实现
     }
 };
-
-function handleBackground(root) {
-    // 处理背景图片
-    root.walkDecls(/^(background|border|mask|src|cursor)/, decl => {
-        // decl.value = decl.value.replace(/url\(([ '"]*)(.+?)([ '"]*)\)/g, `url("${require("$2")}")`)
-        decl.value = decl.value.replace(
-            /url\(([ '"]*)(.+?)([ '"]*)\)/g,
-            (...args) => {
-                // console.log(args[2])
-                return `url("' + require('${args[2]}') + '")`;
-            }
-        );
-        // decl.value = decl.value.replace(/url\(([ '"]*)(.+?)([ '"]*)\)/g, `url("${'require(' + "$2" + ')'}")`)
-
-        // 旧代码
-        // 匹配到background中的url()
-        // let matches = decl.value.match(/url\((.*?)\)/)
-
-        // if (matches && matches.length > 1) {
-        //     let v = matches[1]
-
-        //     decl.value = decl.value.replace(v, (m) => {
-
-        //         // 双引号变单引号
-        //         m = m.replace(/"/g, '\'')
-        //         if (m.indexOf('\'') < 0) {
-        //             m = `'${m}'`
-        //         }
-
-        //         return "' +  require(" + m + ") + '"
-        //     })
-        // }
-    });
-}

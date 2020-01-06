@@ -4,6 +4,7 @@ const { chunkNameClientRunFirst } = require('../../defaults/before-build');
 const defaultEntrypoints = require('../../defaults/entrypoints');
 const readClientFile = require('../../utils/read-client-file');
 const getClientFilePath = require('../../utils/get-client-file-path');
+const getSSRStateString = require('../../libs/get-ssr-state-string');
 
 /**
  * 注入: JavaScript 代码
@@ -90,7 +91,9 @@ module.exports = ({
                     `window.addEventListener('load', function() {` +
                     // + `navigator.serviceWorker.register("${injectCache.pathnameSW}?koot=${process.env.KOOT_VERSION}",`
                     `navigator.serviceWorker.register("${injectCache.pathnameSW ||
-                        JSON.parse(process.env.KOOT_PWA_PATHNAME)}?koot=0.8",` +
+                        JSON.parse(
+                            process.env.KOOT_PWA_PATHNAME
+                        )}?koot=0.11",` +
                     `{scope: '/'}` +
                     `)` +
                     `.catch(err => {console.log('👩‍💻 Service Worker SUPPORTED. ERROR', err)})` +
@@ -109,7 +112,7 @@ module.exports = ({
         `<script type="text/javascript">` +
         (reduxHtml ? reduxHtml : `window.__REDUX_STATE__ = {};`) +
         `window.__KOOT_LOCALEID__ = "${SSRState.localeId || ''}";` +
-        `window.__KOOT_SSR_STATE__ = ${JSON.stringify(SSRState)};` +
+        `window.__KOOT_SSR_STATE__ = ${getSSRStateString(SSRState)};` +
         `</script>` +
         getClientRunFirstJS(localeId, compilation) +
         `${injectCache.scriptsInBody}`

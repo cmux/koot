@@ -15,6 +15,7 @@ const {
     keyFileProjectConfigTempFull,
     keyFileProjectConfigTempPortionServer,
     keyFileProjectConfigTempPortionClient,
+    keyFileProjectConfigTempPortionOtherClient,
     filenameWebpackDevServerPortTemp,
     filenameBuilding
     // filenameBuildFail,
@@ -43,9 +44,11 @@ const getCwd = require('../utils/get-cwd');
 const getPathnameDevServerStart = require('../utils/get-pathname-dev-server-start');
 const getLogMsg = require('../libs/get-log-msg');
 const log = require('../libs/log');
-// const terminate = require('../utils/terminate')
+// const terminate = require('../utils/terminate');
 
 const kootWebpackBuildVendorDll = require('koot-webpack/build-vendor-dll');
+
+let exiting = false;
 
 program
     .version(require('../package').version, '-v, --version')
@@ -156,7 +159,8 @@ const run = async () => {
         devPort,
         [keyFileProjectConfigTempFull]: fileProjectConfigTempFull,
         [keyFileProjectConfigTempPortionServer]: fileProjectConfigTempPortionServer,
-        [keyFileProjectConfigTempPortionClient]: fileProjectConfigTempPortionClient
+        [keyFileProjectConfigTempPortionClient]: fileProjectConfigTempPortionClient,
+        [keyFileProjectConfigTempPortionOtherClient]: fileProjectConfigTempPortionOtherClient
     } = kootConfig;
     const [devMemoryAllocationClient, devMemoryAllocationServer] = (() => {
         const { devMemoryAllocation } = kootConfig;
@@ -181,7 +185,7 @@ const run = async () => {
     const processes = [];
 
     /** @type {Boolean} 全局等待提示 */
-    let waitingSpinner = false;
+    const waitingSpinner = false;
 
     // 清理遗留的临时文件
     await removeTempBuild(dist);
@@ -193,6 +197,8 @@ const run = async () => {
         process.env.KOOT_PROJECT_CONFIG_PORTION_SERVER_PATHNAME = fileProjectConfigTempPortionServer;
     if (fileProjectConfigTempPortionClient)
         process.env.KOOT_PROJECT_CONFIG_PORTION_CLIENT_PATHNAME = fileProjectConfigTempPortionClient;
+    if (fileProjectConfigTempPortionOtherClient)
+        process.env.KOOT_PROJECT_CONFIG_PORTION_OTHER_CLIENT_PATHNAME = fileProjectConfigTempPortionOtherClient;
 
     // 如果为 SPA，强制设置 STAGE
     if (process.env.WEBPACK_BUILD_TYPE === 'spa') {
@@ -207,6 +213,10 @@ const run = async () => {
 
     // 设置其他环境变量
     process.env.KOOT_DEV_START_TIME = Date.now();
+    if (typeof kootConfig.devServer === 'object')
+        process.env.KOOT_DEV_WDS_EXTEND_CONFIG = JSON.stringify(
+            kootConfig.devServer
+        );
 
     // 等待一段时间，确保某些硬盘操作的完成
     await sleep(1000);
@@ -224,76 +234,105 @@ const run = async () => {
         process.removeListener('uncaughtException', exitHandler);
     };
     const exitHandler = async (options = {}) => {
-        let { silent = false, error = false } = options;
+        if (exiting) return;
+
+        exiting = true;
+
+        let { silent = false } = options;
+        const { error = false } = options;
 
         if (error) silent = true;
 
-        await removeTempProjectConfig();
-        await removeTempBuild(dist);
-        await fs.emptyDir(getDirDevTmp(cwd));
-        // 清理临时目录
-        await fs.remove(getDirTemp());
+        const PromiseAll = Promise.allSettled
+            ? Promise.allSettled.bind(Promise)
+            : Promise.all.bind(Promise);
 
         if (Array.isArray(processes) && processes.length) {
             if (waitingSpinner) waitingSpinner.stop();
-            await sleep(300);
-            // 清屏
-            if (!silent) process.stdout.write('\x1B[2J\x1B[0f');
-            if (!silent)
-                console.log(
-                    '\n\n\n' +
-                        chalk.redBright(
-                            '!! Please wait for killing processes !!'
-                        ) +
-                        '\n\n'
-                );
-            for (let process of processes) {
-                await new Promise((resolve, reject) => {
-                    // console.log(process)
-                    pm2.delete(process.name, (err, proc) => {
-                        // console.log('err', err)
-                        // console.log('proc', proc)
-                        if (
-                            Array.isArray(proc) &&
-                            proc.every(p => p.status === 'stopped')
-                        )
-                            return resolve(proc);
+            // eslint-disable-next-line no-console
+            if (!silent) console.log(' ');
+
+            // if (!silent)
+            //     console.log(
+            //         '\n\n\n' +
+            //             chalk.redBright(
+            //                 '!! Please wait for killing processes !!'
+            //             ) +
+            //             '\n\n'
+            //     );
+            const kill = p => {
+                // if (!silent) {
+                //     console.log(
+                //         `TERMINATING: ${p.pm2_env.pm_id} | ${p.pid} | ${p.name}`
+                //     );
+                // }
+                return new Promise((resolve, reject) => {
+                    // console.log(JSON.stringify(p));
+                    // console.log(pm2, pm2.delete);
+                    pm2.delete(p.pm2_env.pm_id, (err, proc) => {
+                        // console.log('err', err);
+                        // console.log('proc', proc.map(p => p.status));
                         if (err) return reject(err);
-                        reject('stop failed');
+                        // processes.splice(processes.indexOf(p), 1);
+                        resolve(proc);
                     });
                 });
-            }
+            };
+            // for (const p of processes) {
+            //     await kill(p);
+            // }
+            await PromiseAll(processes.map(kill)).catch(console.error);
             pm2.disconnect();
-            await sleep(300);
             // w.stop()
-            try {
-                // console.log(process.pid)
-                removeAllExitListeners();
-                if (!error)
-                    console.log(
-                        '\n\n\n' +
-                            chalk.cyanBright('Press CTRL+C again to exit.') +
-                            '\n\n'
-                    );
-                // process.kill(process.pid)
-                process.exit(1);
-            } catch (e) {
-                // console.log(e)
-            }
-        } else {
-            removeAllExitListeners();
-            // 清屏
-            // process.stdout.write('\x1B[2J\x1B[0f')
-            if (!error) console.log('Press CTRL+C again to exit.');
+        }
 
-            // 发送信息
+        // console.log(
+        //     '> status',
+        //     processes.map(p => {
+        //         const { pm2_env, stderr, stdio, stdout, stdin, ...proc } = p;
+        //         console.log(proc);
+        //         return proc.status;
+        //     })
+        // );
+        // await sleep(1000);
+
+        try {
+            await PromiseAll([
+                removeTempProjectConfig(),
+                removeTempBuild(dist),
+                fs.emptyDir(getDirDevTmp(cwd)),
+                // 清理临时目录
+                fs.remove(getDirTemp())
+            ]);
+        } catch (e) {}
+
+        removeAllExitListeners();
+
+        try {
+            // if (!silent)
+            //     console.log(
+            //         '\n\n\n' + chalk.redBright('!! TERMINATED !!') + '\n\n'
+            //     );
             if (process.send) {
                 process.send('Koot dev mode exit successfully');
             }
-
-            // 退出
+            try {
+                process.kill(process.pid);
+            } catch (e) {}
+            if (!error) {
+                // eslint-disable-next-line no-console
+                console.log(
+                    '\n\n\n' +
+                        chalk.cyanBright('Press CTRL+C again to exit.') +
+                        '\n\n'
+                );
+            }
             process.exit(1);
+        } catch (e) {
+            console.error(e);
         }
+
+        // exiting = false;
     };
     // 在脚本进程关闭/结束时，同时关闭打开的 PM2 进程
     process.stdin.resume();
@@ -350,6 +389,7 @@ const run = async () => {
         const cmd = `koot-build --stage ${stage} ${buildCmdArgs}`;
         const child = npmRunScript(cmd, {});
         child.once('error', error => {
+            // eslint-disable-next-line no-console
             console.trace(error);
             process.exit(1);
         });
@@ -381,14 +421,18 @@ const run = async () => {
             await new Promise(resolve => {
                 setTimeout(() => {
                     log('success', 'dev', __('dev.spa_success'));
+                    // eslint-disable-next-line no-console
                     console.log(
                         '           @ ' +
                             chalk.green(
                                 `http://localhost:${process.env.SERVER_PORT}/`
                             )
                     );
+                    // eslint-disable-next-line no-console
                     console.log(' ');
+                    // eslint-disable-next-line no-console
                     console.log('------------------------------');
+                    // eslint-disable-next-line no-console
                     console.log(' ');
                     resolve();
                 }, 500);
@@ -440,7 +484,7 @@ const run = async () => {
                 cwd: cwd,
                 output: pathLogOut,
                 error: pathLogErr,
-                autorestart: false
+                autorestart: true
             };
 
             switch (stage) {
@@ -483,11 +527,16 @@ const run = async () => {
                     break;
                 }
                 case 'main': {
+                    const mainScript = path.resolve(
+                        __dirname,
+                        '../ReactApp/server/index-dev.js'
+                    );
                     Object.assign(config, {
-                        script: path.resolve(
-                            __dirname,
-                            '../ReactApp/server/index-dev.js'
-                        )
+                        script: mainScript,
+                        watch: path.dirname(mainScript)
+                        // env: {
+                        //     DEBUG: 'koa-mount'
+                        // }
                     });
                     delete config.args;
                     break;
@@ -501,18 +550,17 @@ const run = async () => {
             pm2.start(config, (err, proc) => {
                 // console.log(err)
                 if (err) return reject(err);
-                processes.push({
-                    ...proc,
-                    name: config.name
+                proc.forEach(p => {
+                    processes.push({
+                        ...p,
+                        name: config.name,
+                        pid: p.pid || p.process.pid
+                    });
                 });
                 // console.log(JSON.stringify(proc))
-                // fs.writeJsonSync(
-                //     path.resolve(__dirname, '../2.json'),
-                //     proc,
-                //     {
-                //         spaces: 4
-                //     }
-                // )
+                // fs.writeJsonSync(path.resolve(__dirname, '../2.json'), proc, {
+                //     spaces: 4
+                // });
                 resolve(proc);
             });
         });
@@ -539,6 +587,7 @@ const run = async () => {
                 process.exit(2);
             }
 
+            // eslint-disable-next-line no-console
             console.log(
                 `  ` +
                     chalk.yellowBright('[koot/build] ') +
@@ -571,6 +620,7 @@ const run = async () => {
             //         .then(encounterError)
             // ])
             // waitingSpinner.succeed()
+            // eslint-disable-next-line no-console
             console.log(
                 chalk.green('√ ') +
                     chalk.yellowBright('[koot/build] ') +
@@ -594,6 +644,7 @@ const run = async () => {
             //         env: chalk.green('dev'),
             //     })
             // )
+            // eslint-disable-next-line no-console
             console.log(
                 `  ` +
                     chalk.yellowBright('[koot/build] ') +
@@ -616,6 +667,7 @@ const run = async () => {
             // )
 
             await sleep(500);
+            // eslint-disable-next-line no-console
             console.log(
                 chalk.green('√ ') +
                     chalk.yellowBright('[koot/build] ') +
@@ -658,8 +710,11 @@ const run = async () => {
                 errServerRun
             ) {
                 // 出错
+                // eslint-disable-next-line no-console
                 console.log(' ');
+                // eslint-disable-next-line no-console
                 console.log(chalk.redBright(errServerRun));
+                // eslint-disable-next-line no-console
                 console.log(' ');
                 return await exitHandler({
                     silent: true

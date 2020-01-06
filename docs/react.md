@@ -4,6 +4,8 @@
 
 _Koot.js_ 为 _React_ 提供高阶组件 _extend()_，可赋予目标组件**CSS 命名空间**、**同构数据**、**更新页面信息**等能力。
 
+针对 _同构/SSR_ 项目，同构渲染 CSS `<style>` 标签、异步数据请求、页面标题与 `<meta>` 标签等信息，均通过该高阶组件实现。
+
 #### 使用
 
 ```javascript
@@ -33,26 +35,56 @@ class HomePage extends React.Component {
 export default HomePage;
 ```
 
-##### 参数
+**TypeScript**
 
--   _Function_ `connect`
-    <br>`connect([mapStateToProps], [mapDispatchToProps], [mergeProps], [options])`
-    <br>传入 `react-redux` 的高阶组件 `connect` 的回调函数，使用相同的结构。
--   _Object_ `styles` CSS 文本结果
-    <br>使用时多为引用 CSS (Less/Sass) 文件
--   `pageinfo` 修改页面 title 和 meta 标签
+```typescript
+
+// 函数方式定义
+extend<ComponentProps>(extendOptions)(FunctionalComponent)
+
+// 装饰器方式定义
+@extend(extendOptions)
+ComponentClass
+```
+
+在 TypeScript 中的写法请参见 [TypeScript 开发/TSX 代码示例](/typescript?id=tsx-代码示例)
+
+##### 参数对象属性
+
+_Function_ `connect`
+
+-   传入 `react-redux` 的高阶组件 `connect` 的回调函数。
+-   传入多个参数的方法请见下文示例。
+
+_Object_ `styles` 组件 CSS
+
+-   一般情况下，该属性为引用 `css` `less` 或 `sass` 文件。
+-   为该组件提供或更新 `props.className`
+    -   如果父级组件传入了 `props.className`，该子组件的 `props.className` 会包含父级传入的值以及引用的组件 CSS 的样式名
+    -   如果父级组件没有传入 `props.className`，该子组件的 `props.className` 仅为引用的组件 CSS 的样式名
+-   该组件渲染时，这些 CSS 会作为 `<style>` 标签添加到 `<head>` 中。
+-   该对象需要提供以下属性：_string_ `wrapper` 和 _string_ `css`
+-   有关 CSS 的相关开发指南请查阅 [CSS](/css)
+
+`pageinfo` 修改页面 title 和 meta 标签
+
+-   该组件渲染时，这些信息会更新到 `<head>` 中。
+-   该属性有两种用法：
     -   _Object_ `pageinfo`
-        -   _String_ `pageinfo.title`
-        -   _Array_ `pageinfo.metas`
+        -   _string_ `pageinfo.title`
+        -   _Array<MetaObject>_ `pageinfo.metas`
     -   _Function_ `pageinfo`
         <br>`pageinfo(state, renderProps)`
         -   参数
             -   _Object_ `state` 当前 Redux state
             -   _Object_ `renderProps` 同构对象
         -   返回值：_Object_
-            -   _String_ `title` 新的页面标题
+            -   _string_ `title` 新的页面标题
             -   _Array_ `metas` 新的页面 meta 标签信息
--   `data` 同构数据相关
+
+`data` 同构数据相关
+
+-   该属性有两种用法：
     -   _Object_ `data`
         -   _Function_ `data.fetch` 获取数据的方法函数
             <br>`fetch(state, renderProps, dispatch)`
@@ -70,13 +102,15 @@ export default HomePage;
     -   _Function_ `data`
         <br>为 _Function_ 时，同 `data.fetch`
         <br>使用该方法时，需要自行编写检查数据的代码，推荐写在 redux action 中
--   `ssr` 仅作用于 SSR 项目的服务器端：控制该组件的 SSR 行为
-    -   默认值：`true`
-    -   _Boolean_ `ssr`
-        <br>该组件是否需要 SSR。
-        <br>`false` 时，SSR 阶段不会渲染该组件，最终在 HTML 结果中不会出现相应的 HTML 代码。
-    -   _String_|_ReactComponent_ `ssr`
-        <br>在 SSR 时渲染指定的内容或组件
+
+`ssr` 仅作用于 SSR 项目的服务器端：控制该组件的 SSR 行为
+
+-   默认值：`true`
+-   _Boolean_ `ssr`
+    <br>该组件是否需要 SSR。
+    <br>`false` 时，SSR 阶段不会渲染该组件，最终在 HTML 结果中不会出现相应的 HTML 代码。
+-   _string_|_ReactComponent_ `ssr`
+    <br>在 SSR 时渲染指定的内容或组件
 
 ##### 示例：使用所有参数
 
@@ -147,13 +181,17 @@ export default HomePage;
 
 使用 _extend()_ 高阶组件封装后，目标组件将会获得以下新的 `props`
 
--   _String_ `className`
+-   _string_ `className`
     <br>包含父组件传入的 `className` 以及过 hash 后本组件的 className
--   _String_ `data-class-name`
+-   _string_ `data-class-name`
     <br>经过 hash 后本组件的 className
     <br>注: 与 `props.className` 不同，`props['data-class-name']` 仅为本组件 CSS 的 className
 -   _Function_ `updatePageinfo`
-    <br>如果提供了 `pageinfo` 配置，组件会新增 `props.updatePageinfo` 方法，可用来手动触发页面信息更新
+    <br>可用来手动触发页面信息更新
+    -   可传入 _Object_ 或 _Function_，语法与 `connect()` 高阶组件的 `pageinfo` 的用法相同
+        <br>如果没有传入参数，会使用 `extend()` 高阶组件中的 `pageinfo` 的值
+    -   注 1: 仅在客户端环境下使用才有意义
+        <br>注 2: 仅在 `extend()` 高阶组件中使用 `pageinfo` 属性时才会存在
 
 ---
 
@@ -165,9 +203,9 @@ export default HomePage;
 
 **注** Koot.js 默认的热更新能力有以下限制：
 
--   仅影响扩展名为 `.jsx` 的文件
-    -   非 React 组件文件请勿以 `.jsx` 作为文件扩展名
--   仅影响 `.jsx` 文件中输出 (`export`) 的组件
+-   仅影响扩展名为 `.jsx` `.tsx` 的文件
+    -   非 React 组件文件请勿以 `.jsx` `.tsx` 作为文件扩展名
+-   仅影响文件中输出 (`export`) 的组件，没有输出的组件不会有热更新
 
 ### 同构对象
 

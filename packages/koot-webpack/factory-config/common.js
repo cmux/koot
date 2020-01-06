@@ -7,7 +7,11 @@ const webpack = require('webpack');
 const createModuleRules = require('./module/rules');
 const KootResetCssLoaderPlugin = require('../plugins/reset-css-loader');
 const defaultDefines = require('koot/defaults/defines');
-const { keyConfigBuildDll } = require('koot/defaults/before-build');
+const {
+    keyConfigBuildDll,
+    styleTagGlobalAttributeName,
+    styleTagModuleAttributeName
+} = require('koot/defaults/before-build');
 const getPathnameProjectConfigFile = require('koot/utils/get-pathname-project-config-file');
 // const readBaseConfig = require('koot/utils/read-base-config')
 
@@ -65,6 +69,11 @@ const plugins = async (
         _defaultDefines[key] = JSON.stringify(defaultDefines[key]);
     });
 
+    const constants = {
+        __STYLE_TAG_GLOBAL_ATTR_NAME__: styleTagGlobalAttributeName,
+        __STYLE_TAG_MODULE_ATTR_NAME__: styleTagModuleAttributeName
+    };
+
     const thisDefines = Object.assign(
         _defaultDefines,
         {
@@ -83,10 +92,14 @@ const plugins = async (
             // 服务器启动时，会优先选取当前环境变量中的 SERVER_PORT，如果没有，会选择 __SERVER_PORT__
             __SERVER_PORT__: JSON.stringify(process.env.SERVER_PORT)
         },
+        Object.entries(constants).reduce((obj, [key, value]) => {
+            obj[key] = JSON.stringify(value);
+            return obj;
+        }, {}),
         defines
     );
 
-    for (let key in thisDefines) {
+    for (const key in thisDefines) {
         if (typeof thisDefines[key] === 'function')
             thisDefines[key] = thisDefines[key]();
     }
@@ -154,6 +167,10 @@ const plugins = async (
         [
             /^__KOOT_PROJECT_CONFIG_PORTION_CLIENT_PATHNAME__$/,
             getPathnameProjectConfigFile('client')
+        ],
+        [
+            /^__KOOT_PROJECT_CONFIG_PORTION_OTHER_CLIENT_PATHNAME__$/,
+            getPathnameProjectConfigFile('client-other')
         ],
         [
             /^__KOOT_HOC_EXTEND__$/,

@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 
 const run = async () => {
-    if (await require('../steps/check-update')()) return;
+    const { needUpdate } = await require('../steps/before')();
+    if (needUpdate) return;
     await require('../steps/create')();
 };
 

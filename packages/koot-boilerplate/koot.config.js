@@ -36,11 +36,12 @@ module.exports = {
         '@components': path.resolve('./src/components'),
         '@constants': path.resolve('./src/constants'),
         '@locales': path.resolve('./src/locales'),
-        '@router': path.resolve('./src/router'),
+        '@routes': path.resolve('./src/routes'),
         '@server': path.resolve('./src/server'),
         '@store': path.resolve('./src/store'),
         '@views': path.resolve('./src/views'),
-        '~vars.less': path.resolve('./src/constants/less/_all.less')
+        '~vars.less': path.resolve('./src/constants/less/_all.less'),
+        '@types': path.resolve('./types')
     },
 
     defines: {

@@ -1,8 +1,13 @@
 /* global
-    __KOOT_STORE__:false,
-    __KOOT_HISTORY__:false,
-    __KOOT_LOCALEID__:false,
+    __KOOT_SSR__: false,
+    __KOOT_STORE__: false,
+    __KOOT_HISTORY__: false,
+    __KOOT_LOCALEID__: false,
 */
+
+import isRenderSafe from './React/is-render-safe';
+
+// ============================================================================
 
 /**
  * 手动创建 Redux Store 时需要的相关对象
@@ -19,7 +24,8 @@ export { createStore, reduxForCreateStore };
  */
 export { default as extend } from '__KOOT_HOC_EXTEND__';
 
-// 其他全局变量
+// ============================================================================
+
 export const getLocaleId = () => {
     if (__CLIENT__) return window.__KOOT_LOCALEID__ || '';
     if (__SERVER__) {
@@ -30,6 +36,8 @@ export const getLocaleId = () => {
 };
 export const resetLocaleId = () => (localeId = getLocaleId());
 export let localeId = (() => getLocaleId())();
+
+// ============================================================================
 
 export const getStore = () => {
     if (__CLIENT__) return window.__KOOT_STORE__;
@@ -42,6 +50,8 @@ export const getStore = () => {
 export const resetStore = () => (store = getStore());
 export let store = (() => getStore())();
 
+// ============================================================================
+
 export const getHistory = () => {
     if (__CLIENT__) return window.__KOOT_HISTORY__;
     if (__SERVER__) {
@@ -52,6 +62,27 @@ export const getHistory = () => {
 };
 export const resetHistory = () => (history = getHistory());
 export let history = (() => getHistory())();
+
+// ============================================================================
+
+export const getCache = localeId => {
+    if (!isRenderSafe()) return {};
+    if (__CLIENT__) {
+        if (typeof window.__KOOT_CACHE__ !== 'object')
+            window.__KOOT_CACHE__ = {};
+        return window.__KOOT_CACHE__;
+    }
+    if (__SERVER__) {
+        const SSR = __DEV__ ? global.__KOOT_SSR__ : __KOOT_SSR__;
+        const cache = SSR.globalCache;
+        if (!cache) return {};
+        if (localeId === true) return cache.get(getLocaleId());
+        if (localeId) return cache.get(localeId) || {};
+        return cache.get('__');
+    }
+};
+
+// ============================================================================
 
 if (__DEV__) {
     global.__KOOT_SSR_SET__ = v => {
@@ -69,4 +100,7 @@ if (__DEV__) {
         global.__KOOT_HISTORY__ = v;
         history = v;
     };
+    // if (__CLIENT__) {
+    //     window.__DEV_KOOT_GET_STYLES__ = getStyles;
+    // }
 }

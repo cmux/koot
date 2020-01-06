@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import hoistStatics from 'hoist-non-react-statics';
 
 import { getStore } from '../';
+import { needConnectComponents } from '../defaults/defines-server';
 
 //
 
@@ -21,6 +22,7 @@ import {
 } from './styles';
 import clientUpdatePageInfo from './client-update-page-info';
 import { RESET_CERTAIN_STATE } from './redux';
+import isRenderSafe from './is-render-safe';
 
 //
 
@@ -54,7 +56,7 @@ let devSSRConnectIndex = 0;
  * @callback callbackCheckLoaded
  * @param {Object} state 当前 state
  * @param {Object} renderProps 封装的同构 props
- * @returns {Boolean}
+ * @returns {boolean}
  */
 
 /**
@@ -72,6 +74,8 @@ let devSSRConnectIndex = 0;
  * @returns {Promise}
  */
 const doFetchData = (store, renderProps, dataFetch) => {
+    if (!isRenderSafe()) return new Promise(resolve => resolve(result));
+
     const result = dataFetch(store.getState(), renderProps, store.dispatch);
     // if (result === true) {
     //     isDataPreloaded = true
@@ -91,6 +95,8 @@ const doFetchData = (store, renderProps, dataFetch) => {
  * @returns {Array} infos.metas
  */
 const doPageinfo = (store, props, pageinfo) => {
+    if (!isRenderSafe()) return {};
+
     const defaultPageInfo = {
         title: '',
         metas: []
@@ -139,7 +145,7 @@ const doPageinfo = (store, props, pageinfo) => {
 /**
  * 高阶组件/组件装饰器：组件扩展
  * @param {Object} options 选项
- * @param {Boolean|Function} [options.connect] react-redux 的 connect() 的参数。如果为 true，表示使用 connect()，但不连接任何数据
+ * @param {boolean|Function} [options.connect] react-redux 的 connect() 的参数。如果为 true，表示使用 connect()，但不连接任何数据
  * @param {Object|callbackGetPageInfo} [options.pageinfo]
  * @param {Object} [options.data] 同构数据相关
  * @param {callbackFetchData} [options.data.fetch]
@@ -174,17 +180,17 @@ export default (options = {}) => WrappedComponent => {
         obj => typeof obj === 'object' && typeof obj.wrapper === 'string'
     );
 
-    /** @type {Boolean} 是否有上述结果对象 */
+    /** @type {boolean} 是否有上述结果对象 */
     const hasStyles = Array.isArray(styles) && styles.length > 0;
     // console.log({ ttt, hasStyles, styles })
 
-    /** @type {Boolean} 是否有 pageinfo 对象 */
+    /** @type {boolean} 是否有 pageinfo 对象 */
     const hasPageinfo =
         typeof pageinfo === 'function' || typeof pageinfo === 'object';
 
     // 同构数据相关
 
-    /** @type {Boolean} 同构数据是否已经获取成功 */
+    /** @type {boolean} 同构数据是否已经获取成功 */
     // let isDataPreloaded = false
 
     /** @type {Function} 获取同构数据 */
@@ -213,14 +219,23 @@ export default (options = {}) => WrappedComponent => {
 
         //
 
-        clientUpdatePageInfo() {
+        clientUpdatePageInfo(to) {
+            if (!__CLIENT__) return;
             if (!hasPageinfo) return;
 
-            const { title, metas } = doPageinfo(
-                getStore(),
-                getRenderPropsFromComponentProps(this.props),
-                pageinfo
-            );
+            const { title, metas } =
+                typeof to === 'function'
+                    ? doPageinfo(
+                          getStore(),
+                          getRenderPropsFromComponentProps(this.props),
+                          to
+                      )
+                    : to ||
+                      doPageinfo(
+                          getStore(),
+                          getRenderPropsFromComponentProps(this.props),
+                          pageinfo
+                      );
 
             clientUpdatePageInfo(title, metas);
         }
@@ -243,6 +258,25 @@ export default (options = {}) => WrappedComponent => {
 
         constructor(props /*, context*/) {
             super(props /*, context*/);
+
+            /**
+             * _服务器端_
+             * 将组件注册到同构渲染对象中
+             */
+            if (__SERVER__) {
+                const SSR = __DEV__ ? global.__KOOT_SSR__ : __KOOT_SSR__;
+                if (SSR[needConnectComponents]) {
+                    if (__DEV__) {
+                        // console.log(options.name || '__');
+                        KootComponent.id = devSSRConnectIndex++;
+                        // KootComponent.pageinfo = pageinfo;
+                    }
+                    const { connectedComponents = [] } = SSR;
+                    connectedComponents.unshift(KootComponent);
+                }
+            }
+
+            if (!isRenderSafe()) return;
 
             if (hasStyles) {
                 this.kootClassNames = styles.map(obj => obj.wrapper);
@@ -274,12 +308,12 @@ export default (options = {}) => WrappedComponent => {
         //
 
         componentDidUpdate(prevProps) {
-            if (
-                typeof prevProps.location === 'object' &&
-                typeof this.props.location === 'object' &&
-                prevProps.location.pathname !== this.props.location.pathname
-            )
-                this.clientUpdatePageInfo();
+            // if (
+            //     typeof prevProps.location === 'object' &&
+            //     typeof this.props.location === 'object' &&
+            //     prevProps.location.pathname !== this.props.location.pathname
+            // )
+            this.clientUpdatePageInfo();
         }
 
         componentDidMount() {
@@ -299,6 +333,14 @@ export default (options = {}) => WrappedComponent => {
             }
 
             this.clientUpdatePageInfo();
+            if (hasPageinfo && this.mounted) {
+                setTimeout(() => {
+                    if (this && this.mounted) {
+                        this.clientUpdatePageInfo();
+                    }
+                }, 500);
+            }
+
             if (everMounted) {
             } else {
                 everMounted = true;
@@ -322,7 +364,7 @@ export default (options = {}) => WrappedComponent => {
 
         //
 
-        render = () => {
+        render() {
             // console.log('styles', styles)
             // console.log('this', this)
             // console.log('this.kootClassNames', this.kootClassNames)
@@ -356,7 +398,7 @@ export default (options = {}) => WrappedComponent => {
                 props.loaded = this.state.loaded;
 
             return <WrappedComponent {...props} />;
-        };
+        }
     }
 
     if (typeof dataFetch !== 'undefined') {
@@ -396,21 +438,6 @@ export default (options = {}) => WrappedComponent => {
         KootComponent = connect(_connect)(KootComponent);
     } else if (Array.isArray(_connect)) {
         KootComponent = connect(..._connect)(KootComponent);
-    }
-
-    /**
-     * _服务器端_
-     * 将组件注册到同构渲染对象中
-     */
-    if (__SERVER__) {
-        if (__DEV__) {
-            KootComponent.id = devSSRConnectIndex++;
-            // KootComponent.pageinfo = pageinfo;
-        }
-        const { connectedComponents = [] } = __DEV__
-            ? global.__KOOT_SSR__
-            : __KOOT_SSR__;
-        connectedComponents.unshift(KootComponent);
     }
 
     return KootComponent;

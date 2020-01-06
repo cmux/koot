@@ -1,7 +1,7 @@
 <!-- # Koot  -->
 <p align="center">
     <a href="http://https://koot.js.org">
-        <img alt="koot" src="./docs/koot-logo@2x.png" width="300">
+        <img alt="koot" src="./docs/assets/logo.png" width="300">
     </a>
 </p>
 

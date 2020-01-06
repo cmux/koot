@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * React SSR 基础测试，主要用于测试打包结果的正确性。这些测试*不包括*
  * - ❌ SSR 数据
@@ -30,7 +31,8 @@ const {
     styles: puppeteerTestStyles,
     customEnv: puppeteerTestCustomEnv,
     injectScripts: puppeteerTestInjectScripts,
-    requestHidden404: testRequestHidden404
+    requestHidden404: testRequestHidden404,
+    criticalAssetsShouldBeGzip: testAssetsGzip
 } = require('../puppeteer-test');
 const addCommand = require('../../libs/add-command-to-package-json');
 const terminate = require('../../libs/terminate-process');
@@ -89,10 +91,16 @@ afterEach(() => {});
  * 测试项目
  * @async
  * @param {Number} port
+ * @param {string} dist
  * @param {Object} settings
  */
-const doTest = async (port, settings = {}) => {
-    const { isDev = false, enableJavascript = true, customEnv = {} } = settings;
+const doTest = async (port, dist, settings = {}) => {
+    const {
+        isDev = false,
+        enableJavascript = true,
+        customEnv = {}
+        // childProcess
+    } = settings;
     customEnv.notexist = undefined;
 
     const checkBackgroundResult = styleValue => {
@@ -142,42 +150,356 @@ const doTest = async (port, settings = {}) => {
 
     await testHtmlRenderedByKoot(await res.text());
 
+    // base 图片应该引用打包结果的文件
     {
-        // base 图片应该引用打包结果的文件
-        const resultBase = await page.evaluate(() => {
+        const { base, baseRelative } = await page.evaluate(() => {
             const el = document.querySelector('[data-bg-type="base"]');
-            if (!el) return '';
-            return window.getComputedStyle(el).backgroundImage;
+            if (!el) return {};
+            const elRelative = document.querySelector(
+                '[data-bg-type="base-relative"]'
+            );
+            if (!elRelative) return {};
+            return {
+                base: window.getComputedStyle(el).backgroundImage,
+                baseRelative: window.getComputedStyle(elRelative)
+                    .backgroundImage
+            };
         });
-        expect(checkBackgroundResult(resultBase)).toBe(true);
+        expect(checkBackgroundResult(base)).toBe(true);
+        expect(checkBackgroundResult(baseRelative)).toBe(true);
     }
 
+    // respoinsive 图片应该引用打包结果的文件
     {
-        // respoinsive 图片应该引用打包结果的文件
+        const result = {};
+        const resultNative = {};
         const test = async scale => {
             await setScaleFactor(scale);
-            const result = await page.evaluate(() => {
+            const { value, valueNative } = await page.evaluate(() => {
                 const el = document.querySelector(
                     '[data-bg-type="responsive"]'
                 );
-                if (!el) return '';
-                return window.getComputedStyle(el).backgroundImage;
+                if (!el) return {};
+                const elNative = document.querySelector(
+                    '[data-bg-type="responsive-native"]'
+                );
+                if (!elNative) return {};
+                return {
+                    value: window.getComputedStyle(el).backgroundImage,
+                    valueNative: window.getComputedStyle(elNative)
+                        .backgroundImage
+                };
             });
-            expect(checkBackgroundResult(result)).toBe(true);
+            expect(checkBackgroundResult(value)).toBe(true);
+            expect(checkBackgroundResult(valueNative)).toBe(true);
+            result[scale] = value;
+            resultNative[scale] = valueNative;
         };
+        await test(1);
         await test(1.5);
         await test(2);
+        // expect(result[1]).not.toBe(result[1.5]);
+        // expect(result[1.5]).not.toBe(result[2]);
+        // expect(resultNative[1]).not.toBe(resultNative[2]);
+    }
+
+    // 测试: react-router v3 兼容相关的属性
+    {
+        const context = await browser.createIncognitoBrowserContext();
+        const page = await context.newPage();
+        const testLocation = {
+            pathname: '/route-test/123',
+            search: '?test=aaa',
+            hash: '#bbb'
+        };
+        await page.goto(
+            origin +
+                testLocation.pathname +
+                testLocation.search +
+                testLocation.hash,
+            {
+                waitUntil: 'networkidle2'
+            }
+        );
+        const testResults = await page.evaluate(testLocation => {
+            const results = {};
+            const {
+                props = {},
+                propsInConnect = {},
+                stateInConnect = {}
+            } = window.__KOOT_TEST_ROUTE__;
+
+            const isPropsValid = (props = {}) => {
+                const {
+                    location = {},
+                    params = {},
+                    route = {},
+                    routeParams = {},
+                    router = {},
+                    routes
+                } = props;
+
+                return (
+                    location.hash === testLocation.hash &&
+                    location.pathname === testLocation.pathname &&
+                    location.search === testLocation.search &&
+                    params.testId === '123' &&
+                    typeof route.component === 'function' &&
+                    route.path === '/route-test/:testId' &&
+                    routeParams.testId === '123' &&
+                    typeof router.createHref === 'function' &&
+                    typeof router.createKey === 'function' &&
+                    typeof router.createLocation === 'function' &&
+                    typeof router.createPath === 'function' &&
+                    typeof router.getCurrentLocation === 'function' &&
+                    typeof router.go === 'function' &&
+                    typeof router.goBack === 'function' &&
+                    typeof router.goForward === 'function' &&
+                    typeof router.isActive === 'function' &&
+                    typeof router.listen === 'function' &&
+                    typeof router.listenBefore === 'function' &&
+                    typeof router.location === 'object' &&
+                    router.location.hash === testLocation.hash &&
+                    router.location.pathname === testLocation.pathname &&
+                    router.location.search === testLocation.search &&
+                    typeof router.params === 'object' &&
+                    router.params.testId === '123' &&
+                    typeof router.push === 'function' &&
+                    typeof router.replace === 'function' &&
+                    Array.isArray(router.routes) &&
+                    typeof router.setRouteLeaveHook === 'function' &&
+                    typeof router.transitionTo === 'function' &&
+                    typeof router.unsubscribe === 'function' &&
+                    Array.isArray(routes)
+                );
+            };
+
+            results.validLocationBeforeTransitionsInState =
+                typeof stateInConnect.routing === 'object' &&
+                typeof stateInConnect.routing.locationBeforeTransitions ===
+                    'object' &&
+                stateInConnect.routing.locationBeforeTransitions.hash ===
+                    testLocation.hash &&
+                stateInConnect.routing.locationBeforeTransitions.pathname ===
+                    testLocation.pathname &&
+                stateInConnect.routing.locationBeforeTransitions.search ===
+                    testLocation.search;
+            results.validPropsInConnect = isPropsValid(propsInConnect);
+            results.validProps = isPropsValid(props);
+
+            return results;
+        }, testLocation);
+        await context.close();
+
+        expect(typeof testResults).toBe('object');
+        expect(testResults.validLocationBeforeTransitionsInState).toBe(true);
+        expect(testResults.validPropsInConnect).toBe(true);
+        expect(testResults.validProps).toBe(true);
+    }
+
+    // 测试: 组件内手动 updatePageinfo
+    {
+        const context = await browser.createIncognitoBrowserContext();
+        const page = await context.newPage();
+        await page.goto(origin + '/route-test/123?test=aaa#bbb', {
+            waitUntil: 'networkidle2'
+        });
+
+        await page.evaluate(() => {
+            const button = document.querySelector(
+                '#__test-manually-update-pageinfo'
+            );
+            if (!button) return {};
+            button.click();
+        });
+        await sleep(1000);
+        const { title, metaTestRoute } = await page.evaluate(() => {
+            const title = document.title;
+            const metaTestRoute = document.querySelector('meta[test-route]');
+
+            if (!metaTestRoute) return { title };
+
+            return {
+                title,
+                metaTestRoute: metaTestRoute.getAttribute('test-route')
+            };
+        });
+
+        await context.close();
+
+        expect(title).toBe('TEST ROUTE');
+        expect(metaTestRoute).toBe('test-route');
+    }
+
+    // 测试: 使用工具函数手动更新 pageinfo
+    {
+        const test = async (changedTitle, changedMetas) => {
+            const context = await browser.createIncognitoBrowserContext();
+            const page = await context.newPage();
+            await page.goto(origin, {
+                waitUntil: 'networkidle2'
+            });
+
+            const { result, oldTitle } = await page.evaluate(
+                (changedTitle, changedMetas) => {
+                    const r = {
+                        oldTitle: document.title
+                    };
+
+                    const $button = document.querySelector(
+                        `#__test-client_update_pageinfo > button[data-change-title="${
+                            changedTitle ? 'true' : 'false'
+                        }"][data-change-metas="${
+                            changedMetas ? 'true' : 'false'
+                        }"]`
+                    );
+                    if (!$button) {
+                        r.result = `no matched button`;
+                        return r;
+                    }
+
+                    $button.click();
+
+                    return r;
+                },
+                changedTitle,
+                changedMetas
+            );
+
+            if (typeof result === 'string') {
+                await context.close();
+                return result;
+            }
+
+            await sleep(1000);
+
+            const result2 = await page.evaluate(
+                (oldTitle, changedTitle, changedMetas) => {
+                    if (changedTitle && document.title === oldTitle)
+                        return 'title has not changed';
+                    if (!changedTitle && document.title !== oldTitle)
+                        return 'title has changed';
+
+                    const hasOldMeta = !!document.querySelector(
+                        'meta[page-name="home"]'
+                    );
+                    if (changedMetas && hasOldMeta)
+                        return 'meta has not changed';
+                    if (!changedMetas && !hasOldMeta) return 'meta has changed';
+
+                    return true;
+                },
+                oldTitle,
+                changedTitle,
+                changedMetas
+            );
+
+            await context.close();
+
+            return result2;
+        };
+
+        expect(await test(true, false)).toBe(true);
+        expect(await test(false, true)).toBe(true);
+        expect(await test(true, true)).toBe(true);
+    }
+
+    // 测试: WDS proxy
+    if (isDev) {
+        const context = await browser.createIncognitoBrowserContext();
+        const page = await context.newPage();
+        await page.goto(origin + '/proxy-1/policies?hl=en', {
+            waitUntil: 'networkidle2'
+        });
+        const title = await page.evaluate(() => document.title);
+        await context.close();
+
+        expect(title.includes('Policies')).toBe(true);
+    }
+
+    // 测试: store 文件只会引用一次
+    {
+        const context = await browser.createIncognitoBrowserContext();
+        const page = await context.newPage();
+        await page.goto(origin, {
+            waitUntil: 'networkidle2'
+        });
+
+        const count = await page.evaluate(
+            () => window.__REDUX_STOER_RUN_COUNT__
+        );
+
+        await context.close();
+
+        expect(count).toBe(1);
+    }
+
+    // 测试: SASS
+    {
+        const context = await browser.createIncognitoBrowserContext();
+        const page = await context.newPage();
+        await page.goto(origin + '/sass-test', {
+            waitUntil: 'networkidle2'
+        });
+
+        const { container, nested } = await page.evaluate(() => {
+            const container = document.getElementById('__test-sass');
+            if (!container) return {};
+            const nested = container.querySelector('.nested');
+            if (!nested) return {};
+            return {
+                container: parseInt(
+                    window.getComputedStyle(container).fontSize
+                ),
+                nested: parseInt(window.getComputedStyle(nested).fontSize)
+            };
+        });
+
+        await context.close();
+
+        expect(container).toBe(20);
+        expect(nested).toBe(40);
+    }
+
+    // 测试: getStyles()
+    {
+        const context = await browser.createIncognitoBrowserContext();
+        const page = await context.newPage();
+        await page.goto(origin, {
+            waitUntil: 'networkidle2'
+        });
+
+        const { hasGlobal, hasModule } = await page.evaluate(() => {
+            const { _global, ...modules } = window.__KOOT_TEXT_GET_STYLES__();
+            const isPropValid = obj =>
+                typeof obj === 'object' &&
+                typeof obj.text === 'string' &&
+                obj.rules instanceof CSSRuleList;
+            return {
+                hasGlobal: isPropValid(_global),
+                hasModule:
+                    Object.keys(modules).length > 0 &&
+                    Object.values(modules).every(isPropValid)
+            };
+        });
+
+        await context.close();
+
+        expect(hasGlobal).toBe(true);
+        expect(hasModule).toBe(true);
     }
 
     await puppeteerTestStyles(page);
     await puppeteerTestCustomEnv(page, customEnv);
     await puppeteerTestInjectScripts(page);
     await testRequestHidden404(origin, browser);
+    if (!isDev) await testAssetsGzip(origin, dist, browser);
 
     // TODO: 在设置了 sw 时有 sw 注册且没有报错
 
     // 测试: 没有失败的请求
     if (failedResponse.length) {
+        // eslint-disable-next-line no-console
         console.log(
             'failedResponse',
             failedResponse.map(res => ({
@@ -216,6 +538,7 @@ const afterTest = async (cwd, title) => {
     // 移除临时项目配置文件
     await removeTempProjectConfig(cwd);
 
+    // eslint-disable-next-line no-console
     console.log(
         chalk.green('√ ') +
             chalk.green(`${(Date.now() - lastTime) / 1000}s `) +
@@ -277,13 +600,26 @@ describe('测试: React 同构项目', () => {
                 );
 
                 await testFilesFromChunkmap(dist);
-                await doTest(port, {
+                await doTest(port, dist, {
                     customEnv
                 });
-                await doTest(port, {
+                await doTest(port, dist, {
                     enableJavascript: false,
                     customEnv
                 });
+
+                // 测试: 项目 package.json 里应有 koot 属性对象
+                {
+                    const {
+                        version: kootVersion
+                    } = require('koot/package.json');
+                    const { koot: result } = require(path.resolve(
+                        dir,
+                        'package.json'
+                    ));
+                    expect(typeof result).toBe('object');
+                    expect(result.version).toBe(kootVersion);
+                }
 
                 if (fs.existsSync(dist)) fs.emptyDirSync(dist);
                 else fs.removeSync(dist);
@@ -296,6 +632,7 @@ describe('测试: React 同构项目', () => {
                 await beforeTest(dir);
 
                 // const port = '8316'
+                const dist = path.resolve(dir, 'dist');
                 const customEnv = {
                     aaaaa: '' + Math.floor(Math.random() * 10000),
                     bbbbb: 'a1b2c3'
@@ -324,14 +661,16 @@ describe('测试: React 同构项目', () => {
                 // })
                 expect(errors.length).toBe(0);
 
-                await doTest(port, {
-                    isDev: true,
-                    customEnv
-                });
-                await doTest(port, {
+                await doTest(port, dist, {
                     isDev: true,
                     customEnv,
-                    enableJavascript: false
+                    childProcess: child
+                });
+                await doTest(port, dist, {
+                    isDev: true,
+                    customEnv,
+                    enableJavascript: false,
+                    childProcess: child
                 });
                 await terminate(child.pid);
                 await afterTest(dir, 'ENV: dev');

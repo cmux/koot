@@ -23,6 +23,10 @@ const Nav = props => {
         {
             title: 'TypeScript',
             to: '/ts'
+        },
+        {
+            title: 'test: modify state',
+            to: '/test-modify-state'
         }
     ];
 

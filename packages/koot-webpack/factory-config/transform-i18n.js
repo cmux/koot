@@ -1,4 +1,4 @@
-const fs = require('fs-extra');
+// const fs = require('fs-extra');
 const path = require('path');
 // const chalk = require('chalk')
 const getCwd = require('koot/utils/get-cwd');
@@ -14,11 +14,11 @@ const getCwd = require('koot/utils/get-cwd');
  * @param {*} i18n
  * @return {Boolean|Object} 不可用 (false) 或完整配置数组
  */
-module.exports = async i18n => {
+module.exports = async ({ dist, i18n }) => {
     const {
         WEBPACK_BUILD_TYPE: TYPE,
         WEBPACK_BUILD_ENV: ENV
-        // WEBPACK_BUILD_STAGE: STAGE,
+        // WEBPACK_BUILD_STAGE: STAGE
         // WEBPACK_ANALYZE,
         // SERVER_DOMAIN,
         // SERVER_PORT,
@@ -61,9 +61,12 @@ module.exports = async i18n => {
 
         locales.forEach(arr => {
             if (arr[2]) return;
-            const pathname = path.resolve(getCwd(), arr[1]);
-            arr[1] = fs.readJsonSync(pathname);
-            arr[2] = pathname;
+            const file = path.resolve(getCwd(), arr[1]);
+            arr[1] = {};
+            /** 语言包在硬盘里的路径 */
+            arr[2] = file;
+            /** 针对服务器端：语言包在打包结果里的路径 */
+            arr[3] = `./locales/` + arr[0] + path.extname(file);
         });
 
         process.env.KOOT_I18N = JSON.stringify(true);

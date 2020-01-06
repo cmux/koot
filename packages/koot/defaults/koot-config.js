@@ -14,6 +14,7 @@ module.exports = {
     // onHistoryUpdate: '',
 
     port: 8080,
+    renderCache: false,
     // serverBefore: '',
     // serverAfter: '',
     // serverOnRender: '',

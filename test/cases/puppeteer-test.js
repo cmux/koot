@@ -1,4 +1,5 @@
 const puppeteer = require('puppeteer');
+const getUriFromChunkmap = require('../libs/get-uri-from-chunkmap');
 
 /**
  * puppeteer 测试
@@ -130,7 +131,7 @@ const injectScripts = async page => {
  * 访问隐藏文件返回 404
  */
 const requestHidden404 = async (origin, browser) => {
-    let needToClose = !browser;
+    const needToClose = !browser;
 
     if (!browser)
         browser = await puppeteer.launch({
@@ -150,9 +151,49 @@ const requestHidden404 = async (origin, browser) => {
     expect(res.status()).toBe(404);
 };
 
+/**
+ * puppeteer 测试
+ *
+ * 请求关键资源文件应为 gzip
+ * @async
+ * @param {string} origin
+ * @param {string} dist
+ * @param {Object} [browser]
+ * @returns {Promise}
+ */
+const criticalAssetsShouldBeGzip = async (origin, dist, browser) => {
+    const needToClose = !browser;
+
+    if (!browser)
+        browser = await puppeteer.launch({
+            headless: true
+        });
+
+    const uri = await getUriFromChunkmap(dist, 'client.js');
+    expect(!!uri).toBe(true);
+
+    const context = await browser.createIncognitoBrowserContext();
+    const page = await context.newPage();
+    const res = await page.goto(
+        `${origin}${uri.substr(0, 1) === '/' ? '' : '/'}${uri}`,
+        {
+            waitUntil: 'domcontentloaded'
+        }
+    );
+    const headers = res.headers();
+    const text = await res.text();
+
+    await context.close();
+    if (needToClose) await browser.close();
+
+    expect(headers['content-encoding']).toBe('gzip');
+    expect(parseInt(headers['content-length']) <= text.length).toBe(true);
+};
+
 module.exports = {
     styles,
     customEnv,
     injectScripts,
-    requestHidden404
+    requestHidden404,
+    criticalAssetsShouldBeGzip
 };

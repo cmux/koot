@@ -11,28 +11,32 @@
 
 /**
  * 将样式表写入到 head 标签内
- * @param {Object} styleMap 
+ * @param {Object} styleMap
  */
 export const checkAndWriteIntoHead = (styleMap = {}) => {
-    if (typeof styleMap !== 'object') return
+    if (typeof styleMap !== 'object') return;
     Object.keys(styleMap).forEach(wrapper => {
-        const style = styleMap[wrapper]
+        const style = styleMap[wrapper];
+        const el = document.querySelector(
+            `style[${__STYLE_TAG_MODULE_ATTR_NAME__}=${wrapper}]`
+        );
         if (style.count > 0) {
             // 配置样式
-            if (!document.getElementById(wrapper)) {
-                const styleTag = document.createElement('style')
-                styleTag.innerHTML = style.css
-                styleTag.setAttribute('id', wrapper)
-                document.getElementsByTagName('head')[0].appendChild(styleTag)
+            if (!el && style.css !== '') {
+                const styleTag = document.createElement('style');
+                styleTag.innerHTML = style.css;
+                // styleTag.setAttribute('id', wrapper);
+                styleTag.setAttribute(__STYLE_TAG_MODULE_ATTR_NAME__, wrapper);
+                document.getElementsByTagName('head')[0].appendChild(styleTag);
             }
         } else {
             // 移除样式
-            if (document.getElementById(wrapper)) {
-                document.getElementById(wrapper).remove()
+            if (el) {
+                el.remove();
             }
         }
-    })
-}
+    });
+};
 
 // const getStyleMap = (passedMap) => {
 //     if (__CLIENT__)
@@ -46,54 +50,54 @@ export const checkAndWriteIntoHead = (styleMap = {}) => {
 
 /**
  * 追加样式
- * @param {Object} styleMap 
- * @param {Object|Array} style 
+ * @param {Object} styleMap
+ * @param {Object|Array} style
  */
 export const append = (styleMap = {}, style) => {
     // const styleMap = getStyleMap(passedMap)
 
     if (Array.isArray(style))
-        return style.forEach(theStyle => append(styleMap, theStyle))
+        return style.forEach(theStyle => append(styleMap, theStyle));
 
-    if (typeof style !== 'object') return
+    if (typeof style !== 'object') return;
 
     if (!styleMap[style.wrapper]) {
         styleMap[style.wrapper] = {
             css: style.css,
             count: 1
-        }
+        };
     } else {
-        styleMap[style.wrapper].count++
+        styleMap[style.wrapper].count++;
     }
 
     if (__CLIENT__) {
-        checkAndWriteIntoHead(styleMap)
+        checkAndWriteIntoHead(styleMap);
     }
-}
+};
 
 /**
  * 移除样式
- * @param {Object} styleMap 
- * @param {*} style 
+ * @param {Object} styleMap
+ * @param {*} style
  */
 export const remove = (styleMap = {}, style) => {
     // const styleMap = getStyleMap(passedMap)
 
     if (Array.isArray(style))
-        return style.forEach(theStyle => remove(theStyle))
+        return style.forEach(theStyle => remove(theStyle));
 
-    if (typeof style !== 'object') return
+    if (typeof style !== 'object') return;
 
     if (styleMap[style.wrapper]) {
-        styleMap[style.wrapper].count--
+        styleMap[style.wrapper].count--;
     }
-}
+};
 
 // export const idDivStylesContainer = '__KOOT_ISOMORPHIC_STYLES_CONTAINER__'
 
 // /**
 //  * 分析 HTML 代码，解析已有样式表，将其从 HTML 代码中移除，并返回可以直接写入到 head 标签内的样式表代码
-//  * @param {String} html 
+//  * @param {String} html
 //  * @returns {String} htmlStyles
 //  */
 // export const parseHtmlForStyles = (html) => {

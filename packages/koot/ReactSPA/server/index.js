@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 // import { server as serverConfig } from '__KOOT_PROJECT_CONFIG_PORTION_SERVER_PATHNAME__';
 import createKoaApp from '../../libs/create-koa-app';
 import koaStaticDefaults from '../../defaults/koa-static';

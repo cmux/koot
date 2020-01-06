@@ -1,11 +1,325 @@
+## [Unreleased]
+
+-   更新依赖包 minor 和 patch 版本号
+
+**koot**
+
+-   **新特性**
+    -   **新工具函数** `koot/utils/client-get-styles` - 获取当前全局 CSS 和所有组件 CSS。具体用法请参见文档 [全局与工具函数/工具函数/客户端](https://koot.js.org/#/utilities?id=客户端) ([#185](https://github.com/cmux/koot/issues/185))
+-   优化
+    -   组件 CSS 的 `<style>` 标签上不再有 `id` 属性，以避免和元素冲突
+
+## [0.11.15] - 2019-10-15
+
+-   更新依赖包 minor 和 patch 版本号
+
+**koot**
+
+-   优化
+    -   现在可零配置正常使用 _SASS_ 了 ([#179](https://github.com/cmux/koot/issues/179))
+-   错误修正
+    -   SPA 项目无法使用 `analyze` 命令的问题
+
+## [0.11.14] - 2019-09-29
+
+-   更新依赖包 minor 和 patch 版本号
+
+**koot**
+
+-   错误修正
+    -   `store` 选项指向的文件在客户端被引用多次的问题
+
+## [0.11.13] - 2019-09-26
+
+-   更新依赖包 minor 和 patch 版本号
+
+**koot**
+
+-   错误修正
+    -   `cookiesToStore` 为 `'all'` 时，部分带有 `=` 的值处理错误 ([#177](https://github.com/cmux/koot/issues/177))
+
+**koot-boilerplate**
+
+-   为日文添加更合适的字体
+-   错误修正
+    -   _EJS_ 模板中 `lang` 属性位置不正确的问题
+
+## [0.11.12] - 2019-09-25
+
+**koot**
+
+-   更新 TS 定义
+-   错误修正
+    -   SSR 服务器环境 _Store_ 中的有关路由信息错误 ([#178](https://github.com/cmux/koot/issues/178))
+
+## [0.11.11] - 2019-09-24
+
+-   更新依赖包 minor 和 patch 版本号
+
+**koot**
+
+-   更新 TS 定义
+    -   注：所有类组件 (_Class Component_) 的 `render()` 方法返回值类型需更改为 `React.ReactNode`
+
+## [0.11.10] - 2019-09-20
+
+**koot**
+
+-   优化
+    -   通过配置 `devServer.proxy`，SSR 项目的开发环境中，现在可以使用 _webpack-dev-server_ 的 `proxy` 能力了 ([#176](https://github.com/cmux/koot/issues/176))
+
+## [0.11.9] - 2019-09-19
+
+**koot**
+
+-   优化
+    -   调整开发环境的关闭流程
+-   错误修正
+    -   开发环境 _source map_ 不正确的问题 ([#175](https://github.com/cmux/koot/issues/175))
+
+**koot-boilerplate**
+
+-   添加 `.eslintignore` 和 `.prettierignore`
+
+## [0.11.8] - 2019-09-17
+
+**koot**
+
+-   优化
+    -   开发环境服务器现在会尝试自动重启
+-   更新依赖包 minor 和 patch 版本号
+
+**koot-boilerplate**
+
+-   调整默认字体 `font-family`
+
+## [0.11.7] - 2019-09-10
+
+核心
+
+-   更新 TS 定义
+-   更新依赖包 minor 和 patch 版本号
+    -   `babel` 和相关依赖包 -> _7.6.0_
+
+## [0.11.6] - 2019-09-05
+
+核心
+
+-   更新 TS 定义
+-   更新依赖包 patch 版本号
+
+## [0.11.5] - 2019-08-30
+
+核心
+
+-   更新 TS 定义
+
+## [0.11.4] - 2019-08-30
+
+核心
+
+-   更新依赖包
+    -   major
+        -   `inquirer` -> _7.0.0_
+        -   `sass-loader` -> _8.0.0_
+    -   minor
+        -   `typescript` -> _3.6.2_
+    -   patch
+        -   `@types/node` -> _12.7.3_
+        -   `@types/webpack` -> _4.39.1_
+        -   `react-hot-loader` -> _4.12.12_
+        -   `webpack` -> _4.39.3_
+
+**koot-cli**
+
+-   更新依赖包
+    -   major
+        -   `inquirer` -> _7.0.0_
+
+## [0.11.3] - 2019-08-29
+
+核心
+
+-   **错误修正**
+    -   修正：SSR 预渲染后 _Store_ state 中的 `routing` 属性被清空
+
+## [0.11.2] - 2019-08-28
+
+核心
+
+-   **优化**
+    -   更新 TS 定义
+
+## [0.11.1] - 2019-08-27
+
+核心
+
+-   **优化**
+    -   `extend()` 高阶组件，如果传入了 `pageinfo`，在组件挂载 (`componentDidMount`) 延迟 500ms 后，会再次自动执行一次 `updatePageinfo`
+
+## [0.11.0] - 2019-08-23
+
+核心
+
+-   **重大改动**
+    -   同构/SSR 项目
+        -   SSR 流程和生命周期调整，原则上对已有项目不会造成影响。如果升级 _Koot.js_ 后 SSR 出现异常，请查阅: [升级指南: 0.10 -> 0.11](https://koot.js.org/#/migration/0.10-to-0.11)
+        -   渲染缓存 (RenderCache) 默认禁用，如需继续使用，请配置 `renderCache`，配置方式请查阅 [项目配置/renderCache](https://koot.js.org/#/config?id=renderCache)
+-   **新特性**
+    -   **新全局函数** `getCache()` - 获取公用缓存空间。具体用法请参见文档 [全局与工具函数/全局函数](https://koot.js.org/#/utilities?id=全局函数) ([#143](https://github.com/cmux/koot/issues/143))
+    -   **新工具函数** `clientUpdatePageinfo()` - 更新页面标题 `<title>` 和 `<meta>` 标签。具体用法请参见文档 [全局与工具函数/工具函数](https://koot.js.org/#/utilities?id=工具函数) ([#143](https://github.com/cmux/koot/issues/163))
+    -   **新服务器端生命周期** `beforePreRender()` - 在预渲染之前之情。具体用法请参见文档 [生命周期/服务器端](https://koot.js.org/#/life-cycle?id=服务器端)
+    -   现在会自动为客户端打包结果中的部分资源文件生成 gzip 版本 (.gz 文件) ([#129](https://github.com/cmux/koot/issues/129))
+-   **优化**
+    -   `createStore()` 全局函数现允许传入 store 增强函数 (enhancer)。详情请参见文档 [Store/全局函数 createStore](https://koot.js.org/#/store?id=全局函数-createstore) ([#144](https://github.com/cmux/koot/issues/144))
+    -   多语言翻译函数 (`__()`) 现支持返回一个对象或数组
+    -   `service-worker` 对首页的缓存处理
+    -   SSR
+        -   _服务器端_: 现支持有超大型语言包的项目 ([#145](https://github.com/cmux/koot/issues/145))
+    -   开发环境
+        -   _客户端_: 减少部分初始的日志输出
+    -   Webpack
+        -   `koot-css-loader`
+            -   现支持更多的 URL 引用写法
+            -   针对相对路径的引用进行优化
+-   添加依赖包
+    -   `@types/webpack`
+    -   `compression-webpack-plugin`
+-   更新依赖包
+    -   major
+        -   `commander` -> _3.0.0_
+        -   `koa-helmet` -> _5.0.0_
+        -   `rimraf` -> _3.0.0_
+        -   `style-loader` -> _1.0.0_
+        -   `yargs` -> _14.0.0_
+    -   minor
+        -   `@babel/register` -> _7.5.5_
+        -   `@hot-loader/react-dom` -> _16.9.0_
+        -   `@types/node` -> _12.7.2_
+        -   `@types/react` -> _16.9.2_
+        -   `@types/react-dom` -> _16.9.0_
+        -   `@types/webpack` -> _4.39.0_
+        -   `css-loader` -> _3.2.0_
+        -   `file-loader` -> _4.2.0_
+        -   `koa` -> _2.8.1_
+        -   `koa-helmet` -> _5.1.0_
+        -   `less` -> _3.10.3_
+        -   `mini-css-extract-plugin` -> _0.8.0_
+        -   `react` -> _16.9.0_
+        -   `react-dom` -> _16.9.0_
+        -   `sass-loader` -> _7.3.1_
+        -   `webpack` -> _4.39.2_
+        -   `webpack-bundle-analyzer` -> _3.4.1_
+        -   `webpack-dev-server` -> _3.8.0_
+    -   patch
+        -   `@babel/core` -> _7.5.5_
+        -   `@babel/plugin-proposal-class-properties` -> _7.5.5_
+        -   `@babel/plugin-proposal-object-rest-spread` -> _7.5.5_
+        -   `@babel/plugin-transform-runtime` -> _7.5.5_
+        -   `@babel/preset-env` -> _7.5.5_
+        -   `@types/react-redux` -> _7.1.2_
+        -   `cache-loader` -> _4.1.0_
+        -   `copy-webpack-plugin` -> _5.0.4_
+        -   `execa` -> _2.0.4_
+        -   `inquirer` -> _6.5.1_
+        -   `js-cookie` -> _2.2.1_
+        -   `koa-body` -> _4.1.1_
+        -   `lodash` -> _4.17.15_
+        -   `portfinder` -> _1.0.23_
+        -   `react-hot-loader` -> _4.12.11_
+        -   `thread-loader` -> _2.1.3_
+        -   `url-loader` -> _2.1.0_
+
+**koot-boilerplate**
+
+-   更新依赖包
+    -   minor
+        -   `husky` -> _3.0.4_
+        -   `lint-staged` -> _9.2.3_
+
+**koot-cli**
+
+-   更新依赖包
+    -   minor
+        -   `package-json` -> _6.5.0_
+        -   `semver` -> _6.3.0_
+    -   patch
+        -   `inquirer` -> _6.5.1_
+
+## 0.10.15
+
+**2019-08-20**
+
+核心
+
+-   **错误修正**
+    -   修正配置项 `renderCache = false` 时不生效的问题：现在可以正确的禁用服务器渲染缓存了
+
+## 0.10.14
+
+**2019-08-13**
+
+核心
+
+-   **优化**
+    -   客户端更新页面信息的逻辑
+
+## 0.10.13
+
+**2019-08-09**
+
+核心
+
+-   **优化**
+    -   同构/SSR: `__REDUX_STATE__` 与 `__KOOT_SSR_STATE__` 会经过转义输出，并在初始化时自动反转义，以增强安全性
+
+## 0.10.12
+
+**2019-08-01**
+
+核心
+
+-   **优化**
+    -   更新 TS 定义
+
+## 0.10.11
+
+**2019-07-30**
+
+核心
+
+-   **优化**
+    -   调整同构/SSR 服务器逻辑，现在在 `beforeDataToStore` 周期运行之前，会有一次 `renderToString` 操作，用以获取当前匹配的组件
+        -   取消上一版本针对同构/SSR 项目的改动
+
+## 0.10.10
+
+**2019-07-30**
+
+核心
+
+-   **优化**
+    -   优化开发环境的热更新体验
+        -   同构/SSR 项目在开发环境中，每次访问页面后，服务器会自动重置
+        -   开发环境中监控客户端资源的 _Webpack_ 服务器现在每次打包后不再会重置 `koot-css-loader` 的计数器
+
+## 0.10.9
+
+**2019-07-26**
+
+核心
+
+-   **错误修正**
+    -   修正：某些情况下 SPA 打包结果会被自动清空的问题
+
 ## 0.10.8
 
 **2019-07-22**
 
 核心
 
--   **错误修正**
-    -   修正：某些情况下 SPA 打包结果会被自动清空的问题
+-   **优化**
+    -   同构/SSR 项目中的模板注入函数现在会传入第 3 个参数: `ctx` - KOA 的 `ctx` 对象
 
 ## 0.10.7
 
@@ -29,6 +343,20 @@
         -   `portfinder` -> _1.0.21_
         -   `react-hot-loader` -> _4.12.6_
         -   `redux` -> _4.0.4_
+
+**koot-boilerplate**
+
+-   更新依赖包
+    -   minor
+        -   `lint-staged` -> _9.2.0_
+
+**koot-cli**
+
+-   更新依赖包
+    -   minor
+        -   `inquirer` -> _6.5.0_
+    -   patch
+        -   `isbinaryfile` -> _4.0.2_
 
 ## 0.10.6
 

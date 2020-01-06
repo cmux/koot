@@ -23,6 +23,7 @@ module.exports = {
     staticCopyFrom: path.resolve(__dirname, './public'),
 
     port: 8081,
+    // renderCache: true,
 
     webpackConfig: async () => {
         const ENV = process.env.WEBPACK_BUILD_ENV;
@@ -63,5 +64,19 @@ module.exports = {
         'react-router',
         'react-router-redux',
         'koot'
-    ]
+    ],
+    devServer: {
+        proxy: {
+            // '/proxy-1': {
+            //     target: 'http://10.60.204.111:8080',
+            //     changeOrigin: true,
+            //     pathRewrite: { '^/proxy-1': '' }
+            // },
+            '/proxy-1': {
+                target: 'https://www.cmcm.com',
+                changeOrigin: true,
+                pathRewrite: { '^/proxy-1': '' }
+            }
+        }
+    }
 };

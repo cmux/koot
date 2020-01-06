@@ -21,6 +21,7 @@
 -   **开发**
 
     -   [React](/react)
+    -   [路由/Route](/router)
     -   [Store](/store)
     -   [TypeScript](/typescript)
     -   [CSS](/css)
@@ -28,6 +29,8 @@
     -   [生命周期](/life-cycle)
     -   [全局常量与环境变量](/env)
     -   [全局与工具函数](/utilities)
+    -   [默认关闭的功能](/disabled)
 
 -   **建议**
     -   [发布 & 上线](/deploy)
+    -   [升级/迁移指南](/migration)

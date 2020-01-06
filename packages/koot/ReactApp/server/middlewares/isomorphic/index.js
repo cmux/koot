@@ -7,6 +7,7 @@ import getSWPathname from '../../../../utils/get-sw-pathname';
 
 import i18nGetLangFromCtx from '../../../../i18n/server/get-lang-from-ctx';
 import getI18nType from '../../../../i18n/get-type';
+import localesIds from '../../../../i18n/locale-ids';
 
 // import initStore from './init-store'
 import validateI18n from '../../validate/i18n';
@@ -58,13 +59,16 @@ const middlewareIsomorphic = (options = {}) => {
     const filemap = new Map();
     /** @type {Map} 样式表 */
     // const styleMap = new Map()
+    /** @type {Object} 公用缓存空间 */
+    const globalCache = new Map();
+    globalCache.set('__', {});
 
     /** @type {String} i18n 类型 */
     const i18nType = getI18nType();
 
     // 针对 i18n 分包形式的项目，静态注入按语言缓存
     if (i18nType === 'default') {
-        for (let l in chunkmap) {
+        for (const l in chunkmap) {
             const thisLocaleId = l.substr(0, 1) === '.' ? l.substr(1) : l;
             entrypoints.set(thisLocaleId, chunkmap[l]['.entrypoints']);
             filemap.set(thisLocaleId, chunkmap[l]['.files']);
@@ -80,6 +84,18 @@ const middlewareIsomorphic = (options = {}) => {
             pathnameSW: getSWPathname(chunkmap)
         });
         // styleMap.set('', {})
+    }
+
+    if (Array.isArray(localesIds)) {
+        localesIds.forEach(localeId => {
+            globalCache.set(localeId, {});
+            // Object.defineProperty(globalCache, localeId, {
+            //     value: {},
+            //     enumerable: false,
+            //     writable: false,
+            //     configurable: false
+            // });
+        });
     }
 
     return async (ctx, next) => {
@@ -156,6 +172,7 @@ const middlewareIsomorphic = (options = {}) => {
                 thisEntrypoints,
                 thisFilemap, //thisStyleMap,
                 styleMap,
+                globalCache,
 
                 connectedComponents: __DEV__
                     ? global.__KOOT_SSR__.connectedComponents || []

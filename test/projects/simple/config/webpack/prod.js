@@ -38,7 +38,8 @@ module.exports = async () => {
                     commons: {
                         name: 'commons',
                         chunks: 'initial',
-                        minChunks: 2
+                        minChunks: 2,
+                        reuseExistingChunk: true
                     }
                 }
             }

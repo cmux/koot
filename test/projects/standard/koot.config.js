@@ -26,7 +26,7 @@ module.exports = {
     // historyType: 'hash',
 
     store: './src/store/create-method-1',
-    cookiesToStore: 'all',
+    cookiesToStore: true,
     sessionStore: true,
 
     // i18n: {
@@ -96,6 +96,7 @@ module.exports = {
     serverBefore: './server/lifecycle/before',
     serverAfter: './server/lifecycle/after',
     serverOnRender: {
+        beforePreRender: './server/lifecycle/on-render-before-pre-render',
         beforeDataToStore: './server/lifecycle/on-render-before-data-to-store',
         afterDataToStore: './server/lifecycle/on-render-after-data-to-store'
     },

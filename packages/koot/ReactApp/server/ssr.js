@@ -18,6 +18,7 @@ import { resetStore, resetHistory } from '../../';
 import RootIsomorphic from './root-isomorphic';
 
 import { publicPathPrefix } from '../../defaults/webpack-dev-server';
+import { needConnectComponents } from '../../defaults/defines-server';
 import { CHANGE_LANGUAGE } from '../action-types';
 
 import validateRouterConfig from '../../React/validate/router-config';
@@ -25,8 +26,13 @@ import validateInject from '../../React/validate-inject';
 import validateReduxConfig from '../../React/validate/redux-config';
 import isNeedInjectCritical from '../../React/inject/is-need-inject-critical';
 import renderTemplate from '../../React/render-template';
+import {
+    default as clearStore,
+    defaultKeysToPreserve
+} from '../../React/redux/reset-store';
 
 import beforeRouterMatch from './middlewares/isomorphic/lifecycle/before-router-match';
+import beforePreRender from './middlewares/isomorphic/lifecycle/before-pre-render';
 import beforeDataToStore from './middlewares/isomorphic/lifecycle/before-data-to-store';
 import afterDataToStore from './middlewares/isomorphic/lifecycle/after-data-to-store';
 import executeComponentsLifecycle from './middlewares/isomorphic/execute-components-lifecycle';
@@ -165,6 +171,31 @@ const ssr = async (options = {}) => {
         return;
     }
 
+    // 强制更新 store: state.routing.locationBeforeTransitions
+    Object.assign(Store.getState().routing.locationBeforeTransitions, {
+        pathname: ctx.path,
+        search: ctx.search
+    });
+
+    // 渲染生命周期: beforePreRender
+    await beforePreRender({
+        ctx,
+        store: Store,
+        localeId: LocaleId,
+        callback: lifecycle.beforePreRender
+    });
+
+    // 确定当前访问匹配到的组件
+    SSR[needConnectComponents] = true;
+    SSR.connectedComponents = [];
+    try {
+        renderToString(<RootIsomorphic store={Store} {...renderProps} />);
+    } catch (e) {}
+    SSR[needConnectComponents] = false;
+
+    // 重置 state
+    clearStore(Store, [...defaultKeysToPreserve, 'server', 'routing']);
+
     // 渲染生命周期: beforeDataToStore
     await beforeDataToStore({
         ctx,
@@ -205,8 +236,14 @@ const ssr = async (options = {}) => {
     //     .map(id => `<style id="${id}">${thisStyleMap[id].css}</style>`)
     //     .join('')
     const stylesHtml = Object.keys(styleMap)
-        .filter(id => typeof styleMap[id].css === 'string')
-        .map(id => `<style id="${id}">${styleMap[id].css}</style>`)
+        .filter(
+            id =>
+                typeof styleMap[id].css === 'string' && styleMap[id].css !== ''
+        )
+        .map(
+            id =>
+                `<style ${__STYLE_TAG_MODULE_ATTR_NAME__}="${id}">${styleMap[id].css}</style>`
+        )
         .join('');
     // console.log('result thisStyleMap', thisStyleMap)
 
@@ -242,7 +279,8 @@ const ssr = async (options = {}) => {
             ...inject,
             ...templateInject
         }),
-        store: Store
+        store: Store,
+        ctx
     });
 
     // 结果写入缓存

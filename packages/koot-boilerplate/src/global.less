@@ -18,6 +18,11 @@ textarea {
     font-family: inherit;
 }
 
+input,
+textarea {
+    user-select: auto;
+}
+
 // global styles --------------------------------------------------------------
 
 html,
@@ -26,13 +31,15 @@ body {
 }
 html {
     box-sizing: border-box;
-    font-family: Roboto, 'HelveticaNeue-Light', 'Helvetica Neue Light',
-        'Helvetica Neue', Helvetica, 'Nimbus Sans L', Arial, 'Lucida Grande',
-        'Liberation Sans', 'Microsoft YaHei UI', 'Microsoft YaHei',
-        'Hiragino Sans GB', 'Wenquanyi Micro Hei', 'WenQuanYi Zen Hei',
-        'ST Heiti', SimHei, 'WenQuanYi Zen Hei Sharp', sans-serif, caption;
-    font-size: @root-font-size;
     color: @color-base;
+    font-size: @root-font-size;
+    font-family: Roboto, 'SF Pro Display', 'SF Pro Icons', 'Helvetica Neue',
+        'Helvetica', 'Arial', 'Microsoft YaHei UI', 'Microsoft YaHei',
+        'Hiragino Sans GB', sans-serif;
+    &[lang^='ja'] {
+        font-family: 'Noto Sans JP', 'Lucida Grande',
+            'Hiragino Kaku Gothic ProN', Meiryo, Roboto, sans-serif;
+    }
 }
 body {
     font-size: @base-font-size;

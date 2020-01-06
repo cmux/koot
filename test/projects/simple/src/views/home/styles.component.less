@@ -35,11 +35,20 @@
             &[data-bg-type='base'] {
                 background-image: url('~Assets/bg-base.png');
             }
+            &[data-bg-type='base-relative'] {
+                background-image: url('../../assets/bg-base.png');
+            }
             &[data-bg-type='responsive'] {
                 background-image: -webkit-image-set(
                     url('~Assets/bg-1x.png') 1x,
                     url('~Assets/bg-1.5x.png') 1.5x,
                     url('~Assets/bg-2x.png') 2x
+                );
+            }
+            &[data-bg-type='responsive-native'] {
+                background-image: image-set(
+                    '~Assets/bg-1x.png' 1x,
+                    '~Assets/bg-2x.png' 2x
                 );
             }
         }

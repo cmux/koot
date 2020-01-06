@@ -57,18 +57,26 @@ module.exports = async (project, dest) => {
         delete p.author;
     }
     if (project.dist) {
-        const regexDist = new RegExp(`dist:[ ]*['"](.+?)['"]`, 'gm');
-
+        if (
+            !path.isAbsolute(project.dist) &&
+            !/^\.(\/|\\)/.test(project.dist.substr(0, 2))
+        ) {
+            project.dist = './' + project.dist;
+        }
         const pathBuildConfig = await getConfigFile(tmp);
         const buildConfig = await fs.readFile(pathBuildConfig, 'utf-8');
+        // const { name, dist } = require(pathBuildConfig);
+        const { name, dist } = {
+            name: 'Koot.js App',
+            dist: './dist'
+        };
+        const regexName = new RegExp(`([ ]*)name:[ ]*['"]${name}['"]`, 'gm');
+        const regexDist = new RegExp(`([ ]*)dist:[ ]*['"]${dist}['"]`, 'gm');
         await fs.writeFile(
             pathBuildConfig,
             buildConfig
-                .replace(regexDist, `dist: "${project.dist}"`)
-                .replace(
-                    /([ ]*)name:[ ]*['"](.+?)['"]/g,
-                    `$1name: "${project.name}"`
-                ),
+                .replace(regexName, `$1name: "${project.name}"`)
+                .replace(regexDist, `$1dist: "${project.dist}"`),
             'utf-8'
         );
 

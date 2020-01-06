@@ -7,18 +7,27 @@ import { github as urlGithub } from '@constants/urls';
 import { Link } from 'react-router';
 import NavItem from '@components/nav/item';
 
+import styles from './index.module.less';
+
+// ============================================================================
+
+// ! i18n is disabled in SPA mode
+const intros = __SPA__ ? [] : __('intro');
+
+// ============================================================================
+
 const PageHome = extend({
     pageinfo: () => ({
         title: `${__('pages.home.title')} - ${__('title')}`,
         metas: [{ description: __('pages.home.description') }]
     }),
-    styles: require('./index.module.less')
+    styles
 })(({ className }) => (
     <div className={className}>
         <div className="wrapper">
             <h2 className="title">Koot.js</h2>
             <span className="intro">
-                {__('intro').map((str, index) => (
+                {intros.map((str, index) => (
                     <span className="line" key={index}>
                         {str}
                     </span>

@@ -7,5 +7,16 @@ export default {
 
     indexRoute: {
         component: require('@views/home').default
-    }
+    },
+
+    childRoutes: [
+        {
+            path: '/route-test/:testId',
+            component: require('@views/route-test').default
+        },
+        {
+            path: '/sass-test',
+            component: require('@views/sass-test').default
+        }
+    ]
 };

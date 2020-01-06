@@ -8,8 +8,12 @@ import NavItem from '@components/nav/item';
 import Center from '@components/center';
 import Icon from '@components/icon';
 
+import styles from './index.module.less';
+
+// ============================================================================
+
 const Nav = extend({
-    styles: require('./index.module.less')
+    styles
 })(({ location, className }) => {
     if (location.pathname === '' || location.pathname === '/') return null;
 

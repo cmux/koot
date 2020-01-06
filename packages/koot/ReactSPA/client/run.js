@@ -5,7 +5,11 @@ import history from '../../React/history';
 
 //
 
-import { localeId as LocaleId, store as Store, getHistory } from '../../index';
+import {
+    // localeId as LocaleId,
+    store as Store,
+    getHistory
+} from '../../index';
 import { actionUpdate } from '../../React/realtime-location';
 import Root from '../../React/root.jsx';
 import validateRouterConfig from '../../React/validate/router-config';
@@ -57,7 +61,7 @@ export default ({ router, client }) => {
         onUpdate: (...args) => {
             if (__DEV__ && logCountRouterUpdate < 2) {
                 console.log(
-                    `🚩 [koot/client] ` + `callback: onRouterUpdate`,
+                    `🚩 [koot/client] callback: onRouterUpdate`,
                     ...args
                 );
                 logCountRouterUpdate++;
@@ -80,7 +84,7 @@ export default ({ router, client }) => {
         // console.log(store.getState())
 
         if (__DEV__ && logCountHistoryUpdate < 2) {
-            console.log(`🚩 [koot/client] ` + `callback: onHistoryUpdate`, [
+            console.log(`🚩 [koot/client] callback: onHistoryUpdate`, [
                 location,
                 Store
             ]);
@@ -96,12 +100,12 @@ export default ({ router, client }) => {
 
     if (__DEV__)
         console.log(
-            `🚩 [koot/client] ` + `callback: before`
+            `🚩 [koot/client] callback: before`
             // args
         );
     if (__DEV__)
         console.log(
-            `🚩 [koot/client] ` + `callback: before`
+            `🚩 [koot/client] callback: before`
             // args
         );
     const beforePromise = (() => {
@@ -120,7 +124,7 @@ export default ({ router, client }) => {
     beforePromise
         .then(() => {
             if (__DEV__)
-                console.log(`🚩 [koot/client] ` + `callback: after`, {
+                console.log(`🚩 [koot/client] callback: after`, {
                     Store,
                     history
                 });

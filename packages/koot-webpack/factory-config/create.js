@@ -72,7 +72,7 @@ module.exports = async (kootConfig = {}) => {
     // ========================================================================
 
     kootBuildConfig.dist = await transformDist(kootBuildConfig.dist);
-    kootBuildConfig.i18n = await transformI18n(kootBuildConfig.i18n);
+    kootBuildConfig.i18n = await transformI18n(kootBuildConfig);
     kootBuildConfig.pwa = await transformPWA(kootBuildConfig.pwa);
     kootBuildConfig.template = await transformTemplate(
         kootBuildConfig.template
@@ -119,7 +119,17 @@ module.exports = async (kootConfig = {}) => {
         // ====================================================================
 
         if (analyze) {
-            if (Array.isArray(config)) config = config[0];
+            if (Array.isArray(config)) {
+                config =
+                    config[
+                        ENV === 'prod' &&
+                        STAGE === 'client' &&
+                        TYPE === 'spa' &&
+                        config.length > 1
+                            ? 1
+                            : 0
+                    ];
+            }
             config.plugins.push(
                 new BundleAnalyzerPlugin({
                     analyzerPort: process.env.SERVER_PORT,

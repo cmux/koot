@@ -107,11 +107,16 @@ export const middlewares = [thunk, routerMiddleware(history)];
 /**
  * 创建 redux store
  * - _注_: 与 redux 提供的 `createStore` 方法略有不同，仅需提供项目所用的 reducer 对象和中间件列表，**不需要**初始 state 对象
- * @param {Object|Function} appReducers 项目使用的 reducer，可为形式为 Object 的列表，也可以为 reducer 函数
- * @param {Array} appMiddlewares 项目的中间件列表
+ * @param {Object|Function} appReducers 项目使用的 reducer，可为 `ReducersMapObject` (形式为 Object 的列表)，也可以为 `Reducer` (reducer 函数)
+ * @param {Function[]} appMiddlewares 项目的中间件列表
+ * @param {Function[]} appEnhancers 项目的 store 增强函数 (enhancer) 列表
  * @returns {Object} redux store
  */
-export const createStore = (appReducer, appMiddlewares = []) => {
+export const createStore = (
+    appReducer,
+    appMiddlewares = [],
+    appEnhancers = []
+) => {
     // const toCompose = [
     //     reduxApplyMiddleware(...middlewares.concat(appMiddlewares))
     // ];
@@ -142,11 +147,16 @@ export const createStore = (appReducer, appMiddlewares = []) => {
         });
     })();
 
+    if (!Array.isArray(appEnhancers) && appEnhancers)
+        appEnhancers = [appEnhancers];
+    else if (!appEnhancers) appEnhancers = [];
+
     return reduxCreateStore(
         projectReducer,
         initialState,
         reduxCompose(
-            reduxApplyMiddleware(...middlewares.concat(appMiddlewares))
+            reduxApplyMiddleware(...middlewares.concat(appMiddlewares)),
+            ...appEnhancers
         )
     );
 };

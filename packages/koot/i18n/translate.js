@@ -54,9 +54,17 @@ const translate = (...args) => {
 
     const length = keys.length;
 
+    if (args.length === 1 && typeof args[0] === 'object') {
+        /**
+         * ! 如果只有一个 arg 且为 Object，直接返回该 Object
+         */
+        return args[0];
+    }
+
     if (typeof keys[0] === 'object') {
-        // 第一个值为 Object，通常是客户端情况
-        // 后续值依次取前一个 Object 内对应的值
+        /**
+         * 第一个值为 Object，通常是客户端情况，后续值依次取前一个 Object 内对应的值
+         */
         key = keys[0];
         let hasUnmatched = false;
         for (let i = 1; i < length; i++) {

@@ -1,8 +1,10 @@
 import React from 'react';
 import { extend } from 'koot';
 
+import styles from './index.module.less';
+
 const Icon = extend({
-    styles: require('./index.module.less')
+    styles
 })(({ className, style, id, icon, ...props }) => (
     <svg
         xmlns="http://www.w3.org/2000/svg"
