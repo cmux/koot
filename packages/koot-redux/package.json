@@ -8,6 +8,7 @@
     "main": "index.js",
     "directories": {
         "lib": "lib",
+        "typing": "index.d.ts",
         "test": "__tests__"
     },
     "files": [
