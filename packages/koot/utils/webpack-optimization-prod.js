@@ -72,6 +72,7 @@ module.exports = (options = {}) => {
         },
         libsOthers: {
             name: 'libs-others',
+            priority: 10,
             chunks: 'all',
             minChunks: 2,
             reuseExistingChunk: true
@@ -86,6 +87,9 @@ module.exports = (options = {}) => {
     // }
 
     return {
+        minimize: true,
+        noEmitOnErrors: true,
+
         splitChunks: {
             maxAsyncRequests: 8,
             maxInitialRequests: 6,

@@ -39,6 +39,7 @@ const getFilenameSPATemplateInject = require('koot/libs/get-filename-spa-templat
 const validatePathname = require('koot/libs/validate-pathname');
 const isI18nEnabled = require('koot/i18n/is-enabled');
 const getModuleVersion = require('koot/utils/get-module-version');
+const webpackOptimizationProd = require('koot/utils/webpack-optimization-prod');
 
 /**
  * Webpack 配置处理 - 客户端配置
@@ -254,9 +255,10 @@ module.exports = async (kootConfigForThisBuild = {}) => {
             }
 
             // 处理 optimization
+            if (typeof result.optimization !== 'object')
+                result.optimization =
+                    ENV === 'dev' ? {} : webpackOptimizationProd();
             if (ENV === 'dev') {
-                if (typeof result.optimization !== 'object')
-                    result.optimization = {};
                 Object.assign(result.optimization, {
                     removeAvailableModules: false,
                     removeEmptyChunks: false,

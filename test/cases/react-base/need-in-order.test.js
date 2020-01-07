@@ -648,7 +648,7 @@ describe('测试: React 同构项目', () => {
                     false
                 );
 
-                await testFilesFromChunkmap(dist);
+                await testFilesFromChunkmap(dist, false);
                 await doTest(port, dist, {
                     customEnv
                 });
@@ -765,7 +765,7 @@ describe('测试: React 同构项目', () => {
                     )
                 ).toBe(true);
 
-                await testFilesFromChunkmap(dist);
+                await testFilesFromChunkmap(dist, false);
 
                 await fs.remove(dist);
                 await afterTest(dir, '[config] bundleVersionsKeep: false');

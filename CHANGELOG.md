@@ -23,16 +23,18 @@
         -   `ejs` -> _^3.0.1_
         -   `ora` -> _^4.0.3_
 -   **新特性**
+    -   现在默认支持在浏览器环境中使用 _async_ / _await_ 开发
+    -   客户端打包现在会默认提供 `optimization` 配置，进行代码拆分
+        -   已有项目如无特殊需求，可将 `optimization` 配置移除
+    -   现在开发环境下会默认启用 _Service Worker_
     -   **新配置项** `distClientAssetsDirName` - 设定客户端打包结果中静态资源存放路径的目录名。详情请参见文档 [配置/distClientAssetsDirName](https://koot.js.org/#/config?id=distClientAssetsDirName) ([#181](https://github.com/cmux/koot/issues/181))
     -   **新全局函数** `getCtx` - 获取服务器的 _Koa ctx_ 对象。具体用法请参见文档 [全局与工具函数/全局函数](https://koot.js.org/#/utilities?id=全局函数) ([#196](https://github.com/cmux/koot/issues/196))
     -   **新工具函数** `koot/utils/client-get-styles` - 获取当前全局 CSS 和所有组件 CSS。具体用法请参见文档 [全局与工具函数/工具函数/客户端](https://koot.js.org/#/utilities?id=仅客户端) ([#185](https://github.com/cmux/koot/issues/185))
     -   **新工具函数** `koot/utils/webpack-optimization-prod` - 生成 Webpack `optimization` 配置，用于拆分代码。具体用法请参见文档 [全局与工具函数/工具函数/打包](https://koot.js.org/#/utilities?id=仅打包)
 -   优化
-    -   现在默认支持在浏览器环境中使用 _async_ / _await_ 开发
     -   SSR & 客户端渲染 & SPA 模板生成
         -   所有注入/插入的 `<script>` 标签现在均会新增 `[data-koot-entry]` 属性
         -   特殊 JS 入口 `_CLIENT_RUN_FIRST_` 现默认引入 `regenerator-runtime/runtime`
-    -   现在开发环境下会默认启用 _Service Worker_
     -   更新 TS 定义 ([#191](https://github.com/cmux/koot/issues/191))
     -   多语言 / i18n
         -   优化语言包匹配逻辑 ([#201](https://github.com/cmux/koot/issues/201)) ([#203](https://github.com/cmux/koot/issues/203))

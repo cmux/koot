@@ -210,7 +210,7 @@ const testFull = (dir, configFileName) => {
             testFileFromFilelist(chunkNameExtractCss + '.css', true);
             testFileFromFilelist(chunkNameExtractCssForImport + '.css', false);
 
-            await testFilesFromChunkmap(dist);
+            await testFilesFromChunkmap(dist, false);
         });
 
         test(`[prod] 简易服务器可用 & JS 执行正确`, async () => {

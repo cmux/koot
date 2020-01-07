@@ -935,7 +935,7 @@ module.exports = {
 ### classNameHashLength
 
 -   `koot >= 0.9`
--   类型: `Number`
+-   类型: `number`
 -   默认值: `6`
 -   **仅针对**: Webpack 打包过程
 
@@ -954,7 +954,7 @@ module.exports = {
 ### bundleVersionsKeep
 
 -   `koot >= 0.9`
--   类型: `Number`
+-   类型: `number` `boolean`
 -   默认值: `2`
 -   **仅针对**: 同构/SSR 项目的生产环境下的 Webpack 打包过程
 

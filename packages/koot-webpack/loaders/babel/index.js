@@ -140,11 +140,7 @@ module.exports = require('babel-loader').custom(babel => {
                 newPlugins.push(require('react-hot-loader/babel'));
             }
 
-            if (
-                !__createDll &&
-                !isServer &&
-                process.env.WEBPACK_BUILD_ENV === 'dev'
-            ) {
+            if (!__createDll && !isServer) {
                 let pathname = path.resolve(getCwd(), __routes);
                 if (fs.lstatSync(pathname).isDirectory()) pathname += '/index';
                 if (!fs.existsSync(pathname)) {
@@ -159,7 +155,10 @@ module.exports = require('babel-loader').custom(babel => {
                     });
                 }
                 newPlugins.push([
-                    path.resolve(__dirname, './plugins/client-dev.js'),
+                    path.resolve(
+                        __dirname,
+                        './plugins/client-sanitize-code-spliting-name.js'
+                    ),
                     {
                         routesConfigFile: pathname
                     }

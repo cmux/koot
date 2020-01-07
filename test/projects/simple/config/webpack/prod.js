@@ -1,5 +1,5 @@
 const factoryConfig = require('./_factory');
-const webpackOptimizationProd = require('koot/utils/webpack-optimization-prod');
+// const webpackOptimizationProd = require('koot/utils/webpack-optimization-prod');
 
 module.exports = async () => {
     const defaults = await factoryConfig();
@@ -11,9 +11,9 @@ module.exports = async () => {
             // publicPath: "/aaa/",
             filename: `core.[chunkhash].js`,
             chunkFilename: `chunk.[chunkhash].js`
-        },
+        }
 
-        optimization: webpackOptimizationProd()
+        // optimization: webpackOptimizationProd()
     };
 
     return Object.assign({}, defaults, config);

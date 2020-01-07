@@ -166,7 +166,7 @@ const testProduction = (
 
         expect(errors.length).toBe(0);
 
-        await testFilesFromChunkmap(dist);
+        await testFilesFromChunkmap(dist, false);
         await testCodeSplitting(dist);
         await doPuppeteerTest(port, dist, {
             kootConfig: config,
@@ -1318,7 +1318,7 @@ describe('测试: React 同构项目', () => {
                 expect(typeof stderr).toBe('string');
                 expect(stderr).toBe('');
 
-                await testFilesFromChunkmap(dist);
+                await testFilesFromChunkmap(dist, false);
                 await testCodeSplitting(dist);
                 await afterTest(dir, '[prod] 使用 koot-build 命令进行打包');
             });
