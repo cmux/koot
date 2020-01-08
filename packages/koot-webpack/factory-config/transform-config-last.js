@@ -7,6 +7,8 @@ const {
     filenameDll,
     filenameDllManifest,
     keyConfigOutputPathShouldBe,
+    keyConfigWebpackSPATemplateInject,
+    keyConfigWebpackSPAServer,
     WEBPACK_OUTPUT_PATH
 } = require('koot/defaults/before-build');
 const getDirDevDll = require('koot/libs/get-dir-dev-dll');
@@ -20,7 +22,7 @@ const forWebpackVersion = require('../libs/for-webpack-version');
  * @param {Object} kootConfigForThisBuild 完整的 Koot 项目配置（仅针对本次打包）
  * @return {Object|Array}
  */
-const transform = async (config, kootConfigForThisBuild = {}) => {
+const transform = async (config, kootConfigForThisBuild = {}, index = 0) => {
     const {
         [keyConfigBuildDll]: createDll = false,
         // dist,
@@ -85,15 +87,17 @@ const transform = async (config, kootConfigForThisBuild = {}) => {
     // 数组情况，拆分每项分别处理
     if (Array.isArray(config)) {
         const r = [];
+        let i = 0;
         for (const thisConfig of config) {
-            r.push(await transform(thisConfig, kootConfigForThisBuild));
+            r.push(await transform(thisConfig, kootConfigForThisBuild, i));
+            i++;
         }
         return r;
     }
 
     // copy this
 
-    return validate(Object.assign({}, config), kootConfigForThisBuild);
+    return validate(Object.assign({}, config), kootConfigForThisBuild, index);
 };
 
 /**
@@ -101,7 +105,7 @@ const transform = async (config, kootConfigForThisBuild = {}) => {
  * @param {Object} config 本次打包的 Webpack 配置
  * @returns {Object}
  */
-const validate = (config, kootConfigForThisBuild) => {
+const validate = (config, kootConfigForThisBuild, index = 0) => {
     // try to fix a pm2 bug that will currupt [name] value
     if (typeof config.output === 'object') {
         for (const key in config.output) {
@@ -133,7 +137,6 @@ const validate = (config, kootConfigForThisBuild) => {
     delete config.spa;
     delete config.analyzer;
     delete config.htmlPath;
-    delete config[keyConfigOutputPathShouldBe];
 
     // 针对 Webpack 4 处理
     forWebpackVersion('4.x', () => {
@@ -157,7 +160,16 @@ const validate = (config, kootConfigForThisBuild) => {
     });
 
     // 修改本次打包的 Koot 完整配置对象
-    kootConfigForThisBuild[WEBPACK_OUTPUT_PATH] = config.output.path;
+    if (
+        !config[keyConfigWebpackSPATemplateInject] &&
+        !config[keyConfigWebpackSPAServer]
+    )
+        kootConfigForThisBuild[WEBPACK_OUTPUT_PATH] = config.output.path;
+
+    // 移除其他多余字段
+    delete config[keyConfigOutputPathShouldBe];
+    // delete config[keyConfigWebpackSPATemplateInject];
+    delete config[keyConfigWebpackSPAServer];
 
     return config;
 };

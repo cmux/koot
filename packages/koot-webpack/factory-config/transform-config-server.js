@@ -9,7 +9,8 @@ const KootI18nPlugin = require('../plugins/i18n');
 const DevModePlugin = require('../plugins/dev-mode');
 const {
     keyConfigBuildDll,
-    keyConfigClientAssetsPublicPath
+    keyConfigClientAssetsPublicPath,
+    keyConfigWebpackSPAServer
 } = require('koot/defaults/before-build');
 
 const createTargetDefaultConfig = require('./create-target-default');
@@ -203,6 +204,7 @@ module.exports = async (kootBuildConfig = {}) => {
 
     if (isSPAProd) {
         if (dist) configsFull[0].output.path = path.resolve(dist, './.server');
+        configsFull[0][keyConfigWebpackSPAServer] = true;
         return await transformConfigLast(configsFull, kootBuildConfig);
     } else {
         Object.keys(otherEntries).forEach(entryName => {
