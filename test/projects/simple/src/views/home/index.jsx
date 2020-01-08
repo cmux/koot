@@ -4,6 +4,7 @@ import clientUpdatePageinfo from 'koot/utils/client-update-pageinfo';
 
 import Issue68 from '@components/issue-68';
 import TestAsyncFunction from './test-async-function';
+import TestGetPort from './test-get-port';
 
 import styles from './styles.component.less';
 
@@ -41,6 +42,7 @@ const PageHome = ({ className }) => {
             </div>
 
             <TestAsyncFunction />
+            <TestGetPort />
         </div>
     );
 };
