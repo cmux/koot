@@ -138,16 +138,6 @@ module.exports = {
      *************************************************************************/
 
     devPort: 3080,
-    devDll: [
-        'react',
-        'react-dom',
-        'redux',
-        'redux-thunk',
-        'react-redux',
-        'react-router',
-        'react-router-redux',
-        'koot'
-    ],
     // devHmr: {
     //     multiStep: false
     // },

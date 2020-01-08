@@ -47,6 +47,7 @@
         -   现在同时支持 _ES Module_ 和 _CommonJS_ 引用方式
     -   优化打包和进入开发环境时的错误日志显示
     -   使用 `import()` 时，如果 `webpackChunkName` 注释选项中包含特殊字符，现在会自动转换为文件名安全的字符 ([#190](https://github.com/cmux/koot/issues/190))
+    -   扩充配置 `devDll`
 -   错误修正
     -   客户端生命周期 `before()` 和 `after()` 现在会传入正确的参数 ([#198](https://github.com/cmux/koot/issues/198))
 

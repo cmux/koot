@@ -4,7 +4,6 @@ const webpack = require('webpack');
 
 const {
     keyConfigBuildDll,
-    filenameDll,
     filenameDllManifest,
     keyConfigOutputPathShouldBe,
     keyConfigWebpackSPATemplateInject,
@@ -13,6 +12,7 @@ const {
 } = require('koot/defaults/before-build');
 const getDirDevDll = require('koot/libs/get-dir-dev-dll');
 
+const transformClientDevDll = require('./transform-config-client-dev-dll');
 const forWebpackVersion = require('../libs/for-webpack-version');
 
 /**
@@ -23,65 +23,17 @@ const forWebpackVersion = require('../libs/for-webpack-version');
  * @return {Object|Array}
  */
 const transform = async (config, kootConfigForThisBuild = {}, index = 0) => {
-    const {
-        [keyConfigBuildDll]: createDll = false,
-        // dist,
-        devDll: webpackDll = []
-    } = kootConfigForThisBuild;
+    const { [keyConfigBuildDll]: createDll = false } = kootConfigForThisBuild;
     // const {
     //     WEBPACK_BUILD_STAGE: STAGE,
     // } = process.env
 
     // 生成 DLL 包模式: 本次打包仅生成 DLL 包
     if (createDll) {
-        const defaults = [
-            'react',
-            'react-dom',
-            'redux',
-            'redux-thunk',
-            'react-redux',
-            'react-router',
-            'react-router-redux'
-            // 'koot',
-        ];
-        const result = Array.isArray(config) ? { ...config[0] } : { ...config };
-        delete result.watch;
-        delete result.watchOptions;
-
-        // 如果自行添加了 koot，排除
-        const library =
-            !Array.isArray(webpackDll) || !webpackDll.length
-                ? defaults
-                : webpackDll;
-        if (library.includes('koot'))
-            library.splice(library.indexOf('koot'), 1);
-        result.entry = {
-            library
-        };
-
-        // console.log('result.entry.library', result.entry.library)
-        result.output = {
-            filename: filenameDll,
-            library: '[name]_[hash]',
-            // path: STAGE === 'server' ? path.resolve(dist, 'server') : dist
-            path: getDirDevDll()
-        };
-        process.env.KOOT_DEV_DLL_FILE_CLIENT = path.resolve(
-            getDirDevDll(undefined, 'client'),
-            filenameDll
+        return validate(
+            await transformClientDevDll(config, kootConfigForThisBuild),
+            kootConfigForThisBuild
         );
-        process.env.KOOT_DEV_DLL_FILE_SERVER = path.resolve(
-            getDirDevDll(undefined, 'server'),
-            filenameDll
-        );
-        result.plugins.push(
-            new webpack.DllPlugin({
-                // context: path.resolve(__dirname, '../../../../'),
-                path: path.resolve(result.output.path, filenameDllManifest),
-                name: '[name]_[hash]'
-            })
-        );
-        return validate(result, kootConfigForThisBuild);
     }
 
     // 数组情况，拆分每项分别处理

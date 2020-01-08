@@ -379,7 +379,11 @@ const run = async () => {
         } catch (e) {
             waiting.stop();
             spinner(msg).fail();
-            if (Array.isArray(result.errors) && result.errors.length) {
+            if (
+                result &&
+                Array.isArray(result.errors) &&
+                result.errors.length
+            ) {
                 error = result.errors;
                 result.errors.forEach(e => console.error(e));
             } else {

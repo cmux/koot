@@ -31,6 +31,10 @@ module.exports = {
         if (ENV === 'prod') return await require('./config/webpack/prod')();
         return {};
     },
+
+    webpackBefore: async (kootConfigWithExtra = {}) => {
+        console.log(kootConfigWithExtra);
+    },
     // webpackBefore: async (kootConfigWithExtra = {}) => {
     //     const {
     //         __WEBPACK_OUTPUT_PATH,
@@ -55,16 +59,16 @@ module.exports = {
     // bundleVersionsKeep: false,
 
     devPort: 3081,
-    devDll: [
-        'react',
-        'react-dom',
-        'redux',
-        'redux-thunk',
-        'react-redux',
-        'react-router',
-        'react-router-redux',
-        'koot'
-    ],
+    // devDll: [
+    //     'react',
+    //     'react-dom',
+    //     'redux',
+    //     'redux-thunk',
+    //     'react-redux',
+    //     'react-router',
+    //     'react-router-redux',
+    //     'koot'
+    // ],
     devServer: {
         proxy: {
             // '/proxy-1': {

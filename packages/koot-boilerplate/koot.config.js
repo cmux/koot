@@ -133,17 +133,6 @@ module.exports = {
      * 开发环境
      *************************************************************************/
 
-    devPort: 3088,
-    devDll: [
-        'react',
-        'react-dom',
-        'redux',
-        'react-redux',
-        'react-router',
-        'react-router-redux',
-        'koot',
-        'axios',
-        'classnames'
-    ]
+    devPort: 3088
     // 更多选项请查阅文档...
 };

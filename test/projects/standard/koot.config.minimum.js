@@ -1,16 +1,15 @@
 /**
  * @module kootConfig
- * 
+ *
  * Koot.js 项目配置
- * 
+ *
  * 配置文档请查阅: [https://koot.js.org/#/config]
  */
 
-const fs = require('fs-extra')
-const path = require('path')
+const fs = require('fs-extra');
+const path = require('path');
 
 module.exports = {
-
     /**************************************************************************
      * 项目信息
      *************************************************************************/
@@ -22,7 +21,7 @@ module.exports = {
     i18n: [
         ['zh', './src/locales/zh.json'],
         ['zh-tw', './src/locales/zh-tw.json'],
-        ['en', './src/locales/en.json'],
+        ['en', './src/locales/en.json']
     ],
     aliases: {
         '@src': path.resolve('./src'),
@@ -33,29 +32,29 @@ module.exports = {
         '@store': path.resolve('./src/store'),
         '@views': path.resolve('./src/views'),
         '@server': path.resolve('./server'),
-        "~base.less": path.resolve('./src/constants/less/base.less'),
-        "~Assets": path.resolve('./src/assets'),
-        "~/": path.resolve('./src')
+        '~base.less': path.resolve('./src/constants/less/base.less'),
+        '~Assets': path.resolve('./src/assets'),
+        '~/': path.resolve('./src')
     },
     defines: {
-        __QA__: JSON.stringify(false),
+        __QA__: JSON.stringify(false)
     },
     staticCopyFrom: path.resolve(__dirname, './public'),
     serverBefore: './server/lifecycle/before',
     webpackConfig: async () => {
-        const ENV = process.env.WEBPACK_BUILD_ENV
-        if (ENV === 'dev') return await require('./config/webpack/dev')
-        if (ENV === 'prod') return await require('./config/webpack/prod')
-        return {}
+        const ENV = process.env.WEBPACK_BUILD_ENV;
+        if (ENV === 'dev') return await require('./config/webpack/dev');
+        if (ENV === 'prod') return await require('./config/webpack/prod');
+        return {};
     },
     webpackBefore: async (/* kootConfig */) => {
-        console.log('\n\n💢 webpackBefore')
+        console.log('\n\n💢 webpackBefore');
         if (process.env.WEBPACK_BUILD_STAGE === 'client') {
-            const dist = process.env.KOOT_DIST_DIR
-            await fs.remove(path.resolve(dist, 'public'))
-            await fs.remove(path.resolve(dist, 'server'))
+            const dist = process.env.KOOT_DIST_DIR;
+            await fs.remove(path.resolve(dist, 'public'));
+            await fs.remove(path.resolve(dist, 'server'));
         }
-        return
+        return;
     },
     moduleCssFilenameTest: /^((?!\.g\.).)*/,
     internalLoaderOptions: {
@@ -67,35 +66,15 @@ module.exports = {
         }
     },
 
-
-
-
-
-
-
-
-
-
     /**************************************************************************
      * 开发模式
      *************************************************************************/
 
     devPort: 3080,
-    devDll: [
-        'react',
-        'react-dom',
-        'redux',
-        'redux-thunk',
-        'react-redux',
-        'react-router',
-        'react-router-redux',
-        'koot',
-    ],
     devHmr: {
         multiStep: false
     },
     devServer: {
         quiet: true
-    },
-
-}
+    }
+};
