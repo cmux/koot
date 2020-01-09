@@ -2,7 +2,7 @@ const path = require('path');
 const getCwd = require('../utils/get-cwd');
 
 module.exports = {
-    dist: path.resolve(getCwd(), './dist'),
+    dist: path.resolve(getCwd(), 'dist'),
     distClientAssetsDirName: 'includes',
     config: {},
     aliases: {},

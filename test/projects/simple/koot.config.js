@@ -32,9 +32,9 @@ module.exports = {
         return {};
     },
 
-    webpackBefore: async (kootConfigWithExtra = {}) => {
-        console.log(kootConfigWithExtra);
-    },
+    // webpackBefore: async (kootConfigWithExtra = {}) => {
+    //     console.log(kootConfigWithExtra);
+    // },
     // webpackBefore: async (kootConfigWithExtra = {}) => {
     //     const {
     //         __WEBPACK_OUTPUT_PATH,

@@ -7,81 +7,9 @@ const {
     filenameDll,
     filenameDllManifest
 } = require('koot/defaults/before-build');
+const defaultModules = require('koot/defaults/dev-dll-modules');
 const getDirDevDll = require('koot/libs/get-dir-dev-dll');
 const getCwd = require('koot/utils/get-cwd');
-
-// ============================================================================
-
-const defaultModules = [
-    // Koot
-    'koot',
-
-    // React
-    'react',
-    'react-dom',
-    'redux',
-    'react-redux',
-    'react-router',
-    'react-router-redux',
-    'prop-types',
-
-    // Ant-Design related
-    'antd',
-    '@ant-design/icons',
-    'moment',
-    'rc-align',
-    'rc-animate',
-    'rc-calendar',
-    'rc-checkbox',
-    'rc-form',
-    'rc-menu',
-    'rc-notification',
-    'rc-pagination',
-    'rc-progress',
-    'rc-resize-observer',
-    'rc-select',
-    'rc-tabs',
-    'rc-tooltip',
-    'rc-trigger',
-    'rc-upload',
-    // 'rc-util'
-
-    // Common Libraries
-    'add-dom-event-listener',
-    'async-validator',
-    'axios',
-    'classnames',
-    'core-js',
-    'create-react-class',
-    'css-animation',
-    'date-fns',
-    'dom-align',
-    'dom-scroll-into-view',
-    'fbjs',
-    'gud',
-    'hoist-non-react-statics',
-    'is-mobile',
-    'lodash',
-    'memoize-one',
-    'merge-anything',
-    'mini-store',
-    'object-assign',
-    'omit.js',
-    'performance-now',
-    'process',
-    'query-string',
-    'raf',
-    'react-is',
-    'react-lifecycles-compat',
-    'resize-observer-polyfill',
-    'scheduler',
-    'strict-uri-encode',
-    'styled-components',
-    'stylis',
-    'stylis-rule-sheet',
-    'tinycolor2',
-    'warning'
-];
 
 // ============================================================================
 
