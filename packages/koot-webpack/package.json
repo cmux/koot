@@ -1,6 +1,6 @@
 {
     "name": "koot-webpack",
-    "version": "0.12.0-beta.6",
+    "version": "0.12.0-beta.7",
     "description": "Creates Webpack configuration for Koot.js app.",
     "sideEffects": false,
     "scripts": {},
@@ -67,7 +67,7 @@
         "node-sass": "^4.13.0"
     },
     "devDependencies": {
-        "koot": "^0.12.0-beta.6"
+        "koot": "^0.12.0-beta.7"
     },
     "gitHead": "2c40d0d15861c83c7fff0db2557df6890abd084c"
 }
