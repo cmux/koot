@@ -249,26 +249,32 @@ module.exports = {
 };
 ```
 
-### pwa
+### serviceWorker
 
 -   类型: `boolean` 或 `Object`
 -   默认值: `true`
 
 自动生成 `service-worker` 脚本文件的设置。
 
-关于自动生成的 `service-worker` 脚本文件的详情，请查阅 [PWA](/pwa)。
+关于详细配置和自动生成的 `service-worker` 脚本文件的详情，请查阅 [Service Worker & PWA](/pwa)。
 
 ```javascript
 module.exports = {
-    // 自动生成 `service-worker` 脚本文件，并自动注册 (默认值)
-    pwa: true,
+    /**
+     * **默认配置**
+     * - 自动生成 Service-Worker 文件
+     * - 预先缓存所有 Webpack 入口
+     * - 客户端自动安装
+     */
+    serviceWorker: true,
 
-    // 不启用默认的 PWA 相关机制和功能
-    pwa: false,
+    // 禁用自动生成 Service-Worker 文件，禁用自动安装
+    serviceWorker: false,
 
-    // 详细设置
-    // TODO: 详细配置规则仍在调整中，暂不提供文档
-    pwa: {}
+    // 详细配置。配置项及其说明详见下表
+    serviceWorker: {
+        [option]: 'value'
+    }
 };
 ```
 
@@ -771,6 +777,7 @@ Webpack 打包配置。如果为 `Function`，需要返回 Webpack 打包配置�
 -   `module.rules` / Loaders
     -   _Koot.js_ 会自动添加 _JavaScript_、_TypeScript_、_CSS_、_LESS_、_SASS_ 相关的 Loader。为了避免冲突，请勿自行添加相关 Loader。
         -   内置的 Loader 可以通过 _Koot.js_ 配置项 `internalLoaderOptions` 进行设置。
+-   默认包含一套代码拆分优化规则，如无特殊需要，无需自行对 `optimization` 进行设置。
 
 ```javascript
 module.exports = {
@@ -1018,6 +1025,7 @@ module.exports = {
         'react-redux',
         'react-router',
         'react-router-redux'
+        // 以及其他常见的第三方库/包
     ]
 };
 ```
