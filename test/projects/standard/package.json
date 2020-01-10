@@ -65,11 +65,11 @@
     "private": true,
     "sideEffects": false,
     "koot": {
-        "version": "0.12.0-beta.6"
+        "version": "0.12.0-beta.7"
     },
     "devDependencies": {
         "@types/lodash": "^4.14.149",
-        "@types/node": "^13.1.4",
+        "@types/node": "^13.1.6",
         "@types/react": "^16.9.17",
         "@types/react-dom": "^16.9.4",
         "@types/react-redux": "^7.1.5",
@@ -143,7 +143,7 @@
         "@hot-loader/react-dom": "^16.11.0",
         "@types/webpack": "^4.41.2",
         "babel-loader": "^8.0.6",
-        "compression-webpack-plugin": "^3.0.1",
+        "compression-webpack-plugin": "^3.1.0",
         "copy-webpack-plugin": "^5.1.1",
         "css-loader": "^3.4.1",
         "extract-hoc": "^0.0.5",

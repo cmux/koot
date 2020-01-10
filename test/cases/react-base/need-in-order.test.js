@@ -8,7 +8,7 @@
  */
 
 // jest configuration
-jest.setTimeout(5 * 60 * 1 * 1000);
+jest.setTimeout(10 * 60 * 1 * 1000);
 
 //
 
