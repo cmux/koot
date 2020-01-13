@@ -193,7 +193,7 @@ const run = async () => {
     // 清理遗留的临时文件
     await removeTempBuild(dist);
 
-    // 如果有临时项目配置文件，更改环境变量
+    // 如果有临时项目配置��件，更改环境变量
     if (fileProjectConfigTempFull)
         process.env.KOOT_PROJECT_CONFIG_FULL_PATHNAME = fileProjectConfigTempFull;
     if (fileProjectConfigTempPortionServer)
