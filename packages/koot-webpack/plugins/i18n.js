@@ -1,9 +1,31 @@
 const fs = require('fs-extra');
 const path = require('path');
-const ParserHelpers = require('webpack/lib/ParserHelpers');
+// const {
+//     toConstantDependency
+// } = require('webpack/lib/javascript/JavascriptParserHelpers');
+const {
+    addParsedVariableToModule,
+    toConstantDependency
+} = require('webpack/lib/ParserHelpers');
 const ConstDependency = require('webpack/lib/dependencies/ConstDependency');
 const NullFactory = require('webpack/lib/NullFactory');
 const getCwd = require('koot/utils/get-cwd');
+
+// const addParsedVariableToModule = (parser, name, expression) => {
+//     if (!parser.state.current.addVariable) return false;
+//     const deps = [];
+//     parser.parse(expression, {
+//         current: {
+//             addDependency: dep => {
+//                 dep.userRequest = name;
+//                 deps.push(dep);
+//             }
+//         },
+//         module: parser.state.module
+//     });
+//     parser.state.current.addVariable(name, expression, deps);
+//     return true;
+// };
 
 class I18nPlugin {
     constructor({
@@ -31,7 +53,7 @@ class I18nPlugin {
 
         if (stage === 'client') {
             const loop = (obj, prefix) => {
-                for (let _key in obj) {
+                for (const _key in obj) {
                     const value = obj[_key];
                     const key = prefix ? `${prefix}.${_key}` : _key;
                     definitions[key] = value;
@@ -46,6 +68,8 @@ class I18nPlugin {
         compiler.hooks.compilation.tap(
             'I18nPlugin',
             (compilation, { normalModuleFactory }) => {
+                const localeId = this.localeId;
+
                 compilation.dependencyFactories.set(
                     ConstDependency,
                     new NullFactory()
@@ -60,7 +84,7 @@ class I18nPlugin {
 
                     parser.hooks.call
                         .for(functionName)
-                        .tap('I18nPlugin', function(expr) {
+                        .tap('I18nPlugin', function(node) {
                             const request = [].concat([
                                 'koot/i18n/translate',
                                 'default'
@@ -75,17 +99,17 @@ class I18nPlugin {
                                     .map(r => `[${JSON.stringify(r)}]`)
                                     .join('');
                             }
-                            ParserHelpers.addParsedVariableToModule(
+                            addParsedVariableToModule(
                                 parser,
                                 functionName,
                                 expression
                             );
 
                             if (
-                                Array.isArray(expr.arguments) &&
-                                expr.arguments[0].type === 'Literal'
+                                Array.isArray(node.arguments) &&
+                                node.arguments[0].type === 'Literal'
                             ) {
-                                const arg = expr.arguments[0];
+                                const arg = node.arguments[0];
                                 const key = arg.value;
                                 const code =
                                     stage === 'client'
@@ -96,12 +120,23 @@ class I18nPlugin {
                                                   : definitions[key]
                                           )
                                         : JSON.stringify(key); //.replace(/\./g, '","')
-                                // console.log(key, code)
+                                if (
+                                    stage === 'client' &&
+                                    typeof localeId === 'string' &&
+                                    !!localeId &&
+                                    node.arguments.length === 1
+                                ) {
+                                    return toConstantDependency(
+                                        parser,
+                                        code
+                                    )(node);
+                                }
                                 const dep = new ConstDependency(
                                     code,
                                     arg.range
                                 );
                                 dep.loc = arg.loc;
+                                // console.log({ key, code, dep, node });
                                 return parser.state.current.addDependency(dep);
                             }
                         });

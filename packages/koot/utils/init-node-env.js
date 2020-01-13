@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs-extra');
 
-const defaultsPWA = require('../defaults/pwa');
+const defaultsServiceWorker = require('../defaults/service-worker');
 
 /**
  * 初始化 node.js 环境变量
@@ -86,12 +86,15 @@ module.exports = () => {
         // KOOT_DIST_DIR: '',
 
         // PWA Service-Worker 脚本是否自动注册
-        KOOT_PWA_AUTO_REGISTER: JSON.stringify(defaultsPWA.auto),
+        KOOT_PWA_AUTO_REGISTER: JSON.stringify(defaultsServiceWorker.auto),
         // PWA Service-Worker 访问路径
-        KOOT_PWA_PATHNAME: JSON.stringify(defaultsPWA.pathname),
+        KOOT_PWA_PATHNAME: JSON.stringify(`/${defaultsServiceWorker.filename}`),
 
         // 当前是否是测试模式
         KOOT_TEST_MODE: JSON.stringify(false),
+
+        // 当前是否是内部开发模式
+        KOOT_DEVELOPMENT_MODE: JSON.stringify(false),
 
         // 开发环境启动时间
         // KOOT_DEV_START_TIME: Date.now(),

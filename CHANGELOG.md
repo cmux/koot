@@ -4,10 +4,68 @@
 
 **koot**
 
+-   **重大改动**
+    -   _Node.js_ 最低版本要求提升到 `8.12.0`
+    -   SSR & 客户端渲染 & SPA 模板生成
+        -   组件 CSS 的 `<style>` 标签上不再有 `id` 属性，以避免和元素冲突
+            -   如果项目中有用到根据 `id` 选择 `<style>` 标签的场景，可改为选择标签属性 `[data-koot-module]`
+        -   特殊 JS 入口 _CLIENT_RUN_FIRST_ 如果文件尺寸大于 10KB，会改为引用请求的方式加载
+    -   默认的 _Service Worker_ 文件现在使用 _Workbox_ 生成
+        -   如果原有项目中有使用自定的 _Service Worker_ 模板，升级后需要更新该模板。详情请参见文档 [Service Worker](https://koot.js.org/#/pwa)
+    -   现在会忽略 _Babel_ 插件 `@babel/plugin-transform-regenerator`
+    -   现在默认不会安装以下依赖包，如有使用需要，请在项目中自行安装
+        -   `file-loader`
+        -   `html-webpack-plugin`
+        -   `json-loader`
+        -   `url-loader`
+    -   更新依赖包 **major** 版本号
+        -   `chalk` -> _^3.0.0_
+        -   `ejs` -> _^3.0.1_
+        -   `ora` -> _^4.0.3_
 -   **新特性**
-    -   **新工具函数** `koot/utils/client-get-styles` - 获取当前全局 CSS 和所有组件 CSS。具体用法请参见文档 [全局与工具函数/工具函数/客户端](https://koot.js.org/#/utilities?id=客户端) ([#185](https://github.com/cmux/koot/issues/185))
+    -   现在默认支持在浏览器环境中使用 _async_ / _await_ 开发
+    -   客户端打包现在会默认提供 `optimization` 配置，进行代码拆分
+        -   已有项目如无特殊需求，可将 `optimization` 配置移除
+    -   现在开发环境下会默认启用 _Service Worker_
+    -   **新配置项** `distClientAssetsDirName` - 设定客户端打包结果中静态资源存放路径的目录名。详情请参见文档 [配置/distClientAssetsDirName](https://koot.js.org/#/config?id=distClientAssetsDirName) ([#181](https://github.com/cmux/koot/issues/181))
+    -   **新全局函数** `getCtx` - 获取服务器的 _Koa ctx_ 对象。具体用法请参见文档 [全局与工具函数/全局函数](https://koot.js.org/#/utilities?id=全局函数) ([#196](https://github.com/cmux/koot/issues/196))
+    -   **新工具函数** `koot/utils/client-get-styles` - 获取当前全局 CSS 和所有组件 CSS。具体用法请参见文档 [全局与工具函数/工具函数/客户端](https://koot.js.org/#/utilities?id=仅客户端) ([#185](https://github.com/cmux/koot/issues/185))
+    -   **新工具函数** `koot/utils/webpack-optimization-prod` - 生成 Webpack `optimization` 配置，用于拆分代码。具体用法请参见文档 [全局与工具函数/工具函数/打包](https://koot.js.org/#/utilities?id=仅打包)
 -   优化
-    -   组件 CSS 的 `<style>` 标签上不再有 `id` 属性，以避免和元素冲突
+    -   SSR & 客户端渲染 & SPA 模板生成
+        -   所有注入/插入的 `<script>` 标签现在均会新增 `[data-koot-entry]` 属性
+        -   特殊 JS 入口 `_CLIENT_RUN_FIRST_` 现默认引入 `regenerator-runtime/runtime`
+    -   更新 TS 定义 ([#191](https://github.com/cmux/koot/issues/191))
+    -   多语言 / i18n
+        -   优化语言包匹配逻辑 ([#201](https://github.com/cmux/koot/issues/201)) ([#203](https://github.com/cmux/koot/issues/203))
+        -   如果翻译函数 (`__()`) 获得了确定的结果，函数会被自动转换成字符串 ([#187](https://github.com/cmux/koot/issues/187))
+    -   服务器
+        -   优化服务器代码的文件尺寸 ([#172](https://github.com/cmux/koot/issues/172), [#186](https://github.com/cmux/koot/issues/186))
+        -   如果 URL 中开头的斜线 `/` 过多，现在会自动跳转到正确的 URL ([#157](https://github.com/cmux/koot/issues/157))
+    -   `node-sass` 现在改为 `optionalDependencies`，如果安装失败，不会影响 _Koot.js_ 的安装
+    -   组件 CSS 文件现在会按照 _ES Module_ 格式输出
+        -   现在同时支持 _ES Module_ 和 _CommonJS_ 引用方式
+    -   优化打包和进入开发环境时的错误日志显示
+    -   使用 `import()` 时，如果 `webpackChunkName` 注释选项中包含特殊字符，现在会自动转换为文件名安全的字符 ([#190](https://github.com/cmux/koot/issues/190))
+    -   扩充配置 `devDll` ([#202](https://github.com/cmux/koot/issues/202))
+-   错误修正
+    -   客户端生命周期 `before()` 和 `after()` 现在会传入正确的参数 ([#198](https://github.com/cmux/koot/issues/198))
+
+**koot-boilerplate**
+
+-   _Node.js_ 最低版本要求提升到 `10.13.0`
+-   _Webpack_ 配置
+    -   图片资源改用 `url-loader` 处理
+        -   大于 **2KB** 的文件会继续使用 `file-loader` 处理
+    -   大于 **5KB** 的 _SVG_ 的文件会改用 `file-loader` 处理
+    -   优化生产环境的代码分割规则
+-   新命令 `yarn up` - 使用 _Yarn_ 检查本地依赖版本并选择更新
+    -   该命令要求使用 _Yarn_ 进行本地包管理
+
+**koot-cli**
+
+-   错误修正
+    -   新建项目时的“覆盖”模式会删除原有文件的问题 ([#180](https://github.com/cmux/koot/issues/180))
 
 ## [0.11.15] - 2019-10-15
 

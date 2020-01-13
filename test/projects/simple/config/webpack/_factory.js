@@ -23,16 +23,18 @@ module.exports = async () => {
             rules: [
                 {
                     test: /\.(ico|gif|jpg|jpeg|png|webp)$/,
-                    // loader: 'file-loader',
-                    // options: {
-                    //     context: 'static',
-                    //     name: 'assets/[hash:32].[ext]',
-                    //     emitFile: Boolean(
-                    //         process.env.WEBPACK_BUILD_STAGE === 'client'
-                    //     )
-                    // }
-                    loader:
-                        'file-loader?context=static&name=assets/[hash:32].[ext]&aaa=bbb'
+                    loader: 'file-loader',
+                    options: {
+                        context: 'static',
+                        name: 'assets/[hash:32].[ext]',
+                        aaa: 'bbb'
+                        // emitFile: Boolean(
+                        //     process.env.WEBPACK_BUILD_STAGE === 'client'
+                        // ),
+                        // esModule: false
+                    }
+                    // loader:
+                    //     'file-loader?context=static&name=assets/[hash:32].[ext]&aaa=bbb'
                 },
                 {
                     test: /\.svg$/,
@@ -40,6 +42,7 @@ module.exports = async () => {
                     exclude: /node_modules/,
                     options: {
                         noquotes: true
+                        // esModule: false
                     }
                 }
             ]
@@ -47,6 +50,12 @@ module.exports = async () => {
 
         plugins: [
             undefined // Koot.js: 处理 webpack 配置时会自动过滤掉 null、undefined 等无意义的项
-        ]
+        ],
+
+        resolve: {
+            alias: {
+                __AAA__: 'aaa'
+            }
+        }
     };
 };

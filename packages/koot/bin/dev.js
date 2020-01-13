@@ -67,6 +67,7 @@ program
     .option('--no-open', "Don't open browser automatically")
     .option('--no-dll', "Don't use Webpack's DLL plugin")
     .option('--koot-test', 'Koot test mode')
+    .option('--koot-development', 'Koot development mode')
     .parse(process.argv);
 
 /**
@@ -104,7 +105,8 @@ const run = async () => {
         open = true,
         port,
         dll = true,
-        kootTest = false
+        kootTest = false,
+        kootDevelopment = false
     } = program;
 
     initNodeEnv();
@@ -130,6 +132,7 @@ const run = async () => {
         (typeof config === 'string' ? ` --config ${config}` : '') +
         (typeof type === 'string' ? ` --type ${type}` : '') +
         (kootTest ? ` --koot-test` : '') +
+        (kootDevelopment ? ` --koot-development` : '') +
         ' --koot-dev';
 
     // ========================================================================
@@ -354,22 +357,43 @@ const run = async () => {
     if (dll && process.env.WEBPACK_BUILD_STAGE !== 'server') {
         const msg = getLogMsg(false, 'dev', __('dev.build_dll'));
         const waiting = spinner(msg + '...');
+        let error;
+        let result;
 
         // DLL 打包
-        if (stage) {
-            process.env.WEBPACK_BUILD_STAGE = stage;
-            await kootWebpackBuildVendorDll(kootConfig);
-        } else {
-            const stageCurrent = process.env.WEBPACK_BUILD_STAGE;
+        try {
+            if (stage) {
+                process.env.WEBPACK_BUILD_STAGE = stage;
+                result = await kootWebpackBuildVendorDll(kootConfig);
+            } else {
+                const stageCurrent = process.env.WEBPACK_BUILD_STAGE;
 
-            process.env.WEBPACK_BUILD_STAGE = 'client';
-            await kootWebpackBuildVendorDll(kootConfig);
-            await sleep(500);
-            process.env.WEBPACK_BUILD_STAGE = 'server';
-            await kootWebpackBuildVendorDll(kootConfig);
+                process.env.WEBPACK_BUILD_STAGE = 'client';
+                result = await kootWebpackBuildVendorDll(kootConfig);
+                await sleep(500);
+                process.env.WEBPACK_BUILD_STAGE = 'server';
+                result = await kootWebpackBuildVendorDll(kootConfig);
 
-            process.env.WEBPACK_BUILD_STAGE = stageCurrent;
+                process.env.WEBPACK_BUILD_STAGE = stageCurrent;
+            }
+        } catch (e) {
+            waiting.stop();
+            spinner(msg).fail();
+            if (
+                result &&
+                Array.isArray(result.errors) &&
+                result.errors.length
+            ) {
+                error = result.errors;
+                result.errors.forEach(e => console.error(e));
+            } else {
+                error = e;
+                console.error(e);
+            }
+            process.exit();
         }
+
+        if (error) return;
 
         await sleep(500);
         // console.log('result', result)

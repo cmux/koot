@@ -2,6 +2,9 @@
 // import createMemoryHistory from 'history/lib/createMemoryHistory'
 // import { syncHistoryWithStore } from 'react-router-redux'
 
+import { serviceWorker as devRequestServiceWorker } from '../../../../defaults/dev-request-uri';
+import { uriServiceWorker } from '../../../../React/inject/_cache-keys';
+
 import getChunkmap from '../../../../utils/get-chunkmap';
 import getSWPathname from '../../../../utils/get-sw-pathname';
 
@@ -72,17 +75,21 @@ const middlewareIsomorphic = (options = {}) => {
             const thisLocaleId = l.substr(0, 1) === '.' ? l.substr(1) : l;
             entrypoints.set(thisLocaleId, chunkmap[l]['.entrypoints']);
             filemap.set(thisLocaleId, chunkmap[l]['.files']);
-            templateInjectCache.set(thisLocaleId, {
-                pathnameSW: getSWPathname(chunkmap[l])
-            });
+            const cache = {};
+            if (!__DEV__) {
+                extendCacheObject(cache, chunkmap, l);
+            }
+            templateInjectCache.set(thisLocaleId, cache);
             // styleMap.set(thisLocaleId, {})
         }
     } else {
         entrypoints.set('', chunkmap['.entrypoints']);
         filemap.set('', chunkmap['.files']);
-        templateInjectCache.set('', {
-            pathnameSW: getSWPathname(chunkmap)
-        });
+        const cache = {};
+        if (!__DEV__) {
+            extendCacheObject(cache, chunkmap);
+        }
+        templateInjectCache.set('', cache);
         // styleMap.set('', {})
     }
 
@@ -136,6 +143,14 @@ const middlewareIsomorphic = (options = {}) => {
             /** @type {Object} 本次请求的 (当前语言的) CSS 对照表 */
             const styleMap = {};
             // const thisStyleMap = styleMap.get(i18nType === 'default' ? LocaleId : '')
+
+            if (__DEV__) {
+                extendCacheObject(
+                    thisTemplateInjectCache,
+                    chunkmap,
+                    i18nType === 'default' ? LocaleId : undefined
+                );
+            }
 
             // 生成/清理 Store
             // console.log('\x1b[36m⚑\x1b[0m' + ' Store created')
@@ -219,3 +234,16 @@ const middlewareIsomorphic = (options = {}) => {
 };
 
 export default middlewareIsomorphic;
+
+// ============================================================================
+
+const extendCacheObject = (cache, chunkmap, localeId) => {
+    const serviceWorker = getSWPathname(
+        localeId ? chunkmap[localeId] : chunkmap
+    );
+    if (serviceWorker) {
+        cache[uriServiceWorker] = __DEV__
+            ? devRequestServiceWorker
+            : serviceWorker;
+    }
+};

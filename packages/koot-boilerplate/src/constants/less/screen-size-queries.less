@@ -1,0 +1,42 @@
+@screen-phone-small-max: 460px;
+@screen-phone-max: 759px;
+@screen-tablet-portrait-start-from: (@screen-phone-max + 1);
+@screen-tablet-portrait-max: 800px;
+@screen-tablet-landscape-start-from: (@screen-tablet-portrait-max + 1);
+@screen-tablet-landscape-max: 1030px;
+
+@media-query-screen-phone-small: ~'only screen and (max-width: @{screen-phone-small-max})';
+@media-query-screen-phone: ~'only screen and (max-width: @{screen-phone-max})';
+@media-query-screen-phone-and-tablet: ~'only screen and (max-width: @{screen-tablet-landscape-max})';
+@media-query-screen-tablet-only: ~'only screen and (min-width: @{screen-tablet-portrait-start-from}) and (max-width: @{screen-tablet-landscape-max})';
+
+.screen-phone-small( @rules ) {
+    @media @media-query-screen-phone-small {
+        & {
+            @rules();
+        }
+    }
+}
+.screen-phone( @rules ) {
+    @media @media-query-screen-phone {
+        & {
+            @rules();
+        }
+    }
+}
+
+.screen-phone-and-tablet( @rules ) {
+    @media @media-query-screen-phone-and-tablet {
+        & {
+            @rules();
+        }
+    }
+}
+
+.screen-tablet-only( @rules ) {
+    @media @media-query-screen-tablet-only {
+        & {
+            @rules();
+        }
+    }
+}

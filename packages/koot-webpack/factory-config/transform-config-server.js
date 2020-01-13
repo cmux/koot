@@ -7,7 +7,11 @@ const DefaultWebpackConfig = require('webpack-config').default;
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const KootI18nPlugin = require('../plugins/i18n');
 const DevModePlugin = require('../plugins/dev-mode');
-const { keyConfigBuildDll } = require('koot/defaults/before-build');
+const {
+    keyConfigBuildDll,
+    keyConfigClientAssetsPublicPath,
+    keyConfigWebpackSPAServer
+} = require('koot/defaults/before-build');
 
 const createTargetDefaultConfig = require('./create-target-default');
 const transformConfigExtendDefault = require('./transform-config-extend-default');
@@ -30,7 +34,7 @@ module.exports = async (kootBuildConfig = {}) => {
         webpackConfig: config = {},
         appType,
         dist,
-        defaultPublicPathname,
+        [keyConfigClientAssetsPublicPath]: __clientAssetsPublicPath,
         i18n,
         staticCopyFrom: staticAssets,
         template,
@@ -63,7 +67,7 @@ module.exports = async (kootBuildConfig = {}) => {
     // 如果用户自己配置了服务端打包路径，则覆盖默认的
     if (dist) result.output.path = path.resolve(dist, './server');
     if (!result.output.publicPath)
-        result.output.publicPath = defaultPublicPathname;
+        result.output.publicPath = __clientAssetsPublicPath;
     if (!result.output.filename)
         result.output.filename = 'entry.[chunkhash].js';
     if (!result.output.chunkFilename)
@@ -113,7 +117,7 @@ module.exports = async (kootBuildConfig = {}) => {
     // entry / 入口
     const entryIndex = [
         // '@babel/register',
-        '@babel/polyfill',
+        // '@babel/polyfill',
         // 'core-js/stable',
         // path.resolve(__dirname, '../../../defaults/server-stage-0.js'),
         require('../libs/get-koot-file')(`${appType}/server`)
@@ -200,6 +204,7 @@ module.exports = async (kootBuildConfig = {}) => {
 
     if (isSPAProd) {
         if (dist) configsFull[0].output.path = path.resolve(dist, './.server');
+        configsFull[0][keyConfigWebpackSPAServer] = true;
         return await transformConfigLast(configsFull, kootBuildConfig);
     } else {
         Object.keys(otherEntries).forEach(entryName => {

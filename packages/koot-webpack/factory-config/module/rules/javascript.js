@@ -1,5 +1,9 @@
 // const getDirDevCache = require('koot/libs/get-dir-dev-cache')
 
+const findCacheDir = require('find-cache-dir');
+
+const cacheFolderName = 'koot-webpack-server';
+
 /**
  * Loader 规则 - Javascript
  * @param {Object} options
@@ -8,12 +12,16 @@
 module.exports = (kootBuildConfig = {}) => {
     const env = process.env.WEBPACK_BUILD_ENV;
     const stage = process.env.WEBPACK_BUILD_STAGE;
+    const stageServer = stage === 'server';
 
-    const { createDll = false } = kootBuildConfig;
+    const { createDll = false, routes } = kootBuildConfig;
 
     //
 
     const ruleUseBabelLoader = (options = {}) => {
+        options.__server = stageServer;
+        options.__routes = routes;
+
         if (typeof options.cacheDirectory === 'undefined')
             options.cacheDirectory = true;
 
@@ -22,10 +30,23 @@ module.exports = (kootBuildConfig = {}) => {
                 options.__createDll = true;
                 options.sourceMaps = false;
             } else {
-                // options.cacheDirectory = false
+                if (
+                    process.env.KOOT_DEVELOPMENT_MODE &&
+                    JSON.parse(process.env.KOOT_DEVELOPMENT_MODE)
+                )
+                    options.cacheDirectory = false;
             }
             options.compact = false;
             options.cacheCompression = false;
+        }
+
+        if (stageServer) {
+            options.cacheDirectory = findCacheDir({
+                name: cacheFolderName
+            });
+            options.cacheIdentifier = 'koot-webpack-server-bundling';
+            options.babelrc = false;
+            // options.cacheCompression = false;
         }
 
         return {
@@ -165,7 +186,7 @@ module.exports = (kootBuildConfig = {}) => {
             {
                 test: /\.(js|mjs|cjs|jsx)$/,
                 use: [
-                    ...ruleUseLoaders(),
+                    ...ruleUseLoaders({}),
                     require.resolve('../../../loaders/koot-dev-ssr.js')
                 ]
             },
@@ -184,11 +205,13 @@ module.exports = (kootBuildConfig = {}) => {
     return [
         {
             test: /\.(js|mjs|cjs|jsx)$/,
-            use: ruleUseBabelLoader()
+            use: ruleUseBabelLoader({})
         },
         {
             test: /\.(ts|tsx)$/,
-            use: ruleUseBabelLoader({ __typescript: true })
+            use: ruleUseBabelLoader({
+                __typescript: true
+            })
         }
     ];
 };

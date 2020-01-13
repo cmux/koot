@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const inquirer = require('inquirer');
 
 const runScript = require('../libs/run-script');
@@ -12,8 +13,8 @@ const run = async () => {
         reactBase: `./test/cases/react-base`,
         reactIsomorphic: `./test/cases/react-isomorphic`,
         reactSPA: `./test/cases/react-spa`,
-        analyze: {
-            all: './packages/koot-diagnose/__tests__/.+\\.test\\.[jt]sx?$'
+        cli: {
+            all: './packages/koot-cli/__tests__/.+\\.test\\.[jt]sx?$'
         }
     };
 
@@ -50,11 +51,7 @@ const run = async () => {
             new inquirer.Separator(),
             {
                 name: 'Package: koot-cli',
-                value: './test/cases/package/cli'
-            },
-            {
-                name: 'Package: koot-diagnose',
-                value: jestScript.analyze.all
+                value: jestScript.cli.all
             },
             new inquirer.Separator(),
             {
@@ -68,6 +65,11 @@ const run = async () => {
             {
                 name: 'Lib: koot-css-loader',
                 value: './test/cases/libs/koot-css-loader'
+            },
+            new inquirer.Separator(),
+            {
+                name: 'Functions: koot/i18n',
+                value: './test/cases/i18n'
             },
             new inquirer.Separator()
         ],
@@ -85,8 +87,8 @@ const run = async () => {
 
         const jestAll = [
             `jest "test/((?!need-in-order).)*\\.test\\.[jt]sx?$"`,
-            ...jestReactAll,
-            `jest ${jestScript.analyze.all}`
+            `jest ${jestScript.cli.all}`,
+            ...jestReactAll
         ];
 
         if (value === 'FULL')

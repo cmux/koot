@@ -15,7 +15,9 @@ const {
     keyConfigBuildDll,
     keyConfigOutputPathShouldBe,
     keyConfigWebpackSPATemplateInject,
-    chunkNameClientRunFirst
+    keyConfigClientAssetsPublicPath,
+    chunkNameClientRunFirst,
+    keyConfigClientServiceWorkerPathname
 } = require('koot/defaults/before-build');
 const { hmrOptions } = require('koot/defaults/webpack-dev-server');
 
@@ -27,6 +29,7 @@ const createTargetDefaultConfig = require('./create-target-default');
 const transformConfigExtendDefault = require('./transform-config-extend-default');
 const transformConfigLast = require('./transform-config-last');
 const transformOutputPublicpath = require('./transform-output-publicpath');
+const newPluginWorkbox = require('../libs/new-plugin-workbox');
 
 const getCwd = require('koot/utils/get-cwd');
 const getWDSport = require('koot/utils/get-webpack-dev-server-port');
@@ -36,6 +39,7 @@ const getFilenameSPATemplateInject = require('koot/libs/get-filename-spa-templat
 const validatePathname = require('koot/libs/validate-pathname');
 const isI18nEnabled = require('koot/i18n/is-enabled');
 const getModuleVersion = require('koot/utils/get-module-version');
+const webpackOptimizationProd = require('koot/utils/webpack-optimization-prod');
 
 /**
  * Webpack 配置处理 - 客户端配置
@@ -52,8 +56,8 @@ module.exports = async (kootConfigForThisBuild = {}) => {
         template,
         templateInject,
         bundleVersionsKeep,
-        defaultPublicDirName,
-        defaultPublicPathname,
+        distClientAssetsDirName,
+        [keyConfigClientAssetsPublicPath]: __clientAssetsPublicPath,
         staticCopyFrom: staticAssets,
         analyze = false,
         devHmr: webpackHmr = {},
@@ -100,7 +104,7 @@ module.exports = async (kootConfigForThisBuild = {}) => {
         /** @type {Boolean} 是否为多语言分包模式 */
         const isSeperateLocale = localeId && typeof localeFile === 'string';
 
-        /** @type {String} 打包结果基础目录 (最终的打包目录是该目录下的 defaultPublicDirName 目录) */
+        /** @type {String} 打包结果基础目录 (最终的打包目录是该目录下的 distClientAssetsDirName 目录) */
         const pathPublic = getDirDistPublic(dist, bundleVersionsKeep);
 
         /** @type {Object} 默认配置 */
@@ -172,12 +176,12 @@ module.exports = async (kootConfigForThisBuild = {}) => {
             if (!result.output.path) {
                 result.output.path = path.resolve(
                     pathPublic,
-                    defaultPublicDirName
+                    distClientAssetsDirName
                 );
-                result.output.publicPath = defaultPublicPathname;
+                result.output.publicPath = __clientAssetsPublicPath;
             }
             if (!result.output.publicPath) {
-                result.output.publicPath = defaultPublicPathname;
+                result.output.publicPath = __clientAssetsPublicPath;
             }
             result.output.publicPath = transformOutputPublicpath(
                 result.output.publicPath
@@ -205,7 +209,7 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                 // 标记打包目录（对应 prod 模式的结果）
                 result[keyConfigOutputPathShouldBe] = path.resolve(
                     pathPublic,
-                    defaultPublicDirName
+                    distClientAssetsDirName
                 );
                 result.output.pathinfo = false;
             }
@@ -251,9 +255,10 @@ module.exports = async (kootConfigForThisBuild = {}) => {
             }
 
             // 处理 optimization
+            if (typeof result.optimization !== 'object')
+                result.optimization =
+                    ENV === 'dev' ? {} : webpackOptimizationProd();
             if (ENV === 'dev') {
-                if (typeof result.optimization !== 'object')
-                    result.optimization = {};
                 Object.assign(result.optimization, {
                     removeAvailableModules: false,
                     removeEmptyChunks: false,
@@ -321,6 +326,15 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                     })
                 );
 
+                if (!analyze) {
+                    result.plugins.push(
+                        await newPluginWorkbox(
+                            kootConfigForThisBuild,
+                            isSeperateLocale ? localeId : undefined
+                        )
+                    );
+                }
+
                 if (TYPE === 'spa') {
                     result.plugins.push(
                         new SpaTemplatePlugin({
@@ -330,14 +344,22 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                             inject: path.resolve(
                                 getDirTemp(),
                                 getFilenameSPATemplateInject(localeId)
-                            )
+                            ),
+                            serviceWorkerPathname:
+                                kootConfigForThisBuild[
+                                    keyConfigClientServiceWorkerPathname
+                                ]
                         })
                     );
                 } else {
                     result.plugins.push(
                         await new GenerateChunkmapPlugin({
                             localeId: isSeperateLocale ? localeId : undefined,
-                            pathPublic
+                            pathPublic,
+                            serviceWorkerPathname:
+                                kootConfigForThisBuild[
+                                    keyConfigClientServiceWorkerPathname
+                                ]
                         })
                     );
                 }

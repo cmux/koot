@@ -5,7 +5,8 @@ const postcss = require('postcss');
 const Chunk = require('webpack/lib/Chunk');
 const {
     chunkNameExtractCss,
-    chunkNameExtractCssForImport
+    chunkNameExtractCssForImport,
+    thresholdStylesExtracted
 } = require('koot/defaults/before-build');
 const postcssTransformDeclUrls = require('../postcss/transform-decl-urls');
 
@@ -28,7 +29,7 @@ class CreateGeneralCssBundlePlugin {
             /** @type {Array} 已打包输出的 CSS 文件 */
             const cssFiles = [];
 
-            for (let chunkId in stats.compilation.chunks) {
+            for (const chunkId in stats.compilation.chunks) {
                 const chunk = stats.compilation.chunks[chunkId];
                 if (Array.isArray(chunk.files)) {
                     chunk.files
@@ -57,15 +58,24 @@ class CreateGeneralCssBundlePlugin {
                           .join('\n\n')
                     : '';
 
-            const filename = `extract.all.${md5(content)}.css`;
+            const size = content.length;
+            const filename = `extract.all.${md5(content)}${
+                size > thresholdStylesExtracted ? '.large' : '.small'
+            }.css`;
 
             // 添加 chunk
             const chunk = new Chunk(chunkNameExtractCss);
-            const id = compilation.chunks.length;
+            const id = Array.isArray(compilation.chunks)
+                ? compilation.chunks.length
+                : compilation.chunks.size;
             chunk.files = [filename];
             chunk.id = id;
             chunk.ids = [id];
-            compilation.chunks.push(chunk);
+            if (Array.isArray(compilation.chunks)) {
+                compilation.chunks.push(chunk);
+            } else {
+                compilation.chunks.add(chunk);
+            }
 
             // 写入 Webpack 文件流
             newCompilationFileDependency(compilation, filename, content);
@@ -74,7 +84,9 @@ class CreateGeneralCssBundlePlugin {
             if (process.env.WEBPACK_BUILD_TYPE === 'spa') {
                 const thisFilename = `extract.all.${md5(
                     content
-                )}.url-no-public-path.css`;
+                )}.url-no-public-path${
+                    size > thresholdStylesExtracted ? '.large' : '.small'
+                }.css`;
 
                 // 添加 chunk
                 const chunk = new Chunk(chunkNameExtractCssForImport);

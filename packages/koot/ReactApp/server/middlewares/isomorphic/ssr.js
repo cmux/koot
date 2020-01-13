@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+
 import __KOOT_GET_DIST_PATH__ from '../../../../utils/get-dist-path';
 
 const fs = require('fs-extra');
@@ -54,7 +56,7 @@ const ssr = async __KOOT_SSR__ =>
         // console.log('\n' + chalk.cyanBright('eval SSR'))
         // await eval(__KOOT_SSR_FILE_CONTENT__)
 
-        let Store, History, __KOOT_STORE__, __KOOT_HISTORY__;
+        let Store, History, __KOOT_STORE__, __KOOT_HISTORY__, __KOOT_CTX__;
         const {
             // Store: __KOOT_STORE__,
             // History: __KOOT_HISTORY__,
@@ -69,8 +71,12 @@ const ssr = async __KOOT_SSR__ =>
             History = value;
             __KOOT_HISTORY__ = value;
         };
+        const __KOOT_SSR_SET_CTX__ = value => {
+            __KOOT_CTX__ = value;
+        };
 
         try {
+            // eslint-disable-next-line no-eval
             eval(__KOOT_SSR_FILE_CONTENT__);
         } catch (err) {
             resolve({

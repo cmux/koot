@@ -1,0 +1,76 @@
+.is-hover( @rules ) {
+    html.is-hover &:hover {
+        @rules();
+    }
+}
+
+.is-hover( @rulesHover ; @rulesActive ) {
+    html.is-hover &:hover {
+        @rulesHover();
+    }
+    &:active,
+    html.is-hover &:hover:active {
+        @rulesActive();
+    }
+}
+
+.is-active( @rulesActive ) {
+    &:active,
+    html.is-hover &:hover:active {
+        @rulesActive();
+    }
+}
+
+.is-dragging-file( @rules ) {
+    html.is-dragging-over & {
+        @rules();
+    }
+}
+
+// ============================================================================
+
+.dark-theme( @rules ) {
+    @media-query-dark-theme: ~'(prefers-color-scheme: dark)';
+    @media @media-query-dark-theme {
+        & {
+            @rules();
+        }
+    }
+}
+
+.input-placeholder(@styles) {
+    &::-webkit-input-placeholder {
+        /* Chrome/Opera/Safari */
+        @styles();
+    }
+    &::-moz-placeholder {
+        /* Firefox 19+ */
+        @styles();
+    }
+    &:-ms-input-placeholder {
+        /* IE 10+ */
+        @styles();
+    }
+    &:-moz-placeholder {
+        /* Firefox 18- */
+        @styles();
+    }
+}
+
+.force-word-break() {
+    /* These are technically the same, but use both */
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+
+    -ms-word-break: break-all;
+    /* This is the dangerous one in WebKit, as it breaks things wherever */
+    word-break: break-all;
+    /* Instead use this non-standard one: */
+    word-break: break-word;
+
+    /* Adds a hyphen where the word breaks, if supported (No Blink) */
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+}

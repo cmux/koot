@@ -14,6 +14,7 @@ module.exports = {
         '__FILE_PROJECT_CONFIG_TEMP_PORTION_CLIENT__',
     keyFileProjectConfigTempPortionOtherClient:
         '__FILE_PROJECT_CONFIG_TEMP_PORTION_OTHER_CLIENT__',
+    keyKootBaseVersion: '__KOOT_BASE_VERSION__',
     dirConfigTemp: 'logs/tmp/config',
     filenameProjectConfigTempFull: 'full.*.js',
     filenameProjectConfigTempPortionServer: 'portion.server.*.js',
@@ -43,6 +44,9 @@ module.exports = {
     keyConfigQuiet: '__QUIET__',
     keyConfigOutputPathShouldBe: '__OUTPUT_PATH_SHOULD_BE__',
     keyConfigWebpackSPATemplateInject: '__SPA_TEMPLATE_INJECT__',
+    keyConfigWebpackSPAServer: '__SPA_SERVER__',
+    keyConfigClientAssetsPublicPath: '__CLIENT_ASSETS_PUBLIC_PATH__',
+    keyConfigClientServiceWorkerPathname: '__CLIENT_SERVICE_WORKER_PATHNAME__',
     WEBPACK_OUTPUT_PATH: '__WEBPACK_OUTPUT_PATH',
     CLIENT_ROOT_PATH: '__CLIENT_ROOT_PATH',
 
@@ -60,7 +64,22 @@ module.exports = {
     // [生产环境] 文件名
     filenameCurrentBundle: '.koot-current',
 
-    // CSS 相关
+    // 标签属性
     styleTagGlobalAttributeName: 'data-koot-global',
-    styleTagModuleAttributeName: 'data-koot-module'
+    styleTagModuleAttributeName: 'data-koot-module',
+    scriptTagEntryAttributeName: 'data-koot-entry',
+
+    // 模板中的一些判断阈值
+    /**
+     * @type {number} 全局 CSS 抽出总结果文件尺寸阈值
+     * - 如果超过这个值，会采用 <link> 引用的方式
+     * - 如果小于等于这个值，直接将文件内容写入 HTML
+     */
+    thresholdStylesExtracted: 50 * 1000,
+    /**
+     * @type {number} run-first 入口的文件尺寸阈值
+     * - 如果超过这个值，会采用 <script> 引用的方式
+     * - 如果小于等于这个值，直接将文件内容写入 HTML
+     */
+    thresholdScriptRunFirst: 10 * 1000
 };

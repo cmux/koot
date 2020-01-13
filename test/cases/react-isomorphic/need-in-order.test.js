@@ -34,12 +34,15 @@
  *     - 部分开启，同时混入无效设置
  * - 0.6版配置
  *     - 禁用
+ *
+ * **distClientAssetsDirName**
+ * - 默认
+ *     - 没有配置 (默认 `includes`)
+ * - 二号
+ *     - `"__assets__"`
  */
 
-// jest configuration
-jest.setTimeout(6 * 60 * 1 * 1000);
-
-//
+// Import modules =============================================================
 
 const fs = require('fs-extra');
 const path = require('path');
@@ -51,7 +54,7 @@ const chalk = require('chalk');
 const get = require('lodash/get');
 const cheerio = require('cheerio');
 
-//
+// Import local scripts =======================================================
 
 const {
     changeLocaleQueryKey,
@@ -67,24 +70,22 @@ const checkForChunkmap = require('../../libs/check-for-chunkmap');
 const filterState = require('../../../packages/koot/libs/filter-state');
 const testHtmlRenderedByKoot = require('../../general-tests/html/rendered-by-koot');
 const testFilesFromChunkmap = require('../../general-tests/bundle/check-files-from-chunkmap');
-
-//
+const getProjects = require('../../projects/get');
+const ensureUrlTrailingSlash = require('../../../packages/koot/utils/ensure-url-trailing-slash');
 
 const {
     injectScripts: puppeteerTestInjectScripts,
     requestHidden404: testRequestHidden404,
-    criticalAssetsShouldBeGzip: testAssetsGzip
+    criticalAssetsShouldBeGzip: testAssetsGzip,
+    clientLifecycles: testClientLifecycles
 } = require('../puppeteer-test');
 
-//
+// Constants ==================================================================
 
 global.kootTest = true;
 process.env.KOOT_TEST_MODE = JSON.stringify(true);
 
-//
-
-const projects = require('../../projects/get')();
-
+const projects = getProjects();
 const projectsToUse = projects.filter(
     project =>
         // Array.isArray(project.type) && project.type.includes('react-isomorphic')
@@ -96,9 +97,13 @@ const commandTestBuild = 'koot-buildtest';
 const fullTest = true;
 const headless = true;
 
-//
+// Jest configuration =========================================================
+
+jest.setTimeout(10 * 60 * 1 * 1000);
 
 let browser;
+let lastTime;
+
 beforeAll(() =>
     puppeteer
         .launch({
@@ -114,13 +119,9 @@ afterAll(() =>
         .then(() => (browser = undefined))
         .then(() => exec(`pm2 kill`))
 );
-
-//
-
-let lastTime;
 beforeEach(() => (lastTime = Date.now()));
 
-//
+// Wrapped test function ======================================================
 
 /**
  * 生产环境基准测试
@@ -137,7 +138,7 @@ const testProduction = (
     script,
     extraConing = {}
 ) => {
-    const testName = `[prod] 打包并运行生产模式 (${name})`;
+    const testName = `[prod] 打包并运行生产环境 (${name})`;
     return test(testName, async () => {
         await beforeTest(dir);
 
@@ -165,7 +166,7 @@ const testProduction = (
 
         expect(errors.length).toBe(0);
 
-        await testFilesFromChunkmap(dist);
+        await testFilesFromChunkmap(dist, false);
         await testCodeSplitting(dist);
         await doPuppeteerTest(port, dist, {
             kootConfig: config,
@@ -193,7 +194,7 @@ const testDevelopment = (
     script,
     extraConing = {}
 ) => {
-    const testName = `[dev] 启动开发模式并访问 (${name})`;
+    const testName = `[dev] 启动开发环境并访问 (${name})`;
     test(testName, async () => {
         await beforeTest(dir);
 
@@ -237,6 +238,50 @@ const testFull = (...args) => {
 };
 
 //
+
+/**
+ * 测试项目开始前
+ * @async
+ * @param {String} cwd
+ */
+const beforeTest = async cwd => {
+    // 重置
+    await exec(`pm2 kill`);
+    await removeTempProjectConfig(cwd);
+};
+
+/**
+ * 测试项目结束后
+ * @async
+ * @param {String} cwd
+ * @param {String} title
+ */
+const afterTest = async (cwd, title) => {
+    // await fs.remove(path.resolve(cwd, 'logs'));
+    await sleep(2 * 1000);
+    await exec(`pm2 kill`);
+    // 移除临时项目配置文件
+    await removeTempProjectConfig(cwd);
+
+    // eslint-disable-next-line no-console
+    console.log(
+        chalk.green('√ ') +
+            chalk.green(`${(Date.now() - lastTime) / 1000}s `) +
+            title
+    );
+};
+
+const emptyDist = async dir => {
+    if (!fs.existsSync(dir)) return;
+    const files = await fs.readdir(dir);
+    for (const filename of files) {
+        const file = path.resolve(dir, filename);
+        const lstat = fs.lstatSync(file);
+        if (!(filename === 'node_modules' && lstat.isDirectory())) {
+            await fs.remove(file);
+        }
+    }
+};
 
 /**
  * 测试代码分割
@@ -1099,6 +1144,8 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
             routing: { locationBeforeTransitions: L }
         } = await getSSRStateFromScriptTag(page);
 
+        await context.close();
+
         expect(
             i18nUseRouter
                 ? '/' +
@@ -1108,7 +1155,86 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
                           .join('/')
                 : L.pathname
         ).toBe(pathname);
+        // expect(L.pathname).toBe(pathname);
         expect(L.search).toBe(search);
+    }
+
+    // 测试: i18n / 多语言
+    {
+        await breath();
+
+        const toLocaleId = 'zh';
+        const gotoUrl = i18nUseRouter
+            ? `${origin}/${toLocaleId}`
+            : `${origin}?${changeLocaleQueryKey}=${toLocaleId}`;
+
+        const context = await browser.createIncognitoBrowserContext();
+        const page = await context.newPage();
+
+        const res = await page.goto(gotoUrl, {
+            waitUntil: 'networkidle0'
+        });
+
+        const HTML = await res.text();
+        const $ = cheerio.load(HTML);
+
+        {
+            const selector = `h1 ~ a[href="${
+                i18nUseRouter ? `/${toLocaleId}` : ''
+            }/"]`;
+            const result = '欢迎';
+            expect($(selector).text()).toBe(result);
+            expect(
+                await page.evaluate(
+                    selector => document.querySelector(selector).innerText,
+                    selector
+                )
+            ).toBe(result);
+        }
+
+        if (!isDev) {
+            const chunkmap = await fs.readJson(
+                path.resolve(dist, '.public-chunkmap.json')
+            );
+            const pathname = path.resolve(
+                dist,
+                chunkmap[`.${toLocaleId}`]['.files']['client.js']
+            );
+            const content = await fs.readFile(pathname, 'utf-8');
+            expect(
+                /__KOOT_TEST_LOCALE_TRANSLATE_FUNCTION_ONLY_RESULT__\|\|[^(]+?\(['"]\/test-img-zh\.png['"]/.test(
+                    content
+                )
+            ).toBe(true);
+        }
+
+        await context.close();
+    }
+
+    // 测试: 服务器端获取 koa ctx
+    {
+        const context = await browser.createIncognitoBrowserContext();
+        const page = await context.newPage();
+        const gotoUrl = i18nUseRouter
+            ? `${origin}/zh/test-server-ctx-redirect`
+            : `${origin}/test-server-ctx-redirect`;
+
+        await page.goto(gotoUrl, {
+            waitUntil: 'networkidle0'
+        });
+        const result = await page.evaluate(() => window.location.href);
+
+        await context.close();
+
+        if (i18nUseRouter) {
+            expect(ensureUrlTrailingSlash(origin + '/zh')).toBe(
+                ensureUrlTrailingSlash(result)
+            );
+        } else {
+            expect(ensureUrlTrailingSlash(origin)).toBe(
+                ensureUrlTrailingSlash(result)
+            );
+        }
     }
 
     // TODO: 测试: 所有 Webpack 结果资源的访问
@@ -1135,68 +1261,28 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
     await puppeteerTestInjectScripts(page);
     await testRequestHidden404(origin, browser);
     if (!isDev) await testAssetsGzip(origin, dist, browser);
+    await testClientLifecycles(origin, browser);
 
     // 测试: 没有失败的请求
-    if (failedResponse.length) {
+    const failedResponseFiltered = failedResponse.filter(
+        res => !/\/sockjs-node\//.test(res.url())
+    );
+    if (failedResponseFiltered.length) {
         console.error(
             'failedResponse',
-            failedResponse.map(res => ({
+            failedResponseFiltered.map(res => ({
                 status: res.status(),
                 url: res.url()
             }))
         );
     }
-    expect(failedResponse.length).toBe(0);
+    expect(failedResponseFiltered.length).toBe(0);
 
     // 结束测试
     await page.close();
     await context.close();
 
     return;
-};
-
-/**
- * 测试项目开始前
- * @async
- * @param {String} cwd
- */
-const beforeTest = async cwd => {
-    // 重置
-    await exec(`pm2 kill`);
-    await removeTempProjectConfig(cwd);
-};
-
-/**
- * 测试项目结束后
- * @async
- * @param {String} cwd
- * @param {String} title
- */
-const afterTest = async (cwd, title) => {
-    // await fs.remove(path.resolve(cwd, 'logs'));
-    await sleep(2 * 1000);
-    await exec(`pm2 kill`);
-    // 移除临时项目配置文件
-    await removeTempProjectConfig(cwd);
-
-    // eslint-disable-next-line no-console
-    console.log(
-        chalk.green('√ ') +
-            chalk.green(`${(Date.now() - lastTime) / 1000}s `) +
-            title
-    );
-};
-
-const emptyDist = async dir => {
-    if (!fs.existsSync(dir)) return;
-    const files = await fs.readdir(dir);
-    for (const filename of files) {
-        const file = path.resolve(dir, filename);
-        const lstat = fs.lstatSync(file);
-        if (!(filename === 'node_modules' && lstat.isDirectory())) {
-            await fs.remove(file);
-        }
-    }
 };
 
 //
@@ -1232,7 +1318,7 @@ describe('测试: React 同构项目', () => {
                 expect(typeof stderr).toBe('string');
                 expect(stderr).toBe('');
 
-                await testFilesFromChunkmap(dist);
+                await testFilesFromChunkmap(dist, false);
                 await testCodeSplitting(dist);
                 await afterTest(dir, '[prod] 使用 koot-build 命令进行打包');
             });

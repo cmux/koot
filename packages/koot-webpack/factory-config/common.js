@@ -24,7 +24,7 @@ const factory = async ({
     stage = process.env.WEBPACK_BUILD_STAGE,
     // spa = false,
 
-    aliases,
+    aliases = {},
     defines = {},
     css = {},
     [keyConfigBuildDll]: createDll = false,

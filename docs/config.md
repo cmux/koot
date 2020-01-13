@@ -224,7 +224,7 @@ module.exports = {
 
 多语言配置。
 
-关于多语言的使用、语言包规则等，请查阅 [多语言 (i18n)](/i18n)。
+关于详细配置、多语言的使用、语言包规则等内容，请查阅 [多语言 (i18n)](/i18n)。
 
 ```javascript
 module.exports = {
@@ -242,84 +242,39 @@ module.exports = {
         ['en', './src/locales/en.json']
     ],
 
-    /** 完整配置
-     * - 当前列出的均为默认值
-     * - 除 `locales` 外均为**可选项**
-     */
-    /**
-     * 详细配置
-     * - 当前列出的均为默认值
-     * - 除 `locales` 外均为**可选项**
-     * @typedef renderCache
-     * @type {Object}
-     * @property {string} [type="default"]
-     *           多语言打包模式
-     *           - **仅针对**: 生产环境
-     *
-     *           目前支持:
-     *           - `default` (默认值)
-     *             客户端按语种分别打包，语言包内容会直接打入到代码中，代码结果中不存在“语言包对象”
-     *             适合所有项目使用，推荐语言包较大的项目使用
-     *           - `store`
-     *             服务器输出 HTML 时，当前语种的语言包对象会写入 Redux store
-     *             适合语言包较小，或对文件/请求体积不敏感的 WebApp 项目使用
-     *             开发环境下会强制使用这一模式
-     * @property {string} [use="query"]
-     *           使用 URL 切换语种的方式
-     *
-     *           目前支持:
-     *           - `query` (默认值)
-     *             一般情况下，URL 中不会存在有关语种的字段。
-     *             切换语种时使用名为 hl 的 URL 参数，如：
-     *               `https://some.project.com/?hl=zh-cn`
-     *               `https://some.project.com/list/articles/?page=10&hl=ja-jp`
-     *           - `router`
-     *             规定路由的第一层为语种ID。
-     *             如果访问的 URL 的路由第一层不是项目设定的已知的语种 ID，则会自动跳转到最近一次访问的语种或默认语种对应的页面。
-     *               `https://some.project.com/` 自动跳转到 `https://some.project.com/zh-cn/`
-     *             URL 示例：
-     *               `https://some.project.com/zh-cn/`
-     *               `https://some.project.com/ja-jp/list/articles/?page=10`
-     * @property {string} [expr="__"]
-     *           JavaScript 代码中多语言翻译方法名
-     * @property {string} [domain]
-     *           Cookie 影响的域
-     * @property {string} [cookieKey="spLocaleId"]
-     *           语种ID存储于 Cookie 中的字段名
-     * @property {Array<LocaleConfig>} locales
-     *           语种ID和语言包。参见上文简易配置
-     */
+    // 详细配置。配置项及其说明详见多语言章节 (链接见上文)
     i18n: {
-        type: 'default',
-        use: 'query',
-        expr: '__',
-        domain: undefined,
-        cookieKey: 'spLocaleId',
-        locales: []
+        [option]: 'value'
     }
 };
 ```
 
-### pwa
+### serviceWorker
 
 -   类型: `boolean` 或 `Object`
 -   默认值: `true`
 
 自动生成 `service-worker` 脚本文件的设置。
 
-关于自动生成的 `service-worker` 脚本文件的详情，请查阅 [PWA](/pwa)。
+关于详细配置和自动生成的 `service-worker` 脚本文件的详情，请查阅 [Service Worker & PWA](/pwa)。
 
 ```javascript
 module.exports = {
-    // 自动生成 `service-worker` 脚本文件，并自动注册 (默认值)
-    pwa: true,
+    /**
+     * **默认配置**
+     * - 自动生成 Service-Worker 文件
+     * - 预先缓存所有 Webpack 入口
+     * - 客户端自动安装
+     */
+    serviceWorker: true,
 
-    // 不启用默认的 PWA 相关机制和功能
-    pwa: false,
+    // 禁用自动生成 Service-Worker 文件，禁用自动安装
+    serviceWorker: false,
 
-    // 详细设置
-    // TODO: 详细配置规则仍在调整中，暂不提供文档
-    pwa: {}
+    // 详细配置。配置项及其说明详见下表
+    serviceWorker: {
+        [option]: 'value'
+    }
 };
 ```
 
@@ -812,6 +767,18 @@ module.exports = {
 
 Webpack 打包配置。如果为 `Function`，需要返回 Webpack 打包配置，可为异步方法。有关 Koot.js 内 Webpack 的使用请查阅 [Webpack 相关](/webpack)。
 
+注意事项
+
+-   原则上不建议设定 `output` 对象。
+    -   若需修改打包结果路径，请调整以下 _Koot.js_ 配置项: `dist` `distClientAssetsDirName`
+-   `entry` 入口文件
+    -   客户端: _Koot.js_ 会自动添加 2 个入口，并在 SSR 渲染结果 / SPA 模板结果中自动插入引用。
+    -   服务器端: _Koot.js_ 会自动覆盖所有的入口，即无法定制服务器端的 _Webpack_ 入口。
+-   `module.rules` / Loaders
+    -   _Koot.js_ 会自动添加 _JavaScript_、_TypeScript_、_CSS_、_LESS_、_SASS_ 相关的 Loader。为了避免冲突，请勿自行添加相关 Loader。
+        -   内置的 Loader 可以通过 _Koot.js_ 配置项 `internalLoaderOptions` 进行设置。
+-   默认包含一套代码拆分优化规则，如无特殊需要，无需自行对 `optimization` 进行设置。
+
 ```javascript
 module.exports = {
     // 默认值
@@ -856,6 +823,24 @@ module.exports = {
             ]
         }
     })
+};
+```
+
+### distClientAssetsDirName
+
+-   类型: `string`
+-   默认值: `includes`
+-   **仅针对**: Webpack 打包过程
+
+客户端打包结果中静态资源存放路径的目录名。
+
+```javascript
+module.exports = {
+    // 默认值
+    distClientAssetsDirName: 'includes',
+
+    // 所有客户端静态资源文件均会存储到 [dist目录]/public/koot-*/assets/ 目录下
+    distClientAssetsDirName: 'assets'
 };
 ```
 
@@ -957,7 +942,7 @@ module.exports = {
 ### classNameHashLength
 
 -   `koot >= 0.9`
--   类型: `Number`
+-   类型: `number`
 -   默认值: `6`
 -   **仅针对**: Webpack 打包过程
 
@@ -976,7 +961,7 @@ module.exports = {
 ### bundleVersionsKeep
 
 -   `koot >= 0.9`
--   类型: `Number`
+-   类型: `number` `boolean`
 -   默认值: `2`
 -   **仅针对**: 同构/SSR 项目的生产环境下的 Webpack 打包过程
 
@@ -1040,6 +1025,7 @@ module.exports = {
         'react-redux',
         'react-router',
         'react-router-redux'
+        // 以及其他常见的第三方库/包
     ]
 };
 ```

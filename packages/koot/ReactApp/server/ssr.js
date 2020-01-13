@@ -1,10 +1,12 @@
 /* global
     __KOOT_SSR_SET_STORE__:false,
     __KOOT_SSR_SET_HISTORY__:false,
+    __KOOT_SSR_SET_CTX__: false,
     __KOOT_LOCALEID__:false,
     __KOOT_SSR__:false
 */
 
+import 'regenerator-runtime/runtime';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
 import match from 'react-router/lib/match';
@@ -30,6 +32,7 @@ import {
     default as clearStore,
     defaultKeysToPreserve
 } from '../../React/redux/reset-store';
+import injectCacheKeys from '../../React/inject/_cache-keys';
 
 import beforeRouterMatch from './middlewares/isomorphic/lifecycle/before-router-match';
 import beforePreRender from './middlewares/isomorphic/lifecycle/before-pre-render';
@@ -49,6 +52,14 @@ const ssr = async (options = {}) => {
         // History = __DEV__ ? global.__KOOT_HISTORY__ : __KOOT_HISTORY__,
         SSR = __DEV__ ? global.__KOOT_SSR__ : __KOOT_SSR__
     } = options;
+
+    const {
+        /** @type {Object} KOA Context */
+        ctx
+    } = SSR;
+
+    /** @type {string} 本次请求的 URL */
+    const url = ctx.path + ctx.search;
 
     // ========================================================================
 
@@ -81,9 +92,11 @@ const ssr = async (options = {}) => {
         // global.__KOOT_HISTORY__ = History
         global.__KOOT_SSR_SET_STORE__(Store);
         global.__KOOT_SSR_SET_HISTORY__(History);
+        global.__KOOT_SSR_SET_CTX__(ctx);
     } else {
         __KOOT_SSR_SET_STORE__(Store);
         __KOOT_SSR_SET_HISTORY__(History);
+        __KOOT_SSR_SET_CTX__(ctx);
         resetStore();
         resetHistory();
     }
@@ -101,7 +114,6 @@ const ssr = async (options = {}) => {
     const i18nEnabled = Boolean(LocaleId);
 
     const {
-        ctx,
         thisTemplateInjectCache,
         thisEntrypoints,
         thisFilemap, //thisStyleMap,
@@ -119,9 +131,6 @@ const ssr = async (options = {}) => {
     ctx.hrefTrue = proxyRequestOrigin.protocol
         ? ctx.href.replace(/^http:\/\//, `${proxyRequestOrigin.protocol}://`)
         : ctx.href;
-
-    /** @type {String} 本次请求的 URL */
-    const url = ctx.path + ctx.search;
 
     const { lifecycle, routerConfig: routes } = await initConfig(i18nEnabled);
 
@@ -172,10 +181,13 @@ const ssr = async (options = {}) => {
     }
 
     // 强制更新 store: state.routing.locationBeforeTransitions
-    Object.assign(Store.getState().routing.locationBeforeTransitions, {
-        pathname: ctx.path,
-        search: ctx.search
-    });
+    const state = Store.getState();
+    const currentPathname = state.routing.locationBeforeTransitions.pathname;
+    if (currentPathname.split(0, 1) !== '/')
+        Object.assign(Store.getState().routing.locationBeforeTransitions, {
+            pathname: ctx.path
+            // search: ctx.search
+        });
 
     // 渲染生命周期: beforePreRender
     await beforePreRender({
@@ -285,12 +297,14 @@ const ssr = async (options = {}) => {
 
     // 结果写入缓存
     if (__DEV__) {
+        if (injectCacheKeys) {
+            for (const k of Object.values(injectCacheKeys)) {
+                delete thisTemplateInjectCache[k];
+            }
+        }
+
         // 将结果中指向 webpack-dev-server 的 URL 转换为指向本服务器的代理地址
         // 替换 localhost 为 origin，以允许外部请求访问
-        delete thisTemplateInjectCache.styles;
-        delete thisTemplateInjectCache.scriptsInBody;
-        // delete thisTemplateInjectCache.pathnameSW
-
         const origin = ctx.originTrue.split('://')[1];
         // origin = origin.split(':')[0]
         body = body.replace(

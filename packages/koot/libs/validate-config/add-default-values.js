@@ -3,7 +3,7 @@ const path = require('path');
 const semver = require('semver');
 
 const defaultValues = require('../../defaults/koot-config');
-const { typesSPA } = require('../../defaults/before-build');
+const { keyKootBaseVersion, typesSPA } = require('../../defaults/before-build');
 
 /**
  * 为空项添加默认值
@@ -33,6 +33,12 @@ module.exports = async (projectDir, config) => {
             }
         }
     });
+
+    if (!config[keyKootBaseVersion]) {
+        config[keyKootBaseVersion] =
+            kootBaseVersion ||
+            semver.valid(semver.coerce(process.env.KOOT_VERSION));
+    }
 
     if (!config.name) {
         if (fs.existsSync(filePackageJson)) {

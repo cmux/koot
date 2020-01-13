@@ -1,4 +1,5 @@
-// https://github.com/jantimon/html-webpack-plugin
+/* eslint-disable no-console */
+// ref: https://github.com/jantimon/html-webpack-plugin
 
 const fs = require('fs-extra');
 const path = require('path');
@@ -25,12 +26,15 @@ class SpaTemplatePlugin {
         this.localeId = settings.localeId;
         this.inject = settings.inject;
         this.template = settings.template;
+        this.serviceWorkerPathname = settings.serviceWorkerPathname;
     }
 
     apply(compiler) {
         const localeId = this.localeId;
         const inject = this.inject;
         const template = this.template;
+        const serviceWorkerPathname = this.serviceWorkerPathname;
+
         const filename = `index${localeId ? `.${localeId}` : ''}.html`;
 
         // 失败原因
@@ -99,11 +103,22 @@ class SpaTemplatePlugin {
             const appType = await getAppType();
 
             // 获取并写入 chunkmap
-            await writeChunkmap(compilation);
+            await writeChunkmap(
+                compilation,
+                undefined,
+                undefined,
+                serviceWorkerPathname
+            );
             const {
                 '.files': filemap,
                 '.entrypoints': entrypoints
+                // 'service-worker': serviceWorker
             } = getChunkmap(localeId);
+
+            // console.log({
+            //     serviceWorker,
+            //     KOOT_PWA_PATHNAME: process.env.KOOT_PWA_PATHNAME
+            // });
 
             // 如果环境变量中未找到模板结果，报错并返回
             if (typeof process.env.KOOT_HTML_TEMPLATE !== 'string') {

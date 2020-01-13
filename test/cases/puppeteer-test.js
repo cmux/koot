@@ -1,6 +1,8 @@
 const puppeteer = require('puppeteer');
 const getUriFromChunkmap = require('../libs/get-uri-from-chunkmap');
 
+// ============================================================================
+
 /**
  * puppeteer 测试
  *
@@ -172,22 +174,64 @@ const criticalAssetsShouldBeGzip = async (origin, dist, browser) => {
     const uri = await getUriFromChunkmap(dist, 'client.js');
     expect(!!uri).toBe(true);
 
+    const fullUrl = `${origin}${uri.substr(0, 1) === '/' ? '' : '/'}${uri}`;
     const context = await browser.createIncognitoBrowserContext();
     const page = await context.newPage();
-    const res = await page.goto(
-        `${origin}${uri.substr(0, 1) === '/' ? '' : '/'}${uri}`,
-        {
-            waitUntil: 'domcontentloaded'
-        }
-    );
+    const res = await page.goto(fullUrl, {
+        waitUntil: 'domcontentloaded'
+    });
     const headers = res.headers();
     const text = await res.text();
 
     await context.close();
     if (needToClose) await browser.close();
 
+    if (headers['content-encoding'] !== 'gzip') {
+        console.log(fullUrl, dist);
+    }
+
     expect(headers['content-encoding']).toBe('gzip');
     expect(parseInt(headers['content-length']) <= text.length).toBe(true);
+};
+
+/**
+ * puppeteer 测试
+ *
+ * 客户端生命周期: before 和 after
+ * @async
+ * @param {string} origin
+ * @param {Object} [browser]
+ * @returns {Promise}
+ */
+const clientLifecycles = async (origin, browser) => {
+    const needToClose = !browser;
+    if (!browser)
+        browser = await puppeteer.launch({
+            headless: true
+        });
+
+    const context = await browser.createIncognitoBrowserContext();
+    const page = await context.newPage();
+    const result = {
+        before: false,
+        after: false
+    };
+    page.on('console', msg => {
+        if (msg.type() === 'log') {
+            if (msg.text() === '__KOOT_TEST_CLIENT_BEFORE_SUCCESS__')
+                result.before = true;
+            if (msg.text() === '__KOOT_TEST_CLIENT_AFTER_SUCCESS__')
+                result.after = true;
+        }
+    });
+    await page.goto(origin, {
+        waitUntil: 'networkidle0'
+    });
+    await context.close();
+    if (needToClose) await browser.close();
+
+    expect(result.before).toBe(true);
+    expect(result.after).toBe(true);
 };
 
 module.exports = {
@@ -195,5 +239,6 @@ module.exports = {
     customEnv,
     injectScripts,
     requestHidden404,
-    criticalAssetsShouldBeGzip
+    criticalAssetsShouldBeGzip,
+    clientLifecycles
 };

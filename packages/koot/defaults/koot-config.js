@@ -4,7 +4,7 @@ module.exports = {
     cookiesToStore: true,
     sessionStore: false,
     i18n: false,
-    pwa: true,
+    serviceWorker: true,
     aliases: {},
     defines: {},
 

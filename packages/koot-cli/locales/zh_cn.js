@@ -43,8 +43,8 @@ module.exports = {
     project_mode_spa: '单页面应用 (SPA)',
 
     confirm_remove_exist_dir: '目标目录已存在',
-    confirm_remove_exist_dir_remove: '删除目标目录',
-    confirm_remove_exist_dir_overwrite: '覆盖已有文件',
+    confirm_remove_exist_dir_remove: '删除并替换目标目录',
+    confirm_remove_exist_dir_overwrite: '在目标目录中覆盖、追加文件',
     confirm_remove_exist_dir_input: '选择其他目录',
     removing_exist_dir: '删除目标目录',
     input_dir: '请输入路径名 (*)',

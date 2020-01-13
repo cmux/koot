@@ -8,7 +8,7 @@
  */
 
 // jest configuration
-jest.setTimeout(5 * 60 * 1 * 1000);
+jest.setTimeout(10 * 60 * 1 * 1000);
 
 //
 
@@ -489,6 +489,55 @@ const doTest = async (port, dist, settings = {}) => {
         expect(hasModule).toBe(true);
     }
 
+    // 测试: 客户端使用 async/await
+    {
+        const context = await browser.createIncognitoBrowserContext();
+        const page = await context.newPage();
+        await page.goto(origin, {
+            waitUntil: 'networkidle2'
+        });
+
+        const { valueHasChanged } = await page.evaluate(async () => {
+            const container = document.querySelector('#__test-async_await');
+            const button = container.querySelector(
+                'button[data-role="button"]'
+            );
+            const value = container.querySelector('[data-role="value"]');
+
+            const currentValue = value.innerHTML;
+
+            button.click();
+
+            await new Promise(resolve => setTimeout(resolve, 1500));
+
+            return {
+                oldValue: currentValue,
+                newValue: value.innerHTML,
+                valueHasChanged: Boolean(currentValue !== value.innerHTML)
+            };
+        });
+
+        await context.close();
+
+        expect(valueHasChanged).toBe(true);
+    }
+
+    // 测试: 服务器跳转多余 /
+    if (!isDev) {
+        const context = await browser.createIncognitoBrowserContext();
+        const page = await context.newPage();
+        await page.goto(origin, {
+            waitUntil: 'networkidle2'
+        });
+        const title = await page.evaluate(async () => {
+            return document.title;
+        });
+
+        await context.close();
+
+        expect(title).toBe('Koot Boilerplate (Simple)');
+    }
+
     await puppeteerTestStyles(page);
     await puppeteerTestCustomEnv(page, customEnv);
     await puppeteerTestInjectScripts(page);
@@ -599,7 +648,7 @@ describe('测试: React 同构项目', () => {
                     false
                 );
 
-                await testFilesFromChunkmap(dist);
+                await testFilesFromChunkmap(dist, false);
                 await doTest(port, dist, {
                     customEnv
                 });
@@ -716,7 +765,7 @@ describe('测试: React 同构项目', () => {
                     )
                 ).toBe(true);
 
-                await testFilesFromChunkmap(dist);
+                await testFilesFromChunkmap(dist, false);
 
                 await fs.remove(dist);
                 await afterTest(dir, '[config] bundleVersionsKeep: false');

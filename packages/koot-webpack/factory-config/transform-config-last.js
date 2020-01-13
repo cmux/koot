@@ -4,13 +4,15 @@ const webpack = require('webpack');
 
 const {
     keyConfigBuildDll,
-    filenameDll,
     filenameDllManifest,
     keyConfigOutputPathShouldBe,
+    keyConfigWebpackSPATemplateInject,
+    keyConfigWebpackSPAServer,
     WEBPACK_OUTPUT_PATH
 } = require('koot/defaults/before-build');
 const getDirDevDll = require('koot/libs/get-dir-dev-dll');
 
+const transformClientDevDll = require('./transform-config-client-dev-dll');
 const forWebpackVersion = require('../libs/for-webpack-version');
 
 /**
@@ -20,80 +22,34 @@ const forWebpackVersion = require('../libs/for-webpack-version');
  * @param {Object} kootConfigForThisBuild 完整的 Koot 项目配置（仅针对本次打包）
  * @return {Object|Array}
  */
-const transform = async (config, kootConfigForThisBuild = {}) => {
-    const {
-        [keyConfigBuildDll]: createDll = false,
-        // dist,
-        devDll: webpackDll = []
-    } = kootConfigForThisBuild;
+const transform = async (config, kootConfigForThisBuild = {}, index = 0) => {
+    const { [keyConfigBuildDll]: createDll = false } = kootConfigForThisBuild;
     // const {
     //     WEBPACK_BUILD_STAGE: STAGE,
     // } = process.env
 
     // 生成 DLL 包模式: 本次打包仅生成 DLL 包
     if (createDll) {
-        const defaults = [
-            'react',
-            'react-dom',
-            'redux',
-            'redux-thunk',
-            'react-redux',
-            'react-router',
-            'react-router-redux'
-            // 'koot',
-        ];
-        const result = Array.isArray(config) ? { ...config[0] } : { ...config };
-        delete result.watch;
-        delete result.watchOptions;
-
-        // 如果自行添加了 koot，排除
-        const library =
-            !Array.isArray(webpackDll) || !webpackDll.length
-                ? defaults
-                : webpackDll;
-        if (library.includes('koot'))
-            library.splice(library.indexOf('koot'), 1);
-        result.entry = {
-            library
-        };
-
-        // console.log('result.entry.library', result.entry.library)
-        result.output = {
-            filename: filenameDll,
-            library: '[name]_[hash]',
-            // path: STAGE === 'server' ? path.resolve(dist, 'server') : dist
-            path: getDirDevDll()
-        };
-        process.env.KOOT_DEV_DLL_FILE_CLIENT = path.resolve(
-            getDirDevDll(undefined, 'client'),
-            filenameDll
+        return validate(
+            await transformClientDevDll(config, kootConfigForThisBuild),
+            kootConfigForThisBuild
         );
-        process.env.KOOT_DEV_DLL_FILE_SERVER = path.resolve(
-            getDirDevDll(undefined, 'server'),
-            filenameDll
-        );
-        result.plugins.push(
-            new webpack.DllPlugin({
-                // context: path.resolve(__dirname, '../../../../'),
-                path: path.resolve(result.output.path, filenameDllManifest),
-                name: '[name]_[hash]'
-            })
-        );
-        return validate(result, kootConfigForThisBuild);
     }
 
     // 数组情况，拆分每项分别处理
     if (Array.isArray(config)) {
         const r = [];
+        let i = 0;
         for (const thisConfig of config) {
-            r.push(await transform(thisConfig, kootConfigForThisBuild));
+            r.push(await transform(thisConfig, kootConfigForThisBuild, i));
+            i++;
         }
         return r;
     }
 
     // copy this
 
-    return validate(Object.assign({}, config), kootConfigForThisBuild);
+    return validate(Object.assign({}, config), kootConfigForThisBuild, index);
 };
 
 /**
@@ -101,7 +57,7 @@ const transform = async (config, kootConfigForThisBuild = {}) => {
  * @param {Object} config 本次打包的 Webpack 配置
  * @returns {Object}
  */
-const validate = (config, kootConfigForThisBuild) => {
+const validate = (config, kootConfigForThisBuild, index = 0) => {
     // try to fix a pm2 bug that will currupt [name] value
     if (typeof config.output === 'object') {
         for (const key in config.output) {
@@ -133,14 +89,13 @@ const validate = (config, kootConfigForThisBuild) => {
     delete config.spa;
     delete config.analyzer;
     delete config.htmlPath;
-    delete config[keyConfigOutputPathShouldBe];
 
     // 针对 Webpack 4 处理
     forWebpackVersion('4.x', () => {
         // 这些选项会在 Webpack 5 中移除，对应 Webpack 4 的 false 配置
-        if (typeof config.node !== 'object') config.node = {};
-        config.node.Buffer = false;
-        config.node.process = false;
+        // if (typeof config.node !== 'object') config.node = {};
+        // config.node.Buffer = false;
+        // config.node.process = false;
     });
 
     // 针对 Webpack 5 处理
@@ -157,7 +112,16 @@ const validate = (config, kootConfigForThisBuild) => {
     });
 
     // 修改本次打包的 Koot 完整配置对象
-    kootConfigForThisBuild[WEBPACK_OUTPUT_PATH] = config.output.path;
+    if (
+        !config[keyConfigWebpackSPATemplateInject] &&
+        !config[keyConfigWebpackSPAServer]
+    )
+        kootConfigForThisBuild[WEBPACK_OUTPUT_PATH] = config.output.path;
+
+    // 移除其他多余字段
+    delete config[keyConfigOutputPathShouldBe];
+    // delete config[keyConfigWebpackSPATemplateInject];
+    delete config[keyConfigWebpackSPAServer];
 
     return config;
 };
@@ -250,7 +214,9 @@ const validateModuleRules = (config, kootConfigForThisBuild = {}) => {
                 });
             }
             switch (loader) {
-                case 'file-loader': {
+                case 'file-loader':
+                case 'url-loader':
+                case 'svg-url-loader': {
                     if (process.env.WEBPACK_BUILD_STAGE === 'server') {
                         options.emitFile = false;
                     }

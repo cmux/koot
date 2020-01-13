@@ -1,3 +1,4 @@
+import 'regenerator-runtime/runtime';
 import { syncHistoryWithStore } from 'react-router-redux';
 import * as portionConfig from '__KOOT_PROJECT_CONFIG_PORTION_CLIENT_PATHNAME__';
 import validateReduxConfig from './validate/redux-config';

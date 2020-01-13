@@ -90,62 +90,36 @@ describe('测试: 生成 Webpack 配置', () => {
                         );
                     };
 
-                    if (configIsArray()) {
-                        expect(Array.isArray(webpackConfig)).toBe(true);
-                        for (const thisConfig of webpackConfig) {
-                            expect(typeof thisConfig).toBe('object');
-                            const {
-                                mode,
-                                entry,
-                                output,
-                                plugins,
-                                module
-                            } = thisConfig;
-                            expect(mode).toBe(modeToBe);
-                            expect(typeof output).toBe('object');
-                            expect(typeof output.path).toBe('string');
-                            if (typeof entry === 'object') {
-                                if (stage === 'client') {
-                                    expect('client' in entry).toBe(true);
-                                    expect(typeof entry.client).toBe('string');
-                                } else if (stage === 'server') {
-                                    expect(
-                                        'index' in entry || 'ssr' in entry
-                                    ).toBe(true);
-                                }
-                            }
-                            expect(Array.isArray(plugins)).toBe(true);
-                            expect(plugins.some(p => p === null)).toBe(false);
-                            expect(
-                                plugins.some(p => typeof p === 'undefined')
-                            ).toBe(false);
-                            expect(Array.isArray(module.rules)).toBe(true);
-                        }
-                    } else {
-                        expect(typeof webpackConfig).toBe('object');
+                    const testConfig = config => {
+                        expect(typeof config).toBe('object');
+
                         const {
                             mode,
                             entry,
                             output,
                             plugins,
-                            module
-                        } = webpackConfig;
-                        // console.log(webpackConfig)
-                        // console.log(plugins)
-                        // console.log(module.rules)
+                            module,
+                            resolve
+                        } = config;
+
                         expect(mode).toBe(modeToBe);
                         expect(typeof output).toBe('object');
                         expect(typeof output.path).toBe('string');
-                        if (stage === 'client' && typeof entry === 'object') {
-                            expect('client' in entry).toBe(true);
-                            // 启用热更新后，client 入口从 string 变为 array
-                            expect(Array.isArray(entry.client)).toBe(
-                                stage === 'client' && env === 'prod'
-                                    ? false
-                                    : true
-                            );
-                        } else if (stage === 'server') {
-                            expect(Array.isArray(entry)).toBe(true);
+                        if (typeof entry === 'object') {
+                            if (stage === 'client') {
+                                expect('client' in entry).toBe(true);
+                                // 启用热更新后，client 入口从 string 变为 array
+                                expect(typeof entry.client).toBe(
+                                    env === 'prod' ? 'string' : 'object'
+                                );
+                                expect(Array.isArray(entry.client)).toBe(
+                                    env === 'prod' ? false : true
+                                );
+                            } else if (stage === 'server') {
+                                expect('index' in entry || 'ssr' in entry).toBe(
+                                    true
+                                );
+                            }
                         }
                         expect(Array.isArray(plugins)).toBe(true);
                         expect(plugins.some(p => p === null)).toBe(false);
@@ -153,6 +127,16 @@ describe('测试: 生成 Webpack 配置', () => {
                             plugins.some(p => typeof p === 'undefined')
                         ).toBe(false);
                         expect(Array.isArray(module.rules)).toBe(true);
+                        expect(resolve.alias.__AAA__).toBe('aaa');
+                    };
+
+                    if (configIsArray()) {
+                        expect(Array.isArray(webpackConfig)).toBe(true);
+                        for (const thisConfig of webpackConfig) {
+                            testConfig(thisConfig);
+                        }
+                    } else {
+                        testConfig(webpackConfig);
                     }
 
                     delete process.env.KOOT_CWD;

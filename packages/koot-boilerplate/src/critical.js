@@ -1,3 +1,5 @@
+import bindEvent from 'bind-event';
+
 // 全局 CSS
 // 打包时会被自动抽取并整合到 extract.all.[hash].css
 // 引用方法: 无需引用，会自动注入到模板中
@@ -113,6 +115,29 @@ const doCricital = () => {
             window.addEventListener('offline', doOffline);
             if (navigator.onLine === false) doOffline();
         }
+
+        // 利用 pointer event 判断当前是否为 hover
+        document.documentElement.classList.add('is-hover');
+        if (window.PointerEvent) {
+            document.documentElement.addEventListener('pointerenter', evt => {
+                if (evt.pointerType === 'mouse' || evt.pointerType === 'pen')
+                    document.documentElement.classList.add('is-hover');
+                else document.documentElement.classList.remove('is-hover');
+            });
+            document.documentElement.addEventListener('pointerleave', () => {
+                document.documentElement.classList.remove('is-hover');
+            });
+        }
+
+        // 如果有 dropover 操作，标记 class
+        bindEvent(document.body, 'dragover', () => {
+            document.documentElement.classList.add('is-dragging-over');
+        });
+        ['dragend', 'dragexit', 'dragleave', 'drop'].forEach(type => {
+            bindEvent(document.body, type, () => {
+                document.documentElement.classList.remove('is-dragging-over');
+            });
+        });
     });
 
     window.__IS_CLITICAL_INITED__ = true;

@@ -60,6 +60,7 @@ export default ({ router, client }) => {
         routes,
         onUpdate: (...args) => {
             if (__DEV__ && logCountRouterUpdate < 2) {
+                // eslint-disable-next-line no-console
                 console.log(
                     `🚩 [koot/client] callback: onRouterUpdate`,
                     ...args
@@ -84,6 +85,7 @@ export default ({ router, client }) => {
         // console.log(store.getState())
 
         if (__DEV__ && logCountHistoryUpdate < 2) {
+            // eslint-disable-next-line no-console
             console.log(`🚩 [koot/client] callback: onHistoryUpdate`, [
                 location,
                 Store
@@ -98,40 +100,54 @@ export default ({ router, client }) => {
     // React 初始化
     // ============================================================================
 
-    if (__DEV__)
-        console.log(
-            `🚩 [koot/client] callback: before`
-            // args
-        );
-    if (__DEV__)
-        console.log(
-            `🚩 [koot/client] callback: before`
-            // args
-        );
+    if (__DEV__) {
+        // eslint-disable-next-line no-console
+        console.log(`🚩 [koot/client] callback: before`, {
+            store: Store,
+            history: History
+            // localeId: LocaleId
+        });
+    }
     const beforePromise = (() => {
-        const _before = typeof before === 'function' ? before() : before;
+        const _before =
+            typeof before === 'function'
+                ? before({
+                      store: Store,
+                      history: History
+                      // localeId: LocaleId
+                  })
+                : before;
 
         if (typeof _before === 'object' && typeof _before.then === 'function') {
             return _before;
         }
 
         return new Promise(resolve => {
-            if (typeof _before === 'function') _before();
+            if (typeof _before === 'function')
+                _before({
+                    store: Store,
+                    history: History
+                    // localeId: LocaleId
+                });
             resolve();
         });
     })();
 
     beforePromise
         .then(() => {
-            if (__DEV__)
+            if (__DEV__) {
+                // eslint-disable-next-line no-console
                 console.log(`🚩 [koot/client] callback: after`, {
-                    Store,
+                    store: Store,
                     history
                 });
+            }
             if (typeof after === 'function')
                 after({
-                    Store,
-                    history
+                    // Store,
+                    store: Store,
+                    // history
+                    history: History
                 });
         })
         .then(() => {

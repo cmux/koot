@@ -8,6 +8,7 @@ const path = require('path');
 const chalk = require('chalk');
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
+// const findCacheDir = require('find-cache-dir');
 
 const resetCssLoader = require('./loaders/css/reset');
 
@@ -47,8 +48,6 @@ const getDirDistPublicFoldername = require('koot/libs/get-dir-dist-public-folder
 const removeBuildFlagFiles = require('koot/libs/remove-build-flag-files');
 const updateKootInPackageJson = require('koot/libs/update-koot-in-package-json');
 const kootPackageJson = require('koot/package.json');
-
-const createPWAsw = require('koot/core/pwa/create');
 
 const buildClient = require('./build-client');
 
@@ -211,6 +210,13 @@ module.exports = async (kootConfig = {}) => {
 
         // 服务器环境
         if (STAGE === 'server') {
+            // 清理缓存
+            // fs.removeSync(
+            //     findCacheDir({
+            //         name: 'koot-webpack-server'
+            //     })
+            // );
+
             // 清理已有的打包结果
             fs.ensureDirSync(path.resolve(dist, `server`));
             fs.emptyDirSync(path.resolve(dist, `server`));
@@ -241,11 +247,6 @@ module.exports = async (kootConfig = {}) => {
         const dist = getDistPath();
 
         if (!quietMode) console.log(' ');
-
-        if (!analyze && pwa && STAGE === 'client' && ENV === 'prod') {
-            // 生成 service-worker.js
-            await createPWAsw(pwa, i18n, bundleVersionsKeep);
-        }
 
         if (
             !analyze &&
@@ -413,7 +414,7 @@ module.exports = async (kootConfig = {}) => {
     ).catch(err => {
         console.error('生成打包配置时发生错误! \n', err);
     });
-    const { webpackConfig, pwa, i18n, devServer = {}, pathnameChunkmap } = data;
+    const { webpackConfig, i18n, devServer = {}, pathnameChunkmap } = data;
 
     if (TYPE === 'spa' && typeof !!kootConfig.i18n) {
         log(
@@ -472,9 +473,6 @@ module.exports = async (kootConfig = {}) => {
      * @param {Error|String} err
      */
     const buildingError = err => {
-        // 移除过程中创建的临时文件
-        emptyTempConfigDir();
-
         // 如果有打包版本子目录，删除
         if (
             typeof process.env.KOOT_CLIENT_BUNDLE_SUBFOLDER === 'string' &&
@@ -499,6 +497,9 @@ module.exports = async (kootConfig = {}) => {
         // 移除标记文件
         const fileBuilding = path.resolve(data.dist, filenameBuilding);
         if (fs.existsSync(fileBuilding)) fs.removeSync(fileBuilding);
+
+        // 移除过程中创建的临时文件
+        emptyTempConfigDir();
 
         if (ENV === 'prod') throw err;
 

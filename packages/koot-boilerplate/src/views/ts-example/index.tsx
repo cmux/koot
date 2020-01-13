@@ -31,7 +31,7 @@ const TSFunctionalComponent = extend<ComponentProps>({
         return (
             <div className={className} data-koot-test-page="page-ts">
                 <img
-                    src={require('@assets/typescript.svg')}
+                    src={svgTS}
                     className="logo"
                     alt="TypeScript LOGO"
                     data-custom-props={customProps}

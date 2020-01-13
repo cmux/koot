@@ -30,6 +30,7 @@ module.exports = async () => {
                     options: {
                         context: 'static',
                         name: 'assets/[hash:32].[ext]'
+                        // esModule: false
                         // emitFile: Boolean(
                         //     process.env.WEBPACK_BUILD_STAGE === 'client'
                         // )
@@ -43,6 +44,7 @@ module.exports = async () => {
                     exclude: /node_modules/,
                     options: {
                         noquotes: true
+                        // esModule: false
                     }
                 }
             ]
@@ -50,6 +52,12 @@ module.exports = async () => {
 
         plugins: [
             undefined // Koot.js: 处理 webpack 配置时会自动过滤掉 null、undefined 等无意义的项
-        ]
+        ],
+
+        resolve: {
+            alias: {
+                __AAA__: 'aaa'
+            }
+        }
     };
 };

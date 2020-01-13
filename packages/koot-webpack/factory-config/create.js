@@ -2,6 +2,9 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
     .BundleAnalyzerPlugin;
 
 // Libs & Utilities
+const {
+    keyConfigClientAssetsPublicPath
+} = require('koot/defaults/before-build');
 const getAppType = require('koot/utils/get-app-type');
 // const getPort = require('koot/utils/get-port')
 const getChunkmapPathname = require('koot/utils/get-chunkmap-path');
@@ -10,7 +13,7 @@ const initNodeEnv = require('koot/utils/init-node-env');
 // Transformers
 const transformDist = require('./transform-dist');
 const transformI18n = require('./transform-i18n');
-const transformPWA = require('./transform-pwa');
+const transformServiceWorker = require('./transform-service-worker');
 const transformTemplate = require('./transform-template');
 const transformConfigClient = require('./transform-config-client');
 const transformConfigServer = require('./transform-config-server');
@@ -37,20 +40,21 @@ module.exports = async (kootConfig = {}) => {
         // SERVER_PORT,
     } = process.env;
 
-    const defaultPublicDirName = 'includes';
-    const defaultPublicPathname = (() => {
+    const distClientAssetsDirName =
+        kootConfig.distClientAssetsDirName || defaults.distClientAssetsDirName;
+    const clientAssetsPublicPath = (() => {
         if (TYPE === 'spa' && ENV === 'dev') return `/`;
         if (TYPE === 'spa' && /^browser/.test(process.env.KOOT_HISTORY_TYPE))
-            return `/${defaultPublicDirName}/`;
-        if (TYPE === 'spa') return `${defaultPublicDirName}/`;
-        return `/${defaultPublicDirName}/`;
+            return `/${distClientAssetsDirName}/`;
+        if (TYPE === 'spa') return `${distClientAssetsDirName}/`;
+        return `/${distClientAssetsDirName}/`;
     })();
 
     // 抽取配置
     const kootBuildConfig = Object.assign({}, defaults, kootConfig, {
         appType: await getAppType(),
-        defaultPublicDirName,
-        defaultPublicPathname
+        distClientAssetsDirName,
+        [keyConfigClientAssetsPublicPath]: clientAssetsPublicPath
     });
     const { analyze = false } = kootBuildConfig;
 
@@ -73,7 +77,9 @@ module.exports = async (kootConfig = {}) => {
 
     kootBuildConfig.dist = await transformDist(kootBuildConfig.dist);
     kootBuildConfig.i18n = await transformI18n(kootBuildConfig);
-    kootBuildConfig.pwa = await transformPWA(kootBuildConfig.pwa);
+    kootBuildConfig.serviceWorker = await transformServiceWorker(
+        kootBuildConfig.serviceWorker
+    );
     kootBuildConfig.template = await transformTemplate(
         kootBuildConfig.template
     );
@@ -96,6 +102,18 @@ module.exports = async (kootConfig = {}) => {
             config = await transformConfigClient(kootBuildConfig);
         if (STAGE === 'server')
             config = await transformConfigServer(kootBuildConfig);
+
+        const extendConfig = config => {
+            if (Array.isArray(config)) return config.map(c => extendConfig(c));
+
+            if (typeof config.resolve !== 'object') config.resolve = {};
+            config.resolve.alias = {
+                ...(config.resolve.alias || {}),
+                ...(kootBuildConfig.aliases || {})
+            };
+            return config;
+        };
+        extendConfig(config);
 
         // ====================================================================
         //

@@ -19,6 +19,7 @@ const samples = fs
 
 // ============================================================================
 
+/*
 const debug = require('debug');
 
 const run = async () => {
@@ -56,6 +57,7 @@ const validateSample = async sample => {
 
     // await fs.remove(resultDir)
 };
+*/
 // run()
 
 // ============================================================================
@@ -63,7 +65,11 @@ const validateSample = async sample => {
 // return
 
 describe('测试: 验证配置 (生成临时的核心代码引用文件，返回其他配置对象)', () => {
-    for (const { name, file, filename } of samples) {
+    for (const {
+        name,
+        // file,
+        filename
+    } of samples) {
         test(`类型: ${name}`, async () => {
             const resultDir = path.resolve(samplesDir, name);
             await fs.ensureDir(resultDir);
@@ -90,7 +96,12 @@ describe('测试: 验证配置 (生成临时的核心代码引用文件，返回
             expect(typeof kootConfig.dist).toBe('string');
             expect(typeof kootConfig.cookiesToStore !== 'undefined').toBe(true);
             expect(typeof kootConfig.i18n !== 'undefined').toBe(true);
-            expect(typeof kootConfig.pwa !== 'undefined').toBe(true);
+            expect(typeof kootConfig.pwa).toBe('undefined');
+            expect(
+                ['boolean', 'object'].some(
+                    t => typeof kootConfig.serviceWorker === t
+                ) && !Array.isArray(kootConfig.serviceWorker)
+            ).toBe(true);
             expect(
                 typeof kootConfig.aliases === 'object' &&
                     !Array.isArray(kootConfig.aliases)

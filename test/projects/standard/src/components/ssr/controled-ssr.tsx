@@ -15,7 +15,7 @@ const SSR: React.ComponentClass = extend({
     ssr: <SSR />
 })
 class ControledSSR extends React.Component<ExtendedProps> {
-    render() {
+    render(): React.ReactNode {
         return <div id="koot-test-controled-ssr">Controled SSR</div>;
     }
 }

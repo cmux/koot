@@ -1,4 +1,29 @@
+const fs = require('fs-extra');
+const path = require('path');
+const getCwd = require('koot/utils/get-cwd');
 const transformFixDefaultExport = require('./transform-fix-default-export');
+
+/**
+ * 检查 Plugin 对象的请求文件的名字
+ * @param {Object} plugin Babel 处理过程中的 Plugin 对象
+ * @param {string|regExp} name
+ * @return {boolean}
+ */
+const testPluginName = (pluginObject, regExp) => {
+    regExp =
+        regExp instanceof RegExp
+            ? regExp
+            : new RegExp(
+                  `^@babel(\\/|\\\\)${
+                      /^plugin-/.test(regExp) ? regExp : `plugin-${regExp}`
+                  }$`
+              );
+
+    return (
+        typeof pluginObject.file === 'object' &&
+        regExp.test(pluginObject.file.request)
+    );
+};
 
 module.exports = require('babel-loader').custom(babel => {
     // function myPlugin() {
@@ -10,11 +35,20 @@ module.exports = require('babel-loader').custom(babel => {
 
     return {
         // Passed the loader options.
-        customOptions({ __createDll, __react, __typescript, ...loader }) {
+        customOptions({
+            __createDll,
+            __react,
+            __typescript,
+            __server,
+            __routes,
+            ...loader
+        }) {
             Object.assign(customOptions, {
                 __createDll,
                 __react,
-                __typescript
+                __typescript,
+                __server,
+                __routes
             });
             // Pull out any custom options that the loader might have.
             return {
@@ -33,11 +67,16 @@ module.exports = require('babel-loader').custom(babel => {
             const {
                 __createDll,
                 __react,
-                __typescript = false
+                __typescript = false,
+                __server = false,
+                __routes
             } = customOptions;
             const { presets, plugins, ...options } = cfg.options;
+            const isServer =
+                __server || process.env.WEBPACK_BUILD_STAGE === 'server';
             // console.log({ options });
 
+            // presets ========================================================
             const newPresets = [...presets];
             if (__typescript) {
                 newPresets.unshift([
@@ -51,43 +90,46 @@ module.exports = require('babel-loader').custom(babel => {
                 ]);
                 // console.log(newPresets);
             }
-            // .filter(preset => {
-            //     if (typeof preset.file === 'object' &&
-            //         /^@babel\/preset-env$/.test(preset.file.request) &&
-            //         process.env.WEBPACK_BUILD_STAGE === 'server'
-            //     ) return false
-            //     return true
-            // })
-            // .map(preset => {
-            //     if (typeof preset.file === 'object' &&
-            //         /^@babel\/preset-env$/.test(preset.file.request)
-            //     ) {
-            //         if (!preset.options)
-            //             preset.options = {}
-            //         return preset
-            //     }
-            //     return preset
-            // })
+            newPresets.forEach((preset, index) => {
+                if (
+                    typeof preset.file === 'object' &&
+                    /^@babel\/preset-env$/.test(preset.file.request)
+                ) {
+                    const thisPreset = newPresets[index];
+                    if (typeof thisPreset.options !== 'object')
+                        thisPreset.options = {};
+                    thisPreset.options.modules = false;
+                    thisPreset.options.exclude = [
+                        '@babel/plugin-transform-regenerator',
+                        '@babel/plugin-transform-async-to-generator'
+                    ];
+                    if (isServer) {
+                        thisPreset.options.targets = {
+                            node: true
+                        };
+                        thisPreset.options.ignoreBrowserslistConfig = true;
+                    }
+                    // console.log(thisPreset);
+                }
+            });
+
+            // plugins ========================================================
+            // console.log('\n ');
+            // console.log('before', plugins.map(plugin => plugin.file.request));
 
             const newPlugins = plugins.filter(plugin => {
-                if (
-                    typeof plugin.file === 'object' &&
-                    (/extract-hoc(\/|\\)babel/.test(plugin.file.request) ||
-                        /react-hot-loader(\/|\\)babel/.test(
-                            plugin.file.request
-                        ))
-                )
+                // console.log(plugin.file.request);
+                if (testPluginName(plugin, /^extract-hoc(\/|\\)babel$/))
                     return false;
-                // if (
-                //     process.env.WEBPACK_BUILD_STAGE === 'server' &&
-                //     typeof plugin.file === 'object' &&
-                //     /@babel(\/|\\)plugin-transform-regenerator/.test(
-                //         plugin.file.request
-                //     )
-                // )
-                //     return false;
+                if (testPluginName(plugin, /^react-hot-loader(\/|\\)babel$/))
+                    return false;
+                if (testPluginName(plugin, 'transform-regenerator'))
+                    return false;
+
                 return true;
             });
+
+            // console.log('after', newPlugins.map(plugin => plugin.file.request));
 
             if (
                 !__createDll &&
@@ -98,35 +140,40 @@ module.exports = require('babel-loader').custom(babel => {
                 newPlugins.push(require('react-hot-loader/babel'));
             }
 
-            // console.log('')
-            // presets.forEach(preset => {
-            //     console.log('')
-            //     console.log('options', preset.options)
-            //     console.log('file', preset.file)
-            // })
-            // console.log({
-            //     'plugin[].file': newPlugins
-            //         // .filter(plugin => !!plugin.file)
-            //         .map(plugin => {
-            //             return plugin
-            //             // return plugin.file
-            //         })
-            // })
-            // console.log(
-            //     {
-            //         ...options,
-            //         presets: newPresets,
-            //         plugins: newPlugins,
-            //     }
-            // )
-            // console.log('')
+            if (!__createDll && !isServer) {
+                let pathname = path.resolve(getCwd(), __routes);
+                if (fs.lstatSync(pathname).isDirectory()) pathname += '/index';
+                if (!fs.existsSync(pathname)) {
+                    const exts = ['.js', '.ts'];
+                    exts.some(ext => {
+                        const newPathname = path.resolve(pathname + ext);
+                        if (fs.existsSync(newPathname)) {
+                            pathname = newPathname;
+                            return true;
+                        }
+                        return false;
+                    });
+                }
+                newPlugins.push([
+                    path.resolve(
+                        __dirname,
+                        './plugins/client-sanitize-code-spliting-name.js'
+                    ),
+                    {
+                        routesConfigFile: pathname
+                    }
+                ]);
+                // console.log(newPlugins);
+            }
 
-            return {
+            const thisOptions = {
                 ...options,
-                // presets: presets,
                 presets: newPresets,
                 plugins: newPlugins
             };
+            // console.log(isServer);
+
+            return thisOptions;
         },
 
         result(result) {

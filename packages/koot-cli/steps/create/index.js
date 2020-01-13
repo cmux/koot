@@ -15,7 +15,12 @@ const modifyPackageJsonAddKootVersion = require('../../lib/modify-package-json/a
  * @param {Boolean} [options.showWelcome=true] 显示欢迎信息
  */
 module.exports = async (options = {}) => {
+    /** 目标目录路径 */
     let dest;
+
+    /** 目标目录是否已经存在 */
+    let destExists = false;
+
     try {
         const { showWelcome = true } = options;
 
@@ -29,7 +34,11 @@ module.exports = async (options = {}) => {
         }
 
         const project = await require('./inquiry-project')();
-        dest = await require('./get-project-folder')(project);
+
+        const r = await require('./get-project-folder')(project);
+        dest = r.dest;
+        destExists = r.destExists;
+
         await require('./download-boilerplate')(project, dest);
         await modifyPackageJsonAddKootVersion(dest);
 
@@ -46,7 +55,7 @@ module.exports = async (options = {}) => {
 
         console.log('');
     } catch (e) {
-        if (dest) await fs.remove(dest);
+        if (dest && !destExists) await fs.remove(dest);
         throw e;
     }
 };

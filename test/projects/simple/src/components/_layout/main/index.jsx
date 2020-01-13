@@ -1,8 +1,8 @@
-import React from 'react'
-import { extend } from 'koot'
+import React from 'react';
+import { extend } from 'koot';
+
+import styles from './styles.component.less';
 
 export default extend({
-    styles: require('./styles.component.less')
-})(
-    props => <div {...props} />
-)
+    styles
+})(props => <div {...props} />);

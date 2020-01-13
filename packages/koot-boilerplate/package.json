@@ -1,8 +1,8 @@
 {
     "name": "koot-boilerplate",
     "private": true,
-    "version": "0.11.15",
-    "description": "Tech-demo boilerplate for koot.js.",
+    "version": "0.12.0-beta.8",
+    "description": "Boilerplate project for koot.js app",
     "author": {
         "name": "diablohu",
         "email": "diablohudream@gmail.com",
@@ -14,6 +14,9 @@
         "type": "git",
         "url": "https://github.com/cmux/koot.git"
     },
+    "engines": {
+        "node": ">=10.13.0"
+    },
     "scripts": {
         "start": "koot-start",
         "start:server": "koot-start --no-build",
@@ -24,26 +27,30 @@
         "dev:spa": "koot-dev --type spa",
         "analyze": "koot-analyze",
         "eslint": "eslint \"src/**/*.+(js|jsx)\"",
-        "check-types": "tsc --noEmit"
+        "check-types": "tsc --noEmit",
+        "up": "yarn upgrade-interactive --latest"
     },
     "dependencies": {
-        "axios": "^0.19.0",
+        "axios": "^0.19.1",
+        "bind-event": "^1.1.2",
         "classnames": "^2.2.6",
-        "koot": "^0.11.15"
+        "koot": "^0.12.0-beta.8"
     },
     "devDependencies": {
-        "autoprefixer": "^9.7.1",
+        "@types/classnames": "^2.2.9",
+        "autoprefixer": "^9.7.3",
         "babel-eslint": "^10.0.3",
         "cssnano": "^4.1.10",
-        "eslint": "^6.6.0",
-        "eslint-config-koot": "^1.5.0",
-        "husky": "^3.0.9",
-        "lint-staged": "^9.4.2",
+        "eslint": "^6.8.0",
+        "eslint-config-koot": "^1.6.0",
+        "husky": "^4.0.7",
+        "lint-staged": "^9.5.0",
         "normalize.css": "^8.0.1",
-        "prettier": "^1.18.2",
-        "prettier-eslint": "^9.0.0",
+        "prettier": "^1.19.1",
+        "prettier-eslint": "^9.0.1",
         "redux-logger": "^3.0.6",
-        "svg-url-loader": "^3.0.2"
+        "svg-url-loader": "^3.0.3",
+        "url-loader": "^3.0.0"
     },
     "bugs": {
         "url": "https://github.com/cmux/koot/issues"
@@ -66,5 +73,8 @@
             "prettier --write",
             "git add"
         ]
+    },
+    "koot": {
+        "version": "0.12.0-alpha.27"
     }
 }
