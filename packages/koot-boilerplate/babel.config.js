@@ -18,10 +18,9 @@ module.exports = function(api) {
 
             // proposal
             ['@babel/plugin-proposal-decorators', { legacy: true }],
-            '@babel/plugin-proposal-class-properties',
+            '@babel/plugin-proposal-class-properties'
 
             // syntax
-            '@babel/plugin-syntax-dynamic-import'
         ]
     };
 };

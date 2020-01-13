@@ -23,7 +23,7 @@ module.exports = function(api) {
             '@babel/plugin-proposal-class-properties',
 
             // syntax
-            '@babel/plugin-syntax-dynamic-import',
+            // '@babel/plugin-syntax-dynamic-import',
 
             // other
             'react-hot-loader/babel'
