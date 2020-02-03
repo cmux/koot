@@ -29,15 +29,19 @@ module.exports = async (kootConfigForThisBuild, localeId) => {
 
     const { distClientAssetsDirName } = kootConfigForThisBuild;
 
+    // Parse config ===========================================================
     const {
         filename,
         swSrc: _swSrc,
         include = [],
         exclude = [],
-        importWorkboxFrom = 'local',
-        importsDirectory = '__workbox-assets',
+        // importWorkboxFrom = 'local',
+        // importsDirectory = '__workbox-assets',
         ...rest
     } = Object.assign({}, defaults, serviceWorker);
+    ['auto', 'importWorkboxFrom', 'importsDirectory'].forEach(
+        key => delete rest[key]
+    );
 
     const isDev = process.env.WEBPACK_BUILD_ENV === 'dev';
 
@@ -81,10 +85,10 @@ module.exports = async (kootConfigForThisBuild, localeId) => {
         ...rest,
         swDest,
         swSrc,
-        importWorkboxFrom: isDev ? 'cdn' : importWorkboxFrom,
+        // importWorkboxFrom: isDev ? 'cdn' : importWorkboxFrom,
         include: [/\.js$/, /extract\.all\..+?\.large\.css$/, ...include],
-        exclude: [/\.map$/, /^manifest.*\.js$/, ...exclude],
-        importsDirectory: isDev ? '' : importsDirectory
+        exclude: [/\.map$/, /^manifest.*\.js$/, ...exclude]
+        // importsDirectory: isDev ? '' : importsDirectory
     });
 };
 

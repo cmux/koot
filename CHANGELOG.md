@@ -1,5 +1,12 @@
 ## [Unreleased]
 
+-   更新依赖包 minor 和 patch 版本号
+
+**koot**
+
+-   优化
+    -   现在 `serviceWorker` 配置项允许传入所有 _Workbox_ 可接受的选项 ([#209](https://github.com/cmux/koot/issues/209))
+
 ## [0.12.0] - 2020-01-13
 
 -   更新依赖包 minor 和 patch 版本号

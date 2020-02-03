@@ -14,9 +14,5 @@ module.exports = Object.assign({}, baseConfig, {
 
     cookiesToStore: 'all',
     sessionStore: 'all',
-    distClientAssetsDirName: '__assets__',
-
-    serviceWorker: {
-        importsDirectory: 'workbox-assets'
-    }
+    distClientAssetsDirName: '__assets__'
 });
