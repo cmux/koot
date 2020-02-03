@@ -102,6 +102,7 @@ const testFull = (dir, configFileName) => {
         dir,
         configFileName || 'koot.config.js'
     );
+    const fileKootConfigRel = path.relative(dir, fileKootConfig);
 
     return describe(`配置文件: ${configFileName || '默认'}`, () => {
         const config = require(fileKootConfig);
@@ -123,7 +124,7 @@ const testFull = (dir, configFileName) => {
                 `koot-build --koot-test` +
                 (forceChangeType
                     ? ` --type react-spa --dest ${dest}`
-                    : ` --config ${fileKootConfig}`);
+                    : ` --config ${fileKootConfigRel}`);
             await addCommand(commandName, command, dir);
 
             // console.log(commandName)
