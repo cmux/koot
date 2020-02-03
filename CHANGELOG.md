@@ -4,6 +4,9 @@
 
 **koot**
 
+-   **重大改动**
+    -   更新依赖包 **major** 版本号
+        -   `workbox` -> _^5.0.0_
 -   优化
     -   现在 `serviceWorker` 配置项允许传入所有 _Workbox_ 可接受的选项 ([#209](https://github.com/cmux/koot/issues/209))
 
