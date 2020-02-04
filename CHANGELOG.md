@@ -1,5 +1,14 @@
 ## [Unreleased]
 
+-   更新依赖包 minor 和 patch 版本号
+
+**koot**
+
+-   优化
+    -   现在重新允许 _Babel_ 插件 `@babel/plugin-transform-regenerator` (撤回 0.12.0 的一项改动)
+        -   为保证最大兼容
+        -   打包的代码量会比之前稍大一些
+
 ## [0.12.1] - 2020-02-03
 
 -   更新依赖包 minor 和 patch 版本号

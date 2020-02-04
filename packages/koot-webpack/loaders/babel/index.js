@@ -100,8 +100,8 @@ module.exports = require('babel-loader').custom(babel => {
                         thisPreset.options = {};
                     thisPreset.options.modules = false;
                     thisPreset.options.exclude = [
-                        '@babel/plugin-transform-regenerator',
-                        '@babel/plugin-transform-async-to-generator'
+                        // '@babel/plugin-transform-regenerator',
+                        // '@babel/plugin-transform-async-to-generator'
                     ];
                     if (isServer) {
                         thisPreset.options.targets = {

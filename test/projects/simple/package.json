@@ -49,7 +49,7 @@
     "private": true,
     "sideEffects": false,
     "koot": {
-        "version": "0.12.0"
+        "version": "0.12.1"
     },
     "devDependencies": {
         "@types/lodash": "^4.14.149",
@@ -121,6 +121,7 @@
         "@babel/polyfill": "^7.8.3",
         "@babel/preset-env": "^7.8.4",
         "@babel/preset-flow": "^7.8.3",
+        "@babel/preset-modules": "^0.1.2",
         "@babel/preset-react": "^7.8.3",
         "@babel/preset-typescript": "^7.8.3",
         "@babel/register": "^7.8.3",

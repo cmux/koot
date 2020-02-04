@@ -255,6 +255,7 @@ const filterExternalsModules = () => {
         .filter(x => !/^super-/.test(x))
         .filter(x => !/^koot-/.test(x))
         .filter(x => !/^@/.test(x))
+        .filter(x => !/^workbox($|-)/.test(x))
         .reduce((ext, mod) => {
             ext[mod] = ['commonjs', mod].join(' '); // eslint-disable-line no-param-reassign
             // ext[mod] = mod + '' // eslint-disable-line no-param-reassign
