@@ -5,6 +5,7 @@
 **koot**
 
 -   优化
+    -   `extend()` 高阶组件现在会正确的向目标组件传入 `forwardedRef` 属性 ([#206](https://github.com/cmux/koot/issues/206))
     -   现在重新允许 _Babel_ 插件 `@babel/plugin-transform-regenerator` (撤回 0.12.0 的一项改动)
         -   为保证最大兼容
         -   打包的代码量会比之前稍大一些

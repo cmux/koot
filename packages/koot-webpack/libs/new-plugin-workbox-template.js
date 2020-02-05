@@ -4,6 +4,8 @@ import { precacheAndRoute } from 'workbox-precaching';
 import { registerRoute } from 'workbox-routing';
 import * as workboxStrategies from 'workbox-strategies';
 
+self.__WB_DISABLE_DEV_LOGS = true;
+
 // Koot.js specific ===========================================================
 
 if (typeof self.__koot !== 'object') {

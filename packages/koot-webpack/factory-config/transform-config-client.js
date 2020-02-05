@@ -227,6 +227,7 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                     for (const key in result.entry) {
                         if (!Array.isArray(result.entry[key]))
                             result.entry[key] = [result.entry[key]];
+                        // result.entry[key].unshift('react-hot-loader/patch');
                         result.entry[key].unshift(
                             'webpack/hot/only-dev-server'
                         );

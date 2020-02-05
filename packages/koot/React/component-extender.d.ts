@@ -8,7 +8,8 @@ import {
     FC,
     ComponentClass,
     Component,
-    ComponentState
+    ComponentState,
+    RefObject
 } from 'react';
 import { Store, Dispatch } from 'redux';
 import {
@@ -140,6 +141,7 @@ export interface ExtendedProps {
      * - 仅在 `extend()` 高阶组件中使用 `pageinfo` 属性时才会存在
      */
     readonly updatePageinfo?: ExtendedPropsUpdatePageinfo;
+    readonly forwardedRef?: RefObject<any>;
 }
 type ExtendedPropsUpdatePageinfo = (
     newPageinfo?: Pageinfo | ExtendPageinfoFunction
