@@ -16,7 +16,7 @@ const getCwd = require('koot/utils/get-cwd');
  */
 module.exports = async ({ dist, i18n }) => {
     const {
-        WEBPACK_BUILD_TYPE: TYPE,
+        // WEBPACK_BUILD_TYPE: TYPE,
         WEBPACK_BUILD_ENV: ENV
         // WEBPACK_BUILD_STAGE: STAGE
         // WEBPACK_ANALYZE,
@@ -24,17 +24,9 @@ module.exports = async ({ dist, i18n }) => {
         // SERVER_PORT,
     } = process.env;
 
-    // TODO:
-    if (TYPE === 'spa') {
-        // SPA：临时禁用
-        i18n = false;
-        process.env.KOOT_I18N = JSON.stringify(false);
-        return i18n;
-    }
-
     if (typeof i18n === 'object') {
         let type = (() => {
-            if (TYPE === 'spa') return 'store';
+            // if (TYPE === 'spa') return 'store';
             if (ENV === 'dev') return 'store';
             return 'default';
         })();

@@ -416,13 +416,15 @@ module.exports = async (kootConfig = {}) => {
     });
     const { webpackConfig, i18n, devServer = {}, pathnameChunkmap } = data;
 
-    if (TYPE === 'spa' && typeof !!kootConfig.i18n) {
+    /*if (TYPE === 'spa' && typeof !!kootConfig.i18n) {
         log(
             'error',
             'build',
             chalk.redBright(__('build.spa_i18n_disabled_temporarily'))
         );
-    } else if (typeof i18n === 'object') {
+    } else */ if (
+        typeof i18n === 'object'
+    ) {
         if (STAGE === 'client') {
             log('success', 'build', `i18n ` + chalk.yellowBright(`enabled`));
             if (!quietMode)

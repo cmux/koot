@@ -1,3 +1,7 @@
+/* global
+    __KOOT_LOCALEID__: false,
+*/
+
 const fs = require('fs-extra');
 const path = require('path');
 
@@ -19,8 +23,17 @@ const getFilePath = (filename, localeId, isPathname = false) => {
 
     if (typeof localeId === 'undefined') {
         try {
-            localeId = require('../index').localeId;
-        } catch (e) {}
+            if (
+                typeof __KOOT_SPA_TEMPLATE_INJECT__ === 'boolean' &&
+                __KOOT_SPA_TEMPLATE_INJECT__
+            ) {
+                localeId = __KOOT_LOCALEID__ || undefined;
+            } else {
+                localeId = require('../index').localeId;
+            }
+        } catch (e) {
+            // console.error(e);
+        }
     }
 
     const pathPublic = getPublicPath();
@@ -53,8 +66,8 @@ const getFilePath = (filename, localeId, isPathname = false) => {
         : /(^\.\/|^)public\//;
 
     /**************************************************************************
-     * ┌─┐┌─┐┌┬┐┌┬┐┌─┐┌┐┌  ┌─┐┬ ┬┌┐┌┌─┐┌┬┐┬┌─┐┌┐┌┌─┐
-     * │  │ ││││││││ ││││  ├┤ │ │││││   │ ││ ││││└─┐
+     *   ┌─┐┌─┐┌┬┐┌┬┐┌─┐┌┐┌  ┌─┐┬ ┬┌┐┌┌─┐┌┬┐┬┌─┐┌┐┌┌─┐
+     *  │  │ ││││││││ ││││  ├┤ │ │││││   │ ││ ││││└─┐
      * └─┘└─┘┴ ┴┴ ┴└─┘┘└┘  └  └─┘┘└┘└─┘ ┴ ┴└─┘┘└┘└─┘
      *************************************************************************/
 
@@ -67,8 +80,8 @@ const getFilePath = (filename, localeId, isPathname = false) => {
         pathPublic + pathname.replace(regPublicPath, '');
 
     /**************************************************************************
-     * ┌┬┐┌─┐┌┐ ┬ ┬┌─┐
-     *  ││├┤ ├┴┐│ ││ ┬
+     *   ┌┬┐┌─┐┌┐ ┬ ┬┌─┐
+     *   ││├┤ ├┴┐│ ││ ┬
      * ─┴┘└─┘└─┘└─┘└─┘
      *************************************************************************/
 
@@ -86,8 +99,8 @@ const getFilePath = (filename, localeId, isPathname = false) => {
     // console.log('----------')
 
     /**************************************************************************
-     * ┌─┐┬ ┬┌─┐┌─┐┬┌─   ┬   ┬─┐┌─┐┌┬┐┬─┐┬ ┬┌┐┌┌─┐
-     * │  ├─┤├┤ │  ├┴┐  ┌┼─  ├┬┘├┤  │ ├┬┘│ ││││└─┐
+     *   ┌─┐┬ ┬┌─┐┌─┐┬┌─   ┬   ┬─┐┌─┐┌┬┐┬─┐┬ ┬┌┐┌┌─┐
+     *  │  ├─┤├┤ │  ├┴┐  ┌┼─  ├┬┘├┤  │ ├┬┘│ ││││└─┐
      * └─┘┴ ┴└─┘└─┘┴ ┴  └┘   ┴└─└─┘ ┴ ┴└─└─┘┘└┘└─┘
      *************************************************************************/
 

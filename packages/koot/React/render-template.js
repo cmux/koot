@@ -10,6 +10,7 @@ const getClientFilePath = require('../utils/get-client-file-path');
  * @param {Object} [options.inject={}] 注入对象
  * @param {Object} [options.state] 当前 Redux state。也可以传入 Redux store
  * @param {Object} [options.compilation] webpack compilation
+ * @param {Object} [options.localeId] 强制更变为目标语种
  * @returns {String}
  */
 module.exports = ({
@@ -18,7 +19,8 @@ module.exports = ({
     store,
     state,
     compilation,
-    ctx
+    ctx,
+    localeId
 }) => {
     if (
         typeof state !== 'object' &&
@@ -30,11 +32,12 @@ module.exports = ({
         state = state.getState();
 
     try {
-        for (let key in inject) {
+        for (const key in inject) {
             if (typeof inject[key] === 'function')
                 inject[key] = inject[key](template, state, ctx);
         }
     } catch (e) {
+        // eslint-disable-next-line no-console
         console.log(e);
     }
 
@@ -47,15 +50,16 @@ module.exports = ({
 
     // console.log(template)
 
-    const localeId = typeof state === 'object' ? state.localeId : undefined;
+    const thisLocaleId =
+        localeId || (typeof state === 'object' ? state.localeId : undefined);
 
     return ejs.render(
         template,
         {
             inject,
             content: filename =>
-                readClientFile(filename, localeId, compilation),
-            pathname: filename => getClientFilePath(filename, localeId)
+                readClientFile(filename, thisLocaleId, compilation),
+            pathname: filename => getClientFilePath(filename, thisLocaleId)
         },
         {}
     );

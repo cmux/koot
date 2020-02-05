@@ -27,6 +27,7 @@ const factory = async ({
     aliases = {},
     defines = {},
     css = {},
+    options = {},
     [keyConfigBuildDll]: createDll = false,
     ...remainingKootBuildConfig
 }) => {
@@ -53,7 +54,13 @@ const factory = async ({
             ...resolve,
             alias: { ...resolve.alias, ...aliases }
         },
-        plugins: await plugins(env, stage, defines, remainingKootBuildConfig)
+        plugins: await plugins(
+            env,
+            stage,
+            defines,
+            remainingKootBuildConfig,
+            options
+        )
     };
 };
 
@@ -62,7 +69,8 @@ const plugins = async (
     env,
     stage,
     defines = {},
-    remainingKootBuildConfig = {}
+    remainingKootBuildConfig = {},
+    options = {}
 ) => {
     const _defaultDefines = {};
     Object.keys(defaultDefines).forEach(key => {
@@ -85,6 +93,7 @@ const plugins = async (
             __TEST__: false,
             __QA__: false,
             __PREPROD__: false,
+            __KOOT_SPA_TEMPLATE_INJECT__: options.isSPATemplateInject === true,
             // '__SPA__': !!spa,
             // __DIST__: JSON.stringify(process.env.KOOT_DIST_DIR),
 

@@ -134,7 +134,10 @@ module.exports = async (kootConfigForThisBuild = {}) => {
             .merge(
                 await transformConfigExtendDefault(
                     thisConfig,
-                    kootConfigForThisBuild
+                    kootConfigForThisBuild,
+                    {
+                        isSPATemplateInject
+                    }
                 )
             );
 
@@ -166,6 +169,13 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                 [keyConfigWebpackSPATemplateInject]: true,
                 stats: 'errors-only'
             });
+            if (!Array.isArray(result.plugins)) result.plugins = [];
+            if (localeId)
+                result.plugins.push(
+                    new webpack.DefinePlugin({
+                        __KOOT_LOCALEID__: JSON.stringify(localeId)
+                    })
+                );
             delete result.optimization.minimizer;
         } else {
             // 处理 output

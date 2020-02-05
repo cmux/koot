@@ -105,15 +105,16 @@ class SpaTemplatePlugin {
             // 获取并写入 chunkmap
             await writeChunkmap(
                 compilation,
-                undefined,
+                localeId,
                 undefined,
                 serviceWorkerPathname
             );
+
             const {
                 '.files': filemap,
                 '.entrypoints': entrypoints
                 // 'service-worker': serviceWorker
-            } = getChunkmap(localeId);
+            } = getChunkmap(localeId, false, true);
 
             // console.log({
             //     serviceWorker,
@@ -169,8 +170,13 @@ class SpaTemplatePlugin {
                         return thisModule.default;
                     if (typeof thisModule === 'object') return thisModule;
                     return {};
+                })(
                     // eslint-disable-next-line no-eval
-                })(eval(fs.readFileSync(inject, 'utf-8')));
+                    eval(
+                        `const __KOOT_LOCALEID__ = '${localeId}';\n` +
+                            fs.readFileSync(inject, 'utf-8')
+                    )
+                );
             })();
 
             const html = renderTemplate({
@@ -179,7 +185,8 @@ class SpaTemplatePlugin {
                     ...defaultInject,
                     ...projectInject
                 },
-                compilation
+                compilation,
+                localeId
             });
 
             // 写入 Webpack 文件流

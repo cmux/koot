@@ -1,4 +1,4 @@
-const common = require('./common')
+const common = require('./common');
 
 /**
  * 生产通用默认配置对象
@@ -9,18 +9,16 @@ const common = require('./common')
  * @param {Object} [options.css]
  * @returns {Object} 通用配置对象
  */
-module.exports = async (kootBuildConfig = {}) => {
-    const {
-        WEBPACK_BUILD_ENV: ENV,
-        WEBPACK_BUILD_STAGE: STAGE,
-    } = process.env
+module.exports = async (kootBuildConfig = {}, options = {}) => {
+    const { WEBPACK_BUILD_ENV: ENV, WEBPACK_BUILD_STAGE: STAGE } = process.env;
 
     return await common.factory({
         env: ENV,
         stage: STAGE,
 
         spa: false,
+        options,
 
         ...kootBuildConfig
-    })
-}
+    });
+};
