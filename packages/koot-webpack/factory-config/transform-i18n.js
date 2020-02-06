@@ -47,7 +47,12 @@ module.exports = async ({ dist, i18n }) => {
             use = i18n.use || 'query';
         }
 
+        // 强制值
         if (ENV === 'dev') type = 'store';
+        if (TYPE === 'spa') type = 'store';
+        if (TYPE === 'spa') use = 'query';
+
+        // 兼容转换
         if (type.toLowerCase() === 'redux') type = 'store';
         type = type.toLowerCase();
 
