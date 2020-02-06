@@ -22,6 +22,8 @@ const {
  * @param {Object} [options.injectCache]
  * @param {Object} [options.entrypoints]
  * @param {String} [options.localeId]
+ * @param {Object} [options.localeFileMap]
+ * @param {string} [options.defaultLocaleId]
  * @param {String} [options.reduxHtml]
  * @param {Object} [options.compilation]
  * @param {Object} [options.SSRState]
@@ -32,6 +34,8 @@ module.exports = ({
     injectCache,
     entrypoints,
     localeId,
+    localeFileMap,
+    defaultLocaleId,
     reduxHtml,
     SSRState = {},
     compilation
@@ -41,6 +45,14 @@ module.exports = ({
         ENV === 'dev' || (typeof __DEV__ !== 'undefined' && __DEV__)
     );
     // const isProd = !isDev;
+    const isSPA = Boolean(process.env.WEBPACK_BUILD_TYPE === 'spa');
+    /** @type {boolean} 启用多语言的 SPA */
+    const isSPAi18nEnabled = Boolean(
+        isSPA &&
+            typeof localeFileMap === 'object' &&
+            Object.keys(localeFileMap).length &&
+            defaultLocaleId
+    );
 
     if (isDev || typeof injectCache[scriptsRunFirst] === 'undefined') {
         const filename = `${chunkNameClientRunFirst}.js`;
@@ -72,6 +84,10 @@ module.exports = ({
 
     if (isDev || typeof injectCache[scriptsInBody] === 'undefined') {
         let r = '';
+
+        // [启用多语言的 SPA] 插入代码片段 - 判断当前请求的语种
+        if (isSPAi18nEnabled) {
+        }
 
         // 入口: critical
         if (needInjectCritical && Array.isArray(entrypoints.critical)) {
@@ -143,6 +159,19 @@ module.exports = ({
         }
 
         injectCache[scriptsInBody] = r;
+    }
+
+    if (isSPAi18nEnabled) {
+        return (
+            `<script type="text/javascript">` +
+            `window.__KOOT_SPA_LOCALE_FILE_MAP__ = ${JSON.stringify(
+                localeFileMap
+            )};` +
+            `</script>` +
+            // getClientRunFirstJS(localeId, compilation) +
+            injectCache[scriptsRunFirst] +
+            injectCache[scriptsInBody]
+        );
     }
 
     return (
