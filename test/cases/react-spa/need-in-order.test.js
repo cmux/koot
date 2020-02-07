@@ -276,6 +276,29 @@ const testFull = (dir, configFileName) => {
                 expect(failedResponse.length).toBe(0);
                 expect(errors.length).toBe(0);
 
+                // 测试: 多语言
+                {
+                    const getLocaleId = async targetId => {
+                        const context = await browser.createIncognitoBrowserContext();
+                        const page = await context.newPage();
+                        await page.goto(`${origin}?hl=${targetId}`, {
+                            waitUntil: 'networkidle0'
+                        });
+                        const localeId = await page.evaluate(
+                            () =>
+                                document.querySelector('#page-home-body > p')
+                                    .innerText
+                        );
+                        await page.close();
+                        await context.close();
+
+                        return localeId;
+                    };
+                    expect(await getLocaleId('zh-tw')).toBe('zh-tw');
+                    expect(await getLocaleId('en')).toBe('en');
+                    expect(await getLocaleId('ja')).toBe('zh');
+                }
+
                 // 结束测试
                 await terminate(child.pid);
             };
