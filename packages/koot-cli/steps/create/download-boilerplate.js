@@ -20,10 +20,10 @@ const repo = 'github:cmux/koot';
 module.exports = async (project, dest) => {
     const isNext = [...process.argv].includes('next');
 
-    /** @type {String} 下载临时目录 */
     const msg =
         chalk.whiteBright(_('downloading_boilerplate')) +
         (isNext ? ` (next)` : '');
+    /** @type {String} 下载临时目录 */
     const downloadTo = path.resolve(os.tmpdir(), `koot-${Date.now()}`);
     const waitingDownloading = spinner(msg + '...');
     await new Promise((resolve, reject) => {

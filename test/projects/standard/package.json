@@ -65,7 +65,7 @@
     "private": true,
     "sideEffects": false,
     "koot": {
-        "version": "0.12.2"
+        "version": "0.12.3"
     },
     "devDependencies": {
         "@types/lodash": "^4.14.149",
@@ -99,10 +99,10 @@
         "koa-convert": "^1.2.0",
         "koa-helmet": "^5.2.0",
         "koa-mount": "^4.0.0",
-        "koa-proxies": "^0.9.0",
-        "koa-router": "^8.0.6",
+        "koa-proxies": "^0.11.0",
+        "koa-router": "^8.0.7",
         "koa-static": "^5.0.0",
-        "less": "^3.10.3",
+        "less": "3.10.3",
         "lodash": "^4.17.15",
         "md5": "^2.2.1",
         "md5-file": "^4.0.0",
@@ -119,7 +119,7 @@
         "react-router-redux": "^4.0.8",
         "redux": "^4.0.5",
         "redux-thunk": "^2.3.0",
-        "rimraf": "^3.0.1",
+        "rimraf": "^3.0.2",
         "sanitize-filename": "1.6.3",
         "sp-koa-views": "^1.0.1",
         "sync-request": "^6.1.0",
@@ -143,7 +143,7 @@
         "@babel/preset-typescript": "^7.8.3",
         "@babel/register": "^7.8.3",
         "@hot-loader/react-dom": "^16.11.0",
-        "@types/webpack": "^4.41.5",
+        "@types/webpack": "^4.41.6",
         "babel-loader": "^8.0.6",
         "compression-webpack-plugin": "^3.1.0",
         "copy-webpack-plugin": "^5.1.1",
@@ -162,7 +162,7 @@
         "webpack-bundle-analyzer": "^3.6.0",
         "webpack-config": "^7.5.0",
         "webpack-dev-middleware": "^3.7.2",
-        "webpack-dev-server": "^3.10.2",
+        "webpack-dev-server": "^3.10.3",
         "webpack-hot-middleware": "^2.25.0",
         "workbox-webpack-plugin": "^5.0.0"
     }

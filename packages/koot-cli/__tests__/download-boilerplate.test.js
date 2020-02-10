@@ -36,6 +36,12 @@ describe('测试: 下载模板', () => {
         await fs.writeFile(junk, junkContent, 'utf-8');
 
         await downloadBoilerplate({}, target).catch(err => (error = err));
+        if (error) {
+            await fs.remove(target);
+            expect(typeof error).toBe('undefined');
+            console.error(error);
+            return;
+        }
 
         const readmeExists = fs.existsSync(readme);
         const readmeNewContent = await fs.readFile(readme, 'utf-8');

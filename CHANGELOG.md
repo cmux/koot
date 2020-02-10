@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+-   更新依赖包 minor 和 patch 版本号
+
 ## [0.12.3] - 2020-02-07
 
 **koot**

@@ -64,7 +64,7 @@
         "lint-staged": "^10.0.7",
         "prettier": "^1.19.1",
         "prettier-eslint": "^9.0.1",
-        "puppeteer": "^2.1.0",
+        "puppeteer": "^2.1.1",
         "simple-git": "^1.131.0",
         "symlink-dir": "^3.1.1"
     },
@@ -76,20 +76,17 @@
     "lint-staged": {
         "*.{js,jsx,cjs,mjs}": [
             "eslint --fix",
-            "prettier --write",
-            "git add"
+            "prettier --write"
         ],
         "*.{ts,tsx}": [
             "eslint --fix",
-            "prettier --write",
-            "git add"
+            "prettier --write"
         ],
         "*.{xxxxxx}": [
             "tsc --noEmit"
         ],
         "*.{json,md,css,less,sass,scss}": [
-            "prettier --write",
-            "git add"
+            "prettier --write"
         ]
     }
 }
