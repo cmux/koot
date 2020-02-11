@@ -277,7 +277,7 @@ const testFull = (dir, configFileName) => {
                 expect(errors.length).toBe(0);
 
                 // 测试: 多语言
-                {
+                if (config.i18n) {
                     const getLocaleId = async targetId => {
                         const context = await browser.createIncognitoBrowserContext();
                         const page = await context.newPage();
@@ -343,6 +343,7 @@ describe('测试: React SPA 项目', () => {
             testFull(dir);
             testFull(dir, 'koot.build.spa-1.js');
             testFull(dir, 'koot.build.spa-2.js');
+            testFull(dir, 'koot.build.spa-3.js');
         });
     }
 });

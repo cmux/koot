@@ -2,6 +2,11 @@
 
 -   更新依赖包 minor 和 patch 版本号
 
+**koot**
+
+-   错误修正
+    -   修正 SPA 项目禁用多语言时无法正常运行的问题 ([#212](https://github.com/cmux/koot/issues/212))
+
 ## [0.12.3] - 2020-02-07
 
 **koot**
