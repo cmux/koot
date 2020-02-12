@@ -6,10 +6,12 @@ const path = require('path');
 // const ignore = "koot-@(cli|boilerplate|boilerplate-*)"
 const ignore = 'koot-@(cli|boilerplate-legacy)';
 
-const runCmd = async cmd => {
+const runCmd = async (msg, cmd, options = {}) => {
+    if (!cmd || typeof cmd === 'object') return await runCmd(cmd, cmd, options);
+
     // print name
     console.log('\n');
-    console.log(`\x1b[43m \x1b[0m\x1b[33m ` + cmd + `\x1b[0m`);
+    console.log(`\x1b[43m \x1b[0m\x1b[33m ` + msg + `\x1b[0m`);
     console.log('');
 
     // spawn
@@ -17,7 +19,8 @@ const runCmd = async cmd => {
     await new Promise(resolve => {
         const child = require('child_process').spawn(chunks.shift(), chunks, {
             stdio: 'inherit',
-            shell: true
+            shell: true,
+            ...options
         });
         child.on('close', () => {
             resolve();
@@ -31,9 +34,28 @@ const run = async () => {
         path.resolve(__dirname, 'node_modules/lerna')
     );
 
-    if (lernaInstalled) await runCmd(`lerna clean --yes --ignore "${ignore}"`);
-    await runCmd('npm install --no-package-lock');
-    await runCmd(`lerna bootstrap --hoist --ignore "${ignore}"`);
+    if (lernaInstalled) {
+        await runCmd(
+            `Run: lerna clean`,
+            `lerna clean --yes --ignore "${ignore}"`
+        );
+    }
+    await runCmd(
+        `Install deps for root directory`,
+        'npm install --no-package-lock'
+    );
+    await runCmd(
+        `Run: lerna bootstrap`,
+        `lerna bootstrap --hoist --ignore "${ignore}"`
+    );
+    await runCmd(
+        `Install deps for koot-cli`,
+        `npm install --no-package-lock"`,
+        {
+            cwd: path.resolve(__dirname, './packages/koot-cli')
+        }
+    );
+    await runCmd(`Install deps for test projects`, `node test/pre-test.js"`);
 
     //
 

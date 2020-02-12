@@ -38,8 +38,8 @@ describe('测试: 下载模板', () => {
         await downloadBoilerplate({}, target).catch(err => (error = err));
         if (error) {
             await fs.remove(target);
-            expect(typeof error).toBe('undefined');
             console.error(error);
+            expect(typeof error).toBe('undefined');
             return;
         }
 
