@@ -1,6 +1,11 @@
 ## [Unreleased]
 
+## [0.12.5] - 2020-02-13
+
 -   更新依赖包 minor 和 patch 版本号
+
+**koot**
+
 -   **新特性**
     -   **新配置项** `devServiceWorker` - 设定开发环境中是否应用 _Service Worker_。详情请参见文档 [配置/devServiceWorker](https://koot.js.org/#/config?id=devServiceWorker) ([#211](https://github.com/cmux/koot/issues/211))
 
