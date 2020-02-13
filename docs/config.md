@@ -271,7 +271,7 @@ module.exports = {
     // 禁用自动生成 Service-Worker 文件，禁用自动安装
     serviceWorker: false,
 
-    // 详细配置。配置项及其说明详见下表
+    // 详细配置。配置项及其说明详见 Service Worker & PWA 章节 (链接见上文)
     serviceWorker: {
         [option]: 'value'
     }
@@ -1089,6 +1089,30 @@ module.exports = {
             }
             if (typeof before === 'function') return before(app);
         }
+    }
+};
+```
+
+### devServiceWorker
+
+-   类型: `boolean` 或 `Object`
+-   默认值: `false`
+-   **仅针对**: 开发环境
+
+设定开发环境中是否应用 _Service Worker_。有关独立配置对象请查阅 [Service Worker & PWA](/pwa)。
+
+```javascript
+module.exports = {
+    // 默认值 - 开发环境中禁用 Service Worker
+    devServiceWorker: false,
+
+    // 开发环境中启用 Service Worker，采用 `serviceWorker` 配置对象
+    devServiceWorker: true,
+
+    // 开发环境中启用 Service Worker，采用独立配置对象
+    // 配置项及其说明详见 Service Worker & PWA 章节 (链接见上文)
+    devServiceWorker: {
+        [option]: `value`
     }
 };
 ```

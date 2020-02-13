@@ -23,5 +23,6 @@ module.exports = {
     classNameHashLength: 6,
     bundleVersionsKeep: 2,
 
-    devPort: 3080
+    devPort: 3080,
+    devServiceWorker: false
 };

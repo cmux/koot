@@ -78,7 +78,7 @@ module.exports = async (kootConfig = {}) => {
     kootBuildConfig.dist = await transformDist(kootBuildConfig.dist);
     kootBuildConfig.i18n = await transformI18n(kootBuildConfig);
     kootBuildConfig.serviceWorker = await transformServiceWorker(
-        kootBuildConfig.serviceWorker
+        kootBuildConfig
     );
     kootBuildConfig.template = await transformTemplate(
         kootBuildConfig.template
@@ -166,5 +166,6 @@ module.exports = async (kootConfig = {}) => {
     //
     // ========================================================================
 
+    // console.log({ kootBuildConfig });
     return kootBuildConfig;
 };

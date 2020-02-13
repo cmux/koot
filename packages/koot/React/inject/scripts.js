@@ -138,9 +138,9 @@ module.exports = ({
             (process.env.WEBPACK_BUILD_TYPE === 'spa' ||
                 typeof injectCache[uriServiceWorker] === 'string')
         ) {
-            r += `<script id="__koot-pwa-register-sw" type="text/javascript">`;
-            // if (isProd) {
             r +=
+                `<script id="__koot-pwa-register-sw" type="text/javascript">` +
+                // if (isProd) {
                 `if ('serviceWorker' in navigator) {` +
                 `window.addEventListener('load', function() {` +
                 // + `navigator.serviceWorker.register("${injectCache[uriServiceWorker]}?koot=${process.env.KOOT_VERSION}",`
@@ -151,11 +151,11 @@ module.exports = ({
                 `)` +
                 `.catch(err => {console.log('👩‍💻 Service Worker SUPPORTED. ERROR', err)})` +
                 `});` +
-                `}else{console.log('👩‍💻 Service Worker not supported!')}`;
-            // } else if (isDev) {
-            //     r += `console.log('👩‍💻 No Service Worker for DEV mode.')`;
-            // }
-            r += `</script>`;
+                `}else{console.log('👩‍💻 Service Worker not supported!')}` +
+                // } else if (isDev) {
+                //     r += `console.log('👩‍💻 No Service Worker for DEV mode.')`;
+                // }
+                `</script>`;
         }
 
         injectCache[scriptsInBody] = r;
