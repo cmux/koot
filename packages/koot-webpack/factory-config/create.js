@@ -6,7 +6,6 @@ const {
     keyConfigClientAssetsPublicPath
 } = require('koot/defaults/before-build');
 const getAppType = require('koot/utils/get-app-type');
-// const getPort = require('koot/utils/get-port')
 const getChunkmapPathname = require('koot/utils/get-chunkmap-path');
 const initNodeEnv = require('koot/utils/init-node-env');
 
@@ -58,7 +57,6 @@ module.exports = async (kootConfig = {}) => {
     });
     const { analyze = false } = kootBuildConfig;
 
-    // kootBuildConfig.portServer = getPort(kootBuildConfig.port)
     if (process.env.WEBPACK_BUILD_ENV === 'dev' && kootBuildConfig.devPort) {
         process.env.SERVER_PORT = kootBuildConfig.devPort;
     } else if (
