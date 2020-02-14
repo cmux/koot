@@ -13,8 +13,11 @@ module.exports = (port, env = process.env.WEBPACK_BUILD_ENV) => {
     //     __SERVER_PORT__: __SERVER_PORT__
     // });
     const defaultPort =
-        // typeof process.env.SERVER_PORT === 'undefined' &&
-        typeof __SERVER_PORT__ !== 'undefined'
+        process.env.WEBPACK_BUILD_ENV === 'prod' &&
+        typeof process.env.SERVER_PORT !== 'undefined'
+            ? process.env.SERVER_PORT
+            : /* typeof process.env.SERVER_PORT === 'undefined' && */ typeof __SERVER_PORT__ !==
+              'undefined'
             ? __SERVER_PORT__
             : process.env.SERVER_PORT;
 

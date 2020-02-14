@@ -1,5 +1,5 @@
 // jest configuration
-jest.setTimeout(5 * 60 * 1 * 1000); // 5mins
+jest.setTimeout(2 * 60 * 1 * 1000); // 5mins
 
 const fs = require('fs-extra');
 const path = require('path');
