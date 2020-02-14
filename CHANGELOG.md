@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+**koot**
+
+-   优化
+    -   工具函数 `getPort` 现在明确会返回 Web Server 端口号 ([#210](https://github.com/cmux/koot/issues/210))
+
 ## [0.12.5] - 2020-02-13
 
 -   更新依赖包 minor 和 patch 版本号
