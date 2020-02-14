@@ -71,6 +71,13 @@ import getClientFilePath from 'koot/utils/get-client-file-path';
 
 目前提供以下全局函数
 
+##### 客户端 & 服务器端
+
+##### `getPort(): number`
+
+-   引用地址: `koot/utils/get-port`
+-   获取 _Web 服务器_ 的端口号
+
 ##### 仅客户端
 
 ##### `clientUpdatePageinfo(title?: string, metas?: Array<MetaObject>): void`
