@@ -53,7 +53,7 @@
         "eslint": "^6.8.0",
         "eslint-config-koot": "^1.6.0",
         "fs-extra": "^8.1.0",
-        "husky": "^4.2.2",
+        "husky": "^4.2.3",
         "inquirer": "7.0.4",
         "is-valid-path": "^0.1.1",
         "jest": "^25.1.0",
