@@ -49,7 +49,7 @@
     "private": true,
     "sideEffects": false,
     "koot": {
-        "version": "0.12.5"
+        "version": "0.12.6"
     },
     "devDependencies": {
         "@types/lodash": "^4.14.149",
@@ -84,7 +84,7 @@
         "koa-helmet": "^5.2.0",
         "koa-mount": "^4.0.0",
         "koa-proxies": "^0.11.0",
-        "koa-router": "^8.0.7",
+        "koa-router": "^8.0.8",
         "koa-static": "^5.0.0",
         "less": "^3.11.1",
         "lodash": "^4.17.15",

@@ -57,7 +57,7 @@
         "inquirer": "7.0.4",
         "is-valid-path": "^0.1.1",
         "jest": "^25.1.0",
-        "jsdom": "^16.1.0",
+        "jsdom": "^16.2.0",
         "latest-version": "^5.1.0",
         "lerna": "^3.20.2",
         "lerna-wizard": "^1.1.1",
