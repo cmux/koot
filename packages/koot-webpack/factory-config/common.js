@@ -237,12 +237,12 @@ const resolve = Object.assign({
         '.ts',
         '.tsx',
         '.mjs',
-        '.cjs',
-        '.json',
-        '.css',
-        '.less',
-        '.sass',
-        '.scss'
+        '.cjs'
+        // '.json',
+        // '.css',
+        // '.less',
+        // '.sass',
+        // '.scss'
     ]
 });
 

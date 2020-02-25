@@ -2,7 +2,14 @@
 
 const findCacheDir = require('find-cache-dir');
 
-const cacheFolderName = 'koot-webpack-server';
+const getBabelLoaderDefaults = ({ createDll = false }) => ({
+    cacheDirectory: findCacheDir({ name: 'koot-webpack', thunk: true })(
+        `babel/${process.env.WEBPACK_BUILD_ENV}.${
+            process.env.WEBPACK_BUILD_STAGE
+        }${createDll ? '.dll' : ''}`
+    ),
+    cacheCompression: false
+});
 
 /**
  * Loader 规则 - Javascript
@@ -22,8 +29,11 @@ module.exports = (kootBuildConfig = {}) => {
         options.__server = stageServer;
         options.__routes = routes;
 
-        if (typeof options.cacheDirectory === 'undefined')
-            options.cacheDirectory = true;
+        options = Object.assign(
+            {},
+            getBabelLoaderDefaults({ createDll }),
+            options
+        );
 
         if (process.env.WEBPACK_BUILD_ENV === 'dev') {
             if (createDll) {
@@ -37,14 +47,10 @@ module.exports = (kootBuildConfig = {}) => {
                     options.cacheDirectory = false;
             }
             options.compact = false;
-            options.cacheCompression = false;
         }
 
         if (stageServer) {
-            options.cacheDirectory = findCacheDir({
-                name: cacheFolderName
-            });
-            options.cacheIdentifier = 'koot-webpack-server-bundling';
+            // options.cacheIdentifier = 'koot-webpack-server-bundling';
             options.babelrc = false;
             // options.cacheCompression = false;
         }
