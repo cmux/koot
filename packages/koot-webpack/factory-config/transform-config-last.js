@@ -217,6 +217,9 @@ const validatePlugins = (config, kootConfigForThisBuild = {}) => {
             ignores.push({
                 test: /koot[\\/].+?[\\/]server[\\/](run|ssr)\.(j|t)s(x|$)/
             });
+            ignores.push({
+                test: /\.public-chunkmap\.json/
+            });
         }
         config.plugins.push(
             new HardSourceWebpackPlugin.ExcludeModulePlugin(ignores)
