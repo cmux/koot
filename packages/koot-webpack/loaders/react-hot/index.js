@@ -1,6 +1,7 @@
 const { getOptions } = require('loader-utils');
 const fs = require('fs-extra');
-const path = require('path');
+// const path = require('path');
+const getKootFile = require('../../libs/get-koot-file');
 
 // modify based on:
 // https://github.com/NoamELB/react-hot-loader-loader
@@ -93,10 +94,7 @@ function transformSourceForExportClassDirectly(source) {
 
 // getters
 
-const customHotLoaderAbsolutePath = path.resolve(
-    __dirname,
-    '../../../koot/React/hoc/dev-hot.js'
-);
+const customHotLoaderAbsolutePath = getKootFile('React/hoc/dev-hot.js');
 const customHotLoader = fs.existsSync(customHotLoaderAbsolutePath)
     ? customHotLoaderAbsolutePath.replace(/\\/g, '\\\\')
     : 'koot/React/hoc/dev-hot';

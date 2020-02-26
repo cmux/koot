@@ -87,12 +87,13 @@ module.exports = (kootBuildConfig = {}) => {
             // Allow to respawn a dead worker pool
             // respawning slows down the entire compilation
             // and should be set to false for development
-            poolRespawn: false,
+            poolRespawn: process.env.WEBPACK_BUILD_ENV === 'dev' ? false : true,
 
             // timeout for killing the worker processes when idle
             // defaults to 500 (ms)
             // can be set to Infinity for watching builds to keep workers alive
-            poolTimeout: Infinity,
+            poolTimeout:
+                process.env.WEBPACK_BUILD_ENV === 'dev' ? Infinity : 500,
 
             // number of jobs the poll distributes to the workers
             // defaults to 200
@@ -101,7 +102,7 @@ module.exports = (kootBuildConfig = {}) => {
 
             // name of the pool
             // can be used to create different pools with elsewise identical options
-            name: 'koot-dev-workers-pool',
+            name: 'koot-webpack-workers-pool',
 
             ...options
         }
@@ -116,6 +117,8 @@ module.exports = (kootBuildConfig = {}) => {
                 options
             });
         }
+
+        if (!createDll && env === 'prod' && stage === 'client') return use;
 
         return [
             ruleUseThreadLoader(),
@@ -230,23 +233,23 @@ module.exports = (kootBuildConfig = {}) => {
     return [
         {
             test: /\.(js|mjs|cjs)$/,
-            use: ruleUseBabelLoader({})
+            use: ruleUseLoaders({})
         },
         {
             test: /\.jsx$/,
-            use: ruleUseBabelLoader({
+            use: ruleUseLoaders({
                 __react: true
             })
         },
         {
             test: /\.ts$/,
-            use: ruleUseBabelLoader({
+            use: ruleUseLoaders({
                 __typescript: true
             })
         },
         {
             test: /\.tsx$/,
-            use: ruleUseBabelLoader({
+            use: ruleUseLoaders({
                 __react: true,
                 __typescript: true
             })

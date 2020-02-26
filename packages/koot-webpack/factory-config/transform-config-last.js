@@ -181,7 +181,13 @@ const validatePlugins = (config, kootConfigForThisBuild = {}) => {
     );
 
     // 添加缓存插件
-    if (ENV !== 'dev' && process.env.WEBPACK_BUILD_STAGE === 'client') {
+    // const useHardSourceCache = false;
+    if (
+        // useHardSourceCache &&
+        ENV !== 'dev' &&
+        process.env.WEBPACK_BUILD_STAGE === 'client' &&
+        !config[keyConfigWebpackSPATemplateInject]
+    ) {
         config.plugins.push(
             new HardSourceWebpackPlugin({
                 cacheDirectory: findCacheDir({
@@ -195,8 +201,9 @@ const validatePlugins = (config, kootConfigForThisBuild = {}) => {
                     }/[confighash]`
                 ),
                 configHash: function(webpackConfig) {
-                    return require('node-object-hash')({ sort: false }).hash(
-                        JSON.parse(
+                    return require('node-object-hash')({ sort: false }).hash({
+                        // ...kootConfigForThisBuild,
+                        ...JSON.parse(
                             JSON.stringify(webpackConfig)
                                 .replace(/koot-[0-9]+/g, 'koot-**TIMESTAMP**')
                                 .replace(
@@ -204,13 +211,26 @@ const validatePlugins = (config, kootConfigForThisBuild = {}) => {
                                     'config$1$2.**TIMESTAMP**.js'
                                 )
                         )
-                    );
+                    });
+                },
+                info: {
+                    mode: 'none',
+                    level: 'error'
                 }
             })
         );
         const ignores = [
             {
                 test: /mini-css-extract-plugin[\\/]dist[\\/]loader/
+            },
+            {
+                test: /file-loader/
+            },
+            {
+                test: /\.public-chunkmap\.json/
+            },
+            {
+                test: /koot[\\/]ReactSPA[\\/].+/
             }
         ];
         if (process.env.WEBPACK_BUILD_STAGE === 'server') {
@@ -222,9 +242,6 @@ const validatePlugins = (config, kootConfigForThisBuild = {}) => {
             });
             ignores.push({
                 test: /koot-webpack[\\/]/
-            });
-            ignores.push({
-                test: /\.public-chunkmap\.json/
             });
         }
         config.plugins.push(
