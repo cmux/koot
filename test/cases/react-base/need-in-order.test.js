@@ -146,6 +146,13 @@ const doTest = async (port, dist, settings = {}) => {
         })
         .catch();
 
+    if (!res.ok()) {
+        console.warn({
+            res,
+            text: await res.text()
+        });
+    }
+
     // 请求应 OK
     expect(res.ok()).toBe(true);
 
@@ -417,7 +424,9 @@ const doTest = async (port, dist, settings = {}) => {
         const title = await page.evaluate(() => document.title);
         await context.close();
 
-        expect(title.includes('Policies')).toBe(true);
+        expect(title.includes('Policies') || title.includes('隐私政策')).toBe(
+            true
+        );
     }
 
     // 测试: store 文件只会引用一次
@@ -427,12 +436,13 @@ const doTest = async (port, dist, settings = {}) => {
         await page.goto(origin, {
             waitUntil: 'networkidle2'
         });
+        await sleep(1000);
 
         const count = await page.evaluate(
             () => window.__REDUX_STOER_RUN_COUNT__
         );
 
-        await context.close();
+        // await context.close();
 
         expect(count).toBe(1);
     }

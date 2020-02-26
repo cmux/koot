@@ -181,7 +181,7 @@ const validatePlugins = (config, kootConfigForThisBuild = {}) => {
     );
 
     // 添加缓存插件
-    if (ENV !== 'dev') {
+    if (ENV !== 'dev' && process.env.WEBPACK_BUILD_STAGE === 'client') {
         config.plugins.push(
             new HardSourceWebpackPlugin({
                 cacheDirectory: findCacheDir({
@@ -214,8 +214,14 @@ const validatePlugins = (config, kootConfigForThisBuild = {}) => {
             }
         ];
         if (process.env.WEBPACK_BUILD_STAGE === 'server') {
+            // ignores.push({
+            //     test: /koot[\\/].+?[\\/]server[\\/](run|ssr)\.(j|t)s(x|$)/
+            // });
             ignores.push({
-                test: /koot[\\/].+?[\\/]server[\\/](run|ssr)\.(j|t)s(x|$)/
+                test: /koot[\\/]/
+            });
+            ignores.push({
+                test: /koot-webpack[\\/]/
             });
             ignores.push({
                 test: /\.public-chunkmap\.json/

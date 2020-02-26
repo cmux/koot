@@ -196,6 +196,15 @@ module.exports = (kootBuildConfig = {}) => {
                     require.resolve('../../../loaders/koot-dev-ssr.js')
                 ]
             },
+            // {
+            //     test: /\.(jsx)$/,
+            //     use: [
+            //         ...ruleUseLoaders({
+            //             __react: true
+            //         }),
+            //         require.resolve('../../../loaders/koot-dev-ssr.js')
+            //     ]
+            // },
             {
                 test: /\.(ts|tsx)$/,
                 use: [
@@ -205,17 +214,40 @@ module.exports = (kootBuildConfig = {}) => {
                     require.resolve('../../../loaders/koot-dev-ssr.js')
                 ]
             }
+            // {
+            //     test: /\.(tsx)$/,
+            //     use: [
+            //         ...ruleUseLoaders({
+            //             __react: true,
+            //             __typescript: true
+            //         }),
+            //         require.resolve('../../../loaders/koot-dev-ssr.js')
+            //     ]
+            // }
         ];
     }
 
     return [
         {
-            test: /\.(js|mjs|cjs|jsx)$/,
+            test: /\.(js|mjs|cjs)$/,
             use: ruleUseBabelLoader({})
         },
         {
-            test: /\.(ts|tsx)$/,
+            test: /\.jsx$/,
             use: ruleUseBabelLoader({
+                __react: true
+            })
+        },
+        {
+            test: /\.ts$/,
+            use: ruleUseBabelLoader({
+                __typescript: true
+            })
+        },
+        {
+            test: /\.tsx$/,
+            use: ruleUseBabelLoader({
+                __react: true,
                 __typescript: true
             })
         }
