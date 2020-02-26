@@ -194,24 +194,24 @@ const validatePlugins = (config, kootConfigForThisBuild = {}) => {
                     name: 'koot-webpack',
                     thunk: true
                 })(
-                    `hard/${process.env.WEBPACK_BUILD_ENV}.${
-                        process.env.WEBPACK_BUILD_STAGE
-                    }${
-                        kootConfigForThisBuild.createDll ? '.dll' : ''
-                    }/[confighash]`
+                    `hard/${process.env.WEBPACK_BUILD_TYPE}` +
+                        `.${process.env.WEBPACK_BUILD_ENV}` +
+                        `.${process.env.WEBPACK_BUILD_STAGE}` +
+                        (kootConfigForThisBuild.createDll ? '.dll' : '') +
+                        `/[confighash]`
                 ),
                 configHash: function(webpackConfig) {
-                    return require('node-object-hash')({ sort: false }).hash({
+                    return require('node-object-hash')({ sort: false }).hash(
                         // ...kootConfigForThisBuild,
-                        ...JSON.parse(
-                            JSON.stringify(webpackConfig)
-                                .replace(/koot-[0-9]+/g, 'koot-**TIMESTAMP**')
-                                .replace(
-                                    /config([\\/])(.+?)\.[0-9]+\.js/g,
-                                    'config$1$2.**TIMESTAMP**.js'
-                                )
-                        )
-                    });
+                        // ...JSON.parse(
+                        JSON.stringify(webpackConfig)
+                            .replace(/koot-[0-9]+/g, 'koot-**TIMESTAMP**')
+                            .replace(
+                                /config([\\/])(.+?)\.[0-9]+\.js/g,
+                                'config$1$2.**TIMESTAMP**.js'
+                            )
+                        // )
+                    );
                 },
                 info: {
                     mode: 'none',

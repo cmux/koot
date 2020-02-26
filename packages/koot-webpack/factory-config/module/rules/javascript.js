@@ -4,9 +4,10 @@ const findCacheDir = require('find-cache-dir');
 
 const getBabelLoaderDefaults = ({ createDll = false }) => ({
     cacheDirectory: findCacheDir({ name: 'koot-webpack', thunk: true })(
-        `babel/${process.env.WEBPACK_BUILD_ENV}.${
-            process.env.WEBPACK_BUILD_STAGE
-        }${createDll ? '.dll' : ''}`
+        `babel/${process.env.WEBPACK_BUILD_TYPE}` +
+            `.${process.env.WEBPACK_BUILD_ENV}` +
+            `.${process.env.WEBPACK_BUILD_STAGE}` +
+            (createDll ? '.dll' : '')
     ),
     cacheCompression: false
 });
