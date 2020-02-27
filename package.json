@@ -61,12 +61,12 @@
         "latest-version": "^5.1.0",
         "lerna": "^3.20.2",
         "lerna-wizard": "^1.1.1",
-        "lint-staged": "^10.0.7",
+        "lint-staged": "^10.0.8",
         "prettier": "^1.19.1",
         "prettier-eslint": "^9.0.1",
         "puppeteer": "^2.1.1",
         "simple-git": "^1.131.0",
-        "symlink-dir": "^3.1.1"
+        "symlink-dir": "^3.1.2"
     },
     "husky": {
         "hooks": {

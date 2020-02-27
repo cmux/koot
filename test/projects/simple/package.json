@@ -49,12 +49,12 @@
     "private": true,
     "sideEffects": false,
     "koot": {
-        "version": "0.12.7-alpha.0"
+        "version": "0.12.7-alpha.1"
     },
     "devDependencies": {
         "@types/lodash": "^4.14.149",
-        "@types/node": "^13.7.4",
-        "@types/react": "^16.9.22",
+        "@types/node": "^13.7.6",
+        "@types/react": "^16.9.23",
         "@types/react-dom": "^16.9.5",
         "@types/react-redux": "^7.1.7",
         "@types/react-router": "^3.0.8",
@@ -95,8 +95,8 @@
         "os-locale": "^4.0.0",
         "pm2": "^4.2.3",
         "portfinder": "^1.0.25",
-        "react": "^16.12.0",
-        "react-dom": "^16.12.0",
+        "react": "^16.13.0",
+        "react-dom": "^16.13.0",
         "react-redux": "^5.1.1",
         "react-router": "^3.2.1",
         "react-router-redux": "^4.0.8",
@@ -125,9 +125,10 @@
         "@babel/preset-react": "^7.8.3",
         "@babel/preset-typescript": "^7.8.3",
         "@babel/register": "^7.8.3",
-        "@hot-loader/react-dom": "^16.11.0",
+        "@hot-loader/react-dom": "^16.12.0",
         "@types/webpack": "^4.41.6",
         "babel-loader": "^8.0.6",
+        "cache-loader": "^4.1.0",
         "compression-webpack-plugin": "^3.1.0",
         "copy-webpack-plugin": "^5.1.1",
         "css-loader": "^3.4.2",
