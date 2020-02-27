@@ -49,6 +49,7 @@ module.exports = {
     keyConfigClientServiceWorkerPathname: '__CLIENT_SERVICE_WORKER_PATHNAME__',
     WEBPACK_OUTPUT_PATH: '__WEBPACK_OUTPUT_PATH',
     CLIENT_ROOT_PATH: '__CLIENT_ROOT_PATH',
+    WEBPACK_MODIFIED_PUBLIC_PATH: '__WEBPACK_MODIFIED_PUBLIC_PATH',
 
     // 自定义 chunk
     chunkNameExtractCss: '__KOOT__EXTRACT__CSS__',

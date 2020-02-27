@@ -18,9 +18,9 @@ class ModifyServerBundlePlugin {
     }
 
     apply(compiler) {
-        const { isServerless = false } = this;
+        // const { isServerless = false } = this;
 
-        if (isServerless) {
+        if (process.env.WEBPACK_BUILD_ENV === 'prod') {
             compiler.hooks.afterEmit.tapAsync.bind(
                 compiler.hooks.afterEmit,
                 'ModifyServerBundlePlugin'
@@ -32,7 +32,9 @@ class ModifyServerBundlePlugin {
                 await fs.writeFile(
                     file,
                     'const path = require("path");\n' +
-                        'global.KOOT_DIST_DIR = path.resolve(__dirname, "../");\n\n' +
+                        'if (typeof global.KOOT_DIST_DIR === "undefined") {\n' +
+                        '    global.KOOT_DIST_DIR = path.resolve(__dirname, "../");\n' +
+                        '}\n\n' +
                         // 'console.log(global.KOOT_DIST_DIR);\n\n' +
                         (await fs.readFile(file, 'utf-8')),
                     'utf-8'

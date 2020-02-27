@@ -68,16 +68,6 @@ module.exports = async ({ dist, i18n }) => {
 
         process.env.KOOT_I18N = JSON.stringify(true);
         process.env.KOOT_I18N_TYPE = JSON.stringify(type);
-        // process.env.KOOT_I18N_LOCALES = JSON.stringify(
-        //     TYPE === 'spa'
-        //         ? locales.map(([...l]) => {
-        //               delete l[1];
-        //               delete l[2];
-        //               delete l[3];
-        //               return l;
-        //           })
-        //         : locales
-        // );
         process.env.KOOT_I18N_LOCALES = JSON.stringify(
             locales.map(([...l]) => {
                 if (TYPE === 'spa') {
@@ -85,7 +75,7 @@ module.exports = async ({ dist, i18n }) => {
                     delete l[2];
                     delete l[3];
                 }
-                if (STAGE === 'server') {
+                if (STAGE === 'server' && ENV === 'prod') {
                     delete l[2];
                 }
                 return l;

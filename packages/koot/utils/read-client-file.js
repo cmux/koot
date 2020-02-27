@@ -64,7 +64,7 @@ const readClientFile = (
     }
 
     // 在打包结果中寻找指定文件
-    let pathnames = getFilePath(filename, localeId, isPathname);
+    let pathnames = getFilePath(filename, localeId, isPathname, true);
     if (!Array.isArray(pathnames)) pathnames = [pathnames];
 
     const results = pathnames.map(pathname => {

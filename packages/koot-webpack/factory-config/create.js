@@ -4,6 +4,7 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
 // Libs & Utilities
 const {
     keyConfigClientAssetsPublicPath
+    // WEBPACK_MODIFIED_PUBLIC_PATH
 } = require('koot/defaults/before-build');
 const getAppType = require('koot/utils/get-app-type');
 const getChunkmapPathname = require('koot/utils/get-chunkmap-path');
@@ -95,6 +96,7 @@ module.exports = async (kootConfig = {}) => {
     // ========================================================================
 
     const webpackConfig = await (async () => {
+        // if(typeof kootBuildConfig.webpackConfig.output === 'object' && kootBuildConfig)
         let config;
         if (STAGE === 'client')
             config = await transformConfigClient(kootBuildConfig);

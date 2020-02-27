@@ -783,19 +783,9 @@ module.exports = {
 -   **必填**
 -   **仅针对**: Webpack 打包过程
 
-Webpack 打包配置。如果为 `Function`，需要返回 Webpack 打包配置，可为异步方法。有关 Koot.js 内 Webpack 的使用请查阅 [Webpack 相关](/webpack)。
+Webpack 打包配置。如果为 `Function`，需要返回 Webpack 打包配置，可为异步方法。
 
-注意事项
-
--   原则上不建议设定 `output` 对象。
-    -   若需修改打包结果路径，请调整以下 _Koot.js_ 配置项: `dist` `distClientAssetsDirName`
--   `entry` 入口文件
-    -   客户端: _Koot.js_ 会自动添加 2 个入口，并在 SSR 渲染结果 / SPA 模板结果中自动插入引用。
-    -   服务器端: _Koot.js_ 会自动覆盖所有的入口，即无法定制服务器端的 _Webpack_ 入口。
--   `module.rules` / Loaders
-    -   _Koot.js_ 会自动添加 _JavaScript_、_TypeScript_、_CSS_、_LESS_、_SASS_ 相关的 Loader。为了避免冲突，请勿自行添加相关 Loader。
-        -   内置的 Loader 可以通过 _Koot.js_ 配置项 `internalLoaderOptions` 进行设置。
--   默认包含一套代码拆分优化规则，如无特殊需要，无需自行对 `optimization` 进行设置。
+相关的注意事项请查阅 [Webpack 相关](/webpack)。
 
 ```javascript
 module.exports = {
@@ -851,6 +841,8 @@ module.exports = {
 -   **仅针对**: Webpack 打包过程
 
 客户端打包结果中静态资源存放路径的目录名。
+
+**注**: 如果项目的 _Webpack_ 配置存在 `output.publicPath` 的设定，该属性会失效，所有的静态资源会直接存放到 `output.path` 目录下。
 
 ```javascript
 module.exports = {

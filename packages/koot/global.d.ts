@@ -235,6 +235,12 @@ declare namespace NodeJS {
         'WEBPACK_DEV_SERVER_PORT'
          */
         /**
+         * 服务器端渲染时的 Public Path —— 请求静态资源的 URL 前缀
+         * - 默认为 `/`
+         * > **⚠️** 经过 `JSON.stringify` 处理 **⚠️**
+         */
+        KOOT_SSR_PUBLIC_PATH: string;
+        /**
          * 服务器模式
          * - _空_ - 默认模式
          * - serverless

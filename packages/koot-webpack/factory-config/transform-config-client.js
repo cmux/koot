@@ -78,6 +78,13 @@ module.exports = async (kootConfigForThisBuild = {}) => {
             typeof templateInject !== 'undefined'
     );
 
+    const isPublicPathProvided = Boolean(
+        process.env.WEBPACK_BUILD_ENV === 'prod' &&
+            typeof config === 'object' &&
+            typeof config.output === 'object' &&
+            typeof config.output.publicPath === 'string'
+    );
+
     /**
      * 创建 Webpack 配置对象
      * @async
@@ -185,13 +192,20 @@ module.exports = async (kootConfigForThisBuild = {}) => {
             // }
             if (typeof result.output !== 'object') result.output = {};
             if (!result.output.path) {
-                result.output.path = path.resolve(
-                    pathPublic,
-                    distClientAssetsDirName
-                );
-                result.output.publicPath = __clientAssetsPublicPath;
+                result.output.path = isPublicPathProvided
+                    ? path.resolve(pathPublic)
+                    : path.resolve(pathPublic, distClientAssetsDirName);
+                // result.output.publicPath = __clientAssetsPublicPath;
             }
-            if (!result.output.publicPath) {
+            if (isPublicPathProvided) {
+                result.output.publicPath = result.output.publicPath.replace(
+                    /(\\|\/)$/g,
+                    ''
+                );
+                // result.output.publicPath =
+                //     result.output.publicPath.replace(/(\\|\/)$/g, '') +
+                //     `/${distClientAssetsDirName}`;
+            } else if (!result.output.publicPath) {
                 result.output.publicPath = __clientAssetsPublicPath;
             }
             result.output.publicPath = transformOutputPublicpath(
@@ -345,7 +359,8 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                     result.plugins.push(
                         await newPluginWorkbox(
                             kootConfigForThisBuild,
-                            isSeperateLocale ? localeId : undefined
+                            isSeperateLocale ? localeId : undefined,
+                            isPublicPathProvided
                         )
                     );
                 }

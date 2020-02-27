@@ -18,6 +18,7 @@
         "start:server": "koot-start --no-build",
         "start:spa": "koot-start --type spa",
         "start:serverless": "koot-start --config koot.config.serverless.js",
+        "start:public-path": "koot-start --config koot.config.public-path.js",
         "build": "koot-build",
         "build:client": "koot-build -c",
         "build:server": "koot-build -s",
@@ -50,7 +51,9 @@
         "koot-buildtest-spa-build-config-default": "koot-build --koot-test --type react-spa --dest dist-spa-test",
         "koot-buildtest-spa-build-config-koot_build_spa-1_js": "koot-build --koot-test --config koot.build.spa-1.js",
         "koot-buildtest-spa-build-config-koot_build_spa-2_js": "koot-build --koot-test --config koot.build.spa-2.js",
-        "koot-buildtest-spa-build-config-koot_build_spa-3_js": "koot-build --koot-test --config koot.build.spa-3.js"
+        "koot-buildtest-spa-build-config-koot_build_spa-3_js": "koot-build --koot-test --config koot.build.spa-3.js",
+        "koot-buildtest-isomorphic-public_path-production": "koot-start --koot-test --config koot.config.public-path.js",
+        "koot-buildtest-isomorphic-public_path-development": "koot-dev --no-open --koot-test --config koot.config.public-path.js"
     },
     "dependencies": {
         "autoprefixer": "9.7.2",
@@ -68,7 +71,7 @@
     "private": true,
     "sideEffects": false,
     "koot": {
-        "version": "0.12.7-alpha.3"
+        "version": "0.12.7-alpha.4"
     },
     "devDependencies": {
         "@types/lodash": "^4.14.149",

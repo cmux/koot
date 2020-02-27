@@ -195,6 +195,7 @@ module.exports = ({
  */
 const combineFilePaths = (name, ...args) => {
     let pathnames = getClientFilePath(...args);
+    // console.log({ name, args, pathnames });
     if (!Array.isArray(pathnames)) pathnames = [pathnames];
     return pathnames
         .map(

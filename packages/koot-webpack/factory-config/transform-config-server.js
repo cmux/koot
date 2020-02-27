@@ -69,23 +69,44 @@ module.exports = async (kootBuildConfig = {}) => {
         .merge(configTargetDefault)
         .merge(config);
 
+    const isPublicPathProvided = Boolean(
+        process.env.WEBPACK_BUILD_ENV === 'prod' &&
+            typeof config === 'object' &&
+            typeof config.output === 'object' &&
+            typeof config.output.publicPath === 'string'
+    );
+
     await transformConfigExtendDefault(result, kootBuildConfig);
 
     Object.assign(result.output, configTargetDefault.output);
 
+    // output =================================================================
     // 如果用户自己配置了服务端打包路径，则覆盖默认的
     if (dist) result.output.path = path.resolve(dist, './server');
-    if (!result.output.publicPath)
+    if (isPublicPathProvided) {
+        result.output.publicPath = transformOutputPublicpath(
+            result.output.publicPath
+        );
+        process.env.KOOT_SSR_PUBLIC_PATH = JSON.stringify(
+            result.output.publicPath
+        );
+    } else if (!result.output.publicPath) {
         result.output.publicPath = __clientAssetsPublicPath;
+        result.output.publicPath = transformOutputPublicpath(
+            result.output.publicPath
+        );
+    } else {
+        result.output.publicPath = transformOutputPublicpath(
+            result.output.publicPath
+        );
+    }
     if (!result.output.filename)
         result.output.filename = 'entry.[chunkhash].js';
     if (!result.output.chunkFilename)
         result.output.chunkFilename = 'chunk.[chunkhash].js';
     if (isServerless) result.output.libraryTarget = 'commonjs2';
 
-    result.output.publicPath = transformOutputPublicpath(
-        result.output.publicPath
-    );
+    // ========================================================================
 
     result.plugins = [
         new webpack.optimize.LimitChunkCountPlugin({

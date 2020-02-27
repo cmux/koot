@@ -1,7 +1,13 @@
 const fs = require('fs-extra');
 const path = require('path');
 
-const specialKeys = ['.public', '.entrypoints', '.files', 'service-worker'];
+const specialKeys = [
+    '.public',
+    '.out',
+    '.entrypoints',
+    '.files',
+    'service-worker'
+];
 
 /**
  * 检查 chunkmap，执行回调
