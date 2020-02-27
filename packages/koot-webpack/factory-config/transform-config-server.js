@@ -50,6 +50,12 @@ module.exports = async (kootBuildConfig = {}) => {
     } = process.env;
 
     const isSPAProd = Boolean(ENV === 'prod' && TYPE === 'spa');
+    const isServerless = Boolean(
+        process.env.WEBPACK_BUILD_STAGE === 'server' &&
+            process.env.WEBPACK_BUILD_ENV === 'prod' &&
+            process.env.WEBPACK_BUILD_TYPE === 'isomorphic' &&
+            (serverless || process.env.KOOT_SERVER_MODE === 'serverless')
+    );
 
     const configTargetDefault = await createTargetDefaultConfig({
         pathRun: getCwd(),
@@ -73,6 +79,7 @@ module.exports = async (kootBuildConfig = {}) => {
         result.output.filename = 'entry.[chunkhash].js';
     if (!result.output.chunkFilename)
         result.output.chunkFilename = 'chunk.[chunkhash].js';
+    if (isServerless) result.output.libraryTarget = 'commonjs2';
 
     result.output.publicPath = transformOutputPublicpath(
         result.output.publicPath
@@ -122,11 +129,7 @@ module.exports = async (kootBuildConfig = {}) => {
         // 'core-js/stable',
         // path.resolve(__dirname, '../../../defaults/server-stage-0.js'),
         require('../libs/get-koot-file')(
-            appType +
-                `/server` +
-                (serverless || process.env.KOOT_SERVER_MODE === 'serverless'
-                    ? '/index-serverless.js'
-                    : '')
+            appType + `/server` + (isServerless ? '/index-serverless.js' : '')
         )
     ];
     const otherEntries = {};

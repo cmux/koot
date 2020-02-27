@@ -520,7 +520,7 @@ export default (...args) => {
 
 -   类型: `string`
 -   默认值: _无_
--   **仅针对**: 同构/SSR 项目，服务器端
+-   **仅针对**: 同构/SSR 项目，生产环境，服务器端
 
 Web 服务器是否为 _Serverless_ 模式
 
