@@ -4,9 +4,18 @@
 
 **koot**
 
+-   **新特性**
+    -   **新配置项** `serverless` - 设定 _Web_ 服务器是否为 _Serverless_ 模式 [配置/serverless](https://koot.js.org/#/config?id=serverless) ([#217](https://github.com/cmux/koot/issues/217))
 -   优化
-    -   优化打包缓存机制，现在生产环境下的打包速度会更快 ([#214](https://github.com/cmux/koot/issues/214))
-    -   同构/SSR 项目: 打包结果目录中的 `package.json` 中现在会有更少的依赖项
+    -   更新 TS 定义
+
+**koot-webpack**
+
+-   优化打包缓存机制，现在生产环境下的打包速度会更快 ([#214](https://github.com/cmux/koot/issues/214))
+-   同构/SSR 项目: 打包结果目录中的 `package.json` 中现在会有更少的依赖项
+-   服务器端打包时现在会强制忽略以下 _Babel_ 插件，以实现原生的 _async/await_
+    -   `@babel/plugin-transform-regenerator`
+    -   `@babel/plugin-transform-async-to-generator`
 
 ## [0.12.6] - 2020-02-15
 

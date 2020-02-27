@@ -138,6 +138,7 @@ const plugins = async (
         'KOOT_DEV_DLL_FILE_CLIENT',
         'KOOT_DEV_DLL_FILE_SERVER',
         'KOOT_SESSION_STORE',
+        'KOOT_SERVER_MODE',
         'WEBPACK_BUILD_TYPE',
         'WEBPACK_BUILD_ENV',
         'WEBPACK_CHUNKMAP',

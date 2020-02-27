@@ -246,6 +246,9 @@ const finalValidate = async (config = {}) => {
     // 添加 placeholder
     config[WEBPACK_OUTPUT_PATH] = undefined;
 
+    // 更新环境变量
+    if (config.serverless === true) process.env.KOOT_SERVER_MODE = 'serverless';
+
     return config;
 };
 

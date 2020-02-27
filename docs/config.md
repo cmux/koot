@@ -516,6 +516,24 @@ export default (...args) => {
 
 服务器启动端口号。（开发环境默认会使用该端口号）
 
+### serverless
+
+-   类型: `string`
+-   默认值: _无_
+-   **仅针对**: 同构/SSR 项目，服务器端
+
+Web 服务器是否为 _Serverless_ 模式
+
+```javascript
+module.exports = {
+    // 默认值：标准 Node.js 服务器
+    serverless: false,
+
+    // 输出的 Web 服务器为 Serverless
+    serverless: true
+};
+```
+
 ### renderCache
 
 -   类型: `Object` 或 `boolean`

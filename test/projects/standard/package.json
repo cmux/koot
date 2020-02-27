@@ -22,6 +22,7 @@
         "build:server": "koot-build -s",
         "build:spa": "koot-build --type spa --dest dist-spa",
         "build:spa:use-config-file": "koot-build --config koot.config.spa.js",
+        "build:serverless": "koot-build --config koot.config.serverless.js",
         "dev": "koot-dev",
         "dev:0.8:full": "koot-dev --config koot.config.0.8-full.js",
         "dev:client": "koot-dev -c",

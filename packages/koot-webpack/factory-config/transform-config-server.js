@@ -38,6 +38,7 @@ module.exports = async (kootBuildConfig = {}) => {
         i18n,
         staticCopyFrom: staticAssets,
         template,
+        serverless = false,
         [keyConfigBuildDll]: createDll = false
     } = kootBuildConfig;
 
