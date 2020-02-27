@@ -2,7 +2,6 @@ const fs = require('fs');
 const path = require('path');
 const webpack = require('webpack');
 // const ExtractTextPlugin = require("extract-text-webpack-plugin")
-// const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 
 const createModuleRules = require('./module/rules');
 const KootResetCssLoaderPlugin = require('../plugins/reset-css-loader');

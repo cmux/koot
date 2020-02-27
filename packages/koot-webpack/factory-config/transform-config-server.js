@@ -11,7 +11,7 @@ const ModifyServerBundlePlugin = require('../plugins/modify-server-bundle');
 
 const {
     keyConfigBuildDll,
-    keyConfigClientAssetsPublicPath,
+    // keyConfigClientAssetsPublicPath,
     keyConfigWebpackSPAServer
 } = require('koot/defaults/before-build');
 
@@ -36,7 +36,7 @@ module.exports = async (kootBuildConfig = {}) => {
         webpackConfig: config = {},
         appType,
         dist,
-        [keyConfigClientAssetsPublicPath]: __clientAssetsPublicPath,
+        // [keyConfigClientAssetsPublicPath]: __clientAssetsPublicPath,
         i18n,
         staticCopyFrom: staticAssets,
         template,
@@ -81,29 +81,22 @@ module.exports = async (kootBuildConfig = {}) => {
     Object.assign(result.output, configTargetDefault.output);
 
     // output =================================================================
-    // 如果用户自己配置了服务端打包路径，则覆盖默认的
-    if (dist) result.output.path = path.resolve(dist, './server');
-    if (isPublicPathProvided) {
+    result.output = {
+        publicPath: '/',
+        filename: `[name].js`,
+        chunkFilename: `chunk.[chunkhash].js`,
+        ...(result.output || {})
+    };
+    if (result.output.publicPath)
         result.output.publicPath = transformOutputPublicpath(
             result.output.publicPath
         );
+    if (isPublicPathProvided)
         process.env.KOOT_SSR_PUBLIC_PATH = JSON.stringify(
             result.output.publicPath
         );
-    } else if (!result.output.publicPath) {
-        result.output.publicPath = __clientAssetsPublicPath;
-        result.output.publicPath = transformOutputPublicpath(
-            result.output.publicPath
-        );
-    } else {
-        result.output.publicPath = transformOutputPublicpath(
-            result.output.publicPath
-        );
-    }
-    if (!result.output.filename)
-        result.output.filename = 'entry.[chunkhash].js';
-    if (!result.output.chunkFilename)
-        result.output.chunkFilename = 'chunk.[chunkhash].js';
+    // 如果用户自己配置了服务端打包路径，则覆盖默认的
+    if (dist) result.output.path = path.resolve(dist, './server');
     if (isServerless) result.output.libraryTarget = 'commonjs2';
 
     // ========================================================================

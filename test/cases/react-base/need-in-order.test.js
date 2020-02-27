@@ -107,9 +107,7 @@ const doTest = async (port, dist, settings = {}) => {
     const checkBackgroundResult = styleValue => {
         return styleValue.match(/url\([ "']*(.+?)[ '"]*\)/g).every(assetUri => {
             return assetUri.includes(
-                isDev
-                    ? `__koot_webpack_dev_server__/dist/assets`
-                    : `/includes/assets/`
+                isDev ? `__koot_webpack_dev_server__/dist/assets` : `/assets/`
             );
         });
     };

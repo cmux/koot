@@ -49,12 +49,15 @@ module.exports = async (
 
     const isDev = process.env.WEBPACK_BUILD_ENV === 'dev';
 
+    // const swDest = isDev
+    //     ? serviceWorkerFilename
+    //     : `${!isPublicPathProvided ? '../' : ''}${getSWFilename(
+    //           filename,
+    //           localeId
+    //       )}`;
     const swDest = isDev
         ? serviceWorkerFilename
-        : `${!isPublicPathProvided ? '../' : ''}${getSWFilename(
-              filename,
-              localeId
-          )}`;
+        : getSWFilename(filename, localeId);
 
     const swSrc = await (async () => {
         if (_swSrc) return _swSrc;

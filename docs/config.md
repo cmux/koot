@@ -842,8 +842,6 @@ module.exports = {
 
 客户端打包结果中静态资源存放路径的目录名。
 
-**注**: 如果项目的 _Webpack_ 配置存在 `output.publicPath` 的设定，该属性会失效，所有的静态资源会直接存放到 `output.path` 目录下。
-
 ```javascript
 module.exports = {
     // 默认值

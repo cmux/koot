@@ -8,7 +8,6 @@
     -   **新配置项** `serverless` - 设定 _Web_ 服务器是否为 _Serverless_ 模式 [配置/serverless](https://koot.js.org/#/config?id=serverless) ([#217](https://github.com/cmux/koot/issues/217))
 -   优化
     -   服务器端渲染时，现在会利用自定义的 `publicPath`
-        -   如果项目提供了 `output.publicPath`，_Koot.js_ 配置该属 `distClientAssetsDirName` 性会失效，所有的静态资源会直接存放到 `output.path` 目录下
     -   更新 TS 定义
 
 **koot-webpack**

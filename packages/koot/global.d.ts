@@ -198,7 +198,7 @@ declare namespace NodeJS {
          * 项目模式
          * - isomorphic - 同构/SSR 项目
          * - spa - 单页应用 (Single-Page App)
-         * - static - 静态化站点
+         * - static - 静态化站点 (❌尚未启用)
          */
         WEBPACK_BUILD_TYPE: 'isomorphic' | 'spa' | 'static';
         /**
@@ -237,7 +237,10 @@ declare namespace NodeJS {
         /**
          * 服务器端渲染时的 Public Path —— 请求静态资源的 URL 前缀
          * - 默认为 `/`
-         * > **⚠️** 经过 `JSON.stringify` 处理 **⚠️**
+         *
+         * > **⚠️** 仅针对: 服务器端
+         *
+         * > **⚠️** 经过 `JSON.stringify` 处理
          */
         KOOT_SSR_PUBLIC_PATH: string;
         /**

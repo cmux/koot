@@ -45,9 +45,9 @@ module.exports = async (kootConfig = {}) => {
     const clientAssetsPublicPath = (() => {
         if (TYPE === 'spa' && ENV === 'dev') return `/`;
         if (TYPE === 'spa' && /^browser/.test(process.env.KOOT_HISTORY_TYPE))
-            return `/${distClientAssetsDirName}/`;
-        if (TYPE === 'spa') return `${distClientAssetsDirName}/`;
-        return `/${distClientAssetsDirName}/`;
+            return `/`;
+        if (TYPE === 'spa') return ``;
+        return `/`;
     })();
 
     // 抽取配置
@@ -96,7 +96,6 @@ module.exports = async (kootConfig = {}) => {
     // ========================================================================
 
     const webpackConfig = await (async () => {
-        // if(typeof kootBuildConfig.webpackConfig.output === 'object' && kootBuildConfig)
         let config;
         if (STAGE === 'client')
             config = await transformConfigClient(kootBuildConfig);
