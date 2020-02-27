@@ -10,7 +10,8 @@ const {
     keyConfigOutputPathShouldBe,
     keyConfigWebpackSPATemplateInject,
     keyConfigWebpackSPAServer,
-    WEBPACK_OUTPUT_PATH
+    WEBPACK_OUTPUT_PATH,
+    buildManifestFilename
 } = require('koot/defaults/before-build');
 const getDirDevDll = require('koot/libs/get-dir-dev-dll');
 
@@ -227,7 +228,7 @@ const validatePlugins = (config, kootConfigForThisBuild = {}) => {
                 test: /file-loader/
             },
             {
-                test: /\.public-chunkmap\.json/
+                test: new RegExp(buildManifestFilename.replace(/\./g, '\\.'))
             },
             {
                 test: /koot[\\/]ReactSPA[\\/].+/

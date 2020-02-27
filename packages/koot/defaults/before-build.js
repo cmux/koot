@@ -81,5 +81,8 @@ module.exports = {
      * - 如果超过这个值，会采用 <script> 引用的方式
      * - 如果小于等于这个值，直接将文件内容写入 HTML
      */
-    thresholdScriptRunFirst: 15 * 1024
+    thresholdScriptRunFirst: 15 * 1024,
+
+    /** @type {string} 打包结果目录中的文件对照表文件名 */
+    buildManifestFilename: '.public-chunkmap.json'
 };

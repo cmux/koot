@@ -7,6 +7,8 @@ const DefaultWebpackConfig = require('webpack-config').default;
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const KootI18nPlugin = require('../plugins/i18n');
 const DevModePlugin = require('../plugins/dev-mode');
+const ModifyServerBundlePlugin = require('../plugins/modify-server-bundle');
+
 const {
     keyConfigBuildDll,
     keyConfigClientAssetsPublicPath,
@@ -208,7 +210,11 @@ module.exports = async (kootBuildConfig = {}) => {
             output: {
                 ...result.output,
                 filename: 'index.js'
-            }
+            },
+            plugins: [
+                new ModifyServerBundlePlugin({ isServerless }),
+                ...result.plugins
+            ]
         }
     ];
 
