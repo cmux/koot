@@ -17,6 +17,7 @@
         "start:0.8:full": "koot-start --config koot.config.0.8-full.js",
         "start:server": "koot-start --no-build",
         "start:spa": "koot-start --type spa",
+        "start:serverless": "koot-start --config koot.config.serverless.js",
         "build": "koot-build",
         "build:client": "koot-build -c",
         "build:server": "koot-build -s",

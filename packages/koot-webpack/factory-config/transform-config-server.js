@@ -121,7 +121,13 @@ module.exports = async (kootBuildConfig = {}) => {
         // '@babel/polyfill',
         // 'core-js/stable',
         // path.resolve(__dirname, '../../../defaults/server-stage-0.js'),
-        require('../libs/get-koot-file')(`${appType}/server`)
+        require('../libs/get-koot-file')(
+            appType +
+                `/server` +
+                (serverless || process.env.KOOT_SERVER_MODE === 'serverless'
+                    ? '/index-serverless.js'
+                    : '')
+        )
     ];
     const otherEntries = {};
     if (isSPAProd) {

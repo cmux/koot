@@ -121,9 +121,6 @@ const startKootIsomorphicServer = async () => {
         log('callback', 'server', `callback: \x1b[32m${'after'}\x1b[0m(app)`);
     if (typeof serverAfter === 'function') await serverAfter(app);
 
-    // 初始化完成，准备启动服务器
-    log(' ', 'server', `init \x1b[32m${'OK'}\x1b[0m!`);
-
     // [开发环境] 中间件: 请求完成后，触发 server/index.js 保存，让 PM2 重启服务器
     if (__DEV__) {
         app.use(async (ctx, next) => {
@@ -143,6 +140,9 @@ const startKootIsomorphicServer = async () => {
             //     }
         });
     }
+
+    // 初始化完成，准备启动服务器
+    log(' ', 'server', `init \x1b[32m${'OK'}\x1b[0m!`);
 
     // 启动服务器
     await new Promise(resolve => {

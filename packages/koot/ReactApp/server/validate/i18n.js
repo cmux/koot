@@ -15,10 +15,9 @@ const path = require('path');
  *
  * _开发环境_ 同构中间件需执行该验证方法
  *
- * @async
  * @returns {void}
  */
-const validateI18n = async () => {
+const validateI18n = () => {
     if (!isI18nEnabled()) return;
 
     /** @type {Object} 完整语言包配置 */
