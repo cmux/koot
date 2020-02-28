@@ -230,7 +230,6 @@ declare namespace NodeJS {
         'KOOT_DEV_DLL_FILE_CLIENT',
         'KOOT_DEV_DLL_FILE_SERVER',
         'KOOT_SESSION_STORE',
-        'KOOT_CLIENT_BUNDLE_SUBFOLDER',
         'WEBPACK_CHUNKMAP',
         'WEBPACK_DEV_SERVER_PORT'
          */

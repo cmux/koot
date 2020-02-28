@@ -39,6 +39,7 @@ module.exports = async (
         swSrc: _swSrc,
         include = [],
         exclude = [],
+        cacheFirst = [],
         // importWorkboxFrom = 'local',
         // importsDirectory = '__workbox-assets',
         ...rest
@@ -48,6 +49,31 @@ module.exports = async (
     );
 
     const isDev = process.env.WEBPACK_BUILD_ENV === 'dev';
+
+    const inject = async (kootConfigForThisBuild, localeId) => {
+        const ENV = process.env.WEBPACK_BUILD_ENV;
+
+        const {
+            [keyKootBaseVersion]: kootBaseVersion,
+            distClientAssetsDirName
+        } = kootConfigForThisBuild;
+
+        const obj = {
+            distClientAssetsDirName:
+                ENV === 'dev' ? devPublicPathPrefix : distClientAssetsDirName,
+            '__baseVersion_lt_0.12': kootBaseVersion
+                ? semver.lt(kootBaseVersion, '0.12.0')
+                : false,
+            cacheFirst,
+            env: {
+                WEBPACK_BUILD_ENV: ENV
+            }
+        };
+
+        if (localeId) obj.localeId = localeId;
+
+        return `\rself.__koot = ${JSON.stringify(obj, undefined, 4)}\r\r`;
+    };
 
     // const swDest = isDev
     //     ? serviceWorkerFilename
@@ -103,27 +129,3 @@ module.exports = async (
 };
 
 // ============================================================================
-
-const inject = async (kootConfigForThisBuild, localeId) => {
-    const ENV = process.env.WEBPACK_BUILD_ENV;
-
-    const {
-        [keyKootBaseVersion]: kootBaseVersion,
-        distClientAssetsDirName
-    } = kootConfigForThisBuild;
-
-    const obj = {
-        distClientAssetsDirName:
-            ENV === 'dev' ? devPublicPathPrefix : distClientAssetsDirName,
-        '__baseVersion_lt_0.12': kootBaseVersion
-            ? semver.lt(kootBaseVersion, '0.12.0')
-            : false,
-        env: {
-            WEBPACK_BUILD_ENV: ENV
-        }
-    };
-
-    if (localeId) obj.localeId = localeId;
-
-    return `\rself.__koot = ${JSON.stringify(obj, undefined, 4)}\r\r`;
-};

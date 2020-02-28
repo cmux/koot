@@ -45,7 +45,10 @@ module.exports = {
         ['en', './src/locales/en.json']
     ],
 
-    pwa: true,
+    // pwa: true,
+    serviceWorker: {
+        cacheFirst: ['/photo.jpg']
+    },
 
     aliases: {
         '@src': path.resolve('./src'),

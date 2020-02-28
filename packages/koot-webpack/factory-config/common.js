@@ -145,9 +145,6 @@ const plugins = async (
         'WEBPACK_DEV_SERVER_PORT'
         // "WEBPACK_SERVER_PUBLIC_PATH",
     ];
-    if (process.env.KOOT_CLIENT_BUNDLE_SUBFOLDER) {
-        envsToDefine.push('KOOT_CLIENT_BUNDLE_SUBFOLDER');
-    }
     if (
         remainingKootBuildConfig.sessionStore === true ||
         remainingKootBuildConfig.sessionStore === 'all' ||

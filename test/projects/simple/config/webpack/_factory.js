@@ -26,7 +26,10 @@ module.exports = async () => {
                     loader: 'file-loader',
                     options: {
                         context: 'static',
-                        name: 'assets/[hash:32].[ext]',
+                        name:
+                            process.env.WEBPACK_BUILD_ENV === 'prod'
+                                ? `assets/${process.env.KOOT_BUILD_START_TIME}.[hash:32].[ext]`
+                                : `assets/[hash:32].[ext]`,
                         aaa: 'bbb'
                         // emitFile: Boolean(
                         //     process.env.WEBPACK_BUILD_STAGE === 'client'

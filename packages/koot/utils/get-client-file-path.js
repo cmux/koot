@@ -58,18 +58,7 @@ const getFilePath = (
 
     // 如果标记为 pathname，直接返回结果
     if (isPathname)
-        return (
-            pathPublic +
-            filename.replace(
-                new RegExp(
-                    '(^\\.\\/|^)public\\/' +
-                        (process.env.KOOT_CLIENT_BUNDLE_SUBFOLDER
-                            ? `${process.env.KOOT_CLIENT_BUNDLE_SUBFOLDER}\\/`
-                            : '')
-                ),
-                ''
-            )
-        );
+        return pathPublic + filename.replace(/(^\.\/|^)public\//, '');
 
     const chunkmap = getChunkmap(localeId);
     const regPublicPath = chunkmap['.public']
@@ -105,7 +94,6 @@ const getFilePath = (
     // console.log(pathPublic + chunkmap['.files'][filename].replace(regPublicPath, ''))
     // console.log({
     //     regPublicPath,
-    //     'process.env.KOOT_CLIENT_BUNDLE_SUBFOLDER': process.env.KOOT_CLIENT_BUNDLE_SUBFOLDER
     // })
     // console.log('----------')
 

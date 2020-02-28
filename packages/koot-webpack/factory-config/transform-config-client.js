@@ -57,7 +57,6 @@ module.exports = async (kootConfigForThisBuild = {}) => {
         dist,
         template,
         templateInject,
-        bundleVersionsKeep,
         distClientAssetsDirName,
         [keyConfigClientAssetsPublicPath]: __clientAssetsPublicPath,
         staticCopyFrom: staticAssets,
@@ -118,7 +117,7 @@ module.exports = async (kootConfigForThisBuild = {}) => {
         const isSeperateLocale = localeId && typeof localeFile === 'string';
 
         /** @type {String} 打包结果目录 */
-        const outputPath = getDirDistPublic(dist, bundleVersionsKeep);
+        const outputPath = getDirDistPublic(dist);
 
         /** @type {Object} 默认配置 */
         const configTargetDefault = await createTargetDefaultConfig({

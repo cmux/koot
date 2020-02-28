@@ -5,12 +5,18 @@
 **koot**
 
 -   **重大改动**
+    -   调整客户端打包结果目录结构
+        -   不再有 `koot-[timestamp]` 目录
+        -   现在会智能的根据 `bundleVersionsKeep` 配置项删除旧的文件
+        -   打包结果根目录中新增 `.public-outputs.json` 文件，用以记录旧的打包文件列表
     -   调整了 `distClientAssetsDirName` 配置项的行为方式，现在公共路径名会作为前缀添加到 _Webpack_ 配置 `output.filename` 的值之前
-        -   打包结果目录内的文件结构会受影响，但不影响使用
-        -   如果项目种有针对打包结果目录内文件的处理，请注意
+    -   打包结果目录内的文件结构会受影响，但不影响使用
+    -   如果项目种有针对打包结果目录内文件的处理，请注意
 -   **新特性**
-    -   **新配置项** `serverless` - 设定 _Web_ 服务器是否为 _Serverless_ 模式 [配置/serverless](https://koot.js.org/#/config?id=serverless) ([#217](https://github.com/cmux/koot/issues/217))
+    -   **新配置项** `serverless` - 设定 _Web_ 服务器是否为 _Serverless_ 模式。详情请参见文档 [配置/serverless](https://koot.js.org/#/config?id=serverless) ([#217](https://github.com/cmux/koot/issues/217))
 -   优化
+    -   `serviceWorker` 配置项新增 `cacheFirst` 属性，可用以定义“优先利用本地缓存”请求策略的地址。详情请参见文档 [Service Worker](https://koot.js.org/#/pwa?id=service-worker)
+    -   优化 _Service Worker_ 的默认缓存规则
     -   服务器端渲染时，现在会利用自定义的 `publicPath`
     -   更新 TS 定义
 

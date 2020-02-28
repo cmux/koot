@@ -14,6 +14,7 @@ jest.setTimeout(10 * 60 * 1 * 1000);
 
 const fs = require('fs-extra');
 const path = require('path');
+const glob = require('glob-promise');
 const util = require('util');
 const execSync = require('child_process').exec;
 const exec = util.promisify(require('child_process').exec);
@@ -23,11 +24,13 @@ const cheerio = require('cheerio');
 
 //
 
-const {
-    filenameCurrentBundle
-} = require('../../../packages/koot/defaults/before-build');
+// const {
+//     filenameCurrentBundle
+// } = require('../../../packages/koot/defaults/before-build');
 const removeTempProjectConfig = require('../../../packages/koot/libs/remove-temp-project-config');
 const sleep = require('../../../packages/koot/utils/sleep');
+const getOutputsFile = require('../../../packages/koot/utils/get-outputs-path');
+
 const {
     styles: puppeteerTestStyles,
     customEnv: puppeteerTestCustomEnv,
@@ -641,6 +644,38 @@ const afterTest = async (cwd, title) => {
 
 //
 
+const testOutputs = async (dist, countToBe) => {
+    const fileOutputs = getOutputsFile(dist);
+    const outputs = await fs.readJson(fileOutputs);
+
+    const filesNeedToExist = [];
+    for (const files of Object.values(outputs)) {
+        files
+            .map(file => path.resolve(dist, file))
+            .filter(file => !filesNeedToExist.includes(file))
+            .forEach(file => filesNeedToExist.push(file));
+    }
+
+    const filesExist = (
+        await glob(path.resolve(dist, 'public', '**/*'), {
+            dot: true
+        })
+    )
+        .filter(file => !fs.lstatSync(file).isDirectory())
+        .map(file => path.normalize(file));
+
+    expect(fs.existsSync(dist)).toBe(true);
+    expect(fs.existsSync(path.resolve(dist, 'public'))).toBe(true);
+    expect(fs.existsSync(path.resolve(dist, 'public/service-worker.js'))).toBe(
+        true
+    );
+    expect(fs.existsSync(fileOutputs)).toBe(true);
+    expect(Object.keys(outputs).length).toBe(countToBe);
+    expect(filesNeedToExist.length).toBe(filesExist.length);
+};
+
+//
+
 describe('测试: React 同构项目', () => {
     for (const project of projectsToUse) {
         const { name, dir } = project;
@@ -799,15 +834,9 @@ describe('测试: React 同构项目', () => {
                 }).catch(e => errors.push(e));
 
                 expect(errors.length).toBe(0);
-                expect(fs.existsSync(dist)).toBe(true);
-                expect(fs.existsSync(path.resolve(dist, 'public'))).toBe(true);
-                expect(
-                    fs.existsSync(
-                        path.resolve(dist, 'public/service-worker.js')
-                    )
-                ).toBe(true);
 
                 await testFilesFromChunkmap(dist, false);
+                await testOutputs(dist, 1);
 
                 await fs.remove(dist);
                 await afterTest(dir, '[config] bundleVersionsKeep: false');
@@ -848,44 +877,41 @@ describe('测试: React 同构项目', () => {
                     }).catch(e => errors.push(e));
                 }
 
-                const dirPublic = path.resolve(dist, 'public');
+                // const dirPublic = path.resolve(dist, 'public');
                 expect(errors.length).toBe(0);
-                expect(fs.existsSync(dist)).toBe(true);
-                expect(fs.existsSync(dirPublic)).toBe(true);
-                expect(
-                    fs.existsSync(path.resolve(dirPublic, 'service-worker.js'))
-                ).toBe(false);
 
-                const files = (await fs.readdir(dirPublic))
-                    .filter(filename => filename !== filenameCurrentBundle)
-                    .map(filename => path.resolve(dirPublic, filename));
-                const kootVersionFolders = (await fs.readdir(dirPublic)).filter(
-                    filename => {
-                        const file = path.resolve(dirPublic, filename);
-                        const lstat = fs.lstatSync(file);
-                        if (!lstat.isDirectory()) return false;
-                        return /^koot-[0-9]+$/.test(filename);
-                    }
-                );
+                // const files = (await fs.readdir(dirPublic))
+                //     .filter(filename => filename !== filenameCurrentBundle)
+                //     .map(filename => path.resolve(dirPublic, filename));
+                // const kootVersionFolders = (await fs.readdir(dirPublic)).filter(
+                //     filename => {
+                //         const file = path.resolve(dirPublic, filename);
+                //         const lstat = fs.lstatSync(file);
+                //         if (!lstat.isDirectory()) return false;
+                //         return /^koot-[0-9]+$/.test(filename);
+                //     }
+                // );
 
                 // 打包结果目录数量应该正确
-                expect(kootVersionFolders.length).toBe(files.length);
-                expect(kootVersionFolders.length).toBe(bundleVersionsKeep);
+                // expect(kootVersionFolders.length).toBe(files.length);
+                // expect(kootVersionFolders.length).toBe(bundleVersionsKeep);
 
                 // 当前打包结果版本应该存在
-                const currentID =
-                    kootVersionFolders[kootVersionFolders.length - 1];
-                const dirCurrent = path.resolve(dirPublic, currentID);
-                const fileCurrent = path.resolve(
-                    dirPublic,
-                    filenameCurrentBundle
-                );
-                expect(fs.existsSync(fileCurrent)).toBe(true);
-                expect(currentID).toBe(fs.readFileSync(fileCurrent, 'utf-8'));
-                expect(fs.existsSync(dirCurrent)).toBe(true);
-                expect(
-                    fs.existsSync(path.resolve(dirCurrent, 'includes'))
-                ).toBe(true);
+                // const currentID =
+                //     kootVersionFolders[kootVersionFolders.length - 1];
+                // const dirCurrent = path.resolve(dirPublic, currentID);
+                // const fileCurrent = path.resolve(
+                //     dirPublic,
+                //     filenameCurrentBundle
+                // );
+                // expect(fs.existsSync(fileCurrent)).toBe(true);
+                // expect(currentID).toBe(fs.readFileSync(fileCurrent, 'utf-8'));
+                // expect(fs.existsSync(dirCurrent)).toBe(true);
+                // expect(
+                //     fs.existsSync(path.resolve(dirCurrent, 'includes'))
+                // ).toBe(true);
+
+                await testOutputs(dist, bundleVersionsKeep);
 
                 await fs.remove(dist);
                 await afterTest(dir, '[config] bundleVersionsKeep: 3');

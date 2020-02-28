@@ -88,6 +88,7 @@ const run = async () => {
 
     process.env.KOOT_TEST_MODE = JSON.stringify(kootTest);
     process.env.KOOT_DEVELOPMENT_MODE = JSON.stringify(kootDevelopment);
+    process.env.KOOT_BUILD_START_TIME = Date.now() + '';
 
     const stage = (() => {
         if (_stage) return _stage;
@@ -175,7 +176,7 @@ run().catch(err => {
     if (!isFromCommandStart())
         spinner(chalk.yellowBright('[koot/build] ')).fail();
 
-    if (Array.isArray(result.errors) && result.errors.length) {
+    if (result && Array.isArray(result.errors) && result.errors.length) {
         result.errors.forEach(e => console.error(e));
     } else {
         console.error(err);

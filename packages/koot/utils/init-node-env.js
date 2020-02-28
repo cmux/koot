@@ -109,9 +109,6 @@ module.exports = () => {
         // 定制的环境变量键值
         KOOT_CUSTOM_ENV_KEYS: JSON.stringify([]),
 
-        // 客户端打包子目录名
-        KOOT_CLIENT_BUNDLE_SUBFOLDER: '',
-
         // 配置: sessionStore
         KOOT_SESSION_STORE: JSON.stringify(false),
 
@@ -123,6 +120,9 @@ module.exports = () => {
          * - serverless
          */
         KOOT_SERVER_MODE: ''
+
+        // 打包开始时间
+        // KOOT_BUILD_START_TIME: ''
     };
     for (const key in defaults) {
         if (typeof process.env[key] === 'undefined') {

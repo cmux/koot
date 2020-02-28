@@ -4,6 +4,7 @@ const path = require('path');
 
 const generateFilemap = require('./generate-filemap-from-compilation');
 const getChunkmapPath = require('./get-chunkmap-path');
+const getOutputsPath = require('./get-outputs-path');
 const getDistPath = require('./get-dist-path');
 
 // const times = n => f => {
@@ -31,7 +32,7 @@ const isNotSourcemap = filename => !/\.(js|css)\.map$/i.test(filename);
 // };
 
 /**
- * 写入打包文件对应表 (chunkmap)
+ * 写入打包文件对应表 (chunkmap) 和输出的文件列表 (outputs)
  * @param {*} stats
  * @param {*} localeId
  * @param {string} [pathPublic]
@@ -163,6 +164,47 @@ module.exports = async (
     await fs.writeJsonSync(filepathname, json, {
         spaces: 4
     });
+
+    // ========================================================================
+    // 输出的文件列表
+    // ========================================================================
+    if (
+        process.env.WEBPACK_BUILD_ENV === 'prod' &&
+        typeof process.env.KOOT_BUILD_START_TIME === 'string'
+    ) {
+        const assets = compilation.getAssets();
+        if (Array.isArray(assets)) {
+            const fileOutputs = getOutputsPath();
+            const buildTimestamp = process.env.KOOT_BUILD_START_TIME;
+            let existResult = {};
+
+            try {
+                existResult = fs.readJsonSync(fileOutputs);
+            } catch (e) {
+                fs.writeJsonSync(fileOutputs, {});
+            }
+
+            const {
+                [process.env.KOOT_BUILD_START_TIME]: list = []
+            } = existResult;
+
+            /** 本次打包输出的所有文件的列表 */
+            assets
+                .filter(
+                    asset =>
+                        typeof asset === 'object' &&
+                        typeof asset.name === 'string'
+                )
+                .map(({ name }) => getFilePathname(name))
+                .filter(file => !list.includes(file))
+                .forEach(file => list.push(file));
+
+            existResult[buildTimestamp] = list.sort();
+            fs.writeJsonSync(fileOutputs, existResult, {
+                spaces: 4
+            });
+        }
+    }
 
     return json;
 };
