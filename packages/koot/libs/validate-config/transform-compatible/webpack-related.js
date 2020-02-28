@@ -9,6 +9,7 @@
  * - internalLoaderOptions
  * - devDll
  * - devHmr
+ * - distClientAssetsDirName
  * @async
  * @param {Object} config
  * @void
@@ -57,5 +58,12 @@ module.exports = async config => {
             const r = parseInt(config.classNameHashLength);
             if (r <= 0) delete config.classNameHashLength;
         }
+    }
+
+    if (config.distClientAssetsDirName) {
+        // 去掉开头和结尾的斜杠
+        config.distClientAssetsDirName = config.distClientAssetsDirName
+            .replace(/^(\\|\/)+/, '')
+            .replace(/(\\|\/)+$/, '');
     }
 };

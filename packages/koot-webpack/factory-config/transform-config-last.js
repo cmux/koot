@@ -252,6 +252,8 @@ const validatePlugins = (config, kootConfigForThisBuild = {}) => {
 };
 
 const validateModuleRules = (config, kootConfigForThisBuild = {}) => {
+    const { distClientAssetsDirName } = kootConfigForThisBuild;
+
     // 删除重复 loader
     if (Array.isArray(config.module.rules)) {
         config.module.rules = removeDuplicateObject(config.module.rules);
@@ -286,11 +288,31 @@ const validateModuleRules = (config, kootConfigForThisBuild = {}) => {
                 });
             }
             switch (loader) {
+                // TODO: Webpack 5 - 改为使用 Asset Module
                 case 'file-loader':
                 case 'url-loader':
                 case 'svg-url-loader': {
                     if (process.env.WEBPACK_BUILD_STAGE === 'server') {
                         options.emitFile = false;
+                    }
+                    if (
+                        process.env.WEBPACK_BUILD_ENV === 'prod' &&
+                        distClientAssetsDirName
+                    ) {
+                        if (
+                            options.name &&
+                            !options.outputPath &&
+                            !new RegExp(`^${distClientAssetsDirName}`).test(
+                                options.name
+                            )
+                        ) {
+                            options.name =
+                                distClientAssetsDirName + '/' + options.name;
+                        } else if (!options.name && !options.outputPath) {
+                            options.name =
+                                distClientAssetsDirName +
+                                '/[contenthash].[ext]';
+                        }
                     }
                     break;
                 }

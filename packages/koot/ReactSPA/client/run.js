@@ -1,5 +1,3 @@
-// TODO: i18n
-
 import ReactDOM from 'react-dom';
 import history from '../../React/history';
 
