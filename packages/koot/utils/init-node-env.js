@@ -113,7 +113,16 @@ module.exports = () => {
         KOOT_CLIENT_BUNDLE_SUBFOLDER: '',
 
         // 配置: sessionStore
-        KOOT_SESSION_STORE: JSON.stringify(false)
+        KOOT_SESSION_STORE: JSON.stringify(false),
+
+        KOOT_SSR_PUBLIC_PATH: JSON.stringify('/'),
+
+        /** @type {string}
+         * 服务器模式，可选模式
+         * - _空_ - 默认模式
+         * - serverless
+         */
+        KOOT_SERVER_MODE: ''
     };
     for (const key in defaults) {
         if (typeof process.env[key] === 'undefined') {

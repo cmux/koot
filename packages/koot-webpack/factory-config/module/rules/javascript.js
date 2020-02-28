@@ -2,7 +2,15 @@
 
 const findCacheDir = require('find-cache-dir');
 
-const cacheFolderName = 'koot-webpack-server';
+const getBabelLoaderDefaults = ({ createDll = false }) => ({
+    cacheDirectory: findCacheDir({ name: 'koot-webpack', thunk: true })(
+        `babel/${process.env.WEBPACK_BUILD_TYPE}` +
+            `.${process.env.WEBPACK_BUILD_ENV}` +
+            `.${process.env.WEBPACK_BUILD_STAGE}` +
+            (createDll ? '.dll' : '')
+    ),
+    cacheCompression: false
+});
 
 /**
  * Loader 规则 - Javascript
@@ -22,8 +30,11 @@ module.exports = (kootBuildConfig = {}) => {
         options.__server = stageServer;
         options.__routes = routes;
 
-        if (typeof options.cacheDirectory === 'undefined')
-            options.cacheDirectory = true;
+        options = Object.assign(
+            {},
+            getBabelLoaderDefaults({ createDll }),
+            options
+        );
 
         if (process.env.WEBPACK_BUILD_ENV === 'dev') {
             if (createDll) {
@@ -37,14 +48,10 @@ module.exports = (kootBuildConfig = {}) => {
                     options.cacheDirectory = false;
             }
             options.compact = false;
-            options.cacheCompression = false;
         }
 
         if (stageServer) {
-            options.cacheDirectory = findCacheDir({
-                name: cacheFolderName
-            });
-            options.cacheIdentifier = 'koot-webpack-server-bundling';
+            // options.cacheIdentifier = 'koot-webpack-server-bundling';
             options.babelrc = false;
             // options.cacheCompression = false;
         }
@@ -81,12 +88,13 @@ module.exports = (kootBuildConfig = {}) => {
             // Allow to respawn a dead worker pool
             // respawning slows down the entire compilation
             // and should be set to false for development
-            poolRespawn: false,
+            poolRespawn: process.env.WEBPACK_BUILD_ENV === 'dev' ? false : true,
 
             // timeout for killing the worker processes when idle
             // defaults to 500 (ms)
             // can be set to Infinity for watching builds to keep workers alive
-            poolTimeout: Infinity,
+            poolTimeout:
+                process.env.WEBPACK_BUILD_ENV === 'dev' ? Infinity : 500,
 
             // number of jobs the poll distributes to the workers
             // defaults to 200
@@ -95,7 +103,7 @@ module.exports = (kootBuildConfig = {}) => {
 
             // name of the pool
             // can be used to create different pools with elsewise identical options
-            name: 'koot-dev-workers-pool',
+            name: 'koot-webpack-workers-pool',
 
             ...options
         }
@@ -110,6 +118,8 @@ module.exports = (kootBuildConfig = {}) => {
                 options
             });
         }
+
+        if (!createDll && env === 'prod' && stage === 'client') return use;
 
         return [
             ruleUseThreadLoader(),
@@ -190,6 +200,15 @@ module.exports = (kootBuildConfig = {}) => {
                     require.resolve('../../../loaders/koot-dev-ssr.js')
                 ]
             },
+            // {
+            //     test: /\.(jsx)$/,
+            //     use: [
+            //         ...ruleUseLoaders({
+            //             __react: true
+            //         }),
+            //         require.resolve('../../../loaders/koot-dev-ssr.js')
+            //     ]
+            // },
             {
                 test: /\.(ts|tsx)$/,
                 use: [
@@ -199,17 +218,40 @@ module.exports = (kootBuildConfig = {}) => {
                     require.resolve('../../../loaders/koot-dev-ssr.js')
                 ]
             }
+            // {
+            //     test: /\.(tsx)$/,
+            //     use: [
+            //         ...ruleUseLoaders({
+            //             __react: true,
+            //             __typescript: true
+            //         }),
+            //         require.resolve('../../../loaders/koot-dev-ssr.js')
+            //     ]
+            // }
         ];
     }
 
     return [
         {
-            test: /\.(js|mjs|cjs|jsx)$/,
-            use: ruleUseBabelLoader({})
+            test: /\.(js|mjs|cjs)$/,
+            use: ruleUseLoaders({})
         },
         {
-            test: /\.(ts|tsx)$/,
-            use: ruleUseBabelLoader({
+            test: /\.jsx$/,
+            use: ruleUseLoaders({
+                __react: true
+            })
+        },
+        {
+            test: /\.ts$/,
+            use: ruleUseLoaders({
+                __typescript: true
+            })
+        },
+        {
+            test: /\.tsx$/,
+            use: ruleUseLoaders({
+                __react: true,
                 __typescript: true
             })
         }

@@ -56,13 +56,21 @@ module.exports = async (
         .relative(getDistPath(), stats.outputPath)
         .replace(/\\/g, '/');
     const filepathname = getChunkmapPath();
-    // stats.compilation.outputOptions.path,
+    const { outputPath } = stats;
 
     if (pathPublic) {
         const relative = path
             .relative(getDistPath(), pathPublic)
             .replace(/\\/g, '/');
         chunkmap['.public'] =
+            relative +
+            (relative.substr(0, relative.length - 1) === '/' ? '' : '/');
+    }
+    if (outputPath) {
+        const relative = path
+            .relative(getDistPath(), outputPath)
+            .replace(/\\/g, '/');
+        chunkmap['.out'] =
             relative +
             (relative.substr(0, relative.length - 1) === '/' ? '' : '/');
     }

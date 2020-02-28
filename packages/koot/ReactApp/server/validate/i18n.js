@@ -15,10 +15,9 @@ const path = require('path');
  *
  * _开发环境_ 同构中间件需执行该验证方法
  *
- * @async
  * @returns {void}
  */
-const validateI18n = async () => {
+const validateI18n = () => {
     if (!isI18nEnabled()) return;
 
     /** @type {Object} 完整语言包配置 */
@@ -49,12 +48,26 @@ const getLocalesFull = () => {
     const locales = JSON.parse(process.env.KOOT_I18N_LOCALES);
     return locales.map(l => [
         l[0],
-        fs.readJsonSync(
-            __DEV__ ? l[2] : path.resolve(getDist(), 'server', l[3]),
-            'utf-8'
-        ),
+        fs.readJsonSync(__DEV__ ? l[2] : getLocaleFile(l[3]), 'utf-8'),
         l[2],
         l[3]
     ]);
     // return JSON.parse(process.env.KOOT_I18N_LOCALES);
+};
+
+/** 通过环境变量中记录的相对路径读取语言包内容 */
+const getLocaleFile = relativePath => {
+    let file = relativePath;
+    if (fs.existsSync(file)) return file;
+
+    file = path.resolve(getDist(), 'server', relativePath);
+    if (fs.existsSync(file)) return file;
+
+    file = path.resolve('server', relativePath);
+    if (fs.existsSync(file)) return file;
+
+    file = path.resolve(relativePath);
+    if (fs.existsSync(file)) return file;
+
+    return {};
 };

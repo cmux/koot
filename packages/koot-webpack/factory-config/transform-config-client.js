@@ -5,6 +5,7 @@ const DefaultWebpackConfig = require('webpack-config').default;
 
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const KootI18nPlugin = require('../plugins/i18n');
 const DevModePlugin = require('../plugins/dev-mode');
 const SpaTemplatePlugin = require('../plugins/spa-template');
@@ -70,12 +71,23 @@ module.exports = async (kootConfigForThisBuild = {}) => {
     const defaultClientEntry = require('../libs/get-koot-file')(
         `${appType}/client`
     );
+    /** 基于存放目录名的文件名前缀 */
+    const filenamePrefix = distClientAssetsDirName
+        ? `${distClientAssetsDirName}/`
+        : '';
 
     /** @type {Boolean} 是否为 SPA 同时需要模板注入支持 */
     const isSPANeedTemplateInject = Boolean(
         process.env.WEBPACK_BUILD_TYPE === 'spa' &&
             !createDll &&
             typeof templateInject !== 'undefined'
+    );
+
+    const isPublicPathProvided = Boolean(
+        process.env.WEBPACK_BUILD_ENV === 'prod' &&
+            typeof config === 'object' &&
+            typeof config.output === 'object' &&
+            typeof config.output.publicPath === 'string'
     );
 
     /**
@@ -105,8 +117,8 @@ module.exports = async (kootConfigForThisBuild = {}) => {
         /** @type {Boolean} 是否为多语言分包模式 */
         const isSeperateLocale = localeId && typeof localeFile === 'string';
 
-        /** @type {String} 打包结果基础目录 (最终的打包目录是该目录下的 distClientAssetsDirName 目录) */
-        const pathPublic = getDirDistPublic(dist, bundleVersionsKeep);
+        /** @type {String} 打包结果目录 */
+        const outputPath = getDirDistPublic(dist, bundleVersionsKeep);
 
         /** @type {Object} 默认配置 */
         const configTargetDefault = await createTargetDefaultConfig({
@@ -180,49 +192,31 @@ module.exports = async (kootConfigForThisBuild = {}) => {
             delete result.optimization.minimizer;
         } else {
             // 处理 output
-            // if (TYPE === 'spa') {
-            //     result.output = configTargetDefault.output
-            // }
-            if (typeof result.output !== 'object') result.output = {};
-            if (!result.output.path) {
-                result.output.path = path.resolve(
-                    pathPublic,
-                    distClientAssetsDirName
+            result.output = {
+                path: outputPath,
+                publicPath: __clientAssetsPublicPath,
+                filename: analyze
+                    ? `entry-[id]-[name].js`
+                    : configTargetDefaultOutput.filename ||
+                      `entry.[chunkhash].js`,
+                chunkFilename: analyze
+                    ? `chunk-[id]-[name].js`
+                    : configTargetDefaultOutput.chunkFilename ||
+                      `chunk.[chunkhash].js`,
+                ...(result.output || {})
+            };
+            if (result.output.publicPath)
+                result.output.publicPath = transformOutputPublicpath(
+                    result.output.publicPath
                 );
-                result.output.publicPath = __clientAssetsPublicPath;
-            }
-            if (!result.output.publicPath) {
-                result.output.publicPath = __clientAssetsPublicPath;
-            }
-            result.output.publicPath = transformOutputPublicpath(
-                result.output.publicPath
-            );
-
-            // analyze 模式，强制修改输出文件名
-            if (analyze) {
-                // result.output.filename = 'entry-[id].[name].js'
-                // result.output.chunkFilename = 'chunck-[id].[name].js'
-                result.output.filename = 'entry-[id]-[name].js';
-                result.output.chunkFilename = 'chunk-[id]-[name].js';
-            } else {
-                if (!result.output.filename)
-                    result.output.filename =
-                        configTargetDefaultOutput.filename ||
-                        'entry.[chunkhash].js';
-                if (!result.output.chunkFilename)
-                    result.output.chunkFilename =
-                        configTargetDefaultOutput.chunkFilename ||
-                        'chunk.[chunkhash].js';
-            }
-
-            // [开发环境]
             if (ENV === 'dev') {
-                // 标记打包目录（对应 prod 模式的结果）
-                result[keyConfigOutputPathShouldBe] = path.resolve(
-                    pathPublic,
-                    distClientAssetsDirName
-                );
+                result[keyConfigOutputPathShouldBe] = outputPath;
                 result.output.pathinfo = false;
+            } else {
+                result.output.filename =
+                    filenamePrefix + result.output.filename;
+                result.output.chunkFilename =
+                    filenamePrefix + result.output.chunkFilename;
             }
 
             // 处理 entry
@@ -337,7 +331,18 @@ module.exports = async (kootConfigForThisBuild = {}) => {
             if (!createDll) {
                 result.plugins.push(
                     await new CreateGeneralCssBundlePlugin({
-                        localeId: isSeperateLocale ? localeId : undefined
+                        localeId: isSeperateLocale ? localeId : undefined,
+                        distClientAssetsDirName
+                    })
+                );
+                result.plugins.push(
+                    new MiniCssExtractPlugin({
+                        filename:
+                            filenamePrefix +
+                            (ENV === 'prod'
+                                ? `extract.[id].[chunkhash].css`
+                                : (localeId ? localeId : '') +
+                                  '.extract.[id].[chunkhash].css')
                     })
                 );
 
@@ -345,7 +350,8 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                     result.plugins.push(
                         await newPluginWorkbox(
                             kootConfigForThisBuild,
-                            isSeperateLocale ? localeId : undefined
+                            isSeperateLocale ? localeId : undefined,
+                            isPublicPathProvided
                         )
                     );
                 }
@@ -408,7 +414,7 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                     result.plugins.push(
                         await new GenerateChunkmapPlugin({
                             localeId: isSeperateLocale ? localeId : undefined,
-                            pathPublic,
+                            outputPath,
                             serviceWorkerPathname:
                                 kootConfigForThisBuild[
                                     keyConfigClientServiceWorkerPathname
@@ -431,9 +437,9 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                                         ? undefined
                                         : path.relative(
                                               result.output.path,
-                                              pathPublic
+                                              outputPath
                                           )
-                                // to: path.relative(result.output.path, pathPublic)
+                                // to: path.relative(result.output.path, outputPath)
                             }))
                         )
                     );

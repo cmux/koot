@@ -8,6 +8,8 @@ const getDistPath = require('./get-dist-path');
 const getPort = require('./get-port');
 const getDirDistPublic = require('../libs/get-dir-dist-public');
 
+// ============================================================================
+
 /**
  * 读取目标客户端打包结果文件的内容
  * @param {String} filename 要查找的文件的文件名。根据打包文件对应表 (chunkmap) 查询文件名和实际打包结果文件的对应关系
@@ -62,7 +64,7 @@ const readClientFile = (
     }
 
     // 在打包结果中寻找指定文件
-    let pathnames = getFilePath(filename, localeId, isPathname);
+    let pathnames = getFilePath(filename, localeId, isPathname, true);
     if (!Array.isArray(pathnames)) pathnames = [pathnames];
 
     const results = pathnames.map(pathname => {

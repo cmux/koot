@@ -6,7 +6,7 @@
     __KOOT_SSR__:false
 */
 
-import 'regenerator-runtime/runtime';
+// import 'regenerator-runtime/runtime';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
 import match from 'react-router/lib/match';

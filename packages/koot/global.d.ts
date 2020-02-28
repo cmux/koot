@@ -189,3 +189,65 @@ declare module '*.view.less' {
     const kootComponentStyleLESS: KootModularStyleObject;
     export = kootComponentStyleLESS;
 }
+
+// ============================================================================
+
+declare namespace NodeJS {
+    export interface ProcessEnv {
+        /**
+         * 项目模式
+         * - isomorphic - 同构/SSR 项目
+         * - spa - 单页应用 (Single-Page App)
+         * - static - 静态化站点 (❌尚未启用)
+         */
+        WEBPACK_BUILD_TYPE: 'isomorphic' | 'spa' | 'static';
+        /**
+         * 当前打包场景或运行时
+         * - client - 客户端/浏览器端
+         * - server - 服务器端
+         */
+        WEBPACK_BUILD_STAGE: 'client' | 'server';
+        /**
+         * 当前环境
+         * - prod - 生产环境
+         * - dev - 开发环境
+         */
+        WEBPACK_BUILD_ENV: 'prod' | 'dev';
+        /**
+        'KOOT_VERSION',
+        'KOOT_PROJECT_NAME',
+        'KOOT_DIST_DIR',
+        'KOOT_I18N',
+        'KOOT_I18N_TYPE',
+        'KOOT_I18N_LOCALES',
+        'KOOT_I18N_COOKIE_KEY',
+        'KOOT_I18N_COOKIE_DOMAIN',
+        'KOOT_I18N_URL_USE',
+        'KOOT_HTML_TEMPLATE',
+        'KOOT_PWA_AUTO_REGISTER',
+        'KOOT_PWA_PATHNAME',
+        'KOOT_DEV_START_TIME',
+        'KOOT_DEV_DLL_FILE_CLIENT',
+        'KOOT_DEV_DLL_FILE_SERVER',
+        'KOOT_SESSION_STORE',
+        'KOOT_CLIENT_BUNDLE_SUBFOLDER',
+        'WEBPACK_CHUNKMAP',
+        'WEBPACK_DEV_SERVER_PORT'
+         */
+        /**
+         * 服务器端渲染时的 Public Path —— 请求静态资源的 URL 前缀
+         * - 默认为 `/`
+         *
+         * > **⚠️** 仅针对: 服务器端
+         *
+         * > **⚠️** 经过 `JSON.stringify` 处理
+         */
+        KOOT_SSR_PUBLIC_PATH: string;
+        /**
+         * 服务器模式
+         * - _空_ - 默认模式
+         * - serverless
+         */
+        KOOT_SERVER_MODE: '' | 'serverless';
+    }
+}
