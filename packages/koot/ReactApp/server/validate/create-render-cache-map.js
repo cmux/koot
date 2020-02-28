@@ -7,10 +7,11 @@ import availableLocaleIds from '../../../i18n/locale-ids';
  *
  * Map 的第一级为语种ID，每个语种有独立的空间，非多语言项目为 `` (空String)
  *
+ * @async
  * @param {Object|boolean} renderCacheConfig
  * @returns {Map}
  */
-const createRenderCacheMap = (renderCacheConfig = {}) => {
+const createRenderCacheMap = async (renderCacheConfig = {}) => {
     // console.log({ renderCacheConfig });
     if (renderCacheConfig === false) return false;
 

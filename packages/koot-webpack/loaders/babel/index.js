@@ -108,12 +108,6 @@ module.exports = require('babel-loader').custom(babel => {
                             node: true
                         };
                         thisPreset.options.ignoreBrowserslistConfig = true;
-                        thisPreset.options.exclude.push(
-                            '@babel/plugin-transform-regenerator'
-                        );
-                        thisPreset.options.exclude.push(
-                            '@babel/plugin-transform-async-to-generator'
-                        );
                     }
                     // console.log(thisPreset);
                 }

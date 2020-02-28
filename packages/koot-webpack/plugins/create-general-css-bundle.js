@@ -14,15 +14,7 @@ const postcssTransformDeclUrls = require('../postcss/transform-decl-urls');
  * Webpack 插件 - 将抽取的 CSS 文件整合为一个文件，并修改 chunkmap
  */
 class CreateGeneralCssBundlePlugin {
-    constructor(settings = {}) {
-        this.distClientAssetsDirName = settings.distClientAssetsDirName;
-    }
     apply(compiler) {
-        const { distClientAssetsDirName } = this;
-        const filenamePrefix = distClientAssetsDirName
-            ? `${distClientAssetsDirName}/`
-            : '';
-
         compiler.hooks.emit.tapAsync.bind(
             compiler.hooks.emit,
             'CreateGeneralCssBundlePlugin'
@@ -67,12 +59,9 @@ class CreateGeneralCssBundlePlugin {
                     : '';
 
             const size = content.length;
-            const filename =
-                filenamePrefix +
-                `extract.all.` +
-                md5(content) +
-                (size > thresholdStylesExtracted ? '.large' : '.small') +
-                `.css`;
+            const filename = `extract.all.${md5(content)}${
+                size > thresholdStylesExtracted ? '.large' : '.small'
+            }.css`;
 
             // 添加 chunk
             const chunk = new Chunk(chunkNameExtractCss);
@@ -93,13 +82,11 @@ class CreateGeneralCssBundlePlugin {
 
             // 针对 SPA 类型: 输出额外的版本，其内的资源引用相对路径不会包含 publicPath
             if (process.env.WEBPACK_BUILD_TYPE === 'spa') {
-                const thisFilename =
-                    filenamePrefix +
-                    `extract.all.` +
-                    md5(content) +
-                    `.url-no-public-path` +
-                    (size > thresholdStylesExtracted ? '.large' : '.small') +
-                    `.css`;
+                const thisFilename = `extract.all.${md5(
+                    content
+                )}.url-no-public-path${
+                    size > thresholdStylesExtracted ? '.large' : '.small'
+                }.css`;
 
                 // 添加 chunk
                 const chunk = new Chunk(chunkNameExtractCssForImport);

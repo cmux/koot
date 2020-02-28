@@ -40,8 +40,6 @@
  *     - 没有配置 (默认 `includes`)
  * - 二号
  *     - `"__assets__"`
- *
- * 四号：调整了 Webpack 配置的 `output.publicPath`。其他内容同默认
  */
 
 // Import modules =============================================================
@@ -1505,13 +1503,6 @@ describe('测试: React 同构项目', () => {
                     {
                         cookiesToStore: ['kootTest2', 'kootTest3']
                     }
-                );
-
-                testFull(
-                    '四号 / output.publicPath',
-                    dir,
-                    'koot.config.public-path.js',
-                    'isomorphic-public_path'
                 );
 
                 testFull(

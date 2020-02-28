@@ -17,8 +17,8 @@ const getCwd = require('koot/utils/get-cwd');
 module.exports = async ({ dist, i18n }) => {
     const {
         WEBPACK_BUILD_TYPE: TYPE,
-        WEBPACK_BUILD_ENV: ENV,
-        WEBPACK_BUILD_STAGE: STAGE
+        WEBPACK_BUILD_ENV: ENV
+        // WEBPACK_BUILD_STAGE: STAGE
         // WEBPACK_ANALYZE,
         // SERVER_DOMAIN,
         // SERVER_PORT,
@@ -69,17 +69,14 @@ module.exports = async ({ dist, i18n }) => {
         process.env.KOOT_I18N = JSON.stringify(true);
         process.env.KOOT_I18N_TYPE = JSON.stringify(type);
         process.env.KOOT_I18N_LOCALES = JSON.stringify(
-            locales.map(([...l]) => {
-                if (TYPE === 'spa') {
-                    delete l[1];
-                    delete l[2];
-                    delete l[3];
-                }
-                if (STAGE === 'server' && ENV === 'prod') {
-                    delete l[2];
-                }
-                return l;
-            })
+            TYPE === 'spa'
+                ? locales.map(([...l]) => {
+                      delete l[1];
+                      delete l[2];
+                      delete l[3];
+                      return l;
+                  })
+                : locales
         );
         if (cookieKey) process.env.KOOT_I18N_COOKIE_KEY = cookieKey;
         if (domain) process.env.KOOT_I18N_COOKIE_DOMAIN = domain;

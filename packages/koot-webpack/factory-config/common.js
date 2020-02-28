@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const webpack = require('webpack');
 // const ExtractTextPlugin = require("extract-text-webpack-plugin")
+// const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 
 const createModuleRules = require('./module/rules');
 const KootResetCssLoaderPlugin = require('../plugins/reset-css-loader');
@@ -137,8 +138,6 @@ const plugins = async (
         'KOOT_DEV_DLL_FILE_CLIENT',
         'KOOT_DEV_DLL_FILE_SERVER',
         'KOOT_SESSION_STORE',
-        'KOOT_SERVER_MODE',
-        'KOOT_SSR_PUBLIC_PATH',
         'WEBPACK_BUILD_TYPE',
         'WEBPACK_BUILD_ENV',
         'WEBPACK_CHUNKMAP',
@@ -238,12 +237,12 @@ const resolve = Object.assign({
         '.ts',
         '.tsx',
         '.mjs',
-        '.cjs'
-        // '.json',
-        // '.css',
-        // '.less',
-        // '.sass',
-        // '.scss'
+        '.cjs',
+        '.json',
+        '.css',
+        '.less',
+        '.sass',
+        '.scss'
     ]
 });
 

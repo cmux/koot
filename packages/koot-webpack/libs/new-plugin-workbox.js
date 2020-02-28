@@ -19,11 +19,7 @@ const getSWFilename = require('koot/utils/get-sw-filename');
 /**
  * 生成 Webpack Plugin: InjectManifest 所用配置
  */
-module.exports = async (
-    kootConfigForThisBuild,
-    localeId,
-    isPublicPathProvided = false
-) => {
+module.exports = async (kootConfigForThisBuild, localeId) => {
     if (!kootConfigForThisBuild) throw new Error('NO_KOOT_BUILD_CONFIG');
 
     let { serviceWorker } = kootConfigForThisBuild;
@@ -49,15 +45,9 @@ module.exports = async (
 
     const isDev = process.env.WEBPACK_BUILD_ENV === 'dev';
 
-    // const swDest = isDev
-    //     ? serviceWorkerFilename
-    //     : `${!isPublicPathProvided ? '../' : ''}${getSWFilename(
-    //           filename,
-    //           localeId
-    //       )}`;
     const swDest = isDev
         ? serviceWorkerFilename
-        : getSWFilename(filename, localeId);
+        : `../${getSWFilename(filename, localeId)}`;
 
     const swSrc = await (async () => {
         if (_swSrc) return _swSrc;

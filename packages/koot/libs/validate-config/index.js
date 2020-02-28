@@ -243,12 +243,6 @@ const finalValidate = async (config = {}) => {
         delete config.webpack;
     }
 
-    // 配置项: serverless
-    if (config.serverless === true) {
-        // 更新环境变量
-        process.env.KOOT_SERVER_MODE = 'serverless';
-    }
-
     // 添加 placeholder
     config[WEBPACK_OUTPUT_PATH] = undefined;
 

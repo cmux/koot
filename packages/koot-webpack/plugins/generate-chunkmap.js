@@ -7,13 +7,13 @@ const isHotUpdate = require('../libs/is-compilation-hot-update-only');
 class GenerateChunkmap {
     constructor(settings = {}) {
         this.localeId = settings.localeId;
-        this.outputPath = settings.outputPath;
+        this.pathPublic = settings.pathPublic;
         this.serviceWorkerPathname = settings.serviceWorkerPathname;
     }
 
     apply(compiler) {
         const localeId = this.localeId;
-        const outputPath = this.outputPath;
+        const pathPublic = this.pathPublic;
         const serviceWorkerPathname = this.serviceWorkerPathname;
 
         const TYPE = process.env.WEBPACK_BUILD_TYPE;
@@ -36,7 +36,7 @@ class GenerateChunkmap {
                 await writeChunkmap(
                     compilation,
                     localeId,
-                    outputPath,
+                    pathPublic,
                     serviceWorkerPathname
                 );
 

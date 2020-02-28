@@ -7,11 +7,9 @@ const DefaultWebpackConfig = require('webpack-config').default;
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const KootI18nPlugin = require('../plugins/i18n');
 const DevModePlugin = require('../plugins/dev-mode');
-const ModifyServerBundlePlugin = require('../plugins/modify-server-bundle');
-
 const {
     keyConfigBuildDll,
-    // keyConfigClientAssetsPublicPath,
+    keyConfigClientAssetsPublicPath,
     keyConfigWebpackSPAServer
 } = require('koot/defaults/before-build');
 
@@ -36,11 +34,10 @@ module.exports = async (kootBuildConfig = {}) => {
         webpackConfig: config = {},
         appType,
         dist,
-        // [keyConfigClientAssetsPublicPath]: __clientAssetsPublicPath,
+        [keyConfigClientAssetsPublicPath]: __clientAssetsPublicPath,
         i18n,
         staticCopyFrom: staticAssets,
         template,
-        serverless = false,
         [keyConfigBuildDll]: createDll = false
     } = kootBuildConfig;
 
@@ -52,12 +49,6 @@ module.exports = async (kootBuildConfig = {}) => {
     } = process.env;
 
     const isSPAProd = Boolean(ENV === 'prod' && TYPE === 'spa');
-    const isServerless = Boolean(
-        process.env.WEBPACK_BUILD_STAGE === 'server' &&
-            process.env.WEBPACK_BUILD_ENV === 'prod' &&
-            process.env.WEBPACK_BUILD_TYPE === 'isomorphic' &&
-            (serverless || process.env.KOOT_SERVER_MODE === 'serverless')
-    );
 
     const configTargetDefault = await createTargetDefaultConfig({
         pathRun: getCwd(),
@@ -69,37 +60,22 @@ module.exports = async (kootBuildConfig = {}) => {
         .merge(configTargetDefault)
         .merge(config);
 
-    const isPublicPathProvided = Boolean(
-        process.env.WEBPACK_BUILD_ENV === 'prod' &&
-            typeof config === 'object' &&
-            typeof config.output === 'object' &&
-            typeof config.output.publicPath === 'string'
-    );
-
     await transformConfigExtendDefault(result, kootBuildConfig);
 
     Object.assign(result.output, configTargetDefault.output);
 
-    // output =================================================================
-    result.output = {
-        publicPath: '/',
-        filename: `[name].js`,
-        chunkFilename: `chunk.[chunkhash].js`,
-        ...(result.output || {})
-    };
-    if (result.output.publicPath)
-        result.output.publicPath = transformOutputPublicpath(
-            result.output.publicPath
-        );
-    if (isPublicPathProvided)
-        process.env.KOOT_SSR_PUBLIC_PATH = JSON.stringify(
-            result.output.publicPath
-        );
     // 如果用户自己配置了服务端打包路径，则覆盖默认的
     if (dist) result.output.path = path.resolve(dist, './server');
-    if (isServerless) result.output.libraryTarget = 'commonjs2';
+    if (!result.output.publicPath)
+        result.output.publicPath = __clientAssetsPublicPath;
+    if (!result.output.filename)
+        result.output.filename = 'entry.[chunkhash].js';
+    if (!result.output.chunkFilename)
+        result.output.chunkFilename = 'chunk.[chunkhash].js';
 
-    // ========================================================================
+    result.output.publicPath = transformOutputPublicpath(
+        result.output.publicPath
+    );
 
     result.plugins = [
         new webpack.optimize.LimitChunkCountPlugin({
@@ -144,9 +120,7 @@ module.exports = async (kootBuildConfig = {}) => {
         // '@babel/polyfill',
         // 'core-js/stable',
         // path.resolve(__dirname, '../../../defaults/server-stage-0.js'),
-        require('../libs/get-koot-file')(
-            appType + `/server` + (isServerless ? '/index-serverless.js' : '')
-        )
+        require('../libs/get-koot-file')(`${appType}/server`)
     ];
     const otherEntries = {};
     if (isSPAProd) {
@@ -224,11 +198,7 @@ module.exports = async (kootBuildConfig = {}) => {
             output: {
                 ...result.output,
                 filename: 'index.js'
-            },
-            plugins: [
-                new ModifyServerBundlePlugin({ isServerless }),
-                ...result.plugins
-            ]
+            }
         }
     ];
 
