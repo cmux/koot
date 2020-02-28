@@ -15,7 +15,7 @@
 -   **新特性**
     -   **新配置项** `serverless` - 设定 _Web_ 服务器是否为 _Serverless_ 模式。详情请参见文档 [配置/serverless](https://koot.js.org/#/config?id=serverless) ([#217](https://github.com/cmux/koot/issues/217))
 -   优化
-    -   `serviceWorker` 配置项新增 `cacheFirst` 属性，可用以定义“优先利用本地缓存”请求策略的地址。详情请参见文档 [Service Worker](https://koot.js.org/#/pwa?id=service-worker)
+    -   `serviceWorker` 配置项新增 `cacheFirst` `networkFirst` `networkOnly` 属性，可用扩展缓存策略。详情请参见文档 [Service Worker](https://koot.js.org/#/pwa?id=service-worker)
     -   优化 _Service Worker_ 的默认缓存规则
     -   服务器端渲染时，现在会利用自定义的 `publicPath`
     -   更新 TS 定义

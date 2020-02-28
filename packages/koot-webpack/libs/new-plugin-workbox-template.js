@@ -86,13 +86,32 @@ cacheRoutes.forEach(route => {
 
 // Others =====================================================================
 
-registerRoute(getRoute('api/'), new workboxStrategies.NetworkOnly(), 'GET');
+[
+    ...(self.__koot.networkOnly || []).map(p => getRoute(p)),
+    'api/'
+    //
+].forEach(route => {
+    registerRoute(
+        route,
+        new workboxStrategies.NetworkOnly({ cacheName }),
+        'GET'
+    );
+});
+[
+    ...(self.__koot.networkFirst || []).map(p => getRoute(p))
+    //
+].forEach(route => {
+    registerRoute(
+        route,
+        new workboxStrategies.NetworkFirst({ cacheName }),
+        'GET'
+    );
+});
+
+// Fallback ===================================================================
+
 registerRoute(
     getRoute(),
-    new workboxStrategies.NetworkFirst({
-        cacheName: self.__koot['__baseVersion_lt_0.12']
-            ? 'koot-sw-cache'
-            : undefined
-    }),
+    new workboxStrategies.NetworkFirst({ cacheName }),
     'GET'
 );

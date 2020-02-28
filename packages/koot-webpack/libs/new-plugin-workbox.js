@@ -39,7 +39,11 @@ module.exports = async (
         swSrc: _swSrc,
         include = [],
         exclude = [],
+
+        // cache strategies
         cacheFirst = [],
+        networkFirst = [],
+        networkOnly = [],
         // importWorkboxFrom = 'local',
         // importsDirectory = '__workbox-assets',
         ...rest
@@ -65,6 +69,8 @@ module.exports = async (
                 ? semver.lt(kootBaseVersion, '0.12.0')
                 : false,
             cacheFirst,
+            networkFirst,
+            networkOnly,
             env: {
                 WEBPACK_BUILD_ENV: ENV
             }
