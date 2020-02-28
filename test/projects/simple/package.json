@@ -49,7 +49,7 @@
     "private": true,
     "sideEffects": false,
     "koot": {
-        "version": "0.12.7-alpha.5"
+        "version": "0.12.7-alpha.6"
     },
     "devDependencies": {
         "@types/lodash": "^4.14.149",
@@ -111,7 +111,7 @@
         "typescript": "^3.8.2",
         "xmlify": "^1.1.0",
         "yargs": "^15.1.0",
-        "@babel/core": "^7.8.4",
+        "@babel/core": "^7.8.6",
         "@babel/plugin-proposal-class-properties": "^7.8.3",
         "@babel/plugin-proposal-decorators": "^7.8.3",
         "@babel/plugin-proposal-object-rest-spread": "^7.8.3",
@@ -119,14 +119,14 @@
         "@babel/plugin-transform-regenerator": "^7.8.3",
         "@babel/plugin-transform-runtime": "^7.8.3",
         "@babel/polyfill": "^7.8.3",
-        "@babel/preset-env": "^7.8.4",
+        "@babel/preset-env": "^7.8.6",
         "@babel/preset-flow": "^7.8.3",
         "@babel/preset-modules": "^0.1.3",
         "@babel/preset-react": "^7.8.3",
         "@babel/preset-typescript": "^7.8.3",
-        "@babel/register": "^7.8.3",
+        "@babel/register": "^7.8.6",
         "@hot-loader/react-dom": "^16.12.0",
-        "@types/webpack": "^4.41.6",
+        "@types/webpack": "^4.41.7",
         "babel-loader": "^8.0.6",
         "cache-loader": "^4.1.0",
         "compression-webpack-plugin": "^3.1.0",
