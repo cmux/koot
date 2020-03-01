@@ -127,7 +127,7 @@ module.exports = {
 
 _默认规则解释:_ 文件名以 `.component.css` `.view.css` 或 `.module.css` (扩展名可为 `css` `less` `sass`) 为结尾的文件会当作组件 CSS，其他文件会被当做全局 CSS。
 
-_注:_ _TypeScript_ 项目中，如果修改了上述配置，针对组件 CSS 对象的默认的 TS 定义声明会失效。
+⚠️ _TypeScript_ 项目中，如果修改了上述配置，针对组件 CSS 对象的默认的 TS 定义声明会失效。
 
 ##### 组件 CSS hash 字符串长度
 

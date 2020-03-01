@@ -1,5 +1,10 @@
 import 'regenerator-runtime/runtime';
-import { setCacheNameDetails } from 'workbox-core';
+import {
+    setCacheNameDetails,
+    cacheNames,
+    skipWaiting,
+    clientsClaim
+} from 'workbox-core';
 import { precacheAndRoute } from 'workbox-precaching';
 import { registerRoute } from 'workbox-routing';
 import * as workboxStrategies from 'workbox-strategies';
@@ -32,7 +37,7 @@ const getRoute = pathname => {
         : '';
     p = p.replace(/\//g, '\\/');
 
-    const suffix = /\\\/$/.test(p) ? `(\\/|\\?.*|$)` : `(\\?.*|$)`;
+    const suffix = !p ? '' : /\\\/$/.test(p) ? `(\\/|\\?.*|$)` : `(\\?.*|$)`;
 
     while (/\\\/$/.test(p)) {
         p = p.substr(0, p.length - 2);
@@ -46,16 +51,15 @@ const getRoute = pathname => {
 // workbox.setConfig({ debug: false });
 setCacheNameDetails({
     prefix: 'koot',
-    suffix: self.__koot['__baseVersion_lt_0.12']
-        ? 'cache'
-        : `cache${self.__koot.localeId ? `-${self.__koot.localeId}` : ''}`,
-    precache: self.__koot['__baseVersion_lt_0.12'] ? 'sw' : 'pre',
-    runtime: self.__koot['__baseVersion_lt_0.12'] ? 'sw' : 'rt'
+    suffix: `cache${self.__koot.localeId ? `-${self.__koot.localeId}` : ''}`,
+    precache: 'pre',
+    runtime: 'rt'
 });
 
 self.addEventListener('message', event => {
     if (event.data && event.data.type === 'SKIP_WAITING') {
-        self.skipWaiting();
+        skipWaiting();
+        clientsClaim();
     }
 });
 
@@ -63,11 +67,11 @@ self.addEventListener('message', event => {
 
 if (!isKootAppDevEnv) {
     precacheAndRoute([
-        // precache home page
-        { url: '/', revision: null },
         // from webpack build
         ...self.__WB_MANIFEST
     ]);
+    // 缓存首页到 runtime
+    caches.open(cacheNames.runtime).then(cache => cache.add('/'));
 }
 
 // Caching Strategy ===========================================================
@@ -77,18 +81,11 @@ const cacheRoutes = [
     ...(self.__koot.cacheFirst || []).map(p => getRoute(p)),
     getRoute('favicon.ico')
 ];
-const cacheName = self.__koot['__baseVersion_lt_0.12']
-    ? 'koot-sw-cache'
-    : undefined;
 const cacheStrategy = isKootAppDevEnv ? 'NetworkOnly' : 'CacheFirst';
 
 cacheRoutes.forEach(route => {
     // console.log({ route, cacheStrategy });
-    registerRoute(
-        route,
-        new workboxStrategies[cacheStrategy]({ cacheName }),
-        'GET'
-    );
+    registerRoute(route, new workboxStrategies[cacheStrategy](), 'GET');
 });
 
 // Others =====================================================================
@@ -98,33 +95,14 @@ cacheRoutes.forEach(route => {
     'api/'
     //
 ].forEach(route => {
-    registerRoute(
-        route,
-        new workboxStrategies.NetworkOnly({ cacheName }),
-        'GET'
-    );
+    registerRoute(route, new workboxStrategies.NetworkOnly(), 'GET');
 });
 [
     ...(self.__koot.networkFirst || []).map(p => getRoute(p))
     //
 ].forEach(route => {
-    registerRoute(
-        route,
-        new workboxStrategies.NetworkFirst({ cacheName }),
-        'GET'
-    );
+    registerRoute(route, new workboxStrategies.NetworkFirst(), 'GET');
 });
 
-// Home Page ==================================================================
-registerRoute(
-    ({ url }) => url.pathname === '/',
-    new workboxStrategies.NetworkFirst({ cacheName }),
-    'GET'
-);
-
 // Base =======================================================================
-registerRoute(
-    getRoute(),
-    new workboxStrategies.NetworkFirst({ cacheName }),
-    'GET'
-);
+registerRoute(getRoute(), new workboxStrategies.NetworkFirst(), 'GET');

@@ -115,7 +115,8 @@ class SpaTemplatePlugin {
                 compilation,
                 localeId,
                 undefined,
-                serviceWorkerPathname
+                serviceWorkerPathname,
+                [filename]
             );
 
             const {

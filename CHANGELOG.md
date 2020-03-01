@@ -9,7 +9,7 @@
         -   不再有 `koot-[timestamp]` 目录
         -   现在会智能的根据 `bundleVersionsKeep` 配置项删除旧的文件
         -   打包结果根目录中新增 `.public-outputs.json` 文件，用以记录旧的打包文件列表
-    -   调整了 `distClientAssetsDirName` 配置项的行为方式，现在公共路径名会作为前缀添加到 _Webpack_ 配置 `output.filename` 的值之前
+    -   调整了 `distClientAssetsDirName` 配置项的行为方式，现在不在会有 `koot-[时间戳]` 子目录。详情请参见文档 [Webpack](https://koot.js.org/#/webpack)
     -   打包结果目录内的文件结构会受影响，但不影响使用
     -   如果项目种有针对打包结果目录内文件的处理，请注意
 -   **新特性**

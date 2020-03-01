@@ -1112,7 +1112,16 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
                     `(^|\\s|;)${key}\\s*=\\s*${value}`,
                     'g'
                 );
-                expect(regexp.test(result)).toBe(true);
+                const testResult = regexp.test(result);
+                if (!testResult) {
+                    console.error({
+                        result,
+                        regexp,
+                        testResult
+                    });
+                    return;
+                }
+                expect(testResult).toBe(true);
             }
         } else if (cookiesToStore === false) {
             expect(typeof result).toBe('undefined');

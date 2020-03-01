@@ -206,7 +206,7 @@ const validatePlugins = (config, kootConfigForThisBuild = {}) => {
                         // ...kootConfigForThisBuild,
                         // ...JSON.parse(
                         JSON.stringify(webpackConfig)
-                            .replace(/koot-[0-9]+/g, 'koot-**TIMESTAMP**')
+                            // .replace(/koot-[0-9]+/g, 'koot-**TIMESTAMP**')
                             .replace(
                                 /config([\\/])(.+?)\.[0-9]+\.js/g,
                                 'config$1$2.**TIMESTAMP**.js'

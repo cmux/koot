@@ -71,7 +71,7 @@
     "private": true,
     "sideEffects": false,
     "koot": {
-        "version": "0.13.0-alpha.0"
+        "version": "0.13.0-alpha.2"
     },
     "devDependencies": {
         "@types/lodash": "^4.14.149",
