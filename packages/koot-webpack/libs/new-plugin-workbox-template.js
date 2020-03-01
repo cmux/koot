@@ -61,7 +61,14 @@ self.addEventListener('message', event => {
 
 // Pre-caching ================================================================
 
-if (!isKootAppDevEnv) precacheAndRoute(self.__WB_MANIFEST);
+if (!isKootAppDevEnv) {
+    precacheAndRoute([
+        // precache home page
+        { url: '/', revision: null },
+        // from webpack build
+        ...self.__WB_MANIFEST
+    ]);
+}
 
 // Caching Strategy ===========================================================
 
@@ -108,8 +115,14 @@ cacheRoutes.forEach(route => {
     );
 });
 
-// Fallback ===================================================================
+// Home Page ==================================================================
+registerRoute(
+    ({ url }) => url.pathname === '/',
+    new workboxStrategies.NetworkFirst({ cacheName }),
+    'GET'
+);
 
+// Base =======================================================================
 registerRoute(
     getRoute(),
     new workboxStrategies.NetworkFirst({ cacheName }),
