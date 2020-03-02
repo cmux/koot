@@ -29,6 +29,13 @@
     -   `@babel/plugin-transform-regenerator`
     -   `@babel/plugin-transform-async-to-generator`
 
+## [0.12.7] - 2020-03-02
+
+**koot**
+
+-   错误修正
+    -   打包出错时的无效错误提示
+
 ## [0.12.6] - 2020-02-15
 
 **koot**
