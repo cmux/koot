@@ -175,7 +175,7 @@ run().catch(err => {
     if (!isFromCommandStart())
         spinner(chalk.yellowBright('[koot/build] ')).fail();
 
-    if (Array.isArray(result.errors) && result.errors.length) {
+    if (result && Array.isArray(result.errors) && result.errors.length) {
         result.errors.forEach(e => console.error(e));
     } else {
         console.error(err);
