@@ -1,3 +1,11 @@
+import 'regenerator-runtime/runtime';
+import { setCacheNameDetails } from 'workbox-core';
+import { precacheAndRoute } from 'workbox-precaching';
+import { registerRoute } from 'workbox-routing';
+import * as workboxStrategies from 'workbox-strategies';
+
+self.__WB_DISABLE_DEV_LOGS = true;
+
 // Koot.js specific ===========================================================
 
 if (typeof self.__koot !== 'object') {
@@ -30,8 +38,8 @@ const getRoute = (pathname, isNotPath) => {
 
 // Workbox Configuration ======================================================
 
-workbox.setConfig({ debug: false });
-workbox.core.setCacheNameDetails({
+// workbox.setConfig({ debug: false });
+setCacheNameDetails({
     prefix: 'koot',
     suffix: self.__koot['__baseVersion_lt_0.12']
         ? 'cache'
@@ -48,14 +56,7 @@ self.addEventListener('message', event => {
 
 // Pre-caching ================================================================
 
-/**
- * The workboxSW.precacheAndRoute() method efficiently caches and responds to
- * requests for URLs in the manifest.
- * See https://goo.gl/S9QRab
- */
-self.__precacheManifest = [].concat(self.__precacheManifest || []);
-if (!isKootAppDevEnv)
-    workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
+if (!isKootAppDevEnv) precacheAndRoute(self.__WB_MANIFEST);
 
 // Caching Strategy ===========================================================
 
@@ -70,23 +71,19 @@ const cacheStrategy = isKootAppDevEnv ? 'NetworkOnly' : 'CacheFirst';
 
 cacheRoutes.forEach(route => {
     // console.log({ route, cacheStrategy });
-    workbox.routing.registerRoute(
+    registerRoute(
         route,
-        new workbox.strategies[cacheStrategy]({ cacheName }),
+        new workboxStrategies[cacheStrategy]({ cacheName }),
         'GET'
     );
 });
 
 // Others =====================================================================
 
-workbox.routing.registerRoute(
-    getRoute('api'),
-    new workbox.strategies.NetworkOnly(),
-    'GET'
-);
-workbox.routing.registerRoute(
+registerRoute(getRoute('api'), new workboxStrategies.NetworkOnly(), 'GET');
+registerRoute(
     getRoute(),
-    new workbox.strategies.NetworkFirst({
+    new workboxStrategies.NetworkFirst({
         cacheName: self.__koot['__baseVersion_lt_0.12']
             ? 'koot-sw-cache'
             : undefined

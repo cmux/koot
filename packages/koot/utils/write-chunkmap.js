@@ -6,14 +6,14 @@ const generateFilemap = require('./generate-filemap-from-compilation');
 const getChunkmapPath = require('./get-chunkmap-path');
 const getDistPath = require('./get-dist-path');
 
-const times = n => f => {
-    const iter = i => {
-        if (i === n) return;
-        f(i);
-        iter(i + 1);
-    };
-    return iter(0);
-};
+// const times = n => f => {
+//     const iter = i => {
+//         if (i === n) return;
+//         f(i);
+//         iter(i + 1);
+//     };
+//     return iter(0);
+// };
 
 const isNotSourcemap = filename => !/\.(js|css)\.map$/i.test(filename);
 

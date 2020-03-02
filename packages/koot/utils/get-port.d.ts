@@ -1,5 +1,5 @@
 /**
- * 获取当前环境的服务器端口号
+ * 获取 Web 服务器端口号
  */
 function getPort(
     portConfig?:

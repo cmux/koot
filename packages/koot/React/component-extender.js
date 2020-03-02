@@ -202,7 +202,6 @@ export default (options = {}) => WrappedComponent => {
             : undefined;
 
     // 装饰组件
-
     class KootReactComponent extends React.Component {
         static onServerRenderHtmlExtend = ({ store, renderProps = {} }) => {
             const { title, metas } = doPageinfo(
@@ -397,6 +396,10 @@ export default (options = {}) => WrappedComponent => {
             )
                 props.loaded = this.state.loaded;
 
+            // if (typeof props.forwardedRef !== 'undefined') {
+            //     console.log(props.forwardedRef);
+            // }
+
             return <WrappedComponent {...props} />;
         }
     }
@@ -440,5 +443,9 @@ export default (options = {}) => WrappedComponent => {
         KootComponent = connect(..._connect)(KootComponent);
     }
 
-    return KootComponent;
+    // return KootComponent;
+    return React.forwardRef((props, ref) => {
+        if (ref) return <KootComponent {...props} forwardedRef={ref} />;
+        return <KootComponent {...props} />;
+    });
 };

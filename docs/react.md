@@ -183,17 +183,12 @@ export default HomePage;
 
 使用 _extend()_ 高阶组件封装后，目标组件将会获得以下新的 `props`
 
--   _string_ `className`
-    <br>包含父组件传入的 `className` 以及过 hash 后本组件的 className
--   _string_ `data-class-name`
-    <br>经过 hash 后本组件的 className
-    <br>注: 与 `props.className` 不同，`props['data-class-name']` 仅为本组件 CSS 的 className
--   _Function_ `updatePageinfo`
-    <br>可用来手动触发页面信息更新
-    -   可传入 _Object_ 或 _Function_，语法与 `connect()` 高阶组件的 `pageinfo` 的用法相同
-        <br>如果没有传入参数，会使用 `extend()` 高阶组件中的 `pageinfo` 的值
-    -   注 1: 仅在客户端环境下使用才有意义
-        <br>注 2: 仅在 `extend()` 高阶组件中使用 `pageinfo` 属性时才会存在
+| 属性名            | 类型              | 解释                                                                                                                                                                                                                                                                                                                         |
+| ----------------- | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `className`       | `string`          | 如果通过 `extend()` 高阶组件封装并指定了 `styles` 属性：<br>父组件传入的 `className` 以及经过 hash 后本组件的 `className`<br><br>否则：<br>父组件传入的 `className` 属性                                                                                                                                                     |
+| `data-class-name` | `string`          | 经过 hash 后本组件的 className<br>与 `className` 不同，该属性仅为本组件的组件 CSS 的 `className`                                                                                                                                                                                                                             |
+| `updatePageinfo`  | `Function`        | 可用来手动触发页面信息更新<br><br>可传入 _Object_ 或 _Function_，语法与 `connect()` 高阶组件的 `pageinfo` 的用法相同<br>如果没有传入参数，会使用 `extend()` 高阶组件中的 `pageinfo` 的值<br><br>注 1: 仅在客户端环境下使用才有意义，服务器环境下该属性无效<br>注 2: 仅在 `extend()` 高阶组件中使用 `pageinfo` 属性时才会存在 |
+| `forwardedRef`    | `React.RefObject` | 使用该组件时如果传入了 `ref` 属性，该组件会出现 `forwardedRef` 属性用以转发/接收 `ref` 值                                                                                                                                                                                                                                    |
 
 ---
 

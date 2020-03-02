@@ -12,9 +12,10 @@ let cachedChunkmap;
  *
  * @param {String} [localeId] 当前语言，默认为当前语言 (i18n开启时) 或未指定 (i18n未开启时)
  * @param {Boolean} [getFullResult = false] 仅 i18n 开启时：获取 chunkmap 全文，而非当前语言的片段
+ * @param {Boolean} [ignoreCache = false] 忽略结果缓存，强制重新获取对照表
  * @returns {Object}
  */
-const getChunkmap = (localeId, getFullResult = false) => {
+const getChunkmap = (localeId, getFullResult = false, ignoreCache = false) => {
     if (localeId === true) return getChunkmap(getFullResult || undefined, true);
 
     const isI18nEnabled = getIsI18nEnabled();
@@ -29,7 +30,7 @@ const getChunkmap = (localeId, getFullResult = false) => {
     const isI18nDefault = isI18nEnabled && i18nType === 'default';
 
     const chunkmap = (() => {
-        if (cachedChunkmap) return cachedChunkmap;
+        if (!ignoreCache && cachedChunkmap) return cachedChunkmap;
 
         let chunkmap;
 

@@ -7,6 +7,7 @@ const toRemove = [path.resolve(__dirname, './node_modules')];
 
 (async () => {
     const dirProjects = path.resolve(__dirname, './test/projects');
+
     fs.readdirSync(dirProjects)
         .map(filename => path.resolve(dirProjects, filename))
         .filter(file => {

@@ -19,6 +19,7 @@ const execSync = require('child_process').exec;
 const exec = util.promisify(require('child_process').exec);
 const puppeteer = require('puppeteer');
 const chalk = require('chalk');
+const cheerio = require('cheerio');
 
 //
 
@@ -244,7 +245,9 @@ const doTest = async (port, dist, settings = {}) => {
                     location.pathname === testLocation.pathname &&
                     location.search === testLocation.search &&
                     params.testId === '123' &&
-                    typeof route.component === 'function' &&
+                    (typeof route.component === 'function' ||
+                        (typeof route.component === 'object' &&
+                            typeof route.component.render === 'function')) &&
                     route.path === '/route-test/:testId' &&
                     routeParams.testId === '123' &&
                     typeof router.createHref === 'function' &&
@@ -536,6 +539,35 @@ const doTest = async (port, dist, settings = {}) => {
         await context.close();
 
         expect(title).toBe('Koot Boilerplate (Simple)');
+    }
+
+    // 测试: forward ref
+    {
+        const context = await browser.createIncognitoBrowserContext();
+        const page = await context.newPage();
+        const res = await page.goto(origin, {
+            waitUntil: 'networkidle0'
+        });
+
+        const HTML = await res.text();
+        const $ = cheerio.load(HTML);
+        const selector = '#__test-extend_forward_ref';
+
+        const textSSR = $(selector).text();
+        const classNameSSR = $(selector).attr('class');
+        const { textCSR, classNameCSR } = await page.evaluate(selector => {
+            const el = document.querySelector(selector);
+            const textCSR = el.innerText;
+            const classNameCSR = el.getAttribute('class');
+            return {
+                textCSR,
+                classNameCSR
+            };
+        }, selector);
+
+        expect(classNameSSR.includes('success')).toBe(false);
+        expect(classNameCSR.includes('success')).toBe(true);
+        expect(textSSR).not.toBe(textCSR);
     }
 
     await puppeteerTestStyles(page);

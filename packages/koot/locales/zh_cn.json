@@ -22,7 +22,9 @@
         "spa_template_emitted": "SPA HTML 页面文件已输出至 ${file}",
         "spa_template_not_found": "SPA 模板文件未找到",
         "complete": "打包完成！(${time})",
-        "spa_i18n_disabled_temporarily": "SPA 项目当前暂无多语言支持，日后会重新启用"
+        "spa_i18n_disabled_temporarily": "SPA 项目当前暂无多语言支持，日后会重新启用",
+        "spa_i18n_type_force_store": "SPA 项目多语言打包模式 (i18n.type) 仅支持 'store'。已强制更改。",
+        "spa_i18n_use_force_query": "SPA 项目多语言切换语种方式 (i18n.use) 仅支持 'query'。已强制更改。"
     },
     "dev": {
         "build_dll": "生成 DLL 文件",

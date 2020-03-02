@@ -6,7 +6,6 @@ const {
     keyConfigClientAssetsPublicPath
 } = require('koot/defaults/before-build');
 const getAppType = require('koot/utils/get-app-type');
-// const getPort = require('koot/utils/get-port')
 const getChunkmapPathname = require('koot/utils/get-chunkmap-path');
 const initNodeEnv = require('koot/utils/init-node-env');
 
@@ -58,7 +57,6 @@ module.exports = async (kootConfig = {}) => {
     });
     const { analyze = false } = kootBuildConfig;
 
-    // kootBuildConfig.portServer = getPort(kootBuildConfig.port)
     if (process.env.WEBPACK_BUILD_ENV === 'dev' && kootBuildConfig.devPort) {
         process.env.SERVER_PORT = kootBuildConfig.devPort;
     } else if (
@@ -78,7 +76,7 @@ module.exports = async (kootConfig = {}) => {
     kootBuildConfig.dist = await transformDist(kootBuildConfig.dist);
     kootBuildConfig.i18n = await transformI18n(kootBuildConfig);
     kootBuildConfig.serviceWorker = await transformServiceWorker(
-        kootBuildConfig.serviceWorker
+        kootBuildConfig
     );
     kootBuildConfig.template = await transformTemplate(
         kootBuildConfig.template
@@ -166,5 +164,6 @@ module.exports = async (kootConfig = {}) => {
     //
     // ========================================================================
 
+    // console.log({ kootBuildConfig });
     return kootBuildConfig;
 };

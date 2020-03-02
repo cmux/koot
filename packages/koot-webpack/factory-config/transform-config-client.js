@@ -40,6 +40,7 @@ const validatePathname = require('koot/libs/validate-pathname');
 const isI18nEnabled = require('koot/i18n/is-enabled');
 const getModuleVersion = require('koot/utils/get-module-version');
 const webpackOptimizationProd = require('koot/utils/webpack-optimization-prod');
+const getSpaLocaleFileId = require('koot/libs/get-spa-locale-file-id');
 
 /**
  * Webpack 配置处理 - 客户端配置
@@ -134,7 +135,10 @@ module.exports = async (kootConfigForThisBuild = {}) => {
             .merge(
                 await transformConfigExtendDefault(
                     thisConfig,
-                    kootConfigForThisBuild
+                    kootConfigForThisBuild,
+                    {
+                        isSPATemplateInject
+                    }
                 )
             );
 
@@ -166,6 +170,13 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                 [keyConfigWebpackSPATemplateInject]: true,
                 stats: 'errors-only'
             });
+            if (!Array.isArray(result.plugins)) result.plugins = [];
+            if (localeId)
+                result.plugins.push(
+                    new webpack.DefinePlugin({
+                        __KOOT_LOCALEID__: JSON.stringify(localeId)
+                    })
+                );
             delete result.optimization.minimizer;
         } else {
             // 处理 output
@@ -227,6 +238,7 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                     for (const key in result.entry) {
                         if (!Array.isArray(result.entry[key]))
                             result.entry[key] = [result.entry[key]];
+                        // result.entry[key].unshift('react-hot-loader/patch');
                         result.entry[key].unshift(
                             'webpack/hot/only-dev-server'
                         );
@@ -247,7 +259,9 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                 //     './client/run-first.js'
                 // )
                 const fileRunFirst = require('../libs/get-koot-file')(
-                    'React/client-run-first.js'
+                    TYPE === 'spa'
+                        ? 'ReactSPA/client/run-first.js'
+                        : 'React/client-run-first.js'
                 );
                 if (fs.existsSync(fileRunFirst)) {
                     result.entry[chunkNameClientRunFirst] = [fileRunFirst];
@@ -319,6 +333,7 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                 // }
             }
 
+            // 非 DLL 创建时 (即生产环境和开发环境正常打包)
             if (!createDll) {
                 result.plugins.push(
                     await new CreateGeneralCssBundlePlugin({
@@ -336,10 +351,48 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                 }
 
                 if (TYPE === 'spa') {
+                    const isSPAi18nEnabled =
+                        !isSeperateLocale &&
+                        i18n &&
+                        Array.isArray(i18n.locales) &&
+                        i18n.locales.length;
+                    if (isSPAi18nEnabled) {
+                        for (const [localeId, , file] of i18n.locales) {
+                            const tmpdir = path.resolve(
+                                getDirTemp(),
+                                'spa-locale-files'
+                            );
+                            const pathname = path.resolve(
+                                tmpdir,
+                                `${localeId}.js`
+                            );
+                            await fs.ensureDir(tmpdir);
+                            await fs.writeFile(
+                                pathname,
+                                `import locales from '${file.replace(
+                                    /\\/g,
+                                    '\\\\'
+                                )}'\n` +
+                                    `import { setLocales } from 'koot/i18n/locales'\n` +
+                                    `window.__KOOT_SSR_STATE__ = {
+                                    localeId: '${localeId}',
+                                    locales
+                                };` +
+                                    `setLocales(locales);`,
+                                'utf-8'
+                            );
+                            result.entry[
+                                getSpaLocaleFileId(localeId)
+                            ] = pathname;
+                        }
+                    }
                     result.plugins.push(
                         new SpaTemplatePlugin({
                             template,
                             localeId: isSeperateLocale ? localeId : undefined,
+                            locales: isSPAi18nEnabled
+                                ? i18n.locales
+                                : undefined,
                             // inject: templateInject,
                             inject: path.resolve(
                                 getDirTemp(),

@@ -1,7 +1,68 @@
 ## [Unreleased]
 
+## [0.12.7] - 2020-03-02
+
+**koot**
+
+-   错误修正
+    -   打包出错时的无效错误提示
+
+## [0.12.6] - 2020-02-15
+
+**koot**
+
+-   优化
+    -   工具函数 `getPort` 现在明确会返回 Web Server 端口号 ([#210](https://github.com/cmux/koot/issues/210))
+
+## [0.12.5] - 2020-02-13
+
 -   更新依赖包 minor 和 patch 版本号
--   更新 `devDll` 默认列表
+
+**koot**
+
+-   **新特性**
+    -   **新配置项** `devServiceWorker` - 设定开发环境中是否应用 _Service Worker_。详情请参见文档 [配置/devServiceWorker](https://koot.js.org/#/config?id=devServiceWorker) ([#211](https://github.com/cmux/koot/issues/211))
+
+## [0.12.4] - 2020-02-11
+
+-   更新依赖包 minor 和 patch 版本号
+
+**koot**
+
+-   错误修正
+    -   修正 SPA 项目禁用多语言时无法正常运行的问题 ([#212](https://github.com/cmux/koot/issues/212))
+
+## [0.12.3] - 2020-02-07
+
+**koot**
+
+-   **重大改动**
+    -   SPA 项目现在支持多语言开发
+        -   打包类型强制为 `store`
+
+## [0.12.2] - 2020-02-05
+
+-   更新依赖包 minor 和 patch 版本号
+
+**koot**
+
+-   优化
+    -   `extend()` 高阶组件现在会正确的向目标组件传入 `forwardedRef` 属性 ([#206](https://github.com/cmux/koot/issues/206))
+    -   现在重新允许 _Babel_ 插件 `@babel/plugin-transform-regenerator` (撤回 0.12.0 的一项改动)
+        -   为保证最大兼容
+        -   打包的代码量会比之前稍大一些
+
+## [0.12.1] - 2020-02-03
+
+-   更新依赖包 minor 和 patch 版本号
+
+**koot**
+
+-   **重大改动**
+    -   更新依赖包 **major** 版本号
+        -   `workbox` -> _^5.0.0_
+-   优化
+    -   现在 `serviceWorker` 配置项允许传入所有 _Workbox_ 可接受的选项 ([#209](https://github.com/cmux/koot/issues/209))
 
 ## [0.12.0] - 2020-01-13
 

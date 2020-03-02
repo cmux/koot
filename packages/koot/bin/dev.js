@@ -33,7 +33,6 @@ const getDirTemp = require('../libs/get-dir-tmp');
 
 const __ = require('../utils/translate');
 const sleep = require('../utils/sleep');
-// const getPort = require('../utils/get-port')
 const spinner = require('../utils/spinner');
 // const readBuildConfigFile = require('../utils/read-build-config-file')
 const getAppType = require('../utils/get-app-type');

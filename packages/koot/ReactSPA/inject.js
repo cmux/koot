@@ -3,16 +3,24 @@ const validateInject = require('../React/validate-inject');
 module.exports = (options = {}) => {
     const {
         injectCache,
+
         localeId,
+        localeFileMap,
+        defaultLocaleId,
+
         filemap,
         entrypoints,
-        needInjectCritical,
-        compilation
+        compilation,
+
+        needInjectCritical
     } = options;
 
     return validateInject({
         injectCache,
+
         localeId,
+        localeFileMap,
+        defaultLocaleId,
 
         filemap,
         entrypoints,

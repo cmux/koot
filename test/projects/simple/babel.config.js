@@ -12,6 +12,28 @@ module.exports = function(api) {
             '@babel/preset-react',
             '@babel/preset-flow'
         ],
+        // presets: [
+        //     '@babel/preset-modules',
+        //     '@babel/preset-react',
+        //     '@babel/preset-flow'
+        // ],
+        // env: {
+        //     modern: {
+        //         presets: ['@babel/preset-modules']
+        //     },
+        //     legacy: {
+        //         presets: [
+        //             [
+        //                 '@babel/preset-env',
+        //                 {
+        //                     modules: false
+        //                 }
+        //             ],
+        //             '@babel/preset-react',
+        //             '@babel/preset-flow'
+        //         ]
+        //     }
+        // },
         compact: 'auto',
         plugins: [
             // transform

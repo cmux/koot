@@ -14,6 +14,9 @@ const getCwd = require('koot/utils/get-cwd');
 const getChunkmap = require('koot/utils/get-chunkmap');
 const getDirDistPublic = require('koot/libs/get-dir-dist-public');
 const validateTemplate = require('koot/libs/validate-template');
+const getSpaLocaleFileId = require('koot/libs/get-spa-locale-file-id');
+
+// ============================================================================
 
 /**
  * Webpack 插件 - 生成 SPA 主页面文件
@@ -27,13 +30,17 @@ class SpaTemplatePlugin {
         this.inject = settings.inject;
         this.template = settings.template;
         this.serviceWorkerPathname = settings.serviceWorkerPathname;
+        this.locales = settings.locales;
     }
 
     apply(compiler) {
-        const localeId = this.localeId;
-        const inject = this.inject;
-        const template = this.template;
-        const serviceWorkerPathname = this.serviceWorkerPathname;
+        const {
+            localeId,
+            inject,
+            template,
+            serviceWorkerPathname,
+            locales
+        } = this;
 
         const filename = `index${localeId ? `.${localeId}` : ''}.html`;
 
@@ -101,19 +108,21 @@ class SpaTemplatePlugin {
             'SpaTemplatePlugin'
         )(async (compilation, callback) => {
             const appType = await getAppType();
+            const isI18nEnabled = Array.isArray(locales) && locales.length;
 
             // 获取并写入 chunkmap
             await writeChunkmap(
                 compilation,
-                undefined,
+                localeId,
                 undefined,
                 serviceWorkerPathname
             );
+
             const {
                 '.files': filemap,
                 '.entrypoints': entrypoints
                 // 'service-worker': serviceWorker
-            } = getChunkmap(localeId);
+            } = getChunkmap(localeId, false, true);
 
             // console.log({
             //     serviceWorker,
@@ -148,6 +157,19 @@ class SpaTemplatePlugin {
                             compilation,
                             entrypoints,
                             localeId,
+                            localeFileMap: isI18nEnabled
+                                ? locales.reduce((map, [localeId]) => {
+                                      map[localeId] =
+                                          filemap[
+                                              getSpaLocaleFileId(localeId) +
+                                                  '.js'
+                                          ];
+                                      return map;
+                                  }, {})
+                                : undefined,
+                            defaultLocaleId: isI18nEnabled
+                                ? locales[0][0]
+                                : undefined,
                             needInjectCritical: require(`koot/React/inject/is-need-inject-critical`)(
                                 templateStr
                             )
@@ -169,8 +191,13 @@ class SpaTemplatePlugin {
                         return thisModule.default;
                     if (typeof thisModule === 'object') return thisModule;
                     return {};
+                })(
                     // eslint-disable-next-line no-eval
-                })(eval(fs.readFileSync(inject, 'utf-8')));
+                    eval(
+                        `const __KOOT_LOCALEID__ = '${localeId}';\n` +
+                            fs.readFileSync(inject, 'utf-8')
+                    )
+                );
             })();
 
             const html = renderTemplate({
@@ -179,7 +206,8 @@ class SpaTemplatePlugin {
                     ...defaultInject,
                     ...projectInject
                 },
-                compilation
+                compilation,
+                localeId
             });
 
             // 写入 Webpack 文件流

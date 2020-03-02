@@ -3,7 +3,6 @@ const path = require('path');
 
 const { ConcatSource } = require('webpack-sources');
 
-// const getPort = require('koot/utils/get-port')
 // const { filenameDll } = require('koot/defaults/before-build')
 const isHotUpdate = require('../libs/is-compilation-hot-update-only');
 const getCWD = require('koot/utils/get-cwd');

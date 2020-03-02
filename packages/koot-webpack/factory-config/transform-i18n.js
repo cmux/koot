@@ -24,14 +24,6 @@ module.exports = async ({ dist, i18n }) => {
         // SERVER_PORT,
     } = process.env;
 
-    // TODO:
-    if (TYPE === 'spa') {
-        // SPA：临时禁用
-        i18n = false;
-        process.env.KOOT_I18N = JSON.stringify(false);
-        return i18n;
-    }
-
     if (typeof i18n === 'object') {
         let type = (() => {
             if (TYPE === 'spa') return 'store';
@@ -55,7 +47,12 @@ module.exports = async ({ dist, i18n }) => {
             use = i18n.use || 'query';
         }
 
+        // 强制值
         if (ENV === 'dev') type = 'store';
+        if (TYPE === 'spa') type = 'store';
+        if (TYPE === 'spa') use = 'query';
+
+        // 兼容转换
         if (type.toLowerCase() === 'redux') type = 'store';
         type = type.toLowerCase();
 
@@ -71,7 +68,16 @@ module.exports = async ({ dist, i18n }) => {
 
         process.env.KOOT_I18N = JSON.stringify(true);
         process.env.KOOT_I18N_TYPE = JSON.stringify(type);
-        process.env.KOOT_I18N_LOCALES = JSON.stringify(locales);
+        process.env.KOOT_I18N_LOCALES = JSON.stringify(
+            TYPE === 'spa'
+                ? locales.map(([...l]) => {
+                      delete l[1];
+                      delete l[2];
+                      delete l[3];
+                      return l;
+                  })
+                : locales
+        );
         if (cookieKey) process.env.KOOT_I18N_COOKIE_KEY = cookieKey;
         if (domain) process.env.KOOT_I18N_COOKIE_DOMAIN = domain;
         process.env.KOOT_I18N_URL_USE = use;
