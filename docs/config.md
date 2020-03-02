@@ -927,7 +927,7 @@ module.exports = {
 
 -   类型: `Object`
 -   默认值: _无_
--   **仅针对**: Webpack 打包过程
+-   **仅针对**: _Webpack_ 打包过程
 
 用以扩展几乎无法修改的内置 Webpack loader 的配置。
 
@@ -952,7 +952,7 @@ module.exports = {
 -   `koot >= 0.9`
 -   类型: `number`
 -   默认值: `6`
--   **仅针对**: Webpack 打包过程
+-   **仅针对**: _Webpack_ 打包过程
 
 调整组件 CSS 的 className hash 长度。
 
@@ -983,6 +983,25 @@ module.exports = {
     // 关闭该功能
     // ⚠️ 如果使用 koot-cli 从 0.9 之前的版本升级，默认会关闭该功能
     bundleVersionsKeep: false
+};
+```
+
+### exportGzip
+
+-   `koot >= 0.13`
+-   类型: `boolean`
+-   默认值: `true`
+-   **仅针对**: 生产环境，客户端，_Webpack_ 打包过程
+
+是否自动输出 _Gzip_ 压缩后的 `*.gz` 文件。
+
+```javascript
+module.exports = {
+    // 默认值: 客户端打包结果中，每一个文件都有同名但以 `.gz` 为结尾的 _Gzip_ 压缩后的文件
+    exportGzip: true,
+
+    // 关闭该功能
+    exportGzip: false
 };
 ```
 

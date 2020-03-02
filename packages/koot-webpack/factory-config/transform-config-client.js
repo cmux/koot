@@ -63,7 +63,8 @@ module.exports = async (kootConfigForThisBuild = {}) => {
         analyze = false,
         devHmr: webpackHmr = {},
         [keyConfigBuildDll]: createDll = false,
-        webpackCompilerHook = {}
+        webpackCompilerHook = {},
+        exportGzip = true
     } = kootConfigForThisBuild;
 
     /** @type {String} 默认入口文件 */
@@ -446,8 +447,8 @@ module.exports = async (kootConfigForThisBuild = {}) => {
             }
 
             // 生产环境专用
-            if (ENV === 'prod') {
-                result.plugins.push(new CompressionPlugin());
+            if (ENV === 'prod' && exportGzip) {
+                result.plugins.push(new CompressionPlugin({ cache: true }));
             }
         }
 

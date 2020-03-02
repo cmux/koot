@@ -22,6 +22,7 @@ module.exports = {
     moduleCssFilenameTest: /\.(component|view|module)/,
     classNameHashLength: 6,
     bundleVersionsKeep: 2,
+    exportGzip: true,
 
     devPort: 3080,
     devServiceWorker: false

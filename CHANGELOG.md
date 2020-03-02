@@ -13,7 +13,8 @@
         -   如果项目种有针对打包结果目录内文件的处理，请注意
         -   更多细节请参见文档 [Webpack](https://koot.js.org/#/webpack)
 -   **新特性**
-    -   **新配置项** `serverless` - 设定 _Web_ 服务器是否为 _Serverless_ 模式。详情请参见文档 [配置/serverless](https://koot.js.org/#/config?id=serverless) ([#217](https://github.com/cmux/koot/issues/217))
+    -   **新配置项** `serverless` - 设定是否输出 _Serverless_ 模式的 _Web_ 服务器。详情请参见文档 [配置/serverless](https://koot.js.org/#/config?id=serverless) ([#217](https://github.com/cmux/koot/issues/217))
+    -   **新配置项** `exportGzip` - 控制是否自动输出 _Gzip_ 压缩后的 `*.gz` 文件。详情请参见文档 [Webpack](https://koot.js.org/#/webpack)
 -   优化
     -   `serviceWorker` 配置项新增 `cacheFirst` `networkFirst` `networkOnly` 属性，可用扩展缓存策略。详情请参见文档 [Service Worker](https://koot.js.org/#/pwa?id=service-worker)
     -   优化 _Service Worker_ 的默认缓存规则

@@ -6,6 +6,15 @@
  * - ❌ 延迟渲染
  * - ❌ 空路由
  */
+/**
+ *
+ * 不同的 Koot 配置会分别使用不同的配置，用以测试多种结果。以下是已有的案例
+ *
+ * no-bundles-keep
+ * - bundleVersionsKeep: false
+ * - exportGzip: false
+ *
+ */
 
 // jest configuration
 jest.setTimeout(10 * 60 * 1 * 1000);
@@ -728,6 +737,14 @@ describe('测试: React 同构项目', () => {
                     false
                 );
 
+                // 客户端打包结果应有 Gzip 版本
+                {
+                    const files = await glob(
+                        path.resolve(dist, 'public/**/*.gz')
+                    );
+                    expect(files.length).not.toBe(0);
+                }
+
                 await testFilesFromChunkmap(dist, false);
                 await doTest(port, dist, {
                     customEnv
@@ -840,6 +857,14 @@ describe('测试: React 同构项目', () => {
 
                 await testFilesFromChunkmap(dist, false);
                 await testOutputs(dist, 1);
+
+                // 不应有 Gzip 版本
+                {
+                    const files = await glob(
+                        path.resolve(dist, 'public/**/*.gz')
+                    );
+                    expect(files.length).toBe(0);
+                }
 
                 await fs.remove(dist);
                 await afterTest(dir, '[config] bundleVersionsKeep: false');
