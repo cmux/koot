@@ -53,6 +53,7 @@ module.exports = [
     'is-mobile',
     'lodash',
     'lz-string',
+    'marked',
     'memoize-one',
     'merge-anything',
     'metas',
