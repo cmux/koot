@@ -54,7 +54,7 @@
         "gitignore-globs": "^0.1.1",
         "glob": "^7.1.6",
         "glob-promise": "^3.4.0",
-        "inquirer": "^7.0.4",
+        "inquirer": "^7.0.5",
         "isbinaryfile": "^4.0.4",
         "latest-version": "^5.1.0",
         "npm-email": "^3.2.0",

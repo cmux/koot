@@ -54,7 +54,7 @@
         "eslint-config-koot": "^1.6.0",
         "fs-extra": "^8.1.0",
         "husky": "^4.2.3",
-        "inquirer": "7.0.4",
+        "inquirer": "7.0.5",
         "is-valid-path": "^0.1.1",
         "jest": "^25.1.0",
         "jsdom": "^16.2.0",
