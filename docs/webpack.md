@@ -118,9 +118,9 @@ module.exports = {
 
 ---
 
-### Chunkmap (Chunk 对照表)
+### 打包结果文件对照表
 
-在打包结束后，打包结果目录中会自动生成名为 `.public-chunkmap.json` 的文件，其中记录着本次打包的 Webpack 入口和最终文件的对照表
+在打包结束后，打包结果目录中会自动生成名为 `.koot-public-manifest.json` 的文件，其中记录着本次打包的 _Webpack_ 入口和最终文件的对照表
 
 **对照表结构**
 

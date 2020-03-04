@@ -44,8 +44,7 @@ module.exports = async (
         cacheFirst = [],
         networkFirst = [],
         networkOnly = [],
-        // importWorkboxFrom = 'local',
-        // importsDirectory = '__workbox-assets',
+
         ...rest
     } = Object.assign({}, defaults, serviceWorker);
     ['auto', 'importWorkboxFrom', 'importsDirectory'].forEach(
@@ -81,12 +80,6 @@ module.exports = async (
         return `\rself.__koot = ${JSON.stringify(obj, undefined, 4)}\r\r`;
     };
 
-    // const swDest = isDev
-    //     ? serviceWorkerFilename
-    //     : `${!isPublicPathProvided ? '../' : ''}${getSWFilename(
-    //           filename,
-    //           localeId
-    //       )}`;
     const swDest = isDev
         ? serviceWorkerFilename
         : getSWFilename(filename, localeId);
@@ -127,10 +120,8 @@ module.exports = async (
         ...rest,
         swDest,
         swSrc,
-        // importWorkboxFrom: isDev ? 'cdn' : importWorkboxFrom,
         include: [/\.js$/, /extract\.all\..+?\.large\.css$/, ...include],
         exclude: [/\.map$/, /^manifest.*\.js$/, ...exclude]
-        // importsDirectory: isDev ? '' : importsDirectory
     });
 };
 

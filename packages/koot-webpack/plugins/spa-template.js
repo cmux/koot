@@ -6,6 +6,7 @@ const path = require('path');
 // const ejs = require('ejs')
 const chalk = require('chalk');
 
+const { buildManifestFilename } = require('koot/defaults/before-build');
 const writeChunkmap = require('koot/utils/write-chunkmap');
 const getAppType = require('koot/utils/get-app-type');
 const __ = require('koot/utils/translate');
@@ -15,6 +16,8 @@ const getChunkmap = require('koot/utils/get-chunkmap');
 const getDirDistPublic = require('koot/libs/get-dir-dist-public');
 const validateTemplate = require('koot/libs/validate-template');
 const getSpaLocaleFileId = require('koot/libs/get-spa-locale-file-id');
+
+const newCompilationFileDependency = require('../libs/new-compilation-file-dependency');
 
 // ============================================================================
 
@@ -100,6 +103,22 @@ class SpaTemplatePlugin {
             );
         }
 
+        // [生产环境] emit - 添加占位文件
+        if (process.env.WEBPACK_BUILD_ENV === 'prod') {
+            compiler.hooks.emit.tapAsync.bind(
+                compiler.hooks.emit,
+                'SpaTemplatePlugin'
+            )(async (compilation, callback) => {
+                newCompilationFileDependency(compilation, filename, '');
+                newCompilationFileDependency(
+                    compilation,
+                    buildManifestFilename,
+                    ''
+                );
+                callback();
+            });
+        }
+
         // hook: 在文件吐出时修改模板文件代码
         const hookStep =
             process.env.WEBPACK_BUILD_ENV === 'prod' ? 'afterEmit' : 'emit';
@@ -115,8 +134,7 @@ class SpaTemplatePlugin {
                 compilation,
                 localeId,
                 undefined,
-                serviceWorkerPathname,
-                [filename]
+                serviceWorkerPathname
             );
 
             const {
@@ -211,17 +229,7 @@ class SpaTemplatePlugin {
                 localeId
             });
 
-            // 写入 Webpack 文件流
-            if (compilation.fileDependencies.add) {
-                compilation.fileDependencies.add(filename);
-            } else {
-                // Before Webpack 4 - fileDepenencies was an array
-                compilation.fileDependencies.push(filename);
-            }
-            compilation.assets[filename] = {
-                source: () => html,
-                size: () => html.length
-            };
+            newCompilationFileDependency(compilation, filename, html);
 
             // console.log(html)
 

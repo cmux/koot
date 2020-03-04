@@ -87,7 +87,7 @@ module.exports = {
     thresholdScriptRunFirst: 15 * 1024,
 
     /** @type {string} 打包结果目录中的文件对照表文件名 */
-    buildManifestFilename: '.public-chunkmap.json',
+    buildManifestFilename: '.koot-public-manifest.json',
     /** @type {string} 打包结果目录中输出文件总集文件名 */
-    buildOutputsFilename: '.public-outputs.json'
+    buildOutputsFilename: '.koot-public-outputs.json'
 };

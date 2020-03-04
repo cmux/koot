@@ -2,7 +2,6 @@
 const fs = require('fs-extra');
 const path = require('path');
 
-const { buildManifestFilename } = require('../defaults/before-build');
 const generateFilemap = require('./generate-filemap-from-compilation');
 const getChunkmapPath = require('./get-chunkmap-path');
 const getOutputsPath = require('./get-outputs-path');
@@ -38,15 +37,14 @@ const isNotSourcemap = filename => !/\.(js|css)\.map$/i.test(filename);
  * @param {*} localeId
  * @param {string} [pathPublic]
  * @param {string} [serviceWorkerPathname]
- * @param {string[]} [extraAssets] 额外的文件列表，这些文件在 Webpack 流程之外
  * @returns {Object} 打包文件对应表 (chunkmap)
  */
 module.exports = async (
     compilation,
     localeId,
     pathPublic,
-    serviceWorkerPathname,
-    extraAssets = []
+    serviceWorkerPathname
+    // extraAssets = []
 ) => {
     if (typeof compilation !== 'object') return {};
 
@@ -199,13 +197,8 @@ module.exports = async (
                         typeof asset.name === 'string'
                 )
                 .map(({ name }) => getFilePathname(name))
-                .concat(extraAssets)
                 .filter(file => !list.includes(file))
                 .forEach(file => list.push(file));
-
-            if (process.env.WEBPACK_BUILD_TYPE === 'spa') {
-                list.push(buildManifestFilename);
-            }
 
             existResult[buildTimestamp] = list.sort();
             fs.writeJsonSync(fileOutputs, existResult, {

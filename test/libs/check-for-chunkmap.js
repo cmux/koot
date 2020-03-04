@@ -1,6 +1,10 @@
 const fs = require('fs-extra');
 const path = require('path');
 
+const {
+    buildManifestFilename
+} = require('../../packages/koot/defaults/before-build');
+
 const specialKeys = [
     '.public',
     '.out',
@@ -16,7 +20,7 @@ const specialKeys = [
  * @param {Function} func
  */
 module.exports = async (dist, func) => {
-    const file = path.resolve(dist, '.public-chunkmap.json');
+    const file = path.resolve(dist, buildManifestFilename);
     expect(fs.existsSync(file)).toBe(true);
 
     const chunkmap = await fs.readJson(file);

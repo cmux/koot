@@ -8,24 +8,30 @@
     -   调整客户端打包结果目录结构
         -   不再有 `koot-[timestamp]` 目录
         -   现在会智能的根据 `bundleVersionsKeep` 配置项删除旧的文件
-        -   打包结果根目录中新增 `.public-outputs.json` 文件，用以记录旧的打包文件列表
+        -   打包结果根目录中新增 `.koot-public-outputs.json` 文件，用以记录旧的打包文件列表
+        -   `.public-chunkmap.json` 更名为 `.koot-public-manifest.json`
         -   打包结果目录内的文件结构会受影响，但不影响使用
-        -   如果项目种有针对打包结果目录内文件的处理，请注意
+        -   如果项目中有针对打包结果目录内文件的处理，请注意
         -   更多细节请参见文档 [Webpack](https://koot.js.org/#/webpack)
 -   **新特性**
     -   **新配置项** `serverless` - 设定是否输出 _Serverless_ 模式的 _Web_ 服务器。详情请参见文档 [配置/serverless](https://koot.js.org/#/config?id=serverless) ([#217](https://github.com/cmux/koot/issues/217))
     -   **新配置项** `exportGzip` - 控制是否自动输出 _Gzip_ 压缩后的 `*.gz` 文件。详情请参见文档 [Webpack](https://koot.js.org/#/webpack)
+    -   同构/SSR 项目: 打包结果根目录中添加 _Docker_ 相关的文件
 -   优化
     -   `serviceWorker` 配置项新增 `cacheFirst` `networkFirst` `networkOnly` 属性，可用扩展缓存策略。详情请参见文档 [Service Worker](https://koot.js.org/#/pwa?id=service-worker)
-    -   优化 _Service Worker_ 的默认缓存规则
+    -   优化 _Service Worker_ 的默认缓存规则。详情请参见文档 [Service Worker](https://koot.js.org/#/pwa?id=service-worker)
     -   服务器端渲染时，现在会利用自定义的 `publicPath`
     -   更新 TS 定义
+
+**koot-boilerplate** (模板项目)
+
+-   添加 `.prettierignore` 文件
 
 **koot-webpack**
 
 -   优化打包缓存机制，现在生产环境下的打包速度会更快 ([#214](https://github.com/cmux/koot/issues/214))
 -   同构/SSR 项目: 打包结果目录中的 `package.json` 中现在会有更少的依赖项
--   服务器端打包时现在会强制忽略以下 _Babel_ 插件，以实现原生的 _async/await_
+-   服务器端打包时现在会强制忽略以下 _Babel_ 插件，用以实现原生的 _async/await_
     -   `@babel/plugin-transform-regenerator`
     -   `@babel/plugin-transform-async-to-generator`
 

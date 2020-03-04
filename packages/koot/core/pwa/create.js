@@ -186,7 +186,7 @@ const create = async (settings = {}, i18n) => {
                 pathnameSW
             });
 
-            // 修改 .public-chunkmap.json，添加 service-worker 文件信息
+            // 修改 .manifest.json，添加 service-worker 文件信息
             const inChunkmap =
                 (chunkmapCurrent['.public']
                     ? chunkmapCurrent['.public'].replace(/\/$/, '')
@@ -208,7 +208,7 @@ const create = async (settings = {}, i18n) => {
             chunkmap: chunkmapFull
         });
 
-        // 修改 .public-chunkmap.json，添加 service-worker 文件信息
+        // 修改 .manifest.json，添加 service-worker 文件信息
         const inChunkmap =
             (chunkmapFull['.public']
                 ? chunkmapFull['.public'].replace(/\/$/, '')

@@ -2,12 +2,16 @@ const fs = require('fs-extra');
 const path = require('path');
 const puppeteer = require('puppeteer');
 
+const {
+    buildManifestFilename
+} = require('../packages/koot/defaults/before-build');
+
 const origin = 'http://localhost:8080/';
 const dist = path.resolve(__dirname, '../test/projects/standard/dist-spa-test');
 
 const getUriFromChunkmap = async file => {
     const chunkmap = await fs.readJson(
-        path.resolve(dist, '.public-chunkmap.json')
+        path.resolve(dist, buildManifestFilename)
     );
     const getMap = (map = chunkmap) => {
         if (

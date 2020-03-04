@@ -48,7 +48,6 @@ const getRoute = pathname => {
 
 // Workbox Configuration ======================================================
 
-// workbox.setConfig({ debug: false });
 setCacheNameDetails({
     prefix: 'koot',
     suffix: `cache${self.__koot.localeId ? `-${self.__koot.localeId}` : ''}`,
@@ -70,7 +69,7 @@ if (!isKootAppDevEnv) {
         // from webpack build
         ...self.__WB_MANIFEST
     ]);
-    // 缓存首页到 runtime
+    // add home page into `runtime` cache
     caches.open(cacheNames.runtime).then(cache => cache.add('/'));
 }
 

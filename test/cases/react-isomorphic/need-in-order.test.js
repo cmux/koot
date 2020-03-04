@@ -59,6 +59,9 @@ const cheerio = require('cheerio');
 // Import local scripts =======================================================
 
 const {
+    buildManifestFilename
+} = require('../../../packages/koot/defaults/before-build');
+const {
     changeLocaleQueryKey,
     sessionStoreKey
 } = require('../../../packages/koot/defaults/defines');
@@ -1205,7 +1208,7 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
 
         if (!isDev) {
             const chunkmap = await fs.readJson(
-                path.resolve(dist, '.public-chunkmap.json')
+                path.resolve(dist, buildManifestFilename)
             );
             const pathname = path.resolve(
                 dist,
