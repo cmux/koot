@@ -26,6 +26,7 @@ const terminate = require('../../libs/terminate-process');
 const waitForPort = require('../../libs/get-port-from-child-process');
 const testHtmlRenderedByKoot = require('../../general-tests/html/rendered-by-koot');
 const testFilesFromChunkmap = require('../../general-tests/bundle/check-files-from-chunkmap');
+const checkDistRootFiles = require('../../general-tests/check-dist-root-files');
 const {
     requestHidden404: testRequestHidden404,
     criticalAssetsShouldBeGzip: testAssetsGzip,
@@ -212,6 +213,12 @@ const testFull = (dir, configFileName) => {
             testFileFromFilelist(chunkNameExtractCss + '.css', true);
             testFileFromFilelist(chunkNameExtractCssForImport + '.css', false);
 
+            await checkDistRootFiles({
+                dist,
+                env: 'prod',
+                type: 'spa',
+                serverMode: undefined
+            });
             await testFilesFromChunkmap(dist, false);
         });
 

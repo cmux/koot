@@ -52,6 +52,7 @@ const terminate = require('../../libs/terminate-process');
 const waitForPort = require('../../libs/get-port-from-child-process');
 const testHtmlRenderedByKoot = require('../../general-tests/html/rendered-by-koot');
 const testFilesFromChunkmap = require('../../general-tests/bundle/check-files-from-chunkmap');
+const checkDistRootFiles = require('../../general-tests/check-dist-root-files');
 
 //
 
@@ -745,6 +746,12 @@ describe('测试: React 同构项目', () => {
                     expect(files.length).not.toBe(0);
                 }
 
+                await checkDistRootFiles({
+                    dist,
+                    env: 'prod',
+                    type: 'isomorphic',
+                    serverMode: undefined
+                });
                 await testFilesFromChunkmap(dist, false);
                 await doTest(port, dist, {
                     customEnv

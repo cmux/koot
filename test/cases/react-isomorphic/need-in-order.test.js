@@ -75,6 +75,7 @@ const checkForChunkmap = require('../../libs/check-for-chunkmap');
 const filterState = require('../../../packages/koot/libs/filter-state');
 const testHtmlRenderedByKoot = require('../../general-tests/html/rendered-by-koot');
 const testFilesFromChunkmap = require('../../general-tests/bundle/check-files-from-chunkmap');
+const checkDistRootFiles = require('../../general-tests/check-dist-root-files');
 const getProjects = require('../../projects/get');
 const ensureUrlTrailingSlash = require('../../../packages/koot/utils/ensure-url-trailing-slash');
 
@@ -171,6 +172,12 @@ const testProduction = (
 
         expect(errors.length).toBe(0);
 
+        await checkDistRootFiles({
+            dist,
+            env: 'prod',
+            type: 'isomorphic',
+            serverMode: extraConing.serverMode
+        });
         await testFilesFromChunkmap(dist, false);
         await testCodeSplitting(dist);
         await doPuppeteerTest(port, dist, {
