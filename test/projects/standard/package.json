@@ -16,7 +16,7 @@
         "start": "koot-start",
         "start:0.8:full": "koot-start --config koot.config.0.8-full.js",
         "start:server": "koot-start --no-build",
-        "start:spa": "koot-start --type spa",
+        "start:spa": "koot-start --type spa --dest dist-spa",
         "start:serverless": "koot-start --config koot.config.serverless.js",
         "start:public-path": "koot-start --config koot.config.public-path.js",
         "build": "koot-build",
@@ -72,7 +72,7 @@
     "private": true,
     "sideEffects": false,
     "koot": {
-        "version": "0.13.0-beta.1"
+        "version": "0.13.0-beta.2"
     },
     "devDependencies": {
         "@types/lodash": "^4.14.149",

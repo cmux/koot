@@ -6,7 +6,7 @@ import getLang from '../../i18n/spa/get-lang';
     window.__REDUX_STATE__ = { localeId: window.__KOOT_LOCALEID__ };
     window.__KOOT_SSR_STATE__ = {
         localeId: window.__KOOT_LOCALEID__,
-        locales: {}
+        locales: undefined
     };
 
     if (
@@ -14,14 +14,21 @@ import getLang from '../../i18n/spa/get-lang';
         window.__KOOT_LOCALEID__
     ) {
         const fjs = document.getElementsByTagName('script')[0];
-        const id = '__koot-spa-get-locale';
-        if (document.getElementById(id)) {
+        const attrName = 'data-koot-load-locale';
+        if (document.querySelector(`script[${attrName}]`)) {
             return;
         }
         const js = document.createElement('script');
-        js.id = id;
+        js.setAttribute('data-koot-load-locale', window.__KOOT_LOCALEID__);
+        js.setAttribute('defer', '');
         js.onload = function() {
-            // remote script has loaded
+            // console.log('locale file loaded', window.__KOOT_LOCALEID__);
+        };
+        js.onerror = function(e) {
+            console.error(e);
+            throw new Error(
+                `Locale file (${window.__KOOT_LOCALEID__}) load fail!`
+            );
         };
         js.src = window.__KOOT_SPA_LOCALE_FILE_MAP__[window.__KOOT_LOCALEID__];
         fjs.parentNode.insertBefore(js, fjs);

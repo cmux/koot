@@ -4,7 +4,9 @@ const glob = require('glob-promise');
 
 const {
     keyConfigBuildDll,
-    CLIENT_ROOT_PATH
+    CLIENT_ROOT_PATH,
+    filenameBuilding,
+    filenameBuildFail
 } = require('koot/defaults/before-build');
 const getOutputsFile = require('koot/utils/get-outputs-path');
 
@@ -67,11 +69,18 @@ const determine = async (config = {}) => {
             bundleVersionsKeep === false ||
             (typeof bundleVersionsKeep === 'number' && bundleVersionsKeep < 1)
     );
-
+    const ignore = [
+        path.resolve(clientRoot, filenameBuilding),
+        path.resolve(clientRoot, filenameBuildFail)
+    ];
+    if (process.env.WEBPACK_BUILD_TYPE === 'spa') {
+        ignore.push(path.resolve(clientRoot, '.server/**/*'));
+    }
     /** @type {string[]} 目前存在的文件列表 */
     const filesStored = (
         await glob(path.resolve(clientRoot, '**/*'), {
-            dot: true
+            dot: true,
+            ignore
         })
     )
         .filter(file => !fs.lstatSync(file).isDirectory())

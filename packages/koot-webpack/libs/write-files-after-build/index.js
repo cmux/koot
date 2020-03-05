@@ -49,7 +49,12 @@ const extendAndFilterDistPackageDependencies = async (dependencies = {}) => {
 // Main Function
 // ============================================================================
 
-module.exports = async (o = {}) => {
+/**
+ * 在全部打包流程后，添加文件
+ * @async
+ * @void
+ */
+module.exports = async (kootConfig = {}) => {
     if (process.env.WEBPACK_BUILD_ENV !== 'prod') return;
     if (
         process.env.WEBPACK_BUILD_TYPE === 'isomorphic' &&
@@ -57,7 +62,7 @@ module.exports = async (o = {}) => {
     )
         return;
 
-    const { dist } = o;
+    const { dist } = kootConfig;
 
     // ========================================================================
 
@@ -97,10 +102,10 @@ module.exports = async (o = {}) => {
     /** 当前是否是测试模式 */
     const kootTest = JSON.parse(process.env.KOOT_TEST_MODE);
     /** 项目的 Koot.js 配置对象 */
-    const kootConfig = {
-        ...require('koot/defaults/koot-config'),
-        ...require(path.resolve(cwd, 'koot.config.js'))
-    };
+    // const kootConfig = {
+    //     ...require('koot/defaults/koot-config'),
+    //     ...require(path.resolve(cwd, 'koot.config.js'))
+    // };
     /** 需要写入的文件名以 `.` 开头的文件 */
     const dotfiles = ['eslintignore', 'gitignore', 'prettierignore'];
     /** 模板文件 `package.json` 的内容 */
