@@ -40,6 +40,8 @@
  *     - 没有配置 (默认 `includes`)
  * - 二号
  *     - `"__assets__"`
+ *
+ * 四号：调整了 Webpack 配置的 `output.publicPath`。其他内容同默认
  */
 
 // Import modules =============================================================
@@ -57,6 +59,9 @@ const cheerio = require('cheerio');
 // Import local scripts =======================================================
 
 const {
+    buildManifestFilename
+} = require('../../../packages/koot/defaults/before-build');
+const {
     changeLocaleQueryKey,
     sessionStoreKey
 } = require('../../../packages/koot/defaults/defines');
@@ -70,6 +75,7 @@ const checkForChunkmap = require('../../libs/check-for-chunkmap');
 const filterState = require('../../../packages/koot/libs/filter-state');
 const testHtmlRenderedByKoot = require('../../general-tests/html/rendered-by-koot');
 const testFilesFromChunkmap = require('../../general-tests/bundle/check-files-from-chunkmap');
+const checkDistRootFiles = require('../../general-tests/check-dist-root-files');
 const getProjects = require('../../projects/get');
 const ensureUrlTrailingSlash = require('../../../packages/koot/utils/ensure-url-trailing-slash');
 
@@ -166,6 +172,12 @@ const testProduction = (
 
         expect(errors.length).toBe(0);
 
+        await checkDistRootFiles({
+            dist,
+            env: 'prod',
+            type: 'isomorphic',
+            serverMode: extraConing.serverMode
+        });
         await testFilesFromChunkmap(dist, false);
         await testCodeSplitting(dist);
         await doPuppeteerTest(port, dist, {
@@ -1110,7 +1122,16 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
                     `(^|\\s|;)${key}\\s*=\\s*${value}`,
                     'g'
                 );
-                expect(regexp.test(result)).toBe(true);
+                const testResult = regexp.test(result);
+                if (!testResult) {
+                    console.error({
+                        result,
+                        regexp,
+                        testResult
+                    });
+                    return;
+                }
+                expect(testResult).toBe(true);
             }
         } else if (cookiesToStore === false) {
             expect(typeof result).toBe('undefined');
@@ -1194,7 +1215,7 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
 
         if (!isDev) {
             const chunkmap = await fs.readJson(
-                path.resolve(dist, '.public-chunkmap.json')
+                path.resolve(dist, buildManifestFilename)
             );
             const pathname = path.resolve(
                 dist,
@@ -1503,6 +1524,13 @@ describe('测试: React 同构项目', () => {
                     {
                         cookiesToStore: ['kootTest2', 'kootTest3']
                     }
+                );
+
+                testFull(
+                    '四号 / output.publicPath',
+                    dir,
+                    'koot.config.public-path.js',
+                    'isomorphic-public_path'
                 );
 
                 testFull(

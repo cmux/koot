@@ -1,6 +1,10 @@
 const fs = require('fs-extra');
 const path = require('path');
 
+const {
+    buildManifestFilename
+} = require('../../packages/koot/defaults/before-build');
+
 /**
  * 从 chunkmap 中获取指定文件的 URI
  * @param {string} dist
@@ -9,7 +13,7 @@ const path = require('path');
  */
 const getUriFromChunkmap = async (dist, file) => {
     const chunkmap = await fs.readJson(
-        path.resolve(dist, '.public-chunkmap.json')
+        path.resolve(dist, buildManifestFilename)
     );
     const getMap = (map = chunkmap) => {
         if (

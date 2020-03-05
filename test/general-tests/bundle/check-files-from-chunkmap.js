@@ -31,14 +31,24 @@ module.exports = async (dist, isDev = true) => {
         };
         addFiles();
 
-        // console.log(dist, filesToCheck);
+        // console.log({ dist, chunkmap, filesToCheck });
 
         for (const file of filesToCheck) {
             let f = path.resolve(dist, file);
             if (!fs.existsSync(f) && /^public\//.test(file)) {
                 f = path.resolve(dist, file.replace(/^public\//, ''));
             }
-            expect(fs.existsSync(f)).toBe(true);
+            const exist = fs.existsSync(f);
+            if (!exist) {
+                console.warn({
+                    filesToCheck,
+                    dist,
+                    file,
+                    pathname: f,
+                    pathnameBeforeChange: path.resolve(dist, file)
+                });
+            }
+            expect(exist).toBe(true);
         }
 
         // 生产环境

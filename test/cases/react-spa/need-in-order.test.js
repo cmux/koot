@@ -19,12 +19,14 @@ const postcss = require('postcss');
 
 const {
     chunkNameExtractCss,
-    chunkNameExtractCssForImport
+    chunkNameExtractCssForImport,
+    buildManifestFilename
 } = require('koot/defaults/before-build');
 const terminate = require('../../libs/terminate-process');
 const waitForPort = require('../../libs/get-port-from-child-process');
 const testHtmlRenderedByKoot = require('../../general-tests/html/rendered-by-koot');
 const testFilesFromChunkmap = require('../../general-tests/bundle/check-files-from-chunkmap');
+const checkDistRootFiles = require('../../general-tests/check-dist-root-files');
 const {
     requestHidden404: testRequestHidden404,
     criticalAssetsShouldBeGzip: testAssetsGzip,
@@ -145,7 +147,7 @@ const testFull = (dir, configFileName) => {
 
         test(`打包完成后，index.html 与相应的静态资源文件应该存在，且内容应该正确`, async () => {
             // chunkmap
-            const fileChunkmap = path.resolve(dist, '.public-chunkmap.json');
+            const fileChunkmap = path.resolve(dist, buildManifestFilename);
             expect(fs.existsSync(fileChunkmap)).toBe(true);
 
             const chunkmap = fs.readJsonSync(fileChunkmap);
@@ -211,6 +213,12 @@ const testFull = (dir, configFileName) => {
             testFileFromFilelist(chunkNameExtractCss + '.css', true);
             testFileFromFilelist(chunkNameExtractCssForImport + '.css', false);
 
+            await checkDistRootFiles({
+                dist,
+                env: 'prod',
+                type: 'spa',
+                serverMode: undefined
+            });
             await testFilesFromChunkmap(dist, false);
         });
 

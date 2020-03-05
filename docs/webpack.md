@@ -12,13 +12,22 @@ _Koot.js_ 会对传入的 _Webpack_ 配置对象进行全方位的深度包装�
 
 -   `__KOOT__CLIENT__RUN__FIRST__`<br>在 `<head>` 标签内通过内联 (inline) 方式注入，保证在所有其他 JavaScript 代码执行之前，这个入口的代码会优先执行。
 -   `client`<br>所有客户端逻辑的主入口，包括 _React_ 渲染/脱水等流程
--   **注:** 这些入口不可修改，同时会在服务器渲染/生成的 SPA 模板中，自动添加加载逻辑
+-   ⚠️ 这些入口不可修改，同时会在服务器渲染/生成的 SPA 模板中，自动添加加载逻辑
 
 **output**
 
 `filename` 和 `chunkFilename` 存在默认值，同时支持自行修改。
 
-`path` 和 `publicPath` 存在默认值，可自行修改但不建议直接操作，且必须同时修改。可通过调整项目配置 `distClientAssetsDirName` 进行快速调整。
+`path` 和 `publicPath` 存在默认值，可自行修改但不建议直接操作。
+
+可通过调整项目配置 `distClientAssetsDirName` 调整静态资源存放目录。
+
+如果有修改需要 (如文件直接上传至 _CDN_)，请注意以下事项
+
+-   配置项 `distClientAssetsDirName` 的值会自动添加到 `output.filename` 和 `output.chunkFilename` 之前，如：
+    -   `output.filename = distClientAssetsDirName + '/entry.[chunkhash].js'`
+    -   如果不希望该行为，可将配置项 `distClientAssetsDirName` 设为空字符串
+-   `output.publicPath` 仅支持在**生产**环境下的修改
 
 **module (loader)**
 
@@ -40,22 +49,23 @@ _Koot.js_ 会对传入的 _Webpack_ 配置对象进行全方位的深度包装�
 
 `resolve.extensions` 配置会默认存在和 JS、TS、CSS 相关的扩展名
 
-**注:** 服务器端的 _Webpack_ 配置为全自动生成，不可调整。
+⚠️ 服务器端的 _Webpack_ 配置为全自动生成，不可调整。
 
 ---
 
 ### 相关配置项
 
-| 项名                      | 值类型                 | 默认值                                             | 解释                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| ------------------------- | ---------------------- | -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `webpackConfig`           | `Object` 或 `Function` | _无_                                               |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| `distClientAssetsDirName` | `string`               | `includes`                                         | 客户端打包结果中静态资源存放路径的目录名。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| `webpackBefore`           | `Function`             | _无_                                               | Webpack 打包执行之前执行的方法。注意事项详见下文。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| `webpackAfter`            | `Function`             | _无_                                               | Webpack 打包执行之后执行的方法。注意事项详见下文。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| `moduleCssFilenameTest`   | `RegExp`               | <code>/\.(component&#124;view&#124;module)/</code> | 组件 CSS 文件名检查规则，不包括扩展名部分。有关 CSS 的使用请查阅 [CSS](/css)。<br><br>_默认值解释:_ 文件名以 `.component.css` `.view.css` 或 `.module.css` (扩展名可为 `css` `less` `sass`) 为结尾的文件会当作组件 CSS，其他文件会被当做全局 CSS。<br><br>_注:_ _TypeScript_ 项目中，如果修改了该配置，针对组件 CSS 对象的默认的 TS 定义声明会失效。                                                                                                                                                                                   |
-| `internalLoaderOptions`   | `Object`               | _无_                                               | 用以扩展几乎无法修改的内置 Webpack loader 的配置。示例见下文。                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| `classNameHashLength`     | `number`               | `6`                                                | 调整组件 CSS 的 className hash 长度。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| `bundleVersionsKeep`      | `number` 或 `boolean`  | `2`                                                | 指定客户端打包结果保留的版本的个数。如果为自然数，表示开启该功能，其他值均表示关闭该功能。<br><ul><li>开启时，客户端打包结果会在 `public/` 目录下多一级名为 `koot-[时间戳]/` 的目录（如 `public/koot-1556106436230/`）<ul><li>这些目录会保留指定个数，如默认值 `2` 表示仅会保留 2 个这样的目录</li><li>通过清理这些目录，变相的实现了自动清理打包结果的功能</li></ul></li><li>关闭时，客户端打包结果会直接出现在 `public/` 目录下<ul><li>注：该情况下 `public/` 目录不会自动清理，如果有相关需求需主动编写相关逻辑</li></ul></li></ul> |
+| 项名                      | 值类型                 | 默认值                                             | 解释                                                                                                                                                                                                                                                                                                                                                 |
+| ------------------------- | ---------------------- | -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `webpackConfig`           | `Object` 或 `Function` | _无_                                               |                                                                                                                                                                                                                                                                                                                                                      |
+| `distClientAssetsDirName` | `string`               | `includes`                                         | 客户端打包结果中静态资源存放路径的目录名。                                                                                                                                                                                                                                                                                                           |
+| `webpackBefore`           | `Function`             | _无_                                               | Webpack 打包执行之前执行的方法。注意事项详见下文。                                                                                                                                                                                                                                                                                                   |
+| `webpackAfter`            | `Function`             | _无_                                               | Webpack 打包执行之后执行的方法。注意事项详见下文。                                                                                                                                                                                                                                                                                                   |
+| `moduleCssFilenameTest`   | `RegExp`               | <code>/\.(component&#124;view&#124;module)/</code> | 组件 CSS 文件名检查规则，不包括扩展名部分。有关 CSS 的使用请查阅 [CSS](/css)。<br><br>_默认值解释:_ 文件名以 `.component.css` `.view.css` 或 `.module.css` (扩展名可为 `css` `less` `sass`) 为结尾的文件会当作组件 CSS，其他文件会被当做全局 CSS。<br><br>_注:_ _TypeScript_ 项目中，如果修改了该配置，针对组件 CSS 对象的默认的 TS 定义声明会失效。 |
+| `internalLoaderOptions`   | `Object`               | _无_                                               | 用以扩展几乎无法修改的内置 Webpack loader 的配置。示例见下文。                                                                                                                                                                                                                                                                                       |
+| `classNameHashLength`     | `number`               | `6`                                                | 调整组件 CSS 的 className hash 长度。                                                                                                                                                                                                                                                                                                                |
+| `bundleVersionsKeep`      | `number` 或 `boolean`  | `2`                                                | 保留最近 `N` 次的客户端打包结果文件。如果为自然数，表示开启该功能，其他值均表示关闭该功能。                                                                                                                                                                                                                                                          |
+| `exportGzip`              | `boolean`              | `true`                                             | 是否自动输出 _Gzip_ 压缩后的 `*.gz` 文件。                                                                                                                                                                                                                                                                                                           |
 
 **关于 `webpackBefore` 和 `webpackAfter`**
 
@@ -108,9 +118,9 @@ module.exports = {
 
 ---
 
-### Chunkmap (Chunk 对照表)
+### 打包结果文件对照表
 
-在打包结束后，打包结果目录中会自动生成名为 `.public-chunkmap.json` 的文件，其中记录着本次打包的 Webpack 入口和最终文件的对照表
+在打包结束后，打包结果目录中会自动生成名为 `.koot-public-manifest.json` 的文件，其中记录着本次打包的 _Webpack_ 入口和最终文件的对照表
 
 **对照表结构**
 

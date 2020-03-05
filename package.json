@@ -54,19 +54,19 @@
         "eslint-config-koot": "^1.6.0",
         "fs-extra": "^8.1.0",
         "husky": "^4.2.3",
-        "inquirer": "7.0.4",
+        "inquirer": "7.0.6",
         "is-valid-path": "^0.1.1",
         "jest": "^25.1.0",
-        "jsdom": "^16.1.0",
+        "jsdom": "^16.2.0",
         "latest-version": "^5.1.0",
         "lerna": "^3.20.2",
         "lerna-wizard": "^1.1.1",
-        "lint-staged": "^10.0.7",
+        "lint-staged": "^10.0.8",
         "prettier": "^1.19.1",
         "prettier-eslint": "^9.0.1",
         "puppeteer": "^2.1.1",
         "simple-git": "^1.131.0",
-        "symlink-dir": "^3.1.1"
+        "symlink-dir": "^3.1.2"
     },
     "husky": {
         "hooks": {

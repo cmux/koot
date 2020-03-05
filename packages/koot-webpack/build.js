@@ -8,15 +8,14 @@ const path = require('path');
 const chalk = require('chalk');
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
-// const findCacheDir = require('find-cache-dir');
 
 const resetCssLoader = require('./loaders/css/reset');
 
 const createWebpackConfig = require('./factory-config/create');
 const validateWebpackDevServerPort = require('./factory-config/validate-webpack-dev-server-port');
-// const validateDist = require('./factory-config/validate-dist')
-const afterServerProd = require('./factory-config/_lifecyle/after-server-prod');
 const cleanAndWriteLogFiles = require('./libs/write-log-and-clean-old-files');
+const clientCleanUp = require('./libs/client-clean-up');
+const writeFilesAfterBuild = require('./libs/write-files-after-build');
 
 const {
     filenameWebpackDevServerPortTemp,
@@ -25,7 +24,6 @@ const {
     keyConfigWebpackSPATemplateInject,
     filenameBuilding,
     filenameBuildFail,
-    filenameCurrentBundle,
     WEBPACK_OUTPUT_PATH,
     CLIENT_ROOT_PATH
 } = require('koot/defaults/before-build');
@@ -44,7 +42,7 @@ const emptyTempConfigDir = require('koot/libs/empty-temp-config-dir');
 const getHistoryTypeFromConfig = require('koot/libs/get-history-type-from-config');
 const getDirDevTmp = require('koot/libs/get-dir-dev-tmp');
 const getDirDistPublic = require('koot/libs/get-dir-dist-public');
-const getDirDistPublicFoldername = require('koot/libs/get-dir-dist-public-foldername');
+// const getDirDistPublicFoldername = require('koot/libs/get-dir-dist-public-foldername');
 const removeBuildFlagFiles = require('koot/libs/remove-build-flag-files');
 const updateKootInPackageJson = require('koot/libs/update-koot-in-package-json');
 const kootPackageJson = require('koot/package.json');
@@ -133,7 +131,6 @@ module.exports = async (kootConfig = {}) => {
         webpackBefore: beforeBuild,
         webpackAfter: afterBuild,
         analyze = false,
-        bundleVersionsKeep,
         [keyConfigBuildDll]: createDll = false
     } = kootConfig;
 
@@ -182,21 +179,24 @@ module.exports = async (kootConfig = {}) => {
     /** @type {Function} @async 流程回调: webpack 执行前 */
     const before = async () => {
         await fs.ensureDir(data[WEBPACK_OUTPUT_PATH]);
+
         if (STAGE === 'client') {
             const dest = getDirDistPublic();
             data[CLIENT_ROOT_PATH] = dest;
             // 创建 Flag 文件
-            if (bundleVersionsKeep) {
-                const basename = path.basename(dest);
-                const dirPublic = path.resolve(
-                    data.dist,
-                    getDirDistPublicFoldername()
-                );
-                const file = path.resolve(dirPublic, filenameCurrentBundle);
-                await fs.ensureFile(file);
-                await fs.writeFile(file, basename, 'utf-8');
-            }
+            // if (bundleVersionsKeep) {
+            //     const basename = path.basename(dest);
+            //     const dirPublic = path.resolve(
+            //         data.dist,
+            //         getDirDistPublicFoldername()
+            //     );
+            //     const file = path.resolve(dirPublic, filenameCurrentBundle);
+            //     await fs.ensureFile(file);
+            //     await fs.writeFile(file, basename, 'utf-8');
+            // }
         }
+
+        await clientCleanUp.determine(data);
 
         log('callback', 'build', `callback: ` + chalk.green('beforeBuild'));
         // 创建 DLL 模式下不执行传入的生命周期方法
@@ -248,52 +248,8 @@ module.exports = async (kootConfig = {}) => {
 
         if (!quietMode) console.log(' ');
 
-        if (
-            !analyze &&
-            !createDll &&
-            STAGE === 'client' &&
-            ENV === 'prod' &&
-            bundleVersionsKeep
-        ) {
-            /** @type {String} 本次打包目标目录 */
-            const dest = getDirDistPublic();
-            const dirPublic = path.resolve(
-                data.dist,
-                getDirDistPublicFoldername()
-            );
-            /**
-             * @type {String[]} 要删除的文件列表，依以下方式排序得到的结果中，排在后面的文件
-             * - 以 koot- 开头的文件排在前
-             * - 以 koot- 开头的文件，如果后面的字符为数字，数字大的排在前
-             */
-            const toRemove = (await fs.readdir(dirPublic))
-                .filter(filename => filename !== filenameCurrentBundle)
-                .map(filename => path.resolve(dirPublic, filename))
-                // .filter(file => {
-                //     const lstat = fs.lstatSync(file)
-                //     return lstat.isDirectory()
-                // })
-                .filter(dir => dir !== dest)
-                .sort((a, b) => {
-                    const nameA = path.basename(a);
-                    const nameB = path.basename(b);
-                    const regEx = /^koot-([0-9]+)$/;
-                    const matchA = regEx.exec(nameA);
-                    const matchB = regEx.exec(nameB);
-                    if (!Array.isArray(matchA) || matchA.length < 2) return 1;
-                    if (!Array.isArray(matchB) || matchB.length < 2) return -1;
-                    return parseInt(matchB[1]) - parseInt(matchA[1]);
-                })
-                .slice(bundleVersionsKeep - 1);
-            for (const file of toRemove) {
-                await fs.remove(file);
-            }
-        }
-
-        if (STAGE === 'server' && ENV === 'prod') {
-            // 服务器端 / 生产环境
-            await afterServerProd(data);
-        }
+        await clientCleanUp.clean(data);
+        await writeFilesAfterBuild(data);
 
         // 移除所有标记文件
         await removeBuildFlagFiles(dist);
@@ -493,19 +449,6 @@ module.exports = async (kootConfig = {}) => {
      * @param {Error|String} err
      */
     const buildingError = err => {
-        // 如果有打包版本子目录，删除
-        if (
-            typeof process.env.KOOT_CLIENT_BUNDLE_SUBFOLDER === 'string' &&
-            process.env.KOOT_CLIENT_BUNDLE_SUBFOLDER
-        ) {
-            fs.removeSync(
-                path.resolve(
-                    data.dist,
-                    process.env.KOOT_CLIENT_BUNDLE_SUBFOLDER
-                )
-            );
-        }
-
         // 将错误添加入结果对象
         result.addError(err);
 

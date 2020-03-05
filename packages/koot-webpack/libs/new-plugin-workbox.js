@@ -19,7 +19,11 @@ const getSWFilename = require('koot/utils/get-sw-filename');
 /**
  * 生成 Webpack Plugin: InjectManifest 所用配置
  */
-module.exports = async (kootConfigForThisBuild, localeId) => {
+module.exports = async (
+    kootConfigForThisBuild,
+    localeId,
+    isPublicPathProvided = false
+) => {
     if (!kootConfigForThisBuild) throw new Error('NO_KOOT_BUILD_CONFIG');
 
     let { serviceWorker } = kootConfigForThisBuild;
@@ -35,8 +39,12 @@ module.exports = async (kootConfigForThisBuild, localeId) => {
         swSrc: _swSrc,
         include = [],
         exclude = [],
-        // importWorkboxFrom = 'local',
-        // importsDirectory = '__workbox-assets',
+
+        // cache strategies
+        cacheFirst = [],
+        networkFirst = [],
+        networkOnly = [],
+
         ...rest
     } = Object.assign({}, defaults, serviceWorker);
     ['auto', 'importWorkboxFrom', 'importsDirectory'].forEach(
@@ -45,9 +53,36 @@ module.exports = async (kootConfigForThisBuild, localeId) => {
 
     const isDev = process.env.WEBPACK_BUILD_ENV === 'dev';
 
+    const inject = async (kootConfigForThisBuild, localeId) => {
+        const ENV = process.env.WEBPACK_BUILD_ENV;
+
+        const {
+            [keyKootBaseVersion]: kootBaseVersion,
+            distClientAssetsDirName
+        } = kootConfigForThisBuild;
+
+        const obj = {
+            distClientAssetsDirName:
+                ENV === 'dev' ? devPublicPathPrefix : distClientAssetsDirName,
+            '__baseVersion_lt_0.12': kootBaseVersion
+                ? semver.lt(kootBaseVersion, '0.12.0')
+                : false,
+            cacheFirst,
+            networkFirst,
+            networkOnly,
+            env: {
+                WEBPACK_BUILD_ENV: ENV
+            }
+        };
+
+        if (localeId) obj.localeId = localeId;
+
+        return `\rself.__koot = ${JSON.stringify(obj, undefined, 4)}\r\r`;
+    };
+
     const swDest = isDev
         ? serviceWorkerFilename
-        : `../${getSWFilename(filename, localeId)}`;
+        : getSWFilename(filename, localeId);
 
     const swSrc = await (async () => {
         if (_swSrc) return _swSrc;
@@ -85,35 +120,9 @@ module.exports = async (kootConfigForThisBuild, localeId) => {
         ...rest,
         swDest,
         swSrc,
-        // importWorkboxFrom: isDev ? 'cdn' : importWorkboxFrom,
         include: [/\.js$/, /extract\.all\..+?\.large\.css$/, ...include],
         exclude: [/\.map$/, /^manifest.*\.js$/, ...exclude]
-        // importsDirectory: isDev ? '' : importsDirectory
     });
 };
 
 // ============================================================================
-
-const inject = async (kootConfigForThisBuild, localeId) => {
-    const ENV = process.env.WEBPACK_BUILD_ENV;
-
-    const {
-        [keyKootBaseVersion]: kootBaseVersion,
-        distClientAssetsDirName
-    } = kootConfigForThisBuild;
-
-    const obj = {
-        distClientAssetsDirName:
-            ENV === 'dev' ? devPublicPathPrefix : distClientAssetsDirName,
-        '__baseVersion_lt_0.12': kootBaseVersion
-            ? semver.lt(kootBaseVersion, '0.12.0')
-            : false,
-        env: {
-            WEBPACK_BUILD_ENV: ENV
-        }
-    };
-
-    if (localeId) obj.localeId = localeId;
-
-    return `\rself.__koot = ${JSON.stringify(obj, undefined, 4)}\r\r`;
-};

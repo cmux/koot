@@ -9,8 +9,8 @@ module.exports = async () => {
         output: {
             // path: path.resolve(__dirname, '../../dist/public/aaa'),
             // publicPath: "/aaa/",
-            filename: `core.[chunkhash].js`,
-            chunkFilename: `chunk.[chunkhash].js`
+            filename: `${process.env.KOOT_BUILD_START_TIME}.core.[chunkhash].js`,
+            chunkFilename: `${process.env.KOOT_BUILD_START_TIME}.chunk.[chunkhash].js`
         }
 
         // optimization: webpackOptimizationProd()

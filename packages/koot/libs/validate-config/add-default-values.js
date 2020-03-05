@@ -3,7 +3,10 @@ const path = require('path');
 const semver = require('semver');
 
 const defaultValues = require('../../defaults/koot-config');
-const { keyKootBaseVersion, typesSPA } = require('../../defaults/before-build');
+const {
+    keyKootBaseVersion
+    // typesSPA
+} = require('../../defaults/before-build');
 
 /**
  * 为空项添加默认值
@@ -77,9 +80,9 @@ module.exports = async (projectDir, config) => {
     }
 
     if (
-        process.env.WEBPACK_BUILD_ENV === 'dev' ||
-        process.env.WEBPACK_BUILD_TYPE === 'spa' ||
-        typesSPA.includes(config.type)
+        process.env.WEBPACK_BUILD_ENV === 'dev'
+        // process.env.WEBPACK_BUILD_TYPE === 'spa' ||
+        // typesSPA.includes(config.type)
     ) {
         config.bundleVersionsKeep = false;
     }

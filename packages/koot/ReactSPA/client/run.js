@@ -1,5 +1,3 @@
-// TODO: i18n
-
 import ReactDOM from 'react-dom';
 import history from '../../React/history';
 
@@ -29,7 +27,32 @@ const React = require('react');
 let logCountRouterUpdate = 0;
 let logCountHistoryUpdate = 0;
 
-export default ({ router, client }) => {
+const run = ({ router, client }) => {
+    // [SPA/多语言] 检查语言包是否准备完毕，如果仍在准备，轮询
+    if (
+        process.env.WEBPACK_BUILD_TYPE === 'spa' &&
+        typeof window.__KOOT_SPA_LOCALE_FILE_MAP__ === 'object' &&
+        window.__KOOT_LOCALEID__ &&
+        typeof window.__KOOT_SSR_STATE__.locales === 'undefined'
+    ) {
+        // console.group('CLIENT RUN');
+        // console.log('typeof window.__KOOT_STORE__');
+        // console.log(
+        //     'window.__KOOT_SSR_STATE__.localeId',
+        //     window.__KOOT_SSR_STATE__.localeId
+        // );
+        // console.log(
+        //     'window.__KOOT_SSR_STATE__.locales',
+        //     window.__KOOT_SSR_STATE__.locales
+        // );
+        // console.groupEnd();
+        // if (typeof window.__KOOT_SSR_STATE__.locales === 'undefined')
+        return setTimeout(() => {
+            run({ router, client });
+        }, 10);
+    }
+
+    // console.warn('CLIENT RUN');
     addSessionStoreSaveEventHandlerOnPageUnload();
 
     // console.log({
@@ -170,3 +193,5 @@ export default ({ router, client }) => {
             return true;
         });
 };
+
+export default run;

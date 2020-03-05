@@ -1,6 +1,6 @@
 {
     "name": "koot-cli",
-    "version": "0.12.7",
+    "version": "0.13.0-beta.2",
     "description": "CLI for creating and upgrading Koot.js app.",
     "main": "index.js",
     "sideEffects": false,
@@ -54,7 +54,7 @@
         "gitignore-globs": "^0.1.1",
         "glob": "^7.1.6",
         "glob-promise": "^3.4.0",
-        "inquirer": "^7.0.4",
+        "inquirer": "^7.0.6",
         "isbinaryfile": "^4.0.4",
         "latest-version": "^5.1.0",
         "npm-email": "^3.2.0",
@@ -69,5 +69,6 @@
         "/locales",
         "/steps",
         "/index.js"
-    ]
+    ],
+    "gitHead": "f4c58c48692337068d99c7fbbcd9640f2201a3e6"
 }

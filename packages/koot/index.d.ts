@@ -39,9 +39,9 @@ declare namespace Koot {
      *
      * ---
      *
-     * ! 注1 ! 客户端与服务器端的结果不同，在编写同构逻辑时请注意
+     * > **⚠️** 客户端与服务器端的结果不同，在编写同构逻辑时请注意
      *
-     * ! 注2 ! 公用对象空间内不包含对应语种的对象，需要对应语种的结果时需要提供 `localeId`
+     * > **⚠️** 公用对象空间内不包含对应语种的对象，需要对应语种的结果时需要提供 `localeId`
      */
     export function getCache(localeId?: LocaleId | boolean): Cache;
 
@@ -52,7 +52,7 @@ declare namespace Koot {
      *
      * ---
      *
-     * ! 注 ! 客户端返回 undefined
+     * > **⚠️** 客户端返回 undefined
      */
     export function getCtx():
         | Koa<Koa.DefaultState, Koa.DefaultContext>

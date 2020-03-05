@@ -6,6 +6,15 @@
  * - ❌ 延迟渲染
  * - ❌ 空路由
  */
+/**
+ *
+ * 不同的 Koot 配置会分别使用不同的配置，用以测试多种结果。以下是已有的案例
+ *
+ * no-bundles-keep
+ * - bundleVersionsKeep: false
+ * - exportGzip: false
+ *
+ */
 
 // jest configuration
 jest.setTimeout(10 * 60 * 1 * 1000);
@@ -14,6 +23,7 @@ jest.setTimeout(10 * 60 * 1 * 1000);
 
 const fs = require('fs-extra');
 const path = require('path');
+const glob = require('glob-promise');
 const util = require('util');
 const execSync = require('child_process').exec;
 const exec = util.promisify(require('child_process').exec);
@@ -23,11 +33,13 @@ const cheerio = require('cheerio');
 
 //
 
-const {
-    filenameCurrentBundle
-} = require('../../../packages/koot/defaults/before-build');
+// const {
+//     filenameCurrentBundle
+// } = require('../../../packages/koot/defaults/before-build');
 const removeTempProjectConfig = require('../../../packages/koot/libs/remove-temp-project-config');
 const sleep = require('../../../packages/koot/utils/sleep');
+const getOutputsFile = require('../../../packages/koot/utils/get-outputs-path');
+
 const {
     styles: puppeteerTestStyles,
     customEnv: puppeteerTestCustomEnv,
@@ -40,6 +52,7 @@ const terminate = require('../../libs/terminate-process');
 const waitForPort = require('../../libs/get-port-from-child-process');
 const testHtmlRenderedByKoot = require('../../general-tests/html/rendered-by-koot');
 const testFilesFromChunkmap = require('../../general-tests/bundle/check-files-from-chunkmap');
+const checkDistRootFiles = require('../../general-tests/check-dist-root-files');
 
 //
 
@@ -78,7 +91,10 @@ beforeAll(() =>
             browser = theBrowser;
         })
 );
-afterAll(() => browser.close());
+afterAll(() => {
+    if (browser && typeof browser.close === 'function') browser.close();
+    else throw new Error('No Puppeteer instance found');
+});
 
 //
 
@@ -109,7 +125,7 @@ const doTest = async (port, dist, settings = {}) => {
             return assetUri.includes(
                 isDev
                     ? `__koot_webpack_dev_server__/dist/assets`
-                    : `/includes/assets/`
+                    : `/test-includes/assets/`
             );
         });
     };
@@ -145,6 +161,13 @@ const doTest = async (port, dist, settings = {}) => {
             waitUntil: 'networkidle0'
         })
         .catch();
+
+    if (!res.ok()) {
+        console.warn({
+            res,
+            text: await res.text()
+        });
+    }
 
     // 请求应 OK
     expect(res.ok()).toBe(true);
@@ -417,7 +440,9 @@ const doTest = async (port, dist, settings = {}) => {
         const title = await page.evaluate(() => document.title);
         await context.close();
 
-        expect(title.includes('Policies')).toBe(true);
+        expect(title.includes('Policies') || title.includes('隐私政策')).toBe(
+            true
+        );
     }
 
     // 测试: store 文件只会引用一次
@@ -427,12 +452,13 @@ const doTest = async (port, dist, settings = {}) => {
         await page.goto(origin, {
             waitUntil: 'networkidle2'
         });
+        await sleep(1000);
 
         const count = await page.evaluate(
             () => window.__REDUX_STOER_RUN_COUNT__
         );
 
-        await context.close();
+        // await context.close();
 
         expect(count).toBe(1);
     }
@@ -631,6 +657,38 @@ const afterTest = async (cwd, title) => {
 
 //
 
+const testOutputs = async (dist, countToBe) => {
+    const fileOutputs = getOutputsFile(dist);
+    const outputs = await fs.readJson(fileOutputs);
+
+    const filesNeedToExist = [];
+    for (const files of Object.values(outputs)) {
+        files
+            .map(file => path.resolve(dist, file))
+            .filter(file => !filesNeedToExist.includes(file))
+            .forEach(file => filesNeedToExist.push(file));
+    }
+
+    const filesExist = (
+        await glob(path.resolve(dist, 'public', '**/*'), {
+            dot: true
+        })
+    )
+        .filter(file => !fs.lstatSync(file).isDirectory())
+        .map(file => path.normalize(file));
+
+    expect(fs.existsSync(dist)).toBe(true);
+    expect(fs.existsSync(path.resolve(dist, 'public'))).toBe(true);
+    expect(fs.existsSync(path.resolve(dist, 'public/service-worker.js'))).toBe(
+        true
+    );
+    expect(fs.existsSync(fileOutputs)).toBe(true);
+    expect(Object.keys(outputs).length).toBe(countToBe);
+    expect(filesNeedToExist.length).toBe(filesExist.length);
+};
+
+//
+
 describe('测试: React 同构项目', () => {
     for (const project of projectsToUse) {
         const { name, dir } = project;
@@ -680,6 +738,20 @@ describe('测试: React 同构项目', () => {
                     false
                 );
 
+                // 客户端打包结果应有 Gzip 版本
+                {
+                    const files = await glob(
+                        path.resolve(dist, 'public/**/*.gz')
+                    );
+                    expect(files.length).not.toBe(0);
+                }
+
+                await checkDistRootFiles({
+                    dist,
+                    env: 'prod',
+                    type: 'isomorphic',
+                    serverMode: undefined
+                });
                 await testFilesFromChunkmap(dist, false);
                 await doTest(port, dist, {
                     customEnv
@@ -789,15 +861,17 @@ describe('测试: React 同构项目', () => {
                 }).catch(e => errors.push(e));
 
                 expect(errors.length).toBe(0);
-                expect(fs.existsSync(dist)).toBe(true);
-                expect(fs.existsSync(path.resolve(dist, 'public'))).toBe(true);
-                expect(
-                    fs.existsSync(
-                        path.resolve(dist, 'public/service-worker.js')
-                    )
-                ).toBe(true);
 
                 await testFilesFromChunkmap(dist, false);
+                await testOutputs(dist, 1);
+
+                // 不应有 Gzip 版本
+                {
+                    const files = await glob(
+                        path.resolve(dist, 'public/**/*.gz')
+                    );
+                    expect(files.length).toBe(0);
+                }
 
                 await fs.remove(dist);
                 await afterTest(dir, '[config] bundleVersionsKeep: false');
@@ -838,44 +912,41 @@ describe('测试: React 同构项目', () => {
                     }).catch(e => errors.push(e));
                 }
 
-                const dirPublic = path.resolve(dist, 'public');
+                // const dirPublic = path.resolve(dist, 'public');
                 expect(errors.length).toBe(0);
-                expect(fs.existsSync(dist)).toBe(true);
-                expect(fs.existsSync(dirPublic)).toBe(true);
-                expect(
-                    fs.existsSync(path.resolve(dirPublic, 'service-worker.js'))
-                ).toBe(false);
 
-                const files = (await fs.readdir(dirPublic))
-                    .filter(filename => filename !== filenameCurrentBundle)
-                    .map(filename => path.resolve(dirPublic, filename));
-                const kootVersionFolders = (await fs.readdir(dirPublic)).filter(
-                    filename => {
-                        const file = path.resolve(dirPublic, filename);
-                        const lstat = fs.lstatSync(file);
-                        if (!lstat.isDirectory()) return false;
-                        return /^koot-[0-9]+$/.test(filename);
-                    }
-                );
+                // const files = (await fs.readdir(dirPublic))
+                //     .filter(filename => filename !== filenameCurrentBundle)
+                //     .map(filename => path.resolve(dirPublic, filename));
+                // const kootVersionFolders = (await fs.readdir(dirPublic)).filter(
+                //     filename => {
+                //         const file = path.resolve(dirPublic, filename);
+                //         const lstat = fs.lstatSync(file);
+                //         if (!lstat.isDirectory()) return false;
+                //         return /^koot-[0-9]+$/.test(filename);
+                //     }
+                // );
 
                 // 打包结果目录数量应该正确
-                expect(kootVersionFolders.length).toBe(files.length);
-                expect(kootVersionFolders.length).toBe(bundleVersionsKeep);
+                // expect(kootVersionFolders.length).toBe(files.length);
+                // expect(kootVersionFolders.length).toBe(bundleVersionsKeep);
 
                 // 当前打包结果版本应该存在
-                const currentID =
-                    kootVersionFolders[kootVersionFolders.length - 1];
-                const dirCurrent = path.resolve(dirPublic, currentID);
-                const fileCurrent = path.resolve(
-                    dirPublic,
-                    filenameCurrentBundle
-                );
-                expect(fs.existsSync(fileCurrent)).toBe(true);
-                expect(currentID).toBe(fs.readFileSync(fileCurrent, 'utf-8'));
-                expect(fs.existsSync(dirCurrent)).toBe(true);
-                expect(
-                    fs.existsSync(path.resolve(dirCurrent, 'includes'))
-                ).toBe(true);
+                // const currentID =
+                //     kootVersionFolders[kootVersionFolders.length - 1];
+                // const dirCurrent = path.resolve(dirPublic, currentID);
+                // const fileCurrent = path.resolve(
+                //     dirPublic,
+                //     filenameCurrentBundle
+                // );
+                // expect(fs.existsSync(fileCurrent)).toBe(true);
+                // expect(currentID).toBe(fs.readFileSync(fileCurrent, 'utf-8'));
+                // expect(fs.existsSync(dirCurrent)).toBe(true);
+                // expect(
+                //     fs.existsSync(path.resolve(dirCurrent, 'includes'))
+                // ).toBe(true);
+
+                await testOutputs(dist, bundleVersionsKeep);
 
                 await fs.remove(dist);
                 await afterTest(dir, '[config] bundleVersionsKeep: 3');

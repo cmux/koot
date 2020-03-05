@@ -57,6 +57,7 @@ module.exports = {
     // },
     classNameHashLength: 1,
     // bundleVersionsKeep: false,
+    distClientAssetsDirName: '/\\test-includes\\/',
 
     devPort: 3081,
     // devDll: [

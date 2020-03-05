@@ -49,6 +49,9 @@ module.exports = {
     keyConfigClientServiceWorkerPathname: '__CLIENT_SERVICE_WORKER_PATHNAME__',
     WEBPACK_OUTPUT_PATH: '__WEBPACK_OUTPUT_PATH',
     CLIENT_ROOT_PATH: '__CLIENT_ROOT_PATH',
+    WEBPACK_MODIFIED_PUBLIC_PATH: '__WEBPACK_MODIFIED_PUBLIC_PATH',
+    // CLEANUP_PREVIOUS_BUILDS_IDS: '__CLEANUP_PREVIOUS_BUILDS_IDS',
+    // CLEANUP_PREVIOUS_BUILDS_FILES: '__CLEANUP_PREVIOUS_BUILDS_FILES',
 
     // 自定义 chunk
     chunkNameExtractCss: '__KOOT__EXTRACT__CSS__',
@@ -62,7 +65,7 @@ module.exports = {
     filenameSPATemplateInjectJS: '.spa-template-inject.LOCALEID.js',
 
     // [生产环境] 文件名
-    filenameCurrentBundle: '.koot-current',
+    // filenameCurrentBundle: '.koot-current',
 
     // 标签属性
     styleTagGlobalAttributeName: 'data-koot-global',
@@ -81,5 +84,10 @@ module.exports = {
      * - 如果超过这个值，会采用 <script> 引用的方式
      * - 如果小于等于这个值，直接将文件内容写入 HTML
      */
-    thresholdScriptRunFirst: 15 * 1024
+    thresholdScriptRunFirst: 15 * 1024,
+
+    /** @type {string} 打包结果目录中的文件对照表文件名 */
+    buildManifestFilename: '.koot-public-manifest.json',
+    /** @type {string} 打包结果目录中输出文件总集文件名 */
+    buildOutputsFilename: '.koot-public-outputs.json'
 };

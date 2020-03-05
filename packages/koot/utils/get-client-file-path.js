@@ -14,12 +14,23 @@ const getChunkmap = require('./get-chunkmap');
  * @param {String} filename 要查找的文件的文件名。根据打包文件对应表 (chunkmap) 查询文件名和实际打包结果文件的对应关系
  * @param {String} [localeId] 当前语言
  * @param {Boolean} [isPathname = false] 如果标记为 true，表示提供的 filename 为确切的访问地址，无需查询对照表，直接返回结果
+ * @param {Boolean} [isSSRReading = false] 如果标记为 true，表示用于 SSR 时读取文件，会对 publicPath 进行特殊处理
  * @returns {String|String[]} 浏览器环境中的访问路径、空字符串或包含所有可能结果的 Array
  */
-const getFilePath = (filename, localeId, isPathname = false) => {
-    // 如果第一个参数为 true，表示标记为 pathname
+const getFilePath = (
+    filename,
+    localeId,
+    isPathname = false,
+    isSSRReading = false
+) => {
+    // 如果第一个参数为 true，表示完全信任，不进行 chunkmap 对照查询，直接进行处理并返回结果
     if (filename === true)
-        return getFilePath(localeId, isPathname || undefined, true);
+        return getFilePath(
+            localeId,
+            isPathname || undefined,
+            true,
+            isSSRReading
+        );
 
     if (typeof localeId === 'undefined') {
         try {
@@ -36,7 +47,7 @@ const getFilePath = (filename, localeId, isPathname = false) => {
         }
     }
 
-    const pathPublic = getPublicPath();
+    const pathPublic = getPublicPath(isSSRReading);
 
     const i18nType = getI18nType();
     const isI18nDefault = i18nType === 'default';
@@ -47,18 +58,7 @@ const getFilePath = (filename, localeId, isPathname = false) => {
 
     // 如果标记为 pathname，直接返回结果
     if (isPathname)
-        return (
-            pathPublic +
-            filename.replace(
-                new RegExp(
-                    '(^\\.\\/|^)public\\/' +
-                        (process.env.KOOT_CLIENT_BUNDLE_SUBFOLDER
-                            ? `${process.env.KOOT_CLIENT_BUNDLE_SUBFOLDER}\\/`
-                            : '')
-                ),
-                ''
-            )
-        );
+        return pathPublic + filename.replace(/(^\.\/|^)public\//, '');
 
     const chunkmap = getChunkmap(localeId);
     const regPublicPath = chunkmap['.public']
@@ -94,7 +94,6 @@ const getFilePath = (filename, localeId, isPathname = false) => {
     // console.log(pathPublic + chunkmap['.files'][filename].replace(regPublicPath, ''))
     // console.log({
     //     regPublicPath,
-    //     'process.env.KOOT_CLIENT_BUNDLE_SUBFOLDER': process.env.KOOT_CLIENT_BUNDLE_SUBFOLDER
     // })
     // console.log('----------')
 
@@ -157,8 +156,11 @@ const getFilePath = (filename, localeId, isPathname = false) => {
     }
 
     // 如果没有找到 chunkmap 或是 chunkmap 中未找到目标项目，转为过滤文件形式
-    if (fs.existsSync(path.resolve(pathPublic, filename))) {
-        return '/' + filename;
+    // if (fs.existsSync(path.resolve(pathPublic, filename))) {
+    //     return '/' + filename;
+    // }
+    if (fs.existsSync(path.resolve(filename))) {
+        return pathPublic + filename;
     }
 
     console.warn(
