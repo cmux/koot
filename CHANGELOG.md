@@ -21,6 +21,7 @@
     -   `serviceWorker` 配置项新增 `cacheFirst` `networkFirst` `networkOnly` 属性，可用扩展缓存策略。详情请参见文档 [Service Worker](https://koot.js.org/#/pwa?id=service-worker)
     -   优化 _Service Worker_ 的默认缓存规则。详情请参见文档 [Service Worker](https://koot.js.org/#/pwa?id=service-worker)
     -   服务器端渲染时，现在会利用自定义的 `publicPath`
+    -   SPA: 确保 _React_ 渲染时语言包可用
     -   更新 TS 定义
 
 **koot-boilerplate** (模板项目)

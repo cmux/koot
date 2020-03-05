@@ -66,7 +66,7 @@
         "glob": "^7.1.6",
         "glob-promise": "^3.4.0",
         "hoist-non-react-statics": "^3.3.2",
-        "inquirer": "7.0.5",
+        "inquirer": "7.0.6",
         "is-port-reachable": "^3.0.0",
         "is-url": "^1.2.4",
         "isomorphic-fetch": "^2.2.1",
