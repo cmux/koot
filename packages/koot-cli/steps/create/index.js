@@ -26,7 +26,10 @@ module.exports = async (options = {}) => {
 
         vars.locales = await getLocales();
 
+        // 检查是否在 CM 内网 - 尝试访问 oa.cmcm.com
+
         if (showWelcome) {
+            // 根据是否在 CM 内网输出欢迎信息
             console.log('');
             console.log(chalk.cyanBright(_('welcome')));
             console.log(_('required_info'));
@@ -66,3 +69,7 @@ const logNext = (step, command) => {
     if (command) console.log(`   ` + chalk.gray(`> ${command}`));
     nextStep++;
 };
+
+const run = async (options = {}) => {};
+
+// ============================================================================
