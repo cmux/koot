@@ -5,6 +5,8 @@ const chalk = require('chalk');
 const vars = require('../../lib/vars');
 const getLocales = require('../../lib/get-locales');
 const _ = require('../../lib/translate');
+const checkIsCMNetwork = require('../../lib/check-is-cm-network');
+const spinner = require('../../lib/spinner');
 
 const modifyPackageJsonAddKootVersion = require('../../lib/modify-package-json/add-koot-version');
 
@@ -15,6 +17,8 @@ const modifyPackageJsonAddKootVersion = require('../../lib/modify-package-json/a
  * @param {Boolean} [options.showWelcome=true] 显示欢迎信息
  */
 module.exports = async (options = {}) => {
+    const waiting = spinner('');
+
     /** 目标目录路径 */
     let dest;
 
@@ -26,17 +30,22 @@ module.exports = async (options = {}) => {
 
         vars.locales = await getLocales();
 
-        // 检查是否在 CM 内网 - 尝试访问 oa.cmcm.com
+        /** 当前是否在 CM 内网 */
+        const isCMNetwork = await checkIsCMNetwork();
+
+        waiting.stop();
 
         if (showWelcome) {
             // 根据是否在 CM 内网输出欢迎信息
             console.log('');
+            if (isCMNetwork)
+                console.log(chalk.cyanBright(_('welcomeCM')) + '\n');
             console.log(chalk.cyanBright(_('welcome')));
             console.log(_('required_info'));
             console.log('');
         }
 
-        const project = await require('./inquiry-project')();
+        const project = await require('./inquiry-project')({ isCMNetwork });
 
         const r = await require('./get-project-folder')(project);
         dest = r.dest;
@@ -59,6 +68,7 @@ module.exports = async (options = {}) => {
         console.log('');
     } catch (e) {
         if (dest && !destExists) await fs.remove(dest);
+        waiting.fail(e);
         throw e;
     }
 };
@@ -70,6 +80,6 @@ const logNext = (step, command) => {
     nextStep++;
 };
 
-const run = async (options = {}) => {};
+// const run = async (options = {}) => {};
 
 // ============================================================================

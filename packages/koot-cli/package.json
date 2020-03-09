@@ -19,15 +19,15 @@
         "url": "https://github.com/cmux/koot-cli"
     },
     "keywords": [
-        "es6/7",
-        "fullstack",
         "react",
-        "react-server-render",
-        "react-router",
+        "koot",
+        "koot.js",
+        "fullstack",
         "redux",
-        "koa2",
-        "webpack2",
-        "http2"
+        "koa",
+        "webpack",
+        "http2",
+        "ssr"
     ],
     "license": "Apache-2.0",
     "author": {
@@ -48,6 +48,7 @@
         "node": ">=8.9.0"
     },
     "dependencies": {
+        "axios": "^0.19.2",
         "chalk": "^3.0.0",
         "download-git-repo": "^3.0.2",
         "fs-extra": "^8.1.0",

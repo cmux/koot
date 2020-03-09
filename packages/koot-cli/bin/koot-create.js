@@ -3,7 +3,10 @@
 const run = async () => {
     const { needUpdate } = await require('../steps/before')();
     if (needUpdate) return;
-    await require('../steps/create').default();
+
+    const moduleCreate = require('../steps/create');
+    if (typeof moduleCreate === 'function') return await moduleCreate();
+    await moduleCreate.default();
 };
 
 run().catch(err => {

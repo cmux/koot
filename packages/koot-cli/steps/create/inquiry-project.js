@@ -17,9 +17,13 @@ const spinner = require('../../lib/spinner');
 /**
  * 询问项目信息
  * @async
+ * @param {Object} [options={}]
+ * @param {boolean} [options.isCMNetwork=false] 是否处于 CM 内网
  * @returns
  */
 module.exports = async (options = {}) => {
+    const { isCMNetwork } = options;
+
     const project = await inquirer.prompt([
         {
             type: 'input',
