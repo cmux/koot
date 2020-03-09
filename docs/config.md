@@ -340,37 +340,6 @@ const apiBase = __QA__
     : `https://api.project.com/`;
 ```
 
-### staticCopyFrom
-
--   类型: `Pathname` 或 `Pathname[]`
--   默认值: **无**
-
-将目标目录内的所有文件复制到打包结果内的静态服务器目录中。
-
--   原封不动的复制，会保留文件名和目录结构
--   开发环境下也可以使用
-
-```javascript
-const path = require('path');
-module.exports = {
-    // 默认值
-    staticCopyFrom: undefined,
-
-    // 示例 #1 - 复制一个目录
-    staticCopyFrom: path.resolve(__dirname, './src/assets/public'),
-
-    // 示例 #2 - 复制多个目录
-    staticCopyFrom: [
-        path.resolve(__dirname, './src/assets/public'),
-        path.resolve(__dirname, './.data-generated/public')
-    ]
-};
-```
-
-示例效果:
-
--   文件 `/web/src/assets/public/favicon.ico` 可使用以下 URL 访问: `/favicon.ico`
-
 ---
 
 ## 客户端生命周期
@@ -774,7 +743,7 @@ module.exports = {
 
 ---
 
-## Webpack 相关
+## 打包 & Webpack 相关
 
 ### webpackConfig
 
@@ -849,58 +818,6 @@ module.exports = {
 
     // 所有客户端静态资源文件均会存储到 [dist目录]/public/koot-*/assets/ 目录下
     distClientAssetsDirName: 'assets'
-};
-```
-
-### webpackBefore
-
--   类型: `Function`
--   默认值: _无_
--   **仅针对**: Webpack 打包过程
-
-Webpack 打包执行之前执行的方法。
-
-```javascript
-module.exports = {
-    // 默认值
-    webpackBefore: undefined,
-
-    /**
-     * @async
-     * @param {Object} kootConfigWithExtra koot 完整配置对象，附加额外信息
-     * @void
-     */
-    webpackBefore: async kootConfigWithExtra => ({
-        /*
-         * `kootConfigWithExtra` 对象中的额外信息
-         * - `__WEBPACK_OUTPUT_PATH` - 本次打包的目标目录
-         * - `__CLIENT_ROOT_PATH` - 仅针对客户端，本次打包结果的客户端根目录
-         */
-    })
-};
-```
-
-### webpackAfter
-
--   类型: `Function`
--   默认值: _无_
--   **仅针对**: Webpack 打包过程
-
-Webpack 打包执行之后执行的方法。
-
-```javascript
-module.exports = {
-    // 默认值
-    webpackAfter: undefined,
-
-    /**
-     * @async
-     * @param {Object} kootConfigWithExtra koot 完整配置对象，附加额外信息
-     * @void
-     */
-    webpackAfter: async kootConfigWithExtra => ({
-        // `kootConfigWithExtra` 中的额外信息详见上文 `webpackBefore` 的说明
-    })
 };
 ```
 
@@ -1002,6 +919,89 @@ module.exports = {
 
     // 关闭该功能
     exportGzip: false
+};
+```
+
+### staticCopyFrom
+
+-   类型: `Pathname` 或 `Pathname[]`
+-   默认值: **无**
+
+将目标目录内的所有文件复制到打包结果内的静态服务器目录中。
+
+-   原封不动的复制，会保留文件名和目录结构
+-   开发环境下也可以使用
+
+```javascript
+const path = require('path');
+module.exports = {
+    // 默认值
+    staticCopyFrom: undefined,
+
+    // 示例 #1 - 复制一个目录
+    staticCopyFrom: path.resolve(__dirname, './src/assets/public'),
+
+    // 示例 #2 - 复制多个目录
+    staticCopyFrom: [
+        path.resolve(__dirname, './src/assets/public'),
+        path.resolve(__dirname, './.data-generated/public')
+    ]
+};
+```
+
+示例效果:
+
+-   文件 `/web/src/assets/public/favicon.ico` 可使用以下 URL 访问: `/favicon.ico`
+
+### webpackBefore
+
+-   类型: `Function`
+-   默认值: _无_
+-   **仅针对**: Webpack 打包过程
+
+Webpack 打包执行之前执行的方法。
+
+```javascript
+module.exports = {
+    // 默认值
+    webpackBefore: undefined,
+
+    /**
+     * @async
+     * @param {Object} kootConfigWithExtra koot 完整配置对象，附加额外信息
+     * @void
+     */
+    webpackBefore: async kootConfigWithExtra => ({
+        /*
+         * `kootConfigWithExtra` 对象中的额外信息
+         * - `__WEBPACK_OUTPUT_PATH` - 本次打包的目标目录
+         * - `__CLIENT_ROOT_PATH` - 仅针对客户端，本次打包结果的客户端根目录
+         */
+    })
+};
+```
+
+### webpackAfter
+
+-   类型: `Function`
+-   默认值: _无_
+-   **仅针对**: Webpack 打包过程
+
+Webpack 打包执行之后执行的方法。
+
+```javascript
+module.exports = {
+    // 默认值
+    webpackAfter: undefined,
+
+    /**
+     * @async
+     * @param {Object} kootConfigWithExtra koot 完整配置对象，附加额外信息
+     * @void
+     */
+    webpackAfter: async kootConfigWithExtra => ({
+        // `kootConfigWithExtra` 中的额外信息详见上文 `webpackBefore` 的说明
+    })
 };
 ```
 

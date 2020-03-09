@@ -76,12 +76,14 @@
                 mergeNavbar: true,
                 search: {
                     maxAge: 86400000, // 过期时间，单位毫秒，默认一天
-                    paths: ['/', '/guide'], //[] or 'auto'
+                    // paths: ['/', '/guide'], //[] or 'auto'
+                    paths: 'auto',
                     placeholder: '输入搜索内容',
                     noData: '找不到结果',
 
                     // 搜索标题的最大程级, 1 - 6
-                    depth: 6
+                    depth: 6,
+                    namespace: 'koot-doc'
                 },
                 plugins: [
                     // EditOnGithubPlugin.create(
