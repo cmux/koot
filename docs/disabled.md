@@ -31,3 +31,9 @@
 如果当前项目的 Node.js 服务器是通过其他代理服务器请求的（如 nginx 反向代理），可用这个配置声明原始请求的信息。
 
 -   请参见 [项目配置/proxyRequestOrigin](/config?id=proxyRequestOrigin)
+
+### serverless
+
+_Koot.js_ 支持输出 Serverless 模式的服务器脚本。
+
+-   请参见 [项目配置/serverless](/config?id=serverless)
