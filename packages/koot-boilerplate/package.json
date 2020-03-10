@@ -71,8 +71,5 @@
         "*.{json,md,css,less,sass,scss}": [
             "prettier --write"
         ]
-    },
-    "koot": {
-        "version": "0.12.0-alpha.27"
     }
 }

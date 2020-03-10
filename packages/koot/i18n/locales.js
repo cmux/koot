@@ -28,12 +28,12 @@ const getLocalesObject = () => {
  * - 客户端: 当前语种的语言包对象 (仅当多语言类型为 `store` 时)
  * - 服务器端: 所有语种语言包合集对象
  */
-export const locales = (() => getLocalesObject() || {})();
+export let locales = (() => getLocalesObject() || {})();
 
 export const setLocales = (newLocales = {}) => {
     // const obj = getLocalesObject()
     if (locales) Object.assign(locales, newLocales);
-    // console.log({ newLocales, obj, locales, 'global.__KOOT_SSR__': global.__KOOT_SSR__ })
+    else locales = newLocales;
     return locales;
 };
 

@@ -15,6 +15,8 @@ const {
     uriServiceWorker
 } = require('./_cache-keys');
 
+let isSPAi18nEnabled = false;
+
 /**
  * 注入: JavaScript 代码
  * @param {Object} options
@@ -47,7 +49,7 @@ module.exports = ({
     // const isProd = !isDev;
     const isSPA = Boolean(process.env.WEBPACK_BUILD_TYPE === 'spa');
     /** @type {boolean} 启用多语言的 SPA */
-    const isSPAi18nEnabled = Boolean(
+    isSPAi18nEnabled = Boolean(
         isSPA &&
             typeof localeFileMap === 'object' &&
             Object.keys(localeFileMap).length &&
@@ -84,10 +86,6 @@ module.exports = ({
 
     if (isDev || typeof injectCache[scriptsInBody] === 'undefined') {
         let r = '';
-
-        // [启用多语言的 SPA] 插入代码片段 - 判断当前请求的语种
-        if (isSPAi18nEnabled) {
-        }
 
         // 入口: critical
         if (needInjectCritical && Array.isArray(entrypoints.critical)) {
@@ -163,7 +161,32 @@ module.exports = ({
 
     if (isSPAi18nEnabled) {
         return (
-            `<script type="text/javascript">` +
+            `<script type="text/javascript" ${scriptTagEntryAttributeName}="*run-first-spa-locales">` +
+            // `window.__KOOT_SCRIPTS__ = {` +
+            // `addAfterLocale: function(name, src) {` +
+            // `if (` +
+            // `typeof window.__KOOT_SPA_LOCALE_FILE_MAP__ === 'object' &&` +
+            // `window.__KOOT_LOCALEID__ &&` +
+            // `typeof window.__KOOT_SSR_STATE__.locales === 'undefined'` +
+            // `) {` +
+            // `return setTimeout(() => {` +
+            // `return window.__KOOT_SCRIPTS__.addAfterLocale(name, src);` +
+            // `}, 10);` +
+            // `}` +
+            // `var fjs = document.getElementsByTagName('script')[0];` +
+            // `var js = document.createElement('script');` +
+            // `js.setAttribute("${scriptTagEntryAttributeName}", name);` +
+            // `js.setAttribute('defer', '');` +
+            // `js.onerror = function(e) {` +
+            // `console.error(e);` +
+            // `throw new Error(` +
+            // `'Locale javascript file ('+src+') fail!'` +
+            // `);` +
+            // `};` +
+            // `js.src = src;` +
+            // `fjs.parentNode.insertBefore(js, fjs);` +
+            // `}` +
+            // `};` +
             `window.__KOOT_SPA_LOCALE_FILE_MAP__ = ${JSON.stringify(
                 localeFileMap
             )};` +
@@ -195,8 +218,19 @@ module.exports = ({
  */
 const combineFilePaths = (name, ...args) => {
     let pathnames = getClientFilePath(...args);
-    // console.log({ name, args, pathnames });
     if (!Array.isArray(pathnames)) pathnames = [pathnames];
+
+    // if (name !== '*run-first' && isSPAi18nEnabled) {
+    //     return pathnames
+    //         .map(
+    //             (pathname, index) =>
+    //                 `<script type="text/javascript">` +
+    //                 `window.__KOOT_SCRIPTS__.addAfterLocale("${name}", "${pathname}")` +
+    //                 `</script>`
+    //         )
+    //         .join('');
+    // }
+
     return pathnames
         .map(
             pathname =>

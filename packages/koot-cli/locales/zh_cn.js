@@ -1,4 +1,5 @@
 module.exports = {
+    welcomeCM: '小豹你好~',
     welcome: '欢迎使用 Koot CLI :)',
 
     please_wait: '请稍候……',

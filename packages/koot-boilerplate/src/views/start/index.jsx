@@ -11,9 +11,8 @@ import styles from './index.module.less';
 
 // ============================================================================
 
-// ! i18n is disabled in SPA mode
-const listBasic = __SPA__ ? [] : __('pages.start.listBasic');
-const listAdvanced = __SPA__ ? [] : __('pages.start.listAdvanced');
+const listBasic = __('pages.start.listBasic');
+const listAdvanced = __('pages.start.listAdvanced');
 
 // ============================================================================
 
