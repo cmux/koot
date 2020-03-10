@@ -45,8 +45,15 @@ const getLangSPA = () => {
         return cookieValue;
     }
 
-    // 如果上一步没有结果，返回项目默认语种
-    return setLocale(availableLocaleIds[0]);
+    // 如果上一步没有结果，返回客户端语种或项目默认语种
+    return setLocale(
+        navigator.languages ||
+            navigator.language ||
+            navigator.browserLanguage ||
+            navigator.systemLanguage ||
+            navigator.userLanguage ||
+            availableLocaleIds[0]
+    );
 };
 
 export default getLangSPA;

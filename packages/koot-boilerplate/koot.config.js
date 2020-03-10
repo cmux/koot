@@ -27,8 +27,8 @@ module.exports = {
     cookiesToStore: true,
 
     i18n: [
-        ['zh', './src/locales/zh.json'],
-        ['en', './src/locales/en.json']
+        ['en', './src/locales/en.json'],
+        ['zh', './src/locales/zh.json']
     ],
 
     aliases: {
