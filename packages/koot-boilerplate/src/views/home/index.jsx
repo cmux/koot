@@ -11,10 +11,6 @@ import styles from './index.module.less';
 
 // ============================================================================
 
-const intros = __('intro');
-
-// ============================================================================
-
 const PageHome = extend({
     pageinfo: () => ({
         title: `${__('pages.home.title')} - ${__('title')}`,
@@ -26,7 +22,7 @@ const PageHome = extend({
         <div className="wrapper">
             <h2 className="title">Koot.js</h2>
             <span className="intro">
-                {intros.map((str, index) => (
+                {__('intro').map((str, index) => (
                     <span className="line" key={index}>
                         {str}
                     </span>

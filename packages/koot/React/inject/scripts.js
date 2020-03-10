@@ -16,6 +16,7 @@ const {
 } = require('./_cache-keys');
 
 let isSPAi18nEnabled = false;
+const SPAi18nNeedWaiting = false;
 
 /**
  * 注入: JavaScript 代码
@@ -55,6 +56,7 @@ module.exports = ({
             Object.keys(localeFileMap).length &&
             defaultLocaleId
     );
+    // SPAi18nNeedWaiting = Boolean(isSPAi18nEnabled /* && isDev*/);
 
     if (isDev || typeof injectCache[scriptsRunFirst] === 'undefined') {
         const filename = `${chunkNameClientRunFirst}.js`;
@@ -72,7 +74,10 @@ module.exports = ({
                 localeId,
                 compilation
             );
-            if (content.length > thresholdScriptRunFirst) {
+            if (
+                content.length >
+                thresholdScriptRunFirst /* * (isSPAi18nEnabled ? 0 : 1)*/
+            ) {
                 injectCache[scriptsRunFirst] = combineFilePaths(
                     name,
                     filename,
@@ -162,34 +167,38 @@ module.exports = ({
     if (isSPAi18nEnabled) {
         return (
             `<script type="text/javascript" ${scriptTagEntryAttributeName}="*run-first-spa-locales">` +
-            // `window.__KOOT_SCRIPTS__ = {` +
-            // `addAfterLocale: function(name, src) {` +
-            // `if (` +
-            // `typeof window.__KOOT_SPA_LOCALE_FILE_MAP__ === 'object' &&` +
-            // `window.__KOOT_LOCALEID__ &&` +
-            // `typeof window.__KOOT_SSR_STATE__.locales === 'undefined'` +
-            // `) {` +
-            // `return setTimeout(() => {` +
-            // `return window.__KOOT_SCRIPTS__.addAfterLocale(name, src);` +
-            // `}, 10);` +
-            // `}` +
-            // `var fjs = document.getElementsByTagName('script')[0];` +
-            // `var js = document.createElement('script');` +
-            // `js.setAttribute("${scriptTagEntryAttributeName}", name);` +
-            // `js.setAttribute('defer', '');` +
-            // `js.onerror = function(e) {` +
-            // `console.error(e);` +
-            // `throw new Error(` +
-            // `'Locale javascript file ('+src+') fail!'` +
-            // `);` +
-            // `};` +
-            // `js.src = src;` +
-            // `fjs.parentNode.insertBefore(js, fjs);` +
-            // `}` +
-            // `};` +
             `window.__KOOT_SPA_LOCALE_FILE_MAP__ = ${JSON.stringify(
                 localeFileMap
             )};` +
+            (SPAi18nNeedWaiting
+                ? `window.__KOOT_SCRIPTS__ = {` +
+                  `addAfterLocale: function(name, src) {` +
+                  `if (` +
+                  `window.__KOOT_LOCALEID__ && ` +
+                  `typeof window.__KOOT_SSR_STATE__ === 'object' && ` +
+                  `typeof window.__KOOT_SSR_STATE__.locales === 'object'` +
+                  `) {` +
+                  `var fjs = document.getElementsByTagName('script')[0];` +
+                  `var js = document.createElement('script');` +
+                  `js.setAttribute("${scriptTagEntryAttributeName}", name);` +
+                  `js.setAttribute('defer', '');` +
+                  `js.onerror = function(e) {` +
+                  `console.error(e);` +
+                  `throw new Error(` +
+                  `'Loading javascript file ('+src+') fail!'` +
+                  `);` +
+                  `};` +
+                  `js.src = src;` +
+                  `fjs.parentNode.insertBefore(js, fjs);` +
+                  `return;` +
+                  `}` +
+                  `console.warn(name, src, window.__KOOT_LOCALEID__);` +
+                  `return setTimeout(() => {` +
+                  `window.__KOOT_SCRIPTS__.addAfterLocale(name, src);` +
+                  `}, 10);` +
+                  `}` +
+                  `};`
+                : '') +
             `</script>` +
             // getClientRunFirstJS(localeId, compilation) +
             injectCache[scriptsRunFirst] +
@@ -220,16 +229,16 @@ const combineFilePaths = (name, ...args) => {
     let pathnames = getClientFilePath(...args);
     if (!Array.isArray(pathnames)) pathnames = [pathnames];
 
-    // if (name !== '*run-first' && isSPAi18nEnabled) {
-    //     return pathnames
-    //         .map(
-    //             (pathname, index) =>
-    //                 `<script type="text/javascript">` +
-    //                 `window.__KOOT_SCRIPTS__.addAfterLocale("${name}", "${pathname}")` +
-    //                 `</script>`
-    //         )
-    //         .join('');
-    // }
+    if (SPAi18nNeedWaiting && name !== '*run-first') {
+        return pathnames
+            .map(
+                (pathname, index) =>
+                    `<script type="text/javascript">` +
+                    `window.__KOOT_SCRIPTS__.addAfterLocale("${name}", "${pathname}")` +
+                    `</script>`
+            )
+            .join('');
+    }
 
     return pathnames
         .map(
