@@ -18,6 +18,8 @@ export let l = (() => {
     return false;
 })();
 
+let isSPACorrected = false;
+
 /**
  * 翻译文本
  * 语言包中源文本中的 ${replaceKey} 表示此处需要替换，replaceKey 就是传入的 obj 中对应的值
@@ -36,12 +38,16 @@ const translate = (...args) => {
     if (__SERVER__ && __DEV__) l = locales[global.__KOOT_LOCALEID__];
     // SPA: 进一步确保语言包可用
     if (
+        !isSPACorrected &&
+        __SPA__ &&
         typeof window !== 'undefined' &&
         window.__KOOT_SSR_STATE__ &&
+        typeof window.__KOOT_SSR_STATE__.locales === 'object' &&
         Object.keys(window.__KOOT_SSR_STATE__.locales).length &&
         (!l || !Object.keys(l).length)
     ) {
         l = window.__KOOT_SSR_STATE__.locales;
+        isSPACorrected = true;
     }
 
     args.forEach((value, index) => {

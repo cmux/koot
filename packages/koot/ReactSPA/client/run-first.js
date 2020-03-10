@@ -9,6 +9,8 @@ import getLang from '../../i18n/spa/get-lang';
         locales: undefined
     };
 
+    // console.warn(window.__KOOT_LOCALEID__, window.__KOOT_SPA_LOCALE_FILE_MAP__);
+
     if (
         typeof window.__KOOT_SPA_LOCALE_FILE_MAP__ === 'object' &&
         window.__KOOT_LOCALEID__
@@ -31,6 +33,9 @@ import getLang from '../../i18n/spa/get-lang';
             );
         };
         js.src = window.__KOOT_SPA_LOCALE_FILE_MAP__[window.__KOOT_LOCALEID__];
+
+        // console.warn(window.__KOOT_LOCALEID__, js.src, js);
+
         fjs.parentNode.insertBefore(js, fjs);
     }
 
