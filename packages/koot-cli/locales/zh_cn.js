@@ -33,11 +33,22 @@ module.exports = {
     project_name_required: '项目名称 (*)',
     project_name_needed: '请输入项目名称',
     project_description: '项目描述',
-    project_author: '作者名 (推荐填写 NPM 用户名)',
-    project_mode: '项目模式',
+    project_author: '开发者 (推荐填写 NPM 用户名)',
+    project_boilerplate: '模板',
+    project_boilerplates: {
+        base: '基础模板 (推荐 Web 项目使用)',
+        serverless: 'Serverless 模式的基础模板',
+        'cm-system': '系统模板 (推荐管理/后台系统项目使用)'
+    },
+    project_type: '项目类型',
+    project_types: {
+        ssr: '同构 / SSR (Server-Side Rendering)',
+        spa: '单页 / SPA (Single-Page App)'
+    },
+    project_dist_dir: '打包结果目录 (*)',
     project_i18n_enabled: '多语言支持 (i18n)',
     project_i18n_type: '多语言 (i18n) 模式',
-    project_dist_dir: '打包结果目录 (*)',
+    project_mode: '项目模式',
     project_dist_dir_needed: '请输入项目打包结果目录',
 
     project_mode_isomorphic: '同构 (Isomorphic)',

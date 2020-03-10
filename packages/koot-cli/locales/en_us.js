@@ -30,14 +30,25 @@ module.exports = {
     'koot-cli_updated_suggestion':
         'Besides, we strongly suggest that use the following command to use koot-cli, so that it will be the latest version everytime:',
 
-    project_name_required: 'Project name (*)',
+    project_name_required: 'App name (*)',
     project_name_needed: "Please input project's name",
-    project_description: 'Project description',
-    project_author: 'Author name (recommended to be NPM user name)',
+    project_description: 'App description',
+    project_author: 'Developer (recommended to be NPM user name)',
+    project_boilerplate: 'Boilerplate',
+    project_boilerplates: {
+        base: 'Base (Recommended for Web App)',
+        serverless: 'Serverless mode for Base boilerplate',
+        'cm-system': 'System (Recommended for Admin/System App)'
+    },
+    project_type: 'App type',
+    project_types: {
+        ssr: 'SSR (Server-Side Rendering)',
+        spa: 'SPA (Single-Page App)'
+    },
+    project_dist_dir: 'Dist-directory (*)',
     project_mode: 'Project mode',
     project_i18n_enabled: 'Multi-language (i18n) support',
     project_i18n_type: 'Multi-language (i18n) type',
-    project_dist_dir: 'Dist-directory (*)',
     project_dist_dir_needed: "Please input project's dist-directory",
 
     project_mode_isomorphic: 'Isomorphic',

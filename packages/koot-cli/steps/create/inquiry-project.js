@@ -22,30 +22,93 @@ const spinner = require('../../lib/spinner');
  * @returns
  */
 module.exports = async (options = {}) => {
+    const project = {};
+    const prompt = async (options = {}) => {
+        const answers = await inquirer.prompt(
+            Array.isArray(options) ? options : [options]
+        );
+        for (const [key, value] of Object.entries(answers)) {
+            if (typeof project[key] !== 'undefined')
+                throw new Error(`property '${key}' exists!`);
+            project[key] = value;
+        }
+    };
+
+    // ========================================================================
+
     const { isCMNetwork } = options;
 
-    const project = await inquirer.prompt([
-        {
-            type: 'input',
-            name: 'name',
-            message: _('project_name_required'),
-            validate: input => {
-                if (input === 0 || input) return true;
-                return _('project_name_needed');
-            }
-        },
-        {
-            type: 'input',
-            name: 'description',
-            message: _('project_description')
-        },
-        {
-            type: 'input',
-            name: 'author',
-            message: _('project_author')
+    // ========================================================================
+    //
+    // 项目名称
+    //
+    // ========================================================================
+    await prompt({
+        type: 'input',
+        name: 'name',
+        message: _('project_name_required'),
+        validate: input => {
+            if (input === 0 || input) return true;
+            return _('project_name_needed');
         }
-    ]);
+    });
 
+    // ========================================================================
+    //
+    // 项目描述
+    //
+    // ========================================================================
+    await prompt({
+        type: 'input',
+        name: 'description',
+        message: _('project_description')
+    });
+
+    // ========================================================================
+    //
+    // 项目类型
+    //
+    // ========================================================================
+    const appTypes = ['ssr', 'spa'];
+    await prompt({
+        type: 'list',
+        name: 'type',
+        message: _('project_type'),
+        choices: appTypes.map(value => ({
+            name: _('project_types')[value],
+            value
+        })),
+        default: appTypes[0]
+    });
+
+    // ========================================================================
+    //
+    // 模板类型
+    //
+    // ========================================================================
+    const boilerplateTypes = ['base', 'serverless'];
+    if (isCMNetwork) boilerplateTypes.push('cm-system');
+    await prompt({
+        type: 'list',
+        name: 'boilerplate',
+        message: _('project_boilerplate'),
+        choices: boilerplateTypes.map(value => ({
+            name: _('project_boilerplates')[value],
+            value
+        })),
+        default: boilerplateTypes[0]
+    });
+
+    // ========================================================================
+    //
+    // 开发者
+    //
+    // ========================================================================
+    await prompt({
+        type: 'input',
+        name: 'author',
+        message: _('project_author')
+    });
     // 分析用户名
     if (typeof project.author === 'number') {
         project.author = '' + project.author;
@@ -63,7 +126,29 @@ module.exports = async (options = {}) => {
         delete project.author;
     }
 
-    // JS框架
+    // ========================================================================
+    //
+    // 打包结果路径
+    //
+    // ========================================================================
+    Object.assign(
+        project,
+        await inquirer.prompt({
+            type: 'input',
+            name: 'dist',
+            message: _('project_dist_dir'),
+            default: './dist',
+            validate: input => {
+                if (input === 0 || input) return true;
+                return _('project_dist_dir_needed');
+            }
+        })
+    );
+    while (['\\', '/'].includes(project.dist.substr(project.dist.length - 1))) {
+        project.dist = project.dist.substr(0, project.dist.length - 1);
+    }
+
+    // UI 开发框架
     project.framework = 'react';
 
     // 项目模式
@@ -108,24 +193,6 @@ module.exports = async (options = {}) => {
     // if (project.i18n) {
 
     // }
-
-    // 打包结果路径
-    Object.assign(
-        project,
-        await inquirer.prompt({
-            type: 'input',
-            name: 'dist',
-            message: _('project_dist_dir'),
-            default: './dist',
-            validate: input => {
-                if (input === 0 || input) return true;
-                return _('project_dist_dir_needed');
-            }
-        })
-    );
-    while (['\\', '/'].includes(project.dist.substr(project.dist.length - 1))) {
-        project.dist = project.dist.substr(0, project.dist.length - 1);
-    }
 
     return project;
 };
