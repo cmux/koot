@@ -34,6 +34,15 @@ const translate = (...args) => {
     const keys = [];
 
     if (__SERVER__ && __DEV__) l = locales[global.__KOOT_LOCALEID__];
+    // SPA: 进一步确保语言包可用
+    if (
+        typeof window !== 'undefined' &&
+        window.__KOOT_SSR_STATE__ &&
+        Object.keys(window.__KOOT_SSR_STATE__.locales).length &&
+        (!l || !Object.keys(l).length)
+    ) {
+        l = window.__KOOT_SSR_STATE__.locales;
+    }
 
     args.forEach((value, index) => {
         // 如果最后一个参数是 Object，表示为选项

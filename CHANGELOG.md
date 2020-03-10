@@ -1,5 +1,15 @@
 ## [Unreleased]
 
+**koot**
+
+-   优化
+    -   SPA: 进一步优化多语言可靠性
+
+**koot-boilerplate** (模板项目)
+
+-   更新 _VS Code_ 中有关 _ESLint_ 的配置
+-   更新 SPA 多语言相关代码
+
 ## [0.13.0] - 2020-03-05
 
 -   更新依赖包 minor 和 patch 版本号

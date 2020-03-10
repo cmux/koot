@@ -19,7 +19,7 @@ import getLang from '../../i18n/spa/get-lang';
             return;
         }
         const js = document.createElement('script');
-        js.setAttribute('data-koot-load-locale', window.__KOOT_LOCALEID__);
+        js.setAttribute(attrName, window.__KOOT_LOCALEID__);
         js.setAttribute('defer', '');
         js.onload = function() {
             // console.log('locale file loaded', window.__KOOT_LOCALEID__);
