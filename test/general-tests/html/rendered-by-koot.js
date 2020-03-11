@@ -14,5 +14,7 @@ module.exports = async html => {
             '\\.'
         )} --\\>`
     );
+
+    if (!regex.test(html)) console.warn(version, regex);
     expect(regex.test(html)).toBe(true);
 };

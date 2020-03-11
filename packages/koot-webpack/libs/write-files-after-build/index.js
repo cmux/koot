@@ -4,6 +4,8 @@ const path = require('path');
 const getCwd = require('koot/utils/get-cwd');
 const resolveDir = require('koot/utils/resolve-dir');
 
+const isServerBundlingAllModules = require('../../libs/is-server-bundling-all-modules');
+
 // ============================================================================
 // Commons
 // ============================================================================
@@ -24,7 +26,12 @@ const extendAndFilterDistPackageDependencies = async (dependencies = {}) => {
     }
 
     /** 过滤项，满足条件的依赖将被移除 */
-    const ignores = [/^koot$/, /^koot-webpack$/, /^@types\//];
+    const ignores = [
+        /^koot$/,
+        /^koot-webpack$/,
+        /^@types\//
+        // ...require('../../constants/ignored-dist-modules')
+    ];
     if (process.env.KOOT_SERVER_MODE === 'serverless') {
         ignores.push(/^pm2$/);
     }
@@ -100,7 +107,7 @@ module.exports = async (kootConfig = {}) => {
     /** 项目目录 */
     const cwd = getCwd();
     /** 当前是否是测试模式 */
-    const kootTest = JSON.parse(process.env.KOOT_TEST_MODE);
+    // const kootTest = JSON.parse(process.env.KOOT_TEST_MODE);
     /** 项目的 Koot.js 配置对象 */
     // const kootConfig = {
     //     ...require('koot/defaults/koot-config'),
@@ -116,14 +123,19 @@ module.exports = async (kootConfig = {}) => {
         const packageProject = await fs.readJson(
             path.resolve(cwd, 'package.json')
         );
-
         /** 打包目录中的 package.json 内容对象 */
-        const pkg = Object.assign({}, packageJson, {
-            name: `${packageProject.name}-server`,
-            dependencies: await extendAndFilterDistPackageDependencies(
-                packageProject.dependencies
-            )
-        });
+        const pkg = { ...packageJson, name: `${packageProject.name}-server` };
+
+        if (isServerBundlingAllModules()) {
+            delete pkg.dependencies;
+            delete pkg.devDependencies;
+        } else {
+            Object.assign(pkg, {
+                dependencies: await extendAndFilterDistPackageDependencies(
+                    packageProject.dependencies
+                )
+            });
+        }
 
         // 复制 ./files 下的所有文件到打包结果目录
         await fs.copy(path.resolve(__dirname, 'files'), dist, {
@@ -135,18 +147,18 @@ module.exports = async (kootConfig = {}) => {
             spaces: 4
         });
 
-        if (kootTest) {
-            Object.assign(pkg, packageJson, {
-                devDependencies: packageProject.devDependencies || {}
-            });
-            if (/file:/.test(pkg.dependencies.koot)) {
-                pkg.dependencies.koot = pkg.dependencies.koot.replace(
-                    /file:/,
-                    'file:../'
-                );
-            }
-            await fs.writeJson(path.resolve(dist, 'package.json'), pkg);
-        }
+        // if (kootTest) {
+        //     Object.assign(pkg, packageJson, {
+        //         devDependencies: packageProject.devDependencies || {}
+        //     });
+        //     if (/file:/.test(pkg.dependencies.koot)) {
+        //         pkg.dependencies.koot = pkg.dependencies.koot.replace(
+        //             /file:/,
+        //             'file:../'
+        //         );
+        //     }
+        //     await fs.writeJson(path.resolve(dist, 'package.json'), pkg);
+        // }
 
         if (process.env.KOOT_SERVER_MODE !== 'serverless') {
             dotfiles.push('dockerignore');

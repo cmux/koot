@@ -13,6 +13,7 @@ const {
 } = require('koot/defaults/before-build');
 const getPathnameProjectConfigFile = require('koot/utils/get-pathname-project-config-file');
 // const readBaseConfig = require('koot/utils/read-base-config')
+const isServerBundlingAllModules = require('../libs/is-server-bundling-all-modules');
 
 // 打包结果目录
 const outputPath = 'dist';
@@ -253,16 +254,30 @@ const needBabelHandleList = ['koot'];
 // 所以把 package.json 里描述的依赖过滤掉，只打包自己写的代码
 // 注：在上线的时候需要需要自行安装 package.json 的依赖包
 const filterExternalsModules = () => {
+    if (isServerBundlingAllModules()) return [];
+
     const externals = []
         .concat(fs.readdirSync(path.resolve(__dirname, '../../../')))
         .concat(fs.readdirSync(path.resolve(process.cwd(), 'node_modules')))
         .concat(['react-dom/server'])
-        .filter(x => ['.bin'].concat(needBabelHandleList).indexOf(x) === -1)
-        .filter(x => !/^sp-/.test(x))
-        .filter(x => !/^super-/.test(x))
-        .filter(x => !/^koot-/.test(x))
-        .filter(x => !/^@/.test(x))
-        .filter(x => !/^workbox($|-)/.test(x))
+        .filter(
+            x =>
+                !['.bin'].concat(needBabelHandleList).includes(x) &&
+                !/^sp-/.test(x) &&
+                !/^koot-/.test(x) &&
+                !/^@/.test(x) &&
+                !/^workbox($|-)/.test(
+                    x
+                ) /** &&
+                    require('../constants/ignored-dist-modules').every(
+                        regex => !regex.test(x)
+                    ) */
+        )
+        // .filter(x => !/^sp-/.test(x))
+        // .filter(x => !/^super-/.test(x))
+        // .filter(x => !/^koot-/.test(x))
+        // .filter(x => !/^@/.test(x))
+        // .filter(x => !/^workbox($|-)/.test(x))
         .reduce((ext, mod) => {
             ext[mod] = ['commonjs', mod].join(' '); // eslint-disable-line no-param-reassign
             // ext[mod] = mod + '' // eslint-disable-line no-param-reassign
@@ -271,6 +286,8 @@ const filterExternalsModules = () => {
 
     externals['@babel/register'] = ['commonjs', '@babel/register'].join(' ');
     // externals['@babel/polyfill'] = '@babel/polyfill'
+
+    // console.log({ externals });
 
     return externals;
 };
