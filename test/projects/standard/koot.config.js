@@ -94,7 +94,8 @@ module.exports = {
         // protocol: 'koot',
     },
     koaStatic: {
-        index: 'test.photo.jpg'
+        index: 'test.photo.jpg',
+        gzip: true
     },
     serverBefore: './server/lifecycle/before',
     serverAfter: './server/lifecycle/after',

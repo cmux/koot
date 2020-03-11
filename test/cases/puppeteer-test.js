@@ -186,12 +186,18 @@ const criticalAssetsShouldBeGzip = async (origin, dist, browser) => {
     await context.close();
     if (needToClose) await browser.close();
 
-    if (headers['content-encoding'] !== 'gzip') {
-        console.log(fullUrl, dist);
+    if (parseInt(headers['content-length']) > 50) {
+        if (headers['content-encoding'] !== 'gzip') {
+            console.warn(
+                fullUrl,
+                dist,
+                parseInt(headers['content-length']),
+                text.length
+            );
+        }
+        expect(headers['content-encoding']).toBe('gzip');
+        expect(parseInt(headers['content-length']) <= text.length).toBe(true);
     }
-
-    expect(headers['content-encoding']).toBe('gzip');
-    expect(parseInt(headers['content-length']) <= text.length).toBe(true);
 };
 
 /**

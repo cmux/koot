@@ -282,6 +282,9 @@ const testFull = (dir, configFileName) => {
                     );
                 }
                 expect(failedResponse.length).toBe(0);
+                if (errors.length) {
+                    errors.forEach(e => console.error(e));
+                }
                 expect(errors.length).toBe(0);
 
                 // 测试: 多语言
