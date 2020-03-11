@@ -34,22 +34,39 @@ module.exports = {
     project_name_needed: "Please input project's name",
     project_description: 'App description',
     project_author: 'Developer (recommended to be NPM user name)',
-    project_boilerplate: 'Boilerplate',
-    project_boilerplates: {
-        base: 'Base (Recommended for Web App)',
-        serverless: 'Serverless mode for Base boilerplate',
-        'cm-system': 'System (Recommended for Admin/System App)'
-    },
     project_type: 'App type',
     project_types: {
         ssr: 'SSR (Server-Side Rendering)',
-        spa: 'SPA (Single-Page App)'
+        ssr_short: 'SSR',
+        spa: 'SPA (Single-Page App)',
+        spa_sort: 'SPA'
+    },
+    project_boilerplate: 'Boilerplate',
+    project_boilerplates: {
+        base: 'Base (Recommended for Web App)',
+        base_short: 'Base',
+        serverless: 'Serverless mode for Base boilerplate',
+        serverless_short: 'Serverless',
+        'cm-system': 'System (Recommended for Admin/System App)',
+        'cm-system_short': 'System'
+    },
+    project_project_dir: 'Source directory (*)',
+    project_project_dir_types: {
+        sub: 'Sub folder with app name',
+        curr: 'Current folder',
+        input: 'Select...'
+    },
+    project_project_dir_select: 'Select source directory',
+    project_package_manager: 'Package manager',
+    project_package_managers: {
+        yarn: 'Yarn (v1)',
+        npm: 'NPM'
     },
     project_dist_dir: 'Dist-directory (*)',
+    project_dist_dir_needed: "Please input project's dist-directory",
     project_mode: 'Project mode',
     project_i18n_enabled: 'Multi-language (i18n) support',
     project_i18n_type: 'Multi-language (i18n) type',
-    project_dist_dir_needed: "Please input project's dist-directory",
 
     project_mode_isomorphic: 'Isomorphic',
     project_mode_spa: 'Single Page App (SPA)',

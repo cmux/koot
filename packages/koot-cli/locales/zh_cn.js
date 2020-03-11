@@ -34,22 +34,39 @@ module.exports = {
     project_name_needed: '请输入项目名称',
     project_description: '项目描述',
     project_author: '开发者 (推荐填写 NPM 用户名)',
-    project_boilerplate: '模板',
-    project_boilerplates: {
-        base: '基础模板 (推荐 Web 项目使用)',
-        serverless: 'Serverless 模式的基础模板',
-        'cm-system': '系统模板 (推荐管理/后台系统项目使用)'
-    },
     project_type: '项目类型',
     project_types: {
         ssr: '同构 / SSR (Server-Side Rendering)',
-        spa: '单页 / SPA (Single-Page App)'
+        ssr_short: '同构 / SSR',
+        spa: '单页 / SPA (Single-Page App)',
+        spa_sort: '单页 / SPA'
+    },
+    project_boilerplate: '模板',
+    project_boilerplates: {
+        base: '基础模板 (推荐 Web 项目使用)',
+        base_short: '基础',
+        serverless: 'Serverless 模式的基础模板',
+        serverless_short: 'Serverless',
+        'cm-system': '系统模板 (推荐管理/后台系统项目使用)',
+        'cm-system_short': '系统'
+    },
+    project_project_dir: '项目代码目录 (*)',
+    project_project_dir_types: {
+        sub: '以项目名命名的子目录',
+        curr: '当前目录',
+        input: '选择...'
+    },
+    project_project_dir_select: '选择代码目录',
+    project_package_manager: '包管理器',
+    project_package_managers: {
+        yarn: 'Yarn (v1)',
+        npm: 'NPM'
     },
     project_dist_dir: '打包结果目录 (*)',
+    project_dist_dir_needed: '请输入项目打包结果目录',
     project_i18n_enabled: '多语言支持 (i18n)',
     project_i18n_type: '多语言 (i18n) 模式',
     project_mode: '项目模式',
-    project_dist_dir_needed: '请输入项目打包结果目录',
 
     project_mode_isomorphic: '同构 (Isomorphic)',
     project_mode_spa: '单页面应用 (SPA)',

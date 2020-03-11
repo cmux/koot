@@ -19,12 +19,9 @@
     },
     "scripts": {
         "start": "koot-start",
-        "start:server": "koot-start --no-build",
         "build": "koot-build",
-        "build:spa": "koot-build --type spa",
         "dev": "koot-dev",
         "dev:no-open": "koot-dev --no-open",
-        "dev:spa": "koot-dev --type spa",
         "analyze": "koot-analyze",
         "eslint": "eslint \"src/**/*.+(js|jsx)\"",
         "check-types": "tsc --noEmit",

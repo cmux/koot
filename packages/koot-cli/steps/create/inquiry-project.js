@@ -8,11 +8,20 @@
  * @property {number} y - The Y Coordinate
  */
 
+const path = require('path');
 const inquirer = require('inquirer');
 const npmEmail = require('npm-email');
 
 const _ = require('../../lib/translate');
 const spinner = require('../../lib/spinner');
+
+const getProjectFolder = require('./get-project-folder');
+
+// ============================================================================
+
+inquirer.registerPrompt('directory', require('inquirer-select-directory'));
+
+// ============================================================================
 
 /**
  * 询问项目信息
@@ -22,17 +31,22 @@ const spinner = require('../../lib/spinner');
  * @returns
  */
 module.exports = async (options = {}) => {
-    const project = {};
+    const app = {
+        cwd: process.cwd()
+    };
     const prompt = async (options = {}) => {
         const answers = await inquirer.prompt(
             Array.isArray(options) ? options : [options]
         );
         for (const [key, value] of Object.entries(answers)) {
-            if (typeof project[key] !== 'undefined')
+            if (typeof app[key] !== 'undefined')
                 throw new Error(`property '${key}' exists!`);
-            project[key] = value;
+            app[key] = value;
         }
     };
+    const defaultEventEmitterMaxListeners = require('events').EventEmitter
+        .defaultMaxListeners;
+    require('events').EventEmitter.defaultMaxListeners = 30;
 
     // ========================================================================
 
@@ -52,6 +66,7 @@ module.exports = async (options = {}) => {
             return _('project_name_needed');
         }
     });
+    // TODO sanitize
 
     // ========================================================================
     //
@@ -76,7 +91,8 @@ module.exports = async (options = {}) => {
         message: _('project_type'),
         choices: appTypes.map(value => ({
             name: _('project_types')[value],
-            value
+            value,
+            short: _('project_types')[value + '_short']
         })),
         default: appTypes[0]
     });
@@ -94,7 +110,8 @@ module.exports = async (options = {}) => {
         message: _('project_boilerplate'),
         choices: boilerplateTypes.map(value => ({
             name: _('project_boilerplates')[value],
-            value
+            value,
+            short: _('project_boilerplates')[value + '_short']
         })),
         default: boilerplateTypes[0]
     });
@@ -110,89 +127,112 @@ module.exports = async (options = {}) => {
         message: _('project_author')
     });
     // 分析用户名
-    if (typeof project.author === 'number') {
-        project.author = '' + project.author;
+    if (typeof app.author === 'number') {
+        app.author = '' + app.author;
     }
-    if (typeof project.author === 'string' && project.author !== '') {
-        const name = project.author;
-        project.author = {
+    if (typeof app.author === 'string' && app.author !== '') {
+        const name = app.author;
+        app.author = {
             name
         };
         const waiting = spinner();
         const email = await npmEmail(name).catch(() => {});
         waiting.stop();
-        if (email) project.author.email = email;
+        if (email) app.author.email = email;
     } else {
-        delete project.author;
+        delete app.author;
     }
+
+    // ========================================================================
+    //
+    // 项目路径
+    //
+    // ========================================================================
+    await prompt({
+        type: 'list',
+        name: 'dest',
+        message: _('project_project_dir'),
+        choices: [
+            (() => {
+                const dest = `./${app.name}`;
+                return {
+                    name: _('project_project_dir_types')['sub'] + ` (${dest})`,
+                    value: path.resolve(app.cwd, dest),
+                    short: dest
+                };
+            })(),
+            (() => {
+                const dest = `./`;
+                return {
+                    name: _('project_project_dir_types')['curr'] + ` (${dest})`,
+                    value: path.resolve(app.cwd, dest),
+                    short: dest
+                };
+            })(),
+            {
+                name: _('project_project_dir_types')['input'],
+                value: true
+                // short: '...'
+            }
+        ]
+    });
+    if (app.dest === true) {
+        Object.assign(
+            app,
+            await inquirer.prompt({
+                type: 'directory',
+                name: 'dest',
+                message: _('project_project_dir_select'),
+                basePath: `./`
+            })
+        );
+    }
+    Object.assign(app, await getProjectFolder(app.dest));
+
+    // ========================================================================
+    //
+    // 包管理器
+    //
+    // ========================================================================
+    await prompt({
+        type: 'list',
+        name: 'packageManager',
+        message: _('project_package_manager'),
+        choices: Object.entries(_('project_package_managers')).map(
+            ([key, value]) => ({
+                name: value,
+                value: key,
+                short: _('project_package_managers')[key + '_short']
+            })
+        )
+    });
 
     // ========================================================================
     //
     // 打包结果路径
     //
     // ========================================================================
-    Object.assign(
-        project,
-        await inquirer.prompt({
-            type: 'input',
-            name: 'dist',
-            message: _('project_dist_dir'),
-            default: './dist',
-            validate: input => {
-                if (input === 0 || input) return true;
-                return _('project_dist_dir_needed');
-            }
-        })
-    );
-    while (['\\', '/'].includes(project.dist.substr(project.dist.length - 1))) {
-        project.dist = project.dist.substr(0, project.dist.length - 1);
-    }
-
-    // UI 开发框架
-    project.framework = 'react';
-
-    // 项目模式
-    // Object.assign(project,
+    // Object.assign(
+    //     app,
     //     await inquirer.prompt({
-    //         type: 'list',
-    //         name: 'mode',
-    //         message: _('project_mode'),
-    //         choices: [
-    //             {
-    //                 name: _('project_mode_isomorphic'),
-    //                 value: 'isomorphic'
-    //             },
-    //             {
-    //                 name: _('project_mode_spa'),
-    //                 value: 'spa'
-    //             },
-    //         ],
-    //         default: 'isomorphic'
+    //         type: 'input',
+    //         name: 'dist',
+    //         message: _('project_dist_dir'),
+    //         default: './dist',
+    //         validate: input => {
+    //             if (input === 0 || input) return true;
+    //             return _('project_dist_dir_needed');
+    //         }
     //     })
-    // )
-
-    // 多语言
-    // Object.assign(project,
-    //     await inquirer.prompt({
-    //         type: 'list',
-    //         name: 'i18n',
-    //         message: _('project_i18n_enabled'),
-    //         choices: [
-    //             {
-    //                 name: _('yes'),
-    //                 value: true
-    //             },
-    //             {
-    //                 name: _('no'),
-    //                 value: false
-    //             },
-    //         ],
-    //         default: true
-    //     })
-    // )
-    // if (project.i18n) {
-
+    // );
+    // while (['\\', '/'].includes(app.dist.substr(app.dist.length - 1))) {
+    //     app.dist = app.dist.substr(0, app.dist.length - 1);
     // }
 
-    return project;
+    // UI 开发框架
+    // app.framework = 'react';
+
+    require('events').EventEmitter.defaultMaxListeners = defaultEventEmitterMaxListeners;
+
+    return app;
 };

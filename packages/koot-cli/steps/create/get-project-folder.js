@@ -12,8 +12,11 @@ const spinner = require('../../lib/spinner');
  * @param {Object}} project
  */
 module.exports = async (project = {}) => {
+    const cwd = project.cwd || process.cwd();
+
     /** 目标目录路径 */
-    let dest = path.resolve(process.cwd(), project.name);
+    let dest =
+        typeof project === 'string' ? project : path.resolve(cwd, project.name);
     /** 目标目录是否已经存在 */
     let destExists = false;
 
@@ -47,11 +50,11 @@ module.exports = async (project = {}) => {
                     type: 'input',
                     name: 'value',
                     message: _('input_dir'),
-                    default: `./${project.name}`,
+                    default: `./${project.name || ''}`,
                     validate: input => {
                         if (input === 0 || input) {
                             try {
-                                const dest = path.resolve(process.cwd(), input);
+                                const dest = path.resolve(cwd, input);
                                 if (fs.existsSync(dest)) return _('dir_exist');
                             } catch (e) {
                                 return _('invalid_input');
@@ -61,7 +64,7 @@ module.exports = async (project = {}) => {
                         return _('invalid_input');
                     }
                 });
-                dest = path.resolve(process.cwd(), input.value);
+                dest = path.resolve(cwd, input.value);
                 break;
             }
             default: {
@@ -69,5 +72,12 @@ module.exports = async (project = {}) => {
         }
     }
 
-    return { dest, destExists };
+    let destRelative = path.relative(cwd, dest);
+    if (!/^\./.test(destRelative)) destRelative = `./${destRelative}`;
+
+    return {
+        dest,
+        destExists,
+        destRelative
+    };
 };

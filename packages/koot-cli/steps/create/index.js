@@ -47,11 +47,15 @@ module.exports = async (options = {}) => {
 
         const project = await require('./inquiry-project')({ isCMNetwork });
 
-        const r = await require('./get-project-folder')(project);
-        dest = r.dest;
-        destExists = r.destExists;
+        // const r = await require('./get-project-folder')(project);
+        dest = project.dest;
+        destExists = project.destExists;
 
-        await require('./download-boilerplate')(project, dest);
+        console.warn(project);
+
+        return;
+
+        await require('./download-boilerplate')(project);
         await modifyPackageJsonAddKootVersion(dest);
 
         console.log('');
