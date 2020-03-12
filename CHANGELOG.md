@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.13.4] - 2020-03-13
+
 -   **新特性**
     -   **新配置项** `serverPackAll` - 针对 SSR 项目的服务器打包，设定是否打入所有 _Module_。详情请参见文档 [配置/serverPackAll](https://koot.js.org/#/config?id=serverPackAll)
 
