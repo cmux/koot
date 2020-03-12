@@ -10,6 +10,7 @@
  * - devDll
  * - devHmr
  * - distClientAssetsDirName
+ * - serverPackAll
  * @async
  * @param {Object} config
  * @void
