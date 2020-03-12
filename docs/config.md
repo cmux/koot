@@ -959,7 +959,9 @@ module.exports = {
 -   默认值: _Serverless_ 模式为 `true`，其余情况为 `false`
 -   **仅针对**: 生产环境，服务器端
 
-设定是否打入所有 _Module_
+设定是否打入所有 _Module_。
+
+⚠ 开启该选项后，服务器进程将会占用更多的内存空间
 
 ### webpackBefore
 
