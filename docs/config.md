@@ -953,6 +953,14 @@ module.exports = {
 
 -   文件 `/web/src/assets/public/favicon.ico` 可使用以下 URL 访问: `/favicon.ico`
 
+### serverPackAll
+
+-   类型: `boolean`
+-   默认值: _Serverless_ 模式为 `true`，其余情况为 `false`
+-   **仅针对**: 生产环境，服务器端
+
+设定是否打入所有 _Module_
+
 ### webpackBefore
 
 -   类型: `Function`

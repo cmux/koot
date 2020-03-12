@@ -253,8 +253,8 @@ const needBabelHandleList = ['koot'];
 // webpack 在打包服务端依赖 node_modules 的时候易出错，
 // 所以把 package.json 里描述的依赖过滤掉，只打包自己写的代码
 // 注：在上线的时候需要需要自行安装 package.json 的依赖包
-const filterExternalsModules = () => {
-    if (isServerBundlingAllModules()) return [];
+const filterExternalsModules = (kootConfig = {}) => {
+    if (isServerBundlingAllModules(kootConfig)) return [];
 
     const externals = []
         .concat(fs.readdirSync(path.resolve(__dirname, '../../../')))

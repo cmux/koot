@@ -9,5 +9,6 @@ module.exports = Object.assign({}, baseConfig, {
             return config;
         }
         return await baseConfig.webpackConfig(...args);
-    }
+    },
+    serverPackAll: true
 });

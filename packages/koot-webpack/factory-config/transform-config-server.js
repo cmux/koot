@@ -59,10 +59,14 @@ module.exports = async (kootBuildConfig = {}) => {
             (serverless || process.env.KOOT_SERVER_MODE === 'serverless')
     );
 
-    const configTargetDefault = await createTargetDefaultConfig({
-        pathRun: getCwd(),
-        clientDevServerPort
-    });
+    const configTargetDefault = await createTargetDefaultConfig(
+        {
+            pathRun: getCwd(),
+            clientDevServerPort
+        },
+        undefined,
+        kootBuildConfig
+    );
 
     /** @type {Object} 当前环境的 webpack 配置对象 */
     const result = new DefaultWebpackConfig()

@@ -23,6 +23,7 @@ module.exports = {
     classNameHashLength: 6,
     bundleVersionsKeep: 2,
     exportGzip: true,
+    // serverPackAll: true,
 
     devPort: 3080,
     devServiceWorker: false

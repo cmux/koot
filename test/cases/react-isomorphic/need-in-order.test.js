@@ -41,7 +41,10 @@
  * - 二号
  *     - `"__assets__"`
  *
- * 四号：调整了 Webpack 配置的 `output.publicPath`。其他内容同默认
+ * 四号：
+ * - 调整了 Webpack 配置的 `output.publicPath`
+ * - serverPackAll: true
+ * - 其他内容同默认
  */
 
 // Import modules =============================================================

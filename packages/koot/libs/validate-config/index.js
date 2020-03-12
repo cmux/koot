@@ -18,6 +18,7 @@ const {
 } = require('../../defaults/before-build');
 const log = require('../../libs/log');
 const __ = require('../../utils/translate');
+// const isSPA = require('./is-spa');
 
 /**
  * 根据 koot.config.js 生成 koot.js 和打包配置对象，并将必要信息写入环境变量
@@ -247,6 +248,9 @@ const finalValidate = async (config = {}) => {
     if (config.serverless === true) {
         // 更新环境变量
         process.env.KOOT_SERVER_MODE = 'serverless';
+        if (typeof config.serverPackAll === 'undefined') {
+            config.serverPackAll = true;
+        }
     }
 
     // 添加 placeholder

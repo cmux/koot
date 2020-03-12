@@ -126,7 +126,7 @@ module.exports = async (kootConfig = {}) => {
         /** 打包目录中的 package.json 内容对象 */
         const pkg = { ...packageJson, name: `${packageProject.name}-server` };
 
-        if (isServerBundlingAllModules()) {
+        if (isServerBundlingAllModules(kootConfig)) {
             delete pkg.dependencies;
             delete pkg.devDependencies;
         } else {
