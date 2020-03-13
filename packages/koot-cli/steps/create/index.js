@@ -7,8 +7,11 @@ const getLocales = require('../../lib/get-locales');
 const _ = require('../../lib/translate');
 const checkIsCMNetwork = require('../../lib/check-is-cm-network');
 const spinner = require('../../lib/spinner');
-
 const modifyPackageJsonAddKootVersion = require('../../lib/modify-package-json/add-koot-version');
+
+const inquiry = require('./inquiry-project');
+const download = require('./download-boilerplate');
+const modify = require('./modify-boilerplate');
 
 /**
  * 创建 Koot.js 项目
@@ -45,17 +48,19 @@ module.exports = async (options = {}) => {
             console.log('');
         }
 
-        const project = await require('./inquiry-project')({ isCMNetwork });
+        const project = await inquiry({ isCMNetwork });
 
         // const r = await require('./get-project-folder')(project);
         dest = project.dest;
         destExists = project.destExists;
 
-        console.warn(project);
+        // console.warn(project);
+
+        await download(project.dest, project.boilerplate);
+        await modify(project);
 
         return;
 
-        await require('./download-boilerplate')(project);
         await modifyPackageJsonAddKootVersion(dest);
 
         console.log('');

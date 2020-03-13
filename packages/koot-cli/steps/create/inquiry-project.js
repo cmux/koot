@@ -1,17 +1,19 @@
+require('../../types');
+
 /**
  * 步骤: 输入 - 项目名
  */
 
 /**
- * @typedef {Object} ProjectInuiryResult
- * @property {number} x - The X Coordinate
- * @property {number} y - The Y Coordinate
+ * @typedef {Object} Options
+ * @property {boolean} [isCMNetwork=false] 当前是否处于 CM 内网
  */
 
 const path = require('path');
 const inquirer = require('inquirer');
 const npmEmail = require('npm-email');
 
+const sanitize = require('../../lib/sanitize-dir-name');
 const _ = require('../../lib/translate');
 const spinner = require('../../lib/spinner');
 
@@ -21,16 +23,21 @@ const getProjectFolder = require('./get-project-folder');
 
 inquirer.registerPrompt('directory', require('inquirer-select-directory'));
 
+/** @type {AppType[]} */
+const appTypes = ['ssr', 'spa'];
+/** @type {BoilerplateType[]} */
+const boilerplateTypes = ['base', 'serverless'];
+
 // ============================================================================
 
 /**
  * 询问项目信息
  * @async
- * @param {Object} [options={}]
- * @param {boolean} [options.isCMNetwork=false] 是否处于 CM 内网
- * @returns
+ * @param {Options} [options={}]
+ * @returns {Promise<AppInfo>}
  */
 module.exports = async (options = {}) => {
+    /** @type {AppInfo} */
     const app = {
         cwd: process.cwd()
     };
@@ -50,7 +57,7 @@ module.exports = async (options = {}) => {
 
     // ========================================================================
 
-    const { isCMNetwork } = options;
+    // const { isCMNetwork } = options;
 
     // ========================================================================
     //
@@ -66,7 +73,6 @@ module.exports = async (options = {}) => {
             return _('project_name_needed');
         }
     });
-    // TODO sanitize
 
     // ========================================================================
     //
@@ -84,7 +90,6 @@ module.exports = async (options = {}) => {
     // 项目类型
     //
     // ========================================================================
-    const appTypes = ['ssr', 'spa'];
     await prompt({
         type: 'list',
         name: 'type',
@@ -102,8 +107,8 @@ module.exports = async (options = {}) => {
     // 模板类型
     //
     // ========================================================================
-    const boilerplateTypes = ['base', 'serverless'];
-    if (isCMNetwork) boilerplateTypes.push('cm-system');
+    // TODO 解锁 CM 系统摸板
+    // if (isCMNetwork) boilerplateTypes.push('cm-system');
     await prompt({
         type: 'list',
         name: 'boilerplate',
@@ -154,7 +159,7 @@ module.exports = async (options = {}) => {
         message: _('project_project_dir'),
         choices: [
             (() => {
-                const dest = `./${app.name}`;
+                const dest = `./${sanitize(app.name, { replacement: '-' })}`;
                 return {
                     name: _('project_project_dir_types')['sub'] + ` (${dest})`,
                     value: path.resolve(app.cwd, dest),

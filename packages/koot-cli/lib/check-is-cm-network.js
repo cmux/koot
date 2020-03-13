@@ -6,13 +6,24 @@ const axios = require('axios');
  * @returns {boolean}
  */
 const isCM = async () => {
-    const res = await axios.get('https://uxapi.cmcm.com/api/get_network_info');
-    const data = res.data;
+    try {
+        const res = await axios.get(
+            'https://uxapi.cmcm.com/api/get_network_info'
+        );
+        const data = res.data;
 
-    if (!data || data.code !== 200 || !data.data || !data.data.is_cm_network)
+        if (
+            !data ||
+            data.code !== 200 ||
+            !data.data ||
+            !data.data.is_cm_network
+        )
+            return false;
+
+        return true;
+    } catch (e) {
         return false;
-
-    return true;
+    }
 };
 
 module.exports = isCM;
