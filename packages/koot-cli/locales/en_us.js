@@ -22,7 +22,7 @@ module.exports = {
     welcome_exist_current_super_project:
         'Koot CLI tool need [koot] to run while this project is using [super-project]. Do you want to upgrade to [koot]?',
 
-    current_version: 'Current CLI version: ',
+    current_version: 'CLI current version: ',
 
     'koot-cli_updated': 'koot-cli has updated',
     'koot-cli_updated_description':
@@ -36,10 +36,10 @@ module.exports = {
     project_author: 'Developer (recommended to be NPM user name)',
     project_type: 'App type',
     project_types: {
-        ssr: 'SSR (Server-Side Rendering)',
-        ssr_short: 'SSR',
-        spa: 'SPA (Single-Page App)',
-        spa_sort: 'SPA'
+        react: 'SSR (Server-Side Rendering)',
+        react_short: 'SSR',
+        'react-spa': 'SPA (Single-Page App)',
+        'react-spa_short': 'SPA'
     },
     project_boilerplate: 'Boilerplate',
     project_boilerplates: {
@@ -81,6 +81,8 @@ module.exports = {
 
     downloading_boilerplate: 'Downloading boilerplate',
     copying_boilerplate: 'Copying boilerplate',
+    installing_dependencies: 'Installing dependencies (May take a while)',
+    modifying_boilerplate: 'Modifying files',
 
     whats_next: "What's next?",
     step_goto_dir: 'Go to target directory',

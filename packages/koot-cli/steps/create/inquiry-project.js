@@ -24,7 +24,7 @@ const getProjectFolder = require('./get-project-folder');
 inquirer.registerPrompt('directory', require('inquirer-select-directory'));
 
 /** @type {AppType[]} */
-const appTypes = ['ssr', 'spa'];
+const appTypes = ['react', 'react-spa'];
 /** @type {BoilerplateType[]} */
 const boilerplateTypes = ['base', 'serverless'];
 

@@ -13,7 +13,7 @@
  */
 
 /**
- * @typedef {("ssr"|"spa")} AppType
+ * @typedef {("react"|"react-spa")} AppType
  */
 /**
  * @typedef {("base"|"serverless"|"cm-system")} BoilerplateType

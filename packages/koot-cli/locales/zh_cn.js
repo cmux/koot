@@ -22,7 +22,7 @@ module.exports = {
     welcome_exist_current_super_project:
         'Koot CLI 工具需要 [koot] 才能运行，但当前项目目前使用 [super-project]。是否升级到 [koot]？',
 
-    current_version: '当前 CLI 版本: ',
+    current_version: 'CLI 当前版本: ',
 
     'koot-cli_updated': 'koot-cli 已更新',
     'koot-cli_updated_description':
@@ -36,10 +36,10 @@ module.exports = {
     project_author: '开发者 (推荐填写 NPM 用户名)',
     project_type: '项目类型',
     project_types: {
-        ssr: '同构 / SSR (Server-Side Rendering)',
-        ssr_short: '同构 / SSR',
-        spa: '单页 / SPA (Single-Page App)',
-        spa_sort: '单页 / SPA'
+        react: '同构 / SSR (Server-Side Rendering)',
+        react_short: '同构 / SSR',
+        'react-spa': '单页 / SPA (Single-Page App)',
+        'react-spa_short': '单页 / SPA'
     },
     project_boilerplate: '模板',
     project_boilerplates: {
@@ -80,6 +80,8 @@ module.exports = {
 
     downloading_boilerplate: '下载模板',
     copying_boilerplate: '复制模板',
+    installing_dependencies: '安装依赖 (可能会运行一段时间)',
+    modifying_boilerplate: '更新文件',
 
     whats_next: '接下来……',
     step_goto_dir: '进入项目目录',

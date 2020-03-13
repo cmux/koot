@@ -57,19 +57,25 @@ module.exports = async (dest, type) => {
     /** @type {String} 下载临时目录 */
     const downloadTo = path.resolve(os.tmpdir(), `koot-new-${Date.now()}`);
 
-    await new Promise((resolve, reject) => {
-        downloadGitRepo(
-            download.github + (download.branch ? `#${download.branch}` : ''),
-            downloadTo,
-            err => {
-                if (err) return reject(err);
-                resolve();
-            }
-        );
-    });
+    try {
+        await new Promise((resolve, reject) => {
+            downloadGitRepo(
+                download.github +
+                    (download.branch ? `#${download.branch}` : ''),
+                downloadTo,
+                err => {
+                    if (err) return reject(err);
+                    resolve();
+                }
+            );
+        });
 
-    waitingDownloading.stop();
-    spinner(msg).finish();
+        waitingDownloading.stop();
+        spinner(msg).finish();
+    } catch (e) {
+        await fs.remove(downloadTo);
+        throw e;
+    }
 
     // ========================================================================
     //
@@ -103,66 +109,4 @@ module.exports = async (dest, type) => {
     // 标记完成
     waitingCopying.stop();
     spinner(msgCopying).finish();
-
-    // const pathPackage = path.resolve(tmp, 'package.json');
-    // const p = await fs.readJson(pathPackage);
-    // p.version = '1.0.0';
-    // if (typeof project.name === 'string') {
-    //     p.name = project.name;
-    // }
-    // if (typeof project.description === 'string' && project.description !== '') {
-    //     p.description = project.description;
-    // } else {
-    //     delete p.description;
-    // }
-    // if (typeof project.author === 'object') {
-    //     p.author = project.author;
-    // } else {
-    //     delete p.author;
-    // }
-    // if (false || project.dist) {
-    //     if (
-    //         !path.isAbsolute(project.dist) &&
-    //         !/^\.(\/|\\)/.test(project.dist.substr(0, 2))
-    //     ) {
-    //         project.dist = './' + project.dist;
-    //     }
-    //     const pathBuildConfig = await getConfigFile(tmp);
-    //     const buildConfig = await fs.readFile(pathBuildConfig, 'utf-8');
-    //     // const { name, dist } = require(pathBuildConfig);
-    //     const { name, dist } = {
-    //         name: 'Koot.js App',
-    //         dist: './dist'
-    //     };
-    //     const regexName = new RegExp(`([ ]*)name:[ ]*['"]${name}['"]`, 'gm');
-    //     const regexDist = new RegExp(`([ ]*)dist:[ ]*['"]${dist}['"]`, 'gm');
-    //     await fs.writeFile(
-    //         pathBuildConfig,
-    //         buildConfig
-    //             .replace(regexName, `$1name: "${project.name}"`)
-    //             .replace(regexDist, `$1dist: "${project.dist}"`),
-    //         'utf-8'
-    //     );
-
-    //     const pathBuildSpaConfig = path.resolve(tmp, 'koot.build.spa.js');
-    //     if (fs.existsSync(pathBuildSpaConfig)) {
-    //         const buildSpaConfig = await fs.readFile(
-    //             pathBuildSpaConfig,
-    //             'utf-8'
-    //         );
-    //         await fs.writeFile(
-    //             pathBuildSpaConfig,
-    //             buildSpaConfig.replace(
-    //                 regexDist,
-    //                 `dist: "${project.dist}-spa"`
-    //             ),
-    //             'utf-8'
-    //         );
-    //     }
-    // }
-
-    // 写入新的 package.json
-    // await fs.writeJson(pathPackage, p, {
-    //     spaces: 4
-    // });
 };
