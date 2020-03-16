@@ -26,7 +26,9 @@ inquirer.registerPrompt('directory', require('inquirer-select-directory'));
 /** @type {AppType[]} */
 const appTypes = ['react', 'react-spa'];
 /** @type {BoilerplateType[]} */
-const boilerplateTypes = ['base', 'serverless'];
+// const boilerplateTypes = ['base', 'serverless'];
+/** @type {ServerMode[]} */
+const serverModes = ['normal', 'serverless'];
 
 // ============================================================================
 
@@ -109,17 +111,36 @@ module.exports = async (options = {}) => {
     // ========================================================================
     // TODO 解锁 CM 系统摸板
     // if (isCMNetwork) boilerplateTypes.push('cm-system');
-    await prompt({
-        type: 'list',
-        name: 'boilerplate',
-        message: _('project_boilerplate'),
-        choices: boilerplateTypes.map(value => ({
-            name: _('project_boilerplates')[value],
-            value,
-            short: _('project_boilerplates')[value + '_short']
-        })),
-        default: boilerplateTypes[0]
-    });
+    // await prompt({
+    //     type: 'list',
+    //     name: 'boilerplate',
+    //     message: _('project_boilerplate'),
+    //     choices: boilerplateTypes.map(value => ({
+    //         name: _('project_boilerplates')[value],
+    //         value,
+    //         short: _('project_boilerplates')[value + '_short']
+    //     })),
+    //     default: boilerplateTypes[0]
+    // });
+    app.boilerplate = 'base';
+
+    // ========================================================================
+    //
+    // 服务器模式
+    //
+    // ========================================================================
+    if (app.boilerplate !== 'serverless' && app.type === 'react') {
+        await prompt({
+            type: 'list',
+            name: 'serverMode',
+            message: _('project_server_mode'),
+            choices: serverModes.map(value => ({
+                name: _('project_server_modes')[value],
+                value,
+                short: _('project_server_modes')[value + '_short']
+            }))
+        });
+    }
 
     // ========================================================================
     //

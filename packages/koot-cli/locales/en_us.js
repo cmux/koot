@@ -50,6 +50,13 @@ module.exports = {
         'cm-system': 'System (Recommended for Admin/System App)',
         'cm-system_short': 'System'
     },
+    project_server_mode: 'Server mode',
+    project_server_modes: {
+        normal: 'Normal KOA Server',
+        normal_short: 'Normal',
+        serverless: 'Serverless',
+        serverless_short: 'Serverless'
+    },
     project_project_dir: 'Source directory (*)',
     project_project_dir_types: {
         sub: 'Sub folder with app name',
@@ -89,6 +96,7 @@ module.exports = {
     step_install_dependencies: 'Install dependencies',
     step_run_dev: 'Run dev mode',
     step_visit: 'Wait for browser opened automatically',
+    step_visit_for_steps: 'Visit the page following for further steps',
 
     welcome_upgrade: 'Upgrading Koot.js project',
     upgrade_confirmation: 'About to upgrade. Confirm?',

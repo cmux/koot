@@ -5,6 +5,7 @@
  * @property {string} [description] 项目描述
  * @property {AppType} type 项目类型
  * @property {BoilerplateType} boilerplate 摸板类型
+ * @property {ServerMode} serverMode 服务器模式
  * @property {string|AuthorObject} [author] 开发者
  * @property {string} dest 目标目录 / 项目存放目录
  * @property {boolean} destExists 目标目录是否存在
@@ -17,6 +18,9 @@
  */
 /**
  * @typedef {("base"|"serverless"|"cm-system")} BoilerplateType
+ */
+/**
+ * @typedef {("normal"|"serverless")} ServerMode
  */
 /**
  * @typedef {Object} AuthorObject

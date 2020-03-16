@@ -50,6 +50,13 @@ module.exports = {
         'cm-system': '系统模板 (推荐管理/后台系统项目使用)',
         'cm-system_short': '系统'
     },
+    project_server_mode: '服务器模式',
+    project_server_modes: {
+        normal: '标准 KOA 服务器',
+        normal_short: '标准',
+        serverless: 'Serverless',
+        serverless_short: 'Serverless'
+    },
     project_project_dir: '项目代码目录 (*)',
     project_project_dir_types: {
         sub: '以项目名命名的子目录',
@@ -88,6 +95,7 @@ module.exports = {
     step_install_dependencies: '安装依赖',
     step_run_dev: '运行开发环境',
     step_visit: '等待浏览器自动打开页面',
+    step_visit_for_steps: '访问以下网址以获得后续操作指南',
 
     welcome_upgrade: 'Koot.js 项目升级',
     upgrade_confirmation: '是否升级？',

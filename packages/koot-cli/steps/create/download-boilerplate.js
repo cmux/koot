@@ -27,8 +27,8 @@ const downloads = {
         next: {
             branch: 'next'
         }
-    },
-    serverless: {}
+    }
+    // serverless: {}
 };
 
 /**
@@ -45,7 +45,7 @@ module.exports = async (dest, type) => {
         (isNext ? ` (next)` : '');
     const waitingDownloading = spinner(msg + '...');
 
-    const download = downloads[type];
+    const download = downloads[type] || downloads.base;
     if (isNext) Object.assign(download, download.next || {});
 
     // ========================================================================

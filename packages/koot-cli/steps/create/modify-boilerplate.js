@@ -93,6 +93,14 @@ module.exports = async app => {
             );
         }
 
+        // 添加 serverless: true
+        if (app.serverMode === 'serverless') {
+            content = content.replace(
+                /\n(\s*).*?更多选项请查阅文档.+?\n+.+?\n.+?Webpack/gm,
+                (str, $1) => `\n${$1}serverless: true,` + str
+            );
+        }
+
         await fs.writeFile(kootConfigFile, content, 'utf-8');
     }
 

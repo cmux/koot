@@ -1,6 +1,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 const chalk = require('chalk');
+const isUrl = require('is-url');
 
 const vars = require('../../lib/vars');
 const getLocales = require('../../lib/get-locales');
@@ -77,8 +78,18 @@ module.exports = async (options = {}) => {
         const rel = path.relative(process.cwd(), dest);
         if (app.destRelative !== '.' && rel) logNext('goto_dir', `cd ${rel}`);
         // logNext('install_dependencies', `npm i`);
-        logNext('run_dev', commands.dev[app.packageManager]);
-        logNext('visit');
+        if (
+            app.boilerplate === 'serverless' ||
+            app.serverMode === 'serverless'
+        ) {
+            logNext(
+                'visit_for_steps',
+                `https://github.com/cmux/koot-serverless/tree/master/packages/koot-serverless`
+            );
+        } else {
+            logNext('run_dev', commands.dev[app.packageManager]);
+            logNext('visit');
+        }
 
         console.log('');
     } catch (e) {
@@ -91,7 +102,8 @@ module.exports = async (options = {}) => {
 let nextStep = 1;
 const logNext = (step, command) => {
     console.log(chalk.cyanBright(`${nextStep}. `) + _(`step_${step}`));
-    if (command) console.log(`   ` + chalk.gray(`> ${command}`));
+    if (isUrl(command)) console.log(`   ` + chalk.underline(`${command}`));
+    else if (command) console.log(`   ` + chalk.white(`> ${command}`));
     nextStep++;
 };
 
