@@ -55,7 +55,7 @@
         "chalk": "^3.0.0",
         "classlist-polyfill": "^1.2.0",
         "cli-spinners": "^2.2.0",
-        "commander": "^4.1.1",
+        "commander": "^5.0.0",
         "cookie": "^0.4.0",
         "copyfiles": "^2.2.0",
         "debug": "^4.1.1",

@@ -3,7 +3,6 @@ require('../../types');
 const fs = require('fs-extra');
 const path = require('path');
 const chalk = require('chalk');
-const semver = require('semver');
 
 const _ = require('../../lib/translate');
 const spinner = require('../../lib/spinner');
@@ -50,35 +49,10 @@ module.exports = async app => {
         }
 
         // 确认当前 Koot.js 版本，添加至特定字段
-        {
-            let kootBaseVersion;
-            // 先判断已安装的 koot 依赖的版本
-            if (
-                fs.existsSync(path.resolve(dest, 'node_modules')) &&
-                fs.existsSync(path.resolve(dest, 'node_modules/koot')) &&
-                fs.existsSync(
-                    path.resolve(dest, 'node_modules/koot/package.json')
-                )
-            ) {
-                const { version } = await fs.readJson(
-                    path.resolve(dest, 'node_modules/koot/package.json')
-                );
-                kootBaseVersion = version;
-            } else {
-                // 如果没有安装 koot，采用当前依赖的版本
-                const {
-                    dependencies = {},
-                    devDependencies = {},
-                    optionalDependencies = {}
-                } = packageJson;
-                kootBaseVersion =
-                    optionalDependencies.koot ||
-                    devDependencies.koot ||
-                    dependencies.koot;
-            }
-            if (!kootBaseVersion) throw new Error('version invalid');
-            extend.koot.baseVersion = semver.coerce(kootBaseVersion).version;
-        }
+        require('../../lib/modify-package-json/add-koot-version.js')(
+            dest,
+            packageJson
+        );
 
         await fs.writeJson(
             packageJsonFile,

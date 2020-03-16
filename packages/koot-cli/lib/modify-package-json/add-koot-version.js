@@ -5,18 +5,24 @@ const semver = require('semver');
 /**
  * 将当前项目使用的 Koot.js 的最初版本信息添加到 package.json 中 (`koot.baseVersion`)
  * @async
- * @void
  * @param {String} dir 项目目录
+ * @param {Object} [packageJson] package.json 内容。如果提供，会直接对该对象进行修改
+ * @void
  */
-module.exports = async dir => {
-    if (typeof dir !== 'string') throw new Error('`dir` not provided');
-
+module.exports = async (dir, packageJson) => {
+    const writeFile = typeof packageJson !== 'object';
     const filePackageJson = path.resolve(dir, 'package.json');
 
-    if (!fs.existsSync(filePackageJson))
-        throw new Error('`package.json` not found');
+    let p = packageJson;
 
-    const p = await fs.readJson(filePackageJson);
+    if (typeof p !== 'object') {
+        if (typeof dir !== 'string') throw new Error('`dir` not provided');
+
+        if (!fs.existsSync(filePackageJson))
+            throw new Error('`package.json` not found');
+
+        p = await fs.readJson(filePackageJson);
+    }
 
     if (typeof p.koot !== 'object') p.koot = {};
     if (p.koot.baseVersion) return;
@@ -53,9 +59,10 @@ module.exports = async dir => {
     // .splice(0, 2)
     // .join('.');
 
-    await fs.writeJson(filePackageJson, p, {
-        spaces: 4
-    });
+    if (writeFile)
+        await fs.writeJson(filePackageJson, p, {
+            spaces: 4
+        });
 
     return;
 };
