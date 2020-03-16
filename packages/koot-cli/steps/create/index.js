@@ -1,6 +1,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 const chalk = require('chalk');
+const isUrl = require('is-url');
 
 const vars = require('../../lib/vars');
 const getLocales = require('../../lib/get-locales');
@@ -8,7 +9,21 @@ const _ = require('../../lib/translate');
 const checkIsCMNetwork = require('../../lib/check-is-cm-network');
 const spinner = require('../../lib/spinner');
 
-const modifyPackageJsonAddKootVersion = require('../../lib/modify-package-json/add-koot-version');
+const inquiry = require('./inquiry-project');
+const download = require('./download-boilerplate');
+const install = require('./install-deps');
+const modify = require('./modify-boilerplate');
+
+// ============================================================================
+
+const commands = {
+    dev: {
+        yarn: 'yarn dev',
+        npm: 'npm run dev'
+    }
+};
+
+// ============================================================================
 
 /**
  * 创建 Koot.js 项目
@@ -45,25 +60,36 @@ module.exports = async (options = {}) => {
             console.log('');
         }
 
-        const project = await require('./inquiry-project')({ isCMNetwork });
+        const app = await inquiry({ isCMNetwork });
 
-        const r = await require('./get-project-folder')(project);
-        dest = r.dest;
-        destExists = r.destExists;
+        // const r = await require('./get-project-folder')(app);
+        dest = app.dest;
+        destExists = app.destExists;
 
-        await require('./download-boilerplate')(project, dest);
-        await modifyPackageJsonAddKootVersion(dest);
+        // return console.warn(app);
+
+        await download(app.dest, app.boilerplate);
+        await install(app);
+        await modify(app);
 
         console.log('');
-        // console.log(project)
-        // console.log(process.cwd(), dest)
-        // console.log(path.relative(process.cwd(), dest))
 
         console.log(chalk.cyanBright(_('whats_next')));
-        logNext('goto_dir', `cd ${path.relative(process.cwd(), dest)}`);
-        logNext('install_dependencies', `npm i`);
-        logNext('run_dev', `npm run dev`);
-        logNext('visit');
+        const rel = path.relative(process.cwd(), dest);
+        if (app.destRelative !== '.' && rel) logNext('goto_dir', `cd ${rel}`);
+        // logNext('install_dependencies', `npm i`);
+        if (
+            app.boilerplate === 'serverless' ||
+            app.serverMode === 'serverless'
+        ) {
+            logNext(
+                'visit_for_steps',
+                `https://github.com/cmux/koot-serverless/tree/master/packages/koot-serverless`
+            );
+        } else {
+            logNext('run_dev', commands.dev[app.packageManager]);
+            logNext('visit');
+        }
 
         console.log('');
     } catch (e) {
@@ -76,7 +102,8 @@ module.exports = async (options = {}) => {
 let nextStep = 1;
 const logNext = (step, command) => {
     console.log(chalk.cyanBright(`${nextStep}. `) + _(`step_${step}`));
-    if (command) console.log(`   ` + chalk.gray(`> ${command}`));
+    if (isUrl(command)) console.log(`   ` + chalk.underline(`${command}`));
+    else if (command) console.log(`   ` + chalk.white(`> ${command}`));
     nextStep++;
 };
 

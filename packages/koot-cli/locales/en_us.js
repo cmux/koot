@@ -22,7 +22,7 @@ module.exports = {
     welcome_exist_current_super_project:
         'Koot CLI tool need [koot] to run while this project is using [super-project]. Do you want to upgrade to [koot]?',
 
-    current_version: 'Current CLI version: ',
+    current_version: 'CLI current version: ',
 
     'koot-cli_updated': 'koot-cli has updated',
     'koot-cli_updated_description':
@@ -30,15 +30,50 @@ module.exports = {
     'koot-cli_updated_suggestion':
         'Besides, we strongly suggest that use the following command to use koot-cli, so that it will be the latest version everytime:',
 
-    project_name_required: 'Project name (*)',
+    project_name_required: 'App name (*)',
     project_name_needed: "Please input project's name",
-    project_description: 'Project description',
-    project_author: 'Author name (recommended to be NPM user name)',
+    project_description: 'App description',
+    project_author: 'Developer (recommended to be NPM user name)',
+    project_type: 'App type',
+    project_types: {
+        react: 'SSR (Server-Side Rendering)',
+        react_short: 'SSR',
+        'react-spa': 'SPA (Single-Page App)',
+        'react-spa_short': 'SPA'
+    },
+    project_boilerplate: 'Boilerplate',
+    project_boilerplates: {
+        base: 'Base (Recommended for Web App)',
+        base_short: 'Base',
+        serverless: 'Serverless mode for Base boilerplate',
+        serverless_short: 'Serverless',
+        'cm-system': 'System (Recommended for Admin/System App)',
+        'cm-system_short': 'System'
+    },
+    project_server_mode: 'Server mode',
+    project_server_modes: {
+        normal: 'Normal KOA Server',
+        normal_short: 'Normal',
+        serverless: 'Serverless',
+        serverless_short: 'Serverless'
+    },
+    project_project_dir: 'Source directory (*)',
+    project_project_dir_types: {
+        sub: 'Sub folder with app name',
+        curr: 'Current folder',
+        input: 'Select...'
+    },
+    project_project_dir_select: 'Select source directory',
+    project_package_manager: 'Package manager',
+    project_package_managers: {
+        yarn: 'Yarn (v1)',
+        npm: 'NPM'
+    },
+    project_dist_dir: 'Dist-directory (*)',
+    project_dist_dir_needed: "Please input project's dist-directory",
     project_mode: 'Project mode',
     project_i18n_enabled: 'Multi-language (i18n) support',
     project_i18n_type: 'Multi-language (i18n) type',
-    project_dist_dir: 'Dist-directory (*)',
-    project_dist_dir_needed: "Please input project's dist-directory",
 
     project_mode_isomorphic: 'Isomorphic',
     project_mode_spa: 'Single Page App (SPA)',
@@ -53,12 +88,15 @@ module.exports = {
 
     downloading_boilerplate: 'Downloading boilerplate',
     copying_boilerplate: 'Copying boilerplate',
+    installing_dependencies: 'Installing dependencies (May take a while)',
+    modifying_boilerplate: 'Modifying files',
 
     whats_next: "What's next?",
     step_goto_dir: 'Go to target directory',
     step_install_dependencies: 'Install dependencies',
     step_run_dev: 'Run dev mode',
     step_visit: 'Wait for browser opened automatically',
+    step_visit_for_steps: 'Visit the page following for further steps',
 
     welcome_upgrade: 'Upgrading Koot.js project',
     upgrade_confirmation: 'About to upgrade. Confirm?',

@@ -35,7 +35,8 @@ describe('测试: 下载模板', () => {
         await fs.writeFile(readme, readmeContent, 'utf-8');
         await fs.writeFile(junk, junkContent, 'utf-8');
 
-        await downloadBoilerplate({}, target).catch(err => (error = err));
+        await downloadBoilerplate(target, 'base').catch(err => (error = err));
+
         if (error) {
             await fs.remove(target);
             console.error(error);

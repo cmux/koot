@@ -22,7 +22,7 @@ module.exports = {
     welcome_exist_current_super_project:
         'Koot CLI 工具需要 [koot] 才能运行，但当前项目目前使用 [super-project]。是否升级到 [koot]？',
 
-    current_version: '当前 CLI 版本: ',
+    current_version: 'CLI 当前版本: ',
 
     'koot-cli_updated': 'koot-cli 已更新',
     'koot-cli_updated_description':
@@ -33,12 +33,47 @@ module.exports = {
     project_name_required: '项目名称 (*)',
     project_name_needed: '请输入项目名称',
     project_description: '项目描述',
-    project_author: '作者名 (推荐填写 NPM 用户名)',
-    project_mode: '项目模式',
-    project_i18n_enabled: '多语言支持 (i18n)',
-    project_i18n_type: '多语言 (i18n) 模式',
+    project_author: '开发者 (推荐填写 NPM 用户名)',
+    project_type: '项目类型',
+    project_types: {
+        react: '同构 / SSR (Server-Side Rendering)',
+        react_short: '同构 / SSR',
+        'react-spa': '单页 / SPA (Single-Page App)',
+        'react-spa_short': '单页 / SPA'
+    },
+    project_boilerplate: '模板',
+    project_boilerplates: {
+        base: '基础模板 (推荐 Web 项目使用)',
+        base_short: '基础',
+        serverless: 'Serverless 模式的基础模板',
+        serverless_short: 'Serverless',
+        'cm-system': '系统模板 (推荐管理/后台系统项目使用)',
+        'cm-system_short': '系统'
+    },
+    project_server_mode: '服务器模式',
+    project_server_modes: {
+        normal: '标准 KOA 服务器',
+        normal_short: '标准',
+        serverless: 'Serverless',
+        serverless_short: 'Serverless'
+    },
+    project_project_dir: '项目代码目录 (*)',
+    project_project_dir_types: {
+        sub: '以项目名命名的子目录',
+        curr: '当前目录',
+        input: '选择...'
+    },
+    project_project_dir_select: '选择代码目录',
+    project_package_manager: '包管理器',
+    project_package_managers: {
+        yarn: 'Yarn (v1)',
+        npm: 'NPM'
+    },
     project_dist_dir: '打包结果目录 (*)',
     project_dist_dir_needed: '请输入项目打包结果目录',
+    project_i18n_enabled: '多语言支持 (i18n)',
+    project_i18n_type: '多语言 (i18n) 模式',
+    project_mode: '项目模式',
 
     project_mode_isomorphic: '同构 (Isomorphic)',
     project_mode_spa: '单页面应用 (SPA)',
@@ -52,12 +87,15 @@ module.exports = {
 
     downloading_boilerplate: '下载模板',
     copying_boilerplate: '复制模板',
+    installing_dependencies: '安装依赖 (可能会运行一段时间)',
+    modifying_boilerplate: '更新文件',
 
     whats_next: '接下来……',
     step_goto_dir: '进入项目目录',
     step_install_dependencies: '安装依赖',
     step_run_dev: '运行开发环境',
     step_visit: '等待浏览器自动打开页面',
+    step_visit_for_steps: '访问以下网址以获得后续操作指南',
 
     welcome_upgrade: 'Koot.js 项目升级',
     upgrade_confirmation: '是否升级？',
