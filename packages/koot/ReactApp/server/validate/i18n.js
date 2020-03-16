@@ -1,6 +1,7 @@
 import isI18nEnabled from '../../../i18n/is-enabled';
 import { setLocales } from '../../../i18n/locales';
 import getDist from '../../../utils/get-dist-path';
+import readLocaleFileSync from '../../../i18n/read-locale-file-sync';
 
 const fs = require('fs-extra');
 const path = require('path');
@@ -48,7 +49,7 @@ const getLocalesFull = () => {
     const locales = JSON.parse(process.env.KOOT_I18N_LOCALES);
     return locales.map(l => [
         l[0],
-        fs.readJsonSync(__DEV__ ? l[2] : getLocaleFile(l[3]), 'utf-8'),
+        readLocaleFileSync(__DEV__ ? l[2] : getLocaleFile(l[3])),
         l[2],
         l[3]
     ]);

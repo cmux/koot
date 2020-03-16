@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+**koot**
+
+-   **新特性**
+    -   多语言/i18n: 语言包现在可以使用 _JavaScript_ 文件了。(仅限使用 `module.exports` 方式输出的 JS 文件) ([#216](https://github.com/cmux/koot/issues/216))
+
 ## [0.13.5 & 0.13.6] - 2020-03-16
 
 **koot-cli**
@@ -12,6 +17,8 @@
 -   创建项目时会自动使用选择的包管理器安装依赖
 
 ## [0.13.4] - 2020-03-13
+
+**koot**
 
 -   **新特性**
     -   **新配置项** `serverPackAll` - 针对 SSR 项目的服务器打包，设定是否打入所有 _Module_。详情请参见文档 [配置/serverPackAll](https://koot.js.org/#/config?id=serverPackAll)
