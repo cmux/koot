@@ -107,11 +107,6 @@ module.exports = {
                     loader: 'url-loader',
                     options: {
                         limit: 2 * 1024,
-                        // context: 'static',
-                        // name: 'assets/[hash:32].[ext]',
-                        // emitFile: Boolean(
-                        //     process.env.WEBPACK_BUILD_STAGE === 'client'
-                        // )
                         name: 'assets/[contenthash].[ext]'
                     }
                 },
