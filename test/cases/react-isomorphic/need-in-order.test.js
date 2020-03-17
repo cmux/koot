@@ -571,6 +571,11 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
             description: 'Summary information for Koot.js Component Extend.',
             exportObject: 'Welcome'
         });
+        await testTargetLocaleId('zh-tw', {
+            title: '組件擴展 - Koot.js 模板項目',
+            description: '簡介：Koot.js 組件擴展',
+            exportObject: '歡迎'
+        });
     }
 
     // 测试: 到其他语种的链接

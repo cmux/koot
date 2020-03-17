@@ -1,5 +1,5 @@
-const fs = require('fs-extra');
-const path = require('path');
+// const fs = require('fs-extra');
+// const path = require('path');
 // const {
 //     toConstantDependency
 // } = require('webpack/lib/javascript/JavascriptParserHelpers');
@@ -9,7 +9,8 @@ const {
 } = require('webpack/lib/ParserHelpers');
 const ConstDependency = require('webpack/lib/dependencies/ConstDependency');
 const NullFactory = require('webpack/lib/NullFactory');
-const getCwd = require('koot/utils/get-cwd');
+// const getCwd = require('koot/utils/get-cwd');
+const readLocaleFileSync = require('koot/i18n/read-locale-file-sync');
 
 // const addParsedVariableToModule = (parser, name, expression) => {
 //     if (!parser.state.current.addVariable) return false;
@@ -38,12 +39,9 @@ class I18nPlugin {
         this.functionName = functionName;
         this.localeId = localeId;
 
-        if (localeFile)
-            this.locales = fs.readJsonSync(
-                path.isAbsolute(localeFile)
-                    ? localeFile
-                    : path.resolve(getCwd(), localeFile)
-            );
+        if (localeFile) {
+            this.locales = readLocaleFileSync(localeFile);
+        }
     }
 
     apply(compiler) {
