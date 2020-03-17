@@ -38,8 +38,8 @@ const translate = (...args) => {
     if (__SERVER__ && __DEV__) l = locales[global.__KOOT_LOCALEID__];
     // SPA: 进一步确保语言包可用
     if (
-        !isSPACorrected &&
         __SPA__ &&
+        !isSPACorrected &&
         typeof window !== 'undefined' &&
         window.__KOOT_SSR_STATE__ &&
         typeof window.__KOOT_SSR_STATE__.locales === 'object' &&

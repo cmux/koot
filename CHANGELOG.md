@@ -6,6 +6,12 @@
 
 -   **新特性**
     -   多语言/i18n: 语言包现在可以使用 _JavaScript_ 文件了。(仅限使用 `module.exports` 方式输出的 JS 文件) ([#216](https://github.com/cmux/koot/issues/216))
+-   错误修正
+    -   SPA 项目中 CSS 引用资源文件的 URL 错误问题
+
+**koot-boilerplate** (模板项目)
+
+-   优化 loader 配置
 
 ## [0.13.5 & 0.13.6] - 2020-03-16
 

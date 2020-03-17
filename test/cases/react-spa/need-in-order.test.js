@@ -269,6 +269,8 @@ const testFull = (dir, configFileName) => {
                 await testAssetsGzip(origin, dist);
                 await testClientLifecycles(origin, browser);
 
+                await page.goto(origin + '/#/static');
+
                 await page.close();
 
                 // 测试: 没有失败的请求

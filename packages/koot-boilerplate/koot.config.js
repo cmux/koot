@@ -26,8 +26,8 @@ module.exports = {
     cookiesToStore: true,
 
     i18n: [
-        ['zh', './src/locales/zh.json'],
-        ['en', './src/locales/en.json']
+        ['zh', './src/locales/zh.js'],
+        ['en', './src/locales/en.js']
     ],
 
     aliases: {
@@ -107,11 +107,19 @@ module.exports = {
                     loader: 'url-loader',
                     options: {
                         limit: 2 * 1024,
-                        context: 'static',
-                        name: 'assets/[hash:32].[ext]',
-                        emitFile: Boolean(
-                            process.env.WEBPACK_BUILD_STAGE === 'client'
-                        )
+                        // context: 'static',
+                        // name: 'assets/[hash:32].[ext]',
+                        // emitFile: Boolean(
+                        //     process.env.WEBPACK_BUILD_STAGE === 'client'
+                        // )
+                        name: 'assets/[contenthash].[ext]'
+                    }
+                },
+                {
+                    test: /\.(ttf|ttc|eot|woff|woff2)$/,
+                    loader: 'file-loader',
+                    options: {
+                        name: 'assets/[contenthash].[ext]'
                     }
                 },
                 {

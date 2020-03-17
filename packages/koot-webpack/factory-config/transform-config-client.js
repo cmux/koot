@@ -72,9 +72,10 @@ module.exports = async (kootConfigForThisBuild = {}) => {
         `${appType}/client`
     );
     /** 基于存放目录名的文件名前缀 */
-    const filenamePrefix = distClientAssetsDirName
-        ? `${distClientAssetsDirName}/`
-        : '';
+    const filenamePrefix =
+        process.env.WEBPACK_BUILD_ENV === 'prod' && distClientAssetsDirName
+            ? `${distClientAssetsDirName}/`
+            : '';
 
     /** @type {Boolean} 是否为 SPA 同时需要模板注入支持 */
     const isSPANeedTemplateInject = Boolean(
@@ -332,7 +333,7 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                 result.plugins.push(
                     await new CreateGeneralCssBundlePlugin({
                         localeId: isSeperateLocale ? localeId : undefined,
-                        distClientAssetsDirName
+                        filenamePrefix
                     })
                 );
                 result.plugins.push(

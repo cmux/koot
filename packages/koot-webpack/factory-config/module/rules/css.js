@@ -18,7 +18,8 @@ module.exports = (kootBuildConfig = {}) => {
         aliases = {},
         moduleCssFilenameTest = defaultModuleCssFilenameTest,
         internalLoaderOptions = {},
-        classNameHashLength = defaultClassNameHashLength
+        classNameHashLength = defaultClassNameHashLength,
+        distClientAssetsDirName
     } = kootBuildConfig;
 
     /** @type {Array} rules */
@@ -39,7 +40,12 @@ module.exports = (kootBuildConfig = {}) => {
             // length: env === 'dev' ? 32 : 4,
             length: classNameHashLength,
             mode: 'replace',
-            readable: env === 'dev' ? true : false
+            readable: env === 'dev' ? true : false,
+            prefixToRemove:
+                process.env.WEBPACK_BUILD_TYPE === 'spa' &&
+                distClientAssetsDirName
+                    ? `${distClientAssetsDirName}/`
+                    : undefined
         }
     };
     const useUniversalAliasLoader = {

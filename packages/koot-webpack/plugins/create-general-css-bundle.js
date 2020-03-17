@@ -15,13 +15,10 @@ const postcssTransformDeclUrls = require('../postcss/transform-decl-urls');
  */
 class CreateGeneralCssBundlePlugin {
     constructor(settings = {}) {
-        this.distClientAssetsDirName = settings.distClientAssetsDirName;
+        this.filenamePrefix = settings.filenamePrefix;
     }
     apply(compiler) {
-        const { distClientAssetsDirName } = this;
-        const filenamePrefix = distClientAssetsDirName
-            ? `${distClientAssetsDirName}/`
-            : '';
+        const { filenamePrefix } = this;
 
         compiler.hooks.emit.tapAsync.bind(
             compiler.hooks.emit,
@@ -111,14 +108,21 @@ class CreateGeneralCssBundlePlugin {
 
                 const root = postcss.parse(content);
                 postcssTransformDeclUrls(root, {
-                    transformer: url =>
-                        url.replace(
+                    transformer: url => {
+                        let result = url.replace(
                             new RegExp(
                                 `^${stats.compilation.outputOptions.publicPath}`,
                                 'g'
                             ),
                             ''
-                        )
+                        );
+                        if (filenamePrefix)
+                            result = result.replace(
+                                new RegExp(`^${filenamePrefix}`),
+                                ''
+                            );
+                        return result;
+                    }
                 });
 
                 // 写入 Webpack 文件流

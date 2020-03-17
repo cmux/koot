@@ -21,7 +21,8 @@ module.exports = function(content) {
     const {
         length = defaultClassNameHashLength,
         mode = 'replace',
-        readable = false
+        readable = false,
+        prefixToRemove
     } = loaderUtils.getOptions(this);
 
     const keyword = 'component';
@@ -151,12 +152,18 @@ module.exports = function(content) {
         // transformer(root);
         postcssTransformDeclUrls(root, {
             transformer: url => {
+                if (prefixToRemove)
+                    result = result.replace(
+                        new RegExp(`^${prefixToRemove}`),
+                        ''
+                    );
                 const resName = `__RES${importIndex}`;
                 importIndex++;
                 imports[resName] = url;
                 return `' + ${resName} + '`;
             },
             context: this.context
+            // prefixToRemove: this.prefixToRemove
         });
 
         // 导出md5的class名字和处理后的css文本
