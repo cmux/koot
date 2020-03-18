@@ -39,10 +39,12 @@ const TSFunctionalComponent = extend<ComponentProps>({
                 />
                 <p className="msg-big">{__('pages.ts.msg')}</p>
                 <p className="msg-small">{__('pages.ts.msgCheckFile')}</p>
-                <Link to="/start" className="back">
-                    <Icon className="icon" icon="circle-left3" />
-                    {__('pages.ts.back')}
-                </Link>
+                <p className="back">
+                    <Link to="/start" className="link">
+                        <Icon className="icon" icon="circle-left3" />
+                        {__('pages.ts.back')}
+                    </Link>
+                </p>
                 {children}
             </div>
         );
@@ -81,10 +83,12 @@ class TSComponentClass extends React.Component<ExtendedProps & ComponentProps> {
                 <img src={svgTS} className="logo" alt="TypeScript LOGO" />
                 <p className="msg-big">{__('pages.ts.msg')}</p>
                 <p className="msg-small">{__('pages.ts.msgCheckFile')}</p>
-                <Link to="/start" className="back">
-                    <Icon className="icon" icon="circle-left3" />
-                    {__('pages.ts.back')}
-                </Link>
+                <p className="back">
+                    <Link to="/start" className="back">
+                        <Icon className="icon" icon="circle-left3" />
+                        {__('pages.ts.back')}
+                    </Link>
+                </p>
                 {this.props.children}
             </div>
         );

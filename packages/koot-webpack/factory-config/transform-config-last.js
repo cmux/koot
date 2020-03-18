@@ -311,7 +311,7 @@ const validateModuleRules = (config, kootConfigForThisBuild = {}) => {
                         } else if (!options.name && !options.outputPath) {
                             options.name =
                                 distClientAssetsDirName +
-                                '/[contenthash].[ext]';
+                                '/asset.[contenthash].[ext]';
                         }
                     }
                     break;
