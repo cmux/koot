@@ -46,8 +46,8 @@
         "prettier": "^1.19.1",
         "prettier-eslint": "^9.0.1",
         "redux-logger": "^3.0.6",
-        "svg-url-loader": "^4.0.0",
-        "url-loader": "^3.0.0"
+        "svg-url-loader": "^5.0.0",
+        "url-loader": "^4.0.0"
     },
     "bugs": {
         "url": "https://github.com/cmux/koot/issues"
