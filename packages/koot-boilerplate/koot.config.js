@@ -106,16 +106,12 @@ module.exports = {
                     test: /\.(ico|gif|jpg|jpeg|png|webp)$/,
                     loader: 'url-loader',
                     options: {
-                        limit: 2 * 1024,
-                        name: 'assets/[contenthash].[ext]'
+                        limit: 2 * 1024
                     }
                 },
                 {
                     test: /\.(ttf|ttc|eot|woff|woff2)$/,
-                    loader: 'file-loader',
-                    options: {
-                        name: 'assets/[contenthash].[ext]'
-                    }
+                    loader: 'file-loader'
                 },
                 {
                     test: /\.svg$/,
