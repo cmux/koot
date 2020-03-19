@@ -27,6 +27,8 @@
         "spa_i18n_use_force_query": "SPA 项目多语言切换语种方式 (i18n.use) 仅支持 'query'。已强制更改。"
     },
     "dev": {
+        "ask_for_auto_open": "自动打开浏览器访问页面",
+        "ask_for_auto_open_suffix": " (${seconds}秒后自动选择是)",
         "build_dll": "生成 DLL 文件",
         "missing_stage": "请设置场景。\n${indent}> ${example}",
         "spa_success": "SPA 开发服务器已启动！"
