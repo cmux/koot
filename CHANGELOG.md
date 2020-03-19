@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+**koot**
+
+-   优化
+    -   启动开发环境时，会询问是否自动打开浏览器访问页面 ([#218](https://github.com/cmux/koot/issues/218))
+
 ## [0.13.7] - 2020-03-17
 
 **koot**

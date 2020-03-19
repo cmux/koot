@@ -27,6 +27,8 @@
         "spa_i18n_use_force_query": "I18n changing locale method (i18n.use) for SPA project only support value 'query'. Modified automatically."
     },
     "dev": {
+        "ask_for_auto_open": "Auto-open browser tab to visit page",
+        "ask_for_auto_open_suffix": " (YES after ${seconds} seconds)",
         "build_dll": "Building DLLs",
         "missing_stage": "Please set STAGE.\n${indent}> ${example}",
         "spa_success": "SPA dev server launched!"

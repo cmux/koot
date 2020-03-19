@@ -43,6 +43,7 @@ const getCwd = require('../utils/get-cwd');
 const getPathnameDevServerStart = require('../utils/get-pathname-dev-server-start');
 const getLogMsg = require('../libs/get-log-msg');
 const log = require('../libs/log');
+const confirmTimeout = require('../libs/prompt-timeout');
 // const terminate = require('../utils/terminate');
 
 const kootWebpackBuildVendorDll = require('koot-webpack/build-vendor-dll');
@@ -93,6 +94,24 @@ const run = async () => {
     // 清空 log
     process.stdout.write('\x1B[2J\x1B[0f');
 
+    // 判断是否自动打开浏览器访问
+    let { open } = program;
+    if (typeof open === 'undefined' || open) {
+        const timeout = 4000;
+        open = await confirmTimeout(
+            {
+                message: __('dev.ask_for_auto_open'),
+                suffix: __(`dev.ask_for_auto_open_suffix`, {
+                    seconds: timeout / 1000
+                }),
+                default: true
+            },
+            timeout
+        );
+    }
+    // console.log({ open });
+    // return;
+
     const {
         client,
         server,
@@ -101,7 +120,7 @@ const run = async () => {
         config,
         type,
         global = false,
-        open = true,
+        // open = true,
         port,
         dll = true,
         kootTest = false,
