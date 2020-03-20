@@ -18,7 +18,8 @@ const {
     keyConfigWebpackSPATemplateInject,
     keyConfigClientAssetsPublicPath,
     chunkNameClientRunFirst,
-    keyConfigClientServiceWorkerPathname
+    keyConfigClientServiceWorkerPathname,
+    pathnameSockjs
 } = require('koot/defaults/before-build');
 const { hmrOptions } = require('koot/defaults/webpack-dev-server');
 
@@ -238,14 +239,14 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                             'webpack/hot/only-dev-server'
                         );
                         result.entry[key].unshift(
-                            `webpack-dev-server/client?http://localhost:${getWDSport()}/sockjs-node/`
+                            `webpack-dev-server/client?http://localhost:${getWDSport()}/${pathnameSockjs}/`
                         );
                     }
                     // result.entry.client = [
                     //     'react-hot-loader/patch',
                     //     ...result.entry.client
                     // ];
-                    // result.entry[entryClientHMR] = `webpack-dev-server/client?http://localhost:${getWDSport()}/sockjs-node/`
+                    // result.entry[entryClientHMR] = `webpack-dev-server/client?http://localhost:${getWDSport()}/${pathnameSockjs}/`
                 }
                 // const fileRunFirst = path.resolve(
                 //     __dirname,

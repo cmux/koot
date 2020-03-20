@@ -89,5 +89,8 @@ module.exports = {
     /** @type {string} 打包结果目录中的文件对照表文件名 */
     buildManifestFilename: '.koot-public-manifest.json',
     /** @type {string} 打包结果目录中输出文件总集文件名 */
-    buildOutputsFilename: '.koot-public-outputs.json'
+    buildOutputsFilename: '.koot-public-outputs.json',
+
+    /** @type {string} Webpack Dev Server 热更新 Web Socket 地址 */
+    pathnameSockjs: `sockjs-node`
 };

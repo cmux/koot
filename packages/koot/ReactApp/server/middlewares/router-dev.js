@@ -2,11 +2,13 @@ const fs = require('fs-extra');
 
 const router = new require('koa-router')();
 
+const { pathnameSockjs } = require('../../../defaults/before-build');
 const {
     publicPathPrefix,
     serviceWorkerFilename
 } = require('../../../defaults/webpack-dev-server');
 const { dll, serviceWorker } = require('../../../defaults/dev-request-uri');
+const getWDSport = require('../../../utils/get-webpack-dev-server-port');
 
 const { KOOT_DEV_DLL_FILE_CLIENT: fileDllClient } = process.env;
 
@@ -24,6 +26,13 @@ router.get(serviceWorker, async ctx => {
     const res = await fetch(new Request(uri));
     ctx.body = await res.text();
     ctx.type = 'application/javascript';
+});
+
+router.get(`/${pathnameSockjs}/*`, async ctx => {
+    const portWebpackDevServer = getWDSport();
+    ctx.redirect(
+        `${ctx.protocol}://${ctx.hostname}:${portWebpackDevServer}${ctx.path}?${ctx.querystring}`
+    );
 });
 
 export default router.routes();

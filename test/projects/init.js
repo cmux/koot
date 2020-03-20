@@ -61,6 +61,9 @@ const initProject = async name => {
             ...pkgKoot.dependencies,
             ...pkgKootWebpack.dependencies
         };
+        // for (const dep of Object.keys(pkg.devDependencies)) {
+        //     pkg.devDependencies[dep] = `file:../../../node_modules/${dep}`;
+        // }
 
         // 移除所有内部包依赖
         for (const internalPackage of internalPackages) {

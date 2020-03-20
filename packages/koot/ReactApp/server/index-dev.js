@@ -4,6 +4,7 @@ const mount = require('koa-mount');
 const betterProxy = require('koa-better-http-proxy');
 const proxy = require('koa-proxies');
 
+const { pathnameSockjs } = require('../../defaults/before-build');
 const { publicPathPrefix } = require('../../defaults/webpack-dev-server');
 const getWDSport = require('../../utils/get-webpack-dev-server-port');
 const getPathnameDevServerStart = require('../../utils/get-pathname-dev-server-start');
@@ -69,10 +70,10 @@ const run = async () => {
                         )
                         .replace(
                             new RegExp(
-                                `://${origin}/${publicPathPrefix}/sockjs-node/`,
+                                `://${origin}/${publicPathPrefix}/${pathnameSockjs}/`,
                                 'mg'
                             ),
-                            `://localhost:${portWebpackDevServer}/sockjs-node/`
+                            `://localhost:${portWebpackDevServer}/${pathnameSockjs}/`
                         )
                         .replace(
                             /(socketUrl\s*=\s*url.format\({\s*protocol:\s*protocol,\s*auth:\s*urlParts.auth,\s*hostname:\s*hostname,\s*port:\s*)(port)/gm,

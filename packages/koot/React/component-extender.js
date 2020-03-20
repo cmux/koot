@@ -153,7 +153,7 @@ const doPageinfo = (store, props, pageinfo) => {
  * @param {Object} [options.styles] 组件 CSS 结果
  * @returns {Function} 封装好的 React 组件
  */
-export default (options = {}) => WrappedComponent => {
+const extend = (options = {}) => WrappedComponent => {
     // console.log((typeof store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' store in [HOC] extend run')
 
     const {
@@ -430,26 +430,43 @@ export default (options = {}) => WrappedComponent => {
     //     KootComponent = hot(module)(KootComponent)
     // }
 
-    // console.log(WrappedComponent);
-    let KootComponent = hoistStatics(KootReactComponent, WrappedComponent);
-
     // if (typeof styles === 'object' &&
     //     typeof styles.wrapper === 'string'
     // ) {
     //     KootComponent = ImportStyle(styles)(KootComponent)
     // }
-
-    if (_connect === true) {
-        KootComponent = connect(() => ({}))(KootComponent);
-    } else if (typeof _connect === 'function') {
-        KootComponent = connect(_connect)(KootComponent);
-    } else if (Array.isArray(_connect)) {
-        KootComponent = connect(..._connect)(KootComponent);
-    }
+    const KootComponent = hoistStatics(KootReactComponent, WrappedComponent);
 
     // return KootComponent;
-    return React.forwardRef((props, ref) => {
-        if (ref) return <KootComponent {...props} kootForwardedRef={ref} />;
-        return <KootComponent {...props} />;
-    });
+    return React.forwardRef((props, ref) =>
+        createKootComponent(KootComponent, _connect, props, ref)
+    );
 };
+
+const createKootComponent = (_component, _connect, props, ref) => {
+    let Component = _component;
+
+    if (_connect === true) {
+        Component = connect(() => ({}), undefined, undefined, {
+            forwardRef: !!ref || !!props.forwardedRef
+        })(Component);
+    } else if (typeof _connect === 'function') {
+        Component = connect(_connect, undefined, undefined, {
+            forwardRef: !!ref || !!props.forwardedRef
+        })(Component);
+    } else if (Array.isArray(_connect)) {
+        if (typeof _connect[3] !== 'object') _connect[3] = {};
+        _connect[3].forwardRef = !!ref || !!props.forwardedRef;
+        Component = connect(..._connect)(Component);
+    }
+
+    if (props.forwardedRef) {
+        return <Component {...props} kootForwardedRef={props.forwardedRef} />;
+    }
+    if (ref) {
+        return <Component {...props} kootForwardedRef={ref} />;
+    }
+    return <Component {...props} />;
+};
+
+export default extend;

@@ -37,7 +37,7 @@
 <body>
     <div id="main-loader"></div>
     <div id="root"><%- inject.react %></div>
-    <script type="text/javascript"><%- content('critical.js') %></script>
+    <script type="text/javascript">window.__KOOT_DEV__={};<%- content('critical.js') %></script>
     <div data-test="</head>"></div>
     <div id="koot-test-scripts"><%- inject.scripts %></div>
 </body>
