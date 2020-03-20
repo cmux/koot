@@ -19,18 +19,20 @@ const isServerBundlingAllModules = require('../libs/is-server-bundling-all-modul
 const outputPath = 'dist';
 
 // 执行顺序，从右到左
-const factory = async ({
-    env = process.env.WEBPACK_BUILD_ENV,
-    stage = process.env.WEBPACK_BUILD_STAGE,
-    // spa = false,
+const factory = async (
+    {
+        env = process.env.WEBPACK_BUILD_ENV,
+        stage = process.env.WEBPACK_BUILD_STAGE,
+        // spa = false,
 
-    aliases = {},
-    defines = {},
-    css = {},
-    options = {},
-    [keyConfigBuildDll]: createDll = false,
-    ...remainingKootBuildConfig
-}) => {
+        aliases = {},
+        defines = {},
+        css = {},
+        [keyConfigBuildDll]: createDll = false,
+        ...remainingKootBuildConfig
+    },
+    options = {}
+) => {
     // const useSpCssLoader = {
     //     loader: 'sp-css-loader',
     //     options: {
@@ -42,13 +44,16 @@ const factory = async ({
 
     return {
         module: {
-            rules: createModuleRules({
-                aliases,
-                defines,
-                css,
-                createDll,
-                ...remainingKootBuildConfig
-            })
+            rules: createModuleRules(
+                {
+                    aliases,
+                    defines,
+                    css,
+                    createDll,
+                    ...remainingKootBuildConfig
+                },
+                options
+            )
         },
         resolve: {
             ...resolve,
