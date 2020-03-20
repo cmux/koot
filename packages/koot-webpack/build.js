@@ -178,7 +178,8 @@ module.exports = async (kootConfig = {}) => {
 
     /** @type {Function} @async 流程回调: webpack 执行前 */
     const before = async () => {
-        await fs.ensureDir(data[WEBPACK_OUTPUT_PATH]);
+        if (!(STAGE === 'client' && ENV === 'dev'))
+            await fs.ensureDir(data[WEBPACK_OUTPUT_PATH]);
 
         if (STAGE === 'client') {
             const dest = getDirDistPublic();

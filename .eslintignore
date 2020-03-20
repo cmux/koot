@@ -1,4 +1,5 @@
-/test/projects/*/dist/**/*
-/test/projects/*/dist*/**/*
 node_modules/**/*
 /packages/koot-webpack/libs/new-plugin-workbox-template.js
+/test/projects/*/dist/**/*
+/test/projects/*/dist*/**/*
+/test/projects/*/node_modules/**/*
