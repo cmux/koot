@@ -305,7 +305,7 @@ export default (options = {}) => WrappedComponent => {
 
         //
 
-        render = () => {
+        render() {
             // console.log('styles', styles)
             // console.log('this', this)
             // console.log('this.kootClassNames', this.kootClassNames)
@@ -332,7 +332,7 @@ export default (options = {}) => WrappedComponent => {
                 props.loaded = this.state.loaded;
 
             return <WrappedComponent {...props} />;
-        };
+        }
     }
 
     if (typeof dataFetch !== 'undefined') {
