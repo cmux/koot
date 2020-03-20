@@ -399,6 +399,10 @@ export default (options = {}) => WrappedComponent => {
             // if (typeof props.forwardedRef !== 'undefined') {
             //     console.log(props.forwardedRef);
             // }
+            if (typeof props.kootForwardedRef !== 'undefined') {
+                props.forwardedRef = props.kootForwardedRef;
+                delete props.kootForwardedRef;
+            }
 
             return <WrappedComponent {...props} />;
         }
@@ -445,7 +449,7 @@ export default (options = {}) => WrappedComponent => {
 
     // return KootComponent;
     return React.forwardRef((props, ref) => {
-        if (ref) return <KootComponent {...props} forwardedRef={ref} />;
+        if (ref) return <KootComponent {...props} kootForwardedRef={ref} />;
         return <KootComponent {...props} />;
     });
 };
