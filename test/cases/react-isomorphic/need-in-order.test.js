@@ -225,7 +225,7 @@ const testDevelopment = (
         });
         const errors = [];
 
-        const port = await waitForPort(child, / on.*http:.*:([0-9]+)/);
+        const port = await waitForPort(child, / started on.*http:.*:([0-9]+)/);
         child.stderr.on('data', err => {
             errors.push(err);
         });
@@ -236,6 +236,7 @@ const testDevelopment = (
         // })
         expect(errors.length).toBe(0);
 
+        await sleep(2000);
         await doPuppeteerTest(port, undefined, {
             kootConfig: config,
             isDev: true,

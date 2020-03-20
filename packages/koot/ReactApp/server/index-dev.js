@@ -87,9 +87,10 @@ const run = async () => {
 
     // 代理服务器 -> WSD 代理服务器
     {
-        const { proxy: proxyConfig } = JSON.parse(
+        const { proxy: proxyConfig = {} } = JSON.parse(
             process.env.KOOT_DEV_WDS_EXTEND_CONFIG
         );
+        proxyConfig[pathnameSockjs] = true;
         if (typeof proxyConfig === 'object') {
             for (const route of Object.keys(proxyConfig)) {
                 const { changeOrigin = false } = proxyConfig[route];

@@ -155,6 +155,7 @@ const doTest = async (port, dist, settings = {}) => {
     );
 
     const origin = isNaN(port) ? port : `http://127.0.0.1:${port}`;
+    // console.log({ origin, port, t: typeof port });
 
     const res = await page
         .goto(origin, {
@@ -803,7 +804,10 @@ describe('测试: React 同构项目', () => {
                 );
                 const errors = [];
 
-                const port = await waitForPort(child, / on.*http:.*:([0-9]+)/);
+                const port = await waitForPort(
+                    child,
+                    / started on.*http:.*:([0-9]+)/
+                );
                 child.stderr.on('data', err => {
                     errors.push(err);
                 });
@@ -814,6 +818,7 @@ describe('测试: React 同构项目', () => {
                 // })
                 expect(errors.length).toBe(0);
 
+                await sleep(2000);
                 await doTest(port, dist, {
                     isDev: true,
                     customEnv,
