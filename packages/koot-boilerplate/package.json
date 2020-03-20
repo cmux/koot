@@ -21,7 +21,6 @@
         "start": "koot-start",
         "build": "koot-build",
         "dev": "koot-dev",
-        "dev:no-open": "koot-dev --no-open",
         "analyze": "koot-analyze",
         "eslint": "eslint \"src/**/*.+(js|jsx)\"",
         "check-types": "tsc --noEmit",
