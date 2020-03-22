@@ -96,31 +96,31 @@ if (__DEV__) {
                     return;
                 // filter out `react-redux v5` & `react-router v3` warnings/errors
                 if (
-                    /*args.some(arg =>
-                        /^Warning: Did not expect server HTML to contain a <%s> in <%s>\.$/.test(
-                            arg
-                        )
-                    ) ||*/
-                    /*args.some(arg =>
+                    // args.some(arg =>
+                    //     /^Warning: Did not expect server HTML to contain a <%s> in <%s>\.$/.test(
+                    //         arg
+                    //     )
+                    // ) ||
+                    (args.some(arg =>
                         /^Warning: Legacy context API has been detected within a strict-mode tree/.test(
                             arg
                         )
-                    ) &&*/
-                    /*args.some(
-                        arg =>
-                            arg === 'Link' ||
-                            arg === 'Connect(KootReactComponent), Link'
-                    ) ||*/
-                    /*args.some(arg =>
+                    ) &&
+                        args.some(
+                            arg =>
+                                arg === 'Link' ||
+                                arg === 'Connect(KootReactComponent), Link'
+                        )) ||
+                    (args.some(arg =>
                         /^Warning: Unsafe lifecycle methods were found within a strict-mode tree/.test(
                             arg
                         )
-                    ) &&*/
-                    args.some(arg =>
-                        /^componentWillReceiveProps: Please update the following components to use static getDerivedStateFromProps instead: .*?Link($|\n|\r)/.test(
-                            arg
-                        )
-                    )
+                    ) &&
+                        args.some(arg =>
+                            /^componentWillReceiveProps: Please update the following components to use static getDerivedStateFromProps instead: .*?Link($|\n|\r)/.test(
+                                arg
+                            )
+                        ))
                 ) {
                     if (!warningShowed.reactRouterV3) {
                         console.warn(
