@@ -97,7 +97,7 @@ const run = async () => {
     // 判断是否自动打开浏览器访问
     let { open } = program;
     if (typeof open === 'undefined' || open) {
-        const timeout = 4000;
+        const timeout = 10 * 1000;
         open = await confirmTimeout(
             {
                 message: __('dev.ask_for_auto_open'),
