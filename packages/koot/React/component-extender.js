@@ -13,11 +13,11 @@ import { needConnectComponents } from '../defaults/defines-server';
 
 import {
     fromServerProps as getRenderPropsFromServerProps,
-    fromComponentProps as getRenderPropsFromComponentProps
+    fromComponentProps as getRenderPropsFromComponentProps,
 } from './get-render-props';
 import {
     append as appendStyle,
-    remove as removeStyle
+    remove as removeStyle,
     // StyleMapContext,
 } from './styles';
 import clientUpdatePageInfo from './client-update-page-info';
@@ -74,7 +74,7 @@ let devSSRConnectIndex = 0;
  * @returns {Promise}
  */
 const doFetchData = (store, renderProps, dataFetch) => {
-    if (!isRenderSafe()) return new Promise(resolve => resolve(result));
+    if (!isRenderSafe()) return new Promise((resolve) => resolve(result));
 
     const result = dataFetch(store.getState(), renderProps, store.dispatch);
     // if (result === true) {
@@ -83,7 +83,7 @@ const doFetchData = (store, renderProps, dataFetch) => {
     // }
     if (Array.isArray(result)) return Promise.all(result);
     if (result instanceof Promise) return result;
-    return new Promise(resolve => resolve(result));
+    return new Promise((resolve) => resolve(result));
 };
 
 /**
@@ -99,7 +99,7 @@ const doPageinfo = (store, props, pageinfo) => {
 
     const defaultPageInfo = {
         title: '',
-        metas: []
+        metas: [],
     };
 
     if (typeof pageinfo !== 'function' && typeof pageinfo !== 'object')
@@ -115,12 +115,12 @@ const doPageinfo = (store, props, pageinfo) => {
 
     const {
         title = defaultPageInfo.title,
-        metas = defaultPageInfo.metas
+        metas = defaultPageInfo.metas,
     } = infos;
 
     if (state.localeId) {
         if (
-            !metas.some(meta => {
+            !metas.some((meta) => {
                 if (meta.name === 'koot-locale-id') {
                     meta.content = state.localeId;
                     return true;
@@ -130,14 +130,14 @@ const doPageinfo = (store, props, pageinfo) => {
         ) {
             metas.push({
                 name: 'koot-locale-id',
-                content: state.localeId
+                content: state.localeId,
             });
         }
     }
 
     return {
         title,
-        metas
+        metas,
     };
 };
 
@@ -153,7 +153,7 @@ const doPageinfo = (store, props, pageinfo) => {
  * @param {Object} [options.styles] 组件 CSS 结果
  * @returns {Function} 封装好的 React 组件
  */
-const extend = (options = {}) => WrappedComponent => {
+const extend = (options = {}) => (WrappedComponent) => {
     // console.log((typeof store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' store in [HOC] extend run')
 
     const {
@@ -162,10 +162,10 @@ const extend = (options = {}) => WrappedComponent => {
         data: {
             fetch: _dataFetch,
             check: dataCheck,
-            resetWhenUnmount: dataResetWhenUnmount
+            resetWhenUnmount: dataResetWhenUnmount,
         } = {},
         styles: _styles,
-        ssr = true
+        ssr = true,
         // ttt
         // hot: _hot = true,
         // name
@@ -177,7 +177,7 @@ const extend = (options = {}) => WrappedComponent => {
 
     /** @type {Object} 经过 koot-css-loader 处理后的 css 文件的结果对象 */
     const styles = (!Array.isArray(_styles) ? [_styles] : _styles).filter(
-        obj => typeof obj === 'object' && typeof obj.wrapper === 'string'
+        (obj) => typeof obj === 'object' && typeof obj.wrapper === 'string'
     );
 
     /** @type {boolean} 是否有上述结果对象 */
@@ -248,7 +248,7 @@ const extend = (options = {}) => WrappedComponent => {
                           getStore().getState(),
                           getRenderPropsFromComponentProps(this.props)
                       )
-                    : undefined
+                    : undefined,
         };
         mounted = false;
         kootClassNames = [];
@@ -278,7 +278,7 @@ const extend = (options = {}) => WrappedComponent => {
             if (!isRenderSafe()) return;
 
             if (hasStyles) {
-                this.kootClassNames = styles.map(obj => obj.wrapper);
+                this.kootClassNames = styles.map((obj) => obj.wrapper);
                 appendStyle(this.getStyleMap(/*context*/), styles);
                 // console.log('----------')
                 // console.log('styles', styles)
@@ -326,7 +326,7 @@ const extend = (options = {}) => WrappedComponent => {
                 ).then(() => {
                     if (!this.mounted) return;
                     this.setState({
-                        loaded: true
+                        loaded: true,
                     });
                 });
             }
@@ -355,7 +355,7 @@ const extend = (options = {}) => WrappedComponent => {
                 setTimeout(() => {
                     this.props.dispatch({
                         type: RESET_CERTAIN_STATE,
-                        data: dataResetWhenUnmount
+                        data: dataResetWhenUnmount,
                     });
                 });
             }
@@ -384,7 +384,7 @@ const extend = (options = {}) => WrappedComponent => {
                     .concat(this.props.className)
                     .join(' ')
                     .trim(),
-                'data-class-name': this.kootClassNames.join(' ').trim()
+                'data-class-name': this.kootClassNames.join(' ').trim(),
             });
             if (hasPageinfo)
                 props.updatePageinfo = this.clientUpdatePageInfo.bind(this);
@@ -411,10 +411,10 @@ const extend = (options = {}) => WrappedComponent => {
     if (typeof dataFetch !== 'undefined') {
         KootReactComponent.onServerRenderStoreExtend = ({
             store,
-            renderProps
+            renderProps,
         }) => {
             if (typeof dataFetch === 'undefined')
-                return new Promise(resolve => resolve());
+                return new Promise((resolve) => resolve());
             // console.log('onServerRenderStoreExtend')
             return doFetchData(
                 store,
@@ -435,38 +435,40 @@ const extend = (options = {}) => WrappedComponent => {
     // ) {
     //     KootComponent = ImportStyle(styles)(KootComponent)
     // }
-    const KootComponent = hoistStatics(KootReactComponent, WrappedComponent);
+    let KootComponent = hoistStatics(KootReactComponent, WrappedComponent);
 
-    // return KootComponent;
-    return React.forwardRef((props, ref) =>
-        createKootComponent(KootComponent, _connect, props, ref)
-    );
-};
-
-const createKootComponent = (_component, _connect, props, ref) => {
-    let Component = _component;
+    // if (typeof styles === 'object' &&
+    //     typeof styles.wrapper === 'string'
+    // ) {
+    //     KootComponent = ImportStyle(styles)(KootComponent)
+    // }
 
     if (_connect === true) {
-        Component = connect(() => ({}), undefined, undefined, {
-            forwardRef: !!ref || !!props.forwardedRef
-        })(Component);
+        KootComponent = connect(() => ({}), undefined, undefined, {
+            forwardRef: true,
+        })(KootComponent);
     } else if (typeof _connect === 'function') {
-        Component = connect(_connect, undefined, undefined, {
-            forwardRef: !!ref || !!props.forwardedRef
-        })(Component);
+        KootComponent = connect(_connect, undefined, undefined, {
+            forwardRef: true,
+        })(KootComponent);
     } else if (Array.isArray(_connect)) {
         if (typeof _connect[3] !== 'object') _connect[3] = {};
-        _connect[3].forwardRef = !!ref || !!props.forwardedRef;
-        Component = connect(..._connect)(Component);
+        _connect[3].forwardRef = true;
+        KootComponent = connect(..._connect)(KootComponent);
     }
 
-    if (props.forwardedRef) {
-        return <Component {...props} kootForwardedRef={props.forwardedRef} />;
-    }
-    if (ref) {
-        return <Component {...props} kootForwardedRef={ref} />;
-    }
-    return <Component {...props} />;
+    // return KootComponent;
+    return React.forwardRef((props, ref) => {
+        if (props.forwardedRef)
+            return (
+                <KootComponent
+                    {...props}
+                    kootForwardedRef={props.forwardedRef}
+                />
+            );
+        if (ref) return <KootComponent {...props} kootForwardedRef={ref} />;
+        return <KootComponent {...props} />;
+    });
 };
 
 export default extend;
