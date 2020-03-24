@@ -25,7 +25,7 @@ const {
     filenameBuilding,
     filenameBuildFail,
     WEBPACK_OUTPUT_PATH,
-    CLIENT_ROOT_PATH
+    CLIENT_ROOT_PATH,
 } = require('koot/defaults/before-build');
 
 const __ = require('koot/utils/translate');
@@ -83,29 +83,29 @@ module.exports = async (kootConfig = {}) => {
      */
     const result = {
         errors: false,
-        warnings: false
+        warnings: false,
     };
     Object.defineProperties(result, {
         addError: {
-            value: err => {
+            value: (err) => {
                 if (!Array.isArray(result.errors)) result.errors = [];
                 result.errors.push(
                     !(err instanceof Error) ? new Error(err) : err
                 );
-            }
+            },
         },
         addWarning: {
-            value: warning => {
+            value: (warning) => {
                 if (!Array.isArray(result.warnings)) result.warnings = [];
                 result.warnings.push(warning);
-            }
+            },
         },
         hasError: {
-            value: () => Array.isArray(result.errors)
+            value: () => Array.isArray(result.errors),
         },
         hasWarning: {
-            value: () => Array.isArray(result.warnings)
-        }
+            value: () => Array.isArray(result.warnings),
+        },
     });
 
     // ========================================================================
@@ -131,7 +131,7 @@ module.exports = async (kootConfig = {}) => {
         webpackBefore: beforeBuild,
         webpackAfter: afterBuild,
         analyze = false,
-        [keyConfigBuildDll]: createDll = false
+        [keyConfigBuildDll]: createDll = false,
     } = kootConfig;
 
     /** @type {String} 项目类型 */
@@ -147,7 +147,7 @@ module.exports = async (kootConfig = {}) => {
         WEBPACK_BUILD_ENV: ENV,
         WEBPACK_BUILD_STAGE: STAGE,
         // WEBPACK_DEV_SERVER_PORT,
-        KOOT_TEST_MODE
+        KOOT_TEST_MODE,
     } = process.env;
     const kootTest = JSON.parse(KOOT_TEST_MODE);
 
@@ -171,7 +171,7 @@ module.exports = async (kootConfig = {}) => {
             {
                 type: chalk.cyanBright(__(`appType.${appType}`)),
                 stage: chalk.green(STAGE),
-                env: chalk.green(ENV)
+                env: chalk.green(ENV),
             }
         )
     );
@@ -271,7 +271,7 @@ module.exports = async (kootConfig = {}) => {
                 {
                     type: chalk.cyanBright(__(`appType.${appType}`)),
                     stage: chalk.green(STAGE),
-                    env: chalk.green(ENV)
+                    env: chalk.green(ENV),
                 }
             )
         );
@@ -353,7 +353,7 @@ module.exports = async (kootConfig = {}) => {
 
     // 将当前 koot.js 版本号写入 package.json
     await updateKootInPackageJson({
-        version: kootPackageJson.version
+        version: kootPackageJson.version,
     });
 
     // ========================================================================
@@ -365,10 +365,10 @@ module.exports = async (kootConfig = {}) => {
         Object.assign(kootConfig, {
             webpackCompilerHook: {
                 afterEmit: () => buildingComplete(),
-                done: after
-            }
+                done: after,
+            },
         })
-    ).catch(err => {
+    ).catch((err) => {
         console.error('生成打包配置时发生错误! \n', err);
     });
     const { webpackConfig, i18n, devServer = {}, pathnameChunkmap } = data;
@@ -406,7 +406,9 @@ module.exports = async (kootConfig = {}) => {
                 console.log(`  > type: ${chalk.yellowBright(i18n.type)}`);
             if (!quietMode)
                 console.log(
-                    `  > locales: ${i18n.locales.map(arr => arr[0]).join(', ')}`
+                    `  > locales: ${i18n.locales
+                        .map((arr) => arr[0])
+                        .join(', ')}`
                 );
         }
         if (ENV === 'dev' && i18n.type === 'default') {
@@ -449,7 +451,7 @@ module.exports = async (kootConfig = {}) => {
      * 打包过程出错处理
      * @param {Error|String} err
      */
-    const buildingError = err => {
+    const buildingError = (err) => {
         // 将错误添加入结果对象
         result.addError(err);
 
@@ -475,7 +477,7 @@ module.exports = async (kootConfig = {}) => {
     await cleanAndWriteLogFiles(webpackConfig, {
         quietMode,
         createDll,
-        analyze
+        analyze,
     });
 
     // if (Array.isArray(webpackConfig)) {
@@ -504,7 +506,7 @@ module.exports = async (kootConfig = {}) => {
         const configsClientDev = [];
 
         if (Array.isArray(webpackConfig)) {
-            webpackConfig.forEach(config => {
+            webpackConfig.forEach((config) => {
                 if (config[keyConfigWebpackSPATemplateInject])
                     configsSPATemplateInject.push(config);
                 else configsClientDev.push(config);
@@ -515,10 +517,10 @@ module.exports = async (kootConfig = {}) => {
 
         for (const config of configsSPATemplateInject) {
             await buildClient(config)
-                .then(err => {
+                .then((err) => {
                     if (err) return buildingError(err);
                 })
-                .catch(err => {
+                .catch((err) => {
                     return buildingError(err);
                 });
         }
@@ -561,7 +563,7 @@ module.exports = async (kootConfig = {}) => {
                     warnings: true,
                     // our additional options
                     moduleTrace: true,
-                    errorDetails: true
+                    errorDetails: true,
                 },
                 // info: false,
                 // noInfo: true,
@@ -572,7 +574,7 @@ module.exports = async (kootConfig = {}) => {
                 publicPath: TYPE === 'spa' ? '/' : '/dist/',
                 headers: {
                     'Access-Control-Allow-Origin': '*',
-                    ...headers
+                    ...headers,
                 },
                 // 打开页面的操作由 /bin/dev.js 管理并执行
                 // open: TYPE === 'spa',
@@ -583,10 +585,10 @@ module.exports = async (kootConfig = {}) => {
                         // /node_modules/,
                         // 'node_modules',
                         getDistPath(),
-                        path.resolve(getDistPath(), '**/*')
-                    ]
+                        path.resolve(getDistPath(), '**/*'),
+                    ],
                 },
-                before: app => {
+                before: (app) => {
                     if (appType === 'ReactSPA') {
                         require('koot/ReactSPA/dev-server/extend')(app);
                     }
@@ -594,8 +596,8 @@ module.exports = async (kootConfig = {}) => {
                 },
                 hot: true,
                 hotOnly: true,
-                sockHost: 'localhost',
-                sockPort: port
+                // sockHost: 'localhost',
+                sockPort: port,
             },
             extendDevServerOptions
         );
@@ -609,14 +611,14 @@ module.exports = async (kootConfig = {}) => {
         server.use(require('webpack-hot-middleware')(compiler));
 
         try {
-            server.listen(port, async err => {
+            server.listen(port, async (err) => {
                 // if (err) console.error(err)
                 if (err) buildingError(err);
                 // console.log('===========')
             });
 
             // 等待 building 标记为 false
-            await new Promise(resolve => {
+            await new Promise((resolve) => {
                 const wait = () =>
                     setTimeout(() => {
                         if (building === false) return resolve();
@@ -649,7 +651,7 @@ module.exports = async (kootConfig = {}) => {
                 pathnameChunkmap,
                 {},
                 {
-                    spaces: 4
+                    spaces: 4,
                 }
             );
         }
@@ -660,14 +662,14 @@ module.exports = async (kootConfig = {}) => {
         // 执行打包
         const build = async (config, onComplete = buildingComplete) => {
             const {
-                [keyConfigWebpackSPATemplateInject]: isSPATemplateInject = false
+                [keyConfigWebpackSPATemplateInject]: isSPATemplateInject = false,
             } = config;
             delete config[keyConfigWebpackSPATemplateInject];
 
             /** @type {Boolean} Webpack 自我输出过错误信息 */
             // let webpackLoggedError = false
 
-            const error = err => {
+            const error = (err) => {
                 errorEncountered = true;
 
                 if (spinnerBuildingSingle) spinnerBuildingSingle.stop();
@@ -704,7 +706,7 @@ module.exports = async (kootConfig = {}) => {
                             console.log(
                                 stats.toString({
                                     chunks: false,
-                                    colors: true
+                                    colors: true,
                                 })
                             );
                             // webpackLoggedError = true
@@ -732,7 +734,7 @@ module.exports = async (kootConfig = {}) => {
                                     stats.toString({
                                         assets: false,
                                         builtAt: true,
-                                        colors: true
+                                        colors: true,
                                         // modules: false,
                                     })
                                 );
@@ -754,7 +756,7 @@ module.exports = async (kootConfig = {}) => {
             buildingComplete();
             // console.log(' ')
             // let index = 0
-            const onComplete = localeId => {
+            const onComplete = (localeId) => {
                 if (spinnerBuildingSingle) {
                     if (result.hasError()) {
                         spinnerBuildingSingle.fail();
@@ -778,7 +780,8 @@ module.exports = async (kootConfig = {}) => {
 
                 const localeId = (() => {
                     const ids = config.plugins.filter(
-                        plugin => plugin && typeof plugin.localeId === 'string'
+                        (plugin) =>
+                            plugin && typeof plugin.localeId === 'string'
                     );
                     if (ids.length)
                         return ids.reduce((prev, cur) => cur.localeId);
@@ -792,7 +795,7 @@ module.exports = async (kootConfig = {}) => {
                             (
                                 chalk.yellowBright('[koot/build] ') +
                                 __('build.building_locale', {
-                                    locale: localeId
+                                    locale: localeId,
                                 })
                             ).replace(
                                 new RegExp(' ' + localeId + '\\)'),
@@ -839,7 +842,7 @@ module.exports = async (kootConfig = {}) => {
             console.log(
                 stats.toString({
                     chunks: false,
-                    colors: true
+                    colors: true,
                 })
             );
 
@@ -876,7 +879,7 @@ module.exports = async (kootConfig = {}) => {
         /** @type {Boolean} Webpack 自我输出过错误信息 */
         let webpackLoggedError = false;
 
-        const error = err => {
+        const error = (err) => {
             if (!webpackLoggedError) {
                 buildingError(err);
                 console.error(err);
@@ -907,7 +910,7 @@ module.exports = async (kootConfig = {}) => {
                         console.log(
                             stats.toString({
                                 chunks: false,
-                                colors: true
+                                colors: true,
                             })
                         );
                         webpackLoggedError = true;
@@ -932,7 +935,7 @@ module.exports = async (kootConfig = {}) => {
                         console.log(
                             stats.toString({
                                 chunks: false, // Makes the build much quieter
-                                colors: true
+                                colors: true,
                             })
                         );
 

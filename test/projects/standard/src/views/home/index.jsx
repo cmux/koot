@@ -4,15 +4,15 @@ import { extend } from 'koot';
 if (__CLIENT__) console.log('!:!:! KOOT TEST VIEW: WELCOME PAGE !:!:!');
 
 export default extend({
-    connect: state => ({
-        localeId: state.localeId
+    connect: (state) => ({
+        localeId: state.localeId,
     }),
     pageinfo: (/*state, renderProps*/) => ({
         title: __('title'),
-        metas: [{ description: __('title') }, { 'page-name': 'home' }]
+        metas: [{ description: __('title') }, { 'page-name': 'home' }],
     }),
     styles: require('./styles.less'),
-    name: 'PageHome'
+    name: 'PageHome',
 })(({ className, localeId }) => (
     <div className={className} id="page-home-body">
         <h2>props.localeId</h2>

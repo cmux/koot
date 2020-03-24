@@ -248,5 +248,14 @@ declare namespace NodeJS {
          * - serverless
          */
         KOOT_SERVER_MODE: '' | 'serverless';
+        /**
+         * 多语言项目种，URL 采用何种方式区分语种、切换语种
+         * - **query** (默认)
+         *     - URL 上无任何标识时，匹配默认语种
+         *     - 添加 `hl` 参数时，会切换语种。如 `https://site.com/page-1/?hl=zh-cn`
+         * - router - 一级路由为语种
+         * - subdomain - 最深层的子域名为语种
+         */
+        KOOT_I18N_URL_USE: 'query' | 'router' | 'subdomain';
     }
 }

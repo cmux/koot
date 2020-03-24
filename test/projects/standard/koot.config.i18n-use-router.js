@@ -5,14 +5,10 @@ module.exports = Object.assign({}, baseConfig, {
     store: './src/store/create-method-2',
     i18n: {
         use: 'router',
-        locales: [
-            ['zh', './src/locales/zh.json'],
-            ['zh-tw', './src/locales/zh-tw.json'],
-            ['en', './src/locales/en.json']
-        ]
+        locales: baseConfig.i18n,
     },
 
     cookiesToStore: 'all',
     sessionStore: 'all',
-    distClientAssetsDirName: '__assets__'
+    distClientAssetsDirName: '__assets__',
 });

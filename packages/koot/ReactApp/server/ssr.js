@@ -30,7 +30,7 @@ import isNeedInjectCritical from '../../React/inject/is-need-inject-critical';
 import renderTemplate from '../../React/render-template';
 import {
     default as clearStore,
-    defaultKeysToPreserve
+    defaultKeysToPreserve,
 } from '../../React/redux/reset-store';
 import injectCacheKeys from '../../React/inject/_cache-keys';
 
@@ -50,12 +50,12 @@ const ssr = async (options = {}) => {
         LocaleId = __DEV__ ? global.__KOOT_LOCALEID__ : __KOOT_LOCALEID__,
         // Store = __DEV__ ? global.__KOOT_STORE__ : __KOOT_STORE__,
         // History = __DEV__ ? global.__KOOT_HISTORY__ : __KOOT_HISTORY__,
-        SSR = __DEV__ ? global.__KOOT_SSR__ : __KOOT_SSR__
+        SSR = __DEV__ ? global.__KOOT_SSR__ : __KOOT_SSR__,
     } = options;
 
     const {
         /** @type {Object} KOA Context */
-        ctx
+        ctx,
     } = SSR;
 
     /** @type {string} 本次请求的 URL */
@@ -75,7 +75,7 @@ const ssr = async (options = {}) => {
         basename:
             LocaleId && process.env.KOOT_I18N_URL_USE === 'router'
                 ? `/${LocaleId}`
-                : '/'
+                : '/',
     };
     /* eslint-disable react-hooks/rules-of-hooks */
     const memoryHistory = useRouterHistory(() => createMemoryHistory(url))(
@@ -122,9 +122,10 @@ const ssr = async (options = {}) => {
         templateInject,
         proxyRequestOrigin = {},
         // syncCookie,
-        ssrComplete
+        ssrComplete,
     } = SSR;
 
+    // console.log('\n\nbefore router match', ctx.href);
     ctx.originTrue = proxyRequestOrigin.protocol
         ? ctx.origin.replace(/^http:\/\//, `${proxyRequestOrigin.protocol}://`)
         : ctx.origin;
@@ -139,12 +140,13 @@ const ssr = async (options = {}) => {
         ctx,
         store: Store,
         syncCookie,
-        callback: lifecycle.beforeRouterMatch
+        callback: lifecycle.beforeRouterMatch,
     });
     if (LocaleId) {
         Store.dispatch({ type: CHANGE_LANGUAGE, data: LocaleId });
         i18nOnServerRender({ store: Store });
     }
+    // console.log('after router match', ctx.hrefTrue, LocaleId);
 
     // 进行路由匹配
     const { redirectLocation, renderProps } = await new Promise(
@@ -153,7 +155,7 @@ const ssr = async (options = {}) => {
                 {
                     history: History,
                     routes,
-                    location: url
+                    location: url,
                 },
                 (error, redirectLocation, renderProps) => {
                     if (error) return reject(error);
@@ -166,7 +168,7 @@ const ssr = async (options = {}) => {
     // 如果需要重定向，派发 ctx.redirect / 302
     if (redirectLocation) {
         ssrComplete({
-            redirect: redirectLocation.pathname + redirectLocation.search
+            redirect: redirectLocation.pathname + redirectLocation.search,
         });
         return;
     }
@@ -175,7 +177,7 @@ const ssr = async (options = {}) => {
     // 表示 react 不应处理该请求
     if (!renderProps) {
         ssrComplete({
-            next: true
+            next: true,
         });
         return;
     }
@@ -185,7 +187,7 @@ const ssr = async (options = {}) => {
     const currentPathname = state.routing.locationBeforeTransitions.pathname;
     if (currentPathname.split(0, 1) !== '/')
         Object.assign(Store.getState().routing.locationBeforeTransitions, {
-            pathname: ctx.path
+            pathname: ctx.path,
             // search: ctx.search
         });
 
@@ -194,7 +196,7 @@ const ssr = async (options = {}) => {
         ctx,
         store: Store,
         localeId: LocaleId,
-        callback: lifecycle.beforePreRender
+        callback: lifecycle.beforePreRender,
     });
 
     // 确定当前访问匹配到的组件
@@ -213,14 +215,14 @@ const ssr = async (options = {}) => {
         ctx,
         store: Store,
         localeId: LocaleId,
-        callback: lifecycle.beforeDataToStore
+        callback: lifecycle.beforeDataToStore,
     });
 
     // 执行所有匹配到的组件的自定义的静态生命周期
     const { title, metaHtml, reduxHtml } = await executeComponentsLifecycle({
         store: Store,
         renderProps,
-        ctx
+        ctx,
     });
 
     // 渲染生命周期: afterDataToStore
@@ -228,7 +230,7 @@ const ssr = async (options = {}) => {
         ctx,
         store: Store,
         localeId: LocaleId,
-        callback: lifecycle.afterDataToStore
+        callback: lifecycle.afterDataToStore,
     });
 
     // SSR
@@ -249,11 +251,11 @@ const ssr = async (options = {}) => {
     //     .join('')
     const stylesHtml = Object.keys(styleMap)
         .filter(
-            id =>
+            (id) =>
                 typeof styleMap[id].css === 'string' && styleMap[id].css !== ''
         )
         .map(
-            id =>
+            (id) =>
                 `<style ${__STYLE_TAG_MODULE_ATTR_NAME__}="${id}">${styleMap[id].css}</style>`
         )
         .join('');
@@ -271,16 +273,16 @@ const ssr = async (options = {}) => {
         stylesHtml,
         reduxHtml,
         SSRState: {
-            ...i18nGetSSRState()
+            ...i18nGetSSRState(),
         },
-        needInjectCritical: isNeedInjectCritical(template)
+        needInjectCritical: isNeedInjectCritical(template),
     });
     if (LocaleId) {
         // i18n 启用时: 添加其他语种页面跳转信息的 meta 标签
         inject.metas += i18nGenerateHtmlRedirectMetas({
             ctx,
             proxyRequestOrigin,
-            localeId: LocaleId
+            localeId: LocaleId,
         });
     }
 
@@ -289,10 +291,10 @@ const ssr = async (options = {}) => {
         template,
         inject: Object.assign({
             ...inject,
-            ...templateInject
+            ...templateInject,
         }),
         store: Store,
-        ctx
+        ctx,
     });
 
     // 结果写入缓存
@@ -315,7 +317,7 @@ const ssr = async (options = {}) => {
 
     // React SSR
     ssrComplete({
-        body
+        body,
     });
 };
 
@@ -323,7 +325,7 @@ const ssr = async (options = {}) => {
  * 初始化 SSR 配置
  * @param {*} i18nEnabled
  */
-const initConfig = async i18nEnabled => {
+const initConfig = async (i18nEnabled) => {
     const LocaleId = __DEV__ ? global.__KOOT_LOCALEID__ : __KOOT_LOCALEID__;
 
     const { server: serverConfig = {} } = kootConfig;
@@ -339,7 +341,7 @@ const initConfig = async i18nEnabled => {
     if (typeof serverConfig.onRender === 'function') {
         config.lifecycle.beforeDataToStore = serverConfig.onRender;
     } else if (typeof serverConfig.onRender === 'object') {
-        Object.keys(serverConfig.onRender).forEach(key => {
+        Object.keys(serverConfig.onRender).forEach((key) => {
             config.lifecycle[key] = serverConfig.onRender[key];
         });
     }
@@ -348,9 +350,9 @@ const initConfig = async i18nEnabled => {
 };
 
 if (!__DEV__)
-    ssr().catch(err => {
+    ssr().catch((err) => {
         __KOOT_SSR__.ssrComplete({
-            error: err
+            error: err,
         });
         console.error(err);
         throw err;
