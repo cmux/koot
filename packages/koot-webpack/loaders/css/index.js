@@ -21,8 +21,8 @@ module.exports = function(content) {
     const {
         length = defaultClassNameHashLength,
         mode = 'replace',
-        readable = false,
-        prefixToRemove
+        readable = false
+        // prefixToRemove
     } = loaderUtils.getOptions(this);
 
     const keyword = 'component';

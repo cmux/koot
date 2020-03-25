@@ -18,7 +18,11 @@ const postcssTransformDeclUrls = (root, options = {}) => {
     if (typeof root !== 'object') throw new Error('Missing parameter: `root`');
     if (!root.toResult) throw new Error('Invalid parameter: `transformer`');
 
-    const { transformer, context, prefixToRemove } = options;
+    const {
+        transformer,
+        context
+        // prefixToRemove
+    } = options;
 
     // 处理所有属性中的 `url()` 和 `image-set()` 的引用地址
 
