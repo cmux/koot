@@ -15,6 +15,7 @@
     "scripts": {
         "start": "koot-start",
         "start:server": "koot-start --no-build",
+        "start:spa": "koot-start --type react-spa",
         "build": "koot-build",
         "build:client": "koot-build -c",
         "build:server": "koot-build -s",

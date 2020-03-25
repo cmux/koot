@@ -5,14 +5,22 @@ const router = new require('koa-router')();
 // const { pathnameSockjs } = require('../../../defaults/before-build');
 const {
     publicPathPrefix,
-    serviceWorkerFilename
+    serviceWorkerFilename,
 } = require('../../../defaults/webpack-dev-server');
 const { dll, serviceWorker } = require('../../../defaults/dev-request-uri');
 // const getWDSport = require('../../../utils/get-webpack-dev-server-port');
 
+const getDevRoutes = require('../../../libs/get-dev-routes');
+
 const { KOOT_DEV_DLL_FILE_CLIENT: fileDllClient } = process.env;
 
-router.get(dll, ctx => {
+getDevRoutes().forEach(({ file, route }) => {
+    router.get(route, (ctx) => {
+        ctx.type = 'application/javascript';
+        ctx.body = fs.readFileSync(file);
+    });
+});
+router.get(dll, (ctx) => {
     if (fileDllClient && fs.existsSync(fileDllClient)) {
         ctx.type = 'application/javascript';
         ctx.body = fs.readFileSync(fileDllClient);
@@ -21,7 +29,7 @@ router.get(dll, ctx => {
     }
 });
 
-router.get(serviceWorker, async ctx => {
+router.get(serviceWorker, async (ctx) => {
     const uri = `${ctx.origin}/${publicPathPrefix}/dist/${serviceWorkerFilename}`;
     const res = await fetch(new Request(uri));
     ctx.body = await res.text();

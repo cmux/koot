@@ -3,7 +3,7 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
 
 // Libs & Utilities
 const {
-    keyConfigClientAssetsPublicPath
+    keyConfigClientAssetsPublicPath,
     // WEBPACK_MODIFIED_PUBLIC_PATH
 } = require('koot/defaults/before-build');
 const getAppType = require('koot/utils/get-app-type');
@@ -34,7 +34,7 @@ module.exports = async (kootConfig = {}) => {
     const {
         WEBPACK_BUILD_TYPE: TYPE,
         WEBPACK_BUILD_ENV: ENV,
-        WEBPACK_BUILD_STAGE: STAGE
+        WEBPACK_BUILD_STAGE: STAGE,
         // WEBPACK_ANALYZE,
         // SERVER_DOMAIN,
         // SERVER_PORT,
@@ -54,7 +54,7 @@ module.exports = async (kootConfig = {}) => {
     const kootBuildConfig = Object.assign({}, defaults, kootConfig, {
         appType: await getAppType(),
         distClientAssetsDirName,
-        [keyConfigClientAssetsPublicPath]: clientAssetsPublicPath
+        [keyConfigClientAssetsPublicPath]: clientAssetsPublicPath,
     });
     const { analyze = false } = kootBuildConfig;
 
@@ -102,13 +102,14 @@ module.exports = async (kootConfig = {}) => {
         if (STAGE === 'server')
             config = await transformConfigServer(kootBuildConfig);
 
-        const extendConfig = config => {
-            if (Array.isArray(config)) return config.map(c => extendConfig(c));
+        const extendConfig = (config) => {
+            if (Array.isArray(config))
+                return config.map((c) => extendConfig(c));
 
             if (typeof config.resolve !== 'object') config.resolve = {};
             config.resolve.alias = {
                 ...(config.resolve.alias || {}),
-                ...(kootBuildConfig.aliases || {})
+                ...(kootBuildConfig.aliases || {}),
             };
             return config;
         };
@@ -121,10 +122,10 @@ module.exports = async (kootConfig = {}) => {
         // ====================================================================
         if (ENV === 'prod' && STAGE === 'client' && TYPE === 'spa') {
             process.env.WEBPACK_BUILD_STAGE = 'server';
-            if (!Array.isArray(config)) config = config[0];
+            if (!Array.isArray(config)) config = [config];
             config = [
                 ...config,
-                ...(await transformConfigServer(kootBuildConfig))
+                ...(await transformConfigServer(kootBuildConfig)),
             ];
             process.env.WEBPACK_BUILD_STAGE = 'client';
         }
@@ -150,7 +151,7 @@ module.exports = async (kootConfig = {}) => {
             config.plugins.push(
                 new BundleAnalyzerPlugin({
                     analyzerPort: process.env.SERVER_PORT,
-                    defaultSizes: 'gzip'
+                    defaultSizes: 'gzip',
                 })
             );
         }

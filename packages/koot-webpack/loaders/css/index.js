@@ -9,11 +9,11 @@ const md5 = require('md5');
 const stats = require('./stats');
 const replaceSelector = require('./replace-selector');
 const {
-    classNameHashLength: defaultClassNameHashLength
+    classNameHashLength: defaultClassNameHashLength,
 } = require('koot/defaults/koot-config');
 const postcssTransformDeclUrls = require('../../postcss/transform-decl-urls');
 
-module.exports = function(content) {
+module.exports = function (content) {
     this.cacheable && this.cacheable();
 
     content = content.replace(/'/g, '"');
@@ -22,7 +22,7 @@ module.exports = function(content) {
         length = defaultClassNameHashLength,
         mode = 'replace',
         readable = false,
-        prefixToRemove
+        // prefixToRemove
     } = loaderUtils.getOptions(this);
 
     const keyword = 'component';
@@ -98,7 +98,7 @@ module.exports = function(content) {
             )
                 return;
 
-            rule.selectors = rule.selectors.map(selector => {
+            rule.selectors = rule.selectors.map((selector) => {
                 // 可读性好的class名字
                 // eg: .app_3fea
                 if (~selector.indexOf(`__${keyword}`)) {
@@ -151,19 +151,19 @@ module.exports = function(content) {
 
         // transformer(root);
         postcssTransformDeclUrls(root, {
-            transformer: url => {
-                if (prefixToRemove)
-                    result = result.replace(
-                        new RegExp(`^${prefixToRemove}`),
-                        ''
-                    );
+            transformer: (url) => {
+                // if (prefixToRemove)
+                //     result = result.replace(
+                //         new RegExp(`^${prefixToRemove}`),
+                //         ''
+                //     );
                 const resName = `__RES${importIndex}`;
                 importIndex++;
                 imports[resName] = url;
                 return `' + ${resName} + '`;
             },
-            context: this.context
-            // prefixToRemove: this.prefixToRemove
+            context: this.context,
+            prefixToRemove: this.prefixToRemove,
         });
 
         // 导出md5的class名字和处理后的css文本
