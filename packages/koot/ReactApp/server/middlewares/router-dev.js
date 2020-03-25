@@ -8,8 +8,16 @@ const {
 } = require('../../../defaults/webpack-dev-server');
 const { dll, serviceWorker } = require('../../../defaults/dev-request-uri');
 
+const getDevRoutes = require('../../../libs/get-dev-routes');
+
 const { KOOT_DEV_DLL_FILE_CLIENT: fileDllClient } = process.env;
 
+getDevRoutes().forEach(({ file, route }) => {
+    router.get(route, ctx => {
+        ctx.type = 'application/javascript';
+        ctx.body = fs.readFileSync(file);
+    });
+});
 router.get(dll, ctx => {
     if (fileDllClient && fs.existsSync(fileDllClient)) {
         ctx.type = 'application/javascript';
