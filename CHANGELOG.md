@@ -7,6 +7,7 @@
     -   更新依赖包 **major** 版本号
         -   `execa` -> _^4.0.0_
         -   `fs-extra` -> _^9.0.0_
+        -   `react-redux` -> _^7.2.0_
 -   **新特性**
     -   多语言/i18n: `i18n.use = 'subdomain'` - 现在可使用最深层的子域名作为语言标识 ([#220](https://github.com/cmux/koot/issues/220))
 -   优化
