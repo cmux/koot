@@ -38,7 +38,7 @@
         "babel-eslint": "^10.1.0",
         "cssnano": "^4.1.10",
         "eslint": "^6.8.0",
-        "eslint-config-koot": "^1.6.0",
+        "eslint-config-koot": "^1.7.0",
         "husky": "^4.2.3",
         "lint-staged": "^10.0.8",
         "normalize.css": "^8.0.1",

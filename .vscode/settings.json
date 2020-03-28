@@ -6,6 +6,7 @@
     "editor.codeActionsOnSave": {
         "source.fixAll": true
     },
+    "eslint.codeActionsOnSave.mode": "problems",
     "eslint.validate": [
         "javascript",
         "javascriptreact",
