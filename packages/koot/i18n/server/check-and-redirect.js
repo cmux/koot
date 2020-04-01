@@ -27,11 +27,15 @@ const useRouterRedirect = (ctx) => {
             pathname = '/' + pathname.join('/');
 
             // 生成跳转后的地址
-            const newpath =
+            let newpath =
                 ctx.originTrue +
                 ctx.hrefTrue
                     .replace(new RegExp(`^${ctx.originTrue}`), '')
                     .replace(new RegExp(`^${ctx.path}`), pathname);
+
+            if (process.env.WEBPACK_BUILD_ENV === 'dev')
+                newpath = newpath.replace(/^https:\/\//, 'http://');
+
             ctx.hrefTrue = newpath;
 
             // console.log('newpath', newpath)
@@ -52,6 +56,8 @@ const useRouterRedirect = (ctx) => {
                 new RegExp(`://${ctx.hostname}`),
                 `://${localeId}.${domainSplit.join('.')}`
             );
+            if (process.env.WEBPACK_BUILD_ENV === 'dev')
+                ctx.hrefTrue = ctx.hrefTrue.replace(/^https:\/\//, 'http://');
             return ctx.redirect(ctx.hrefTrue);
         };
 
