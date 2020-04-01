@@ -45,7 +45,7 @@ const {
     customEnv: puppeteerTestCustomEnv,
     injectScripts: puppeteerTestInjectScripts,
     requestHidden404: testRequestHidden404,
-    criticalAssetsShouldBeGzip: testAssetsGzip
+    criticalAssetsShouldBeGzip: testAssetsGzip,
 } = require('../puppeteer-test');
 const addCommand = require('../../libs/add-command-to-package-json');
 const terminate = require('../../libs/terminate-process');
@@ -64,7 +64,7 @@ process.env.KOOT_TEST_MODE = JSON.stringify(true);
 const projects = require('../../projects/get')();
 
 const projectsToUse = projects.filter(
-    project =>
+    (project) =>
         // Array.isArray(project.type) && project.type.includes('react-isomorphic')
         project.name === 'simple'
 );
@@ -77,7 +77,7 @@ const headless = true;
 const defaultViewport = {
     width: 800,
     height: 800,
-    deviceScaleFactor: 1
+    deviceScaleFactor: 1,
 };
 
 let browser;
@@ -85,9 +85,9 @@ beforeAll(() =>
     puppeteer
         .launch({
             headless,
-            defaultViewport
+            defaultViewport,
         })
-        .then(theBrowser => {
+        .then((theBrowser) => {
             browser = theBrowser;
         })
 );
@@ -115,24 +115,26 @@ const doTest = async (port, dist, settings = {}) => {
     const {
         isDev = false,
         enableJavascript = true,
-        customEnv = {}
+        customEnv = {},
         // childProcess
     } = settings;
     customEnv.notexist = undefined;
 
-    const checkBackgroundResult = styleValue => {
-        return styleValue.match(/url\([ "']*(.+?)[ '"]*\)/g).every(assetUri => {
-            return assetUri.includes(
-                isDev
-                    ? `__koot_webpack_dev_server__/dist/assets`
-                    : `/test-includes/assets/`
-            );
-        });
+    const checkBackgroundResult = (styleValue) => {
+        return styleValue
+            .match(/url\([ "']*(.+?)[ '"]*\)/g)
+            .every((assetUri) => {
+                return assetUri.includes(
+                    isDev
+                        ? `__koot_webpack_dev_server__/dist/assets`
+                        : `/test-includes/assets/`
+                );
+            });
     };
     const setScaleFactor = async (scale = 1) => {
         await page.setViewport({
             ...defaultViewport,
-            deviceScaleFactor: scale
+            deviceScaleFactor: scale,
         });
         await page.waitFor(200);
     };
@@ -142,7 +144,7 @@ const doTest = async (port, dist, settings = {}) => {
     // await page.setJavaScriptEnabled(enableJavascript)
     if (!enableJavascript) {
         await page.setRequestInterception(true);
-        page.on('request', request => {
+        page.on('request', (request) => {
             const url = request.url();
             if (/\.js$/.test(url)) request.abort();
             else request.continue();
@@ -158,14 +160,14 @@ const doTest = async (port, dist, settings = {}) => {
 
     const res = await page
         .goto(origin, {
-            waitUntil: 'networkidle0'
+            waitUntil: 'networkidle0',
         })
         .catch();
 
     if (!res.ok()) {
         console.warn({
             res,
-            text: await res.text()
+            text: await res.text(),
         });
     }
 
@@ -186,7 +188,7 @@ const doTest = async (port, dist, settings = {}) => {
             return {
                 base: window.getComputedStyle(el).backgroundImage,
                 baseRelative: window.getComputedStyle(elRelative)
-                    .backgroundImage
+                    .backgroundImage,
             };
         });
         expect(checkBackgroundResult(base)).toBe(true);
@@ -197,7 +199,7 @@ const doTest = async (port, dist, settings = {}) => {
     {
         const result = {};
         const resultNative = {};
-        const test = async scale => {
+        const test = async (scale) => {
             await setScaleFactor(scale);
             const { value, valueNative } = await page.evaluate(() => {
                 const el = document.querySelector(
@@ -211,7 +213,7 @@ const doTest = async (port, dist, settings = {}) => {
                 return {
                     value: window.getComputedStyle(el).backgroundImage,
                     valueNative: window.getComputedStyle(elNative)
-                        .backgroundImage
+                        .backgroundImage,
                 };
             });
             expect(checkBackgroundResult(value)).toBe(true);
@@ -234,7 +236,7 @@ const doTest = async (port, dist, settings = {}) => {
         const testLocation = {
             pathname: '/route-test/123',
             search: '?test=aaa',
-            hash: '#bbb'
+            hash: '#bbb',
         };
         await page.goto(
             origin +
@@ -242,15 +244,15 @@ const doTest = async (port, dist, settings = {}) => {
                 testLocation.search +
                 testLocation.hash,
             {
-                waitUntil: 'networkidle2'
+                waitUntil: 'networkidle2',
             }
         );
-        const testResults = await page.evaluate(testLocation => {
+        const testResults = await page.evaluate((testLocation) => {
             const results = {};
             const {
                 props = {},
                 propsInConnect = {},
-                stateInConnect = {}
+                stateInConnect = {},
             } = window.__KOOT_TEST_ROUTE__;
 
             const isPropsValid = (props = {}) => {
@@ -260,7 +262,7 @@ const doTest = async (port, dist, settings = {}) => {
                     route = {},
                     routeParams = {},
                     router = {},
-                    routes
+                    routes,
                 } = props;
 
                 return (
@@ -328,7 +330,7 @@ const doTest = async (port, dist, settings = {}) => {
         const context = await browser.createIncognitoBrowserContext();
         const page = await context.newPage();
         await page.goto(origin + '/route-test/123?test=aaa#bbb', {
-            waitUntil: 'networkidle2'
+            waitUntil: 'networkidle2',
         });
 
         await page.evaluate(() => {
@@ -347,7 +349,7 @@ const doTest = async (port, dist, settings = {}) => {
 
             return {
                 title,
-                metaTestRoute: metaTestRoute.getAttribute('test-route')
+                metaTestRoute: metaTestRoute.getAttribute('test-route'),
             };
         });
 
@@ -363,13 +365,13 @@ const doTest = async (port, dist, settings = {}) => {
             const context = await browser.createIncognitoBrowserContext();
             const page = await context.newPage();
             await page.goto(origin, {
-                waitUntil: 'networkidle2'
+                waitUntil: 'networkidle2',
             });
 
             const { result, oldTitle } = await page.evaluate(
                 (changedTitle, changedMetas) => {
                     const r = {
-                        oldTitle: document.title
+                        oldTitle: document.title,
                     };
 
                     const $button = document.querySelector(
@@ -435,7 +437,7 @@ const doTest = async (port, dist, settings = {}) => {
         const context = await browser.createIncognitoBrowserContext();
         const page = await context.newPage();
         await page.goto(origin + '/proxy-1/policies?hl=en', {
-            waitUntil: 'networkidle2'
+            waitUntil: 'networkidle2',
         });
         const title = await page.evaluate(() => document.title);
         await context.close();
@@ -450,7 +452,7 @@ const doTest = async (port, dist, settings = {}) => {
         const context = await browser.createIncognitoBrowserContext();
         const page = await context.newPage();
         await page.goto(origin, {
-            waitUntil: 'networkidle2'
+            waitUntil: 'networkidle2',
         });
         await sleep(1000);
 
@@ -468,7 +470,7 @@ const doTest = async (port, dist, settings = {}) => {
         const context = await browser.createIncognitoBrowserContext();
         const page = await context.newPage();
         await page.goto(origin + '/sass-test', {
-            waitUntil: 'networkidle2'
+            waitUntil: 'networkidle2',
         });
 
         const { container, nested } = await page.evaluate(() => {
@@ -480,7 +482,7 @@ const doTest = async (port, dist, settings = {}) => {
                 container: parseInt(
                     window.getComputedStyle(container).fontSize
                 ),
-                nested: parseInt(window.getComputedStyle(nested).fontSize)
+                nested: parseInt(window.getComputedStyle(nested).fontSize),
             };
         });
 
@@ -495,12 +497,12 @@ const doTest = async (port, dist, settings = {}) => {
         const context = await browser.createIncognitoBrowserContext();
         const page = await context.newPage();
         await page.goto(origin, {
-            waitUntil: 'networkidle2'
+            waitUntil: 'networkidle2',
         });
 
         const { hasGlobal, hasModule } = await page.evaluate(() => {
             const { _global, ...modules } = window.__KOOT_TEXT_GET_STYLES__();
-            const isPropValid = obj =>
+            const isPropValid = (obj) =>
                 typeof obj === 'object' &&
                 typeof obj.text === 'string' &&
                 obj.rules instanceof CSSRuleList;
@@ -508,7 +510,7 @@ const doTest = async (port, dist, settings = {}) => {
                 hasGlobal: isPropValid(_global),
                 hasModule:
                     Object.keys(modules).length > 0 &&
-                    Object.values(modules).every(isPropValid)
+                    Object.values(modules).every(isPropValid),
             };
         });
 
@@ -523,7 +525,7 @@ const doTest = async (port, dist, settings = {}) => {
         const context = await browser.createIncognitoBrowserContext();
         const page = await context.newPage();
         await page.goto(origin, {
-            waitUntil: 'networkidle2'
+            waitUntil: 'networkidle2',
         });
 
         const { valueHasChanged } = await page.evaluate(async () => {
@@ -537,12 +539,12 @@ const doTest = async (port, dist, settings = {}) => {
 
             button.click();
 
-            await new Promise(resolve => setTimeout(resolve, 1500));
+            await new Promise((resolve) => setTimeout(resolve, 1500));
 
             return {
                 oldValue: currentValue,
                 newValue: value.innerHTML,
-                valueHasChanged: Boolean(currentValue !== value.innerHTML)
+                valueHasChanged: Boolean(currentValue !== value.innerHTML),
             };
         });
 
@@ -556,7 +558,7 @@ const doTest = async (port, dist, settings = {}) => {
         const context = await browser.createIncognitoBrowserContext();
         const page = await context.newPage();
         await page.goto(origin, {
-            waitUntil: 'networkidle2'
+            waitUntil: 'networkidle2',
         });
         const title = await page.evaluate(async () => {
             return document.title;
@@ -572,7 +574,7 @@ const doTest = async (port, dist, settings = {}) => {
         const context = await browser.createIncognitoBrowserContext();
         const page = await context.newPage();
         const res = await page.goto(origin, {
-            waitUntil: 'networkidle0'
+            waitUntil: 'networkidle0',
         });
 
         const HTML = await res.text();
@@ -581,13 +583,13 @@ const doTest = async (port, dist, settings = {}) => {
 
         const textSSR = $(selector).text();
         const classNameSSR = $(selector).attr('class');
-        const { textCSR, classNameCSR } = await page.evaluate(selector => {
+        const { textCSR, classNameCSR } = await page.evaluate((selector) => {
             const el = document.querySelector(selector);
             const textCSR = el.innerText;
             const classNameCSR = el.getAttribute('class');
             return {
                 textCSR,
-                classNameCSR
+                classNameCSR,
             };
         }, selector);
 
@@ -609,9 +611,9 @@ const doTest = async (port, dist, settings = {}) => {
         // eslint-disable-next-line no-console
         console.log(
             'failedResponse',
-            failedResponse.map(res => ({
+            failedResponse.map((res) => ({
                 status: res.status(),
-                url: res.url()
+                url: res.url(),
             }))
         );
     }
@@ -627,7 +629,7 @@ const doTest = async (port, dist, settings = {}) => {
  * @async
  * @param {String} cwd
  */
-const beforeTest = async cwd => {
+const beforeTest = async (cwd) => {
     // 重置
     await exec(`pm2 kill`);
     await removeTempProjectConfig(cwd);
@@ -664,18 +666,18 @@ const testOutputs = async (dist, countToBe) => {
     const filesNeedToExist = [];
     for (const files of Object.values(outputs)) {
         files
-            .map(file => path.resolve(dist, file))
-            .filter(file => !filesNeedToExist.includes(file))
-            .forEach(file => filesNeedToExist.push(file));
+            .map((file) => path.resolve(dist, file))
+            .filter((file) => !filesNeedToExist.includes(file))
+            .forEach((file) => filesNeedToExist.push(file));
     }
 
     const filesExist = (
         await glob(path.resolve(dist, 'public', '**/*'), {
-            dot: true
+            dot: true,
         })
     )
-        .filter(file => !fs.lstatSync(file).isDirectory())
-        .map(file => path.normalize(file));
+        .filter((file) => !fs.lstatSync(file).isDirectory())
+        .map((file) => path.normalize(file));
 
     expect(fs.existsSync(dist)).toBe(true);
     expect(fs.existsSync(path.resolve(dist, 'public'))).toBe(true);
@@ -703,7 +705,7 @@ describe('测试: React 同构项目', () => {
 
                 const customEnv = {
                     aaaaa: '' + Math.floor(Math.random() * 10000),
-                    bbbbb: 'a1b2c3'
+                    bbbbb: 'a1b2c3',
                 };
                 const commandName = `${commandTestBuild}-prod`;
                 const command = `koot-start --koot-test -- bbbbb=${customEnv.bbbbb}`;
@@ -717,14 +719,14 @@ describe('测试: React 同构项目', () => {
                 const child = execSync(
                     `npm run ${commandName} -- aaaaa=${customEnv.aaaaa}`,
                     {
-                        cwd: dir
+                        cwd: dir,
                     }
                 );
                 const errors = [];
 
                 await waitForPort(child);
                 const port = require(path.resolve(dir, configFile)).port;
-                child.stderr.on('data', err => {
+                child.stderr.on('data', (err) => {
                     errors.push(err);
                 });
 
@@ -750,21 +752,21 @@ describe('测试: React 同构项目', () => {
                     dist,
                     env: 'prod',
                     type: 'isomorphic',
-                    serverMode: undefined
+                    serverMode: undefined,
                 });
                 await testFilesFromChunkmap(dist, false);
                 await doTest(port, dist, {
-                    customEnv
+                    customEnv,
                 });
                 await doTest(port, dist, {
                     enableJavascript: false,
-                    customEnv
+                    customEnv,
                 });
 
                 // 测试: 项目 package.json 里应有 koot 属性对象
                 {
                     const {
-                        version: kootVersion
+                        version: kootVersion,
                     } = require('koot/package.json');
                     const { koot: result } = require(path.resolve(
                         dir,
@@ -788,7 +790,7 @@ describe('测试: React 同构项目', () => {
                 const dist = path.resolve(dir, 'dist');
                 const customEnv = {
                     aaaaa: '' + Math.floor(Math.random() * 10000),
-                    bbbbb: 'a1b2c3'
+                    bbbbb: 'a1b2c3',
                 };
                 const commandName = `${commandTestBuild}-isomorphic-dev`;
                 const command = `koot-dev --no-open --koot-test -- bbbbb=${customEnv.bbbbb}`;
@@ -798,13 +800,13 @@ describe('测试: React 同构项目', () => {
                     `npm run ${commandName} -- aaaaa=${customEnv.aaaaa}`,
                     {
                         cwd: dir,
-                        stdio: ['pipe', 'pipe', 'pipe', 'ipc']
+                        stdio: ['pipe', 'pipe', 'pipe', 'ipc'],
                     }
                 );
                 const errors = [];
 
                 const port = await waitForPort(child, / on.*http:.*:([0-9]+)/);
-                child.stderr.on('data', err => {
+                child.stderr.on('data', (err) => {
                     errors.push(err);
                 });
 
@@ -817,13 +819,13 @@ describe('测试: React 同构项目', () => {
                 await doTest(port, dist, {
                     isDev: true,
                     customEnv,
-                    childProcess: child
+                    childProcess: child,
                 });
                 await doTest(port, dist, {
                     isDev: true,
                     customEnv,
                     enableJavascript: false,
-                    childProcess: child
+                    childProcess: child,
                 });
                 await terminate(child.pid);
                 await afterTest(dir, 'ENV: dev');
@@ -845,20 +847,20 @@ describe('测试: React 同构项目', () => {
                 await addCommand(commandName, command, dir);
 
                 const chunks = `npm run ${commandName}`.split(' ');
-                await new Promise(resolve => {
+                await new Promise((resolve) => {
                     const child = require('child_process').spawn(
                         chunks.shift(),
                         chunks,
                         {
                             cwd: dir,
                             stdio: false,
-                            shell: true
+                            shell: true,
                         }
                     );
                     child.on('close', () => {
                         resolve();
                     });
-                }).catch(e => errors.push(e));
+                }).catch((e) => errors.push(e));
 
                 expect(errors.length).toBe(0);
 
@@ -883,7 +885,7 @@ describe('测试: React 同构项目', () => {
                 const configFile = `koot.config.bundles-keep.js`;
                 const {
                     dist: _dist,
-                    bundleVersionsKeep
+                    bundleVersionsKeep,
                 } = require(path.resolve(dir, configFile));
                 const dist = path.resolve(dir, _dist);
                 const commandName = `${commandTestBuild}-bundle_versions_keep`;
@@ -896,20 +898,20 @@ describe('测试: React 同构项目', () => {
                 // 打包多次
                 for (let i = 0; i < bundleVersionsKeep + 2; i++) {
                     const chunks = `npm run ${commandName}`.split(' ');
-                    await new Promise(resolve => {
+                    await new Promise((resolve) => {
                         const child = require('child_process').spawn(
                             chunks.shift(),
                             chunks,
                             {
                                 cwd: dir,
                                 stdio: false,
-                                shell: true
+                                shell: true,
                             }
                         );
                         child.on('close', () => {
                             resolve();
                         });
-                    }).catch(e => errors.push(e));
+                    }).catch((e) => errors.push(e));
                 }
 
                 // const dirPublic = path.resolve(dist, 'public');
