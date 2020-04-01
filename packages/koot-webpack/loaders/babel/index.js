@@ -25,7 +25,7 @@ const testPluginName = (pluginObject, regExp) => {
     );
 };
 
-module.exports = require('babel-loader').custom(babel => {
+module.exports = require('babel-loader').custom((babel) => {
     // function myPlugin() {
     //     return {
     //         visitor: {},
@@ -48,12 +48,12 @@ module.exports = require('babel-loader').custom(babel => {
                 __react,
                 __typescript,
                 __server,
-                __routes
+                __routes,
             });
             // Pull out any custom options that the loader might have.
             return {
                 // Pass the options back with the two custom options removed.
-                loader
+                loader,
             };
         },
 
@@ -69,7 +69,7 @@ module.exports = require('babel-loader').custom(babel => {
                 __react,
                 __typescript = false,
                 __server = false,
-                __routes
+                __routes,
             } = customOptions;
             const { presets, plugins, ...options } = cfg.options;
             const isServer =
@@ -84,9 +84,9 @@ module.exports = require('babel-loader').custom(babel => {
                     __react
                         ? {
                               isTSX: true,
-                              allExtensions: true
+                              allExtensions: true,
                           }
-                        : {}
+                        : {},
                 ]);
                 // console.log(newPresets);
             }
@@ -105,7 +105,7 @@ module.exports = require('babel-loader').custom(babel => {
                     ];
                     if (isServer) {
                         thisPreset.options.targets = {
-                            node: true
+                            node: true,
                         };
                         thisPreset.options.ignoreBrowserslistConfig = true;
                         thisPreset.options.exclude.push(
@@ -123,7 +123,7 @@ module.exports = require('babel-loader').custom(babel => {
             // console.log('\n ');
             // console.log('before', plugins.map(plugin => plugin.file.request));
 
-            const newPlugins = plugins.filter(plugin => {
+            const newPlugins = plugins.filter((plugin) => {
                 // console.log(plugin.file.request);
                 if (testPluginName(plugin, /^extract-hoc(\/|\\)babel$/))
                     return false;
@@ -142,7 +142,7 @@ module.exports = require('babel-loader').custom(babel => {
                 __react &&
                 process.env.WEBPACK_BUILD_ENV === 'dev'
             ) {
-                newPlugins.push(require('extract-hoc/babel'));
+                // newPlugins.push(require('extract-hoc/babel'));
                 newPlugins.push(require('react-hot-loader/babel'));
             }
 
@@ -151,7 +151,7 @@ module.exports = require('babel-loader').custom(babel => {
                 if (fs.lstatSync(pathname).isDirectory()) pathname += '/index';
                 if (!fs.existsSync(pathname)) {
                     const exts = ['.js', '.ts'];
-                    exts.some(ext => {
+                    exts.some((ext) => {
                         const newPathname = path.resolve(pathname + ext);
                         if (fs.existsSync(newPathname)) {
                             pathname = newPathname;
@@ -166,8 +166,8 @@ module.exports = require('babel-loader').custom(babel => {
                         './plugins/client-sanitize-code-spliting-name.js'
                     ),
                     {
-                        routesConfigFile: pathname
-                    }
+                        routesConfigFile: pathname,
+                    },
                 ]);
                 // console.log(newPlugins);
             }
@@ -175,7 +175,7 @@ module.exports = require('babel-loader').custom(babel => {
             const thisOptions = {
                 ...options,
                 presets: newPresets,
-                plugins: newPlugins
+                plugins: newPlugins,
             };
             // console.log(isServer);
 
@@ -198,8 +198,8 @@ module.exports = require('babel-loader').custom(babel => {
             // }
 
             return {
-                ...result
+                ...result,
             };
-        }
+        },
     };
 });

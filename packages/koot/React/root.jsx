@@ -1,4 +1,4 @@
-// import { hot } from 'react-hot-loader/root';
+import { hot } from 'react-hot-loader/root';
 import React from 'react';
 import { Provider } from 'react-redux';
 import Router from 'react-router/lib/Router';
@@ -35,8 +35,8 @@ class Root extends React.Component {
         );
     }
 }
-export default Root;
-// export default hot(Root);
+// export default Root;
+export default hot(Root);
 
 // let e = Root;
 

@@ -7,10 +7,10 @@ import styles from './extended.module.less';
 
 const Extended = extend({
     connect: true,
-    styles
+    styles,
 })(
-    React.memo(({ forwardedRef, className }) => {
-        // console.log('forwardedRef', forwardedRef);
+    React.memo(({ forwardedRef, className, ...props }) => {
+        if (__CLIENT__) console.warn('forwardedRef', forwardedRef, props);
         return (
             <div
                 ref={forwardedRef}

@@ -9,7 +9,7 @@ const defaultDefines = require('koot/defaults/defines');
 const {
     keyConfigBuildDll,
     styleTagGlobalAttributeName,
-    styleTagModuleAttributeName
+    styleTagModuleAttributeName,
 } = require('koot/defaults/before-build');
 const getPathnameProjectConfigFile = require('koot/utils/get-pathname-project-config-file');
 // const readBaseConfig = require('koot/utils/read-base-config')
@@ -40,6 +40,10 @@ const factory = async ({
     //     }
     // }
 
+    if (stage === 'client' && env === 'dev') {
+        aliases['react-dom'] = '@hot-loader/react-dom';
+    }
+
     return {
         module: {
             rules: createModuleRules({
@@ -47,12 +51,12 @@ const factory = async ({
                 defines,
                 css,
                 createDll,
-                ...remainingKootBuildConfig
-            })
+                ...remainingKootBuildConfig,
+            }),
         },
         resolve: {
             ...resolve,
-            alias: { ...resolve.alias, ...aliases }
+            alias: { ...resolve.alias, ...aliases },
         },
         plugins: await plugins(
             env,
@@ -60,7 +64,7 @@ const factory = async ({
             defines,
             remainingKootBuildConfig,
             options
-        )
+        ),
     };
 };
 
@@ -73,13 +77,13 @@ const plugins = async (
     options = {}
 ) => {
     const _defaultDefines = {};
-    Object.keys(defaultDefines).forEach(key => {
+    Object.keys(defaultDefines).forEach((key) => {
         _defaultDefines[key] = JSON.stringify(defaultDefines[key]);
     });
 
     const constants = {
         __STYLE_TAG_GLOBAL_ATTR_NAME__: styleTagGlobalAttributeName,
-        __STYLE_TAG_MODULE_ATTR_NAME__: styleTagModuleAttributeName
+        __STYLE_TAG_MODULE_ATTR_NAME__: styleTagModuleAttributeName,
     };
 
     const thisDefines = Object.assign(
@@ -99,7 +103,7 @@ const plugins = async (
 
             // 将 SERVER_PORT 赋值
             // 服务器启动时，会优先选取当前环境变量中的 SERVER_PORT，如果没有，会选择 __SERVER_PORT__
-            __SERVER_PORT__: JSON.stringify(process.env.SERVER_PORT)
+            __SERVER_PORT__: JSON.stringify(process.env.SERVER_PORT),
         },
         Object.entries(constants).reduce((obj, [key, value]) => {
             obj[key] = JSON.stringify(value);
@@ -143,7 +147,7 @@ const plugins = async (
         'WEBPACK_BUILD_TYPE',
         'WEBPACK_BUILD_ENV',
         'WEBPACK_CHUNKMAP',
-        'WEBPACK_DEV_SERVER_PORT'
+        'WEBPACK_DEV_SERVER_PORT',
         // "WEBPACK_SERVER_PUBLIC_PATH",
     ];
     if (
@@ -159,26 +163,26 @@ const plugins = async (
         process.env.KOOT_SESSION_STORE = JSON.stringify(false);
     }
 
-    JSON.parse(process.env.KOOT_CUSTOM_ENV_KEYS).forEach(key => {
+    JSON.parse(process.env.KOOT_CUSTOM_ENV_KEYS).forEach((key) => {
         if (typeof process.env[key] !== 'undefined') envsToDefine.push(key);
     });
 
     const moduleReplacements = [
         [
             /^__KOOT_PROJECT_CONFIG_FULL_PATHNAME__$/,
-            getPathnameProjectConfigFile()
+            getPathnameProjectConfigFile(),
         ],
         [
             /^__KOOT_PROJECT_CONFIG_PORTION_SERVER_PATHNAME__$/,
-            getPathnameProjectConfigFile('server')
+            getPathnameProjectConfigFile('server'),
         ],
         [
             /^__KOOT_PROJECT_CONFIG_PORTION_CLIENT_PATHNAME__$/,
-            getPathnameProjectConfigFile('client')
+            getPathnameProjectConfigFile('client'),
         ],
         [
             /^__KOOT_PROJECT_CONFIG_PORTION_OTHER_CLIENT_PATHNAME__$/,
-            getPathnameProjectConfigFile('client-other')
+            getPathnameProjectConfigFile('client-other'),
         ],
         [
             /^__KOOT_HOC_EXTEND__$/,
@@ -187,8 +191,8 @@ const plugins = async (
                     return require('../libs/get-koot-file')(
                         'React/component-extender.js'
                     );
-            })()
-        ]
+            })(),
+        ],
         // [
         //     /^__KOOT_HOC_PAGEINFO__$/,
         //     (() => {
@@ -202,12 +206,13 @@ const plugins = async (
     if (historyType) {
         moduleReplacements.push([
             /^__KOOT_CLIENT_REQUIRE_CREATE_HISTORY__$/,
-            `history/lib/create${historyType.substr(0, 1).toUpperCase() +
-                historyType.substr(1)}`
+            `history/lib/create${
+                historyType.substr(0, 1).toUpperCase() + historyType.substr(1)
+            }`,
         ]);
         moduleReplacements.push([
             /^__KOOT_CLIENT_REQUIRE_HISTORY__$/,
-            `react-router/lib/${historyType}`
+            `react-router/lib/${historyType}`,
         ]);
     }
 
@@ -215,12 +220,14 @@ const plugins = async (
         new KootResetCssLoaderPlugin(),
         new webpack.DefinePlugin(thisDefines),
         new webpack.EnvironmentPlugin(
-            envsToDefine.filter(key => typeof process.env[key] !== 'undefined')
+            envsToDefine.filter(
+                (key) => typeof process.env[key] !== 'undefined'
+            )
         ),
         ...moduleReplacements.map(
             ([regex, value]) =>
                 new webpack.NormalModuleReplacementPlugin(regex, value)
-        )
+        ),
     ];
 };
 
@@ -236,13 +243,13 @@ const resolve = Object.assign({
         '.ts',
         '.tsx',
         '.mjs',
-        '.cjs'
+        '.cjs',
         // '.json',
         // '.css',
         // '.less',
         // '.sass',
         // '.scss'
-    ]
+    ],
 });
 
 // 这里配置需要babel处理的node_modules
@@ -261,7 +268,7 @@ const filterExternalsModules = (kootConfig = {}) => {
         .concat(fs.readdirSync(path.resolve(process.cwd(), 'node_modules')))
         .concat(['react-dom/server'])
         .filter(
-            x =>
+            (x) =>
                 !['.bin'].concat(needBabelHandleList).includes(x) &&
                 !/^sp-/.test(x) &&
                 !/^koot-/.test(x) &&
@@ -301,5 +308,5 @@ module.exports = {
     plugins,
     resolve,
     needBabelHandleList,
-    filterExternalsModules
+    filterExternalsModules,
 };

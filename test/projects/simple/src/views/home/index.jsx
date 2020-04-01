@@ -57,7 +57,7 @@ const Bg = ({ className, type }) => (
 
 const IssueTest = ({ className = '', ...props }) => (
     <div
-        className={[className, 'issue-test'].filter(c => !!c).join(' ')}
+        className={[className, 'issue-test'].filter((c) => !!c).join(' ')}
         {...props}
     />
 );
@@ -67,7 +67,7 @@ const IssueTest = ({ className = '', ...props }) => (
 const ButtonTestUpdatePageinfo = ({
     children,
     title = false,
-    metas = false
+    metas = false,
 }) => {
     function onClick() {
         clientUpdatePageinfo({
@@ -75,10 +75,10 @@ const ButtonTestUpdatePageinfo = ({
             metas: metas
                 ? [
                       {
-                          'test-client_update_pageinfo': 'success'
-                      }
+                          'test-client_update_pageinfo': 'success',
+                      },
                   ]
-                : undefined
+                : undefined,
         });
     }
     return (
@@ -102,8 +102,8 @@ export default extend({
         title: 'Koot Boilerplate (Simple)',
         metas: [
             { description: 'Koot Boilerplate (Simple)' },
-            { 'page-name': 'home' }
-        ]
+            { 'page-name': 'home' },
+        ],
     }),
-    styles
+    styles,
 })(PageHome);

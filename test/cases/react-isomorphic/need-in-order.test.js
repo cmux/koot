@@ -62,11 +62,11 @@ const cheerio = require('cheerio');
 // Import local scripts =======================================================
 
 const {
-    buildManifestFilename
+    buildManifestFilename,
 } = require('../../../packages/koot/defaults/before-build');
 const {
     changeLocaleQueryKey,
-    sessionStoreKey
+    sessionStoreKey,
 } = require('../../../packages/koot/defaults/defines');
 const defaultKootConfig = require('../../../packages/koot/defaults/koot-config');
 const removeTempProjectConfig = require('../../../packages/koot/libs/remove-temp-project-config');
@@ -86,7 +86,7 @@ const {
     injectScripts: puppeteerTestInjectScripts,
     requestHidden404: testRequestHidden404,
     criticalAssetsShouldBeGzip: testAssetsGzip,
-    clientLifecycles: testClientLifecycles
+    clientLifecycles: testClientLifecycles,
 } = require('../puppeteer-test');
 
 // Constants ==================================================================
@@ -96,7 +96,7 @@ process.env.KOOT_TEST_MODE = JSON.stringify(true);
 
 const projects = getProjects();
 const projectsToUse = projects.filter(
-    project =>
+    (project) =>
         // Array.isArray(project.type) && project.type.includes('react-isomorphic')
         project.name === 'standard'
 );
@@ -116,9 +116,9 @@ let lastTime;
 beforeAll(() =>
     puppeteer
         .launch({
-            headless
+            headless,
         })
-        .then(theBrowser => {
+        .then((theBrowser) => {
             browser = theBrowser;
         })
 );
@@ -160,7 +160,7 @@ const testProduction = (
         await addCommand(commandName, command, dir);
 
         const child = execSync(`npm run ${commandName}`, {
-            cwd: dir
+            cwd: dir,
         });
         const errors = [];
 
@@ -169,7 +169,7 @@ const testProduction = (
         const port = require('../../../packages/koot/utils/get-port')(
             config.port
         );
-        child.stderr.on('data', err => {
+        child.stderr.on('data', (err) => {
             errors.push(err);
         });
 
@@ -179,13 +179,13 @@ const testProduction = (
             dist,
             env: 'prod',
             type: 'isomorphic',
-            serverMode: extraConing.serverMode
+            serverMode: extraConing.serverMode,
         });
         await testFilesFromChunkmap(dist, false);
         await testCodeSplitting(dist);
         await doPuppeteerTest(port, dist, {
             kootConfig: config,
-            ...extraConing
+            ...extraConing,
         });
         await terminate(child.pid);
 
@@ -221,12 +221,12 @@ const testDevelopment = (
 
         const child = execSync(`npm run ${commandName}`, {
             cwd: dir,
-            stdio: ['pipe', 'pipe', 'pipe', 'ipc']
+            stdio: ['pipe', 'pipe', 'pipe', 'ipc'],
         });
         const errors = [];
 
         const port = await waitForPort(child, / on.*http:.*:([0-9]+)/);
-        child.stderr.on('data', err => {
+        child.stderr.on('data', (err) => {
             errors.push(err);
         });
 
@@ -239,7 +239,7 @@ const testDevelopment = (
         await doPuppeteerTest(port, undefined, {
             kootConfig: config,
             isDev: true,
-            ...extraConing
+            ...extraConing,
         });
         await terminate(child.pid);
 
@@ -259,7 +259,7 @@ const testFull = (...args) => {
  * @async
  * @param {String} cwd
  */
-const beforeTest = async cwd => {
+const beforeTest = async (cwd) => {
     // 重置
     await exec(`pm2 kill`);
     await removeTempProjectConfig(cwd);
@@ -286,7 +286,7 @@ const afterTest = async (cwd, title) => {
     );
 };
 
-const emptyDist = async dir => {
+const emptyDist = async (dir) => {
     if (!fs.existsSync(dir)) return;
     const files = await fs.readdir(dir);
     for (const filename of files) {
@@ -303,8 +303,8 @@ const emptyDist = async dir => {
  * @async
  * @param {String} dist
  */
-const testCodeSplitting = async dist => {
-    const check = chunkmap => {
+const testCodeSplitting = async (dist) => {
+    const check = (chunkmap) => {
         const { '.files': files } = chunkmap;
         const { 'client.js': client, 'PageHome.js': home } = files;
 
@@ -353,10 +353,10 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
         i18nUseRouter = false,
         isDev = false,
         selectorForStoreEnhancer,
-        cookiesToStore
+        cookiesToStore,
     } = settings;
 
-    const getLocaleId = async page => {
+    const getLocaleId = async (page) => {
         return await page.evaluate(() =>
             document
                 .querySelector('meta[name="koot-locale-id"]')
@@ -364,14 +364,14 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
         );
     };
 
-    const getSSRState = async page =>
+    const getSSRState = async (page) =>
         await page.evaluate(() => window.__REDUX_STATE__);
 
-    const getSSRStateFromScriptTag = async page =>
+    const getSSRStateFromScriptTag = async (page) =>
         await page.evaluate(() => {
             const scripts = [...document.querySelectorAll('script')];
             const regex = /^window.__REDUX_STATE__\s*=\s*(.+?)[;$]/m;
-            const s = scripts.filter(el => regex.test(el.innerText));
+            const s = scripts.filter((el) => regex.test(el.innerText));
             if (!s.length) return '';
 
             const str = s[0].innerText;
@@ -408,7 +408,7 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
     {
         const res = await page
             .goto(origin, {
-                waitUntil: defaultWaitUtil
+                waitUntil: defaultWaitUtil,
             })
             .catch();
         const pageContent = await page.content();
@@ -450,15 +450,15 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
             await Promise.all([
                 page
                     .waitFor(`#main > [data-koot-test-page="static"]`, {
-                        timeout: 5000
+                        timeout: 5000,
                     })
-                    .catch(e => {
+                    .catch((e) => {
                         throw e;
                     }),
                 page.evaluate(() => {
                     document.querySelector('a[href$="/static"]').click();
-                })
-            ]).catch(e => (err = e));
+                }),
+            ]).catch((e) => (err = e));
             if (err) console.error(err);
             expect(typeof err).toBe('undefined');
         }
@@ -496,7 +496,7 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
                 : `${origin}/extend?${changeLocaleQueryKey}=${localeId}`;
 
             const res = await page.goto(gotoUrl, {
-                waitUntil: defaultWaitUtil
+                waitUntil: defaultWaitUtil,
             });
             const HTML = await res.text();
             const $ = cheerio.load(HTML);
@@ -564,17 +564,17 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
         await testTargetLocaleId('zh', {
             title: '组件扩展 - Koot.js 模板项目',
             description: '简介：Koot.js 组件扩展',
-            exportObject: '欢迎'
+            exportObject: '欢迎',
         });
         await testTargetLocaleId('en', {
             title: 'Component Extend - Koot.js boilerplate',
             description: 'Summary information for Koot.js Component Extend.',
-            exportObject: 'Welcome'
+            exportObject: 'Welcome',
         });
         await testTargetLocaleId('zh-tw', {
             title: '組件擴展 - Koot.js 模板項目',
             description: '簡介：Koot.js 組件擴展',
-            exportObject: '歡迎'
+            exportObject: '歡迎',
         });
     }
 
@@ -592,7 +592,7 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
                       urlAppend.includes('?') ? '&' : '?'
                   }${changeLocaleQueryKey}=${toLocaleId}`;
             await page.goto(gotoUrl, {
-                waitUntil: defaultWaitUtil
+                waitUntil: defaultWaitUtil,
             });
 
             const localeId = await page.evaluate(() =>
@@ -602,19 +602,19 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
             );
             const linksToOtherLang = await page.$$eval(
                 `link[rel="alternate"][hreflang][href]:not([hreflang="${localeId}"])`,
-                els =>
-                    Array.from(els).map(el => ({
+                (els) =>
+                    Array.from(els).map((el) => ({
                         lang: el.getAttribute('hreflang'),
-                        href: el.getAttribute('href')
+                        href: el.getAttribute('href'),
                     }))
             );
             /** @type {Object[]} */
             const linksToSameLang = await page.$$eval(
                 `link[rel="alternate"][hreflang="${localeId}"][href]`,
-                els =>
-                    Array.from(els).map(el => ({
+                (els) =>
+                    Array.from(els).map((el) => ({
                         lang: el.getAttribute('hreflang'),
-                        href: el.getAttribute('href')
+                        href: el.getAttribute('href'),
                     }))
             );
 
@@ -625,7 +625,7 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
             for (const o of linksToOtherLang) {
                 const { lang, href } = o;
                 await page.goto(href, {
-                    waitUntil: 'networkidle0'
+                    waitUntil: 'networkidle0',
                 });
                 const localeId = await page.evaluate(() =>
                     document
@@ -648,31 +648,31 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
         await breath();
 
         await Promise.all([
-            new Promise(async resolve => {
+            new Promise(async (resolve) => {
                 const pageDelayed = await context.newPage();
                 const localeIdDelayed = 'en';
                 const gotoUrlDelayed = i18nUseRouter
                     ? `${origin}/${localeIdDelayed}/delayed`
                     : `${origin}/delayed?${changeLocaleQueryKey}=${localeIdDelayed}`;
                 await pageDelayed.goto(gotoUrlDelayed, {
-                    waitUntil: defaultWaitUtil
+                    waitUntil: defaultWaitUtil,
                 });
                 const theLocaleId = await getLocaleId(pageDelayed);
                 expect(theLocaleId).toBe(localeIdDelayed);
                 resolve();
             }),
-            new Promise(async resolve => {
+            new Promise(async (resolve) => {
                 const localeId = 'zh';
                 const gotoUrl = i18nUseRouter
                     ? `${origin}/${localeId}`
                     : `${origin}?${changeLocaleQueryKey}=${localeId}`;
                 await page.goto(gotoUrl, {
-                    waitUntil: defaultWaitUtil
+                    waitUntil: defaultWaitUtil,
                 });
                 const theLocaleId = await getLocaleId(page);
                 expect(theLocaleId).toBe(localeId);
                 resolve();
-            })
+            }),
         ]);
     }
 
@@ -686,7 +686,7 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
         const urlParent = `${origin}/static`;
         await page
             .goto(urlParent, {
-                waitUntil: defaultWaitUtil
+                waitUntil: defaultWaitUtil,
             })
             .catch();
         const hasFeature = await page.evaluate(
@@ -698,7 +698,7 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
         const urlNoGiven = `${origin}/static/${name}`;
         const res = await page
             .goto(urlNoGiven, {
-                waitUntil: 'networkidle0'
+                waitUntil: 'networkidle0',
             })
             .catch();
 
@@ -721,7 +721,7 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
         const testUrl = `${origin}/__test.txt`;
         const testContent = 'TEST';
         const res = await page.goto(testUrl, {
-            waitUntil: 'networkidle0'
+            waitUntil: 'networkidle0',
         });
         const result = await res.text();
         expect(res.ok()).toBe(true);
@@ -735,7 +735,7 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
         const context = await browser.createIncognitoBrowserContext();
         const page = await context.newPage();
         await page.goto(origin, {
-            waitUntil: 'networkidle0'
+            waitUntil: 'networkidle0',
         });
 
         const { sessionStore = defaultKootConfig.sessionStore } = kootConfig;
@@ -746,8 +746,8 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
             await Promise.all([
                 page.click(selectorBtn),
                 page.waitForSelector(selectorBtn, {
-                    hidden: true
-                })
+                    hidden: true,
+                }),
                 // page.waitForResponse(response =>
                 //     /\/app-name$/.test(response.url())
                 // )
@@ -756,7 +756,7 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
             const before = await page.evaluate(() => {
                 return {
                     stateBefore: window.__KOOT_STORE__.getState(),
-                    ssrState: window.__REDUX_STATE__
+                    ssrState: window.__REDUX_STATE__,
                 };
             });
             before.stateBefore = filterState(before.stateBefore);
@@ -765,7 +765,7 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
             await page.reload({ waitUntil: 'networkidle0' });
 
             const after = {
-                ...(await page.evaluate(sessionStoreKey => {
+                ...(await page.evaluate((sessionStoreKey) => {
                     let sessionStore;
                     try {
                         sessionStore = JSON.parse(
@@ -783,16 +783,16 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
                     return {
                         sessionStore,
                         state: window.__KOOT_STORE__.getState(),
-                        content
+                        content,
                     };
-                }, sessionStoreKey))
+                }, sessionStoreKey)),
             };
 
             after.state = filterState(after.state);
 
             return {
                 ...before,
-                ...after
+                ...after,
             };
         };
 
@@ -805,7 +805,7 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
         } else if (typeof sessionStore === 'object') {
             const result = await getSessionStoreAfterRefresh();
             const checkValue = (obj, accumulatedKey = '') => {
-                Object.keys(obj).forEach(key => {
+                Object.keys(obj).forEach((key) => {
                     const value = obj[key];
                     if (typeof value === 'object') {
                         checkValue(
@@ -865,7 +865,7 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
 
         const pageTS = origin + '/ts';
         await page.goto(pageTS, {
-            waitUntil: defaultWaitUtil
+            waitUntil: defaultWaitUtil,
         });
         const el = await page.$('[data-koot-test-page="page-ts"]');
         expect(el).not.toBe(null);
@@ -879,7 +879,7 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
         const page = await context.newPage();
 
         const res = await page.goto(origin, {
-            waitUntil: 'networkidle0'
+            waitUntil: 'networkidle0',
         });
 
         const HTML = await res.text();
@@ -887,11 +887,11 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
 
         const client = {
             NoSSR: await page.$('#koot-test-no-ssr'),
-            ControledSSR: await page.$('#koot-test-controled-ssr')
+            ControledSSR: await page.$('#koot-test-controled-ssr'),
         };
         const server = {
             NoSSR: $('#koot-test-no-ssr'),
-            ControledSSR: $('#koot-test-controled-ssr')
+            ControledSSR: $('#koot-test-controled-ssr'),
         };
 
         expect(client.NoSSR).not.toBe(null);
@@ -915,7 +915,7 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
             const context = await browser.createIncognitoBrowserContext();
             const page = await context.newPage();
             const res = await page.goto(origin + '/ts', {
-                waitUntil: 'networkidle0'
+                waitUntil: 'networkidle0',
             });
             const HTML = await res.text();
             const $ = cheerio.load(HTML);
@@ -926,7 +926,7 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
             );
 
             const titleCSR = await page.evaluate(() => document.title);
-            const specialMetaCSR = await page.evaluate(specialMetaKey => {
+            const specialMetaCSR = await page.evaluate((specialMetaKey) => {
                 const meta = document.querySelector(`meta[${specialMetaKey}]`);
                 if (meta) return meta.getAttribute(specialMetaKey);
                 return '';
@@ -946,15 +946,15 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
             const context = await browser.createIncognitoBrowserContext();
             const page = await context.newPage();
             await page.goto(origin, {
-                waitUntil: 'networkidle0'
+                waitUntil: 'networkidle0',
             });
             await Promise.all([
                 page.waitFor(`[data-koot-test-page="page-ts"]`),
-                page.click('a[href$="/ts"]')
+                page.click('a[href$="/ts"]'),
             ]);
 
             const titleCSR = await page.evaluate(() => document.title);
-            const specialMetaCSR = await page.evaluate(specialMetaKey => {
+            const specialMetaCSR = await page.evaluate((specialMetaKey) => {
                 const meta = document.querySelector(`meta[${specialMetaKey}]`);
                 if (meta) return meta.getAttribute(specialMetaKey);
                 return '';
@@ -972,7 +972,7 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
             const context = await browser.createIncognitoBrowserContext();
             const page = await context.newPage();
             const res = await page.goto(origin + '/test-pageinfo-deep', {
-                waitUntil: 'networkidle0'
+                waitUntil: 'networkidle0',
             });
             const HTML = await res.text();
             const $ = cheerio.load(HTML);
@@ -992,7 +992,7 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
             const context = await browser.createIncognitoBrowserContext();
             const page = await context.newPage();
             await page.goto(origin, {
-                waitUntil: 'networkidle0'
+                waitUntil: 'networkidle0',
             });
             await Promise.all([
                 page.waitFor(`[data-koot-test-page="page-test-pageinfo-deep"]`),
@@ -1001,7 +1001,7 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
                     document
                         .querySelector('a[href$="/test-pageinfo-deep"]')
                         .click();
-                })
+                }),
             ]);
 
             const titleCSR = await page.evaluate(() => document.title);
@@ -1021,7 +1021,7 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
             const context = await browser.createIncognitoBrowserContext();
             const page = await context.newPage();
             const res = await page.goto(origin, {
-                waitUntil: defaultWaitUtil
+                waitUntil: defaultWaitUtil,
             });
             const HTML = await res.text();
             const $ = cheerio.load(HTML);
@@ -1044,14 +1044,14 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
         // __test-server-cache
         let expectG, expectL;
         const values = {};
-        const getValue = async localeId => {
+        const getValue = async (localeId) => {
             const gotoUrl = i18nUseRouter
                 ? `${origin}/${localeId}/test-server-cache`
                 : `${origin}/test-server-cache?${changeLocaleQueryKey}=${localeId}`;
             const context = await browser.createIncognitoBrowserContext();
             const page = await context.newPage();
             const res = await page.goto(gotoUrl, {
-                waitUntil: defaultWaitUtil
+                waitUntil: defaultWaitUtil,
             });
             const HTML = await res.text();
             const $ = cheerio.load(HTML);
@@ -1083,7 +1083,7 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
         const page = await context.newPage();
         const test = async (url = origin, toHasValue = false) => {
             await page.goto(url, {
-                waitUntil: defaultWaitUtil
+                waitUntil: defaultWaitUtil,
             });
 
             const SSRState = await getSSRStateFromScriptTag(page);
@@ -1110,7 +1110,7 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
          * - 0.6版配置: `false`
          */
         await page.goto(origin, {
-            waitUntil: defaultWaitUtil
+            waitUntil: defaultWaitUtil,
         });
 
         const { server: SSRStateServer = {} } = await getSSRStateFromScriptTag(
@@ -1120,7 +1120,7 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
         const validResult = {
             kootTest: 'valueForKootTest',
             kootTest2: 'valueForKootTest2',
-            kootTest3: 'koot=koot==koot==='
+            kootTest3: 'koot=koot==koot===',
         };
 
         if (cookiesToStore === true) {
@@ -1135,7 +1135,7 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
                     console.error({
                         result,
                         regexp,
-                        testResult
+                        testResult,
                     });
                     return;
                 }
@@ -1166,22 +1166,18 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
         const context = await browser.createIncognitoBrowserContext();
         const page = await context.newPage();
         await page.goto(`${origin}${pathname}${search}`, {
-            waitUntil: defaultWaitUtil
+            waitUntil: defaultWaitUtil,
         });
 
         const {
-            routing: { locationBeforeTransitions: L }
+            routing: { locationBeforeTransitions: L },
         } = await getSSRStateFromScriptTag(page);
 
         await context.close();
 
         expect(
             i18nUseRouter
-                ? '/' +
-                      L.pathname
-                          .split('/')
-                          .slice(2)
-                          .join('/')
+                ? '/' + L.pathname.split('/').slice(2).join('/')
                 : L.pathname
         ).toBe(pathname);
         // expect(L.pathname).toBe(pathname);
@@ -1201,7 +1197,7 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
         const page = await context.newPage();
 
         const res = await page.goto(gotoUrl, {
-            waitUntil: 'networkidle0'
+            waitUntil: 'networkidle0',
         });
 
         const HTML = await res.text();
@@ -1215,7 +1211,7 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
             expect($(selector).text()).toBe(result);
             expect(
                 await page.evaluate(
-                    selector => document.querySelector(selector).innerText,
+                    (selector) => document.querySelector(selector).innerText,
                     selector
                 )
             ).toBe(result);
@@ -1249,7 +1245,7 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
             : `${origin}/test-server-ctx-redirect`;
 
         await page.goto(gotoUrl, {
-            waitUntil: 'networkidle0'
+            waitUntil: 'networkidle0',
         });
         const result = await page.evaluate(() => window.location.href);
 
@@ -1294,14 +1290,14 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
 
     // 测试: 没有失败的请求
     const failedResponseFiltered = failedResponse.filter(
-        res => !/\/sockjs-node\//.test(res.url())
+        (res) => !/\/sockjs-node\//.test(res.url())
     );
     if (failedResponseFiltered.length) {
         console.error(
             'failedResponse',
-            failedResponseFiltered.map(res => ({
+            failedResponseFiltered.map((res) => ({
                 status: res.status(),
-                url: res.url()
+                url: res.url(),
             }))
         );
     }
@@ -1338,7 +1334,7 @@ describe('测试: React 同构项目', () => {
                 const { /*stdout,*/ stderr } = await exec(
                     `npm run ${commandName}`,
                     {
-                        cwd: dir
+                        cwd: dir,
                     }
                 );
 
@@ -1363,7 +1359,7 @@ describe('测试: React 同构项目', () => {
                 const child = execSync(
                     `npm run ${commandName}`,
                     {
-                        cwd: dir
+                        cwd: dir,
                     }
                     // (err, stdout, stderr) => {
                     //     console.log('err', err)
@@ -1381,7 +1377,7 @@ describe('测试: React 同构项目', () => {
                 await waitForPort(child);
                 // const port = await getPortFromConfig(dir)
                 const port = require(path.resolve(dir, 'koot.config.js')).port;
-                child.stderr.on('data', err => {
+                child.stderr.on('data', (err) => {
                     errors.push(err);
                 });
                 // console.log('port', port)
@@ -1396,7 +1392,7 @@ describe('测试: React 同构项目', () => {
                     kootConfig: require(path.resolve(dir, configFile)),
                     selectorForStoreEnhancer:
                         '#__test-store-enhancer-server-persist',
-                    cookiesToStore: true
+                    cookiesToStore: true,
                 });
                 await terminate(child.pid);
 
@@ -1419,7 +1415,7 @@ describe('测试: React 同构项目', () => {
                     const child = execSync(
                         `npm run ${commandName}`,
                         {
-                            cwd: dir
+                            cwd: dir,
                         }
                         // (err, stdout, stderr) => {
                         //     console.log('err', err)
@@ -1432,7 +1428,7 @@ describe('测试: React 同构项目', () => {
                     // child.stdin.pipe(process.stdin)
                     // child.stdout.pipe(process.stdout)
                     // child.stderr.pipe(process.stderr)
-                    child.stderr.on('data', err => {
+                    child.stderr.on('data', (err) => {
                         errors.push(err);
                     });
 
@@ -1450,7 +1446,7 @@ describe('测试: React 同构项目', () => {
                         kootConfig: require(path.resolve(dir, configFile)),
                         selectorForStoreEnhancer:
                             '#__test-store-enhancer-server-persist',
-                        cookiesToStore: true
+                        cookiesToStore: true,
                     });
                     await terminate(child.pid);
 
@@ -1467,7 +1463,7 @@ describe('测试: React 同构项目', () => {
                     const child = execSync(
                         `node ${path.resolve(cwd, 'index.js')}`,
                         {
-                            cwd
+                            cwd,
                         }
                     );
                     const errors = [];
@@ -1476,7 +1472,7 @@ describe('测试: React 同构项目', () => {
                     // const port = await getPortFromConfig(dir)
                     const port = require(path.resolve(dir, 'koot.config.js'))
                         .port;
-                    child.stderr.on('data', err => {
+                    child.stderr.on('data', (err) => {
                         errors.push(err);
                     });
 
@@ -1490,7 +1486,7 @@ describe('测试: React 同构项目', () => {
                         kootConfig: require(path.resolve(dir, configFile)),
                         selectorForStoreEnhancer:
                             '#__test-store-enhancer-server-persist',
-                        cookiesToStore: true
+                        cookiesToStore: true,
                     });
                     await terminate(child.pid);
 
@@ -1509,7 +1505,7 @@ describe('测试: React 同构项目', () => {
                     {
                         selectorForStoreEnhancer:
                             '#__test-store-enhancer-server-persist',
-                        cookiesToStore: true
+                        cookiesToStore: true,
                     }
                 );
 
@@ -1520,7 +1516,7 @@ describe('测试: React 同构项目', () => {
                     'isomorphic-i18n_use_router',
                     {
                         i18nUseRouter: true,
-                        cookiesToStore: 'all'
+                        cookiesToStore: 'all',
                     }
                 );
 
@@ -1530,7 +1526,7 @@ describe('测试: React 同构项目', () => {
                     'koot.config.no-bundles-keep.js',
                     'isomorphic-no_bundles_keep',
                     {
-                        cookiesToStore: ['kootTest2', 'kootTest3']
+                        cookiesToStore: ['kootTest2', 'kootTest3'],
                     }
                 );
 
@@ -1547,7 +1543,7 @@ describe('测试: React 同构项目', () => {
                     'koot.config.old-0.6.js',
                     'isomorphic-config_old_0.6',
                     {
-                        cookiesToStore: false
+                        cookiesToStore: false,
                     }
                 );
             }
