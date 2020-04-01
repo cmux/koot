@@ -13,6 +13,15 @@
 -   优化
     -   小幅优化热更新速度 (移除多余的 `webpack/hot` 和 `webpack-dev-server/client` 引用)
 
+## [0.13.11] - 2020-04-01
+
+**koot**
+
+-   错误修正
+    -   开发环境中多语言相关的服务器跳转地址为 `https://` 的问题 ([#232](https://github.com/cmux/koot/issues/232))
+        -   开发环境中的相关跳转地址现在会无视 `proxyRequestOrigin.protocol` 配置项，强制为 `http://`
+    -   开发环境中组件热更新时会重新挂载 (re-mount) 的问题 ([#233](https://github.com/cmux/koot/issues/233))
+
 ## [0.13.10] - 2020-03-25
 
 **koot**

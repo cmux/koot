@@ -17,7 +17,7 @@ const {
     keyFileProjectConfigTempPortionClient,
     keyFileProjectConfigTempPortionOtherClient,
     filenameWebpackDevServerPortTemp,
-    filenameBuilding
+    filenameBuilding,
     // filenameBuildFail,
     // filenameDll, filenameDllManifest,
 } = require('../defaults/before-build');
@@ -94,24 +94,6 @@ const run = async () => {
     // 清空 log
     process.stdout.write('\x1B[2J\x1B[0f');
 
-    // 判断是否自动打开浏览器访问
-    let { open } = program;
-    if (typeof open === 'undefined' || open) {
-        const timeout = 10 * 1000;
-        open = await confirmTimeout(
-            {
-                message: __('dev.ask_for_auto_open'),
-                suffix: __(`dev.ask_for_auto_open_suffix`, {
-                    seconds: timeout / 1000
-                }),
-                default: true
-            },
-            timeout
-        );
-    }
-    // console.log({ open });
-    // return;
-
     const {
         client,
         server,
@@ -124,17 +106,17 @@ const run = async () => {
         port,
         dll = true,
         kootTest = false,
-        kootDevelopment = false
+        kootDevelopment = false,
     } = program;
 
     initNodeEnv();
     setEnvFromCommand({
         config,
         type,
-        port
+        port,
     });
 
-    let stage = (() => {
+    const stageFromCommand = (() => {
         if (_stage) return _stage;
         if (client) return 'client';
         if (server) return 'server';
@@ -142,6 +124,25 @@ const run = async () => {
         // false - 同构项目的完整开发环境
         return false;
     })();
+    let stage = stageFromCommand;
+
+    // 判断是否自动打开浏览器访问
+    let { open } = program;
+    if (!stageFromCommand && (typeof open === 'undefined' || open)) {
+        const timeout = 10 * 1000;
+        open = await confirmTimeout(
+            {
+                message: __('dev.ask_for_auto_open'),
+                suffix: __(`dev.ask_for_auto_open_suffix`, {
+                    seconds: timeout / 1000,
+                }),
+                default: true,
+            },
+            timeout
+        );
+    }
+    // console.log({ open });
+    // return;
 
     /** @type {String} build 命令的附加参数 */
     const buildCmdArgs =
@@ -181,7 +182,7 @@ const run = async () => {
         [keyFileProjectConfigTempFull]: fileProjectConfigTempFull,
         [keyFileProjectConfigTempPortionServer]: fileProjectConfigTempPortionServer,
         [keyFileProjectConfigTempPortionClient]: fileProjectConfigTempPortionClient,
-        [keyFileProjectConfigTempPortionOtherClient]: fileProjectConfigTempPortionOtherClient
+        [keyFileProjectConfigTempPortionOtherClient]: fileProjectConfigTempPortionOtherClient,
     } = kootConfig;
     const [devMemoryAllocationClient, devMemoryAllocationServer] = (() => {
         const { devMemoryAllocation } = kootConfig;
@@ -281,7 +282,7 @@ const run = async () => {
             //             ) +
             //             '\n\n'
             //     );
-            const kill = p => {
+            const kill = (p) => {
                 // if (!silent) {
                 //     console.log(
                 //         `TERMINATING: ${p.pm2_env.pm_id} | ${p.pid} | ${p.name}`
@@ -323,7 +324,7 @@ const run = async () => {
                 removeTempBuild(dist),
                 fs.emptyDir(getDirDevTmp(cwd)),
                 // 清理临时目录
-                fs.remove(getDirTemp())
+                fs.remove(getDirTemp()),
             ]);
         } catch (e) {}
 
@@ -403,7 +404,7 @@ const run = async () => {
                 result.errors.length
             ) {
                 error = result.errors;
-                result.errors.forEach(e => console.error(e));
+                result.errors.forEach((e) => console.error(e));
             } else {
                 error = e;
                 console.error(e);
@@ -430,7 +431,7 @@ const run = async () => {
     if (stage) {
         const cmd = `koot-build --stage ${stage} ${buildCmdArgs}`;
         const child = npmRunScript(cmd, {});
-        child.once('error', error => {
+        child.once('error', (error) => {
             // eslint-disable-next-line no-console
             console.trace(error);
             process.exit(1);
@@ -445,7 +446,7 @@ const run = async () => {
             // 等待 filenameBuilding 文件删除
             let flagCreated = false;
             const fileFlagBuilding = path.resolve(dist, filenameBuilding);
-            await new Promise(resolve => {
+            await new Promise((resolve) => {
                 const wait = () =>
                     setTimeout(() => {
                         if (!flagCreated) {
@@ -460,7 +461,7 @@ const run = async () => {
 
             // console.log(' ')
 
-            await new Promise(resolve => {
+            await new Promise((resolve) => {
                 setTimeout(() => {
                     log('success', 'dev', __('dev.spa_success'));
                     // eslint-disable-next-line no-console
@@ -505,7 +506,7 @@ const run = async () => {
     const pathServerStartFlag = getPathnameDevServerStart();
 
     // 根据 stage 开启 PM2 进程
-    const start = stage =>
+    const start = (stage) =>
         new Promise(async (resolve, reject) => {
             // console.log(`starting ${stage}`)
 
@@ -526,7 +527,7 @@ const run = async () => {
                 cwd: cwd,
                 output: pathLogOut,
                 error: pathLogErr,
-                autorestart: true
+                autorestart: true,
             };
 
             switch (stage) {
@@ -548,12 +549,12 @@ const run = async () => {
                             '.server-start',
                             'node_modules',
                             config.output,
-                            config.error
+                            config.error,
                         ],
                         watch_options: {
-                            cwd: path.dirname(pathServerJS)
+                            cwd: path.dirname(pathServerJS),
                             // usePolling: true
-                        }
+                        },
                         // autorestart: true,
                     });
                     // console.log(config);
@@ -575,7 +576,7 @@ const run = async () => {
                     );
                     Object.assign(config, {
                         script: mainScript,
-                        watch: path.dirname(mainScript)
+                        watch: path.dirname(mainScript),
                         // env: {
                         //     DEBUG: 'koa-mount'
                         // }
@@ -592,11 +593,11 @@ const run = async () => {
             pm2.start(config, (err, proc) => {
                 // console.log(err)
                 if (err) return reject(err);
-                proc.forEach(p => {
+                proc.forEach((p) => {
                     processes.push({
                         ...p,
                         name: config.name,
-                        pid: p.pid || p.process.pid
+                        pid: p.pid || p.process.pid,
                     });
                 });
                 // console.log(JSON.stringify(proc))
@@ -614,7 +615,7 @@ const run = async () => {
     };
 
     // 遇到错误
-    const encounterError = e => {
+    const encounterError = (e) => {
         const error = e instanceof Error ? e : new Error(e);
         exitHandler({ error: true });
         throw error;
@@ -623,7 +624,7 @@ const run = async () => {
     // 连接 PM2
     // console.log('noDaemon', !global)
     try {
-        pm2.connect(!global, async err => {
+        pm2.connect(!global, async (err) => {
             if (err) {
                 // console.error(err)
                 process.exit(2);
@@ -636,7 +637,7 @@ const run = async () => {
                     __('build.build_start', {
                         type: chalk.cyanBright(__(`appType.${appType}`)),
                         stage: chalk.green('client'),
-                        env: chalk.green('dev')
+                        env: chalk.green('dev'),
                     })
             );
 
@@ -669,7 +670,7 @@ const run = async () => {
                     __('build.build_complete', {
                         type: chalk.cyanBright(__(`appType.${appType}`)),
                         stage: chalk.green('client'),
-                        env: chalk.green('dev')
+                        env: chalk.green('dev'),
                     })
             );
             // console.log(processClient[0].process, processClient[0].pid)
@@ -693,7 +694,7 @@ const run = async () => {
                     __('build.build_start', {
                         type: chalk.cyanBright(__(`appType.${appType}`)),
                         stage: chalk.green('server'),
-                        env: chalk.green('dev')
+                        env: chalk.green('dev'),
                     })
             );
             await start('server');
@@ -716,7 +717,7 @@ const run = async () => {
                     __('build.build_complete', {
                         type: chalk.cyanBright(__(`appType.${appType}`)),
                         stage: chalk.green('server'),
-                        env: chalk.green('dev')
+                        env: chalk.green('dev'),
                     })
             );
 
@@ -759,7 +760,7 @@ const run = async () => {
                 // eslint-disable-next-line no-console
                 console.log(' ');
                 return await exitHandler({
-                    silent: true
+                    silent: true,
                 });
             }
 
@@ -777,6 +778,6 @@ const openBrowserPage = () => {
     return opn(`http://localhost:${process.env.SERVER_PORT}/`);
 };
 
-run().catch(err => {
+run().catch((err) => {
     console.error(err);
 });

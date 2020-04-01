@@ -3,28 +3,28 @@ import { extend } from 'koot';
 
 import {
     updateServerTimestamp,
-    resetServerTimestamp
+    resetServerTimestamp,
 } from '@store/infos/actions';
 
 if (__CLIENT__) console.log('!:!:! KOOT TEST VIEW: EXTEND PAGE !:!:!');
 
 // console.log((typeof Store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' Store in [PageExtend]')
-const check = props => {
+const check = (props) => {
     if (props.serverTimestamp) return true;
 };
 
 // console.log('PageExtend extend', extend)
 @extend({
-    connect: state => ({
+    connect: (state) => ({
         localeId: state.localeId,
-        serverTimestamp: state.infos.serverTimestamp
+        serverTimestamp: state.infos.serverTimestamp,
     }),
     pageinfo: (/*state, renderProps*/) => ({
         title: `${__('pages.extend.title')} - ${__('title')}`,
         metas: [
             { description: __('pages.extend.description') },
-            { 'page-name': 'extend' }
-        ]
+            { 'page-name': 'extend' },
+        ],
     }),
     styles: require('./styles.less'),
 
@@ -44,18 +44,19 @@ const check = props => {
         if (check(renderProps)) return true;
         return Promise.all([
             dispatch(updateServerTimestamp()),
-            new Promise(resolve => {
+            new Promise((resolve) => {
                 setTimeout(() => resolve(), 100);
-            })
+            }),
         ]);
     },
 
-    name: 'PageExtend'
+    name: 'PageExtend',
 })
 class PageExtend extends React.Component {
     reset = false;
 
     componentDidMount() {
+        console.log('PageExtend mount');
         if (!this.reset && !this.props.serverTimestamp) {
             this.props.dispatch(updateServerTimestamp());
         }

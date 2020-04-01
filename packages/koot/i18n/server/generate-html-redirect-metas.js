@@ -65,7 +65,9 @@ const generateHtmlRedirectMetas = ({
             }
 
             if (__DEV__)
-                thisHref = thisHref.replace('://localhost', '://127.0.0.1');
+                thisHref = thisHref
+                    .replace('://localhost', '://127.0.0.1')
+                    .replace(/^https:\/\//, 'http://');
             return `<link rel="alternate" hreflang="${l}" href="${thisHref}" />`;
         })
         .join('');
