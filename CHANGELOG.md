@@ -8,6 +8,8 @@
         -   `execa` -> _^4.0.0_
         -   `fs-extra` -> _^9.0.0_
         -   `react-redux` -> _^7.2.0_ ([#45](https://github.com/cmux/koot/issues/45), [#154](https://github.com/cmux/koot/issues/154))
+    -   现在默认不会安装以下依赖包，如有使用需要，请在项目中自行安装
+        -   `md5-file`
 -   **新特性**
     -   多语言/i18n: `i18n.use = 'subdomain'` - 现在可使用最深层的子域名作为语言标识 ([#220](https://github.com/cmux/koot/issues/220))
 -   优化

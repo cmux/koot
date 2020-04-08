@@ -2,16 +2,15 @@
 const fs = require('fs-extra');
 const path = require('path');
 const glob = require('glob-promise');
-// const md5File = require('md5-file')
 
 const defaults = require('../../defaults/pwa');
 const getChunkmapPath = require('../../utils/get-chunkmap-path');
 const getDistPath = require('../../utils/get-dist-path');
 const getDirDistPublic = require('../../libs/get-dir-dist-public');
 
-const parseChunkmapPathname = pathname => pathname.replace(/^public\//g, '');
+const parseChunkmapPathname = (pathname) => pathname.replace(/^public\//g, '');
 
-const parsePattern = pattern => {
+const parsePattern = (pattern) => {
     let firstCharacter = pattern.substr(0, 1);
     let isExclude = false;
 
@@ -59,7 +58,7 @@ const create = async (settings = {}, i18n) => {
         template,
         initialCache,
         initialCacheAppend,
-        initialCacheIgonre
+        initialCacheIgonre,
     } = Object.assign({}, defaults, settings);
 
     const pathnamePolyfill = [];
@@ -71,7 +70,7 @@ const create = async (settings = {}, i18n) => {
     const createSW = async ({
         chunkmap = {},
         ignores = [],
-        pathnameSW = pathname
+        pathnameSW = pathname,
     }) => {
         const files = [];
         const outputFile = (() => {
@@ -84,14 +83,14 @@ const create = async (settings = {}, i18n) => {
 
         if (chunkmap.polyfill)
             if (Array.isArray(chunkmap.polyfill)) {
-                chunkmap.polyfill.forEach(pathname => {
+                chunkmap.polyfill.forEach((pathname) => {
                     pathnamePolyfill.push(parseChunkmapPathname(pathname));
                 });
             } else {
                 pathnamePolyfill.push(parseChunkmapPathname(chunkmap.polyfill));
             }
         if (Array.isArray(chunkmap.critical)) {
-            chunkmap.critical.forEach(file =>
+            chunkmap.critical.forEach((file) =>
                 ignores.push(parseChunkmapPathname(file))
             );
         }
@@ -105,7 +104,7 @@ const create = async (settings = {}, i18n) => {
                 .concat(ignores)
                 .concat(pathnamePolyfill)
                 .concat(initialCacheIgonre)
-                .map(pattern => parsePattern(pattern))
+                .map((pattern) => parsePattern(pattern)),
         };
 
         // if (Array.isArray(initialCacheIgonre))
@@ -115,17 +114,17 @@ const create = async (settings = {}, i18n) => {
 
         // console.log(globOptions)
 
-        await glob(parsePattern(initialCache), globOptions).then(matches =>
+        await glob(parsePattern(initialCache), globOptions).then((matches) =>
             matches
-                .filter(_pathname => _pathname.slice(-1) !== '/')
-                .filter(_pathname => {
+                .filter((_pathname) => _pathname.slice(-1) !== '/')
+                .filter((_pathname) => {
                     // ignore .map files
                     if (path.extname(_pathname) === '.map') return false;
                     return true;
                 })
-                .map(_pathname => `/${_pathname}`)
+                .map((_pathname) => `/${_pathname}`)
                 .concat(initialCacheAppend)
-                .forEach(_pathname => files.push(_pathname))
+                .forEach((_pathname) => files.push(_pathname))
         );
 
         // 读取 service-worker 模板文件内容
@@ -162,7 +161,7 @@ const create = async (settings = {}, i18n) => {
             // 暂存当前语言下的所有 chunk
             for (const chunkname in chunkmapCurrent) {
                 if (Array.isArray(chunkmapCurrent[chunkname]))
-                    chunkmapCurrent[chunkname].forEach(pathname =>
+                    chunkmapCurrent[chunkname].forEach((pathname) =>
                         chunksCurrent.push(pathname)
                     );
             }
@@ -173,7 +172,7 @@ const create = async (settings = {}, i18n) => {
                 for (const chunkname in chunkmapFull[dotLocale]) {
                     const arr = chunkmapFull[dotLocale][chunkname];
                     if (!Array.isArray(arr)) continue;
-                    arr.forEach(pathname => {
+                    arr.forEach((pathname) => {
                         if (!chunksCurrent.includes(pathname))
                             chunksIgnore.push(parseChunkmapPathname(pathname));
                     });
@@ -183,7 +182,7 @@ const create = async (settings = {}, i18n) => {
             await createSW({
                 chunkmap: chunkmapCurrent,
                 ignores: chunksIgnore,
-                pathnameSW
+                pathnameSW,
             });
 
             // 修改 .manifest.json，添加 service-worker 文件信息
@@ -205,7 +204,7 @@ const create = async (settings = {}, i18n) => {
         }
     } else {
         await createSW({
-            chunkmap: chunkmapFull
+            chunkmap: chunkmapFull,
         });
 
         // 修改 .manifest.json，添加 service-worker 文件信息
