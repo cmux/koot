@@ -1,8 +1,4 @@
 /* global
-    __KOOT_SSR_SET_STORE__:false,
-    __KOOT_SSR_SET_HISTORY__:false,
-    __KOOT_SSR_SET_CTX__: false,
-    __KOOT_LOCALEID__:false,
     __KOOT_SSR__:false
 */
 
@@ -45,13 +41,16 @@ import i18nOnServerRender from '../../i18n/onServerRender';
 import i18nGenerateHtmlRedirectMetas from '../../i18n/server/generate-html-redirect-metas';
 import i18nGetSSRState from '../../i18n/server/get-ssr-state';
 
-const ssr = async (options = {}) => {
-    const {
-        LocaleId = __DEV__ ? global.__KOOT_LOCALEID__ : __KOOT_LOCALEID__,
-        // Store = __DEV__ ? global.__KOOT_STORE__ : __KOOT_STORE__,
-        // History = __DEV__ ? global.__KOOT_HISTORY__ : __KOOT_HISTORY__,
-        SSR = __DEV__ ? global.__KOOT_SSR__ : __KOOT_SSR__,
-    } = options;
+async function ssr(options = {}) {
+    let SSR, LocaleId;
+
+    if (__DEV__) {
+        SSR = global.__KOOT_SSR__;
+        LocaleId = global.__KOOT_LOCALEID__;
+    } else {
+        SSR = __KOOT_SSR__;
+        LocaleId = SSR.LocaleId;
+    }
 
     const {
         /** @type {Object} KOA Context */
@@ -94,9 +93,8 @@ const ssr = async (options = {}) => {
         global.__KOOT_SSR_SET_HISTORY__(History);
         global.__KOOT_SSR_SET_CTX__(ctx);
     } else {
-        __KOOT_SSR_SET_STORE__(Store);
-        __KOOT_SSR_SET_HISTORY__(History);
-        __KOOT_SSR_SET_CTX__(ctx);
+        SSR.setStore(Store);
+        SSR.setHistory(History);
         resetStore();
         resetHistory();
     }
@@ -122,10 +120,15 @@ const ssr = async (options = {}) => {
         templateInject,
         proxyRequestOrigin = {},
         // syncCookie,
-        ssrComplete,
+        ssrComplete: _complete,
+        // ssrComplete,
     } = SSR;
 
-    // console.log('\n\nbefore router match', ctx.href);
+    function ssrComplete(...args) {
+        SSR = undefined;
+        _complete(...args);
+    }
+
     ctx.originTrue = proxyRequestOrigin.protocol
         ? ctx.origin.replace(/^http:\/\//, `${proxyRequestOrigin.protocol}://`)
         : ctx.origin;
@@ -133,7 +136,10 @@ const ssr = async (options = {}) => {
         ? ctx.href.replace(/^http:\/\//, `${proxyRequestOrigin.protocol}://`)
         : ctx.href;
 
-    const { lifecycle, routerConfig: routes } = await initConfig(i18nEnabled);
+    const { lifecycle, routerConfig: routes } = await initConfig(
+        i18nEnabled,
+        LocaleId
+    );
 
     // 渲染生命周期: beforeRouterMatch
     await beforeRouterMatch({
@@ -319,14 +325,14 @@ const ssr = async (options = {}) => {
     ssrComplete({
         body,
     });
-};
+}
 
 /**
  * 初始化 SSR 配置
  * @param {*} i18nEnabled
  */
-const initConfig = async (i18nEnabled) => {
-    const LocaleId = __DEV__ ? global.__KOOT_LOCALEID__ : __KOOT_LOCALEID__;
+const initConfig = async (i18nEnabled, LocaleId) => {
+    // const LocaleId = __DEV__ ? global.__KOOT_LOCALEID__ : __KOOT_LOCALEID__;
 
     const { server: serverConfig = {} } = kootConfig;
 

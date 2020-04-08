@@ -1,9 +1,5 @@
 /* global
     __KOOT_SSR__: false,
-    __KOOT_STORE__: false,
-    __KOOT_HISTORY__: false,
-    __KOOT_LOCALEID__: false,
-    __KOOT_CTX__: false,
 */
 
 import isRenderSafe from './React/is-render-safe';
@@ -31,8 +27,8 @@ export const getLocaleId = () => {
     if (__CLIENT__) return window.__KOOT_LOCALEID__ || '';
     if (__SERVER__) {
         if (__DEV__) return global.__KOOT_LOCALEID__;
-        if (typeof __KOOT_LOCALEID__ === 'undefined') return '';
-        return __KOOT_LOCALEID__ || '';
+        if (typeof __KOOT_SSR__ === 'undefined') return '';
+        return __KOOT_SSR__.LocaleId || '';
     }
 };
 export const resetLocaleId = () => (localeId = getLocaleId());
@@ -44,8 +40,8 @@ export const getStore = () => {
     if (__CLIENT__) return window.__KOOT_STORE__;
     if (__SERVER__) {
         if (__DEV__) return global.__KOOT_STORE__;
-        if (typeof __KOOT_STORE__ === 'undefined') return '';
-        return __KOOT_STORE__;
+        if (typeof __KOOT_SSR__ === 'undefined') return '';
+        return __KOOT_SSR__.Store;
     }
 };
 export const resetStore = () => (store = getStore());
@@ -57,8 +53,8 @@ export const getHistory = () => {
     if (__CLIENT__) return window.__KOOT_HISTORY__;
     if (__SERVER__) {
         if (__DEV__) return global.__KOOT_HISTORY__;
-        if (typeof __KOOT_HISTORY__ === 'undefined') return '';
-        return __KOOT_HISTORY__;
+        if (typeof __KOOT_SSR__ === 'undefined') return '';
+        return __KOOT_SSR__.History;
     }
 };
 export const resetHistory = () => (history = getHistory());
@@ -88,8 +84,8 @@ export const getCache = (localeId) => {
 export const getCtx = () => {
     if (__CLIENT__) return undefined;
     if (__DEV__) return global.__KOOT_CTX__;
-    if (typeof __KOOT_CTX__ === 'undefined') return undefined;
-    return __KOOT_CTX__;
+    if (typeof __KOOT_SSR__ === 'undefined') return undefined;
+    return __KOOT_SSR__.ctx;
 };
 
 // ============================================================================

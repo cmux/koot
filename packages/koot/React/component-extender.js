@@ -1,4 +1,6 @@
-/* global __KOOT_SSR__:false */
+/* global
+    __KOOT_SSR__:false
+*/
 
 import React from 'react';
 import { connect } from 'react-redux';
@@ -153,7 +155,7 @@ const doPageinfo = (store, props, pageinfo) => {
  * @param {Object} [options.styles] 组件 CSS 结果
  * @returns {Function} 封装好的 React 组件
  */
-const extend = (options = {}) => (WrappedComponent) => {
+export default (options = {}) => (WrappedComponent) => {
     // console.log((typeof store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' store in [HOC] extend run')
 
     const {
@@ -470,5 +472,3 @@ const extend = (options = {}) => (WrappedComponent) => {
         return <KootComponent {...props} />;
     });
 };
-
-export default extend;

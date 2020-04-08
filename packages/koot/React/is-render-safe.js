@@ -1,4 +1,6 @@
-/* global __KOOT_SSR__:false */
+/* global
+    __KOOT_SSR__:false
+*/
 
 const { needConnectComponents } = require('../defaults/defines-server');
 

@@ -4,7 +4,7 @@
 // import koaCompress from 'koa-compress';
 import {
     template as templateConfig,
-    server as serverConfig
+    server as serverConfig,
     // redux as reduxConfigRaw
 } from '__KOOT_PROJECT_CONFIG_PORTION_SERVER_PATHNAME__';
 
@@ -46,7 +46,7 @@ const startKootIsomorphicServer = async () => {
         after: serverAfter,
         renderCache: renderCacheConfig,
         proxyRequestOrigin,
-        inject: templateInject
+        inject: templateInject,
     } = serverConfig;
 
     // 决定服务器启动端口
@@ -112,9 +112,14 @@ const startKootIsomorphicServer = async () => {
             locales,
             proxyRequestOrigin,
             template,
-            templateInject
+            templateInject,
         })
     );
+
+    app.use(function (ctx, next) {
+        delete ctx.__KOOT_SSR__;
+        next();
+    });
 
     // 生命周期: 服务器即将启动
     if (__DEV__)
@@ -145,19 +150,20 @@ const startKootIsomorphicServer = async () => {
     log(' ', 'server', `init \x1b[32m${'OK'}\x1b[0m!`);
 
     // 启动服务器
-    await new Promise(resolve => {
+    await new Promise((resolve) => {
         if (__DEV__) {
             app.listen(process.env.SERVER_PORT);
             // 修改 flag 文件
             setTimeout(() => {
                 console.log(
                     `\x1b[32m√\x1b[0m ` +
-                        `\x1b[93m[koot/server]\x1b[0m started on \x1b[32m${'http://localhost:' +
-                            port}\x1b[0m`
+                        `\x1b[93m[koot/server]\x1b[0m started on \x1b[32m${
+                            'http://localhost:' + port
+                        }\x1b[0m`
                 );
                 fs.writeJsonSync(getPathnameDevServerStart(), {
                     port: process.env.SERVER_PORT_DEV_MAIN,
-                    portServer: process.env.SERVER_PORT
+                    portServer: process.env.SERVER_PORT,
                 });
                 console.log(' ');
                 return resolve();
@@ -173,7 +179,7 @@ const startKootIsomorphicServer = async () => {
                 return resolve();
             });
         }
-    }).catch(err => {
+    }).catch((err) => {
         if (err instanceof Error)
             err.message = errorMsg('KOA_APP_LAUNCH', err.message);
         throw err;
@@ -182,6 +188,6 @@ const startKootIsomorphicServer = async () => {
 
 export default startKootIsomorphicServer;
 
-startKootIsomorphicServer().catch(err => {
+startKootIsomorphicServer().catch((err) => {
     console.error(err);
 });

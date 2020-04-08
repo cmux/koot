@@ -1,4 +1,7 @@
-/* global __KOOT_SSR__:false, __KOOT_SSR_STATE__:false */
+/* global
+    __KOOT_SSR__:false
+    __KOOT_SSR_STATE__:false
+*/
 const __devLocales = {};
 
 /**

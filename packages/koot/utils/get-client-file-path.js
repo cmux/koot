@@ -1,5 +1,5 @@
 /* global
-    __KOOT_LOCALEID__: false,
+    __KOOT_SSR__: false,
 */
 
 const fs = require('fs-extra');
@@ -36,9 +36,10 @@ const getFilePath = (
         try {
             if (
                 typeof __KOOT_SPA_TEMPLATE_INJECT__ === 'boolean' &&
-                __KOOT_SPA_TEMPLATE_INJECT__
+                __KOOT_SPA_TEMPLATE_INJECT__ &&
+                typeof __KOOT_SSR__ === 'object'
             ) {
-                localeId = __KOOT_LOCALEID__ || undefined;
+                localeId = __KOOT_SSR__.LocaleId || undefined;
             } else {
                 localeId = require('../index').localeId;
             }
@@ -76,7 +77,7 @@ const getFilePath = (
      * @param {String} pathname
      * @returns {String}
      */
-    const getResultPathname = pathname =>
+    const getResultPathname = (pathname) =>
         pathPublic + pathname.replace(regPublicPath, '');
 
     /**************************************************************************
@@ -132,11 +133,11 @@ const getFilePath = (
     // 如果有，同时有多个结果，返回包含所有结果的 Array
     if (Array.isArray(chunkmap['.entrypoints'][basename])) {
         const files = chunkmap['.entrypoints'][basename].filter(
-            file => path.extname(file) === extname
+            (file) => path.extname(file) === extname
         );
         if (files.length === 1) return getResultPathname(files[0]);
         else if (files.length)
-            return files.map(file => getResultPathname(file));
+            return files.map((file) => getResultPathname(file));
     }
 
     // 检查 chunkmap 第一级是否有包含该文件的文件名的对应（不包括扩展名）
@@ -144,7 +145,7 @@ const getFilePath = (
     if (typeof chunkmap === 'object') {
         let result;
         if (Array.isArray(chunkmap[basename])) {
-            chunkmap[basename].some(value => {
+            chunkmap[basename].some((value) => {
                 if (path.extname(value) === extname) {
                     result = value;
                     return true;
