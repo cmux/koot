@@ -1,20 +1,20 @@
 #!/usr/bin/env node
 
-const fs = require('fs-extra')
-const path = require('path')
-const program = require('commander')
+const fs = require('fs-extra');
+const path = require('path');
+const program = require('commander');
 // const chalk = require('chalk')
 
-const before = require('./_before')
+const before = require('./_before');
 
 // const __ = require('../utils/translate')
-const validateConfig = require('../libs/validate-config')
+const validateConfig = require('../libs/validate-config');
 // const readBuildConfigFile = require('../utils/read-build-config-file')
-const setEnvFromCommand = require('../utils/set-env-from-command')
-const initNodeEnv = require('../utils/init-node-env')
-const getDirTemp = require('../libs/get-dir-tmp')
+const setEnvFromCommand = require('../utils/set-env-from-command');
+const initNodeEnv = require('../utils/init-node-env');
+const getDirTemp = require('../libs/get-dir-tmp');
 
-const kootWebpackBuild = require('koot-webpack/build')
+const kootWebpackBuild = require('koot-webpack/build');
 
 program
     .version(require('../package').version, '-v, --version')
@@ -25,64 +25,63 @@ program
     .option('--config <config-file-path>', 'Set config file pathname')
     .option('--type <project-type>', 'Set project type')
     .option('--koot-test', 'Koot test mode')
-    .parse(process.argv)
+    .parse(process.argv);
 
 const run = async () => {
     // 清空 log
-    process.stdout.write('\x1B[2J\x1B[0f')
+    process.stdout.write('\x1B[2J\x1B[0f');
 
-    const {
-        client, server,
-        stage: _stage,
-        config,
-        type,
-    } = program
+    const { client, server, stage: _stage, config, type } = program;
 
-    initNodeEnv()
+    initNodeEnv();
     // console.log(program)
 
     setEnvFromCommand({
         config,
         type,
-    })
+    });
 
-    const stage = _stage ||
+    const stage =
+        _stage ||
         (client ? 'client' : undefined) ||
         (server ? 'server' : undefined) ||
-        'client'
+        'client';
 
-    process.env.WEBPACK_BUILD_STAGE = stage || 'client'
-    process.env.WEBPACK_BUILD_ENV = 'prod'
+    process.env.WEBPACK_BUILD_STAGE = stage || 'client';
+    process.env.WEBPACK_BUILD_ENV = 'prod';
 
-    await before(program)
+    await before(program);
 
     // 处理目录
-    const dirAnalyzeBuild = require('../libs/get-dir-dev-tmp')(undefined, 'analyze')
-    await fs.ensureDir(dirAnalyzeBuild)
-    await fs.emptyDir(dirAnalyzeBuild)
-    await fs.ensureDir(path.resolve(dirAnalyzeBuild, 'public'))
-    await fs.ensureDir(path.resolve(dirAnalyzeBuild, 'server'))
+    const dirAnalyzeBuild = require('../libs/get-dir-dev-tmp')(
+        undefined,
+        'analyze'
+    );
+    await fs.ensureDir(dirAnalyzeBuild);
+    await fs.emptyDir(dirAnalyzeBuild);
+    await fs.ensureDir(path.resolve(dirAnalyzeBuild, 'public'));
+    await fs.ensureDir(path.resolve(dirAnalyzeBuild, 'server'));
 
     // 读取构建配置
     const kootConfig = {
-        ...await validateConfig(),
+        ...(await validateConfig()),
 
         dist: dirAnalyzeBuild,
         bundleVersionsKeep: false,
-    }
+    };
 
     await kootWebpackBuild({
         analyze: true,
-        ...kootConfig
-    })
+        ...kootConfig,
+    });
 
     // 清理临时目录
-    await fs.remove(getDirTemp())
+    await fs.remove(getDirTemp());
 
     // 清理结果目录
-    await fs.remove(dirAnalyzeBuild)
+    await fs.remove(dirAnalyzeBuild);
 
-    console.log(' ')
-}
+    console.log(' ');
+};
 
-run()
+run();

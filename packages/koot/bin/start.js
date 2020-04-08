@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable no-console */
 
 const fs = require('fs-extra');
 const path = require('path');
@@ -52,7 +53,7 @@ const run = async () => {
     setEnvFromCommand({
         config,
         type,
-        port
+        port,
     });
 
     process.env.KOOT_TEST_MODE = JSON.stringify(kootTest);
@@ -85,11 +86,11 @@ const run = async () => {
             (typeof type === 'string' ? ` --type ${type}` : '') +
             (kootTest ? ` --koot-test` : '');
 
-        let stderr = '';
-        await new Promise(resolve => {
+        const stderr = '';
+        await new Promise((resolve) => {
             const child = spawn('koot-build', buildCmdArgs.split(' '), {
                 stdio: 'inherit',
-                shell: true
+                shell: true,
             });
             child.on('close', () => {
                 resolve();
@@ -149,7 +150,7 @@ const run = async () => {
 
             // 打出错误报告
             console.log('');
-            console.trace(stderr);
+            console.error(stderr);
 
             // 终止流程
             return;
@@ -197,12 +198,12 @@ const run = async () => {
     const child = npmRunScript(cmd, {});
     // console.log('child', child)
     await new Promise((resolve, reject) => {
-        child.once('error', error => {
+        child.once('error', (error) => {
             console.trace(error);
             process.exit(1);
             reject(error);
         });
-        child.once('exit', exitCode => {
+        child.once('exit', (exitCode) => {
             // console.trace('exit in', exitCode)
             resolve(exitCode);
             // process.exit(exitCode)

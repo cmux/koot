@@ -1,5 +1,5 @@
 /* global
-    __KOOT_SSR__: false,
+    __KOOT_SSR__: false
 */
 
 import isRenderSafe from './React/is-render-safe';
