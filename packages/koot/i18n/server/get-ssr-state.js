@@ -1,4 +1,6 @@
-/* global __KOOT_SSR__:false */
+/* global
+    __KOOT_SSR__:false
+*/
 
 /**
  * 返回多语言相关的 SSR 状态
@@ -14,7 +16,7 @@ const getSSRState = () => {
                     ? global.__KOOT_SSR__.locales[
                           global.__KOOT_SSR__.LocaleId
                       ] || {}
-                    : {}
+                    : {},
         };
 
     if (typeof __KOOT_SSR__ !== 'object') return {};
@@ -24,7 +26,7 @@ const getSSRState = () => {
         locales:
             JSON.parse(process.env.KOOT_I18N_TYPE) === 'store'
                 ? __KOOT_SSR__.locales[__KOOT_SSR__.LocaleId] || {}
-                : {}
+                : {},
     };
 };
 export default getSSRState;

@@ -33,7 +33,7 @@ const middlewareIsomorphic = (options = {}) => {
         locales,
         proxyRequestOrigin = {},
         template,
-        templateInject = {}
+        templateInject = {},
     } = options;
     // const ssrConfig = {}
 
@@ -94,7 +94,7 @@ const middlewareIsomorphic = (options = {}) => {
     }
 
     if (Array.isArray(localesIds)) {
-        localesIds.forEach(localeId => {
+        localesIds.forEach((localeId) => {
             globalCache.set(localeId, {});
             // Object.defineProperty(globalCache, localeId, {
             //     value: {},
@@ -168,40 +168,46 @@ const middlewareIsomorphic = (options = {}) => {
 
             // eval SSR
             // [开发环境] 每次请求都重新验证一次语言包，以确保语言包的更新
-            const SSRoptions = {
-                ctx,
 
-                // Store, History,
-                // memoryHistory,
-                LocaleId,
-                locales: __DEV__ ? await validateI18n() : locales,
+            Object.defineProperty(ctx, '__KOOT_SSR__', {
+                configurable: true,
+                enumerable: false,
+                writable: false,
+                value: {
+                    ctx,
 
-                // ssrConfig,
+                    // Store, History,
+                    // memoryHistory,
+                    LocaleId,
+                    locales: __DEV__ ? await validateI18n() : locales,
 
-                // syncCookie: reduxConfig.syncCookie,
-                proxyRequestOrigin,
-                templateInject,
-                template,
+                    // ssrConfig,
 
-                thisTemplateInjectCache,
-                thisEntrypoints,
-                thisFilemap, //thisStyleMap,
-                styleMap,
-                globalCache,
+                    // syncCookie: reduxConfig.syncCookie,
+                    proxyRequestOrigin,
+                    templateInject,
+                    template,
 
-                connectedComponents: __DEV__
-                    ? global.__KOOT_SSR__.connectedComponents || []
-                    : []
-            };
+                    thisTemplateInjectCache,
+                    thisEntrypoints,
+                    thisFilemap, //thisStyleMap,
+                    styleMap,
+                    globalCache,
+
+                    connectedComponents: __DEV__
+                        ? global.__KOOT_SSR__.connectedComponents || []
+                        : [],
+                },
+            });
             if (__DEV__) {
                 // global.__KOOT_STORE__ = Store
                 // global.__KOOT_HISTORY__ = History
                 // global.__KOOT_LOCALEID__ = LocaleId
                 // global.__KOOT_SSR__ = SSRoptions
-                global.__KOOT_SSR_SET__(SSRoptions);
+                global.__KOOT_SSR_SET__(ctx.__KOOT_SSR__);
                 global.__KOOT_SSR_SET_LOCALEID__(LocaleId);
             }
-            const result = await ssr(SSRoptions);
+            const result = await ssr(ctx);
 
             // console.log('eval finished', {
             //     'localeId in store': Store.getState().localeId

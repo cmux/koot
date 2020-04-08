@@ -1,4 +1,6 @@
-/* global __KOOT_SSR__:false */
+/* global
+    __KOOT_SSR__:false
+*/
 const getSSRStateString = require('../../../../libs/get-ssr-state-string');
 
 /** @type {String} 同步数据到 store 的静态方法名 */
@@ -24,15 +26,15 @@ const executeComponentLifecycle = async ({ store, renderProps, ctx }) => {
      * 扩展 HTML 信息需要执行的方法
      * 仅执行匹配到的最深层组件对应的方法
      */
-    let extendHtmlTasks = [];
+    const extendHtmlTasks = [];
 
-    const extractDataToStoreTask = component => {
+    const extractDataToStoreTask = (component) => {
         if (!component) return;
         if (typeof component[LIFECYCLE_DATA_TO_STORE] === 'function') {
             const thisTask = component[LIFECYCLE_DATA_TO_STORE]({
                 store,
                 renderProps,
-                ctx
+                ctx,
             });
             // component[LIFECYCLE_DATA_TO_STORE] = undefined
             if (Array.isArray(thisTask)) {
@@ -41,7 +43,7 @@ const executeComponentLifecycle = async ({ store, renderProps, ctx }) => {
                 tasks.push(thisTask);
             } else if (typeof thisTask === 'function') {
                 tasks.push(
-                    new Promise(async resolve => {
+                    new Promise(async (resolve) => {
                         await thisTask();
                         resolve();
                     })
@@ -52,7 +54,7 @@ const executeComponentLifecycle = async ({ store, renderProps, ctx }) => {
         }
     };
 
-    const extracHtmlExtendTask = component => {
+    const extracHtmlExtendTask = (component) => {
         if (!component) return;
         if (typeof component[LIFECYCLE_HTML_EXTEND] === 'function') {
             extendHtmlTasks.push(component[LIFECYCLE_HTML_EXTEND]);
@@ -81,16 +83,16 @@ const executeComponentLifecycle = async ({ store, renderProps, ctx }) => {
             // global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__.set(CTX, connectedComponents)
 
             const renderPropsComponents = (renderProps.components || []).filter(
-                c => !!c
+                (c) => !!c
             );
             // 将 renderProps 中的 components 寄存入全局的 connectedComponents 中
             renderPropsComponents
                 .filter(
-                    component =>
+                    (component) =>
                         component &&
-                        connectedComponents.every(c => c.id !== component.id)
+                        connectedComponents.every((c) => c.id !== component.id)
                 )
-                .forEach(component => connectedComponents.push(component));
+                .forEach((component) => connectedComponents.push(component));
             // 将 renderProps 中的 components 移至队列最尾部
             return connectedComponents;
             // .filter(component =>
@@ -107,7 +109,7 @@ const executeComponentLifecycle = async ({ store, renderProps, ctx }) => {
     // console.log('==========\n\n');
 
     // 添加各项任务
-    connectedComponents.forEach(component => {
+    connectedComponents.forEach((component) => {
         extractDataToStoreTask(component);
         extracHtmlExtendTask(component);
     });
@@ -132,14 +134,14 @@ const executeComponentLifecycle = async ({ store, renderProps, ctx }) => {
         metaHtml: '',
         reduxHtml: `window.__REDUX_STATE__ = ${getSSRStateString(
             store.getState()
-        )};`
+        )};`,
     };
-    extendHtmlTasks.some(task => {
+    extendHtmlTasks.some((task) => {
         if (typeof task === 'function') {
             const { title: thisTitle, metas: thisMetas } = task({
                 store,
                 renderProps,
-                ctx
+                ctx,
             });
 
             const hasTitle = !!thisTitle;
@@ -149,10 +151,10 @@ const executeComponentLifecycle = async ({ store, renderProps, ctx }) => {
             if (hasMeta)
                 result.metaHtml = thisMetas
                     .map(
-                        meta =>
+                        (meta) =>
                             '<meta' +
                             Object.keys(meta)
-                                .map(key => ` ${key}="${meta[key]}"`)
+                                .map((key) => ` ${key}="${meta[key]}"`)
                                 .join('') +
                             '>'
                     )
