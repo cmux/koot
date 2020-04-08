@@ -6,5 +6,6 @@ module.exports = {
     useTabs: false,
     semi: true,
     bracketSpacing: true,
-    eslintIntegration: true
+    eslintIntegration: true,
+    endOfLine: 'lf'
 };
