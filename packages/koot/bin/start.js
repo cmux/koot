@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable no-console */
 
 const fs = require('fs-extra');
 const path = require('path');
@@ -85,7 +86,7 @@ const run = async () => {
             (typeof type === 'string' ? ` --type ${type}` : '') +
             (kootTest ? ` --koot-test` : '');
 
-        let stderr = '';
+        const stderr = '';
         await new Promise(resolve => {
             const child = spawn('koot-build', buildCmdArgs.split(' '), {
                 stdio: 'inherit',
@@ -149,7 +150,7 @@ const run = async () => {
 
             // 打出错误报告
             console.log('');
-            console.trace(stderr);
+            console.error(stderr);
 
             // 终止流程
             return;

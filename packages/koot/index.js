@@ -1,5 +1,5 @@
 /* global
-    __KOOT_SSR__: false,
+    __KOOT_SSR__: false
 */
 
 import isRenderSafe from './React/is-render-safe';
@@ -62,7 +62,7 @@ export let history = (() => getHistory())();
 
 // ============================================================================
 
-export const getCache = (localeId) => {
+export const getCache = localeId => {
     if (!isRenderSafe()) return {};
     if (__CLIENT__) {
         if (typeof window.__KOOT_CACHE__ !== 'object')
@@ -91,22 +91,22 @@ export const getCtx = () => {
 // ============================================================================
 
 if (__DEV__) {
-    global.__KOOT_SSR_SET__ = (v) => {
+    global.__KOOT_SSR_SET__ = v => {
         global.__KOOT_SSR__ = v;
     };
-    global.__KOOT_SSR_SET_LOCALEID__ = (v) => {
+    global.__KOOT_SSR_SET_LOCALEID__ = v => {
         global.__KOOT_LOCALEID__ = v;
         localeId = v;
     };
-    global.__KOOT_SSR_SET_STORE__ = (v) => {
+    global.__KOOT_SSR_SET_STORE__ = v => {
         global.__KOOT_STORE__ = v;
         store = v;
     };
-    global.__KOOT_SSR_SET_HISTORY__ = (v) => {
+    global.__KOOT_SSR_SET_HISTORY__ = v => {
         global.__KOOT_HISTORY__ = v;
         history = v;
     };
-    global.__KOOT_SSR_SET_CTX__ = (v) => {
+    global.__KOOT_SSR_SET_CTX__ = v => {
         global.__KOOT_CTX__ = v;
     };
     // if (__CLIENT__) {
