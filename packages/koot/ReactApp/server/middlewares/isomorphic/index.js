@@ -2,15 +2,18 @@
 // import createMemoryHistory from 'history/lib/createMemoryHistory'
 // import { syncHistoryWithStore } from 'react-router-redux'
 
+import { ssrContext as SSRContext } from '../../../../defaults/defines-server';
 import { serviceWorker as devRequestServiceWorker } from '../../../../defaults/dev-request-uri';
 import { uriServiceWorker } from '../../../../React/inject/_cache-keys';
 
 import getChunkmap from '../../../../utils/get-chunkmap';
 import getSWPathname from '../../../../utils/get-sw-pathname';
+import log from '../../../../libs/log';
 
 import i18nGetLangFromCtx from '../../../../i18n/server/get-lang-from-ctx';
 import getI18nType from '../../../../i18n/get-type';
 import localesIds from '../../../../i18n/locale-ids';
+import { setLocales } from '../../../../i18n/locales';
 
 // import initStore from './init-store'
 import validateI18n from '../../validate/i18n';
@@ -109,6 +112,33 @@ const middlewareIsomorphic = (options = {}) => {
         /** @type {String} 本次请求的 URL */
         const url = ctx.path + ctx.search;
 
+        function renderComplete() {
+            // 清理 SSR context
+            if (typeof ctx[SSRContext] === 'object') {
+                Object.keys(ctx[SSRContext]).forEach((key) => {
+                    delete ctx[SSRContext][key];
+                });
+            }
+            delete ctx[SSRContext];
+
+            if (__DEV__) {
+                // [开发环境] 中间件: 请求完成后，触发 server/index.js 保存，让 PM2 重启服务器
+                console.log('  ');
+                log('success', 'server', 'render success');
+                console.log('  ');
+                console.log('  ');
+                console.log('  ');
+                console.log('  ');
+                console.log('  ');
+                //     const fileServer = path.resolve(getDist(), 'server/index.js');
+                //     if (fs.existsSync(fileServer)) {
+                //         await sleep(200);
+                //         const content = await fs.readFile(fileServer, 'utf-8');
+                //         await fs.writeFile(fileServer, content, 'utf-8');
+                //     }
+            }
+        }
+
         try {
             // console.log('request url', url)
             // console.log('\nSSR middleware start')
@@ -125,7 +155,7 @@ const middlewareIsomorphic = (options = {}) => {
             const cached = thisRenderCache ? thisRenderCache.get(url) : false;
             if (!__DEV__ && cached !== false) {
                 ctx.body = cached;
-                return;
+                return renderComplete();
             }
 
             /** @type {Object} 本次请求的 (当前语言的) 注入内容缓存 */
@@ -143,6 +173,7 @@ const middlewareIsomorphic = (options = {}) => {
             /** @type {Object} 本次请求的 (当前语言的) CSS 对照表 */
             const styleMap = {};
             // const thisStyleMap = styleMap.get(i18nType === 'default' ? LocaleId : '')
+            const thisLocales = __DEV__ ? await validateI18n() : locales;
 
             if (__DEV__) {
                 extendCacheObject(
@@ -150,6 +181,7 @@ const middlewareIsomorphic = (options = {}) => {
                     chunkmap,
                     i18nType === 'default' ? LocaleId : undefined
                 );
+                setLocales(thisLocales);
             }
 
             // 生成/清理 Store
@@ -169,17 +201,17 @@ const middlewareIsomorphic = (options = {}) => {
             // eval SSR
             // [开发环境] 每次请求都重新验证一次语言包，以确保语言包的更新
 
-            Object.defineProperty(ctx, '__KOOT_SSR__', {
+            Object.defineProperty(ctx, SSRContext, {
                 configurable: true,
                 enumerable: false,
                 writable: false,
                 value: {
-                    ctx,
+                    // ctx,
 
                     // Store, History,
                     // memoryHistory,
                     LocaleId,
-                    locales: __DEV__ ? await validateI18n() : locales,
+                    locales: thisLocales,
 
                     // ssrConfig,
 
@@ -195,7 +227,7 @@ const middlewareIsomorphic = (options = {}) => {
                     globalCache,
 
                     connectedComponents: __DEV__
-                        ? global.__KOOT_SSR__.connectedComponents || []
+                        ? global[SSRContext].connectedComponents || []
                         : [],
                 },
             });
@@ -203,8 +235,8 @@ const middlewareIsomorphic = (options = {}) => {
                 // global.__KOOT_STORE__ = Store
                 // global.__KOOT_HISTORY__ = History
                 // global.__KOOT_LOCALEID__ = LocaleId
-                // global.__KOOT_SSR__ = SSRoptions
-                global.__KOOT_SSR_SET__(ctx.__KOOT_SSR__);
+                // global[SSRContext] = SSRoptions
+                global.__KOOT_SSR_SET__(ctx);
                 global.__KOOT_SSR_SET_LOCALEID__(LocaleId);
             }
             const result = await ssr(ctx);
@@ -218,12 +250,18 @@ const middlewareIsomorphic = (options = {}) => {
                 // HTML 结果暂存入缓存
                 if (thisRenderCache) thisRenderCache.set(url, result.body);
                 ctx.body = result.body;
-                return;
+                return renderComplete();
             }
 
-            if (result.error) throw result.error;
+            if (result.error) {
+                renderComplete();
+                throw result.error;
+            }
 
-            if (result.redirect) return ctx.redirect(result.redirect);
+            if (result.redirect) {
+                renderComplete();
+                return ctx.redirect(result.redirect);
+            }
 
             if (result.next) return await next();
         } catch (err) {
@@ -235,6 +273,7 @@ const middlewareIsomorphic = (options = {}) => {
             ctx.status = 500;
             ctx.body = err.message;
             ctx.app.emit('error', err, ctx);
+            return renderComplete();
         }
     };
 };

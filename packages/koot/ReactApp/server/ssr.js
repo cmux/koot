@@ -1,7 +1,3 @@
-/* global
-    __KOOT_SSR__:false
-*/
-
 // import 'regenerator-runtime/runtime';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
@@ -13,10 +9,18 @@ import { syncHistoryWithStore } from 'react-router-redux';
 import * as kootConfig from '__KOOT_PROJECT_CONFIG_FULL_PATHNAME__';
 
 import { resetStore, resetHistory } from '../../';
+import {
+    set as setSSRContext,
+    reset as resetSSRContext,
+} from '../../libs/ssr/context';
 import RootIsomorphic from './root-isomorphic';
 
 import { publicPathPrefix } from '../../defaults/webpack-dev-server';
-import { needConnectComponents } from '../../defaults/defines-server';
+import {
+    needConnectComponents,
+    ssrContext as SSRContext,
+    koaContext as KOAContext,
+} from '../../defaults/defines-server';
 import { CHANGE_LANGUAGE } from '../action-types';
 
 import validateRouterConfig from '../../React/validate/router-config';
@@ -41,21 +45,18 @@ import i18nOnServerRender from '../../i18n/onServerRender';
 import i18nGenerateHtmlRedirectMetas from '../../i18n/server/generate-html-redirect-metas';
 import i18nGetSSRState from '../../i18n/server/get-ssr-state';
 
-async function ssr(options = {}) {
+async function ssr(ctx) {
+    setSSRContext(ctx);
+
     let SSR, LocaleId;
 
     if (__DEV__) {
         SSR = global.__KOOT_SSR__;
         LocaleId = global.__KOOT_LOCALEID__;
     } else {
-        SSR = __KOOT_SSR__;
+        SSR = ctx[SSRContext];
         LocaleId = SSR.LocaleId;
     }
-
-    const {
-        /** @type {Object} KOA Context */
-        ctx,
-    } = SSR;
 
     /** @type {string} 本次请求的 URL */
     const url = ctx.path + ctx.search;
@@ -125,7 +126,7 @@ async function ssr(options = {}) {
     } = SSR;
 
     function ssrComplete(...args) {
-        SSR = undefined;
+        resetSSRContext();
         _complete(...args);
     }
 
@@ -354,13 +355,16 @@ const initConfig = async (i18nEnabled, LocaleId) => {
     return config;
 };
 
-if (!__DEV__)
-    ssr().catch((err) => {
-        __KOOT_SSR__.ssrComplete({
+if (!__DEV__) {
+    // eslint-disable-next-line no-eval
+    const ctx = eval(KOAContext);
+    ssr(ctx).catch((err) => {
+        ctx[SSRContext].ssrComplete({
             error: err,
         });
         console.error(err);
         throw err;
     });
+}
 
 export default ssr;

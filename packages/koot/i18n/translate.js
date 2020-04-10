@@ -1,24 +1,23 @@
 import get from 'lodash/get';
 
-import { localeId } from '../';
-import locales from './locales';
+import { get as getSSRContext } from '../libs/ssr/context';
+import { localeId, resetLocaleId } from '../';
+import locales, { setLocales } from './locales';
 
-export let l = (() => {
+export let l = undefined;
+const resetL = () => {
     if (__SERVER__) {
-        if (__DEV__ && typeof global.__KOOT_SSR__ === 'object') {
-            if (typeof global.__KOOT_SSR__.locales === 'object')
-                return global.__KOOT_SSR__.locales[localeId];
-            return {};
-        }
-        // console.log({ locales })
-        if (typeof locales === 'object') return locales[localeId];
-        return {};
-    }
-    if (JSON.parse(process.env.KOOT_I18N_TYPE) === 'store') return locales;
-    return false;
-})();
+        const { locales = {} } = getSSRContext();
+        l = locales[localeId] || {};
+    } else if (JSON.parse(process.env.KOOT_I18N_TYPE) === 'store') l = locales;
+    else l = false;
+
+    setLocales(l);
+};
+resetL();
 
 let isSPACorrected = false;
+let isSSRCorrected = false;
 
 /**
  * 翻译文本
@@ -36,10 +35,14 @@ const translate = (...args) => {
     const keys = [];
 
     if (__SERVER__ && __DEV__) l = locales[global.__KOOT_LOCALEID__];
-    // SPA: 进一步确保语言包可用
-    if (
-        __SPA__ &&
+    else if (!isSSRCorrected && __SERVER__ && !__DEV__) {
+        resetLocaleId();
+        resetL();
+        isSSRCorrected = true;
+    } else if (
+        // SPA: 进一步确保语言包可用
         !isSPACorrected &&
+        __SPA__ &&
         typeof window !== 'undefined' &&
         window.__KOOT_SSR_STATE__ &&
         typeof window.__KOOT_SSR_STATE__.locales === 'object' &&
@@ -61,7 +64,7 @@ const translate = (...args) => {
             return;
         }
         if (typeof value === 'string' && value.includes('.')) {
-            value.split('.').forEach(value => keys.push(value));
+            value.split('.').forEach((value) => keys.push(value));
             return;
         }
         keys.push(value);

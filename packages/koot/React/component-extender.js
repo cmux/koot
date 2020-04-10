@@ -1,7 +1,3 @@
-/* global
-    __KOOT_SSR__:false
-*/
-
 import React from 'react';
 import { connect } from 'react-redux';
 // import { hot } from 'react-hot-loader'
@@ -25,6 +21,7 @@ import {
 import clientUpdatePageInfo from './client-update-page-info';
 import { RESET_CERTAIN_STATE } from './redux';
 import isRenderSafe from './is-render-safe';
+import { get as getSSRContext } from '../libs/ssr/context';
 
 //
 
@@ -265,15 +262,15 @@ export default (options = {}) => (WrappedComponent) => {
              * 将组件注册到同构渲染对象中
              */
             if (__SERVER__) {
-                const SSR = __DEV__ ? global.__KOOT_SSR__ : __KOOT_SSR__;
-                if (SSR[needConnectComponents]) {
+                if (getSSRContext()[needConnectComponents]) {
                     if (__DEV__) {
                         // console.log(options.name || '__');
                         KootComponent.id = devSSRConnectIndex++;
                         // KootComponent.pageinfo = pageinfo;
                     }
-                    const { connectedComponents = [] } = SSR;
+                    let { connectedComponents = [] } = getSSRContext();
                     connectedComponents.unshift(KootComponent);
+                    connectedComponents = undefined;
                 }
             }
 
@@ -297,11 +294,7 @@ export default (options = {}) => (WrappedComponent) => {
          */
         getStyleMap(/*context*/) {
             // console.log('extend', { LocaleId })
-            if (__SERVER__) {
-                if (__DEV__) return global.__KOOT_SSR__.styleMap;
-                if (typeof __KOOT_SSR__ === 'object')
-                    return __KOOT_SSR__.styleMap;
-            }
+            if (__SERVER__) return getSSRContext().styleMap;
             return styleMap;
             // return context
         }
