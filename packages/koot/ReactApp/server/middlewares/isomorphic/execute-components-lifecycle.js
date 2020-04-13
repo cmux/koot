@@ -1,7 +1,8 @@
-/* global
-    __KOOT_SSR__:false
-*/
 const getSSRStateString = require('../../../../libs/get-ssr-state-string');
+// const { get: getSSRContext } = require('../../../../libs/ssr/context');
+const {
+    ssrContext: SSRContext,
+} = require('../../../../defaults/defines-server');
 
 /** @type {String} 同步数据到 store 的静态方法名 */
 const LIFECYCLE_DATA_TO_STORE = 'onServerRenderStoreExtend';
@@ -65,44 +66,49 @@ const executeComponentLifecycle = async ({ store, renderProps, ctx }) => {
     };
 
     /** @type {Array} 使用 extend 高阶组件的组件 */
-    const connectedComponents = (() => {
-        const { connectedComponents = [] } = __DEV__
-            ? global.__KOOT_SSR__
-            : __KOOT_SSR__;
+    let connectedComponents =
+        (__DEV__
+            ? (() => {
+                  const { connectedComponents = [] } = ctx[SSRContext];
 
-        if (__DEV__) {
-            // 旧代码
-            // if (!global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__)
-            //     global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__ = new Map()
+                  if (__DEV__) {
+                      // 旧代码
+                      // if (!global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__)
+                      //     global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__ = new Map()
 
-            // const CTX = JSON.stringify(ctx)
+                      // const CTX = JSON.stringify(ctx)
 
-            // if (global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__.has(CTX))
-            //     return global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__.get(CTX)
+                      // if (global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__.has(CTX))
+                      //     return global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__.get(CTX)
 
-            // global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__.set(CTX, connectedComponents)
+                      // global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__.set(CTX, connectedComponents)
 
-            const renderPropsComponents = (renderProps.components || []).filter(
-                (c) => !!c
-            );
-            // 将 renderProps 中的 components 寄存入全局的 connectedComponents 中
-            renderPropsComponents
-                .filter(
-                    (component) =>
-                        component &&
-                        connectedComponents.every((c) => c.id !== component.id)
-                )
-                .forEach((component) => connectedComponents.push(component));
-            // 将 renderProps 中的 components 移至队列最尾部
-            return connectedComponents;
-            // .filter(component =>
-            //     renderPropsComponents.every(c => c.id !== component.id)
-            // )
-            // .concat(renderPropsComponents);
-        }
+                      const renderPropsComponents = (
+                          renderProps.components || []
+                      ).filter((c) => !!c);
+                      // 将 renderProps 中的 components 寄存入全局的 connectedComponents 中
+                      renderPropsComponents
+                          .filter(
+                              (component) =>
+                                  component &&
+                                  connectedComponents.every(
+                                      (c) => c.id !== component.id
+                                  )
+                          )
+                          .forEach((component) =>
+                              connectedComponents.push(component)
+                          );
+                      // 将 renderProps 中的 components 移至队列最尾部
+                      return connectedComponents;
+                      // .filter(component =>
+                      //     renderPropsComponents.every(c => c.id !== component.id)
+                      // )
+                      // .concat(renderPropsComponents);
+                  }
 
-        return connectedComponents;
-    })();
+                  return connectedComponents;
+              })()
+            : ctx[SSRContext].connectedComponents) || [];
     // console.log('\n\n==========');
     // console.log({ connectedComponents });
     // console.log({ connectedComponents, renderProps });
@@ -113,6 +119,8 @@ const executeComponentLifecycle = async ({ store, renderProps, ctx }) => {
         extractDataToStoreTask(component);
         extracHtmlExtendTask(component);
     });
+
+    connectedComponents = undefined;
 
     // 旧代码
     // for (const component of renderProps.components) {

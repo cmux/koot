@@ -1,31 +1,25 @@
-/* global
-    __KOOT_SSR__:false
-*/
-
-import React from 'react'
-import { Provider } from 'react-redux'
-import RouterContext from 'react-router/lib/RouterContext'
+import React from 'react';
+import { Provider } from 'react-redux';
+import RouterContext from 'react-router/lib/RouterContext';
 
 // import { idDivStylesContainer, StyleMapContext } from '../../React/styles'
 
-const Root = ({
-    store, ...props
-}) => {
+const Root = ({ store, ...props }) => {
     // console.log('Root', {
     //     'in __KOOT_SSR__': __KOOT_SSR__.LocaleId
     // })
     // console.log('Root render Store', typeof Store === 'undefined' ? undefined : Store)
     return (
         // <StyleMapContext.Provider value={{}}>
-        <Provider store={store} >
+        <Provider store={store}>
             <RouterContext {...props} />
         </Provider>
         // <StylesContainer />
         // </StyleMapContext.Provider>
-    )
-}
+    );
+};
 
-export default Root
+export default Root;
 
 /**
  * React 组件: 样式表内容容器

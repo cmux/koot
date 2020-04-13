@@ -12,7 +12,7 @@ const ModifyServerBundlePlugin = require('../plugins/modify-server-bundle');
 const {
     keyConfigBuildDll,
     // keyConfigClientAssetsPublicPath,
-    keyConfigWebpackSPAServer
+    keyConfigWebpackSPAServer,
 } = require('koot/defaults/before-build');
 
 const createTargetDefaultConfig = require('./create-target-default');
@@ -41,14 +41,14 @@ module.exports = async (kootBuildConfig = {}) => {
         staticCopyFrom: staticAssets,
         template,
         serverless = false,
-        [keyConfigBuildDll]: createDll = false
+        [keyConfigBuildDll]: createDll = false,
     } = kootBuildConfig;
 
     const {
         WEBPACK_BUILD_TYPE: TYPE,
         WEBPACK_BUILD_ENV: ENV,
         WEBPACK_BUILD_STAGE: STAGE,
-        WEBPACK_DEV_SERVER_PORT: clientDevServerPort
+        WEBPACK_DEV_SERVER_PORT: clientDevServerPort,
     } = process.env;
 
     const isSPAProd = Boolean(ENV === 'prod' && TYPE === 'spa');
@@ -62,7 +62,7 @@ module.exports = async (kootBuildConfig = {}) => {
     const configTargetDefault = await createTargetDefaultConfig(
         {
             pathRun: getCwd(),
-            clientDevServerPort
+            clientDevServerPort,
         },
         undefined,
         kootBuildConfig
@@ -89,7 +89,7 @@ module.exports = async (kootBuildConfig = {}) => {
         publicPath: '/',
         filename: `[name].js`,
         chunkFilename: `chunk.[chunkhash].js`,
-        ...(result.output || {})
+        ...(result.output || {}),
     };
     if (result.output.publicPath)
         result.output.publicPath = transformOutputPublicpath(
@@ -107,22 +107,22 @@ module.exports = async (kootBuildConfig = {}) => {
 
     result.plugins = [
         new webpack.optimize.LimitChunkCountPlugin({
-            maxChunks: 1
+            maxChunks: 1,
         }),
         new KootI18nPlugin({
             stage: STAGE,
-            functionName: i18n ? i18n.expr : undefined
+            functionName: i18n ? i18n.expr : undefined,
         }),
-        ...result.plugins
+        ...result.plugins,
     ];
 
     if (i18n && Array.isArray(i18n.locales) && i18n.locales.length > 0) {
         result.plugins.push(
             new CopyWebpackPlugin(
-                i18n.locales.map(arr => {
+                i18n.locales.map((arr) => {
                     return {
                         from: arr[2],
-                        to: arr[3]
+                        to: arr[3],
                         // to: '../.locales/'
                         // to: path.resolve(getDirDevTmp(), 'locales')
                     };
@@ -137,8 +137,8 @@ module.exports = async (kootBuildConfig = {}) => {
                 // /node_modules/,
                 // 'node_modules',
                 dist,
-                path.resolve(dist, '**/*')
-            ]
+                path.resolve(dist, '**/*'),
+            ],
         };
     }
 
@@ -150,7 +150,7 @@ module.exports = async (kootBuildConfig = {}) => {
         // path.resolve(__dirname, '../../../defaults/server-stage-0.js'),
         require('../libs/get-koot-file')(
             appType + `/server` + (isServerless ? '/index-serverless.js' : '')
-        )
+        ),
     ];
     const otherEntries = {};
     if (isSPAProd) {
@@ -170,7 +170,7 @@ module.exports = async (kootBuildConfig = {}) => {
             // )
         }
         if (ENV === 'dev') {
-            Object.keys(otherEntries).forEach(key => {
+            Object.keys(otherEntries).forEach((key) => {
                 otherEntries[key].push('webpack/hot/poll?1000');
             });
         }
@@ -183,7 +183,7 @@ module.exports = async (kootBuildConfig = {}) => {
         removeEmptyChunks: false,
         mergeDuplicateChunks: false,
         // occurrenceOrder: false,
-        concatenateModules: false
+        concatenateModules: false,
     };
     try {
         if (parseInt(getModuleVersion('webpack')) < 5) {
@@ -208,13 +208,13 @@ module.exports = async (kootBuildConfig = {}) => {
             // our additional options
             moduleTrace: true,
             errorDetails: true,
-            performance: false
+            performance: false,
         });
 
         if (typeof result.performance !== 'object') result.performance = {};
         Object.assign(result.performance, {
             maxEntrypointSize: 1 * 1024 * 1024,
-            maxAssetSize: 1 * 1024 * 1024
+            maxAssetSize: 1 * 1024 * 1024,
         });
     }
 
@@ -223,17 +223,17 @@ module.exports = async (kootBuildConfig = {}) => {
         {
             ...result,
             entry: {
-                index: entryIndex
+                index: entryIndex,
             },
             output: {
                 ...result.output,
-                filename: 'index.js'
+                filename: 'index.js',
             },
             plugins: [
                 new ModifyServerBundlePlugin({ isServerless }),
-                ...result.plugins
-            ]
-        }
+                ...result.plugins,
+            ],
+        },
     ];
 
     if (isSPAProd) {
@@ -241,31 +241,31 @@ module.exports = async (kootBuildConfig = {}) => {
         configsFull[0][keyConfigWebpackSPAServer] = true;
         return await transformConfigLast(configsFull, kootBuildConfig);
     } else {
-        Object.keys(otherEntries).forEach(entryName => {
+        Object.keys(otherEntries).forEach((entryName) => {
             configsFull.push({
                 ...result,
                 entry: {
-                    [entryName]: otherEntries[entryName]
+                    [entryName]: otherEntries[entryName],
                 },
                 output: {
                     ...result.output,
-                    filename: `${entryName}.js`
-                }
+                    filename: `${entryName}.js`,
+                },
             });
         });
 
         // 对最后一个配置进行加工
-        (config => {
+        ((config) => {
             if (ENV === 'dev') {
                 if (Array.isArray(staticAssets))
                     config.plugins.push(
                         new CopyWebpackPlugin(
-                            staticAssets.map(from => ({
+                            staticAssets.map((from) => ({
                                 from,
                                 to: path.relative(
                                     config.output.path,
                                     getDirDistPublic(dist)
-                                )
+                                ),
                             }))
                         )
                     );

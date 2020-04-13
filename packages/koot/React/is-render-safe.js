@@ -1,7 +1,4 @@
-/* global
-    __KOOT_SSR__:false
-*/
-
+const { get: getSSRContext } = require('../libs/ssr/context');
 const { needConnectComponents } = require('../defaults/defines-server');
 
 /**
@@ -12,8 +9,7 @@ const { needConnectComponents } = require('../defaults/defines-server');
  */
 module.exports = () => {
     if (__SERVER__) {
-        const SSR = __DEV__ ? global.__KOOT_SSR__ : __KOOT_SSR__;
-        if (SSR[needConnectComponents]) return false;
+        if (getSSRContext()[needConnectComponents]) return false;
         return true;
     }
     return true;

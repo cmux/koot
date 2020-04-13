@@ -1,7 +1,9 @@
 /* global
-    __KOOT_SSR__:false
     __KOOT_SSR_STATE__:false
 */
+
+const { get: getSSRContext } = require('../libs/ssr/context');
+
 const __devLocales = {};
 
 /**
@@ -14,8 +16,7 @@ const getLocalesObject = () => {
     if (__SERVER__) {
         if (__DEV__) {
             return __devLocales;
-        } else if (typeof __KOOT_SSR__ === 'object')
-            return __KOOT_SSR__.locales;
+        } else return getSSRContext().locales || false;
     }
     if (__CLIENT__) {
         if (typeof __KOOT_SSR_STATE__ === 'object') {

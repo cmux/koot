@@ -19,7 +19,8 @@
         "start:spa": "koot-start --type spa --dest dist-spa",
         "start:serverless": "koot-start --config koot.config.serverless.js",
         "start:public-path": "koot-start --config koot.config.public-path.js",
-        "start:inspect": "koot-build --config koot.config.public-path.js && node --inspect dist-public-path/server/index.js",
+        "start:normal": "koot-build --config koot.config.public-path.js && node dist-public-path/server/index.js",
+        "start:inspect": "koot-build --config koot.config.test-ssr-memory-leak.js && node --inspect dist-test-ssr-memory-leak/server/index.js",
         "build": "koot-build",
         "build:client": "koot-build -c",
         "build:server": "koot-build -s",
@@ -73,7 +74,7 @@
     "private": true,
     "sideEffects": false,
     "koot": {
-        "version": "0.13.11"
+        "version": "0.13.13"
     },
     "devDependencies": {
         "@types/inquirer": "^6.5.0",
