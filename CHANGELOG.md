@@ -15,6 +15,13 @@
 -   优化
     -   小幅优化热更新速度 (移除多余的 `webpack/hot` 和 `webpack-dev-server/client` 引用)
 
+## [0.13.14] - 2020-04-13
+
+**koot**
+
+-   优化
+    -   进一步优化 `serverPackAll = true` 时的 SSR 服务器内存溢出现象
+
 ## [0.13.13] - 2020-04-08
 
 **koot**

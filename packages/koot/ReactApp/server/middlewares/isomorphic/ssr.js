@@ -1,4 +1,8 @@
 import __KOOT_GET_DIST_PATH__ from '../../../../utils/get-dist-path';
+import {
+    ssrContext as SSRContext,
+    koaContext as KOAContext,
+} from '../../../../defaults/defines-server';
 
 const fs = require('fs-extra');
 const path = require('path');
@@ -10,11 +14,9 @@ let __KOOT_SSR_SCRIPT__;
 
 const context = {
     version: parseInt(process.versions.node.split('.')[0]),
-    // eslint-disable-next-line no-eval
-    require: eval('require'),
     process,
     console,
-    global,
+    // global,
     setTimeout,
     setInterval,
     setImmediate,
@@ -53,17 +55,18 @@ const context = {
 const ssr = (ctx) =>
     new Promise(async (resolve) => {
         const ssrComplete = (result) => {
+            // return resolve('hello');
             // setTimeout(function () {
             //     __KOOT_SSR__ = false;
             // });
             resolve(result);
             // thisContext = undefined;
         };
-        ctx.__KOOT_SSR__.ssrComplete = ssrComplete;
+        ctx[SSRContext].ssrComplete = ssrComplete;
 
         if (__DEV__) {
             return await require('../../ssr')
-                .default()
+                .default(ctx)
                 .catch((err) =>
                     ssrComplete({
                         error: err,
@@ -92,7 +95,10 @@ const ssr = (ctx) =>
             );
             if (fs.existsSync(fileSSR)) {
                 __KOOT_SSR_SCRIPT__ = new vm.Script(
-                    fs.readFileSync(fileSSR, 'utf-8')
+                    fs.readFileSync(fileSSR, 'utf-8'),
+                    {
+                        filename: fileSSR,
+                    }
                 );
             } else {
                 throw new Error(
@@ -101,50 +107,65 @@ const ssr = (ctx) =>
             }
         }
 
-        ctx.__KOOT_SSR__.setStore = function (value) {
-            ctx.__KOOT_SSR__.Store = value;
+        ctx[SSRContext].setStore = function (value) {
+            ctx[SSRContext].Store = value;
         };
-        ctx.__KOOT_SSR__.setHistory = function (value) {
-            ctx.__KOOT_SSR__.History = value;
+        ctx[SSRContext].setHistory = function (value) {
+            ctx[SSRContext].History = value;
         };
-        ctx.__KOOT_SSR__.ctx = ctx;
 
-        // let __KOOT_SSR__ = ctx.__KOOT_SSR__;
+        // let __KOOT_SSR__ = ctx[SSRContext];
         const thisContext = {
             ...context,
+            // eslint-disable-next-line no-eval
+            require: eval('require'),
+            // eslint-disable-next-line no-eval
+            module: eval('module'),
+            global: {},
+            [KOAContext]: ctx,
         };
 
-        Object.defineProperties(thisContext, {
-            __KOOT_SSR__: {
-                configurable: false,
-                enumerable: false,
-                writable: false,
-                value: ctx.__KOOT_SSR__,
-            },
-            Store: {
-                configurable: false,
-                enumerable: false,
-                get: function () {
-                    return ctx.__KOOT_SSR__.Store;
-                },
-            },
-            History: {
-                configurable: false,
-                enumerable: false,
-                get: function () {
-                    return ctx.__KOOT_SSR__.History;
-                },
-            },
-        });
+        // Object.defineProperties(thisContext, {
+        //     [SSRContext]: {
+        //         configurable: false,
+        //         enumerable: false,
+        //         writable: false,
+        //         value: ctx[SSRContext],
+        //     },
+        //     Store: {
+        //         configurable: false,
+        //         enumerable: false,
+        //         get: function () {
+        //             return ctx[SSRContext].Store;
+        //         },
+        //     },
+        //     History: {
+        //         configurable: false,
+        //         enumerable: false,
+        //         get: function () {
+        //             return ctx[SSRContext].History;
+        //         },
+        //     },
+        // });
+
+        vm.createContext(thisContext);
 
         try {
+            // console.log(`const ${KOAContext} = ctx`);
+            // // eslint-disable-next-line no-eval
+            // eval(`const ${KOAContext} = ctx`);
+            // console.log(`console.log({${KOAContext}})`);
+            // const __KOOT_CTX__ = ctx;
+            // eslint-disable-next-line no-eval
+            // eval(`const ${KOAContext} = ctx;\n${__KOOT_SSR_FILE_CONTENT__}`);
             // eslint-disable-next-line no-eval
             // eval(__KOOT_SSR_FILE_CONTENT__);
             // (function () {
             //     // eslint-disable-next-line no-eval
             //     eval(__KOOT_SSR_FILE_CONTENT__);
             // })();
-            __KOOT_SSR_SCRIPT__.runInNewContext(thisContext);
+            __KOOT_SSR_SCRIPT__.runInContext(thisContext);
+            // __KOOT_SSR_SCRIPT__.runInThisContext();
         } catch (err) {
             ssrComplete({
                 error: err,

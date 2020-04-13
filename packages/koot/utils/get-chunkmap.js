@@ -16,7 +16,9 @@ let cachedChunkmap;
  * @returns {Object}
  */
 const getChunkmap = (localeId, getFullResult = false, ignoreCache = false) => {
-    if (localeId === true) return getChunkmap(getFullResult || undefined, true);
+    if (localeId === true) {
+        return getChunkmap(getFullResult || undefined, true);
+    }
 
     const isI18nEnabled = getIsI18nEnabled();
 

@@ -1,5 +1,5 @@
 /* global
-    __KOOT_SSR__: false,
+    __KOOT_LOCALEID__:false
 */
 
 const fs = require('fs-extra');
@@ -36,10 +36,9 @@ const getFilePath = (
         try {
             if (
                 typeof __KOOT_SPA_TEMPLATE_INJECT__ === 'boolean' &&
-                __KOOT_SPA_TEMPLATE_INJECT__ &&
-                typeof __KOOT_SSR__ === 'object'
+                __KOOT_SPA_TEMPLATE_INJECT__
             ) {
-                localeId = __KOOT_SSR__.LocaleId || undefined;
+                localeId = __KOOT_LOCALEID__ || undefined;
             } else {
                 localeId = require('../index').localeId;
             }

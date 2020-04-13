@@ -1,6 +1,4 @@
-/* global
-    __KOOT_SSR__:false
-*/
+import { get as getSSRContext } from '../../libs/ssr/context';
 
 /**
  * 返回多语言相关的 SSR 状态
@@ -8,24 +6,14 @@
  */
 const getSSRState = () => {
     if (!__SERVER__) return {};
-    if (__DEV__)
-        return {
-            localeId: global.__KOOT_SSR__.LocaleId,
-            locales:
-                JSON.parse(process.env.KOOT_I18N_TYPE) === 'store'
-                    ? global.__KOOT_SSR__.locales[
-                          global.__KOOT_SSR__.LocaleId
-                      ] || {}
-                    : {},
-        };
 
-    if (typeof __KOOT_SSR__ !== 'object') return {};
+    const { LocaleId: localeId, locales: localesAll } = getSSRContext();
 
     return {
-        localeId: __KOOT_SSR__.LocaleId,
+        localeId,
         locales:
             JSON.parse(process.env.KOOT_I18N_TYPE) === 'store'
-                ? __KOOT_SSR__.locales[__KOOT_SSR__.LocaleId] || {}
+                ? localesAll[localeId] || {}
                 : {},
     };
 };

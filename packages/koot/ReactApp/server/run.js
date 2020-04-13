@@ -116,35 +116,10 @@ const startKootIsomorphicServer = async () => {
         })
     );
 
-    app.use(function (ctx, next) {
-        delete ctx.__KOOT_SSR__;
-        next();
-    });
-
     // 生命周期: 服务器即将启动
     if (__DEV__)
         log('callback', 'server', `callback: \x1b[32m${'after'}\x1b[0m(app)`);
     if (typeof serverAfter === 'function') await serverAfter(app);
-
-    // [开发环境] 中间件: 请求完成后，触发 server/index.js 保存，让 PM2 重启服务器
-    if (__DEV__) {
-        app.use(async (ctx, next) => {
-            await next();
-            console.log('  ');
-            log('success', 'server', 'render success');
-            console.log('  ');
-            console.log('  ');
-            console.log('  ');
-            console.log('  ');
-            console.log('  ');
-            //     const fileServer = path.resolve(getDist(), 'server/index.js');
-            //     if (fs.existsSync(fileServer)) {
-            //         await sleep(200);
-            //         const content = await fs.readFile(fileServer, 'utf-8');
-            //         await fs.writeFile(fileServer, content, 'utf-8');
-            //     }
-        });
-    }
 
     // 初始化完成，准备启动服务器
     log(' ', 'server', `init \x1b[32m${'OK'}\x1b[0m!`);
