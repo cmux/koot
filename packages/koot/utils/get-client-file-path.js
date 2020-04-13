@@ -1,10 +1,13 @@
+/* global
+    __KOOT_LOCALEID__:false
+*/
+
 const fs = require('fs-extra');
 const path = require('path');
 
 const getI18nType = require('../i18n/get-type');
 const getPublicPath = require('./get-public-dir');
 const getChunkmap = require('./get-chunkmap');
-const { get: getSSRContext } = require('../libs/ssr/context');
 
 /**
  * 获指定文件在客户端/取浏览器端中的可访问路径
@@ -31,11 +34,14 @@ const getFilePath = (
 
     if (typeof localeId === 'undefined') {
         try {
-            localeId =
+            if (
                 typeof __KOOT_SPA_TEMPLATE_INJECT__ === 'boolean' &&
                 __KOOT_SPA_TEMPLATE_INJECT__
-                    ? getSSRContext().LocaleId
-                    : require('../index').localeId || undefined;
+            ) {
+                localeId = __KOOT_LOCALEID__ || undefined;
+            } else {
+                localeId = require('../index').localeId;
+            }
         } catch (e) {
             // console.error(e);
         }

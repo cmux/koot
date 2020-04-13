@@ -10,5 +10,5 @@ module.exports = Object.assign({}, baseConfig, {
         }
         return await baseConfig.webpackConfig(...args);
     },
-    serverPackAll: true
+    serverPackAll: true,
 });

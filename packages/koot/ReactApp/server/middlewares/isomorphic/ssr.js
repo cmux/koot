@@ -119,6 +119,8 @@ const ssr = (ctx) =>
             ...context,
             // eslint-disable-next-line no-eval
             require: eval('require'),
+            // eslint-disable-next-line no-eval
+            module: eval('module'),
             global: {},
             [KOAContext]: ctx,
         };
@@ -149,6 +151,13 @@ const ssr = (ctx) =>
         vm.createContext(thisContext);
 
         try {
+            // console.log(`const ${KOAContext} = ctx`);
+            // // eslint-disable-next-line no-eval
+            // eval(`const ${KOAContext} = ctx`);
+            // console.log(`console.log({${KOAContext}})`);
+            // const __KOOT_CTX__ = ctx;
+            // eslint-disable-next-line no-eval
+            // eval(`const ${KOAContext} = ctx;\n${__KOOT_SSR_FILE_CONTENT__}`);
             // eslint-disable-next-line no-eval
             // eval(__KOOT_SSR_FILE_CONTENT__);
             // (function () {
@@ -156,6 +165,7 @@ const ssr = (ctx) =>
             //     eval(__KOOT_SSR_FILE_CONTENT__);
             // })();
             __KOOT_SSR_SCRIPT__.runInContext(thisContext);
+            // __KOOT_SSR_SCRIPT__.runInThisContext();
         } catch (err) {
             ssrComplete({
                 error: err,

@@ -227,7 +227,9 @@ const middlewareIsomorphic = (options = {}) => {
                     globalCache,
 
                     connectedComponents: __DEV__
-                        ? global[SSRContext].connectedComponents || []
+                        ? (global[SSRContext]
+                              ? global[SSRContext].connectedComponents
+                              : []) || []
                         : [],
                 },
             });

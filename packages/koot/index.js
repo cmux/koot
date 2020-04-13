@@ -3,7 +3,14 @@ import {
     koaContext as KOAContext,
 } from './defaults/defines-server';
 import isRenderSafe from './React/is-render-safe';
-import { get as getSSRContext, getKoaCtx } from './libs/ssr/context';
+import {
+    get as getSSRContext,
+    getKoaCtx,
+    getLocaleId,
+    resetLocaleId,
+    resetStore,
+    resetHistory,
+} from './libs/ssr/context';
 
 // ============================================================================
 
@@ -24,39 +31,14 @@ export { default as extend } from '__KOOT_HOC_EXTEND__';
 
 // ============================================================================
 
-export const getLocaleId = () => {
-    if (__CLIENT__) return window.__KOOT_LOCALEID__ || '';
-    if (__SERVER__) {
-        if (__DEV__) return global.__KOOT_LOCALEID__;
-        return getSSRContext().LocaleId;
-    }
-};
-export const resetLocaleId = () => (localeId = getLocaleId());
-export let localeId = (() => getLocaleId())();
-
-// ============================================================================
-
-export const getStore = () => {
-    if (__CLIENT__) return window.__KOOT_STORE__;
-    if (__SERVER__) {
-        if (__DEV__) return global.__KOOT_STORE__;
-        return getSSRContext().Store;
-    }
-};
-export const resetStore = () => (store = getStore());
-export let store = (() => getStore())();
-
-// ============================================================================
-
-export const getHistory = () => {
-    if (__CLIENT__) return window.__KOOT_HISTORY__;
-    if (__SERVER__) {
-        if (__DEV__) return global.__KOOT_HISTORY__;
-        return getSSRContext().History;
-    }
-};
-export const resetHistory = () => (history = getHistory());
-export let history = (() => getHistory())();
+export {
+    localeId,
+    store,
+    getStore,
+    history,
+    getHistory,
+} from './libs/ssr/context';
+export { getLocaleId, resetLocaleId, resetStore, resetHistory };
 
 // ============================================================================
 
@@ -89,15 +71,15 @@ if (__DEV__) {
     };
     global.__KOOT_SSR_SET_LOCALEID__ = (v) => {
         global.__KOOT_LOCALEID__ = v;
-        localeId = v;
+        resetLocaleId(v);
     };
     global.__KOOT_SSR_SET_STORE__ = (v) => {
         global.__KOOT_STORE__ = v;
-        store = v;
+        resetStore(v);
     };
     global.__KOOT_SSR_SET_HISTORY__ = (v) => {
         global.__KOOT_HISTORY__ = v;
-        history = v;
+        resetHistory(v);
     };
     global.__KOOT_SSR_SET_CTX__ = (v) => {
         global[KOAContext] = v;
