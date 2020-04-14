@@ -59,16 +59,20 @@ const context = {
  */
 const ssr = (ctx) =>
     new Promise(async (resolve) => {
+        let thisContext;
+
         const ssrComplete = (result) => {
             // return resolve('hello');
             // setTimeout(function () {
             //     __KOOT_SSR__ = false;
             // });
-            for (const key of Object.keys(thisContext).filter(
-                (key) => key !== 'global'
-            ))
-                delete thisContext[key];
-            thisContext = undefined;
+            if (typeof thisContext === 'object') {
+                for (const key of Object.keys(thisContext).filter(
+                    (key) => key !== 'global' && key !== KOAContext
+                ))
+                    delete thisContext[key];
+                thisContext = undefined;
+            }
             resolve(result);
         };
         ctx[SSRContext].ssrComplete = ssrComplete;
@@ -117,7 +121,7 @@ const ssr = (ctx) =>
         }
 
         // let __KOOT_SSR__ = ctx[SSRContext];
-        let thisContext = {
+        thisContext = {
             ...context,
             global: {},
             [KOAContext]: ctx,

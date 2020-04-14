@@ -303,15 +303,20 @@ const extendCacheObject = (cache, chunkmap, localeId) => {
  * @param {*} ctx
  */
 const purgeSSRContext = (ctx) => {
-    // store
-    purgeObject(ctx[SSRContext].Store);
-    if (typeof ctx[SSRContext].Store === 'object') {
-        delete ctx[SSRContext].Store['Symbol(observable)'];
-    }
-    // history
-    purgeObject(ctx[SSRContext].History);
+    if (__DEV__) return;
 
-    for (const key of Object.keys(ctx[SSRContext])) delete ctx[SSRContext][key];
+    if (typeof ctx[SSRContext] === 'object') {
+        // store
+        purgeObject(ctx[SSRContext].Store);
+        if (typeof ctx[SSRContext].Store === 'object') {
+            delete ctx[SSRContext].Store['Symbol(observable)'];
+        }
+        // history
+        purgeObject(ctx[SSRContext].History);
+
+        for (const key of Object.keys(ctx[SSRContext]))
+            delete ctx[SSRContext][key];
+    }
     delete ctx[SSRContext];
 };
 

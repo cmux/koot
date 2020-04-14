@@ -51,7 +51,7 @@ import i18nGetSSRState from '../../i18n/server/get-ssr-state';
 async function ssr(ctx) {
     setSSRContext(ctx);
 
-    let SSR = getSSRContext();
+    const SSR = getSSRContext();
     const { LocaleId } = SSR;
 
     /** @type {string} 本次请求的 URL */
@@ -109,10 +109,12 @@ async function ssr(ctx) {
     const { proxyRequestOrigin = {}, ssrComplete: _complete } = SSR;
 
     function ssrComplete(...args) {
-        resetSSRContext();
-        SSR = undefined;
-        ctx = undefined;
-        purgeObject(global);
+        if (!__DEV__) {
+            resetSSRContext();
+            // SSR = undefined;
+            ctx = undefined;
+            purgeObject(global);
+        }
         _complete(...args);
     }
 
