@@ -14,6 +14,11 @@ let __KOOT_SSR_SCRIPT__;
 
 const context = {
     version: parseInt(process.versions.node.split('.')[0]),
+    // eslint-disable-next-line no-eval
+    require: eval('require'),
+    // eslint-disable-next-line no-eval
+    // module: eval('module'),
+    module,
     process,
     console,
     // global,
@@ -59,8 +64,12 @@ const ssr = (ctx) =>
             // setTimeout(function () {
             //     __KOOT_SSR__ = false;
             // });
+            for (const key of Object.keys(thisContext).filter(
+                (key) => key !== 'global'
+            ))
+                delete thisContext[key];
+            thisContext = undefined;
             resolve(result);
-            // thisContext = undefined;
         };
         ctx[SSRContext].ssrComplete = ssrComplete;
 
@@ -107,20 +116,9 @@ const ssr = (ctx) =>
             }
         }
 
-        ctx[SSRContext].setStore = function (value) {
-            ctx[SSRContext].Store = value;
-        };
-        ctx[SSRContext].setHistory = function (value) {
-            ctx[SSRContext].History = value;
-        };
-
         // let __KOOT_SSR__ = ctx[SSRContext];
-        const thisContext = {
+        let thisContext = {
             ...context,
-            // eslint-disable-next-line no-eval
-            require: eval('require'),
-            // eslint-disable-next-line no-eval
-            module: eval('module'),
             global: {},
             [KOAContext]: ctx,
         };

@@ -3,27 +3,27 @@ import { extend } from 'koot';
 
 import {
     updateServerTimestamp,
-    resetServerTimestamp
+    resetServerTimestamp,
 } from '@store/infos/actions';
 
-const check = props => {
+const check = (props) => {
     if (props.serverTimestamp) return true;
 };
 
 @extend({
-    connect: state => ({
-        serverTimestamp: state.infos.serverTimestamp
+    connect: (state) => ({
+        serverTimestamp: state.infos.serverTimestamp,
     }),
 
     data: (state, renderProps, dispatch) => {
         if (check(renderProps)) return true;
         return Promise.all([
             dispatch(updateServerTimestamp()),
-            new Promise(resolve => {
+            new Promise((resolve) => {
                 setTimeout(() => resolve(), 100);
-            })
+            }),
         ]);
-    }
+    },
 })
 class TS extends React.Component {
     // componentDidMount() {

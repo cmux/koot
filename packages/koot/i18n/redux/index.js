@@ -1,33 +1,32 @@
-import parseLanguageList from '../parse-language-list'
-import getLanguagelistFromState from '../get-language-list-from-state'
-import parseLocaleId from '../parse-locale-id'
+// import parseLanguageList from '../parse-language-list';
+// import getLanguagelistFromState from '../get-language-list-from-state';
+// import parseLocaleId from '../parse-locale-id';
 
 // import locales from '../locales'
-import { I18N_INIT/*, I18N_SET_LOCALES*/ } from '../action-types'
+import { I18N_INIT /*, I18N_SET_LOCALES*/ } from '../action-types';
 
 /**
  * Redux reducer: 初始化 localeId
- * 
- * @param {*} state 
+ *
+ * @param {*} state
  * @param {*} action
- * 
+ *
  * @returns {*} state
  */
 export const reducerLocaleId = (state = null, action) => {
     switch (action.type) {
         case I18N_INIT:
-            return action.localeId
+            return action.localeId;
     }
-    return state
-}
-
+    return state;
+};
 
 // /**
 //  * Redux reducer: 初始化 locales
-//  * 
-//  * @param {*} state 
+//  *
+//  * @param {*} state
 //  * @param {*} action
-//  * 
+//  *
 //  * @returns {*} state
 //  */
 // export const reducerLocales = (state = {}, action) => {
@@ -40,30 +39,30 @@ export const reducerLocaleId = (state = null, action) => {
 
 /**
  * Redux action: 初始化
- * 
- * @param {Object} state 
+ *
+ * @param {Object} state
  * @returns {Object}
  */
-export const actionInit = (state) => {
+export const actionInit = (localeId) => {
     // setLocaleId(localeId)
 
-    const localeId = __SERVER__
-        ? init(parseLanguageList(
-            (typeof state === 'object') ? getLanguagelistFromState(state) : state
-        ), state.localeId)
-        : state.localeId
+    // const localeId = __SERVER__
+    //     ? init(parseLanguageList(
+    //         (typeof state === 'object') ? getLanguagelistFromState(state) : state
+    //     ), state.localeId)
+    //     : state.localeId
 
     // setLocaleId(localeId)
 
     return {
         type: I18N_INIT,
-        localeId: '' + localeId
-    }
-}
+        localeId: '' + localeId,
+    };
+};
 
 // /**
 //  * Redux action: 设置语言包内容对象
-//  * 
+//  *
 //  * @returns {Object}
 //  */
 // export const actionLocales = (state) => {
@@ -75,27 +74,26 @@ export const actionInit = (state) => {
 
 /**
  * 服务器环境：根据语言列表，初始化i18n，获得并赋值 localeId
- * 
+ *
  * @param {array|string} langList 语言列表
- * 
+ *
  * @returns (如果已初始化)locales[localeId]
  */
-const init = (langList = [], localeId) => {
-    if (__SERVER__) {
-        // console.log(locales[localeId])
-        if (typeof langList === 'string')
-            if (langList.indexOf(';') > -1)
-                langList = parseLanguageList(langList)
-            else
-                return init([langList], localeId)
+// const init = (langList = [], localeId) => {
+//     if (__SERVER__) {
+//         // console.log(locales[localeId])
+//         if (typeof langList === 'string')
+//             if (langList.indexOf(';') > -1)
+//                 langList = parseLanguageList(langList);
+//             else return init([langList], localeId);
 
-        const parsed = parseLocaleId(langList)
-        // if (parsed) setLocaleId(parsed)
-        // else setLocaleId(localeId)
+//         const parsed = parseLocaleId(langList);
+//         // if (parsed) setLocaleId(parsed)
+//         // else setLocaleId(localeId)
 
-        if (parsed) return parsed
-        return localeId
+//         if (parsed) return parsed;
+//         return localeId;
 
-        // if (locales[localeId]) return locales[localeId]
-    }
-}
+//         // if (locales[localeId]) return locales[localeId]
+//     }
+// };
