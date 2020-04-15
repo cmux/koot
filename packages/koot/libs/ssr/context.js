@@ -6,9 +6,24 @@
 /**
  * 当前 SSR context 对象
  * @typedef {Object} KootSSRContext
+ * @property {Object} Store - 数据存储空间
+ * @property {History} History - 历史纪录对象
  * @property {string} [LocaleId] - 当前语种ID
- * @property {Object} [locales] - 当前语种的语言包对象
+ * @property {Object} [locales] - 语言包对象，包含所有语种
  * @property {Map} globalCache - 公共缓存空间
+ * @property {Object} [proxyRequestOrigin={}] - 配置项 `proxyRequestOrigin`
+ * @property {string} template - EJS 模板
+ * @property {Object} [templateInject={}] - EJS 自定义注入对象
+ *
+                    thisTemplateInjectCache,
+                    thisEntrypoints,
+                    thisFilemap, //thisStyleMap,
+                    styleMap,
+                    connectedComponents: __DEV__
+                        ? (global[SSRContext]
+                              ? global[SSRContext].connectedComponents
+                              : []) || []
+                        : [],
  */
 
 // ============================================================================
@@ -63,6 +78,9 @@ function set(ctx) {
     if (__DEV__) return global.__KOOT_SSR_SET__(ctx);
     kootSSRContext = ctx[SSRContext];
     koaCtx = ctx;
+    resetLocaleId();
+    resetStore();
+    resetHistory();
 }
 
 // ============================================================================
@@ -81,6 +99,7 @@ const resetLocaleId = (newValue) => {
         delete get().LocaleId;
         return;
     }
+    if (newValue) get().LocaleId = newValue;
     localeId = newValue || getLocaleId();
 };
 
@@ -95,11 +114,7 @@ const getStore = () => {
 };
 let store = (() => getStore())();
 const resetStore = (newValue) => {
-    if (__SERVER__ && newValue === false) {
-        store = undefined;
-        delete get().Store;
-        return;
-    }
+    if (newValue) get().Store = newValue;
     store = newValue || getStore();
 };
 
@@ -114,23 +129,32 @@ const getHistory = () => {
 };
 let history = (() => getHistory())();
 const resetHistory = (newValue) => {
-    if (__SERVER__ && newValue === false) {
-        history = undefined;
-        delete get().History;
-        return;
-    }
+    if (newValue) get().History = newValue;
     history = newValue || getHistory();
 };
 
 // ============================================================================
 
 function reset() {
+    resetLocaleId(false);
+    // purgeObj(kootSSRContext);
     kootSSRContext = undefined;
     koaCtx = undefined;
-    resetLocaleId(false);
-    resetStore(false);
-    resetHistory(false);
 }
+// const purgeObj = (obj) => {
+//     if (typeof obj === 'object') {
+//         for (const [key, value] of Object.entries(obj)) {
+//             if (typeof value === 'object') {
+//                 purgeObj(value);
+//             }
+//             // console.log(key);
+//             try {
+//                 obj[key] = undefined;
+//             } catch (e) {}
+//             delete obj[key];
+//         }
+//     }
+// };
 
 // ============================================================================
 

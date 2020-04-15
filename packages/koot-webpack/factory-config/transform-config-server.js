@@ -180,7 +180,7 @@ module.exports = async (kootBuildConfig = {}) => {
     result.optimization = {
         splitChunks: false,
         removeAvailableModules: false,
-        removeEmptyChunks: false,
+        // removeEmptyChunks: false,
         mergeDuplicateChunks: false,
         // occurrenceOrder: false,
         concatenateModules: false,

@@ -1,4 +1,4 @@
-const fs = require('fs-extra');
+const fs = require('fs');
 
 const getIsI18nEnabled = require('../i18n/is-enabled');
 const getI18nType = require('../i18n/get-type');
@@ -43,7 +43,7 @@ const getChunkmap = (localeId, getFullResult = false, ignoreCache = false) => {
             chunkmap = false;
         }
         if (typeof chunkmap !== 'object' && typeof getDistPath() === 'string') {
-            chunkmap = fs.readJsonSync(getChunkmapPath());
+            chunkmap = JSON.parse(fs.readFileSync(getChunkmapPath(), 'utf-8'));
             if (process.env.WEBPACK_BUILD_STAGE === 'server')
                 global.chunkmap = chunkmap;
         }

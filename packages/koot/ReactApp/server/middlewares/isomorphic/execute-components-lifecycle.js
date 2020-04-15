@@ -19,7 +19,7 @@ const LIFECYCLE_HTML_EXTEND = 'onServerRenderHtmlExtend';
  */
 const executeComponentLifecycle = async ({ store, renderProps, ctx }) => {
     /** @type {Array} 需要执行的异步方法 */
-    let tasks = [];
+    const tasks = [];
 
     /**
      * @type {Function}
@@ -39,7 +39,7 @@ const executeComponentLifecycle = async ({ store, renderProps, ctx }) => {
             });
             // component[LIFECYCLE_DATA_TO_STORE] = undefined
             if (Array.isArray(thisTask)) {
-                tasks = tasks.concat(thisTask);
+                for (const task of thisTask) tasks.push(task);
             } else if (thisTask instanceof Promise || thisTask.then) {
                 tasks.push(thisTask);
             } else if (typeof thisTask === 'function') {
@@ -66,61 +66,61 @@ const executeComponentLifecycle = async ({ store, renderProps, ctx }) => {
     };
 
     /** @type {Array} 使用 extend 高阶组件的组件 */
-    let connectedComponents =
-        (__DEV__
-            ? (() => {
-                  const { connectedComponents = [] } = ctx[SSRContext];
+    let thisConnectedComponents = __DEV__
+        ? (() => {
+              const { connectedComponents = [] } = ctx[SSRContext];
 
-                  if (__DEV__) {
-                      // 旧代码
-                      // if (!global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__)
-                      //     global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__ = new Map()
+              if (__DEV__) {
+                  // 旧代码
+                  // if (!global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__)
+                  //     global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__ = new Map()
 
-                      // const CTX = JSON.stringify(ctx)
+                  // const CTX = JSON.stringify(ctx)
 
-                      // if (global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__.has(CTX))
-                      //     return global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__.get(CTX)
+                  // if (global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__.has(CTX))
+                  //     return global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__.get(CTX)
 
-                      // global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__.set(CTX, connectedComponents)
+                  // global.__KOOT_SSR_DEV_CONNECTED_COMPONENTS__.set(CTX, connectedComponents)
 
-                      const renderPropsComponents = (
-                          renderProps.components || []
-                      ).filter((c) => !!c);
-                      // 将 renderProps 中的 components 寄存入全局的 connectedComponents 中
-                      renderPropsComponents
-                          .filter(
-                              (component) =>
-                                  component &&
-                                  connectedComponents.every(
-                                      (c) => c.id !== component.id
-                                  )
-                          )
-                          .forEach((component) =>
-                              connectedComponents.push(component)
-                          );
-                      // 将 renderProps 中的 components 移至队列最尾部
-                      return connectedComponents;
-                      // .filter(component =>
-                      //     renderPropsComponents.every(c => c.id !== component.id)
-                      // )
-                      // .concat(renderPropsComponents);
-                  }
-
+                  const renderPropsComponents = (
+                      renderProps.components || []
+                  ).filter((c) => !!c);
+                  // 将 renderProps 中的 components 寄存入全局的 connectedComponents 中
+                  renderPropsComponents
+                      .filter(
+                          (component) =>
+                              component &&
+                              connectedComponents.every(
+                                  (c) => c.id !== component.id
+                              )
+                      )
+                      .forEach((component) =>
+                          connectedComponents.push(component)
+                      );
+                  // 将 renderProps 中的 components 移至队列最尾部
                   return connectedComponents;
-              })()
-            : ctx[SSRContext].connectedComponents) || [];
+                  // .filter(component =>
+                  //     renderPropsComponents.every(c => c.id !== component.id)
+                  // )
+                  // .concat(renderPropsComponents);
+              }
+
+              return connectedComponents;
+          })()
+        : ctx[SSRContext].connectedComponents;
     // console.log('\n\n==========');
     // console.log({ connectedComponents });
     // console.log({ connectedComponents, renderProps });
     // console.log('==========\n\n');
 
     // 添加各项任务
-    connectedComponents.forEach((component) => {
-        extractDataToStoreTask(component);
-        extracHtmlExtendTask(component);
-    });
+    if (Array.isArray(thisConnectedComponents))
+        thisConnectedComponents.forEach((component) => {
+            extractDataToStoreTask(component);
+            extracHtmlExtendTask(component);
+        });
 
-    connectedComponents = undefined;
+    thisConnectedComponents = undefined;
 
     // 旧代码
     // for (const component of renderProps.components) {
@@ -144,6 +144,7 @@ const executeComponentLifecycle = async ({ store, renderProps, ctx }) => {
             store.getState()
         )};`,
     };
+    // console.log(extendHtmlTasks);
     extendHtmlTasks.some((task) => {
         if (typeof task === 'function') {
             const { title: thisTitle, metas: thisMetas } = task({

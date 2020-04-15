@@ -1,4 +1,4 @@
-const fs = require('fs-extra');
+const fs = require('fs');
 const path = require('path');
 
 const getCwd = require('../utils/get-cwd');
@@ -10,7 +10,7 @@ const getCwd = require('../utils/get-cwd');
  * @param {String} optionTemplate 模板文件路径或模板内容代码
  * @returns {String} 处理后的模板内容代码
  */
-const validateTemplate = optionTemplate => {
+const validateTemplate = (optionTemplate) => {
     if (typeof optionTemplate !== 'string')
         throw new Error('validate-template: `template` need to be String');
 
@@ -30,17 +30,17 @@ const validateTemplate = optionTemplate => {
         // 检查关键 inject 是否存在
         const important = {
             head: {
-                append: ['metas', 'styles']
+                append: ['metas', 'styles'],
             },
             body: {
                 prepend: ['react'],
-                append: ['scripts']
-            }
+                append: ['scripts'],
+            },
         };
 
-        Object.keys(important).forEach(tagName => {
-            Object.keys(important[tagName]).forEach(type => {
-                important[tagName][type].forEach(inject => {
+        Object.keys(important).forEach((tagName) => {
+            Object.keys(important[tagName]).forEach((type) => {
+                important[tagName][type].forEach((inject) => {
                     const regex = new RegExp(`<%\\W*inject\\.${inject}\\W*%>`);
 
                     // 存在该注入，跳过
@@ -55,7 +55,7 @@ const validateTemplate = optionTemplate => {
                         new RegExp(
                             `<${type == 'append' ? '/' : ''}${tagName}.*?>`
                         ),
-                        match => {
+                        (match) => {
                             if (type === 'prepend') return `${match}\n${str}`;
                             return `${str}\n${match}`;
                         }

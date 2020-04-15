@@ -8,10 +8,12 @@ import { syncHistoryWithStore } from 'react-router-redux';
 
 import * as kootConfig from '__KOOT_PROJECT_CONFIG_FULL_PATHNAME__';
 
-import { resetStore, resetHistory } from '../../';
 import {
     set as setSSRContext,
+    get as getSSRContext,
     reset as resetSSRContext,
+    resetStore,
+    resetHistory,
 } from '../../libs/ssr/context';
 import RootIsomorphic from './root-isomorphic';
 
@@ -41,22 +43,16 @@ import afterDataToStore from './middlewares/isomorphic/lifecycle/after-data-to-s
 import executeComponentsLifecycle from './middlewares/isomorphic/execute-components-lifecycle';
 import initStore from './middlewares/isomorphic/init-store';
 
-import i18nOnServerRender from '../../i18n/onServerRender';
+// import i18nOnServerRender from '../../i18n/onServerRender';
+import { actionInit as i18nActionInit } from '../../i18n/redux';
 import i18nGenerateHtmlRedirectMetas from '../../i18n/server/generate-html-redirect-metas';
 import i18nGetSSRState from '../../i18n/server/get-ssr-state';
 
 async function ssr(ctx) {
     setSSRContext(ctx);
 
-    let SSR, LocaleId;
-
-    if (__DEV__) {
-        SSR = global.__KOOT_SSR__;
-        LocaleId = global.__KOOT_LOCALEID__;
-    } else {
-        SSR = ctx[SSRContext];
-        LocaleId = SSR.LocaleId;
-    }
+    const SSR = getSSRContext();
+    const { LocaleId } = SSR;
 
     /** @type {string} 本次请求的 URL */
     const url = ctx.path + ctx.search;
@@ -94,10 +90,8 @@ async function ssr(ctx) {
         global.__KOOT_SSR_SET_HISTORY__(History);
         global.__KOOT_SSR_SET_CTX__(ctx);
     } else {
-        SSR.setStore(Store);
-        SSR.setHistory(History);
-        resetStore();
-        resetHistory();
+        resetStore(Store);
+        resetHistory(History);
     }
 
     // ========================================================================
@@ -112,21 +106,15 @@ async function ssr(ctx) {
     /** @type {Boolean} i18n 是否启用 */
     const i18nEnabled = Boolean(LocaleId);
 
-    const {
-        thisTemplateInjectCache,
-        thisEntrypoints,
-        thisFilemap, //thisStyleMap,
-        styleMap,
-        template,
-        templateInject,
-        proxyRequestOrigin = {},
-        // syncCookie,
-        ssrComplete: _complete,
-        // ssrComplete,
-    } = SSR;
+    const { proxyRequestOrigin = {}, ssrComplete: _complete } = SSR;
 
     function ssrComplete(...args) {
-        resetSSRContext();
+        if (!__DEV__) {
+            resetSSRContext();
+            // SSR = undefined;
+            ctx = undefined;
+            purgeObject(global);
+        }
         _complete(...args);
     }
 
@@ -151,7 +139,8 @@ async function ssr(ctx) {
     });
     if (LocaleId) {
         Store.dispatch({ type: CHANGE_LANGUAGE, data: LocaleId });
-        i18nOnServerRender({ store: Store });
+        Store.dispatch(i18nActionInit(LocaleId));
+        // i18nOnServerRender(Store, LocaleId);
     }
     // console.log('after router match', ctx.hrefTrue, LocaleId);
 
@@ -244,45 +233,46 @@ async function ssr(ctx) {
     const reactHtml = renderToString(
         <RootIsomorphic store={Store} {...renderProps} />
     );
+
     // console.log({
     //     // __KOOT_SSR__,
-    //     // thisTemplateInjectCache,
-    //     // thisEntrypoints, thisFilemap,
+    //     // thisTemplateInjectCache: SSR.thisTemplateInjectCache,
+    //     // thisEntrypoints: SSR.thisEntrypoints,
+    //     // thisFilemap: SSR.thisFilemap,
     //     thisStyleMap,
-    //     // templateInject,
+    //     // templateInject: SSR.templateInject,
     //     // proxyRequestOrigin,
     // })
     // const stylesHtml = Object.keys(thisStyleMap)
     //     .filter(id => typeof thisStyleMap[id].css === 'string')
     //     .map(id => `<style id="${id}">${thisStyleMap[id].css}</style>`)
     //     .join('')
-    const stylesHtml = Object.keys(styleMap)
+    const stylesHtml = Object.keys(SSR.styleMap)
         .filter(
             (id) =>
-                typeof styleMap[id].css === 'string' && styleMap[id].css !== ''
+                typeof SSR.styleMap[id].css === 'string' &&
+                SSR.styleMap[id].css !== ''
         )
         .map(
             (id) =>
-                `<style ${__STYLE_TAG_MODULE_ATTR_NAME__}="${id}">${styleMap[id].css}</style>`
+                `<style ${__STYLE_TAG_MODULE_ATTR_NAME__}="${id}">${SSR.styleMap[id].css}</style>`
         )
         .join('');
     // console.log('result thisStyleMap', thisStyleMap)
 
     // 渲染 EJS 模板
     const inject = validateInject({
-        injectCache: thisTemplateInjectCache,
-        filemap: thisFilemap,
-        entrypoints: thisEntrypoints,
+        injectCache: SSR.thisTemplateInjectCache,
+        filemap: SSR.thisFilemap,
+        entrypoints: SSR.thisEntrypoints,
         localeId: LocaleId,
         title,
         metaHtml,
         reactHtml,
         stylesHtml,
         reduxHtml,
-        SSRState: {
-            ...i18nGetSSRState(),
-        },
-        needInjectCritical: isNeedInjectCritical(template),
+        SSRState: i18nGetSSRState(SSR),
+        needInjectCritical: isNeedInjectCritical(SSR.template),
     });
     if (LocaleId) {
         // i18n 启用时: 添加其他语种页面跳转信息的 meta 标签
@@ -293,13 +283,15 @@ async function ssr(ctx) {
         });
     }
 
+    // > Memory stable ========================================================
+
     /** @type {String} HTML 结果 */
     let body = renderTemplate({
-        template,
-        inject: Object.assign({
+        template: SSR.template,
+        inject: {
             ...inject,
-            ...templateInject,
-        }),
+            ...SSR.templateInject,
+        },
         store: Store,
         ctx,
     });
@@ -308,7 +300,7 @@ async function ssr(ctx) {
     if (__DEV__) {
         if (injectCacheKeys) {
             for (const k of Object.values(injectCacheKeys)) {
-                delete thisTemplateInjectCache[k];
+                delete SSR.thisTemplateInjectCache[k];
             }
         }
 
@@ -363,9 +355,19 @@ if (!__DEV__) {
         ctx[SSRContext].ssrComplete({
             error: err,
         });
-        console.error(err);
+        // console.error(err);
         throw err;
     });
 }
 
 export default ssr;
+
+// ============================================================================
+
+const purgeObject = (obj) => {
+    if (typeof obj !== 'object') return;
+    for (const key of Object.keys(obj)) {
+        if (typeof obj[key] === 'object') purgeObject(obj[key]);
+        delete obj[key];
+    }
+};

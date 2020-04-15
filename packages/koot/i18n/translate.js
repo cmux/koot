@@ -24,6 +24,19 @@ const doCorrect = () => {
         return;
     }
 
+    // if (isSSRCorrected) {
+    //     console.log('correct', {
+    //         isSSRCorrected,
+    //         l,
+    //     });
+    // } else {
+    //     console.log('correct', {
+    //         isSSRCorrected,
+    //         l,
+    //         SSR: getSSRContext(),
+    //     });
+    // }
+
     if (isSSRCorrected && __SERVER__) return;
     if (!isSSRCorrected && __SERVER__) {
         resetLocaleId();
@@ -32,6 +45,7 @@ const doCorrect = () => {
         return;
     }
 
+    if (__CLIENT__ && !__SPA__) return;
     if (isSPACorrected && __SPA__) return;
     if (
         // SPA: 进一步确保语言包可用
