@@ -65,7 +65,7 @@
         "os-locale": "^5.0.0",
         "package-json": "^6.5.0",
         "sanitize-filename": "^1.6.3",
-        "semver": "^7.2.1"
+        "semver": "^7.3.2"
     },
     "files": [
         "/bin",
