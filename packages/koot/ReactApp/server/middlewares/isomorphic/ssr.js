@@ -67,13 +67,15 @@ const ssr = (ctx) =>
             if (__DEV__) return resolve(result);
 
             // setTimeout(function () {
-            for (const key of Object.keys(thisContext).filter(
-                (key) => key !== 'global' && key !== KOAContext
-            ))
-                delete thisContext[key];
-            purgeObject(thisContext.global);
-            delete thisContext.global;
-            // delete thisContext[KOAContext]
+            if (thisContext && typeof thisContext === 'object') {
+                for (const key of Object.keys(thisContext).filter(
+                    (key) => key !== 'global' && key !== KOAContext
+                ))
+                    delete thisContext[key];
+                purgeObject(thisContext.global);
+                delete thisContext.global;
+                // delete thisContext[KOAContext]
+            }
             thisContext = undefined;
             purgeSSRContext(ctx);
 
@@ -199,12 +201,19 @@ const purgeSSRContext = (ctx) => {
     if (typeof ctx[SSRContext] === 'object') {
         purgeObject(ctx[SSRContext].connectedComponents);
         purgeObject(ctx[SSRContext].History);
-        purgeObject(ctx[SSRContext].Store);
-        if (typeof ctx[SSRContext].Store === 'object') {
-            delete ctx[SSRContext].Store['Symbol(observable)'];
-        }
+        // purgeObject(ctx[SSRContext].Store);
         purgeObject(ctx[SSRContext].styleMap);
         purgeObject(ctx[SSRContext].template);
+
+        // store
+        if (typeof ctx[SSRContext].Store === 'object') {
+            // delete ctx[SSRContext].Store['Symbol(observable)'];
+            let state = ctx[SSRContext].Store.getState();
+            purgeObject(state);
+            state = undefined;
+            for (const key of Object.keys(ctx[SSRContext].Store))
+                delete ctx[SSRContext].Store[key];
+        }
 
         for (const key of Object.keys(ctx[SSRContext]))
             delete ctx[SSRContext][key];
@@ -216,7 +225,7 @@ const purgeSSRContext = (ctx) => {
 };
 
 const purgeObject = (obj) => {
-    if (typeof obj !== 'object') return;
+    if (!obj || typeof obj !== 'object') return;
     for (const key of Object.keys(obj)) {
         if (typeof obj[key] === 'object') purgeObject(obj[key]);
         delete obj[key];
