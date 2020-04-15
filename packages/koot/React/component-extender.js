@@ -72,10 +72,12 @@ let devSSRConnectIndex = 0;
  * @param {Object} props renderProps
  * @returns {Promise}
  */
-const doFetchData = (store, renderProps, dataFetch) => {
-    if (!isRenderSafe()) return new Promise((resolve) => resolve(result));
+const doFetchData = (store, renderProps, funcFetch) => {
+    // return new Promise((resolve) => resolve());
+    if (!isRenderSafe())
+        return __CLIENT__ ? new Promise((resolve) => resolve()) : undefined;
 
-    const result = dataFetch(store.getState(), renderProps, store.dispatch);
+    const result = funcFetch(store.getState(), renderProps, store.dispatch);
     // if (result === true) {
     //     isDataPreloaded = true
     //     return new Promise(resolve => resolve())
@@ -262,16 +264,17 @@ export default (options = {}) => (WrappedComponent) => {
              * 将组件注册到同构渲染对象中
              */
             if (__SERVER__) {
-                if (getSSRContext()[needConnectComponents]) {
+                let SSR = getSSRContext();
+                if (SSR[needConnectComponents]) {
                     if (__DEV__) {
                         // console.log(options.name || '__');
                         KootComponent.id = devSSRConnectIndex++;
                         // KootComponent.pageinfo = pageinfo;
                     }
-                    let { connectedComponents = [] } = getSSRContext();
-                    connectedComponents.unshift(KootComponent);
-                    connectedComponents = undefined;
+                    if (Array.isArray(SSR.connectedComponents))
+                        SSR.connectedComponents.unshift(KootComponent);
                 }
+                SSR = undefined;
             }
 
             if (!isRenderSafe()) return;
@@ -407,16 +410,12 @@ export default (options = {}) => (WrappedComponent) => {
         KootReactComponent.onServerRenderStoreExtend = ({
             store,
             renderProps,
-        }) => {
-            if (typeof dataFetch === 'undefined')
-                return new Promise((resolve) => resolve());
-            // console.log('onServerRenderStoreExtend')
-            return doFetchData(
+        }) =>
+            doFetchData(
                 store,
                 getRenderPropsFromServerProps(renderProps),
                 dataFetch
             );
-        };
     }
 
     // if (_hot && __DEV__ && __CLIENT__) {

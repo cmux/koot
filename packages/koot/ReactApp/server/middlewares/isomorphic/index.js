@@ -111,25 +111,16 @@ const middlewareIsomorphic = (options = {}) => {
     return async (ctx, next) => {
         /** @type {String} 本次请求的 URL */
         const url = ctx.path + ctx.search;
+        // console.log(' ');
+        // console.log({
+        //     href: ctx.href,
+        //     [SSRContext]: ctx[SSRContext],
+        // });
 
         function renderComplete() {
-            // 清理 SSR context
-            if (typeof ctx[SSRContext] === 'object') {
-                Object.keys(ctx[SSRContext]).forEach((key) => {
-                    delete ctx[SSRContext][key];
-                });
-            }
-            delete ctx[SSRContext];
-
             if (__DEV__) {
-                // [开发环境] 中间件: 请求完成后，触发 server/index.js 保存，让 PM2 重启服务器
-                console.log('  ');
-                log('success', 'server', 'render success');
-                console.log('  ');
-                console.log('  ');
-                console.log('  ');
-                console.log('  ');
-                console.log('  ');
+                log('success', 'server', `render success ${ctx.href}\n\n\n\n`);
+                // [开发环境] 请求完成后，触发 server/index.js 保存，让 PM2 重启服务器
                 //     const fileServer = path.resolve(getDist(), 'server/index.js');
                 //     if (fs.existsSync(fileServer)) {
                 //         await sleep(200);
@@ -137,6 +128,7 @@ const middlewareIsomorphic = (options = {}) => {
                 //         await fs.writeFile(fileServer, content, 'utf-8');
                 //     }
             }
+            // log('success', 'server', `render success ${ctx.href}\n`);
         }
 
         try {
@@ -155,7 +147,8 @@ const middlewareIsomorphic = (options = {}) => {
             const cached = thisRenderCache ? thisRenderCache.get(url) : false;
             if (!__DEV__ && cached !== false) {
                 ctx.body = cached;
-                return renderComplete();
+                renderComplete();
+                return;
             }
 
             /** @type {Object} 本次请求的 (当前语言的) 注入内容缓存 */
@@ -204,7 +197,7 @@ const middlewareIsomorphic = (options = {}) => {
             Object.defineProperty(ctx, SSRContext, {
                 configurable: true,
                 enumerable: false,
-                writable: false,
+                writable: true,
                 value: {
                     // ctx,
 
@@ -252,30 +245,36 @@ const middlewareIsomorphic = (options = {}) => {
                 // HTML 结果暂存入缓存
                 if (thisRenderCache) thisRenderCache.set(url, result.body);
                 ctx.body = result.body;
-                return renderComplete();
+                renderComplete();
+                return;
             }
 
             if (result.error) {
-                renderComplete();
+                // renderComplete();
                 throw result.error;
             }
 
             if (result.redirect) {
-                renderComplete();
+                // renderComplete();
                 return ctx.redirect(result.redirect);
             }
 
-            if (result.next) return await next();
+            if (result.next) {
+                // renderComplete();
+                return await next();
+            }
         } catch (err) {
             require('debug')('SYSTEM:isomorphic:error')(
                 'Server-Render Error Occures: %O',
                 err.stack
             );
-            console.error(err);
+            const thisError = err instanceof Error ? err : new Error(err);
+            console.error(thisError);
             ctx.status = 500;
-            ctx.body = err.message;
-            ctx.app.emit('error', err, ctx);
-            return renderComplete();
+            ctx.body = thisError.message;
+            ctx.app.emit('error', thisError, ctx);
+            // renderComplete();
+            return;
         }
     };
 };

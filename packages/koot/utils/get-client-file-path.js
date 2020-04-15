@@ -2,7 +2,7 @@
     __KOOT_LOCALEID__:false
 */
 
-const fs = require('fs-extra');
+const fs = require('fs');
 const path = require('path');
 
 const getI18nType = require('../i18n/get-type');

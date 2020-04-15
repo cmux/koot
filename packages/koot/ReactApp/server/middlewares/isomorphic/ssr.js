@@ -4,7 +4,7 @@ import {
     koaContext as KOAContext,
 } from '../../../../defaults/defines-server';
 
-const fs = require('fs-extra');
+const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
 
@@ -14,6 +14,11 @@ let __KOOT_SSR_SCRIPT__;
 
 const context = {
     version: parseInt(process.versions.node.split('.')[0]),
+    // eslint-disable-next-line no-eval
+    require: eval('require'),
+    // eslint-disable-next-line no-eval
+    // module: eval('module'),
+    module,
     process,
     console,
     // global,
@@ -59,8 +64,21 @@ const ssr = (ctx) =>
             // setTimeout(function () {
             //     __KOOT_SSR__ = false;
             // });
+            if (__DEV__) return resolve(result);
+
+            // setTimeout(function () {
+            for (const key of Object.keys(thisContext).filter(
+                (key) => key !== 'global' && key !== KOAContext
+            ))
+                delete thisContext[key];
+            purgeObject(thisContext.global);
+            delete thisContext.global;
+            // delete thisContext[KOAContext]
+            thisContext = undefined;
+            purgeSSRContext(ctx);
+
             resolve(result);
-            // thisContext = undefined;
+            // });
         };
         ctx[SSRContext].ssrComplete = ssrComplete;
 
@@ -107,20 +125,9 @@ const ssr = (ctx) =>
             }
         }
 
-        ctx[SSRContext].setStore = function (value) {
-            ctx[SSRContext].Store = value;
-        };
-        ctx[SSRContext].setHistory = function (value) {
-            ctx[SSRContext].History = value;
-        };
-
         // let __KOOT_SSR__ = ctx[SSRContext];
-        const thisContext = {
+        let thisContext = {
             ...context,
-            // eslint-disable-next-line no-eval
-            require: eval('require'),
-            // eslint-disable-next-line no-eval
-            module: eval('module'),
             global: {},
             [KOAContext]: ctx,
         };
@@ -174,3 +181,44 @@ const ssr = (ctx) =>
     });
 
 export default ssr;
+
+// ============================================================================
+
+/**
+ * 清理 SSR Context 对象。清楚内容
+ * - 所有第一级的对象
+ * - store
+ * - ctx 上的 Context 对象
+ * @param {*} ctx
+ */
+const purgeSSRContext = (ctx) => {
+    if (__DEV__) return;
+
+    // console.log('purging...', ctx[SSRContext]);
+
+    if (typeof ctx[SSRContext] === 'object') {
+        purgeObject(ctx[SSRContext].connectedComponents);
+        purgeObject(ctx[SSRContext].History);
+        purgeObject(ctx[SSRContext].Store);
+        if (typeof ctx[SSRContext].Store === 'object') {
+            delete ctx[SSRContext].Store['Symbol(observable)'];
+        }
+        purgeObject(ctx[SSRContext].styleMap);
+        purgeObject(ctx[SSRContext].template);
+
+        for (const key of Object.keys(ctx[SSRContext]))
+            delete ctx[SSRContext][key];
+    }
+    delete ctx[SSRContext];
+
+    // console.log('purged...', ctx[SSRContext]);
+    // console.log(' \n\n\n\n\n ');
+};
+
+const purgeObject = (obj) => {
+    if (typeof obj !== 'object') return;
+    for (const key of Object.keys(obj)) {
+        if (typeof obj[key] === 'object') purgeObject(obj[key]);
+        delete obj[key];
+    }
+};
