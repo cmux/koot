@@ -20,7 +20,7 @@ module.exports = ({
     state,
     compilation,
     ctx,
-    localeId
+    localeId,
 }) => {
     if (
         typeof state !== 'object' &&
@@ -38,7 +38,8 @@ module.exports = ({
         }
     } catch (e) {
         // eslint-disable-next-line no-console
-        console.log(e);
+        // console.log(e);
+        throw e;
     }
 
     // 开发环境: 将 content('critical.js') 转为 pathname() 方式
@@ -57,9 +58,9 @@ module.exports = ({
         template,
         {
             inject,
-            content: filename =>
+            content: (filename) =>
                 readClientFile(filename, thisLocaleId, compilation),
-            pathname: filename => getClientFilePath(filename, thisLocaleId)
+            pathname: (filename) => getClientFilePath(filename, thisLocaleId),
         },
         {}
     );

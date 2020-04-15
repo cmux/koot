@@ -1,4 +1,4 @@
-const fs = require('fs-extra');
+const fs = require('fs');
 const path = require('path');
 const isUrl = require('is-url');
 
@@ -67,7 +67,7 @@ const readClientFile = (
     let pathnames = getFilePath(filename, localeId, isPathname, true);
     if (!Array.isArray(pathnames)) pathnames = [pathnames];
 
-    const results = pathnames.map(pathname => {
+    const results = pathnames.map((pathname) => {
         if (isUrl(pathname)) {
             if (__DEV__) {
                 const syncRequest = require('sync-request');

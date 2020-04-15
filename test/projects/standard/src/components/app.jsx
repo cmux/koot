@@ -6,7 +6,7 @@ import {
     // getLocaleId,
     history,
     // localeId,
-    extend
+    extend,
 } from 'koot';
 
 // console.log('[App]', { store, history, localeId })
@@ -26,7 +26,7 @@ let stateShowed = false;
 // console.log(AAAAAA);
 
 @extend({
-    connect: state => {
+    connect: (state) => {
         if (__CLIENT__ && __DEV__ && !stateShowed) {
             console.log('root: redux store conected', state);
             stateShowed = true;
@@ -34,7 +34,7 @@ let stateShowed = false;
         return {};
     },
     styles,
-    name: 'App'
+    name: 'App',
 })
 class App extends React.Component {
     componentDidMount() {
@@ -42,14 +42,15 @@ class App extends React.Component {
             console.log('redux store', getStore());
             console.log('history', history);
         }
-        console.log(
-            `__KOOT_TEST_LOCALE_TRANSLATE_FUNCTION_ONLY_RESULT__||${__(
-                'test_img'
-            )}||__`
-        );
+        if (__CLIENT__)
+            console.log(
+                `__KOOT_TEST_LOCALE_TRANSLATE_FUNCTION_ONLY_RESULT__||${__(
+                    'test_img'
+                )}||__`
+            );
     }
     componentDidCatch(error, info) {
-        console.log('ERROR', error, info);
+        if (__CLIENT__) console.log('ERROR', error, info);
         // Display fallback UI
         // this.setState({ hasError: true })
         // You can also log the error to an error reporting service

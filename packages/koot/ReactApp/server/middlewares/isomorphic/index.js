@@ -118,8 +118,6 @@ const middlewareIsomorphic = (options = {}) => {
         // });
 
         function renderComplete() {
-            purgeSSRContext(ctx);
-
             if (__DEV__) {
                 log('success', 'server', `render success ${ctx.href}\n\n\n\n`);
                 // [开发环境] 请求完成后，触发 server/index.js 保存，让 PM2 重启服务器
@@ -252,17 +250,17 @@ const middlewareIsomorphic = (options = {}) => {
             }
 
             if (result.error) {
-                renderComplete();
+                // renderComplete();
                 throw result.error;
             }
 
             if (result.redirect) {
-                renderComplete();
+                // renderComplete();
                 return ctx.redirect(result.redirect);
             }
 
             if (result.next) {
-                renderComplete();
+                // renderComplete();
                 return await next();
             }
         } catch (err) {
@@ -270,11 +268,12 @@ const middlewareIsomorphic = (options = {}) => {
                 'Server-Render Error Occures: %O',
                 err.stack
             );
-            console.error(err);
+            const thisError = err instanceof Error ? err : new Error(err);
+            console.error(thisError);
             ctx.status = 500;
-            ctx.body = err.message;
-            ctx.app.emit('error', err, ctx);
-            renderComplete();
+            ctx.body = thisError.message;
+            ctx.app.emit('error', thisError, ctx);
+            // renderComplete();
             return;
         }
     };
@@ -292,38 +291,5 @@ const extendCacheObject = (cache, chunkmap, localeId) => {
         cache[uriServiceWorker] = __DEV__
             ? devRequestServiceWorker
             : serviceWorker;
-    }
-};
-
-/**
- * 清理 SSR Context 对象。清楚内容
- * - 所有第一级的对象
- * - store
- * - ctx 上的 Context 对象
- * @param {*} ctx
- */
-const purgeSSRContext = (ctx) => {
-    if (__DEV__) return;
-
-    if (typeof ctx[SSRContext] === 'object') {
-        // store
-        purgeObject(ctx[SSRContext].Store);
-        if (typeof ctx[SSRContext].Store === 'object') {
-            delete ctx[SSRContext].Store['Symbol(observable)'];
-        }
-        // history
-        purgeObject(ctx[SSRContext].History);
-
-        for (const key of Object.keys(ctx[SSRContext]))
-            delete ctx[SSRContext][key];
-    }
-    delete ctx[SSRContext];
-};
-
-const purgeObject = (obj) => {
-    if (typeof obj !== 'object') return;
-    for (const key of Object.keys(obj)) {
-        if (typeof obj[key] === 'object') purgeObject(obj[key]);
-        delete obj[key];
     }
 };

@@ -3,7 +3,7 @@ import { setLocales } from '../../../i18n/locales';
 import getDist from '../../../utils/get-dist-path';
 import readLocaleFileSync from '../../../i18n/read-locale-file-sync';
 
-const fs = require('fs-extra');
+const fs = require('fs');
 const path = require('path');
 
 /**
@@ -27,7 +27,7 @@ const validateI18n = () => {
     // const type = JSON.parse(process.env.KOOT_I18N_TYPE) || false
     // const localeIds = []
     const locales = {};
-    localesFull.forEach(arr => {
+    localesFull.forEach((arr) => {
         const [localeId, localeObj] = arr;
         // localeIds.push(localeId)
         locales[localeId] = localeObj;
@@ -47,17 +47,17 @@ export default validateI18n;
  */
 const getLocalesFull = () => {
     const locales = JSON.parse(process.env.KOOT_I18N_LOCALES);
-    return locales.map(l => [
+    return locales.map((l) => [
         l[0],
         readLocaleFileSync(__DEV__ ? l[2] : getLocaleFile(l[3])),
         l[2],
-        l[3]
+        l[3],
     ]);
     // return JSON.parse(process.env.KOOT_I18N_LOCALES);
 };
 
 /** 通过环境变量中记录的相对路径读取语言包内容 */
-const getLocaleFile = relativePath => {
+const getLocaleFile = (relativePath) => {
     let file = relativePath;
     if (fs.existsSync(file)) return file;
 

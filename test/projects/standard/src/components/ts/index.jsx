@@ -39,7 +39,7 @@ class TS extends React.Component {
     render() {
         if (!check(this.props)) return <div>LOADING...</div>;
 
-        console.log('ts', this.props);
+        if (__CLIENT__) console.log('ts', this.props);
 
         return <div children={this.props.serverTimestamp} />;
     }
