@@ -14,6 +14,7 @@
     -   多语言/i18n: `i18n.use = 'subdomain'` - 现在可使用最深层的子域名作为语言标识 ([#220](https://github.com/cmux/koot/issues/220))
 -   优化
     -   小幅优化热更新速度 (移除多余的 `webpack/hot` 和 `webpack-dev-server/client` 引用)
+    -   为今后的某项功能做准备，生成路由对象流程现在采用 _Promise_ 方式
 
 ## [0.13.16] - 2020-04-16
 

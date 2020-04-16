@@ -74,7 +74,7 @@
     "private": true,
     "sideEffects": false,
     "koot": {
-        "version": "0.14.0-alpha.10"
+        "version": "0.14.0-alpha.11"
     },
     "devDependencies": {
         "@types/inquirer": "^6.5.0",
@@ -127,7 +127,7 @@
         "react-router-redux": "^4.0.8",
         "redux": "^4.0.5",
         "redux-thunk": "^2.3.0",
-        "resolve": "^1.15.1",
+        "resolve": "^1.16.0",
         "rimraf": "^3.0.2",
         "sanitize-filename": "1.6.3",
         "sp-koa-views": "^1.0.1",
