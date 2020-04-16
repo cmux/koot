@@ -25,21 +25,19 @@ class ModifyServerBundlePlugin {
                 compiler.hooks.afterEmit,
                 'ModifyServerBundlePlugin'
             )(async (compilation, callback) => {
-                const { outputPath } = compilation.getStats().toJson();
-                const filename = 'index.js';
-                const file = path.resolve(outputPath, filename);
-
-                await fs.writeFile(
-                    file,
-                    'const path = require("path");\n' +
-                        'if (typeof global.KOOT_DIST_DIR === "undefined") {\n' +
-                        '    global.KOOT_DIST_DIR = path.resolve(__dirname, "../");\n' +
-                        '}\n\n' +
-                        // 'console.log(global.KOOT_DIST_DIR);\n\n' +
-                        (await fs.readFile(file, 'utf-8')),
-                    'utf-8'
-                );
-
+                const {
+                    outputPath,
+                    assetsByChunkName,
+                } = compilation.getStats().toJson();
+                for (const files of Object.values(assetsByChunkName)) {
+                    for (const filename of files) {
+                        if (path.extname(filename) === '.js') {
+                            await prependDistDir(
+                                path.resolve(outputPath, filename)
+                            );
+                        }
+                    }
+                }
                 callback();
             });
         }
@@ -47,3 +45,17 @@ class ModifyServerBundlePlugin {
 }
 
 module.exports = ModifyServerBundlePlugin;
+
+// ============================================================================
+
+const prependDistDir = async (file) => {
+    await fs.writeFile(
+        file,
+        'if (typeof global.KOOT_DIST_DIR === "undefined") {\n' +
+            '    global.KOOT_DIST_DIR = require("path").resolve(__dirname, "../");\n' +
+            '}\n\n' +
+            // 'console.log(global.KOOT_DIST_DIR);\n\n' +
+            (await fs.readFile(file, 'utf-8')),
+        'utf-8'
+    );
+};
