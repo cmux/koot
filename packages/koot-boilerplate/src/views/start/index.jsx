@@ -19,9 +19,9 @@ const listAdvanced = __('pages.start.listAdvanced');
 const PageStart = extend({
     pageinfo: () => ({
         title: `${__('pages.start.title')} - ${__('title')}`,
-        metas: [{ description: __('pages.start.description') }]
+        metas: [{ description: __('pages.start.description') }],
     }),
-    styles
+    styles,
 })(({ className }) => (
     <Center className={className}>
         <h2 className="title">{__('pages.start.title')}</h2>

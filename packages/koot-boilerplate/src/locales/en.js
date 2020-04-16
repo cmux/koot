@@ -4,20 +4,20 @@ module.exports = {
     navs: {
         home: 'Koot.js',
         docs: 'Docs',
-        github: 'Github'
+        github: 'Github',
     },
     pages: {
         home: {
             title: 'Welcome',
             description: 'Koot.js Tech Demo boilerplate/template project.',
-            start: 'Quick Start'
+            start: 'Quick Start',
         },
         start: {
             title: 'Quick Start',
             titles: {
                 checkout: 'Check file',
                 learn: 'Learn',
-                learnMore: 'Learn More...'
+                learnMore: 'Learn More...',
             },
             description: 'Quick start guide for developing Koot.js project.',
             linkToDoc: 'Read API doc',
@@ -26,20 +26,21 @@ module.exports = {
                     checkout: '/src/index.ejs',
                     content:
                         'The template file for rendering. You can modify or add HTML and/or EJS code here.',
-                    doc: '/template'
+                    doc: '/template',
                 },
                 {
                     checkout: '/src/routes/index.js',
                     content:
                         'The config file for react-router. The root component for React can also be found here.',
-                    doc: '/config?id=routes'
+                    doc: '/config?id=routes',
                 },
                 {
                     learn: 'HOC: extend',
                     content:
                         'Enabling data-isomorphic, page infomation modification (<title>, <meta>, etc...), CSS processing, and more for React component',
-                    doc: '/react?id=%E9%AB%98%E9%98%B6%E7%BB%84%E4%BB%B6-extend'
-                }
+                    doc:
+                        '/react?id=%E9%AB%98%E9%98%B6%E7%BB%84%E4%BB%B6-extend',
+                },
             ],
             listAdvanced: [
                 {
@@ -51,25 +52,25 @@ module.exports = {
                         'Template injection',
                         'I18n / Localization',
                         'Define constants that can be used in any file',
-                        'and more...'
+                        'and more...',
                     ],
-                    doc: '/config'
+                    doc: '/config',
                 },
                 {
                     title: 'Create Redux store',
                     content:
                         'Koot.js uses Redux for its store management, but it is up to you creating your own Redux store. If you need data-isomorphic capability, you must create a Redux store.',
-                    doc: '/config?id=store'
+                    doc: '/config?id=store',
                 },
                 {
                     title: 'Deploy on server',
                     content:
                         'After a successful build, you can simply deploy the whole /server folder onto your server, and run index.js using Node.js to start SSR server. For more information, you can check API document.',
-                    doc: '/deploy'
-                }
+                    doc: '/deploy',
+                },
             ],
             bonus: 'Bonus',
-            bonusComponentInTS: 'Write in TypeScript'
+            bonusComponentInTS: 'Write in TypeScript',
         },
         ts: {
             title: 'TypeScript',
@@ -77,7 +78,7 @@ module.exports = {
             msg: 'React Component written in TypeScript!',
             msgCheckFile:
                 'You can check and modify the file `/src/views/ts-example/index.tsx`.',
-            back: 'Back to Quick Start'
-        }
-    }
+            back: 'Back to Quick Start',
+        },
+    },
 };

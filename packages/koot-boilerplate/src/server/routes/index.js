@@ -8,9 +8,9 @@ export default router.routes();
 
 // ----------------------------------------------------------------------------
 
-router.get('/api/timestamp', async ctx => {
+router.get('/api/timestamp', async (ctx) => {
     ctx.set('Access-Control-Allow-Origin', '*');
     ctx.body = {
-        ts: Date.now()
+        ts: Date.now(),
     };
 });

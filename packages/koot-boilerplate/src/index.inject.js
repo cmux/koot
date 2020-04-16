@@ -4,5 +4,5 @@
 
 export default {
     performanceInfos: () => `<!-- rendered: ${new Date().toISOString()} -->`,
-    svgIconPack: __SVG_ICON_PACK__
+    svgIconPack: __SVG_ICON_PACK__,
 };

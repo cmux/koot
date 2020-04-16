@@ -4,7 +4,7 @@ import { extend } from 'koot';
 import styles from './index.module.less';
 
 const Icon = extend({
-    styles
+    styles,
 })(({ className, style, id, icon, ...props }) => (
     <svg
         xmlns="http://www.w3.org/2000/svg"

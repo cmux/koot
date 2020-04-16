@@ -26,10 +26,10 @@ export default {
             import(
                 /* webpackChunkName: "PageHome" */
                 '@views/home'
-            ).then(module => {
+            ).then((module) => {
                 if (routeCheck(nextState)) cb(null, module.default);
             });
-        }
+        },
     },
 
     childRoutes: [
@@ -39,10 +39,10 @@ export default {
                 import(
                     /* webpackChunkName: "PageStart" */
                     '@views/start'
-                ).then(module => {
+                ).then((module) => {
                     if (routeCheck(nextState)) cb(null, module.default);
                 });
-            }
+            },
         },
         {
             path: 'ts',
@@ -50,10 +50,10 @@ export default {
                 import(
                     /* webpackChunkName: "PageTS" */
                     '@views/ts-example'
-                ).then(module => {
+                ).then((module) => {
                     if (routeCheck(nextState)) cb(null, module.default);
                 });
-            }
-        }
-    ]
+            },
+        },
+    ],
 };
