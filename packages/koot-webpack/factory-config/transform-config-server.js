@@ -113,6 +113,7 @@ module.exports = async (kootBuildConfig = {}) => {
             stage: STAGE,
             functionName: i18n ? i18n.expr : undefined,
         }),
+        new ModifyServerBundlePlugin({ isServerless }),
         ...result.plugins,
     ];
 
@@ -229,10 +230,7 @@ module.exports = async (kootBuildConfig = {}) => {
                 ...result.output,
                 filename: 'index.js',
             },
-            plugins: [
-                new ModifyServerBundlePlugin({ isServerless }),
-                ...result.plugins,
-            ],
+            plugins: [...result.plugins],
         },
     ];
 

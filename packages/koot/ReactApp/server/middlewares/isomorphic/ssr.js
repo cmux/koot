@@ -52,6 +52,8 @@ const context = {
     // WeakSet,
     // Promise,
     // Symbol,
+    // eslint-disable-next-line no-eval
+    __dirname: eval('__dirname'),
 };
 
 /**

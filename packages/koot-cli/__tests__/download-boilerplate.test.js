@@ -1,5 +1,5 @@
 // jest configuration
-jest.setTimeout(2 * 60 * 1 * 1000); // 5mins
+jest.setTimeout(5 * 60 * 1 * 1000); // 5mins
 
 const fs = require('fs-extra');
 const path = require('path');
@@ -27,15 +27,15 @@ describe('测试: 下载模板', () => {
                 path.relative(dirOriginal, path.resolve(dirOriginal, '.*'))
             )
         )
-            .filter(filename => filename !== '.git')
-            .map(filename => path.resolve(target, filename));
+            .filter((filename) => filename !== '.git')
+            .map((filename) => path.resolve(target, filename));
 
         await fs.ensureDir(target);
         await fs.emptyDir(target);
         await fs.writeFile(readme, readmeContent, 'utf-8');
         await fs.writeFile(junk, junkContent, 'utf-8');
 
-        await downloadBoilerplate(target, 'base').catch(err => (error = err));
+        await downloadBoilerplate(target, 'base').catch((err) => (error = err));
 
         if (error) {
             await fs.remove(target);
@@ -48,7 +48,7 @@ describe('测试: 下载模板', () => {
         const readmeNewContent = await fs.readFile(readme, 'utf-8');
         const junkExists = fs.existsSync(junk);
         const junkNewContent = await fs.readFile(junk, 'utf-8');
-        const dotFilesExist = dotFiles.every(file => fs.existsSync(file));
+        const dotFilesExist = dotFiles.every((file) => fs.existsSync(file));
 
         await fs.remove(target);
 
