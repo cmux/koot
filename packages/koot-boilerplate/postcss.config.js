@@ -6,12 +6,12 @@ module.exports = {
                 'default',
                 {
                     discardComments: {
-                        removeAll: true
+                        removeAll: true,
                     },
                     camelCase: true,
-                    zindex: false
-                }
-            ]
-        })
-    ]
+                    zindex: false,
+                },
+            ],
+        }),
+    ],
 };

@@ -27,7 +27,7 @@ module.exports = {
 
     i18n: [
         ['zh', './src/locales/zh.js'],
-        ['en', './src/locales/en.js']
+        ['en', './src/locales/en.js'],
     ],
 
     aliases: {
@@ -41,7 +41,7 @@ module.exports = {
         '@store': path.resolve('./src/store'),
         '@views': path.resolve('./src/views'),
         '~vars.less': path.resolve('./src/constants/less/_all.less'),
-        '@types': path.resolve('./types')
+        '@types': path.resolve('./types'),
     },
 
     defines: {
@@ -50,7 +50,7 @@ module.exports = {
                 path.resolve(__dirname, './src/assets/symbol-defs.svg'),
                 'utf-8'
             )
-        ).replace(/\n/g, '')
+        ).replace(/\n/g, ''),
     },
 
     staticCopyFrom: path.resolve(__dirname, './src/assets/public'),
@@ -69,7 +69,7 @@ module.exports = {
 
     port: 8081,
     proxyRequestOrigin: {
-        protocol: 'https'
+        protocol: 'https',
     },
     serverBefore: './src/server/before.js',
     // 更多选项请查阅文档...
@@ -87,7 +87,7 @@ module.exports = {
              * - 该模板项目中，本 `critical` 入口的结果会被自动写入到 HTML 结果内，位于 `<body>` 标签中所有自动插入的 `<script>` 标签之前
              * - 详见模板文件 `/src/index.ejs` 内的 `<%- content('critical.js') %>`
              */
-            critical: [path.resolve(__dirname, './src/critical.js')]
+            critical: [path.resolve(__dirname, './src/critical.js')],
 
             /**
              * Koot.js 会自动加入一个名为 `client` 的入口，其中包含所有 React 相关逻辑
@@ -106,12 +106,12 @@ module.exports = {
                     test: /\.(ico|gif|jpg|jpeg|png|webp)$/,
                     loader: 'url-loader',
                     options: {
-                        limit: 2 * 1024
-                    }
+                        limit: 2 * 1024,
+                    },
                 },
                 {
                     test: /\.(ttf|ttc|eot|woff|woff2)$/,
-                    loader: 'file-loader'
+                    loader: 'file-loader',
                 },
                 {
                     test: /\.svg$/,
@@ -119,11 +119,11 @@ module.exports = {
                     exclude: /node_modules/,
                     options: {
                         noquotes: true,
-                        limit: 5 * 1024
-                    }
-                }
-            ]
-        }
+                        limit: 5 * 1024,
+                    },
+                },
+            ],
+        },
     }),
     // 更多选项请查阅文档...
 
@@ -131,6 +131,6 @@ module.exports = {
      * 开发环境
      *************************************************************************/
 
-    devPort: 3088
+    devPort: 3088,
     // 更多选项请查阅文档...
 };

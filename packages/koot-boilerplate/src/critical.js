@@ -19,7 +19,7 @@ const doCricital = () => {
                 return [
                     parseInt(v[1], 10),
                     parseInt(v[2], 10),
-                    parseInt(v[3] || 0, 10)
+                    parseInt(v[3] || 0, 10),
                 ];
             }
         };
@@ -80,7 +80,7 @@ const doCricital = () => {
     }
 
     // DOM ready 时
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         // 检查 WebP 支持
         {
             const canUseWebP = () => {
@@ -119,7 +119,7 @@ const doCricital = () => {
         // 利用 pointer event 判断当前是否为 hover
         document.documentElement.classList.add('is-hover');
         if (window.PointerEvent) {
-            document.documentElement.addEventListener('pointerenter', evt => {
+            document.documentElement.addEventListener('pointerenter', (evt) => {
                 if (evt.pointerType === 'mouse' || evt.pointerType === 'pen')
                     document.documentElement.classList.add('is-hover');
                 else document.documentElement.classList.remove('is-hover');
@@ -133,7 +133,7 @@ const doCricital = () => {
         bindEvent(document.body, 'dragover', () => {
             document.documentElement.classList.add('is-dragging-over');
         });
-        ['dragend', 'dragexit', 'dragleave', 'drop'].forEach(type => {
+        ['dragend', 'dragexit', 'dragleave', 'drop'].forEach((type) => {
             bindEvent(document.body, type, () => {
                 document.documentElement.classList.remove('is-dragging-over');
             });

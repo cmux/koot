@@ -17,7 +17,7 @@ const NavItem = ({ to, className, ...otherProps }) => {
 
     const props = {
         className: classNames(['item', className]),
-        ...otherProps
+        ...otherProps,
     };
 
     if (/^([a-z]+):\/\//i.test(route)) {

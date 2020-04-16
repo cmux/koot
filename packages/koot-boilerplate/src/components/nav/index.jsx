@@ -13,7 +13,7 @@ import styles from './index.module.less';
 // ============================================================================
 
 const Nav = extend({
-    styles
+    styles,
 })(({ location, className }) => {
     if (location.pathname === '' || location.pathname === '/') return null;
 

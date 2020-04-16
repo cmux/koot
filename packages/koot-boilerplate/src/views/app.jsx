@@ -9,7 +9,7 @@ import styles from './app.module.less';
 // ============================================================================
 
 const App = extend({
-    styles
+    styles,
 })(({ className, children, location, ...props }) => (
     <React.StrictMode>
         <div
@@ -17,8 +17,8 @@ const App = extend({
                 className,
                 {
                     'is-home':
-                        location.pathname === '' || location.pathname === '/'
-                }
+                        location.pathname === '' || location.pathname === '/',
+                },
             ])}
         >
             <Nav location={location} {...props} />
@@ -30,4 +30,4 @@ export default App;
 
 // ============================================================================
 
-const Main = props => <main {...props} />;
+const Main = (props) => <main {...props} />;

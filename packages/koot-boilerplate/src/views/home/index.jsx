@@ -14,9 +14,9 @@ import styles from './index.module.less';
 const PageHome = extend({
     pageinfo: () => ({
         title: `${__('pages.home.title')} - ${__('title')}`,
-        metas: [{ description: __('pages.home.description') }]
+        metas: [{ description: __('pages.home.description') }],
     }),
-    styles
+    styles,
 })(({ className }) => (
     <div className={className}>
         <div className="wrapper">

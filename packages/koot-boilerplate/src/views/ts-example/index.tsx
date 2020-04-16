@@ -18,15 +18,15 @@ interface ComponentProps {
 const TSFunctionalComponent = extend<ComponentProps>({
     pageinfo: () => ({
         title: `${__('pages.ts.title')} - ${__('title')}`,
-        metas: [{ description: __('pages.ts.description') }]
+        metas: [{ description: __('pages.ts.description') }],
     }),
-    styles
+    styles,
 })(
     ({
         className,
         children,
         customProps,
-        'data-class-name': dataClassName
+        'data-class-name': dataClassName,
     }): JSX.Element => {
         return (
             <div className={className} data-koot-test-page="page-ts">
@@ -62,9 +62,9 @@ export const UseTSFunctionalComponent: React.FC = (): JSX.Element => (
 @extend({
     pageinfo: () => ({
         title: `${__('pages.ts.title')} - ${__('title')}`,
-        metas: [{ description: __('pages.ts.description') }]
+        metas: [{ description: __('pages.ts.description') }],
     }),
-    styles
+    styles,
 })
 class TSComponentClass extends React.Component<ExtendedProps & ComponentProps> {
     testProperty(): number {
