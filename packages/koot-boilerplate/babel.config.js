@@ -1,4 +1,4 @@
-module.exports = function(api) {
+module.exports = function (api) {
     api.cache(true);
 
     return {
@@ -6,11 +6,11 @@ module.exports = function(api) {
             [
                 '@babel/preset-env',
                 {
-                    modules: false
-                }
+                    modules: false,
+                },
             ],
             '@babel/preset-react',
-            '@babel/preset-flow'
+            '@babel/preset-flow',
         ],
         compact: 'auto',
         plugins: [
@@ -18,9 +18,9 @@ module.exports = function(api) {
 
             // proposal
             ['@babel/plugin-proposal-decorators', { legacy: true }],
-            '@babel/plugin-proposal-class-properties'
+            '@babel/plugin-proposal-class-properties',
 
             // syntax
-        ]
+        ],
     };
 };
