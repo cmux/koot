@@ -61,7 +61,7 @@
         "latest-version": "^5.1.0",
         "lerna": "^3.20.2",
         "lerna-wizard": "^1.1.1",
-        "lint-staged": "^10.1.3",
+        "lint-staged": "^10.1.4",
         "prettier": "^2.0.4",
         "prettier-eslint": "^9.0.1",
         "puppeteer": "^3.0.0",
