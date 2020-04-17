@@ -26,6 +26,7 @@ module.exports = [
     'rc-progress',
     'rc-resize-observer',
     'rc-select',
+    'rc-table',
     'rc-tabs',
     'rc-tooltip',
     'rc-trigger',
@@ -75,5 +76,5 @@ module.exports = [
     'stylis-rule-sheet',
     'swiper',
     'tinycolor2',
-    'warning'
+    'warning',
 ];
