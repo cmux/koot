@@ -2,6 +2,7 @@ const baseConfig = require('./koot.config');
 
 module.exports = Object.assign({}, baseConfig, {
     dist: './dist-public-path/',
+    routes: './src/router/functional.js',
     webpackConfig: async (...args) => {
         if (process.env.WEBPACK_BUILD_ENV === 'prod') {
             const config = await require('./config/webpack/prod')();

@@ -31,6 +31,7 @@
  * - sessionStore | 部分开启，同时混入无效设置
  *
  * **四号**
+ * - routes: 异步函数
  * - 调整了 Webpack 配置的 `output.publicPath`,
  * - serverPackAll: true
  * - i18n.use: 'subdomain'
