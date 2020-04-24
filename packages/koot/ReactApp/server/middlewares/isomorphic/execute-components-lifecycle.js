@@ -44,9 +44,13 @@ const executeComponentLifecycle = async ({ store, renderProps, ctx }) => {
                 tasks.push(thisTask);
             } else if (typeof thisTask === 'function') {
                 tasks.push(
-                    new Promise(async (resolve) => {
-                        await thisTask();
-                        resolve();
+                    new Promise(async (resolve, reject) => {
+                        try {
+                            await thisTask();
+                            resolve();
+                        } catch (e) {
+                            reject(e);
+                        }
                     })
                 );
             }
@@ -134,7 +138,9 @@ const executeComponentLifecycle = async ({ store, renderProps, ctx }) => {
     // }
 
     // 等待所有异步方法执行完毕
-    await Promise.all(tasks);
+    await Promise.all(tasks).catch((e) => {
+        throw e;
+    });
 
     // 扩展 HTML 相关信息
     const result = {

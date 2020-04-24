@@ -89,6 +89,7 @@ module.exports = () => {
         KOOT_PWA_AUTO_REGISTER: JSON.stringify(defaultsServiceWorker.auto),
         // PWA Service-Worker 访问路径
         KOOT_PWA_PATHNAME: JSON.stringify(`/${defaultsServiceWorker.filename}`),
+        KOOT_PWA_SCOPE: JSON.stringify(`/`),
 
         // 当前是否是测试模式
         KOOT_TEST_MODE: JSON.stringify(false),
@@ -119,7 +120,7 @@ module.exports = () => {
          * - _空_ - 默认模式
          * - serverless
          */
-        KOOT_SERVER_MODE: ''
+        KOOT_SERVER_MODE: '',
 
         // 打包开始时间
         // KOOT_BUILD_START_TIME: ''

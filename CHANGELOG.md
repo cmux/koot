@@ -1,5 +1,14 @@
 ## [Unreleased]
 
+## [0.13.20] - 2020-04-24
+
+**koot**
+
+-   **新特性**
+    -   **新配置项** `serviceWorker.scope` - 自动注册 _Service Worker_ 的作用域。详情请参见文档 [Service Worker/选项](https://koot.js.org/#/pwa?id=service-worker)
+-   优化
+    -   SPA 项目中，默认的 _Service Worker_ 注册流程里，默认请求地址调整为相对路径，`scope` 调整为空
+
 ## [0.13.19] - 2020-04-20
 
 **koot**
