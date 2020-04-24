@@ -5,12 +5,12 @@ const { InjectManifest } = require('workbox-webpack-plugin');
 
 const {
     keyKootBaseVersion,
-    keyConfigClientServiceWorkerPathname
+    keyConfigClientServiceWorkerPathname,
 } = require('koot/defaults/before-build');
 const defaults = require('koot/defaults/service-worker');
 const {
     publicPathPrefix: devPublicPathPrefix,
-    serviceWorkerFilename
+    serviceWorkerFilename,
 } = require('koot/defaults/webpack-dev-server');
 const getSWFilename = require('koot/utils/get-sw-filename');
 
@@ -39,6 +39,7 @@ module.exports = async (
         swSrc: _swSrc,
         include = [],
         exclude = [],
+        scope,
 
         // cache strategies
         cacheFirst = [],
@@ -48,7 +49,7 @@ module.exports = async (
         ...rest
     } = Object.assign({}, defaults, serviceWorker);
     ['auto', 'importWorkboxFrom', 'importsDirectory'].forEach(
-        key => delete rest[key]
+        (key) => delete rest[key]
     );
 
     const isDev = process.env.WEBPACK_BUILD_ENV === 'dev';
@@ -58,7 +59,7 @@ module.exports = async (
 
         const {
             [keyKootBaseVersion]: kootBaseVersion,
-            distClientAssetsDirName
+            distClientAssetsDirName,
         } = kootConfigForThisBuild;
 
         const obj = {
@@ -71,8 +72,8 @@ module.exports = async (
             networkFirst,
             networkOnly,
             env: {
-                WEBPACK_BUILD_ENV: ENV
-            }
+                WEBPACK_BUILD_ENV: ENV,
+            },
         };
 
         if (localeId) obj.localeId = localeId;
@@ -121,7 +122,7 @@ module.exports = async (
         swDest,
         swSrc,
         include: [/\.js$/, /extract\.all\..+?\.large\.css$/, ...include],
-        exclude: [/\.map$/, /^manifest.*\.js$/, ...exclude]
+        exclude: [/\.map$/, /^manifest.*\.js$/, ...exclude],
     });
 };
 
