@@ -73,7 +73,7 @@ import styles from './index.module.less';
 
 const PageHome = extend({
     // ...
-    styles
+    styles,
     // ...
 })(({ className }) => {
     /**
@@ -120,7 +120,7 @@ interface KootModularStyleObject {
 ```javascript
 module.exports = {
     // ...
-    moduleCssFilenameTest: /\.(component|view|module)/
+    moduleCssFilenameTest: /\.(component|view|module)/,
     // ...
 };
 ```
@@ -128,6 +128,10 @@ module.exports = {
 _默认规则解释:_ 文件名以 `.component.css` `.view.css` 或 `.module.css` (扩展名可为 `css` `less` `sass`) 为结尾的文件会当作组件 CSS，其他文件会被当做全局 CSS。
 
 ⚠️ _TypeScript_ 项目中，如果修改了上述配置，针对组件 CSS 对象的默认的 TS 定义声明会失效。
+
+⚠️ `moduleCssFilenameTest` 类型: `RegExp` 或 `Object` 或 `Array<RegExp>` 或 `Array<Object>`
+
+-   `Object` 为 _Webpack_ `module.rule`
 
 ##### 组件 CSS hash 字符串长度
 
@@ -143,10 +147,10 @@ module.exports = {
     internalLoaderOptions: {
         'less-loader': {
             modifyVars: {
-                'base-font-size': '40px'
-            }
-        }
-    }
+                'base-font-size': '40px',
+            },
+        },
+    },
     // ...
 };
 ```
@@ -191,3 +195,26 @@ module.exports = {
 -   `body.test .component` -> `body.test .adf3`
 -   `body.test .component.test2` -> `body.test .adf3.test2`
 -   `body.test .component.test2 .component` -> `body.test .adf3.test2 .component`]
+
+### 开发 Tip
+
+##### 某个/些 NPM 包需要支持组件 CSS
+
+通过配置项 `moduleCssFilenameTest` 可实现
+
+```javascript
+const {
+    moduleCssFilenameTest: defaultModuleCssFilenameTest,
+} = require('koot/defaults/koot-config');
+module.exports = {
+    // ...
+    moduleCssFilenameTest: [
+        {
+            test: /^((?!\.g\.).)*/,
+            include: /your-npm-module-name/,
+        },
+        defaultModuleCssFilenameTest,
+    ],
+    // ...
+};
+```

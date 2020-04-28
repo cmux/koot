@@ -6,6 +6,7 @@ import Issue68 from '@components/issue-68';
 import TestAsyncFunction from './test-async-function';
 import TestGetPort from './test-get-port';
 import TestExtendForwardRef from './test-extend-forwardref';
+import TestModuleCSS from './test-module-css';
 
 import styles from './styles.component.less';
 
@@ -45,6 +46,7 @@ const PageHome = ({ className }) => {
             <TestAsyncFunction />
             <TestGetPort />
             <TestExtendForwardRef />
+            <TestModuleCSS />
         </div>
     );
 };

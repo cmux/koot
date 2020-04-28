@@ -598,6 +598,26 @@ const doTest = async (port, dist, settings = {}) => {
         expect(textSSR).not.toBe(textCSR);
     }
 
+    // 测试: 通过配置 moduleCssFilenameTest，可以让 npm module 有组件 CSS 处理能力
+    {
+        const styles = await page.evaluate(() => {
+            const el = document.querySelector('#__test-module_css');
+            if (!el) return {};
+            const styles = window.getComputedStyle(el);
+            return [
+                'backgroundColor',
+                'color',
+                'borderRadius',
+                'textAlign',
+            ].reduce((o, prop) => {
+                o[prop] = styles[prop];
+                return o;
+            }, {});
+        });
+        expect(styles.backgroundColor).toBe('rgb(0, 146, 245)');
+        expect(styles.color).toBe('rgb(255, 255, 255)');
+        expect(styles.textAlign).toBe('center');
+    }
     await puppeteerTestStyles(page);
     await puppeteerTestCustomEnv(page, customEnv);
     await puppeteerTestInjectScripts(page);

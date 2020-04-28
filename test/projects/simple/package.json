@@ -38,11 +38,14 @@
     },
     "dependencies": {
         "autoprefixer": "9.7.2",
+        "biz-components": "^1.0.4",
         "normalize.css": "8.0.1",
         "koot": "file:../../../packages/koot",
         "koot-webpack": "file:../../../packages/koot-webpack",
         "file-loader": "^5.0.2",
-        "svg-url-loader": "^3.0.3"
+        "svg-url-loader": "^3.0.3",
+        "postcss-easing-gradients": "^3.0.1",
+        "postcss-pxtorem": "^5.1.1"
     },
     "engines": {
         "node": ">=10.12.0"
