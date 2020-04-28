@@ -1,3 +1,5 @@
+const { chunkNameClientRunFirst } = require('../defaults/before-build');
+
 /**
  * 生成 Webpack `optimization` 配置，用于拆分代码
  * - 仅针对: Webpack 配置生成
@@ -11,7 +13,6 @@ module.exports = (options = {}) => {
         libs: {
             name: 'libs',
             priority: 100,
-            chunks: 'all',
             minChunks: 1,
             reuseExistingChunk: true,
             test: new RegExp(
@@ -36,14 +37,13 @@ module.exports = (options = {}) => {
                     // 'lodash',
                     // 'underscore'
 
-                    ...extraLibs
+                    ...extraLibs,
                 ].join('|')})[\\\\/]`
-            )
+            ),
         },
         libsAntd: {
             name: 'libs-ant-design-related',
             priority: 90,
-            chunks: 'all',
             minChunks: 1,
             reuseExistingChunk: true,
             test: new RegExp(
@@ -66,17 +66,16 @@ module.exports = (options = {}) => {
                     'rc-tooltip',
                     'rc-trigger',
                     'rc-upload',
-                    'rc-util'
+                    'rc-util',
                 ].join('|')})[\\\\/]`
-            )
+            ),
         },
         libsOthers: {
             name: 'libs-others',
             priority: 10,
-            chunks: 'all',
             minChunks: 2,
-            reuseExistingChunk: true
-        }
+            reuseExistingChunk: true,
+        },
     };
 
     // const isKootTest =
@@ -91,10 +90,15 @@ module.exports = (options = {}) => {
         noEmitOnErrors: true,
 
         splitChunks: {
+            // chunks: 'all',
+            chunks(chunk) {
+                // RunFirst 不应该参与 optimization 处理
+                return chunk.name !== chunkNameClientRunFirst;
+            },
             maxAsyncRequests: 8,
             maxInitialRequests: 6,
 
-            cacheGroups
-        }
+            cacheGroups,
+        },
     };
 };
