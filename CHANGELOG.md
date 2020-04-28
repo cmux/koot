@@ -1,5 +1,12 @@
 ## [Unreleased]
 
+## [0.13.21] - 2020-04-28
+
+**koot**
+
+-   **新特性**
+    -   **新配置项** `moduleCssFilenameTest` - 现在支持传入 _Array_，另外每一个条目也支持传入结构为 _Webpack_ `module.rule` 的 _Object_。详情请参见文档 [CSS/相关配置](https://koot.js.org/#/css?id=相关配置)
+
 ## [0.13.20] - 2020-04-24
 
 **koot**
