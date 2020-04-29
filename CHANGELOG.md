@@ -2,7 +2,7 @@
 
 ## [0.13.22] - 2020-04-29
 
-**koot**
+**koot-webpack**
 
 -   优化
     -   `RUN_FIRST` 入口文件现在不会参与 _Webpack_ 的 _optimization_ 优化流程
