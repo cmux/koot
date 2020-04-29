@@ -20,7 +20,7 @@ module.exports = {
     name: 'Test Subject D-HU',
     template: './src/template.ejs',
     routes: './src/routes',
-    store: './src/store'
+    store: './src/store',
 };
 ```
 
@@ -51,7 +51,7 @@ module.exports = {
     type: 'react',
 
     // React SPA
-    type: 'react-spa'
+    type: 'react-spa',
 };
 ```
 
@@ -74,7 +74,7 @@ HTML 模板文件路径。目前仅支持 `.ejs` 文件。有关模板的使用�
 ```javascript
 module.exports = {
     // 示例配置
-    template: './src/template.ejs'
+    template: './src/template.ejs',
 };
 ```
 
@@ -88,7 +88,7 @@ module.exports = {
 ```javascript
 module.exports = {
     // 示例配置
-    templateInject: './src/template-inject.js'
+    templateInject: './src/template-inject.js',
 };
 ```
 
@@ -105,7 +105,7 @@ module.exports = {
 ```javascript
 module.exports = {
     // 示例配置
-    routes: './src/routes'
+    routes: './src/routes',
 };
 ```
 
@@ -120,7 +120,7 @@ module.exports = {
 ```javascript
 module.exports = {
     // 示例配置：无论项目类型，客户端环境统一使用 hashHistory
-    historyType: 'hash'
+    historyType: 'hash',
 };
 ```
 
@@ -136,7 +136,7 @@ module.exports = {
  * 文件: /koot.config.js
  ***************************/
 module.exports = {
-    store: './src/store'
+    store: './src/store',
 };
 
 /****************************
@@ -183,7 +183,7 @@ module.exports = {
 
     // 仅将名为 `userToken` 的 cookie 写入到 store 中
     // `state.server.cookie` 为对象，key/value 对应 cookie 的每一项
-    cookiesToStore: ['userToken']
+    cookiesToStore: ['userToken'],
 };
 ```
 
@@ -211,9 +211,9 @@ module.exports = {
     sessionStore: {
         user: true,
         page: {
-            home: true
-        }
-    }
+            home: true,
+        },
+    },
 };
 ```
 
@@ -241,13 +241,13 @@ module.exports = {
         ['zh', './src/locales/zh.json'],
         ['zh-tw', './src/locales/zh-tw.json'],
         // ['en', './src/locales/en.json'],
-        ['en', './src/locales/en.js']
+        ['en', './src/locales/en.js'],
     ],
 
     // 详细配置。配置项及其说明详见多语言章节 (链接见上文)
     i18n: {
-        [option]: 'value'
-    }
+        [option]: 'value',
+    },
 };
 ```
 
@@ -275,8 +275,8 @@ module.exports = {
 
     // 详细配置。配置项及其说明详见 Service Worker & PWA 章节 (链接见上文)
     serviceWorker: {
-        [option]: 'value'
-    }
+        [option]: 'value',
+    },
 };
 ```
 
@@ -299,8 +299,8 @@ module.exports = {
     aliases: {
         '@src': path.resolve('./src'),
         '@assets': path.resolve('./src/assets'),
-        '~base.less': path.resolve('./src/assets/css/base.less')
-    }
+        '~base.less': path.resolve('./src/assets/css/base.less'),
+    },
 };
 ```
 
@@ -330,8 +330,8 @@ module.exports = {
 
     // 示例
     defines: {
-        __QA__: JSON.stringify(false)
-    }
+        __QA__: JSON.stringify(false),
+    },
 };
 ```
 
@@ -359,7 +359,7 @@ const apiBase = __QA__
  * 文件: /koot.config.js
  ***************************/
 module.exports = {
-    before: './src/lifecycle/client-before'
+    before: './src/lifecycle/client-before',
 };
 
 /****************************
@@ -390,7 +390,7 @@ export default ({ store, history, localeId }) => {
  * 文件: /koot.config.js
  ***************************/
 module.exports = {
-    after: './src/lifecycle/client-after'
+    after: './src/lifecycle/client-after',
 };
 
 /****************************
@@ -428,7 +428,7 @@ export default ({ store, history, localeId }) => {
  * 文件: /koot.config.js
  ***************************/
 module.exports = {
-    onHistoryUpdate: './src/lifecycle/client-history-update'
+    onHistoryUpdate: './src/lifecycle/client-history-update',
 };
 
 /****************************
@@ -464,7 +464,7 @@ export default (location, store) => {
  * 文件: /koot.config.js
  ***************************/
 module.exports = {
-    onRouterUpdate: './src/lifecycle/client-router-update'
+    onRouterUpdate: './src/lifecycle/client-router-update',
 };
 
 /****************************
@@ -501,7 +501,7 @@ module.exports = {
     serverless: false,
 
     // 输出的 Web 服务器为 Serverless
-    serverless: true
+    serverless: true,
 };
 ```
 
@@ -541,15 +541,15 @@ module.exports = {
     renderCache: {
         maxAge: 5000,
         maxCount: 50,
-        get: url => {
+        get: (url) => {
             // 自实现的缓存结果获取逻辑
             // return false
             return '完整渲染结果';
         },
         set: (url, html) => {
             // 自实现的缓存结果存储逻辑
-        }
-    }
+        },
+    },
 };
 ```
 
@@ -574,8 +574,8 @@ module.exports = {
      *           协议名
      */
     proxyRequestOrigin: {
-        protocol: 'https'
-    }
+        protocol: 'https',
+    },
 };
 ```
 
@@ -596,8 +596,8 @@ module.exports = {
         index: 'index.html',
         defer: false,
         gzip: true,
-        extensions: false
-    }
+        extensions: false,
+    },
 };
 ```
 
@@ -619,9 +619,9 @@ module.exports = {
      * @param {Object} app Koa实例
      * @void
      */
-    serverBefore: async app => {
+    serverBefore: async (app) => {
         // 案例：挂载静态目录中间件
-    }
+    },
 };
 ```
 
@@ -643,9 +643,9 @@ module.exports = {
      * @param {Object} app Koa实例
      * @void
      */
-    serverAfter: async app => {
+    serverAfter: async (app) => {
         // ...
-    }
+    },
 };
 ```
 
@@ -738,8 +738,8 @@ module.exports = {
          */
         afterDataToStore: async ({ ctx, store, localeId }) => {
             // ...
-        }
-    }
+        },
+    },
 };
 ```
 
@@ -771,7 +771,7 @@ module.exports = {
              * - 该模板项目中，本 `critical` 入口的结果会被自动写入到 HTML 结果内，位于 `<body>` 标签中所有自动插入的 `<script>` 标签之前
              * - 详见模板文件 `/src/index.ejs` 内的 `<%- content('critical.js') %>`
              */
-            critical: [path.resolve(__dirname, '../src/critical.js')]
+            critical: [path.resolve(__dirname, '../src/critical.js')],
 
             /**
              * Koot.js 会自动加入一个名为 `client` 的入口，其中包含所有 React 相关逻辑
@@ -789,19 +789,19 @@ module.exports = {
                     test: /\.(ico|gif|jpg|jpeg|png|webp)$/,
                     loader:
                         'file-loader?context=static&name=assets/[hash:32].[ext]',
-                    exclude: /node_modules/
+                    exclude: /node_modules/,
                 },
                 {
                     test: /\.svg$/,
                     loader: 'svg-url-loader',
                     exclude: /node_modules/,
                     options: {
-                        noquotes: true
-                    }
-                }
-            ]
-        }
-    })
+                        noquotes: true,
+                    },
+                },
+            ],
+        },
+    }),
 };
 ```
 
@@ -819,13 +819,14 @@ module.exports = {
     distClientAssetsDirName: 'includes',
 
     // 所有客户端静态资源文件均会存储到 [dist目录]/public/koot-*/assets/ 目录下
-    distClientAssetsDirName: 'assets'
+    distClientAssetsDirName: 'assets',
 };
 ```
 
 ### moduleCssFilenameTest
 
--   类型: `RegExp`
+-   类型: `RegExp` 或 `Object` 或 `Array<RegExp>` 或 `Array<Object>`
+    -   `Object` 为 _Webpack_ `module.rule`
 -   默认值: `/\.(component|view|module)/`
 -   **仅针对**: Webpack 打包过程
 
@@ -838,7 +839,7 @@ _默认值解释:_ 文件名以 `.component.css` `.view.css` 或 `.module.css` (
 ```javascript
 module.exports = {
     // 默认值
-    moduleCssFilenameTest: /\.(component|view|module)/
+    moduleCssFilenameTest: /\.(component|view|module)/,
 };
 ```
 
@@ -859,10 +860,10 @@ module.exports = {
     internalLoaderOptions: {
         'less-loader': {
             modifyVars: {
-                'base-font-size': '40px'
-            }
-        }
-    }
+                'base-font-size': '40px',
+            },
+        },
+    },
 };
 ```
 
@@ -881,7 +882,7 @@ module.exports = {
     classNameHashLength: 6,
 
     // 示例: 生产环境与开发环境使用不同的值
-    classNameHashLength: process.env.WEBPACK_BUILD_ENV === 'dev' ? 16 : 4
+    classNameHashLength: process.env.WEBPACK_BUILD_ENV === 'dev' ? 16 : 4,
 };
 ```
 
@@ -901,7 +902,7 @@ module.exports = {
 
     // 关闭该功能
     // ⚠️ 如果使用 koot-cli 从 0.9 之前的版本升级，默认会关闭该功能
-    bundleVersionsKeep: false
+    bundleVersionsKeep: false,
 };
 ```
 
@@ -920,7 +921,7 @@ module.exports = {
     exportGzip: true,
 
     // 关闭该功能
-    exportGzip: false
+    exportGzip: false,
 };
 ```
 
@@ -946,8 +947,8 @@ module.exports = {
     // 示例 #2 - 复制多个目录
     staticCopyFrom: [
         path.resolve(__dirname, './src/assets/public'),
-        path.resolve(__dirname, './.data-generated/public')
-    ]
+        path.resolve(__dirname, './.data-generated/public'),
+    ],
 };
 ```
 
@@ -983,13 +984,13 @@ module.exports = {
      * @param {Object} kootConfigWithExtra koot 完整配置对象，附加额外信息
      * @void
      */
-    webpackBefore: async kootConfigWithExtra => ({
+    webpackBefore: async (kootConfigWithExtra) => ({
         /*
          * `kootConfigWithExtra` 对象中的额外信息
          * - `__WEBPACK_OUTPUT_PATH` - 本次打包的目标目录
          * - `__CLIENT_ROOT_PATH` - 仅针对客户端，本次打包结果的客户端根目录
          */
-    })
+    }),
 };
 ```
 
@@ -1011,9 +1012,9 @@ module.exports = {
      * @param {Object} kootConfigWithExtra koot 完整配置对象，附加额外信息
      * @void
      */
-    webpackAfter: async kootConfigWithExtra => ({
+    webpackAfter: async (kootConfigWithExtra) => ({
         // `kootConfigWithExtra` 中的额外信息详见上文 `webpackBefore` 的说明
-    })
+    }),
 };
 ```
 
@@ -1035,7 +1036,7 @@ module.exports = {
     devPort: undefined,
 
     // 示例: 指定开发环境采用 8088 端口
-    devPort: 8088
+    devPort: 8088,
 };
 ```
 
@@ -1057,9 +1058,9 @@ module.exports = {
         'redux-thunk',
         'react-redux',
         'react-router',
-        'react-router-redux'
+        'react-router-redux',
         // 以及其他常见的第三方库/包
-    ]
+    ],
 };
 ```
 
@@ -1075,7 +1076,7 @@ module.exports = {
 module.exports = {
     // 默认值
     devHmr: {
-        multiStep: false
+        multiStep: false,
     },
 
     // 开发环境下启动多步打包，以进一步加速热更新速度
@@ -1084,8 +1085,8 @@ module.exports = {
         fullBuildTimeout:
             process.env.WEBPACK_BUILD_TYPE === 'spa' ? 500 : undefined,
         requestTimeout:
-            process.env.WEBPACK_BUILD_TYPE === 'spa' ? undefined : 1000
-    }
+            process.env.WEBPACK_BUILD_TYPE === 'spa' ? undefined : 1000,
+    },
 };
 ```
 
@@ -1110,19 +1111,19 @@ module.exports = {
         contentBase: './',
         publicPath: TYPE === 'spa' ? '/' : '/dist/',
         headers: {
-            'Access-Control-Allow-Origin': '*'
+            'Access-Control-Allow-Origin': '*',
         },
         open: TYPE === 'spa',
         watchOptions: {
-            ignored: [getDistPath(), path.resolve(getDistPath(), '**/*')]
+            ignored: [getDistPath(), path.resolve(getDistPath(), '**/*')],
         },
-        before: app => {
+        before: (app) => {
             if (appType === 'ReactSPA') {
                 require('../../ReactSPA/dev-server/extend')(app);
             }
             if (typeof before === 'function') return before(app);
-        }
-    }
+        },
+    },
 };
 ```
 
@@ -1145,8 +1146,8 @@ module.exports = {
     // 开发环境中启用 Service Worker，采用独立配置对象
     // 配置项及其说明详见 Service Worker & PWA 章节 (链接见上文)
     devServiceWorker: {
-        [option]: `value`
-    }
+        [option]: `value`,
+    },
 };
 ```
 
@@ -1171,17 +1172,17 @@ module.exports = {
     // SSR: 分别指定 `webpack-dev-server` (client) 和服务器打包进程 (server) 分配的内存容量
     devMemoryAllocation: {
         client: 2048,
-        server: 1024
+        server: 1024,
     },
 
     // SSR: 仅指定 `webpack-dev-server` (client) 分配的内存容量
     devMemoryAllocation: {
-        client: 2048
+        client: 2048,
     },
 
     // SSR: 仅指定服务器打包进程 (server) 分配的内存容量
     devMemoryAllocation: {
-        server: 1024
-    }
+        server: 1024,
+    },
 };
 ```

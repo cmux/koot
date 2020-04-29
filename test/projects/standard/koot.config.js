@@ -43,12 +43,12 @@ module.exports = {
         ['zh', './src/locales/zh.json'],
         // ['zh-tw', './src/locales/zh-tw.json'],
         ['zh-tw', './src/locales/zh-tw.js'],
-        ['en', './src/locales/en.json']
+        ['en', './src/locales/en.json'],
     ],
 
     // pwa: true,
     serviceWorker: {
-        cacheFirst: ['/photo.jpg']
+        cacheFirst: ['/photo.jpg'],
     },
 
     aliases: {
@@ -63,14 +63,14 @@ module.exports = {
         '~base.less': path.resolve('./src/constants/less/base.less'),
         '~Assets': path.resolve('./src/assets'),
         '~/': path.resolve('./src'),
-        react: path.resolve(__dirname, '../../../node_modules/react')
+        react: path.resolve(__dirname, '../../../node_modules/react'),
     },
     defines: {
-        __QA__: JSON.stringify(false)
+        __QA__: JSON.stringify(false),
     },
 
     staticCopyFrom: [
-        path.resolve(__dirname, './public')
+        path.resolve(__dirname, './public'),
         // path.resolve(__dirname, './server')
     ],
 
@@ -89,7 +89,7 @@ module.exports = {
 
     port: 8080,
     renderCache: {
-        maxAge: 10 * 1000
+        maxAge: 10 * 1000,
     },
     // renderCache: false,
     proxyRequestOrigin: {
@@ -97,14 +97,14 @@ module.exports = {
     },
     koaStatic: {
         index: 'test.photo.jpg',
-        gzip: true
+        gzip: true,
     },
     serverBefore: './server/lifecycle/before',
     serverAfter: './server/lifecycle/after',
     serverOnRender: {
         beforePreRender: './server/lifecycle/on-render-before-pre-render',
         beforeDataToStore: './server/lifecycle/on-render-before-data-to-store',
-        afterDataToStore: './server/lifecycle/on-render-after-data-to-store'
+        afterDataToStore: './server/lifecycle/on-render-after-data-to-store',
     },
 
     /**************************************************************************
@@ -125,18 +125,24 @@ module.exports = {
         console.log('\n\n💢 webpackAfter');
         return;
     },
-    moduleCssFilenameTest: /^((?!\.g\.).)*/,
+    moduleCssFilenameTest: [
+        {
+            test: /^((?!\.g\.).)*/,
+            include: /biz-components/,
+        },
+        /^((?!\.g\.).)*/,
+    ],
     internalLoaderOptions: {
         'less-loader': {
             modifyVars: {
-                'base-font-size': '40px'
+                'base-font-size': '40px',
             },
-            aaa: 'bbb'
+            aaa: 'bbb',
         },
         'ts-loader': {
             context: __dirname,
-            configFile: path.resolve(__dirname, './tsconfog.json')
-        }
+            configFile: path.resolve(__dirname, './tsconfog.json'),
+        },
     },
 
     /**************************************************************************
@@ -148,6 +154,6 @@ module.exports = {
     //     multiStep: false
     // },
     devServer: {
-        quiet: true
-    }
+        quiet: true,
+    },
 };

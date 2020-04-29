@@ -225,19 +225,14 @@ export default (options = {}) => (WrappedComponent) => {
 
             const { title, metas } =
                 typeof to === 'function'
-                    ? doPageinfo(
-                          getStore(),
-                          getRenderPropsFromComponentProps(this.props),
-                          to
-                      )
+                    ? doPageinfo(getStore(), this.getRenderProps(), to)
                     : to ||
-                      doPageinfo(
-                          getStore(),
-                          getRenderPropsFromComponentProps(this.props),
-                          pageinfo
-                      );
+                      doPageinfo(getStore(), this.getRenderProps(), pageinfo);
 
             clientUpdatePageInfo(title, metas);
+        }
+        getRenderProps() {
+            return getRenderPropsFromComponentProps(this.props);
         }
 
         //
@@ -245,10 +240,7 @@ export default (options = {}) => (WrappedComponent) => {
         state = {
             loaded:
                 typeof dataCheck === 'function'
-                    ? dataCheck(
-                          getStore().getState(),
-                          getRenderPropsFromComponentProps(this.props)
-                      )
+                    ? dataCheck(getStore().getState(), this.getRenderProps())
                     : undefined,
         };
         mounted = false;
@@ -317,16 +309,14 @@ export default (options = {}) => (WrappedComponent) => {
             this.mounted = true;
 
             if (!this.state.loaded && typeof dataFetch !== 'undefined') {
-                doFetchData(
-                    getStore(),
-                    getRenderPropsFromComponentProps(this.props),
-                    dataFetch
-                ).then(() => {
-                    if (!this.mounted) return;
-                    this.setState({
-                        loaded: true,
-                    });
-                });
+                doFetchData(getStore(), this.getRenderProps(), dataFetch).then(
+                    () => {
+                        if (!this.mounted) return;
+                        this.setState({
+                            loaded: true,
+                        });
+                    }
+                );
             }
 
             this.clientUpdatePageInfo();

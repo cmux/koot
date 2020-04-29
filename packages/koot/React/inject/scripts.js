@@ -3,7 +3,7 @@ const path = require('path');
 const {
     chunkNameClientRunFirst,
     scriptTagEntryAttributeName,
-    thresholdScriptRunFirst
+    thresholdScriptRunFirst,
 } = require('../../defaults/before-build');
 const defaultEntrypoints = require('../../defaults/entrypoints');
 const readClientFile = require('../../utils/read-client-file');
@@ -12,7 +12,7 @@ const getSSRStateString = require('../../libs/get-ssr-state-string');
 const {
     scriptsRunFirst,
     scriptsInBody,
-    uriServiceWorker
+    uriServiceWorker,
 } = require('./_cache-keys');
 
 let isSPAi18nEnabled = false;
@@ -41,7 +41,7 @@ module.exports = ({
     defaultLocaleId,
     reduxHtml,
     SSRState = {},
-    compilation
+    compilation,
 }) => {
     const ENV = process.env.WEBPACK_BUILD_ENV;
     const isDev = Boolean(
@@ -95,8 +95,8 @@ module.exports = ({
         // 入口: critical
         if (needInjectCritical && Array.isArray(entrypoints.critical)) {
             r += entrypoints.critical
-                .filter(file => path.extname(file) === '.js')
-                .map(file => {
+                .filter((file) => path.extname(file) === '.js')
+                .map((file) => {
                     if (isDev) {
                         // return `<script type="text/javascript" src="${getClientFilePath(true, file)}"></script>`;
                         return combineFilePaths('critical', true, file);
@@ -109,11 +109,11 @@ module.exports = ({
         // 其他默认入口
         // console.log('defaultEntrypoints', defaultEntrypoints)
         // console.log('entrypoints', entrypoints)
-        defaultEntrypoints.forEach(key => {
+        defaultEntrypoints.forEach((key) => {
             if (Array.isArray(entrypoints[key])) {
                 r += entrypoints[key]
-                    .filter(file => /\.(js|jsx|mjs|ejs)$/.test(file))
-                    .map(file => {
+                    .filter((file) => /\.(js|jsx|mjs|ejs)$/.test(file))
+                    .map((file) => {
                         // console.log(file)
                         // if (isDev)
                         // return `<script type="text/javascript" src="${getClientFilePath(true, file)}" defer></script>`
@@ -141,16 +141,18 @@ module.exports = ({
             (process.env.WEBPACK_BUILD_TYPE === 'spa' ||
                 typeof injectCache[uriServiceWorker] === 'string')
         ) {
+            const scope = JSON.parse(process.env.KOOT_PWA_SCOPE);
             r +=
                 `<script id="__koot-pwa-register-sw" type="text/javascript">` +
                 // if (isProd) {
                 `if ('serviceWorker' in navigator) {` +
                 `window.addEventListener('load', function() {` +
                 // + `navigator.serviceWorker.register("${injectCache[uriServiceWorker]}?koot=${process.env.KOOT_VERSION}",`
-                `navigator.serviceWorker.register("${injectCache[
-                    uriServiceWorker
-                ] || JSON.parse(process.env.KOOT_PWA_PATHNAME)}?koot=0.12",` +
-                `{scope: '/'}` +
+                `navigator.serviceWorker.register("${
+                    injectCache[uriServiceWorker] ||
+                    JSON.parse(process.env.KOOT_PWA_PATHNAME)
+                }?koot=0.12"` +
+                (scope ? `,{scope: '${scope}'}` : '') +
                 `)` +
                 `.catch(err => {console.log('👩‍💻 Service Worker SUPPORTED. ERROR', err)})` +
                 `});` +
@@ -242,7 +244,7 @@ const combineFilePaths = (name, ...args) => {
 
     return pathnames
         .map(
-            pathname =>
+            (pathname) =>
                 `<script type="text/javascript" src="${pathname}" defer ${scriptTagEntryAttributeName}="${name}"></script>`
         )
         .join('');

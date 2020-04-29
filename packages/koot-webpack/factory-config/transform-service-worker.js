@@ -13,7 +13,7 @@ const defaults = require('koot/defaults/service-worker');
  */
 const transformServiceWorker = async ({
     serviceWorker,
-    devServiceWorker // = defaultDevServiceWorker
+    devServiceWorker, // = defaultDevServiceWorker
 }) => {
     if (
         process.env.WEBPACK_BUILD_ENV === 'dev' &&
@@ -25,28 +25,28 @@ const transformServiceWorker = async ({
         // });
         return await transformServiceWorker({
             serviceWorker:
-                devServiceWorker === true ? serviceWorker : devServiceWorker
+                devServiceWorker === true ? serviceWorker : devServiceWorker,
         });
     }
 
+    const isSPA = process.env.WEBPACK_BUILD_TYPE === 'spa';
+    defaults.scope = isSPA ? '' : '/';
+    let config;
+
     if (serviceWorker === true || typeof serviceWorker === 'undefined') {
-        serviceWorker = Object.assign({}, defaults);
-        process.env.KOOT_PWA_AUTO_REGISTER = JSON.stringify(serviceWorker.auto);
-        process.env.KOOT_PWA_PATHNAME = JSON.stringify(
-            serviceWorker.pathname ||
-                (serviceWorker.filename ? `/${serviceWorker.filename}` : '')
-        );
-        return serviceWorker;
+        config = Object.assign({}, defaults);
+    } else if (typeof serviceWorker === 'object') {
+        config = Object.assign({}, defaults, serviceWorker);
     }
 
-    if (typeof serviceWorker === 'object') {
-        serviceWorker = Object.assign({}, defaults, serviceWorker);
-        process.env.KOOT_PWA_AUTO_REGISTER = JSON.stringify(serviceWorker.auto);
+    if (typeof config === 'object') {
+        process.env.KOOT_PWA_AUTO_REGISTER = JSON.stringify(config.auto);
         process.env.KOOT_PWA_PATHNAME = JSON.stringify(
-            serviceWorker.pathname ||
-                (serviceWorker.filename ? `/${serviceWorker.filename}` : '')
+            config.pathname ||
+                (config.filename ? `${isSPA ? '' : '/'}${config.filename}` : '')
         );
-        return serviceWorker;
+        process.env.KOOT_PWA_SCOPE = JSON.stringify(config.scope);
+        return config;
     }
 
     process.env.KOOT_PWA_AUTO_REGISTER = JSON.stringify(false);

@@ -38,7 +38,7 @@ const doCorrect = () => {
     // }
 
     if (isSSRCorrected && __SERVER__) return;
-    if (!isSSRCorrected && __SERVER__) {
+    if (!isSSRCorrected && __SERVER__ && getSSRContext().LocaleId) {
         resetLocaleId();
         resetL();
         isSSRCorrected = true;

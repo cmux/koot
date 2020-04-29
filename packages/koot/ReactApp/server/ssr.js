@@ -356,7 +356,7 @@ if (!__DEV__) {
             error: err,
         });
         // console.error(err);
-        throw err;
+        // throw err;
     });
 }
 

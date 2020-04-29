@@ -1,11 +1,14 @@
 const path = require('path');
+const {
+    moduleCssFilenameTest: defaultModuleCssFilenameTest,
+} = require('koot/defaults/koot-config');
 
 module.exports = {
     name: 'Koot Boilerplate',
     template: './src/template.ejs',
     routes: './src/routes',
     redux: {
-        combineReducers: './src/store/reducers'
+        combineReducers: './src/store/reducers',
     },
     aliases: {
         '@src': path.resolve('./src'),
@@ -19,7 +22,7 @@ module.exports = {
         '~base.less': path.resolve('./src/constants/less/base.less'),
         '~Assets': path.resolve('./src/assets'),
         '~/': path.resolve('./src'),
-        react: path.resolve(__dirname, '../../../node_modules/react')
+        react: path.resolve(__dirname, '../../../node_modules/react'),
     },
     staticCopyFrom: path.resolve(__dirname, './public'),
 
@@ -59,6 +62,14 @@ module.exports = {
     classNameHashLength: 10,
     // bundleVersionsKeep: false,
     distClientAssetsDirName: '/\\test-includes\\/',
+    moduleCssFilenameTest: [
+        {
+            test: /^((?!\.g\.).)*/,
+            include: /biz-components/,
+        },
+        defaultModuleCssFilenameTest,
+    ],
+
     // serverPackAll: true,
     // serverPackAll: false,
     // serverless: true,
@@ -84,8 +95,8 @@ module.exports = {
             '/proxy-1': {
                 target: 'https://www.cmcm.com',
                 changeOrigin: true,
-                pathRewrite: { '^/proxy-1': '' }
-            }
-        }
-    }
+                pathRewrite: { '^/proxy-1': '' },
+            },
+        },
+    },
 };

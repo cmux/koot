@@ -16,6 +16,37 @@
     -   小幅优化热更新速度 (移除多余的 `webpack/hot` 和 `webpack-dev-server/client` 引用)
     -   为今后的某项功能做准备，生成路由对象流程现在采用 _Promise_ 方式
 
+## [0.13.22] - 2020-04-29
+
+**koot**
+
+-   优化
+    -   `RUN_FIRST` 入口文件现在不会参与 _Webpack_ 的 _optimization_ 优化流程
+        -   该改动为了减少一些极端情况问题的发生
+
+## [0.13.21] - 2020-04-28
+
+**koot**
+
+-   **新特性**
+    -   **新配置项** `moduleCssFilenameTest` - 现在支持传入 _Array_，另外每一个条目也支持传入结构为 _Webpack_ `module.rule` 的 _Object_。详情请参见文档 [CSS/相关配置](https://koot.js.org/#/css?id=相关配置)
+
+## [0.13.20] - 2020-04-24
+
+**koot**
+
+-   **新特性**
+    -   **新配置项** `serviceWorker.scope` - 自动注册 _Service Worker_ 的作用域。详情请参见文档 [Service Worker/选项](https://koot.js.org/#/pwa?id=service-worker)
+-   优化
+    -   SPA 项目中，默认的 _Service Worker_ 注册流程里，默认请求地址调整为相对路径，`scope` 调整为空
+
+## [0.13.19] - 2020-04-20
+
+**koot**
+
+-   错误修正
+    -   SSR 多语言渲染不正确的一处问题
+
 ## [0.13.18] - 2020-04-17
 
 **koot**

@@ -143,6 +143,7 @@ const plugins = async (
         'KOOT_HTML_TEMPLATE',
         'KOOT_PWA_AUTO_REGISTER',
         'KOOT_PWA_PATHNAME',
+        'KOOT_PWA_SCOPE',
         'KOOT_DEV_START_TIME',
         'KOOT_DEV_DLL_FILE_CLIENT',
         'KOOT_DEV_DLL_FILE_SERVER',

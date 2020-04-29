@@ -1,7 +1,7 @@
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const {
     moduleCssFilenameTest: defaultModuleCssFilenameTest,
-    classNameHashLength: defaultClassNameHashLength
+    classNameHashLength: defaultClassNameHashLength,
 } = require('koot/defaults/koot-config');
 
 /**
@@ -19,7 +19,7 @@ module.exports = (kootBuildConfig = {}) => {
         moduleCssFilenameTest = defaultModuleCssFilenameTest,
         internalLoaderOptions = {},
         classNameHashLength = defaultClassNameHashLength,
-        distClientAssetsDirName
+        distClientAssetsDirName,
     } = kootBuildConfig;
 
     /** @type {Array} rules */
@@ -32,7 +32,7 @@ module.exports = (kootBuildConfig = {}) => {
     // 各 Loader 的规则
     const {
         'less-loader': lessLoaderConfig = {},
-        'sass-loader': sassLoaderConfig = {}
+        'sass-loader': sassLoaderConfig = {},
     } = internalLoaderOptions;
     const useSpCssLoader = {
         loader: require.resolve('../../../loaders/css'),
@@ -45,41 +45,33 @@ module.exports = (kootBuildConfig = {}) => {
                 process.env.WEBPACK_BUILD_TYPE === 'spa' &&
                 distClientAssetsDirName
                     ? `${distClientAssetsDirName}/`
-                    : undefined
-        }
+                    : undefined,
+        },
     };
     const useUniversalAliasLoader = {
         loader: 'universal-alias-loader',
         options: {
-            alias: aliases
-        }
+            alias: aliases,
+        },
     };
     const useLessLoader = {
         loader: 'less-loader',
         options: {
             javascriptEnabled: true,
-            ...lessLoaderConfig
-        }
+            ...lessLoaderConfig,
+        },
     };
     const useSassLoader = {
         loader: 'sass-loader',
         options: {
-            ...sassLoaderConfig
-        }
+            ...sassLoaderConfig,
+        },
     };
     const useLastLoaderForNormal = (() => {
         if (stage !== 'client') return '';
         if (extractCssAllowed) return MiniCssExtractPlugin.loader;
         return 'style-loader';
     })();
-
-    /** @type {Object} 标准 CSS 文件名规则表 */
-    // const testNormal = validateCssFilenameTest(cssTestNormal)
-    /** @type {Object} 组件 CSS 文件名规则表 */
-    const testComponent = validateCssFilenameTest(
-        moduleCssFilenameTest,
-        'component'
-    );
 
     const rulesCSS = [];
     const rulesLESS = [];
@@ -89,7 +81,7 @@ module.exports = (kootBuildConfig = {}) => {
         let use = [
             'postcss-loader',
             // >> LESS / SASS loader inset here <<
-            useUniversalAliasLoader
+            useUniversalAliasLoader,
         ];
 
         switch (type) {
@@ -104,30 +96,30 @@ module.exports = (kootBuildConfig = {}) => {
             }
         }
 
-        use = use.filter(item => !!item);
+        use = use.filter((item) => !!item);
 
         if (typeof tests === 'object') {
-            Object.keys(tests).forEach(key => {
+            Object.keys(tests).forEach((key) => {
                 const useThis = [...use];
                 if (key === 'less') {
                     useThis.splice(useThis.length - 1, 0, useLessLoader);
                     rulesLESS.push({
                         test: tests[key],
                         use: useThis,
-                        ...rule
+                        ...rule,
                     });
                 } else if (key === 'sass') {
                     useThis.splice(useThis.length - 1, 0, useSassLoader);
                     rulesSASS.push({
                         test: tests[key],
                         use: useThis,
-                        ...rule
+                        ...rule,
                     });
                 } else {
                     rulesCSS.push({
                         test: tests[key],
                         use: useThis,
-                        ...rule
+                        ...rule,
                     });
                 }
             });
@@ -138,20 +130,20 @@ module.exports = (kootBuildConfig = {}) => {
                 rulesLESS.push({
                     test: test,
                     use,
-                    ...rule
+                    ...rule,
                 });
             } else if (/\.(scss|sass)/.test(str)) {
                 use.splice(use.length - 1, 0, useSassLoader);
                 rulesSASS.push({
                     test: test,
                     use,
-                    ...rule
+                    ...rule,
                 });
             } else {
                 rulesCSS.push({
                     test: test,
                     use,
-                    ...rule
+                    ...rule,
                 });
             }
         } else if (test) {
@@ -160,20 +152,20 @@ module.exports = (kootBuildConfig = {}) => {
                 rulesLESS.push({
                     test: test,
                     use,
-                    ...rule
+                    ...rule,
                 });
             } else if (/\.(scss|sass)$/.test(test)) {
                 use.splice(use.length - 1, 0, useSassLoader);
                 rulesSASS.push({
                     test: test,
                     use,
-                    ...rule
+                    ...rule,
                 });
             } else {
                 rulesCSS.push({
                     test: test,
                     use,
-                    ...rule
+                    ...rule,
                 });
             }
         } else {
@@ -196,22 +188,60 @@ module.exports = (kootBuildConfig = {}) => {
         tests: {
             css: /\.(component|module)\.css$/,
             less: /\.(component|module)\.less$/,
-            sass: /\.(component|module)\.(scss|sass)$/
+            sass: /\.(component|module)\.(scss|sass)$/,
         },
         include: regExpKootModules,
-        type: 'component'
+        type: 'component',
     });
 
-    // CSS: component
-    validateCssRule({
-        tests: {
-            css: testComponent.css,
-            less: testComponent.less,
-            sass: testComponent.sass
-        },
-        exclude: [/*testNormal.css, */ /node_modules/, regExpKootModules],
-        type: 'component'
-    });
+    // 处理组件 CSS 规则
+    (Array.isArray(moduleCssFilenameTest)
+        ? moduleCssFilenameTest
+        : [moduleCssFilenameTest]
+    )
+        .map((test) => {
+            if (typeof test === 'object' && !(test instanceof RegExp)) {
+                let { exclude } = test;
+                if (!Array.isArray(exclude))
+                    exclude = typeof exclude === 'undefined' ? [] : [exclude];
+                exclude.push(regExpKootModules);
+                test.exclude = exclude;
+                if (typeof test.test !== 'undefined') {
+                    const testComponent = validateCssFilenameTest(
+                        test.test,
+                        'component'
+                    );
+                    delete test.test;
+                    return {
+                        ...test,
+                        tests: {
+                            css: testComponent.css,
+                            less: testComponent.less,
+                            sass: testComponent.sass,
+                        },
+                        type: 'component',
+                    };
+                }
+                return {
+                    ...test,
+                    type: 'component',
+                };
+            }
+            const testComponent = validateCssFilenameTest(test, 'component');
+            return {
+                tests: {
+                    css: testComponent.css,
+                    less: testComponent.less,
+                    sass: testComponent.sass,
+                },
+                exclude: [
+                    /*testNormal.css, */ /node_modules/,
+                    regExpKootModules,
+                ],
+                type: 'component',
+            };
+        })
+        .forEach(validateCssRule);
 
     // CSS: normal
     validateCssRule({
@@ -221,7 +251,7 @@ module.exports = (kootBuildConfig = {}) => {
         //     sass: testNormal.sass,
         // },
         exclude: [/node_modules/, regExpKootModules],
-        type: 'normal'
+        type: 'normal',
     });
 
     //
@@ -229,8 +259,8 @@ module.exports = (kootBuildConfig = {}) => {
     const useLastNormalLoaders = [
         useLastLoaderForNormal,
         'css-loader',
-        'postcss-loader'
-    ].filter(item => !!item);
+        'postcss-loader',
+    ].filter((item) => !!item);
     rules.push({
         test: /\.css$/,
         oneOf: [
@@ -238,9 +268,9 @@ module.exports = (kootBuildConfig = {}) => {
             {
                 include: /node_modules/,
                 exclude: regExpKootModules,
-                use: [...useLastNormalLoaders]
-            }
-        ]
+                use: [...useLastNormalLoaders],
+            },
+        ],
     });
     rules.push({
         test: /\.less$/,
@@ -249,9 +279,9 @@ module.exports = (kootBuildConfig = {}) => {
             {
                 include: /node_modules/,
                 exclude: regExpKootModules,
-                use: [...useLastNormalLoaders, useLessLoader]
-            }
-        ]
+                use: [...useLastNormalLoaders, useLessLoader],
+            },
+        ],
     });
     rules.push({
         test: /\.(scss|sass)$/,
@@ -260,9 +290,9 @@ module.exports = (kootBuildConfig = {}) => {
             {
                 include: /node_modules/,
                 exclude: regExpKootModules,
-                use: [...useLastNormalLoaders, useSassLoader]
-            }
-        ]
+                use: [...useLastNormalLoaders, useSassLoader],
+            },
+        ],
     });
 
     return rules;
@@ -278,7 +308,7 @@ const validateCssFilenameTest = (test, basename = '') => {
         return {
             css: new RegExp(`${regStr}\\.css$`),
             less: new RegExp(`${regStr}\\.less$`),
-            sass: new RegExp(`${regStr}\\.(sass|scss)$`)
+            sass: new RegExp(`${regStr}\\.(sass|scss)$`),
             // less: new RegExp(regStr.replace(/\.css\$$/, '.less$')),
             // sass: new RegExp(regStr.replace(/\.css\$$/, '.(sass|scss)$')),
         };
@@ -288,7 +318,7 @@ const validateCssFilenameTest = (test, basename = '') => {
         return {
             css: test,
             less: test.replace(/\.css/g, '.less'),
-            sass: test.replace(/\.css/g, '.sass')
+            sass: test.replace(/\.css/g, '.sass'),
             // scss: test.replace(/\.css/g, '.scss'),
         };
     }
@@ -296,6 +326,6 @@ const validateCssFilenameTest = (test, basename = '') => {
     return {
         css: new RegExp(`${basename}\\.css$`),
         less: new RegExp(`${basename}\\.less$`),
-        sass: new RegExp(`${basename}\\.(sass|scss)$`)
+        sass: new RegExp(`${basename}\\.(sass|scss)$`),
     };
 };
