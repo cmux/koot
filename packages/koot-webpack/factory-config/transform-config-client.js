@@ -196,14 +196,12 @@ module.exports = async (kootConfigForThisBuild = {}) => {
             result.output = {
                 path: outputPath,
                 publicPath: __clientAssetsPublicPath,
-                filename: analyze
-                    ? `entry-[id]-[name].js`
-                    : configTargetDefaultOutput.filename ||
-                      `entry.[chunkhash].js`,
-                chunkFilename: analyze
-                    ? `chunk-[id]-[name].js`
-                    : configTargetDefaultOutput.chunkFilename ||
-                      `chunk.[chunkhash].js`,
+                filename:
+                    configTargetDefaultOutput.filename ||
+                    `entry.[chunkhash].js`,
+                chunkFilename:
+                    configTargetDefaultOutput.chunkFilename ||
+                    `chunk.[chunkhash].js`,
                 ...(result.output || {}),
             };
             if (result.output.publicPath)
@@ -213,7 +211,10 @@ module.exports = async (kootConfigForThisBuild = {}) => {
             if (ENV === 'dev') {
                 result[keyConfigOutputPathShouldBe] = outputPath;
                 result.output.pathinfo = false;
-            } else {
+            } else if (analyze) {
+                result.output.filename = `entry-[id]-[name].js`;
+                result.output.chunkFilename = `chunk-[id]-[name].js`;
+            } else if (typeof filenamePrefix === 'string') {
                 result.output.filename =
                     filenamePrefix + result.output.filename;
                 result.output.chunkFilename =
