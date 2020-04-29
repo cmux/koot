@@ -1,7 +1,10 @@
+import Button from 'biz-components/components/button';
+
 // Critical 过程
 const doCricital = () => {
     if (window && window.isCriticalInit) return true;
     if (__DEV__) console.log('🚨 Initializing: critical process...');
+    if (__DEV__) console.log(Button);
 
     window.isCriticalInit = true;
 
@@ -20,7 +23,7 @@ const doCricital = () => {
             return [
                 parseInt(v[1], 10),
                 parseInt(v[2], 10),
-                parseInt(v[3] || 0, 10)
+                parseInt(v[3] || 0, 10),
             ];
         }
     };
@@ -79,7 +82,7 @@ const doCricital = () => {
         document.documentElement.classList.add('platform-' + platform);
 
     // 检查客户端兼容性，如果需要，载入兼容性扩展脚本
-    new Promise(resolve => {
+    new Promise((resolve) => {
         if (typeof Object.assign !== 'function') {
             if (__DEV__)
                 console.log(
@@ -102,11 +105,11 @@ const doCricital = () => {
         .then(() => {
             if (__DEV__) console.log('🚨 Complete: critical process!');
         })
-        .catch(err => window.onInitError(err));
+        .catch((err) => window.onInitError(err));
     // .then(() => window.importJS(window.__CLIENT_FILENAME__))
 
     // DOM ready 时
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         // 检查 WebP 支持
         const canUseWebP = () => {
             var elem = document.createElement('canvas');
@@ -138,7 +141,7 @@ const doCricital = () => {
         // 利用 pointer event 判断当前是否为 hover
         if (window.PointerEvent) {
             // document.documentElement.classList.add('is-hover')
-            document.documentElement.addEventListener('pointerenter', evt => {
+            document.documentElement.addEventListener('pointerenter', (evt) => {
                 if (evt.pointerType === 'mouse' || evt.pointerType === 'pen')
                     document.documentElement.classList.add('is-hover');
                 else document.documentElement.classList.remove('is-hover');
