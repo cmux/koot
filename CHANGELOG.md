@@ -1,8 +1,15 @@
 ## [Unreleased]
 
+## [0.13.23] - 2020-05-11
+
+**koot-webpack**
+
+-   优化
+    -   `hard-source-webpack-plugin` 改为使用 `hard-source-webpack-plugin-fixed-hashbug`，以解决打包时偶发的缓存 hash 错误现象 ([#241](https://github.com/cmux/koot/issues/241))
+
 ## [0.13.22] - 2020-04-29
 
-**koot**
+**koot-webpack**
 
 -   优化
     -   `RUN_FIRST` 入口文件现在不会参与 _Webpack_ 的 _optimization_ 优化流程
