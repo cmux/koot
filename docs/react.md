@@ -142,12 +142,12 @@ import styles from './styles.less';
     // pageinfo 使用 Object 方式
     pageinfo: {
         title: __('pages.home.title'),
-        metas: [{ description: __('pages.home.description') }]
+        metas: [{ name: 'description', content : __('pages.home.description') }]
     },
     // pageinfo 使用 Function 方式
     pageinfo: (state, renderProps) => ({
         title: __('pages.home.title'),
-        metas: [{ description: __('pages.home.description') }]
+        metas: [{ name: 'description', content : __('pages.home.description') }]
     }),
 
     // data 使用 Object 方式
