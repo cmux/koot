@@ -2,7 +2,8 @@ const fs = require('fs-extra');
 const path = require('path');
 const webpack = require('webpack');
 const findCacheDir = require('find-cache-dir');
-const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
+// const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
+const HardSourceWebpackPlugin = require('hard-source-webpack-plugin-fixed-hashbug'); // 3rd-party-fix
 
 const {
     keyConfigBuildDll,
@@ -11,7 +12,7 @@ const {
     keyConfigWebpackSPATemplateInject,
     keyConfigWebpackSPAServer,
     WEBPACK_OUTPUT_PATH,
-    buildManifestFilename
+    buildManifestFilename,
 } = require('koot/defaults/before-build');
 const getDirDevDll = require('koot/libs/get-dir-dev-dll');
 
@@ -136,7 +137,7 @@ const validate = (config, kootConfigForThisBuild, index = 0) => {
  */
 const validatePlugins = (config, kootConfigForThisBuild = {}) => {
     const {
-        WEBPACK_BUILD_ENV: ENV
+        WEBPACK_BUILD_ENV: ENV,
         // WEBPACK_BUILD_STAGE: STAGE,
     } = process.env;
 
@@ -154,7 +155,7 @@ const validatePlugins = (config, kootConfigForThisBuild = {}) => {
                 new webpack.DllReferencePlugin({
                     // context: path.resolve(__dirname, '../../../../'),
                     // scope: match[1],
-                    manifest: file
+                    manifest: file,
                 })
             );
         }
@@ -178,7 +179,7 @@ const validatePlugins = (config, kootConfigForThisBuild = {}) => {
 
     // 清除 plugins 中的空项和非法项
     config.plugins = config.plugins.filter(
-        plugin => typeof plugin !== 'undefined' && plugin !== null
+        (plugin) => typeof plugin !== 'undefined' && plugin !== null
     );
 
     // 添加缓存插件
@@ -193,7 +194,7 @@ const validatePlugins = (config, kootConfigForThisBuild = {}) => {
             new HardSourceWebpackPlugin({
                 cacheDirectory: findCacheDir({
                     name: 'koot-webpack',
-                    thunk: true
+                    thunk: true,
                 })(
                     `hard/${process.env.WEBPACK_BUILD_TYPE}` +
                         `.${process.env.WEBPACK_BUILD_ENV}` +
@@ -201,7 +202,7 @@ const validatePlugins = (config, kootConfigForThisBuild = {}) => {
                         (kootConfigForThisBuild.createDll ? '.dll' : '') +
                         `/[confighash]`
                 ),
-                configHash: function(webpackConfig) {
+                configHash: function (webpackConfig) {
                     return require('node-object-hash')({ sort: false }).hash(
                         // ...kootConfigForThisBuild,
                         // ...JSON.parse(
@@ -216,33 +217,33 @@ const validatePlugins = (config, kootConfigForThisBuild = {}) => {
                 },
                 info: {
                     mode: 'none',
-                    level: 'error'
-                }
+                    level: 'error',
+                },
             })
         );
         const ignores = [
             {
-                test: /mini-css-extract-plugin[\\/]dist[\\/]loader/
+                test: /mini-css-extract-plugin[\\/]dist[\\/]loader/,
             },
             {
-                test: /file-loader/
+                test: /file-loader/,
             },
             {
-                test: new RegExp(buildManifestFilename.replace(/\./g, '\\.'))
+                test: new RegExp(buildManifestFilename.replace(/\./g, '\\.')),
             },
             {
-                test: /koot[\\/]ReactSPA[\\/].+/
-            }
+                test: /koot[\\/]ReactSPA[\\/].+/,
+            },
         ];
         if (process.env.WEBPACK_BUILD_STAGE === 'server') {
             // ignores.push({
             //     test: /koot[\\/].+?[\\/]server[\\/](run|ssr)\.(j|t)s(x|$)/
             // });
             ignores.push({
-                test: /koot[\\/]/
+                test: /koot[\\/]/,
             });
             ignores.push({
-                test: /koot-webpack[\\/]/
+                test: /koot-webpack[\\/]/,
             });
         }
         config.plugins.push(
@@ -271,7 +272,7 @@ const validateModuleRules = (config, kootConfigForThisBuild = {}) => {
             //         return rule
             //     })
             // })()
-            return list.filter(rule => !!rule);
+            return list.filter((rule) => !!rule);
         }
     }
 
@@ -282,7 +283,7 @@ const validateModuleRules = (config, kootConfigForThisBuild = {}) => {
                 const segs = loader.split('?');
                 loader = segs[0];
                 options = {};
-                segs[1].split('&').forEach(pair => {
+                segs[1].split('&').forEach((pair) => {
                     const [key, value] = pair.split('=');
                     options[key] = value;
                 });
@@ -321,7 +322,7 @@ const validateModuleRules = (config, kootConfigForThisBuild = {}) => {
             }
             return { loader, options };
         };
-        const validateRule = rule => {
+        const validateRule = (rule) => {
             if (typeof rule.loader === 'string') {
                 const { loader, options } = validateLoader(
                     rule.loader,
@@ -330,7 +331,7 @@ const validateModuleRules = (config, kootConfigForThisBuild = {}) => {
                 rule.loader = loader;
                 rule.options = options;
             } else if (Array.isArray(rule.use)) {
-                rule.use = rule.use.map(use => {
+                rule.use = rule.use.map((use) => {
                     if (typeof use === 'string') {
                         return validateLoader(use);
                     } else if (typeof use === 'object') {
@@ -344,9 +345,9 @@ const validateModuleRules = (config, kootConfigForThisBuild = {}) => {
                 rule.use = validateLoader(rule.use.loader, rule.use.options);
             }
         };
-        config.module.rules.forEach(rule => {
+        config.module.rules.forEach((rule) => {
             if (Array.isArray(rule.oneOf)) {
-                rule.oneOf.forEach(thisRule => validateRule(thisRule));
+                rule.oneOf.forEach((thisRule) => validateRule(thisRule));
             } else {
                 validateRule(rule);
             }
