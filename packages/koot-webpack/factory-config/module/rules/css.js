@@ -54,13 +54,38 @@ module.exports = (kootBuildConfig = {}) => {
             alias: aliases,
         },
     };
-    const useLessLoader = {
-        loader: 'less-loader',
-        options: {
-            javascriptEnabled: true,
+    const useLessLoader = (() => {
+        const options = {
+            lessOptions: {
+                javascriptEnabled: true,
+            },
             ...lessLoaderConfig,
-        },
-    };
+        };
+
+        // 兼容处理: less-loader v6 - less 配置移动到 lessOptions 中
+        // https://github.com/webpack-contrib/less-loader/issues/350
+        const {
+            lessOptions,
+            prependData,
+            appendData,
+            sourceMap,
+            implementation,
+            ...rest
+        } = options;
+        for (const [key, value] of Object.entries(rest))
+            lessOptions[key] = value;
+
+        return {
+            loader: 'less-loader',
+            options: {
+                lessOptions,
+                prependData,
+                appendData,
+                sourceMap,
+                implementation,
+            },
+        };
+    })();
     const useSassLoader = {
         loader: 'sass-loader',
         options: {

@@ -3,7 +3,7 @@ const path = require('path');
 const webpack = require('webpack');
 const findCacheDir = require('find-cache-dir');
 // const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
-const HardSourceWebpackPlugin = require('hard-source-webpack-plugin-fixed-hashbug'); // 3rd-party-fix
+const HardSourceWebpackPlugin = require('@diablohu/hard-source-webpack-plugin'); // unofficial patch
 
 const {
     keyConfigBuildDll,
