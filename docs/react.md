@@ -122,18 +122,18 @@ import styles from './styles.less';
 
 @extend({
     // connect 仅传入第一个参数
-    connect: state => ({
-        user: state.user || {}
+    connect: (state) => ({
+        user: state.user || {},
     }),
     // connect 传入多个参数
     connect: [
-        state => ({
-            user: state.user || {}
+        (state) => ({
+            user: state.user || {},
         }),
         (dispatch, ownProps) => ({
             getUserData: () =>
-                dispatch({ type: 'GET_USER_DATA', id: ownProps.id })
-        })
+                dispatch({ type: 'GET_USER_DATA', id: ownProps.id }),
+        }),
     ],
 
     //
@@ -142,12 +142,12 @@ import styles from './styles.less';
     // pageinfo 使用 Object 方式
     pageinfo: {
         title: __('pages.home.title'),
-        metas: [{ description: __('pages.home.description') }]
+        metas: [{ name: 'description', content: __('pages.home.description') }],
     },
     // pageinfo 使用 Function 方式
     pageinfo: (state, renderProps) => ({
         title: __('pages.home.title'),
-        metas: [{ description: __('pages.home.description') }]
+        metas: [{ name: 'description', content: __('pages.home.description') }],
     }),
 
     // data 使用 Object 方式
@@ -160,7 +160,7 @@ import styles from './styles.less';
                 typeof renderProps.user === 'object' &&
                 typeof renderProps.user.id !== 'undefined'
             );
-        }
+        },
     },
     // data 使用 Function 方式
     data: (state, renderProps, dispatch) => {
@@ -170,7 +170,7 @@ import styles from './styles.less';
     // 不进行 SSR
     ssr: false,
     // SSR 时渲染该组件
-    ssr: <div>Loading...</div>
+    ssr: <div>Loading...</div>,
 })
 class HomePage extends React.Component {
     // ...
