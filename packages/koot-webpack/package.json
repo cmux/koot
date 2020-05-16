@@ -46,7 +46,7 @@
         "babel-loader": "^8.1.0",
         "cache-loader": "^4.1.0",
         "compression-webpack-plugin": "^4.0.0",
-        "copy-webpack-plugin": "^6.0.0",
+        "copy-webpack-plugin": "^6.0.1",
         "css-loader": "^3.5.3",
         "extract-hoc": "^0.0.5",
         "less": "^3.11.1",
