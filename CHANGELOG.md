@@ -6,6 +6,7 @@
 
 -   优化
     -   `hard-source-webpack-plugin` 改为使用 `hard-source-webpack-plugin-fixed-hashbug`，以解决打包时偶发的缓存 hash 错误现象 ([#241](https://github.com/cmux/koot/issues/241))
+    -   SPA 项目页面中现在会加入跳转到其他语种的链接的 `<meta>` 标签
 
 ## [0.13.22] - 2020-04-29
 
