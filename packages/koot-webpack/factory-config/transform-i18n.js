@@ -2,6 +2,7 @@
 const path = require('path');
 // const chalk = require('chalk')
 const getCwd = require('koot/utils/get-cwd');
+const defaults = require('koot/defaults/i18n');
 
 /**
  * 处理 i18n 配置。以下内容写入环境变量
@@ -18,7 +19,7 @@ module.exports = async ({ dist, i18n }) => {
     const {
         WEBPACK_BUILD_TYPE: TYPE,
         WEBPACK_BUILD_ENV: ENV,
-        WEBPACK_BUILD_STAGE: STAGE
+        WEBPACK_BUILD_STAGE: STAGE,
         // WEBPACK_ANALYZE,
         // SERVER_DOMAIN,
         // SERVER_PORT,
@@ -30,7 +31,7 @@ module.exports = async ({ dist, i18n }) => {
             if (ENV === 'dev') return 'store';
             return 'default';
         })();
-        let expr = '__';
+        let expr = defaults.expr;
         let locales;
         let cookieKey;
         let domain;
@@ -56,7 +57,7 @@ module.exports = async ({ dist, i18n }) => {
         if (type.toLowerCase() === 'redux') type = 'store';
         type = type.toLowerCase();
 
-        locales.forEach(arr => {
+        locales.forEach((arr) => {
             if (arr[2]) return;
             const file = path.resolve(getCwd(), arr[1]);
             arr[1] = {};
@@ -88,7 +89,7 @@ module.exports = async ({ dist, i18n }) => {
         i18n = {
             type,
             expr,
-            locales
+            locales,
         };
 
         return i18n;

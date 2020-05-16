@@ -72,6 +72,7 @@ class App extends React.Component {
         // console.log((typeof Store === 'undefined' ? `\x1b[31m×\x1b[0m` : `\x1b[32m√\x1b[0m`) + ' Store in [App] render')
 
         const serverStartTime = getStore().__kootTestServerStartTime;
+        const pathnameTestImg = __('test_img');
 
         return (
             <React.StrictMode>
@@ -82,7 +83,7 @@ class App extends React.Component {
                 <Debug />
                 <SSR />
                 <div className={componentClassName + '-hidden'}>
-                    {!__SPA__ && (
+                    {/\./.test(pathnameTestImg) && (
                         <img
                             id="__test-translate-in-require"
                             // src={require(__('test_img'))}

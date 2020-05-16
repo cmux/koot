@@ -3,37 +3,37 @@ import { extend } from 'koot';
 
 import Link from '@components/link';
 
-const Nav = props => {
+const Nav = (props) => {
     // console.log('Nav render', {
     //     'in __KOOT_SSR__': __KOOT_SSR__.LocaleId
     // });
     const items = [
         {
-            title: __SPA__ ? '首页' : __('pages.home.title'),
-            to: '/'
+            title: __('pages.home.title'),
+            to: '/',
         },
         {
-            title: __SPA__ ? '静态资源' : __('pages.static.title'),
-            to: '/static'
+            title: __('pages.static.title'),
+            to: '/static',
         },
         {
-            title: __SPA__ ? '延迟渲染' : __('pages.delayed.title'),
-            to: '/delayed'
+            title: __('pages.delayed.title'),
+            to: '/delayed',
         },
         {
             title: 'TypeScript',
-            to: '/ts'
+            to: '/ts',
         },
         {
             title: 'test: modify state',
-            to: '/test-modify-state'
-        }
+            to: '/test-modify-state',
+        },
     ];
 
     if (!__SPA__)
         items.splice(1, 0, {
             title: __('pages.extend.title'),
-            to: '/extend'
+            to: '/extend',
         });
 
     return (
@@ -54,5 +54,5 @@ const Nav = props => {
 
 export default extend({
     styles: require('./styles.less'),
-    name: 'Nav'
+    name: 'Nav',
 })(Nav);

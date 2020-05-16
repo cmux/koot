@@ -16,6 +16,7 @@ const getChunkmap = require('koot/utils/get-chunkmap');
 const getDirDistPublic = require('koot/libs/get-dir-dist-public');
 const validateTemplate = require('koot/libs/validate-template');
 const getSpaLocaleFileId = require('koot/libs/get-spa-locale-file-id');
+const generateHtmlRedirectMetas = require('koot/i18n/generate-html-redirect-metas');
 
 const newCompilationFileDependency = require('../libs/new-compilation-file-dependency');
 
@@ -42,7 +43,7 @@ class SpaTemplatePlugin {
             inject,
             template,
             serviceWorkerPathname,
-            locales
+            locales,
         } = this;
 
         const filename = `index${localeId ? `.${localeId}` : ''}.html`;
@@ -55,14 +56,14 @@ class SpaTemplatePlugin {
             compiler.hooks.compilation.tap(
                 'SpaTemplatePlugin',
                 (compilation, { normalModuleFactory }) => {
-                    const handler = parser => {
+                    const handler = (parser) => {
                         // for (let key in parser.hooks) console.log(key)
 
                         parser.hooks.varDeclaration
                             .for('template')
-                            .tap('SpaTemplatePlugin', function(/*node*/) {
+                            .tap('SpaTemplatePlugin', function (/*node*/) {
                                 // console.log(node)
-                                compilation.modules.forEach(m => {
+                                compilation.modules.forEach((m) => {
                                     if (
                                         typeof m.resource === 'string' &&
                                         typeof m._source === 'object' &&
@@ -139,7 +140,7 @@ class SpaTemplatePlugin {
 
             const {
                 '.files': filemap,
-                '.entrypoints': entrypoints
+                '.entrypoints': entrypoints,
                 // 'service-worker': serviceWorker
             } = getChunkmap(localeId, false, true);
 
@@ -171,7 +172,7 @@ class SpaTemplatePlugin {
             const defaultInject = (() => {
                 switch (appType) {
                     case 'ReactSPA': {
-                        return require(`koot/ReactSPA/inject`)({
+                        const inject = require(`koot/ReactSPA/inject`)({
                             filemap,
                             compilation,
                             entrypoints,
@@ -191,8 +192,9 @@ class SpaTemplatePlugin {
                                 : undefined,
                             needInjectCritical: require(`koot/React/inject/is-need-inject-critical`)(
                                 templateStr
-                            )
+                            ),
                         });
+                        return inject;
                     }
                     default: {
                     }
@@ -205,7 +207,7 @@ class SpaTemplatePlugin {
                 if (!inject) return {};
                 if (typeof inject !== 'string') return {};
                 if (!fs.existsSync(inject)) return {};
-                return (thisModule => {
+                return ((thisModule) => {
                     if (typeof thisModule.default === 'object')
                         return thisModule.default;
                     if (typeof thisModule === 'object') return thisModule;
@@ -219,14 +221,19 @@ class SpaTemplatePlugin {
                 );
             })();
 
+            const thisInject = {
+                ...defaultInject,
+                ...projectInject,
+            };
+            if (isI18nEnabled)
+                thisInject.metas += generateHtmlRedirectMetas({
+                    availableLocaleIds: locales.map(([localeId]) => localeId),
+                });
             const html = renderTemplate({
                 template: templateStr,
-                inject: {
-                    ...defaultInject,
-                    ...projectInject
-                },
+                inject: thisInject,
                 compilation,
-                localeId
+                localeId,
             });
 
             newCompilationFileDependency(compilation, filename, html);
@@ -268,7 +275,7 @@ class SpaTemplatePlugin {
                             chalk.green('√ ') +
                                 chalk.yellowBright('[koot/build] ') +
                                 __('build.spa_template_emitted', {
-                                    file: chalk.green(`/${filename}`)
+                                    file: chalk.green(`/${filename}`),
                                 })
                         );
                     }
