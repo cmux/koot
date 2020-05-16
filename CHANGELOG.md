@@ -17,6 +17,13 @@
     -   小幅优化热更新速度 (移除多余的 `webpack/hot` 和 `webpack-dev-server/client` 引用)
     -   为今后的某项功能做准备，生成路由对象流程现在采用 _Promise_ 方式
 
+**koot-webpack**
+
+-   **重大改动**
+    -   更新依赖包 **major** 版本号
+        -   `compression-webpack-plugin` -> _^4.0.0_
+        -   `copy-webpack-plugin` -> _^6.0.0_
+
 ## [0.13.23] - 2020-05-11
 
 **koot-webpack**

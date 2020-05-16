@@ -4,10 +4,11 @@ const webpack = require('webpack');
 const DefaultWebpackConfig = require('webpack-config').default;
 // const ExtraWatchWebpackPlugin = require('extra-watch-webpack-plugin').default
 
-const CopyWebpackPlugin = require('copy-webpack-plugin');
 const KootI18nPlugin = require('../plugins/i18n');
 const DevModePlugin = require('../plugins/dev-mode');
 const ModifyServerBundlePlugin = require('../plugins/modify-server-bundle');
+
+const newPluginCopyWebpack = require('../libs/new-plugin-copy');
 
 const {
     keyConfigBuildDll,
@@ -119,7 +120,7 @@ module.exports = async (kootBuildConfig = {}) => {
 
     if (i18n && Array.isArray(i18n.locales) && i18n.locales.length > 0) {
         result.plugins.push(
-            new CopyWebpackPlugin(
+            newPluginCopyWebpack(
                 i18n.locales.map((arr) => {
                     return {
                         from: arr[2],
@@ -257,7 +258,7 @@ module.exports = async (kootBuildConfig = {}) => {
             if (ENV === 'dev') {
                 if (Array.isArray(staticAssets))
                     config.plugins.push(
-                        new CopyWebpackPlugin(
+                        newPluginCopyWebpack(
                             staticAssets.map((from) => ({
                                 from,
                                 to: path.relative(

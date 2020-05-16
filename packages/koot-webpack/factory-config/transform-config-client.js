@@ -3,7 +3,6 @@ const path = require('path');
 const webpack = require('webpack');
 const DefaultWebpackConfig = require('webpack-config').default;
 
-const CopyWebpackPlugin = require('copy-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const KootI18nPlugin = require('../plugins/i18n');
@@ -11,6 +10,9 @@ const DevModePlugin = require('../plugins/dev-mode');
 const SpaTemplatePlugin = require('../plugins/spa-template');
 const GenerateChunkmapPlugin = require('../plugins/generate-chunkmap');
 const CreateGeneralCssBundlePlugin = require('../plugins/create-general-css-bundle');
+
+const newPluginWorkbox = require('../libs/new-plugin-workbox');
+const newPluginCopyWebpack = require('../libs/new-plugin-copy');
 
 const {
     keyConfigBuildDll,
@@ -31,7 +33,6 @@ const createTargetDefaultConfig = require('./create-target-default');
 const transformConfigExtendDefault = require('./transform-config-extend-default');
 const transformConfigLast = require('./transform-config-last');
 const transformOutputPublicpath = require('./transform-output-publicpath');
-const newPluginWorkbox = require('../libs/new-plugin-workbox');
 
 const getCwd = require('koot/utils/get-cwd');
 // const getWDSport = require('koot/utils/get-webpack-dev-server-port');
@@ -432,7 +433,7 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                     !index
                 ) {
                     result.plugins.push(
-                        new CopyWebpackPlugin(
+                        newPluginCopyWebpack(
                             staticAssets.map((from) => ({
                                 from,
                                 to:
