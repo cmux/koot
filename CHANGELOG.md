@@ -22,7 +22,7 @@
 -   **重大改动**
     -   更新依赖包 **major** 版本号
         -   `compression-webpack-plugin` -> _^4.0.0_
-        -   `copy-webpack-plugin` -> _^6.0.0_
+        -   `copy-webpack-plugin` -> _^6.0.1_
 
 ## [0.13.23] - 2020-05-11
 
