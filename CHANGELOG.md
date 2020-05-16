@@ -24,6 +24,13 @@
         -   `compression-webpack-plugin` -> _^4.0.0_
         -   `copy-webpack-plugin` -> _^6.0.1_
 
+## [0.13.24] - 2020-05-17
+
+**koot-webpack**
+
+-   优化
+    -   SPA 项目页面中现在会加入跳转到其他语种的链接的 `<meta>` 标签
+
 ## [0.13.23] - 2020-05-11
 
 **koot-webpack**

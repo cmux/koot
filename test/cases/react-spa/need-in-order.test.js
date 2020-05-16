@@ -20,7 +20,7 @@ const postcss = require('postcss');
 const {
     chunkNameExtractCss,
     chunkNameExtractCssForImport,
-    buildManifestFilename
+    buildManifestFilename,
 } = require('koot/defaults/before-build');
 const terminate = require('../../libs/terminate-process');
 const waitForPort = require('../../libs/get-port-from-child-process');
@@ -30,7 +30,8 @@ const checkDistRootFiles = require('../../general-tests/check-dist-root-files');
 const {
     requestHidden404: testRequestHidden404,
     criticalAssetsShouldBeGzip: testAssetsGzip,
-    clientLifecycles: testClientLifecycles
+    clientLifecycles: testClientLifecycles,
+    i18n: testI18n,
 } = require('../puppeteer-test');
 
 //
@@ -44,7 +45,7 @@ const postcssTransformDeclUrls = require('../../../packages/koot-webpack/postcss
 const projects = require('../../projects/get')();
 
 const projectsToUse = projects.filter(
-    project =>
+    (project) =>
         // Array.isArray(project.type) && project.type.includes('react-isomorphic')
         project.name === 'standard'
 );
@@ -67,7 +68,7 @@ const addCommand = async (name, command, cwd) => {
     // if (!p.scripts[name])
     p.scripts[name] = command;
     await fs.writeJson(pathPackage, p, {
-        spaces: 4
+        spaces: 4,
     });
 };
 
@@ -77,7 +78,7 @@ const addCommand = async (name, command, cwd) => {
  * @param {String} cpd Current Project Directory
  * @param {String} dist
  */
-const beforeTest = async cpd => {
+const beforeTest = async (cpd) => {
     await removeTempProjectConfig(cpd);
 };
 
@@ -133,7 +134,7 @@ const testFull = (dir, configFileName) => {
             const { /*stdout,*/ stderr } = await exec(
                 `npm run ${commandName}`,
                 {
-                    cwd: dir
+                    cwd: dir,
                 }
             );
 
@@ -169,7 +170,7 @@ const testFull = (dir, configFileName) => {
                 // 测试 CSS 内容
                 const root = postcss.parse(content);
                 const regExpPublicPath = /^includes\//g;
-                postcssTransformDeclUrls(root, url => {
+                postcssTransformDeclUrls(root, (url) => {
                     expect(regExpPublicPath.test(url)).toBe(
                         shouldHasPublicPath
                     );
@@ -217,7 +218,7 @@ const testFull = (dir, configFileName) => {
                 dist,
                 env: 'prod',
                 type: 'spa',
-                serverMode: undefined
+                serverMode: undefined,
             });
             await testFilesFromChunkmap(dist, false);
         });
@@ -230,20 +231,20 @@ const testFull = (dir, configFileName) => {
             const errors = [];
 
             const browser = await puppeteer.launch({
-                headless: true
+                headless: true,
             });
             const context = await browser.createIncognitoBrowserContext();
 
-            const testSpaServer = async cwd => {
+            const testSpaServer = async (cwd) => {
                 // console.log({
                 //     command: `node ${fileServerJS}`,
                 //     cwd
                 // });
                 const child = execSync(`node ${fileServerJS}`, {
-                    cwd
+                    cwd,
                 });
                 const errors = [];
-                child.stderr.on('data', err => {
+                child.stderr.on('data', (err) => {
                     errors.push(err);
                 });
 
@@ -260,7 +261,7 @@ const testFull = (dir, configFileName) => {
                 );
 
                 const res = await page.goto(origin, {
-                    waitUntil: 'networkidle0'
+                    waitUntil: 'networkidle0',
                 });
                 const html = await res.text();
 
@@ -277,49 +278,39 @@ const testFull = (dir, configFileName) => {
                 if (failedResponse.length) {
                     console.log(
                         'failedResponse',
-                        failedResponse.map(res => ({
+                        failedResponse.map((res) => ({
                             status: res.status(),
-                            url: res.url()
+                            url: res.url(),
                         }))
                     );
                 }
                 expect(failedResponse.length).toBe(0);
                 if (errors.length) {
-                    errors.forEach(e => console.error(e));
+                    errors.forEach((e) => console.error(e));
                 }
                 expect(errors.length).toBe(0);
 
                 // 测试: 多语言
                 if (config.i18n) {
-                    const getLocaleId = async targetId => {
-                        const context = await browser.createIncognitoBrowserContext();
-                        const page = await context.newPage();
-                        await page.goto(`${origin}?hl=${targetId}`, {
-                            waitUntil: 'networkidle0'
-                        });
-                        const localeId = await page.evaluate(
-                            () =>
-                                document.querySelector('#page-home-body > p')
-                                    .innerText
-                        );
-                        await page.close();
-                        await context.close();
-
-                        return localeId;
-                    };
-                    expect(await getLocaleId('zh-tw')).toBe('zh-tw');
-                    expect(await getLocaleId('en')).toBe('en');
-                    expect(await getLocaleId('ja')).toBe('zh');
+                    await testI18n({
+                        browser,
+                        origin,
+                        i18n: config.i18n,
+                        isDev: false,
+                        isSPA: true,
+                        cwd: dir,
+                        dist,
+                    });
                 }
 
                 // 结束测试
                 await terminate(child.pid);
             };
 
-            await testSpaServer(dir).catch(e => {
+            await testSpaServer(dir).catch((e) => {
                 errors.push(e);
             });
-            await testSpaServer(dist).catch(e => {
+            await testSpaServer(dist).catch((e) => {
                 errors.push(e);
             });
 
@@ -329,7 +320,7 @@ const testFull = (dir, configFileName) => {
             await browser.close();
 
             if (errors.length) {
-                errors.forEach(e => console.error(e));
+                errors.forEach((e) => console.error(e));
             }
 
             expect(errors.length).toBe(0);
