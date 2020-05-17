@@ -57,9 +57,9 @@ const cheerio = require('cheerio');
 
 // Import local scripts =======================================================
 
-const {
-    buildManifestFilename,
-} = require('../../../packages/koot/defaults/before-build');
+// const {
+//     buildManifestFilename,
+// } = require('../../../packages/koot/defaults/before-build');
 const {
     changeLocaleQueryKey,
     sessionStoreKey,
@@ -498,74 +498,6 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
             const SSRState = await getSSRState(page);
             expect(SSRState.kootTest.testNeedEncode).toBe('test</script>');
         }
-    }
-
-    // 测试: 到其他语种的链接
-    {
-        await breath();
-
-        const testLinksToOtherLang = async (
-            toLocaleId = '',
-            urlAppend = ''
-        ) => {
-            const gotoUrl = getHref(urlAppend, toLocaleId);
-            await page.goto(gotoUrl, {
-                waitUntil: defaultWaitUtil,
-            });
-
-            const localeId = await page.evaluate(() =>
-                document
-                    .querySelector('meta[name="koot-locale-id"]')
-                    .getAttribute('content')
-            );
-            const linksToOtherLang = await page.$$eval(
-                `link[rel="alternate"][hreflang][href]:not([hreflang="${localeId}"])`,
-                (els) =>
-                    Array.from(els).map((el) => ({
-                        lang: el.getAttribute('hreflang'),
-                        href: el.getAttribute('href'),
-                    }))
-            );
-            /** @type {Object[]} */
-            const linksToSameLang = await page.$$eval(
-                `link[rel="alternate"][hreflang="${localeId}"][href]`,
-                (els) =>
-                    Array.from(els).map((el) => ({
-                        lang: el.getAttribute('hreflang'),
-                        href: el.getAttribute('href'),
-                    }))
-            );
-
-            expect(linksToSameLang.length).toBe(0);
-            expect(Array.isArray(linksToOtherLang)).toBe(true);
-            expect(linksToOtherLang.length).toBeGreaterThan(0);
-
-            for (const o of linksToOtherLang) {
-                const { lang, href } = o;
-                await page.goto(href, {
-                    waitUntil: 'networkidle0',
-                });
-                const localeId = await page.evaluate(() =>
-                    document
-                        .querySelector('meta[name="koot-locale-id"]')
-                        .getAttribute('content')
-                );
-                // console.log({
-                //     toLocaleId,
-                //     urlAppend,
-                //     lang,
-                //     href,
-                //     localeId
-                // });
-                expect(lang).toBe(localeId);
-            }
-        };
-        await testLinksToOtherLang();
-        await testLinksToOtherLang(`zh`);
-        await testLinksToOtherLang(`zh-tw`);
-        await testLinksToOtherLang('', '?test=a');
-        await testLinksToOtherLang('zh', '?test=a');
-        await testLinksToOtherLang('zh-tw', '?test=a');
     }
 
     // 测试: 并发请求 state 是否正确

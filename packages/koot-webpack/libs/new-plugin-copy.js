@@ -1,4 +1,4 @@
-const fs = require('fs-extra');
+// const fs = require('fs-extra');
 const path = require('path');
 const merge = require('lodash/merge');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
@@ -35,12 +35,12 @@ const newPluginCopyWebpack = (...args) => {
         }
 
         if (typeof thisPattern.from === 'string') {
-            thisPattern.from = thisPattern.from.replace(/\\/g, '/');
             if (path.isAbsolute(thisPattern.from)) {
-                if (fs.lstatSync(thisPattern.from).isDirectory())
-                    thisPattern.from =
-                        thisPattern.from.replace(/\\/g, '/') + '/**/*';
+                // if (fs.lstatSync(thisPattern.from).isDirectory())
+                //     thisPattern.from =
+                //         thisPattern.from.replace(/\\/g, '/') + '/**/*';
             } else {
+                thisPattern.from = thisPattern.from.replace(/\\/g, '/');
             }
         }
         if (!thisPattern.to) delete thisPattern.to;

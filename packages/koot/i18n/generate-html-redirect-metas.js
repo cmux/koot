@@ -26,6 +26,7 @@ const generateHtmlRedirectMetas = ({
         querystring = '',
     } = ctx;
     const isUseRouter = use === 'router';
+    const isUseSubdomain = use === 'subdomain';
 
     let html = availableLocaleIds //getLocaleIds()
         .filter((thisLocaleId) => thisLocaleId !== localeId)
@@ -39,6 +40,11 @@ const generateHtmlRedirectMetas = ({
                         .replace(new RegExp(`^${origin}`), '')
                         .replace(new RegExp(`^${localeId}`), l)
                         .replace(new RegExp(`^/${localeId}`), '/' + l);
+            } else if (isUseSubdomain) {
+                thisHref = href.replace(
+                    new RegExp(`://${localeId}.`),
+                    `://${l}.`
+                );
             } else {
                 thisHref = (() => {
                     if (query[changeLocaleQueryKey] === '') {
