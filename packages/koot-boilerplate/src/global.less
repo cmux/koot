@@ -47,6 +47,8 @@ html {
 body {
     font-size: @base-font-size;
     line-height: 1.5em;
+    /* https://hugogiraudel.com/2020/05/18/using-calc-to-figure-out-optimal-line-height/ */
+    line-height: calc(2px + 2ex + 2px);
     min-height: 100vh;
     min-height: -webkit-fill-available;
 }
