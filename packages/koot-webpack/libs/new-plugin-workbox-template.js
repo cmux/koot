@@ -24,7 +24,7 @@ const isKootAppDevEnv = self.__koot.env.WEBPACK_BUILD_ENV === 'dev';
 
 // Commons ====================================================================
 
-const getRoute = pathname => {
+const getRoute = (pathname, addScope = false) => {
     const host = (location.host || location.hostname)
         .split('.')
         .reverse()
@@ -33,8 +33,8 @@ const getRoute = pathname => {
         .join('.');
 
     let p = pathname
-        ? `/${pathname.substr(0, 1) === '/' ? pathname.substr(1) : pathname}`
-        : '';
+        ? `${addScope ? self.__koot.scope : '/'}${pathname.substr(0, 1) === '/' ? pathname.substr(1) : pathname}`
+        : `${addScope ? self.__koot.scope : ''}`;
     p = p.replace(/\//g, '\\/');
 
     const suffix = !p ? '' : /\\\/$/.test(p) ? `(\\/|\\?.*|$)` : `(\\?.*|$)`;
@@ -70,15 +70,15 @@ if (!isKootAppDevEnv) {
         ...self.__WB_MANIFEST
     ]);
     // add home page into `runtime` cache
-    caches.open(cacheNames.runtime).then(cache => cache.add('/'));
+    caches.open(cacheNames.runtime).then(cache => cache.add(self.__koot.scope || '/'));
 }
 
 // Caching Strategy ===========================================================
 
 const cacheRoutes = [
-    getRoute(self.__koot.distClientAssetsDirName + '/'),
+    getRoute(self.__koot.distClientAssetsDirName + '/', true),
     ...(self.__koot.cacheFirst || []).map(p => getRoute(p)),
-    getRoute('favicon.ico')
+    getRoute('favicon.ico', true)
 ];
 const cacheStrategy = isKootAppDevEnv ? 'NetworkOnly' : 'CacheFirst';
 
@@ -104,4 +104,4 @@ cacheRoutes.forEach(route => {
 });
 
 // Base =======================================================================
-registerRoute(getRoute(), new workboxStrategies.NetworkFirst(), 'GET');
+registerRoute(getRoute(undefined, true), new workboxStrategies.NetworkFirst(), 'GET');
