@@ -2,6 +2,7 @@ const path = require('path');
 const fs = require('fs-extra');
 
 const defaultsServiceWorker = require('../defaults/service-worker');
+const defaultI18n = require('../defaults/i18n');
 
 /**
  * 初始化 node.js 环境变量
@@ -73,11 +74,11 @@ module.exports = () => {
         // 语言包
         KOOT_I18N_LOCALES: JSON.stringify([]),
         // 使用的COOKIE KEY
-        KOOT_I18N_COOKIE_KEY: 'spLocaleId',
+        KOOT_I18N_COOKIE_KEY: defaultI18n.cookieKey,
         // i18n cookie 影响的域名
         // KOOT_I18N_COOKIE_DOMAIN: '',
         // i18n URL 使用方式
-        KOOT_I18N_URL_USE: 'query',
+        KOOT_I18N_URL_USE: defaultI18n.use,
 
         // HTML模板内容
         // KOOT_HTML_TEMPLATE: '',

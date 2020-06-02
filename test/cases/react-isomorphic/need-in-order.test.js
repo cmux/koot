@@ -75,6 +75,8 @@ const addCommand = require('../../libs/add-command-to-package-json');
 const terminate = require('../../libs/terminate-process');
 const waitForPort = require('../../libs/get-port-from-child-process');
 const checkForChunkmap = require('../../libs/check-for-chunkmap');
+const getLocaleIdFromPage = require('../../libs/puppeteer/get-locale-id-from-page');
+const getSSRStateFromPage = require('../../libs/puppeteer/get-ssr-state-from-page');
 const filterState = require('../../../packages/koot/libs/filter-state');
 const testHtmlRenderedByKoot = require('../../general-tests/html/rendered-by-koot');
 const testFilesFromChunkmap = require('../../general-tests/bundle/check-files-from-chunkmap');
@@ -87,6 +89,7 @@ const {
     requestHidden404: testRequestHidden404,
     criticalAssetsShouldBeGzip: testAssetsGzip,
     clientLifecycles: testClientLifecycles,
+    i18n: testI18n,
 } = require('../puppeteer-test');
 
 // Constants ==================================================================
@@ -183,7 +186,7 @@ const testProduction = (
         });
         await testFilesFromChunkmap(dist, false);
         await testCodeSplitting(dist);
-        await doPuppeteerTest(port, dist, {
+        await doPuppeteerTest(port, dist, dir, {
             kootConfig: config,
             ...extraConing,
         });
@@ -236,7 +239,7 @@ const testDevelopment = (
         // })
         expect(errors.length).toBe(0);
 
-        await doPuppeteerTest(port, undefined, {
+        await doPuppeteerTest(port, undefined, dir, {
             kootConfig: config,
             isDev: true,
             ...extraConing,
@@ -345,7 +348,7 @@ const testCodeSplitting = async (dist) => {
  * @param {Object} [settings.kootConfig={}] Koot 配置对象
  * @param {Object} [settings.i18nUseRouter=false] 多语言使用路由模式
  */
-const doPuppeteerTest = async (port, dist, settings = {}) => {
+const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
     const context = await browser.createIncognitoBrowserContext();
     const origin = isNaN(port) ? port : `http://127.0.0.1:${port}`;
     const {
@@ -356,16 +359,8 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
         cookiesToStore,
     } = settings;
 
-    const getLocaleId = async (page) => {
-        return await page.evaluate(() =>
-            document
-                .querySelector('meta[name="koot-locale-id"]')
-                .getAttribute('content')
-        );
-    };
-
-    const getSSRState = async (page) =>
-        await page.evaluate(() => window.__REDUX_STATE__);
+    const getLocaleId = getLocaleIdFromPage;
+    const getSSRState = getSSRStateFromPage;
 
     const getSSRStateFromScriptTag = async (page) =>
         await page.evaluate(() => {
@@ -477,105 +472,6 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
             const SSRState = await getSSRState(page);
             expect(SSRState.kootTest.testNeedEncode).toBe('test</script>');
         }
-    }
-
-    // 测试: 利用 URL 可切换到对应语种，并且 SSR 数据正确
-    {
-        await breath();
-
-        /**
-         * 测试目标语种
-         * @param {String} localeId 语种ID
-         * @param {Object} infos 测试目标值
-         * @param {String} infos.title 页面标题
-         * @param {String} infos.description 页面简介
-         */
-        const testTargetLocaleId = async (localeId, infos = {}) => {
-            const gotoUrl = i18nUseRouter
-                ? `${origin}/${localeId}/extend`
-                : `${origin}/extend?${changeLocaleQueryKey}=${localeId}`;
-
-            const res = await page.goto(gotoUrl, {
-                waitUntil: defaultWaitUtil,
-            });
-            const HTML = await res.text();
-            const $ = cheerio.load(HTML);
-
-            // 测试语种 ID 正确
-            const theLocaleId = await getLocaleId(page);
-            expect(theLocaleId).toBe(localeId);
-
-            // 测试页面标题正确
-            const pageTitle = await page.evaluate(
-                () => document.querySelector('title').innerText
-            );
-            expect(pageTitle).toBe(infos.title);
-
-            // 测试页面简介正确
-            const pageDescription = await page.evaluate(
-                () =>
-                    document.querySelector('meta[description]') &&
-                    document
-                        .querySelector('meta[description]')
-                        .getAttribute('description')
-            );
-            expect(pageDescription).toBe(infos.description);
-
-            // 测试 SSR Redux state 正确
-            const SSRState = await getSSRState(page);
-            const SSRServerTime = await page.evaluate(
-                () =>
-                    document.querySelector('.timestamp strong') &&
-                    new Date(
-                        document.querySelector('.timestamp strong').innerText
-                    ).getTime()
-            );
-            expect(typeof SSRState.infos.serverTimestamp).toBe('number');
-            expect(SSRServerTime).toBe(SSRState.infos.serverTimestamp);
-
-            // 测试 __() 输出为对象的情况
-            expect($('#__test-locales-export-object').text()).toBe(
-                infos.exportObject
-            );
-            expect(
-                await page.evaluate(
-                    () =>
-                        document.querySelector('#__test-locales-export-object')
-                            .innerText
-                )
-            ).toBe(infos.exportObject);
-
-            // 测试: inject 传入 ctx
-            {
-                const value = await page.evaluate(
-                    () => document.getElementById('inject-ctx-test').innerText
-                );
-                expect(value).toBe(
-                    i18nUseRouter ? `/${localeId}/extend` : '/extend'
-                );
-            }
-
-            // 测试: SSR beforePreRender() 生命周期
-            expect($('#__test-ssr-lifecycle-before-pre-render').text()).toBe(
-                '__TEST_BEFORE_PRE_RENDER__'
-            );
-        };
-
-        await testTargetLocaleId('zh', {
-            title: '组件扩展 - Koot.js 模板项目',
-            description: '简介：Koot.js 组件扩展',
-            exportObject: '欢迎',
-        });
-        await testTargetLocaleId('en', {
-            title: 'Component Extend - Koot.js boilerplate',
-            description: 'Summary information for Koot.js Component Extend.',
-            exportObject: 'Welcome',
-        });
-        await testTargetLocaleId('zh-tw', {
-            title: '組件擴展 - Koot.js 模板項目',
-            description: '簡介：Koot.js 組件擴展',
-            exportObject: '歡迎',
-        });
     }
 
     // 测试: 到其他语种的链接
@@ -1184,58 +1080,6 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
         expect(L.search).toBe(search);
     }
 
-    // 测试: i18n / 多语言
-    {
-        await breath();
-
-        const toLocaleId = 'zh';
-        const gotoUrl = i18nUseRouter
-            ? `${origin}/${toLocaleId}`
-            : `${origin}?${changeLocaleQueryKey}=${toLocaleId}`;
-
-        const context = await browser.createIncognitoBrowserContext();
-        const page = await context.newPage();
-
-        const res = await page.goto(gotoUrl, {
-            waitUntil: 'networkidle0',
-        });
-
-        const HTML = await res.text();
-        const $ = cheerio.load(HTML);
-
-        {
-            const selector = `h1 ~ a[href="${
-                i18nUseRouter ? `/${toLocaleId}` : ''
-            }/"]`;
-            const result = '欢迎';
-            expect($(selector).text()).toBe(result);
-            expect(
-                await page.evaluate(
-                    (selector) => document.querySelector(selector).innerText,
-                    selector
-                )
-            ).toBe(result);
-        }
-
-        if (!isDev) {
-            const chunkmap = await fs.readJson(
-                path.resolve(dist, buildManifestFilename)
-            );
-            const pathname = path.resolve(
-                dist,
-                chunkmap[`.${toLocaleId}`]['.files']['client.js']
-            );
-            const content = await fs.readFile(pathname, 'utf-8');
-            expect(
-                /__KOOT_TEST_LOCALE_TRANSLATE_FUNCTION_ONLY_RESULT__\|\|[^(]+?\(['"]\/test-img-zh\.png['"]/.test(
-                    content
-                )
-            ).toBe(true);
-        }
-
-        await context.close();
-    }
-
     // 测试: 服务器端获取 koa ctx
     {
         const context = await browser.createIncognitoBrowserContext();
@@ -1283,6 +1127,15 @@ const doPuppeteerTest = async (port, dist, settings = {}) => {
     // TODO: 在设置了 sw 时有 sw 注册且没有报错
 
     // 其他公用测试
+    await testI18n({
+        browser,
+        origin,
+        i18n: kootConfig.i18n,
+        isDev,
+        isSPA: false,
+        cwd: dir,
+        dist,
+    });
     await puppeteerTestInjectScripts(page);
     await testRequestHidden404(origin, browser);
     if (!isDev) await testAssetsGzip(origin, dist, browser);
@@ -1388,7 +1241,7 @@ describe('测试: React 同构项目', () => {
                 // })
                 expect(errors.length).toBe(0);
 
-                await doPuppeteerTest(port, dist, {
+                await doPuppeteerTest(port, dist, dir, {
                     kootConfig: require(path.resolve(dir, configFile)),
                     selectorForStoreEnhancer:
                         '#__test-store-enhancer-server-persist',
@@ -1442,7 +1295,7 @@ describe('测试: React 同构项目', () => {
                     // })
                     expect(errors.length).toBe(0);
 
-                    await doPuppeteerTest(port, dist, {
+                    await doPuppeteerTest(port, dist, dir, {
                         kootConfig: require(path.resolve(dir, configFile)),
                         selectorForStoreEnhancer:
                             '#__test-store-enhancer-server-persist',
@@ -1482,7 +1335,7 @@ describe('测试: React 同构项目', () => {
                     // })
                     expect(errors.length).toBe(0);
 
-                    await doPuppeteerTest(port, cwd, {
+                    await doPuppeteerTest(port, cwd, dir, {
                         kootConfig: require(path.resolve(dir, configFile)),
                         selectorForStoreEnhancer:
                             '#__test-store-enhancer-server-persist',
