@@ -39,7 +39,7 @@ module.exports = async (
         swSrc: _swSrc,
         include = [],
         exclude = [],
-        scope,
+        scope = '/',
 
         // cache strategies
         cacheFirst = [],
@@ -62,6 +62,9 @@ module.exports = async (
             distClientAssetsDirName,
         } = kootConfigForThisBuild;
 
+        let thisScope = /^\//.test(scope) ? scope : `/${scope}`;
+        thisScope = /\/$/.test(thisScope) ? thisScope : `${thisScope}/`;
+
         const obj = {
             distClientAssetsDirName:
                 ENV === 'dev' ? devPublicPathPrefix : distClientAssetsDirName,
@@ -74,6 +77,7 @@ module.exports = async (
             env: {
                 WEBPACK_BUILD_ENV: ENV,
             },
+            scope: thisScope,
         };
 
         if (localeId) obj.localeId = localeId;
