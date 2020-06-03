@@ -1,5 +1,12 @@
 ## [Unreleased]
 
+## [0.13.26] - 2020-06-03
+
+**koot**
+
+-   优化
+    -   继续优化有关 SPA 项目的 Service Worker 配置和 _Workbox_ 模板
+
 ## [0.13.25] - 2020-06-02
 
 **koot-webpack**

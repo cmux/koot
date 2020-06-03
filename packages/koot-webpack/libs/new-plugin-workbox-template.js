@@ -8,6 +8,7 @@ import {
 import { precacheAndRoute } from 'workbox-precaching';
 import { registerRoute } from 'workbox-routing';
 import * as workboxStrategies from 'workbox-strategies';
+import { scopeNeedTransformPathname } from 'koot/defaults/defines-service-worker';
 
 self.__WB_DISABLE_DEV_LOGS = true;
 
@@ -20,6 +21,11 @@ if (typeof self.__koot !== 'object') {
         }
     };
 }
+if (self.__koot.scope === scopeNeedTransformPathname)
+    self.__koot.scope = location.pathname
+        .split('/')
+        .slice(0, location.pathname.split('/').length - 1)
+        .join('/') + '/'
 const isKootAppDevEnv = self.__koot.env.WEBPACK_BUILD_ENV === 'dev';
 
 // Commons ====================================================================
