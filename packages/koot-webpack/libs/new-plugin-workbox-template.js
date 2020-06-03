@@ -8,6 +8,7 @@ import {
 import { precacheAndRoute } from 'workbox-precaching';
 import { registerRoute } from 'workbox-routing';
 import * as workboxStrategies from 'workbox-strategies';
+import sanitize from 'sanitize-filename'
 import { scopeNeedTransformPathname } from 'koot/defaults/defines-service-worker';
 
 self.__WB_DISABLE_DEV_LOGS = true;
@@ -56,7 +57,13 @@ const getRoute = (pathname, addScope = false) => {
 
 setCacheNameDetails({
     prefix: 'koot',
-    suffix: `cache${self.__koot.localeId ? `-${self.__koot.localeId}` : ''}`,
+    suffix: `cache${
+        self.__koot.localeId ? `-${self.__koot.localeId
+    }` : ''}${
+        self.__koot.scope && self.__koot.scope !== '/'
+            ? `-${sanitize(self.__koot.scope)}`
+            : ''
+    }`,
     precache: 'pre',
     runtime: 'rt'
 });
