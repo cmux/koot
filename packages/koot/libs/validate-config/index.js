@@ -14,8 +14,11 @@ const {
     filenameProjectConfigTempPortionOtherClient,
     propertiesToExtract: _propertiesToExtract,
     dirConfigTemp: _dirConfigTemp,
-    WEBPACK_OUTPUT_PATH
+    WEBPACK_OUTPUT_PATH,
 } = require('../../defaults/before-build');
+const {
+    scopeNeedTransformPathname,
+} = require('../../defaults/defines-service-worker');
 const log = require('../../libs/log');
 const __ = require('../../utils/translate');
 // const isSPA = require('./is-spa');
@@ -100,7 +103,7 @@ const validateConfig = async (projectDir = getCwd(), options = {}) => {
 
     // 清理所有第一级的 undefined 项和空对象
     // 清理所有第一级的空对象
-    Object.keys(kootConfig).forEach(key => {
+    Object.keys(kootConfig).forEach((key) => {
         if (typeof kootConfig[key] === 'undefined') delete kootConfig[key];
         // if (Array.isArray(kootConfig[key]) && !kootConfig[key].length)
         //     delete kootConfig[key]
@@ -127,7 +130,7 @@ const validateConfig = async (projectDir = getCwd(), options = {}) => {
             [keyFileProjectConfigTempPortionClient]:
                 process.env.KOOT_PROJECT_CONFIG_PORTION_CLIENT_PATHNAME,
             [keyFileProjectConfigTempPortionOtherClient]:
-                process.env.KOOT_PROJECT_CONFIG_PORTION_OTHER_CLIENT_PATHNAME
+                process.env.KOOT_PROJECT_CONFIG_PORTION_OTHER_CLIENT_PATHNAME,
         };
     }
 
@@ -136,7 +139,7 @@ const validateConfig = async (projectDir = getCwd(), options = {}) => {
         tmpConfig,
         tmpConfigPortionServer,
         tmpConfigPortionClient,
-        tmpConfigPortionOtherClient
+        tmpConfigPortionOtherClient,
     } = await require('./extract-to-tmp')(projectDir, kootConfig);
 
     // 写入项目配置文件 (临时)
@@ -197,7 +200,7 @@ const validateConfig = async (projectDir = getCwd(), options = {}) => {
         [keyFileProjectConfigTempFull]: pathTmpConfig,
         [keyFileProjectConfigTempPortionServer]: pathTmpConfigPortionServer,
         [keyFileProjectConfigTempPortionClient]: pathTmpConfigPortionClient,
-        [keyFileProjectConfigTempPortionOtherClient]: pathTmpConfigPortionOtherClient
+        [keyFileProjectConfigTempPortionOtherClient]: pathTmpConfigPortionOtherClient,
     };
 };
 
@@ -235,7 +238,7 @@ const finalValidate = async (config = {}) => {
         applyWebpackConfig('dll', 'webpackDll');
         applyWebpackConfig('hmr', 'webpackHmr');
         applyWebpackConfig('compilerHook', 'webpackCompilerHook');
-        Object.keys(config.webpack).forEach(key => {
+        Object.keys(config.webpack).forEach((key) => {
             applyWebpackConfig(
                 key,
                 'webpack' + key.substr(0, 1).toUpperCase() + key.substr(1)
@@ -251,6 +254,18 @@ const finalValidate = async (config = {}) => {
         if (typeof config.serverPackAll === 'undefined') {
             config.serverPackAll = true;
         }
+    }
+
+    // SPA && historyType === 'browserHistory' && serviceWorker.scope === '/'
+    if (
+        /spa$/.test(config.type || '') &&
+        /^hash/.test(config.historyType) &&
+        (typeof config.serviceWorker !== 'object' ||
+            !config.serviceWorker.scope ||
+            config.serviceWorker.scope === '/')
+    ) {
+        if (typeof config.serviceWorker !== 'object') config.serviceWorker = {};
+        config.serviceWorker.scope = scopeNeedTransformPathname;
     }
 
     // 添加 placeholder

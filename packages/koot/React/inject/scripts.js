@@ -6,9 +6,13 @@ const {
     thresholdScriptRunFirst,
 } = require('../../defaults/before-build');
 const defaultEntrypoints = require('../../defaults/entrypoints');
+const {
+    scopeNeedTransformPathname,
+} = require('../../defaults/defines-service-worker');
 const readClientFile = require('../../utils/read-client-file');
 const getClientFilePath = require('../../utils/get-client-file-path');
 const getSSRStateString = require('../../libs/get-ssr-state-string');
+const getSwScopeFromEnv = require('../../libs/get-sw-scope-from-env');
 const {
     scriptsRunFirst,
     scriptsInBody,
@@ -141,7 +145,7 @@ module.exports = ({
             (process.env.WEBPACK_BUILD_TYPE === 'spa' ||
                 typeof injectCache[uriServiceWorker] === 'string')
         ) {
-            const scope = JSON.parse(process.env.KOOT_PWA_SCOPE);
+            const scope = getSwScopeFromEnv();
             r +=
                 `<script id="__koot-pwa-register-sw" type="text/javascript">` +
                 // if (isProd) {
@@ -152,7 +156,13 @@ module.exports = ({
                     injectCache[uriServiceWorker] ||
                     JSON.parse(process.env.KOOT_PWA_PATHNAME)
                 }?koot=0.12"` +
-                (scope ? `,{scope: '${scope}'}` : '') +
+                (scope
+                    ? `,{scope: ${
+                          scope === scopeNeedTransformPathname
+                              ? `location.pathname`
+                              : `'${scope}'`
+                      }}`
+                    : '') +
                 `)` +
                 `.catch(err => {console.log('👩‍💻 Service Worker SUPPORTED. ERROR', err)})` +
                 `});` +

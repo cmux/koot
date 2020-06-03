@@ -13,6 +13,7 @@ const {
     serviceWorkerFilename,
 } = require('koot/defaults/webpack-dev-server');
 const getSWFilename = require('koot/utils/get-sw-filename');
+const getSWScopeFromEnv = require('koot/libs/get-sw-scope-from-env');
 
 // ============================================================================
 
@@ -62,9 +63,6 @@ module.exports = async (
             distClientAssetsDirName,
         } = kootConfigForThisBuild;
 
-        let thisScope = /^\//.test(scope) ? scope : `/${scope}`;
-        thisScope = /\/$/.test(thisScope) ? thisScope : `${thisScope}/`;
-
         const obj = {
             distClientAssetsDirName:
                 ENV === 'dev' ? devPublicPathPrefix : distClientAssetsDirName,
@@ -77,7 +75,7 @@ module.exports = async (
             env: {
                 WEBPACK_BUILD_ENV: ENV,
             },
-            scope: thisScope,
+            scope: getSWScopeFromEnv(scope),
         };
 
         if (localeId) obj.localeId = localeId;
