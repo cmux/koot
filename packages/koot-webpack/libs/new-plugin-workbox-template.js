@@ -8,6 +8,8 @@ import {
 import { precacheAndRoute } from 'workbox-precaching';
 import { registerRoute } from 'workbox-routing';
 import * as workboxStrategies from 'workbox-strategies';
+import sanitize from 'sanitize-filename'
+import { scopeNeedTransformPathname } from 'koot/defaults/defines-service-worker';
 
 self.__WB_DISABLE_DEV_LOGS = true;
 
@@ -20,11 +22,16 @@ if (typeof self.__koot !== 'object') {
         }
     };
 }
+if (self.__koot.scope === scopeNeedTransformPathname)
+    self.__koot.scope = location.pathname
+        .split('/')
+        .slice(0, location.pathname.split('/').length - 1)
+        .join('/') + '/'
 const isKootAppDevEnv = self.__koot.env.WEBPACK_BUILD_ENV === 'dev';
 
 // Commons ====================================================================
 
-const getRoute = pathname => {
+const getRoute = (pathname, addScope = false) => {
     const host = (location.host || location.hostname)
         .split('.')
         .reverse()
@@ -33,8 +40,8 @@ const getRoute = pathname => {
         .join('.');
 
     let p = pathname
-        ? `/${pathname.substr(0, 1) === '/' ? pathname.substr(1) : pathname}`
-        : '';
+        ? `${addScope ? self.__koot.scope : '/'}${pathname.substr(0, 1) === '/' ? pathname.substr(1) : pathname}`
+        : `${addScope ? self.__koot.scope : ''}`;
     p = p.replace(/\//g, '\\/');
 
     const suffix = !p ? '' : /\\\/$/.test(p) ? `(\\/|\\?.*|$)` : `(\\?.*|$)`;
@@ -50,7 +57,13 @@ const getRoute = pathname => {
 
 setCacheNameDetails({
     prefix: 'koot',
-    suffix: `cache${self.__koot.localeId ? `-${self.__koot.localeId}` : ''}`,
+    suffix: `cache${
+        self.__koot.localeId ? `-${self.__koot.localeId
+    }` : ''}${
+        self.__koot.scope && self.__koot.scope !== '/'
+            ? `-${sanitize(self.__koot.scope)}`
+            : ''
+    }`,
     precache: 'pre',
     runtime: 'rt'
 });
@@ -70,15 +83,15 @@ if (!isKootAppDevEnv) {
         ...self.__WB_MANIFEST
     ]);
     // add home page into `runtime` cache
-    caches.open(cacheNames.runtime).then(cache => cache.add('/'));
+    caches.open(cacheNames.runtime).then(cache => cache.add(self.__koot.scope || '/'));
 }
 
 // Caching Strategy ===========================================================
 
 const cacheRoutes = [
-    getRoute(self.__koot.distClientAssetsDirName + '/'),
+    getRoute(self.__koot.distClientAssetsDirName + '/', true),
     ...(self.__koot.cacheFirst || []).map(p => getRoute(p)),
-    getRoute('favicon.ico')
+    getRoute('favicon.ico', true)
 ];
 const cacheStrategy = isKootAppDevEnv ? 'NetworkOnly' : 'CacheFirst';
 
@@ -104,4 +117,4 @@ cacheRoutes.forEach(route => {
 });
 
 // Base =======================================================================
-registerRoute(getRoute(), new workboxStrategies.NetworkFirst(), 'GET');
+registerRoute(getRoute(undefined, true), new workboxStrategies.NetworkFirst(), 'GET');

@@ -24,6 +24,28 @@
         -   `compression-webpack-plugin` -> _^4.0.0_
         -   `copy-webpack-plugin` -> _^6.0.1_
 
+## [0.13.27] - 2020-06-03
+
+**koot**
+
+-   优化
+    -   继续优化有关 SPA 项目的 Service Worker 配置和 _Workbox_ 模板
+        -   如果提供了 `scope`，缓存空间命名会自动调整，以防冲突
+
+## [0.13.26] - 2020-06-03
+
+**koot**
+
+-   优化
+    -   继续优化有关 SPA 项目的 Service Worker 配置和 _Workbox_ 模板
+
+## [0.13.25] - 2020-06-02
+
+**koot-webpack**
+
+-   优化
+    -   更新自带的 _Workbox_ 模板，优化在子目录中的项目的表现（通常是 SPA 项目）
+
 ## [0.13.24] - 2020-05-17
 
 **koot-webpack**

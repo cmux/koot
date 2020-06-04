@@ -13,6 +13,7 @@ const {
     serviceWorkerFilename,
 } = require('koot/defaults/webpack-dev-server');
 const getSWFilename = require('koot/utils/get-sw-filename');
+const getSWScopeFromEnv = require('koot/libs/get-sw-scope-from-env');
 
 // ============================================================================
 
@@ -39,7 +40,7 @@ module.exports = async (
         swSrc: _swSrc,
         include = [],
         exclude = [],
-        scope,
+        scope = '/',
 
         // cache strategies
         cacheFirst = [],
@@ -74,6 +75,7 @@ module.exports = async (
             env: {
                 WEBPACK_BUILD_ENV: ENV,
             },
+            scope: getSWScopeFromEnv(scope),
         };
 
         if (localeId) obj.localeId = localeId;
