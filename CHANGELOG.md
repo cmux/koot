@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+_Koot.js_ 0.14 开始原生支持 _Electron_ 项目开发。利用 `koot-cli` 创建新项目时可以根据向导直接创建 _Electron_ 项目并会自动配置完成开发环境。如需手动配置开发环境，如从老的 _Koot.js_ 项目升级，请参见文档 [Electron](https://koot.js.org/#/electron)。
+
 **koot**
 
 -   **重大改动**
@@ -7,15 +9,14 @@
     -   更新依赖包 **major** 版本号
         -   `execa` -> _^4.0.0_
         -   `fs-extra` -> _^9.0.0_
-        -   `less-loader` -> _^6.1.0_
         -   `react-redux` -> _^7.2.0_ ([#45](https://github.com/cmux/koot/issues/45), [#154](https://github.com/cmux/koot/issues/154))
     -   现在默认不会安装以下依赖包，如有使用需要，请在项目中自行安装
         -   `md5-file`
+    -   为今后的某项功能做准备，在客户端/浏览器端生成路由对象的流程，现在采用 _Promise_ 异步方式
 -   **新特性**
     -   多语言/i18n: `i18n.use = 'subdomain'` - 现在可使用最深层的子域名作为语言标识 ([#220](https://github.com/cmux/koot/issues/220))
 -   优化
     -   小幅优化热更新速度 (移除多余的 `webpack/hot` 和 `webpack-dev-server/client` 引用)
-    -   为今后的某项功能做准备，生成路由对象流程现在采用 _Promise_ 方式
 
 **koot-webpack**
 
@@ -23,6 +24,9 @@
     -   更新依赖包 **major** 版本号
         -   `compression-webpack-plugin` -> _^4.0.0_
         -   `copy-webpack-plugin` -> _^6.0.1_
+        -   `less-loader` -> _^6.1.0_
+
+---
 
 ## [0.13.27] - 2020-06-03
 
@@ -266,6 +270,8 @@
 -   服务器端打包时现在会强制忽略以下 _Babel_ 插件，用以实现原生的 _async/await_
     -   `@babel/plugin-transform-regenerator`
     -   `@babel/plugin-transform-async-to-generator`
+
+---
 
 ## [0.12.7] - 2020-03-02
 
