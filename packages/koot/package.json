@@ -104,7 +104,7 @@
         "sp-koa-views": "^1.0.1",
         "sync-request": "^6.1.0",
         "terminate": "^2.1.2",
-        "typescript": "^3.9.3",
+        "typescript": "^3.9.5",
         "xmlify": "^1.1.0",
         "yargs": "^15.3.1"
     },
