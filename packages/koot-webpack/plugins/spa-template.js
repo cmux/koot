@@ -161,7 +161,8 @@ class SpaTemplatePlugin {
 
             const renderTemplate = (() => {
                 switch (appType) {
-                    case 'ReactSPA': {
+                    case 'ReactSPA':
+                    case 'ReactElectronSPA': {
                         return require(`koot/React/render-template`);
                     }
                     default: {
@@ -171,7 +172,8 @@ class SpaTemplatePlugin {
             })();
             const defaultInject = (() => {
                 switch (appType) {
-                    case 'ReactSPA': {
+                    case 'ReactSPA':
+                    case 'ReactElectronSPA': {
                         const inject = require(`koot/ReactSPA/inject`)({
                             filemap,
                             compilation,

@@ -1,5 +1,6 @@
 module.exports = {
     type: 'react',
+    // target: '',
     dist: './dist',
     cookiesToStore: true,
     sessionStore: false,
@@ -26,5 +27,5 @@ module.exports = {
     // serverPackAll: true,
 
     devPort: 3080,
-    devServiceWorker: false
+    devServiceWorker: false,
 };

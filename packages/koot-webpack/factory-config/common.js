@@ -133,6 +133,7 @@ const plugins = async (
     const envsToDefine = [
         'KOOT_VERSION',
         'KOOT_PROJECT_NAME',
+        'KOOT_PROJECT_TYPE',
         'KOOT_DIST_DIR',
         'KOOT_I18N',
         'KOOT_I18N_TYPE',
@@ -148,7 +149,7 @@ const plugins = async (
         'KOOT_DEV_DLL_FILE_CLIENT',
         'KOOT_DEV_DLL_FILE_SERVER',
         'KOOT_SESSION_STORE',
-        'KOOT_SERVER_MODE',
+        'KOOT_BUILD_TARGET',
         'KOOT_SSR_PUBLIC_PATH',
         'WEBPACK_BUILD_TYPE',
         'WEBPACK_BUILD_ENV',

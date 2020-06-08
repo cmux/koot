@@ -13,7 +13,7 @@ const spinner = require('../../lib/spinner');
  * @param {AppInfo} app
  * @returns {Promise<void>}
  */
-module.exports = async app => {
+module.exports = async (app) => {
     const msgModifying = chalk.whiteBright(_('modifying_boilerplate'));
     const waitingDownloading = spinner(msgModifying + '...');
     const { dest } = app;
@@ -31,7 +31,7 @@ module.exports = async app => {
         const packageJson = await fs.readJson(packageJsonFile);
         const extend = {
             version: '1.0.0',
-            koot: {}
+            koot: {},
         };
 
         if (typeof app.name === 'string') extend.name = app.name;
@@ -58,10 +58,10 @@ module.exports = async app => {
             packageJsonFile,
             {
                 ...packageJson,
-                ...extend
+                ...extend,
             },
             {
-                spaces: 4
+                spaces: 4,
             }
         );
     }
@@ -74,7 +74,7 @@ module.exports = async app => {
     {
         const properties = [
             ['name', 'name'],
-            ['type', 'type']
+            ['type', 'type'],
         ];
         const kootConfigFile = path.resolve(dest, 'koot.config.js');
         const kootConfig = require(kootConfigFile);
@@ -93,11 +93,11 @@ module.exports = async app => {
             );
         }
 
-        // 添加 serverless: true
+        // 添加 serverless
         if (app.serverMode === 'serverless') {
             content = content.replace(
-                /\n(\s*).*?更多选项请查阅文档.+?\n+.+?\n.+?Webpack/gm,
-                (str, $1) => `\n${$1}serverless: true,` + str
+                /\n(\s*).*?更多选项请查阅文档.+?\n+.+?\n.+?客户端生命周期/gm,
+                (str, $1) => `\n${$1}target: 'serverless',` + str
             );
         }
 

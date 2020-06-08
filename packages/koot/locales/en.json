@@ -3,7 +3,8 @@
     "missing_option": "Please provide option ${option}.\n${indent}> ${example}",
     "appType": {
         "ReactApp": "React Isomorphic",
-        "ReactSPA": "React SPA"
+        "ReactSPA": "React SPA",
+        "ReactElectronSPA": "React SPA (Electron)"
     },
     "validateConfig": {
         "error": {

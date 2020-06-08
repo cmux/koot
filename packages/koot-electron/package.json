@@ -1,0 +1,35 @@
+{
+    "name": "koot-electron",
+    "version": "0.14.0-alpha.16",
+    "description": "Electron kit for Koot.js app.",
+    "sideEffects": false,
+    "scripts": {},
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/cmux/koot"
+    },
+    "keywords": [
+        "koot",
+        "electron"
+    ],
+    "license": "Apache-2.0",
+    "author": {
+        "name": "diablohu",
+        "email": "diablohudream@gmail.com",
+        "url": "http://diablohu.com"
+    },
+    "bugs": {
+        "url": "https://github.com/cmux/koot/issues"
+    },
+    "homepage": "https://github.com/cmux/koot",
+    "engines": {
+        "node": ">= 8.9.0"
+    },
+    "dependencies": {
+        "electron": "^9.0.2"
+    },
+    "optionalDependencies": {},
+    "devDependencies": {
+        "koot": "^0.14.0-alpha.16"
+    }
+}

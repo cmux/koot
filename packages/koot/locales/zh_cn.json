@@ -3,7 +3,8 @@
     "missing_option": "请提供 ${option} 选项。\n${indent}> ${example}",
     "appType": {
         "ReactApp": "React 同构",
-        "ReactSPA": "React SPA"
+        "ReactSPA": "React SPA",
+        "ReactElectronSPA": "React SPA (Electron)"
     },
     "validateConfig": {
         "error": {

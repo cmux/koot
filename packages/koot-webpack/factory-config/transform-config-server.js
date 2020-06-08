@@ -41,9 +41,11 @@ module.exports = async (kootBuildConfig = {}) => {
         i18n,
         staticCopyFrom: staticAssets,
         template,
-        serverless = false,
+        target,
         [keyConfigBuildDll]: createDll = false,
     } = kootBuildConfig;
+
+    const serverless = target === 'serverless';
 
     const {
         WEBPACK_BUILD_TYPE: TYPE,
@@ -57,7 +59,7 @@ module.exports = async (kootBuildConfig = {}) => {
         process.env.WEBPACK_BUILD_STAGE === 'server' &&
             process.env.WEBPACK_BUILD_ENV === 'prod' &&
             process.env.WEBPACK_BUILD_TYPE === 'isomorphic' &&
-            (serverless || process.env.KOOT_SERVER_MODE === 'serverless')
+            (serverless || process.env.KOOT_BUILD_TARGET === 'serverless')
     );
 
     const configTargetDefault = await createTargetDefaultConfig(

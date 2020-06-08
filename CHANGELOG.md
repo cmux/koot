@@ -13,7 +13,12 @@ _Koot.js_ 0.14 开始原生支持 _Electron_ 项目开发。利用 `koot-cli` �
     -   现在默认不会安装以下依赖包，如有使用需要，请在项目中自行安装
         -   `md5-file`
     -   为今后的某项功能做准备，在客户端/浏览器端生成路由对象的流程，现在采用 _Promise_ 异步方式
+    -   移除环境变量 `precess.env.KOOT_SERVER_MODE`，相关能力整合入新的环境变量 `process.env.KOOT_BUILD_TARGET`
 -   **新特性**
+    -   **新配置项** `target` - 设定项目子类型，目前支持
+        -   `serverless` - 仅针对 SSR 项目。替代之前的 `serverless = true'` 配置
+        -   `electron` - 仅针对 SPA 项目
+        -   详情请参见文档 [配置/target](https://koot.js.org/#/config?id=target)
     -   多语言/i18n: `i18n.use = 'subdomain'` - 现在可使用最深层的子域名作为语言标识 ([#220](https://github.com/cmux/koot/issues/220))
 -   优化
     -   小幅优化热更新速度 (移除多余的 `webpack/hot` 和 `webpack-dev-server/client` 引用)
@@ -25,6 +30,10 @@ _Koot.js_ 0.14 开始原生支持 _Electron_ 项目开发。利用 `koot-cli` �
         -   `compression-webpack-plugin` -> _^4.0.0_
         -   `copy-webpack-plugin` -> _^6.0.1_
         -   `less-loader` -> _^6.1.0_
+
+**koot-electron**
+
+-   新的 NPM 包，承载 _Electron_ 项目开发相关内容
 
 ---
 

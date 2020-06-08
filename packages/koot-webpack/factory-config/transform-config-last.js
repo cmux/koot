@@ -234,6 +234,9 @@ const validatePlugins = (config, kootConfigForThisBuild = {}) => {
             {
                 test: /koot[\\/]ReactSPA[\\/].+/,
             },
+            {
+                test: /koot-electron/,
+            },
         ];
         if (process.env.WEBPACK_BUILD_STAGE === 'server') {
             // ignores.push({

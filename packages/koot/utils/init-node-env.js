@@ -117,11 +117,12 @@ module.exports = () => {
         KOOT_SSR_PUBLIC_PATH: JSON.stringify('/'),
 
         /** @type {string}
-         * 服务器模式，可选模式
-         * - _空_ - 默认模式
-         * - serverless
+         * 构建目标
+         * - _空_ - 默认
+         * - serverless - Serverless App (SSR)
+         * - electron - Electron App (SPA)
          */
-        KOOT_SERVER_MODE: '',
+        KOOT_BUILD_TARGET: '',
 
         // 打包开始时间
         // KOOT_BUILD_START_TIME: ''

@@ -213,6 +213,12 @@ declare namespace NodeJS {
          * - dev - 开发环境
          */
         WEBPACK_BUILD_ENV: 'prod' | 'dev';
+
+        /**
+         * 项目类型
+         * - ReactApp - React 同构/SSR
+         */
+        KOOT_PROJECT_TYPE: 'ReactApp' | 'ReactSPA' | 'ReactElectronSPA';
         /**
         'KOOT_VERSION',
         'KOOT_PROJECT_NAME',
@@ -243,11 +249,12 @@ declare namespace NodeJS {
          */
         KOOT_SSR_PUBLIC_PATH: string;
         /**
-         * 服务器模式
-         * - _空_ - 默认模式
-         * - serverless
+         * 构建目标
+         * - _空_ - 默认
+         * - serverless - Serverless App (SSR)
+         * - electron - Electron App (SPA)
          */
-        KOOT_SERVER_MODE: '' | 'serverless';
+        KOOT_BUILD_TARGET: '' | 'serverless' | 'electron';
         /**
          * 多语言项目种，URL 采用何种方式区分语种、切换语种
          * - **query** (默认)

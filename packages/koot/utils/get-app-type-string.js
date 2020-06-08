@@ -13,17 +13,30 @@ module.exports = (type) => {
         case 'reactapp':
         case 'react-app':
         case 'react_app': {
-            return 'ReactApp'
+            return 'ReactApp';
         }
 
         case 'spa':
         case 'react-spa':
         case 'react_spa':
         case 'reactspa': {
-            return 'ReactSPA'
+            return 'ReactSPA';
         }
 
-        // default:
+        case 'electron':
+        case 'react-electron-spa':
+        case 'react_electron_spa':
+        case 'react-electron_spa':
+        case 'react_electron-spa':
+        case 'react-electron':
+        case 'react_electron':
+        case 'electron_spa':
+        case 'electron-spa': {
+            return 'ReactElectronSPA';
+        }
+
+        default: {
+        }
         //     return process.env.KOOT_PROJECT_TYPE
     }
-}
+};
