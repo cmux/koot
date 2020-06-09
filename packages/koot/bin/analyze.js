@@ -13,6 +13,7 @@ const validateConfig = require('../libs/validate-config');
 const setEnvFromCommand = require('../utils/set-env-from-command');
 const initNodeEnv = require('../utils/init-node-env');
 const getDirTemp = require('../libs/get-dir-tmp');
+const safeguard = require('../libs/safeguard');
 
 const kootWebpackBuild = require('koot-webpack/build');
 
@@ -69,6 +70,8 @@ const run = async () => {
         dist: dirAnalyzeBuild,
         bundleVersionsKeep: false,
     };
+
+    await safeguard(kootConfig);
 
     await kootWebpackBuild({
         analyze: true,

@@ -54,7 +54,8 @@ const getSpaLocaleFileId = require('koot/libs/get-spa-locale-file-id');
 module.exports = async (kootConfigForThisBuild = {}) => {
     const {
         webpackConfig: config,
-        appType,
+        // appType,
+        appTypeUse,
         i18n,
         dist,
         template,
@@ -71,7 +72,7 @@ module.exports = async (kootConfigForThisBuild = {}) => {
 
     /** @type {String} 默认入口文件 */
     const defaultClientEntry = require('../libs/get-koot-file')(
-        `${appType}/client`
+        `${appTypeUse}/client`
     );
     /** 基于存放目录名的文件名前缀 */
     const filenamePrefix =
@@ -412,6 +413,7 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                                 kootConfigForThisBuild[
                                     keyConfigClientServiceWorkerPathname
                                 ],
+                            appTypeUse,
                         })
                     );
                 } else {

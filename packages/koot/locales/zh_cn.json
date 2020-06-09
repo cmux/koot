@@ -6,6 +6,9 @@
         "ReactSPA": "React SPA",
         "ReactElectronSPA": "React SPA (Electron)"
     },
+    "safeguard": {
+        "NEED_PACKAGE_KOOT_ELECTRON": "缺少依赖包: 'koot-electron'。请使用 'npm install' 或 'yarn add' 进行安装。"
+    },
     "validateConfig": {
         "error": {
             "config_file_not_found": "配置文件未找到！",

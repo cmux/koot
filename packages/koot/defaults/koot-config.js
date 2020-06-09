@@ -28,4 +28,8 @@ module.exports = {
 
     devPort: 3080,
     devServiceWorker: false,
+
+    electron: {
+        main: 'koot-electron/main.js',
+    },
 };

@@ -44,6 +44,7 @@ const getPathnameDevServerStart = require('../utils/get-pathname-dev-server-star
 const getLogMsg = require('../libs/get-log-msg');
 const log = require('../libs/log');
 const confirmTimeout = require('../libs/prompt-timeout');
+const safeguard = require('../libs/safeguard');
 // const terminate = require('../utils/terminate');
 
 const kootWebpackBuildVendorDll = require('koot-webpack/build-vendor-dll');
@@ -242,6 +243,8 @@ const run = async () => {
 
     // 等待一段时间，确保某些硬盘操作的完成
     await sleep(1000);
+
+    await safeguard(kootConfig);
 
     // ========================================================================
     //

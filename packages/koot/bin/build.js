@@ -10,7 +10,7 @@ const before = require('./_before');
 
 const {
     keyConfigQuiet,
-    filenameBuilding
+    filenameBuilding,
 } = require('../defaults/before-build');
 
 const __ = require('../utils/translate');
@@ -23,6 +23,7 @@ const spinner = require('../utils/spinner');
 const initNodeEnv = require('../utils/init-node-env');
 // const emptyTempConfigDir = require('../libs/empty-temp-config-dir')
 const getDirTemp = require('../libs/get-dir-tmp');
+const safeguard = require('../libs/safeguard');
 
 const kootWebpackBuild = require('koot-webpack/build');
 
@@ -65,7 +66,7 @@ const run = async () => {
         dest,
         kootDev = false,
         kootTest = false,
-        kootDevelopment = false
+        kootDevelopment = false,
     } = program;
 
     initNodeEnv();
@@ -81,7 +82,7 @@ const run = async () => {
     setEnvFromCommand(
         {
             config,
-            type
+            type,
         },
         fromOtherCommand
     );
@@ -115,6 +116,8 @@ const run = async () => {
         kootConfig[keyConfigQuiet] = true;
     }
 
+    await safeguard(kootConfig);
+
     // Building process =======================================================
 
     // 如果提供了 stage，仅针对该 stage 执行打包
@@ -144,7 +147,7 @@ const run = async () => {
             chalk.green('√ ') +
                 chalk.yellowBright('[koot/build] ') +
                 __('build.complete', {
-                    time: new Date().toLocaleString()
+                    time: new Date().toLocaleString(),
                 })
         );
 
@@ -172,12 +175,12 @@ const after = async (config = {}) => {
     if (fs.existsSync(fileBuilding)) await fs.remove(fileBuilding);
 };
 
-run().catch(err => {
+run().catch((err) => {
     if (!isFromCommandStart())
         spinner(chalk.yellowBright('[koot/build] ')).fail();
 
     if (result && Array.isArray(result.errors) && result.errors.length) {
-        result.errors.forEach(e => console.error(e));
+        result.errors.forEach((e) => console.error(e));
     } else {
         console.error(err);
     }

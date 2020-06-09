@@ -35,7 +35,7 @@ const getModuleVersion = require('koot/utils/get-module-version');
 module.exports = async (kootBuildConfig = {}) => {
     const {
         webpackConfig: config = {},
-        appType,
+        appTypeUse,
         dist,
         // [keyConfigClientAssetsPublicPath]: __clientAssetsPublicPath,
         i18n,
@@ -153,14 +153,16 @@ module.exports = async (kootBuildConfig = {}) => {
         // 'core-js/stable',
         // path.resolve(__dirname, '../../../defaults/server-stage-0.js'),
         require('../libs/get-koot-file')(
-            appType + `/server` + (isServerless ? '/index-serverless.js' : '')
+            appTypeUse +
+                `/server` +
+                (isServerless ? '/index-serverless.js' : '')
         ),
     ];
     const otherEntries = {};
     if (isSPAProd) {
     } else {
         const fileSSR = require('../libs/get-koot-file')(
-            `${appType}/server/ssr.js`
+            `${appTypeUse}/server/ssr.js`
         );
         if (ENV !== 'dev' && fs.existsSync(fileSSR)) {
             otherEntries.ssr = [fileSSR];

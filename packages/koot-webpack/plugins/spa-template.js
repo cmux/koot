@@ -35,6 +35,7 @@ class SpaTemplatePlugin {
         this.template = settings.template;
         this.serviceWorkerPathname = settings.serviceWorkerPathname;
         this.locales = settings.locales;
+        this.appTypeUse = settings.appTypeUse;
     }
 
     apply(compiler) {
@@ -44,6 +45,7 @@ class SpaTemplatePlugin {
             template,
             serviceWorkerPathname,
             locales,
+            appTypeUse,
         } = this;
 
         const filename = `index${localeId ? `.${localeId}` : ''}.html`;
@@ -127,7 +129,6 @@ class SpaTemplatePlugin {
             compiler.hooks[hookStep],
             'SpaTemplatePlugin'
         )(async (compilation, callback) => {
-            const appType = await getAppType();
             const isI18nEnabled = Array.isArray(locales) && locales.length;
 
             // 获取并写入 chunkmap
@@ -160,9 +161,8 @@ class SpaTemplatePlugin {
                     : process.env.KOOT_HTML_TEMPLATE;
 
             const renderTemplate = (() => {
-                switch (appType) {
-                    case 'ReactSPA':
-                    case 'ReactElectronSPA': {
+                switch (appTypeUse) {
+                    case 'ReactSPA': {
                         return require(`koot/React/render-template`);
                     }
                     default: {
@@ -171,9 +171,8 @@ class SpaTemplatePlugin {
                 return () => '';
             })();
             const defaultInject = (() => {
-                switch (appType) {
-                    case 'ReactSPA':
-                    case 'ReactElectronSPA': {
+                switch (appTypeUse) {
+                    case 'ReactSPA': {
                         const inject = require(`koot/ReactSPA/inject`)({
                             filemap,
                             compilation,

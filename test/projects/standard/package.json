@@ -69,7 +69,8 @@
         "koot-webpack": "file:../../../packages/koot-webpack",
         "file-loader": "^5.0.2",
         "postcss-easing-gradients": "^3.0.1",
-        "postcss-pxtorem": "^5.1.1"
+        "postcss-pxtorem": "^5.1.1",
+        "koot-electron": "file:../../../packages/koot-electron"
     },
     "engines": {
         "node": ">=10.12.0"

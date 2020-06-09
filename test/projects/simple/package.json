@@ -19,6 +19,7 @@
         "build": "koot-build",
         "build:client": "koot-build -c",
         "build:server": "koot-build -s",
+        "build:electron": "koot-build --config koot.config.electron.js",
         "dev": "koot-dev",
         "dev:client": "koot-dev -c",
         "dev:server": "koot-dev -s",
@@ -41,6 +42,7 @@
         "biz-components": "^1.0.12",
         "normalize.css": "8.0.1",
         "koot": "file:../../../packages/koot",
+        "koot-electron": "file:../../../packages/koot-electron",
         "koot-webpack": "file:../../../packages/koot-webpack",
         "file-loader": "^5.0.2",
         "svg-url-loader": "^3.0.3",
@@ -53,7 +55,7 @@
     "private": true,
     "sideEffects": false,
     "koot": {
-        "version": "0.14.0-alpha.16"
+        "version": "0.14.0-alpha.17"
     },
     "devDependencies": {
         "@types/inquirer": "^6.5.0",

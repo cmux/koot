@@ -12,3 +12,8 @@ safeguard
 webpack
 
 -   spa - no simple server, add modify-webpack from koot-electron
+
+cli
+
+-   create spa -> electron
+-   add config

@@ -25,6 +25,7 @@ const validateConfigDist = require('../libs/validate-config-dist');
 // const getCwd = require('../utils/get-cwd')
 // const emptyTempConfigDir = require('../libs/empty-temp-config-dir')
 const getDirTemp = require('../libs/get-dir-tmp');
+const safeguard = require('../libs/safeguard');
 
 program
     .version(require('../package').version, '-v, --version')
@@ -72,6 +73,8 @@ const run = async () => {
         // 删除过程中创建的临时文件
         // emptyTempConfigDir()
     };
+
+    await safeguard(kootConfig);
 
     // 打包
     if (build) {

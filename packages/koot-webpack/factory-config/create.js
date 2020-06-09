@@ -51,8 +51,10 @@ module.exports = async (kootConfig = {}) => {
     })();
 
     // 抽取配置
+    const appType = await getAppType();
     const kootBuildConfig = Object.assign({}, defaults, kootConfig, {
-        appType: await getAppType(),
+        appType,
+        appTypeUse: appType === 'ReactElectronSPA' ? 'ReactSPA' : appType,
         distClientAssetsDirName,
         [keyConfigClientAssetsPublicPath]: clientAssetsPublicPath,
     });
