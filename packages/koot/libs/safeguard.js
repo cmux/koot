@@ -1,9 +1,10 @@
+/* eslint-disable no-console */
+
 /**
  * @module
  * Safeguard mechanism for koot commands
  */
 
-const path = require('path');
 const resolve = require('resolve');
 const log = require('./log');
 const __ = require('../utils/translate');
@@ -25,7 +26,7 @@ const safeguard = async (kootConfig = {}) => {
     //
     // ========================================================================
     if (isElectronApp) {
-        const m = await new Promise((r, reject) => {
+        await new Promise((r, reject) => {
             resolve('koot-electron', { basedir: getCwd() }, (err, res) => {
                 if (err) reject(err);
                 else r(res);
@@ -40,8 +41,6 @@ const safeguard = async (kootConfig = {}) => {
             }
             throw err;
         });
-        const pathname = path.dirname(m);
-        console.log(pathname);
     }
 };
 
