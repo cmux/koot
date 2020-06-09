@@ -22,6 +22,7 @@ module.exports = (projectType = '') => {
         case 'reactelectronspa': {
             process.env.WEBPACK_BUILD_TYPE = 'spa';
             process.env.KOOT_PROJECT_TYPE = 'ReactElectronSPA';
+            process.env.KOOT_BUILD_TARGET = 'electron';
             break;
         }
 

@@ -217,6 +217,8 @@ declare namespace NodeJS {
         /**
          * 项目类型
          * - ReactApp - React 同构/SSR
+         *     - serverless 属于 ReactApp
+         * - ReactSPA - React SPA
          */
         KOOT_PROJECT_TYPE: 'ReactApp' | 'ReactSPA' | 'ReactElectronSPA';
         /**
