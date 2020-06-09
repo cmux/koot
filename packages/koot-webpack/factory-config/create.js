@@ -35,6 +35,7 @@ module.exports = async (kootConfig = {}) => {
         WEBPACK_BUILD_TYPE: TYPE,
         WEBPACK_BUILD_ENV: ENV,
         WEBPACK_BUILD_STAGE: STAGE,
+        KOOT_BUILD_TARGET: TARGET,
         // WEBPACK_ANALYZE,
         // SERVER_DOMAIN,
         // SERVER_PORT,
@@ -122,7 +123,12 @@ module.exports = async (kootConfig = {}) => {
         // SPA 生产环境
         //
         // ====================================================================
-        if (ENV === 'prod' && STAGE === 'client' && TYPE === 'spa') {
+        if (
+            ENV === 'prod' &&
+            STAGE === 'client' &&
+            TYPE === 'spa' &&
+            TARGET !== 'electron'
+        ) {
             process.env.WEBPACK_BUILD_STAGE = 'server';
             if (!Array.isArray(config)) config = [config];
             config = [

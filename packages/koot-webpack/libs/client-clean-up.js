@@ -1,14 +1,16 @@
 const fs = require('fs-extra');
 const path = require('path');
 const glob = require('glob-promise');
+const resolve = require('resolve');
 
 const {
     keyConfigBuildDll,
     CLIENT_ROOT_PATH,
     filenameBuilding,
-    filenameBuildFail
+    filenameBuildFail,
 } = require('koot/defaults/before-build');
 const getOutputsFile = require('koot/utils/get-outputs-path');
+const getCwd = require('koot/utils/get-cwd');
 
 // ============================================================================
 
@@ -71,25 +73,33 @@ const determine = async (config = {}) => {
     );
     const ignore = [
         path.resolve(clientRoot, filenameBuilding),
-        path.resolve(clientRoot, filenameBuildFail)
+        path.resolve(clientRoot, filenameBuildFail),
     ];
     if (process.env.WEBPACK_BUILD_TYPE === 'spa') {
-        ignore.push(path.resolve(clientRoot, '.server/**/*'));
+        if (process.env.KOOT_BUILD_TARGET === 'electron') {
+            require(resolve.sync('koot-electron/libs/modify-client-clean-up', {
+                basedir: getCwd(),
+            }))
+                .getIgnores(clientRoot)
+                .forEach((glob) => ignore.push(glob));
+        } else {
+            ignore.push(path.resolve(clientRoot, '.server/**/*'));
+        }
     }
     /** @type {string[]} 目前存在的文件列表 */
     const filesStored = (
         await glob(path.resolve(clientRoot, '**/*'), {
             dot: true,
-            ignore
+            ignore,
         })
     )
-        .filter(file => !fs.lstatSync(file).isDirectory())
-        .map(file => path.normalize(file));
+        .filter((file) => !fs.lstatSync(file).isDirectory())
+        .map((file) => path.normalize(file));
 
     if (forceCleanAll) {
         // 标记当前所有文件为需要清理
-        Object.keys(outputs).forEach(id => listIds.push(id));
-        filesStored.forEach(file => listFiles.push(file));
+        Object.keys(outputs).forEach((id) => listIds.push(id));
+        filesStored.forEach((file) => listFiles.push(file));
     } else {
         /** 需要保留的最近打包数 */
         const preserveCount =
@@ -97,21 +107,23 @@ const determine = async (config = {}) => {
 
         /** outputs.json 中已存在的时间戳 ID，按时间排序，由新到旧 */
         const existTimestampIds = Object.keys(outputs)
-            .map(id => parseInt(id))
+            .map((id) => parseInt(id))
             .sort((a, b) => b - a)
-            .map(id => id + '');
+            .map((id) => id + '');
 
         // 按时间戳将最近 preserveCount 次之外的时间戳 ID 添加到 listIds
-        existTimestampIds.slice(preserveCount).forEach(id => listIds.push(id));
+        existTimestampIds
+            .slice(preserveCount)
+            .forEach((id) => listIds.push(id));
 
         /** @type {string[]} 需要保留的文件列表 */
         const filesPreserved = [];
         // 按时间戳将最近 preserveCount 次打包的文件列表追加到 filesPreserved
-        existTimestampIds.slice(0, preserveCount).forEach(id => {
+        existTimestampIds.slice(0, preserveCount).forEach((id) => {
             outputs[id]
-                .map(file => path.resolve(dist, file))
-                .filter(file => !filesPreserved.includes(file))
-                .forEach(file => filesPreserved.push(file));
+                .map((file) => path.resolve(dist, file))
+                .filter((file) => !filesPreserved.includes(file))
+                .forEach((file) => filesPreserved.push(file));
         });
 
         // console.log({
@@ -123,8 +135,8 @@ const determine = async (config = {}) => {
 
         // 比对两个 Array，将不属于 filesPreserved 的文件追加到 listFiles
         filesStored
-            .filter(file => !filesPreserved.includes(file))
-            .forEach(file => listFiles.push(file));
+            .filter((file) => !filesPreserved.includes(file))
+            .forEach((file) => listFiles.push(file));
     }
 };
 
@@ -154,27 +166,27 @@ const clean = async (config = {}) => {
     let finalList = listFiles;
     if (Object.keys(outputs).length) {
         const latestId = Object.keys(outputs)
-            .map(id => parseInt(id))
+            .map((id) => parseInt(id))
             .sort((a, b) => b - a)
-            .map(id => id + '')[0];
-        const latestFiles = outputs[latestId].map(file =>
+            .map((id) => id + '')[0];
+        const latestFiles = outputs[latestId].map((file) =>
             path.resolve(dist, file)
         );
-        finalList = listFiles.filter(file => !latestFiles.includes(file));
+        finalList = listFiles.filter((file) => !latestFiles.includes(file));
     }
     // console.log({ listIds, finalList });
 
-    listIds.forEach(id => delete outputs[id]);
+    listIds.forEach((id) => delete outputs[id]);
     for (const file of finalList) {
         await fs.remove(file);
     }
 
     await fs.writeJson(fileOutputs, outputs, {
-        spaces: 4
+        spaces: 4,
     });
 };
 
 module.exports = {
     determine,
-    clean
+    clean,
 };
