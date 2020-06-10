@@ -9,9 +9,9 @@ module.exports = {
     i18n: false,
     serviceWorker: true,
     devServer: {},
-    beforeBuild: () => {},
-    afterBuild: () => {},
+    // beforeBuild: () => {},
+    // afterBuild: () => {},
     port: undefined,
     defines: {},
-    webpackDll: []
+    webpackDll: [],
 };

@@ -127,24 +127,6 @@ const run = async () => {
     })();
     let stage = stageFromCommand;
 
-    // 判断是否自动打开浏览器访问
-    let { open } = program;
-    if (!stageFromCommand && (typeof open === 'undefined' || open)) {
-        const timeout = 10 * 1000;
-        open = await confirmTimeout(
-            {
-                message: __('dev.ask_for_auto_open'),
-                suffix: __(`dev.ask_for_auto_open_suffix`, {
-                    seconds: timeout / 1000,
-                }),
-                default: true,
-            },
-            timeout
-        );
-    }
-    // console.log({ open });
-    // return;
-
     /** @type {String} build 命令的附加参数 */
     const buildCmdArgs =
         '--env dev' +
@@ -240,6 +222,26 @@ const run = async () => {
         process.env.KOOT_DEV_WDS_EXTEND_CONFIG = JSON.stringify(
             kootConfig.devServer
         );
+
+    // 判断是否自动打开浏览器访问
+    let { open } = program;
+    if (process.env.KOOT_PROJECT_TYPE === 'ReactElectronSPA') {
+        open = false;
+    } else if (!stageFromCommand && (typeof open === 'undefined' || open)) {
+        const timeout = 10 * 1000;
+        open = await confirmTimeout(
+            {
+                message: __('dev.ask_for_auto_open'),
+                suffix: __(`dev.ask_for_auto_open_suffix`, {
+                    seconds: timeout / 1000,
+                }),
+                default: true,
+            },
+            timeout
+        );
+    }
+    // console.log({ open });
+    // return;
 
     // 等待一段时间，确保某些硬盘操作的完成
     await sleep(1000);

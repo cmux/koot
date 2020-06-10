@@ -11,7 +11,7 @@ const WebpackDevServer = require('webpack-dev-server');
 
 const resetCssLoader = require('./loaders/css/reset');
 
-const createWebpackConfig = require('./factory-config/create');
+const createAppConfig = require('./factory-config/create');
 const validateWebpackDevServerPort = require('./factory-config/validate-webpack-dev-server-port');
 const cleanAndWriteLogFiles = require('./libs/write-log-and-clean-old-files');
 const clientCleanUp = require('./libs/client-clean-up');
@@ -128,8 +128,8 @@ module.exports = async (kootConfig = {}) => {
     // 抽取配置
     let { [keyConfigQuiet]: quietMode = false } = kootConfig;
     const {
-        webpackBefore: beforeBuild,
-        webpackAfter: afterBuild,
+        // webpackBefore: beforeBuild,
+        // webpackAfter: afterBuild,
         analyze = false,
         [keyConfigBuildDll]: createDll = false,
     } = kootConfig;
@@ -179,16 +179,16 @@ module.exports = async (kootConfig = {}) => {
     /** @type {Function} @async 流程回调: webpack 执行前 */
     const before = async () => {
         if (!(STAGE === 'client' && ENV === 'dev'))
-            await fs.ensureDir(data[WEBPACK_OUTPUT_PATH]);
+            await fs.ensureDir(appConfig[WEBPACK_OUTPUT_PATH]);
 
         if (STAGE === 'client') {
             const dest = getDirDistPublic();
-            data[CLIENT_ROOT_PATH] = dest;
+            appConfig[CLIENT_ROOT_PATH] = dest;
             // 创建 Flag 文件
             // if (bundleVersionsKeep) {
             //     const basename = path.basename(dest);
             //     const dirPublic = path.resolve(
-            //         data.dist,
+            //         appConfig.dist,
             //         getDirDistPublicFoldername()
             //     );
             //     const file = path.resolve(dirPublic, filenameCurrentBundle);
@@ -197,12 +197,12 @@ module.exports = async (kootConfig = {}) => {
             // }
         }
 
-        await clientCleanUp.determine(data);
+        await clientCleanUp.determine(appConfig);
 
         log('callback', 'build', `callback: ` + chalk.green('beforeBuild'));
         // 创建 DLL 模式下不执行传入的生命周期方法
-        if (!createDll && typeof beforeBuild === 'function') {
-            await beforeBuild(data);
+        if (!createDll && typeof appConfig.webpackBefore === 'function') {
+            await appConfig.webpackBefore(appConfig);
         }
 
         building = true;
@@ -249,16 +249,16 @@ module.exports = async (kootConfig = {}) => {
 
         if (!quietMode) console.log(' ');
 
-        await clientCleanUp.clean(data);
-        await writeFilesAfterBuild(data);
+        await clientCleanUp.clean(appConfig);
+        await writeFilesAfterBuild(appConfig);
 
         // 移除所有标记文件
         await removeBuildFlagFiles(dist);
 
         log('callback', 'build', `callback: ` + chalk.green('afterBuild'));
         // 创建 DLL 模式下不执行传入的生命周期方法
-        if (!createDll && typeof afterBuild === 'function')
-            await afterBuild(data);
+        if (!createDll && typeof appConfig.webpackAfter === 'function')
+            await appConfig.webpackAfter(appConfig);
 
         // 标记完成
         log(
@@ -361,7 +361,7 @@ module.exports = async (kootConfig = {}) => {
     // 创建对应当前环境的 Webpack 配置
     //
     // ========================================================================
-    const data = await createWebpackConfig(
+    const appConfig = await createAppConfig(
         Object.assign(kootConfig, {
             webpackCompilerHook: {
                 afterEmit: () => buildingComplete(),
@@ -371,7 +371,7 @@ module.exports = async (kootConfig = {}) => {
     ).catch((err) => {
         console.error('生成打包配置时发生错误! \n', err);
     });
-    const { webpackConfig, i18n, devServer = {}, pathnameChunkmap } = data;
+    const { webpackConfig, i18n, devServer = {}, pathnameChunkmap } = appConfig;
 
     /*if (TYPE === 'spa' && typeof !!kootConfig.i18n) {
         log(
@@ -456,12 +456,12 @@ module.exports = async (kootConfig = {}) => {
         result.addError(err);
 
         // 将错误写入文件
-        const fileFail = path.resolve(data.dist, filenameBuildFail);
+        const fileFail = path.resolve(appConfig.dist, filenameBuildFail);
         fs.ensureFileSync(fileFail);
         fs.writeFileSync(fileFail, result.errors.join('\r\n\r\n'), 'utf-8');
 
         // 移除标记文件
-        const fileBuilding = path.resolve(data.dist, filenameBuilding);
+        const fileBuilding = path.resolve(appConfig.dist, filenameBuilding);
         if (fs.existsSync(fileBuilding)) fs.removeSync(fileBuilding);
 
         // 移除过程中创建的临时文件

@@ -1,6 +1,6 @@
 ## [Unreleased]
 
-_Koot.js_ 0.14 开始原生支持 _Electron_ 项目开发。利用 `koot-cli` 创建新项目时可以根据向导直接创建 _Electron_ 项目并会自动配置完成开发环境。如需手动配置开发环境，如从老的 _Koot.js_ 项目升级，请参见文档 [Electron](https://koot.js.org/#/electron)。
+_Koot.js_ 0.14 开始原生支持 _Electron_ 项目开发。利用 `koot-cli` 创建新项目时可以根据向导直接创建 _Electron_ 项目并会自动配置完成开发环境。如需手动配置开发环境，如从老的 _Koot.js_ 项目升级，请参见文档 [Electron](https://koot.js.org/#/electron) ([#102](https://github.com/cmux/koot/issues/102))。
 
 **koot**
 

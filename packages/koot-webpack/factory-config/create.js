@@ -4,11 +4,13 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
 // Libs & Utilities
 const {
     keyConfigClientAssetsPublicPath,
+    keyConfigWebpackSPATemplateInject,
     // WEBPACK_MODIFIED_PUBLIC_PATH
 } = require('koot/defaults/before-build');
 const getAppType = require('koot/utils/get-app-type');
 const getChunkmapPathname = require('koot/utils/get-chunkmap-path');
 const initNodeEnv = require('koot/utils/init-node-env');
+const resolveRequire = require('koot/utils/resolve-require');
 
 // Transformers
 const transformDist = require('./transform-dist');
@@ -22,10 +24,17 @@ const transformConfigServer = require('./transform-config-server');
 const defaults = require('koot/defaults/build-config');
 
 /**
- * 根据当前环境和配置，生成 Webpack 配置对象
+ * 根据当前环境和配置，生成 App 配置对象
+ * - 条件包含
+ *     - 打包类型 (SSR, SPA, etc...)
+ *     - 运行环境 (prod, dev)
+ *     - 打包场景 (client, server)
+ *     - 打包目标 (electron, serverless, etc...)
+ * - 包含所有的 Koot.js 配置
+ * - `webpackConfig` 替换为完整的 Webpack 配置对象
  * @async
  * @param {Object} kootConfig Koot.js 打包配置对象 (koot.build.js)。具体内容详见模板项目的 koot.build.js 文件内注释。
- * @returns {Object} 生成的完整 Webpack 配置对象
+ * @returns {Object} 根据当前环境和配置的 App 配置对象
  */
 module.exports = async (kootConfig = {}) => {
     initNodeEnv();
@@ -53,23 +62,20 @@ module.exports = async (kootConfig = {}) => {
 
     // 抽取配置
     const appType = await getAppType();
-    const kootBuildConfig = Object.assign({}, defaults, kootConfig, {
+    const appConfig = Object.assign({}, defaults, kootConfig, {
         appType,
         appTypeUse: appType === 'ReactElectronSPA' ? 'ReactSPA' : appType,
         distClientAssetsDirName,
         [keyConfigClientAssetsPublicPath]: clientAssetsPublicPath,
     });
-    const { analyze = false } = kootBuildConfig;
+    const { analyze = false } = appConfig;
 
-    if (process.env.WEBPACK_BUILD_ENV === 'dev' && kootBuildConfig.devPort) {
-        process.env.SERVER_PORT = kootBuildConfig.devPort;
-    } else if (
-        process.env.WEBPACK_BUILD_ENV !== 'dev' &&
-        kootBuildConfig.port
-    ) {
-        process.env.SERVER_PORT = kootBuildConfig.port;
+    if (process.env.WEBPACK_BUILD_ENV === 'dev' && appConfig.devPort) {
+        process.env.SERVER_PORT = appConfig.devPort;
+    } else if (process.env.WEBPACK_BUILD_ENV !== 'dev' && appConfig.port) {
+        process.env.SERVER_PORT = appConfig.port;
     }
-    // process.env.SERVER_PORT = kootBuildConfig.portServer
+    // process.env.SERVER_PORT = appConfig.portServer
 
     // ========================================================================
     //
@@ -77,20 +83,16 @@ module.exports = async (kootConfig = {}) => {
     //
     // ========================================================================
 
-    kootBuildConfig.dist = await transformDist(kootBuildConfig.dist);
-    kootBuildConfig.i18n = await transformI18n(kootBuildConfig);
-    kootBuildConfig.serviceWorker = await transformServiceWorker(
-        kootBuildConfig
-    );
-    kootBuildConfig.template = await transformTemplate(
-        kootBuildConfig.template
-    );
-    kootBuildConfig.pathnameChunkmap = await getChunkmapPathname();
+    appConfig.dist = await transformDist(appConfig.dist);
+    appConfig.i18n = await transformI18n(appConfig);
+    appConfig.serviceWorker = await transformServiceWorker(appConfig);
+    appConfig.template = await transformTemplate(appConfig.template);
+    appConfig.pathnameChunkmap = await getChunkmapPathname();
 
-    if (typeof kootBuildConfig.webpackConfig === 'function')
-        kootBuildConfig.webpackConfig = await kootBuildConfig.webpackConfig();
-    if (typeof kootBuildConfig.webpackConfig !== 'object')
-        kootBuildConfig.webpackConfig = {};
+    if (typeof appConfig.webpackConfig === 'function')
+        appConfig.webpackConfig = await appConfig.webpackConfig();
+    if (typeof appConfig.webpackConfig !== 'object')
+        appConfig.webpackConfig = {};
 
     // ========================================================================
     //
@@ -100,10 +102,8 @@ module.exports = async (kootConfig = {}) => {
 
     const webpackConfig = await (async () => {
         let config;
-        if (STAGE === 'client')
-            config = await transformConfigClient(kootBuildConfig);
-        if (STAGE === 'server')
-            config = await transformConfigServer(kootBuildConfig);
+        if (STAGE === 'client') config = await transformConfigClient(appConfig);
+        if (STAGE === 'server') config = await transformConfigServer(appConfig);
 
         const extendConfig = (config) => {
             if (Array.isArray(config))
@@ -112,7 +112,7 @@ module.exports = async (kootConfig = {}) => {
             if (typeof config.resolve !== 'object') config.resolve = {};
             config.resolve.alias = {
                 ...(config.resolve.alias || {}),
-                ...(kootBuildConfig.aliases || {}),
+                ...(appConfig.aliases || {}),
             };
             return config;
         };
@@ -131,10 +131,7 @@ module.exports = async (kootConfig = {}) => {
         ) {
             process.env.WEBPACK_BUILD_STAGE = 'server';
             if (!Array.isArray(config)) config = [config];
-            config = [
-                ...config,
-                ...(await transformConfigServer(kootBuildConfig)),
-            ];
+            config = [...config, ...(await transformConfigServer(appConfig))];
             process.env.WEBPACK_BUILD_STAGE = 'client';
         }
 
@@ -146,15 +143,18 @@ module.exports = async (kootConfig = {}) => {
 
         if (analyze) {
             if (Array.isArray(config)) {
-                config =
-                    config[
-                        ENV === 'prod' &&
-                        STAGE === 'client' &&
-                        TYPE === 'spa' &&
-                        config.length > 1
-                            ? 1
-                            : 0
-                    ];
+                // config =
+                //     config[
+                //         ENV === 'prod' &&
+                //         STAGE === 'client' &&
+                //         TYPE === 'spa' &&
+                //         config.length > 1
+                //             ? 1
+                //             : 0
+                //     ];
+                config = config.filter(
+                    (c) => !c[keyConfigWebpackSPATemplateInject]
+                )[0];
             }
             config.plugins.push(
                 new BundleAnalyzerPlugin({
@@ -166,7 +166,20 @@ module.exports = async (kootConfig = {}) => {
 
         return config;
     })();
-    kootBuildConfig.webpackConfig = webpackConfig;
+    appConfig.webpackConfig = webpackConfig;
+
+    // ========================================================================
+    //
+    // 最终处理
+    //
+    // ========================================================================
+
+    if (STAGE === 'client' && TYPE === 'spa' && TARGET === 'electron') {
+        await resolveRequire(
+            'koot-electron',
+            'libs/modify-config.js'
+        )(appConfig);
+    }
 
     // ========================================================================
     //
@@ -174,6 +187,6 @@ module.exports = async (kootConfig = {}) => {
     //
     // ========================================================================
 
-    // console.log({ kootBuildConfig });
-    return kootBuildConfig;
+    // console.log({ appConfig });
+    return appConfig;
 };

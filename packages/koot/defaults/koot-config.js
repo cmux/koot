@@ -1,3 +1,6 @@
+const path = require('path');
+const resolveDir = require('../utils/resolve-dir');
+
 module.exports = {
     type: 'react',
     // target: '',
@@ -29,7 +32,13 @@ module.exports = {
     devPort: 3080,
     devServiceWorker: false,
 
-    electron: {
-        main: 'koot-electron/main.js',
-    },
+    electron: (() => {
+        try {
+            return {
+                main: path.resolve(resolveDir('koot-electron'), 'main.js'),
+            };
+        } catch (e) {
+            return {};
+        }
+    })(),
 };

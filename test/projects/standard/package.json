@@ -39,6 +39,7 @@
         "dev:spa": "koot-dev --type spa --dest dist-spa",
         "dev:spa:no-open": "koot-dev --type spa --dest dist-spa --no-open",
         "analyze": "koot-analyze",
+        "analyze:spa": "koot-analyze --type spa",
         "eslint": "eslint \"src/**/*.+(js|jsx)\"",
         "test:server": "npm run build:server && node dist\\server\\index.js",
         "koot-buildtest-isomorphic-build": "koot-build --env prod --koot-test",
@@ -78,7 +79,7 @@
     "private": true,
     "sideEffects": false,
     "koot": {
-        "version": "0.14.0-alpha.16"
+        "version": "0.14.0-alpha.17"
     },
     "devDependencies": {
         "@types/inquirer": "^6.5.0",

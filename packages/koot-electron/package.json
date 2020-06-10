@@ -30,6 +30,7 @@
         "electron": "^9.0.2"
     },
     "devDependencies": {
-        "koot": "^0.14.0-alpha.17"
+        "koot": "^0.14.0-alpha.17",
+        "koot-webpack": "^0.14.0-alpha.17"
     }
 }

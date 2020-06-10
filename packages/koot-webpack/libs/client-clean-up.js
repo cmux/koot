@@ -1,7 +1,6 @@
 const fs = require('fs-extra');
 const path = require('path');
 const glob = require('glob-promise');
-const resolve = require('resolve');
 
 const {
     keyConfigBuildDll,
@@ -10,7 +9,7 @@ const {
     filenameBuildFail,
 } = require('koot/defaults/before-build');
 const getOutputsFile = require('koot/utils/get-outputs-path');
-const getCwd = require('koot/utils/get-cwd');
+const resolveRequire = require('koot/utils/resolve-require');
 
 // ============================================================================
 
@@ -77,9 +76,7 @@ const determine = async (config = {}) => {
     ];
     if (process.env.WEBPACK_BUILD_TYPE === 'spa') {
         if (process.env.KOOT_BUILD_TARGET === 'electron') {
-            require(resolve.sync('koot-electron/libs/modify-client-clean-up', {
-                basedir: getCwd(),
-            }))
+            resolveRequire('koot-electron', 'libs/modify-client-clean-up')
                 .getIgnores(clientRoot)
                 .forEach((glob) => ignore.push(glob));
         } else {

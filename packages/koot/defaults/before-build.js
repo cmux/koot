@@ -30,7 +30,7 @@ module.exports = {
         ['store', ''],
         ['cookiesToStore', ''],
         ['client', {}],
-        ['server', {}]
+        ['server', {}],
     ],
     typesSPA: ['spa', 'reactspa', 'react-spa'],
 
@@ -43,7 +43,8 @@ module.exports = {
     // 其他项目配置项名
     keyConfigQuiet: '__QUIET__',
     keyConfigOutputPathShouldBe: '__OUTPUT_PATH_SHOULD_BE__',
-    keyConfigWebpackSPATemplateInject: '__SPA_TEMPLATE_INJECT__',
+    keyConfigWebpackSPATemplateInject:
+        '__KOOT_WEBPACK_CONFIG_FOR_SPA_TEMPLATE_INJECT__',
     keyConfigWebpackSPAServer: '__SPA_SERVER__',
     keyConfigClientAssetsPublicPath: '__CLIENT_ASSETS_PUBLIC_PATH__',
     keyConfigClientServiceWorkerPathname: '__CLIENT_SERVICE_WORKER_PATHNAME__',
@@ -92,5 +93,5 @@ module.exports = {
     buildOutputsFilename: '.koot-public-outputs.json',
 
     /** @type {string} Webpack Dev Server 热更新 Web Socket 地址 */
-    pathnameSockjs: `sockjs-node`
+    pathnameSockjs: `sockjs-node`,
 };
