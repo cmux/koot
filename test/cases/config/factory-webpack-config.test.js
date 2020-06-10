@@ -8,7 +8,7 @@ const createConfig = require('../../../packages/koot-webpack/factory-config/crea
 const validateConfig = require('../../../packages/koot/libs/validate-config');
 
 const {
-    keyFileProjectConfigTempFull
+    keyFileProjectConfigTempFull,
     // filenameProjectConfigTempFull,
     // propertiesToExtract,
 } = require('../../../packages/koot/defaults/before-build');
@@ -69,16 +69,16 @@ describe('测试: 生成 Webpack 配置', () => {
                     const {
                         dist,
                         aliases,
-                        beforeBuild,
-                        afterBuild,
+                        webpackBefore,
+                        webpackAfter,
                         i18n = false,
-                        webpackConfig
+                        webpackConfig,
                     } = config;
 
                     expect(isValidPath(dist)).toBe(true);
                     expect(typeof aliases).toBe('object');
-                    expect(typeof beforeBuild).toBe('function');
-                    expect(typeof afterBuild).toBe('function');
+                    expect(typeof webpackBefore).toBe('function');
+                    expect(typeof webpackAfter).toBe('function');
 
                     const configIsArray = () => {
                         if (stage === 'server') return true;
@@ -90,7 +90,7 @@ describe('测试: 生成 Webpack 配置', () => {
                         );
                     };
 
-                    const testConfig = config => {
+                    const testConfig = (config) => {
                         expect(typeof config).toBe('object');
 
                         const {
@@ -99,7 +99,7 @@ describe('测试: 生成 Webpack 配置', () => {
                             output,
                             plugins,
                             module,
-                            resolve
+                            resolve,
                         } = config;
 
                         expect(mode).toBe(modeToBe);
@@ -122,9 +122,9 @@ describe('测试: 生成 Webpack 配置', () => {
                             }
                         }
                         expect(Array.isArray(plugins)).toBe(true);
-                        expect(plugins.some(p => p === null)).toBe(false);
+                        expect(plugins.some((p) => p === null)).toBe(false);
                         expect(
-                            plugins.some(p => typeof p === 'undefined')
+                            plugins.some((p) => typeof p === 'undefined')
                         ).toBe(false);
                         expect(Array.isArray(module.rules)).toBe(true);
                         expect(resolve.alias.__AAA__).toBe('aaa');

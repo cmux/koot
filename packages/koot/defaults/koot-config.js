@@ -23,6 +23,8 @@ module.exports = {
     // serverAfter: '',
     // serverOnRender: '',
 
+    webpackBefore() {},
+    webpackAfter() {},
     moduleCssFilenameTest: /\.(component|view|module)/,
     classNameHashLength: 6,
     bundleVersionsKeep: 2,
