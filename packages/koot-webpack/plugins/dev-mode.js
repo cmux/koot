@@ -41,14 +41,14 @@ class DevModePlugin {
 
         // compilation - [server / dev] 如果存在 DLL 结果，写入到 index.js 文件开端
         if (STAGE === 'server' && ENV === 'dev') {
-            compiler.hooks.compilation.tap('DevModePlugin', compilation => {
+            compiler.hooks.compilation.tap('DevModePlugin', (compilation) => {
                 compilation.hooks.optimizeChunkAssets.tap(
                     'DevModePlugin',
-                    chunks => {
+                    (chunks) => {
                         if (typeof this.dist !== 'string' || !this.dist) return;
 
                         const {
-                            KOOT_DEV_DLL_FILE_SERVER: fileDll
+                            KOOT_DEV_DLL_FILE_SERVER: fileDll,
                         } = process.env;
                         if (!fileDll || !fs.existsSync(fileDll)) return;
 
@@ -57,8 +57,8 @@ class DevModePlugin {
                                 continue;
                             }
                             chunk.files
-                                .filter(filename => filename === 'index.js')
-                                .forEach(filename => {
+                                .filter((filename) => filename === 'index.js')
+                                .forEach((filename) => {
                                     compilation.assets[
                                         filename
                                     ] = new ConcatSource(
@@ -76,7 +76,7 @@ class DevModePlugin {
         compiler.hooks.afterCompile.tap.bind(
             compiler.hooks.afterCompile,
             'DevModePlugin'
-        )(async compilation => {
+        )(async (compilation) => {
             /**
              * [SSR/server] [SPA]
              * 监视 ejs 模板，如果文件改变触发重新打包

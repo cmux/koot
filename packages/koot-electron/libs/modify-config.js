@@ -17,6 +17,7 @@ const getCwd = require('koot/utils/get-cwd');
 const newWebpackConfig = require('koot-webpack/libs/new-client-webpack-config');
 
 // const { electronFilesFolderName } = require('./constants');
+const __ = require('./translate');
 const pkg = require('../package.json');
 
 // ============================================================================
@@ -72,7 +73,11 @@ const buildElectronMain = async (appConfig) => {
     const dest = getElectronFilesFolder(appConfig);
     const { electron: electronConfig = {}, dist } = appConfig;
     const { main, mainOutput } = electronConfig;
-    const msg = getLogMsg(false, 'electron', mainOutput);
+    const msg = getLogMsg(
+        false,
+        'electron',
+        __('building_main', { file: mainOutput })
+    );
     const waiting = spinner(msg + '...');
 
     files.main = path.resolve(dest, mainOutput);
@@ -172,11 +177,7 @@ const afterBuildAutoOpen = async (appConfig) => {
         // if (!doKill)
         console.log(
             '\n' +
-                getLogMsg(
-                    'warning',
-                    'electron',
-                    'Electron window closed. You can edit and save any file in your project to trigger a hot-reload and re-open Electron window.'
-                ) +
+                getLogMsg('warning', 'electron', __('dev_window_closed')) +
                 '\n\n'
         );
         opened = false;

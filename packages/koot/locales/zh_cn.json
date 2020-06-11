@@ -36,5 +36,9 @@
         "build_dll": "生成 DLL 文件",
         "missing_stage": "请设置场景。\n${indent}> ${example}",
         "spa_success": "SPA 开发服务器已启动！"
+    },
+    "koot-electron": {
+        "building_main": "构建主文件 (${file})",
+        "dev_window_closed": "Electron 窗口已关闭。编辑并保存项目中的任意文件，即可触发热更新，并会自动重新打开 Electron 窗口。"
     }
 }

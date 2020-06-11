@@ -36,5 +36,9 @@
         "build_dll": "Building DLLs",
         "missing_stage": "Please set STAGE.\n${indent}> ${example}",
         "spa_success": "SPA dev server launched!"
+    },
+    "koot-electron": {
+        "building_main": "Building main file (${file})",
+        "dev_window_closed": "Electron window closed. You can edit and save any file in your project to trigger a hot-reload and re-open Electron window."
     }
 }
