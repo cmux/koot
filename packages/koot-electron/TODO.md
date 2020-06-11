@@ -1,9 +1,8 @@
 koot-electron
 
-`/index.js`
+command
 
--   init
--   launch
+-   start: spawn from root
 
 cli
 

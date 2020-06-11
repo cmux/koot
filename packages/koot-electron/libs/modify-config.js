@@ -69,18 +69,19 @@ const getElectronFilesFolder = (appConfig) =>
           );
 
 const buildElectronMain = async (appConfig) => {
-    const msg = getLogMsg(false, 'electron', 'main.js');
-    const waiting = spinner(msg + '...');
     const dest = getElectronFilesFolder(appConfig);
-    const { electron: electronConfig = {} } = appConfig;
+    const { electron: electronConfig = {}, dist } = appConfig;
+    const { main, mainOutput } = electronConfig;
+    const msg = getLogMsg(false, 'electron', mainOutput);
+    const waiting = spinner(msg + '...');
 
-    files.main = path.resolve(dest, 'main.js');
+    files.main = path.resolve(dest, mainOutput);
 
     const webpackConfig = await newWebpackConfig(
         {
             target: 'electron-main',
             entry: {
-                main: electronConfig.main,
+                main,
             },
             output: {
                 path: dest,
@@ -129,19 +130,25 @@ const buildElectronMain = async (appConfig) => {
     }
 
     // 添加 package.json
-    await fs.writeJson(path.resolve(dest, 'package.json'), {
-        name: sanitize(appConfig.name || '')
-            .toLowerCase()
-            .replace(/ /g, '-'),
-        scripts: {
-            start: 'electron .',
+    await fs.writeJson(
+        path.resolve(dist, 'package.json'),
+        {
+            name: sanitize(appConfig.name || '')
+                .toLowerCase()
+                .replace(/ /g, '-'),
+            scripts: {
+                start: 'electron .',
+            },
+            main: path.relative(dist, files.main),
+            private: true,
+            dependencies: {
+                electron: pkg.dependencies.electron,
+            },
         },
-        main: 'main.js',
-        private: true,
-        dependencies: {
-            electron: pkg.dependencies.electron,
-        },
-    });
+        {
+            spaces: 4,
+        }
+    );
 };
 
 let opened = false;

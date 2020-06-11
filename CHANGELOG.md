@@ -33,7 +33,7 @@ _Koot.js_ 0.14 开始原生支持 _Electron_ 项目开发。利用 `koot-cli` �
 
 **koot-electron**
 
--   新的 NPM 包，承载 _Electron_ 项目开发相关内容
+-   新的 NPM 包，包含 _Electron_ 项目开发相关内容
 
 ---
 

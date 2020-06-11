@@ -26,6 +26,7 @@ const validateConfigDist = require('../libs/validate-config-dist');
 // const emptyTempConfigDir = require('../libs/empty-temp-config-dir')
 const getDirTemp = require('../libs/get-dir-tmp');
 const safeguard = require('../libs/safeguard');
+const resolveRequire = require('../utils/resolve-require');
 
 program
     .version(require('../package').version, '-v, --version')
@@ -75,6 +76,15 @@ const run = async () => {
     };
 
     await safeguard(kootConfig);
+
+    // ========================================================================
+
+    const { start: extraStart } =
+        process.env.KOOT_PROJECT_TYPE === 'ReactElectronSPA'
+            ? resolveRequire('koot-electron', 'libs/command-start.js')
+            : {};
+
+    // ========================================================================
 
     // 打包
     if (build) {
@@ -163,6 +173,13 @@ const run = async () => {
     }
 
     await afterBuild();
+
+    // ========================================================================
+
+    if (process.env.KOOT_PROJECT_TYPE === 'ReactElectronSPA') {
+        if (typeof extraStart === 'function') await extraStart(dist);
+        return;
+    }
 
     // 运行服务器
     const pathServerJS = path.resolve(

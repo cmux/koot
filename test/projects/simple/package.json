@@ -16,6 +16,7 @@
         "start": "koot-start",
         "start:server": "koot-start --no-build",
         "start:spa": "koot-start --type react-spa",
+        "start:electron": "koot-start --config koot.config.electron.js",
         "build": "koot-build",
         "build:spa": "koot-build --type react-spa",
         "build:client": "koot-build -c",

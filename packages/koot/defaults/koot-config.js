@@ -38,6 +38,7 @@ module.exports = {
         try {
             return {
                 main: path.resolve(resolveDir('koot-electron'), 'main.js'),
+                mainOutput: 'main.js',
             };
         } catch (e) {
             return {};

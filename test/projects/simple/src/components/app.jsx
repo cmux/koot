@@ -10,14 +10,14 @@ import styles from './app.component.less';
 let stateShowed = false;
 
 @extend({
-    connect: state => {
+    connect: (state) => {
         if (__CLIENT__ && __DEV__ && !stateShowed) {
             console.log('root: redux store conected', state);
             stateShowed = true;
         }
         return {};
     },
-    styles
+    styles,
 })
 class App extends React.Component {
     componentDidMount() {
