@@ -39,6 +39,9 @@
     },
     "koot-electron": {
         "building_main": "Building main file (${file})",
-        "dev_window_closed": "Electron window closed. You can edit and save any file in your project to trigger a hot-reload and re-open Electron window."
+        "dev_window_closed": "Electron window closed. You can edit and save any file in your project to trigger a hot-reload and re-open Electron window.",
+        "question_do_packaging": "Build an executable distribution version",
+        "question_select_targets": "Please select target OS",
+        "can_only_build_on_mac": "Can only build on Mac"
     }
 }

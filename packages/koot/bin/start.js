@@ -59,6 +59,7 @@ const run = async () => {
     });
 
     process.env.KOOT_TEST_MODE = JSON.stringify(kootTest);
+    process.env.KOOT_COMMAND_START = JSON.stringify(true);
 
     await before(program);
 

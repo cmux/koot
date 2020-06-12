@@ -39,6 +39,9 @@
     },
     "koot-electron": {
         "building_main": "构建主文件 (${file})",
-        "dev_window_closed": "Electron 窗口已关闭。编辑并保存项目中的任意文件，即可触发热更新，并会自动重新打开 Electron 窗口。"
+        "dev_window_closed": "Electron 窗口已关闭。编辑并保存项目中的任意文件，即可触发热更新，并会自动重新打开 Electron 窗口。",
+        "question_do_packaging": "是否打包成可执行文件",
+        "question_select_targets": "请选择目标操作系统",
+        "can_only_build_on_mac": "仅限 Mac 系统"
     }
 }

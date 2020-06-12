@@ -2,8 +2,14 @@
 
 const fs = require('fs-extra');
 const path = require('path');
+const os = require('os');
 const webpack = require('webpack');
 const sanitize = require('sanitize-filename');
+const resolve = require('resolve');
+const inquirer = require('inquirer');
+const merge = require('lodash/merge');
+const spinner = require('koot-cli-kit/spinner');
+const spawn = require('koot-cli-kit/spawn');
 
 const {
     keyConfigWebpackSPATemplateInject,
@@ -12,13 +18,14 @@ const {
 } = require('koot/defaults/before-build');
 const getDirDevTmp = require('koot/libs/get-dir-dev-tmp');
 const getLogMsg = require('koot/libs/get-log-msg');
-const spinner = require('koot/utils/spinner');
+const isFromStartCommand = require('koot/libs/is-from-start-command');
 const getCwd = require('koot/utils/get-cwd');
 const newWebpackConfig = require('koot-webpack/libs/new-client-webpack-config');
 
-// const { electronFilesFolderName } = require('./constants');
 const __ = require('./translate');
-const pkg = require('../package.json');
+
+const defaultWebpackConfigMain = require('./defaults/webpack-config-main');
+const defaultDistPackageJson = require('./defaults/dist-package-json');
 
 // ============================================================================
 
@@ -29,6 +36,9 @@ const modifyConfig = async (appConfig) => {
         throw new Error('MISSING_PARAMETER: appConfig');
 
     const { webpackConfig, webpackBefore, webpackAfter } = appConfig;
+
+    // 修改 dist
+    // appConfig.dist = path.resolve(appConfig.dist, 'build');
 
     // 修改 Webpack 配置
     appConfig.webpackConfig = await modifyWebpackConfig(
@@ -46,8 +56,20 @@ const modifyConfig = async (appConfig) => {
     appConfig.webpackAfter = async (...args) => {
         if (process.env.WEBPACK_BUILD_ENV === 'dev') {
             await afterBuildAutoOpen(...args);
-        } else {
-            await packElectron(...args);
+        } else if (!isFromStartCommand()) {
+            console.log(' ');
+            const { doPackaging } = await inquirer.prompt({
+                type: 'confirm',
+                name: 'doPackaging',
+                message: getLogMsg(
+                    false,
+                    'electron',
+                    __('question_do_packaging')
+                ),
+                default: false,
+            });
+            if (doPackaging) await packElectron(...args);
+            else console.log(' ');
         }
         if (typeof webpackAfter === 'function') await webpackAfter(...args);
     };
@@ -64,15 +86,12 @@ const files = {};
 const getElectronFilesFolder = (appConfig) =>
     process.env.WEBPACK_BUILD_ENV === 'dev'
         ? getDirDevTmp('electron')
-        : path.resolve(
-              appConfig[CLIENT_ROOT_PATH]
-              // electronFilesFolderName
-          );
+        : path.resolve(appConfig[CLIENT_ROOT_PATH]);
 
 const buildElectronMain = async (appConfig) => {
     const dest = getElectronFilesFolder(appConfig);
     const { electron: electronConfig = {}, dist } = appConfig;
-    const { main, mainOutput } = electronConfig;
+    const { main, mainOutput, build = {} } = electronConfig;
     const msg = getLogMsg(
         false,
         'electron',
@@ -82,20 +101,26 @@ const buildElectronMain = async (appConfig) => {
 
     files.main = path.resolve(dest, mainOutput);
 
+    const cwd = getCwd();
+    const projectPkg = require(path.resolve(cwd, 'package.json'));
+    const installedElectronDir = path.dirname(
+        resolve.sync('electron', {
+            basedir: cwd,
+        })
+    );
+    const installedElectronVersion = require(path.resolve(
+        installedElectronDir,
+        'package.json'
+    )).version;
     const webpackConfig = await newWebpackConfig(
-        {
-            target: 'electron-main',
+        merge({}, defaultWebpackConfigMain, {
             entry: {
                 main,
             },
             output: {
                 path: dest,
             },
-            node: {
-                __dirname: false,
-                __filename: false,
-            },
-        },
+        }),
         appConfig
     );
 
@@ -137,19 +162,20 @@ const buildElectronMain = async (appConfig) => {
     // 添加 package.json
     await fs.writeJson(
         path.resolve(dist, 'package.json'),
-        {
+        merge({}, defaultDistPackageJson, {
             name: sanitize(appConfig.name || '')
                 .toLowerCase()
                 .replace(/ /g, '-'),
-            scripts: {
-                start: 'electron .',
-            },
             main: path.relative(dist, files.main),
-            private: true,
-            dependencies: {
-                electron: pkg.dependencies.electron,
+            description:
+                projectPkg.description || defaultDistPackageJson.description,
+            version: projectPkg.version || defaultDistPackageJson.version,
+            author: projectPkg.author || defaultDistPackageJson.author,
+            build,
+            devDependencies: {
+                electron: installedElectronVersion,
             },
-        },
+        }),
         {
             spaces: 4,
         }
@@ -175,11 +201,9 @@ const afterBuildAutoOpen = async (appConfig) => {
 
     child.on('close', () => {
         // if (!doKill)
-        console.log(
-            '\n' +
-                getLogMsg('warning', 'electron', __('dev_window_closed')) +
-                '\n\n'
-        );
+        console.log(' ');
+        console.log(getLogMsg('warning', 'electron', __('dev_window_closed')));
+        console.log(' ');
         opened = false;
         // process.exit(1);
     });
@@ -198,7 +222,38 @@ const afterBuildAutoOpen = async (appConfig) => {
 };
 
 const packElectron = async (appConfig) => {
-    console.log('TODO: packElectron');
+    const platform = os.platform();
+    const { targets } = await inquirer.prompt({
+        type: 'checkbox',
+        name: 'targets',
+        message: getLogMsg(false, 'electron', __('question_select_targets')),
+        choices: [
+            {
+                name: 'Windows',
+                value: '--win',
+                checked: platform === 'win32',
+            },
+            {
+                name:
+                    'macOS' +
+                    (platform !== 'darwin'
+                        ? ` (${__('can_only_build_on_mac')})`
+                        : ''),
+                value: '--mac',
+                disabled: platform !== 'darwin',
+                checked: platform === 'darwin',
+            },
+            {
+                name: 'Linux',
+                value: '--linux',
+            },
+        ],
+    });
+    const args = [...targets];
+
+    await spawn(`electron-builder build ${args.join(' ')}`, {
+        cwd: appConfig.dist,
+    });
 };
 
 const modifyWebpackConfig = async (webpackConfig, appConfig) => {

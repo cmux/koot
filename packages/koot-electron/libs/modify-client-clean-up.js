@@ -1,9 +1,9 @@
 const path = require('path');
-// const { electronFilesFolderName } = require('./constants');
+const { packedFilesFolderName } = require('./constants');
 
 const getIgnores = (clientRoot) => {
     return [
-        // path.resolve(clientRoot, `${electronFilesFolderName}/**/*`),
+        path.resolve(clientRoot, `${packedFilesFolderName}/**/*`),
         path.resolve(clientRoot, `main.js`),
         path.resolve(clientRoot, `package.json`),
     ];
