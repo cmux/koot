@@ -116,6 +116,7 @@ describe('测试: 验证配置 (生成临时的核心代码引用文件，返回
             expect(typeof kootConfig.webpackConfig).toBe('function');
 
             switch (kootConfig.type) {
+                case 'react':
                 case 'react-app': {
                     if (kootConfig.target === 'serverless')
                         expect(typeof kootConfig.serverPackAll).toBe(true);

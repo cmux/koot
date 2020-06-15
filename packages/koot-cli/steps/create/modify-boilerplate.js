@@ -3,6 +3,7 @@ require('../../types');
 const fs = require('fs-extra');
 const path = require('path');
 const chalk = require('chalk');
+const latestVersion = require('latest-version');
 
 const _ = require('../../lib/translate');
 const spinner = require('../../lib/spinner');
@@ -46,6 +47,14 @@ module.exports = async (app) => {
             extend.author = app.author;
         } else {
             delete packageJson.author;
+        }
+
+        if (app.spaMode === 'electron') {
+            extend.devDependencies = {
+                ...packageJson.devDependencies,
+            };
+            extend.devDependencies['koot-electron'] =
+                '^' + (await latestVersion('koot-electron'));
         }
 
         // 确认当前 Koot.js 版本，添加至特定字段
@@ -97,7 +106,15 @@ module.exports = async (app) => {
         if (app.serverMode === 'serverless') {
             content = content.replace(
                 /\n(\s*).*?更多选项请查阅文档.+?\n+.+?\n.+?客户端生命周期/gm,
-                (str, $1) => `\n${$1}target: 'serverless',` + str
+                (str, $1) => `${$1}target: 'serverless',\n` + str
+            );
+        }
+
+        // 添加 electron
+        if (app.spaMode === 'electron') {
+            content = content.replace(
+                /\n(\s*).*?更多选项请查阅文档.+?\n+.+?\n.+?客户端生命周期/gm,
+                (str, $1) => `${$1}target: 'electron',\n` + str
             );
         }
 
