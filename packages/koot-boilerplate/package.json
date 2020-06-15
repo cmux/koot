@@ -40,7 +40,7 @@
         "eslint": "^7.2.0",
         "eslint-config-koot": "^1.7.1",
         "husky": "^4.2.5",
-        "lint-staged": "^10.2.9",
+        "lint-staged": "^10.2.10",
         "normalize.css": "^8.0.1",
         "prettier": "^2.0.5",
         "prettier-eslint": "^11.0.0",

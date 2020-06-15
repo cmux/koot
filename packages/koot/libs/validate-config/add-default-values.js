@@ -38,6 +38,8 @@ module.exports = async (projectDir, config) => {
         } else if (
             typeof config[key] === typeof defaultValues[key] &&
             typeof config[key] === 'object' &&
+            !(config[key] instanceof RegExp) &&
+            !(defaultValues[key] instanceof RegExp) &&
             !Array.isArray(config[key]) &&
             !Array.isArray(defaultValues[key])
         ) {

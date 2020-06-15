@@ -42,7 +42,7 @@ jspm_packages
 *.lock
 package-lock.json
 .koot.*
-test/cases/config/samples
+test/cases/config/samples/**/
 logs
 dist
 /packages/koot-webpack/libs/.tmp

@@ -308,6 +308,10 @@ const finalValidate = async (config = {}) => {
         }
     }
 
+    if (config.target !== 'electron') {
+        delete config.electron;
+    }
+
     // 添加 placeholder
     config[WEBPACK_OUTPUT_PATH] = undefined;
 
