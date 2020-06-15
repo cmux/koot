@@ -29,6 +29,7 @@
     -   [CSS](/css)
     -   [多语言](/i18n)
     -   [生命周期](/life-cycle)
+    -   [Electron](/electron)
     -   [全局与工具函数](/utilities)
     -   [默认关闭的功能](/disabled)
 
