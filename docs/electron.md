@@ -1,8 +1,10 @@
 # Electron 项目开发
 
-_Koot.js_ 从 0.14 开始原生支持 _Electron_ 项目的开发。
+_Koot.js_ 从 **0.14** 开始原生支持 _Electron_ 项目的开发。
 
 利用 `koot-cli` 创建新项目时可以根据向导直接创建 _Electron_ 项目并自动完成相关环境的配置。如需手动配置开发环境，如从老版本的 _Koot.js_ 项目升级，请参阅本文档。
+
+_Electron_ 主文件、打包可执行文件的方式等功能，均可以进行配置，请参阅本文档。
 
 ---
 
@@ -53,7 +55,26 @@ module.exports = {
 
 ---
 
+### 主文件
+
+通过上述配置，可以修改 _Electron_ 主文件脚本。该文件会经过 _Webpack_ 打包、转译，最终输出到打包目录中。
+
+除了可以完全的自行编写启动脚本外，`koot-electron` 包中也提供了一些函数以供使用。
+
+```TypeScript
+/**
+ * 创建浏览器窗口，自动适配 _Koot.js_ 生产环境和开发环境，并有如下默认值
+ * - 窗口起始尺寸为主显示器分辨率的 80%
+ * - `webPreferences.nodeIntegration` 设为 true
+ */
+export function createWindow(
+    options?: Electron.BrowserWindowConstructorOptions
+): Electron.BrowserWindow;
+```
+
+---
+
 ### 开发注意事项
 
 -   _Electron_ 项目必须为 SPA 模式
--   使用 `electron-builder` 进行可执行文件的打包
+-   默认使用 `electron-builder` 进行可执行文件的打包

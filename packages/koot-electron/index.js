@@ -26,6 +26,8 @@ const createWindow = (options = {}) => {
     } else {
         mainWindow.loadFile('index.html');
     }
+
+    return mainWindow;
 };
 
 // ============================================================================

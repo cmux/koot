@@ -23,6 +23,11 @@ _Koot.js_ 0.14 开始原生支持 _Electron_ 项目开发。利用 `koot-cli` �
 -   优化
     -   小幅优化热更新速度 (移除多余的 `webpack/hot` 和 `webpack-dev-server/client` 引用)
 
+**koot-boilerplate**
+
+-   优化
+    -   _PostCSS_ 配置中 `cssnano` 插件配置调整: 禁用 `normalizeWhitespace`
+
 **koot-webpack**
 
 -   **重大改动**
@@ -33,7 +38,7 @@ _Koot.js_ 0.14 开始原生支持 _Electron_ 项目开发。利用 `koot-cli` �
 
 **koot-electron**
 
--   新的 NPM 包，包含 _Electron_ 项目开发相关内容
+-   新的 NPM 包，包含 _Electron_ 项目开发相关内容。参见文档 [Electron](https://koot.js.org/#/electron)
 
 ---
 
