@@ -26,7 +26,7 @@ module.exports = {
 
 ---
 
-## 项目信息
+## 项目基本信息
 
 ### name
 
@@ -37,6 +37,8 @@ module.exports = {
 
 -   同构：若首页组件没有通过 `extend()` 设定标题，默认使用该名作为页面标题。
 -   SPA：模板中的 `<%= inject.title %>` 默认使用该名进行注入替换。
+
+_TODO_: 支持定制不同语种的项目名
 
 ### type
 
@@ -112,6 +114,81 @@ module.exports = {
 };
 ```
 
+### icon
+
+-   类型: `Pathname` 或 `Object`
+-   默认值: _无_
+
+项目图标配置。如果提供了图标，则会用于以下场景，并自动生成相关的信息和代码
+
+-   浏览器的网站图标，HTML 中自动添加 `favicon` 信息
+-   PWA 的图标，自动生成 `manifest.json` 并在 HTML 中自动添加引用信息
+-   Electron 程序的图标，在打包可执行文件时自动添加
+
+```javascript
+module.exports = {
+    /** 默认不提供 */
+    icon: undefined,
+
+    /**
+     * 单一尺寸的图标
+     *
+     * 如果提供的是单一尺寸图标文件，Koot.js 会尝试自动生成适用于不同场景的各种尺寸的版本
+     */
+    icon: './src/assets/icon.png',
+
+    /**
+     * 提供详细的尺寸版本
+     *
+     * - 属性名需要为表示尺寸的数字 (Number)
+     * - Koot.js 会尝试利用最接近的尺寸自动生成适用于不同场景的各种尺寸的版本
+     */
+    icon: {
+        32: './src/assets/icon-32x.png',
+        128: './src/assets/icon-128x.png',
+        512: './src/assets/icon-launcher.png',
+    },
+};
+```
+
+### i18n
+
+-   类型: `boolean` `Object` 或 `Array[]`
+-   默认值: `false`
+
+多语言配置。
+
+关于详细配置、多语言的使用、语言包规则等内容，请查阅 [多语言 (i18n)](/i18n)。
+
+```javascript
+module.exports = {
+    // 不启用多语言支持 (默认值)
+    i18n: false,
+
+    /** 简易配置
+     * - `Array` 中每一个元素为 `Array`，其内第一个元素为**语种ID**，第二个元素为**语言包文件路径**
+     * - 采用该配置方式时，其他多语言相关选项均采用默认值（见下）
+     * - 第一行为默认语种
+     * - 语言包可以为 JSON 文件，也可以为以 `module.exports` 方式输出 JSON 的 JavaScript 文件
+     */
+    i18n: [
+        ['zh', './src/locales/zh.json'],
+        ['zh-tw', './src/locales/zh-tw.json'],
+        // ['en', './src/locales/en.json'],
+        ['en', './src/locales/en.js'],
+    ],
+
+    // 详细配置。配置项及其说明详见多语言章节 (链接见上文)
+    i18n: {
+        [option]: 'value',
+    },
+};
+```
+
+---
+
+## 路由 & 浏览器历史记录
+
 ### routes
 
 -   类型: `Pathname:Object`
@@ -143,6 +220,10 @@ module.exports = {
     historyType: 'hash',
 };
 ```
+
+---
+
+## 数据存储 & Store
 
 ### store
 
@@ -237,39 +318,9 @@ module.exports = {
 };
 ```
 
-### i18n
+---
 
--   类型: `boolean` `Object` 或 `Array[]`
--   默认值: `false`
-
-多语言配置。
-
-关于详细配置、多语言的使用、语言包规则等内容，请查阅 [多语言 (i18n)](/i18n)。
-
-```javascript
-module.exports = {
-    // 不启用多语言支持 (默认值)
-    i18n: false,
-
-    /** 简易配置
-     * - `Array` 中每一个元素为 `Array`，其内第一个元素为**语种ID**，第二个元素为**语言包文件路径**
-     * - 采用该配置方式时，其他多语言相关选项均采用默认值（见下）
-     * - 第一行为默认语种
-     * - 语言包可以为 JSON 文件，也可以为以 `module.exports` 方式输出 JSON 的 JavaScript 文件
-     */
-    i18n: [
-        ['zh', './src/locales/zh.json'],
-        ['zh-tw', './src/locales/zh-tw.json'],
-        // ['en', './src/locales/en.json'],
-        ['en', './src/locales/en.js'],
-    ],
-
-    // 详细配置。配置项及其说明详见多语言章节 (链接见上文)
-    i18n: {
-        [option]: 'value',
-    },
-};
-```
+## 客户端设置 & 生命周期
 
 ### serviceWorker
 
@@ -300,71 +351,21 @@ module.exports = {
 };
 ```
 
-### aliases
+### electron
 
 -   类型: `Object`
--   默认值: `{}` (空对象)
+-   默认值: _空对象_
 
-定义文件、路径别名。可在任何项目代码中使用。该功能使用 `webpack.resolve.alias` 实现。
-
-> 项目代码指所有经过 _Webpack_ 处理的 _JavaScript_ 文件的代码。通常来说，除了 _Koot.js_ 项目配置文件 (`koot.config.js`)、_Babel_ 配置文件 (`babel.config.js`) 等配置文件外，其他所有的代码文件都会经过 _Webpack_ 处理。
-
-```javascript
-const path = require('path');
-module.exports = {
-    // 默认值
-    aliases: {},
-
-    // 示例
-    aliases: {
-        '@src': path.resolve('./src'),
-        '@assets': path.resolve('./src/assets'),
-        '~base.less': path.resolve('./src/assets/css/base.less'),
-    },
-};
-```
-
-```javascript
-// 针对上述示例的代码
-import App from '@src/components/app';
-```
-
-```less
-// 针对上述示例的代码
-import '~base.less';
-```
-
-### defines
-
--   类型: `Object`
--   默认值: `{}` (空对象)
-
-定义 JavaScript 代码中的常量。可在任何 JavaScript 项目代码中使用。使用 Webpack 插件 `DefinePlugin` 实现。
-
-> 项目代码指所有经过 _Webpack_ 处理的 _JavaScript_ 文件的代码。通常来说，除了 _Koot.js_ 项目配置文件 (`koot.config.js`)、_Babel_ 配置文件 (`babel.config.js`) 等配置文件外，其他所有的代码文件都会经过 _Webpack_ 处理。
+Electron 程序以及打包可执行文件的相关配置，具体配置内容和方式请查阅 [Electron/相关配置项](/electron?id=相关配置项)。
 
 ```javascript
 module.exports = {
-    // 默认值
-    defines: {},
-
-    // 示例
-    defines: {
-        __QA__: JSON.stringify(false),
+    // 详细配置。配置项及其说明详见 Electron 章节 (链接见上文)
+    electron: {
+        [option]: 'value',
     },
 };
 ```
-
-```javascript
-// 针对上述示例的代码
-const apiBase = __QA__
-    ? `http://qa-api.project.com/`
-    : `https://api.project.com/`;
-```
-
----
-
-## 客户端生命周期
 
 ### before
 
@@ -1022,7 +1023,69 @@ module.exports = {
 
 ---
 
-## 开发环境
+## 开发环境 & 开发设置
+
+### aliases
+
+-   类型: `Object`
+-   默认值: `{}` (空对象)
+
+定义文件、路径别名。可在任何项目代码中使用。该功能使用 `webpack.resolve.alias` 实现。
+
+> 项目代码指所有经过 _Webpack_ 处理的 _JavaScript_ 文件的代码。通常来说，除了 _Koot.js_ 项目配置文件 (`koot.config.js`)、_Babel_ 配置文件 (`babel.config.js`) 等配置文件外，其他所有的代码文件都会经过 _Webpack_ 处理。
+
+```javascript
+const path = require('path');
+module.exports = {
+    // 默认值
+    aliases: {},
+
+    // 示例
+    aliases: {
+        '@src': path.resolve('./src'),
+        '@assets': path.resolve('./src/assets'),
+        '~base.less': path.resolve('./src/assets/css/base.less'),
+    },
+};
+```
+
+```javascript
+// 针对上述示例的代码
+import App from '@src/components/app';
+```
+
+```less
+// 针对上述示例的代码
+import '~base.less';
+```
+
+### defines
+
+-   类型: `Object`
+-   默认值: `{}` (空对象)
+
+定义 JavaScript 代码中的常量。可在任何 JavaScript 项目代码中使用。使用 Webpack 插件 `DefinePlugin` 实现。
+
+> 项目代码指所有经过 _Webpack_ 处理的 _JavaScript_ 文件的代码。通常来说，除了 _Koot.js_ 项目配置文件 (`koot.config.js`)、_Babel_ 配置文件 (`babel.config.js`) 等配置文件外，其他所有的代码文件都会经过 _Webpack_ 处理。
+
+```javascript
+module.exports = {
+    // 默认值
+    defines: {},
+
+    // 示例
+    defines: {
+        __QA__: JSON.stringify(false),
+    },
+};
+```
+
+```javascript
+// 针对上述示例的代码
+const apiBase = __QA__
+    ? `http://qa-api.project.com/`
+    : `https://api.project.com/`;
+```
 
 ### devPort
 

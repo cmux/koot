@@ -15,15 +15,33 @@ interface Cache {
 declare namespace Koot {
     // general informations =======================================================
 
-    /** 获取当前请求对应到项目的语种ID */
+    /**
+     * 获取当前请求对应到项目的语种ID
+     *
+     * > **⚠️** 仅在 `SSRMode === 'vm'` 时有效，其他 SSR 模式下该函数禁用
+     *
+     * > **⚠️** 当前仅有 `vm` 模式，在未来会加入其他模式
+     */
     const getLocaleId: () => LocaleId;
     /** 当前请求对应到项目的语种ID */
     type LocaleId = string;
 
-    /** 获取 _Redux store_ 对象 */
+    /**
+     * 获取 _Redux store_ 对象
+     *
+     * > **⚠️** 仅在 `SSRMode === 'vm'` 时有效，其他 SSR 模式下该函数禁用
+     *
+     * > **⚠️** 当前仅有 `vm` 模式，在未来会加入其他模式
+     */
     const getStore: () => Store;
 
-    /** 获取封装后的 History 对象 */
+    /**
+     * 获取封装后的 History 对象
+     *
+     * > **⚠️** 仅在 `SSRMode === 'vm'` 时有效，其他 SSR 模式下该函数禁用
+     *
+     * > **⚠️** 当前仅有 `vm` 模式，在未来会加入其他模式
+     */
     const getHistory: () => History;
 
     /**
@@ -46,11 +64,15 @@ declare namespace Koot {
     export function getCache(localeId?: LocaleId | boolean): Cache;
 
     /**
-     * _仅针对服务器端_
+     * **SERVER ONLY** 获取 Koa ctx 对象
      *
-     * 获取 Koa ctx 对象
+     * > **⚠️** 仅在 `SSRMode === 'vm'` 时有效，其他 SSR 模式下该函数禁用
+     *
+     * > **⚠️** 当前仅有 `vm` 模式，在未来会加入其他模式
      *
      * ---
+     *
+     * > **⚠️** _仅针对_ 服务器端
      *
      * > **⚠️** 客户端返回 undefined
      */

@@ -268,3 +268,26 @@ declare namespace NodeJS {
         KOOT_I18N_URL_USE: 'query' | 'router' | 'subdomain';
     }
 }
+
+// ============================================================================
+
+declare interface KootAppConfig {
+    /**
+     * 项目名称
+     *
+     * 默认值: `package.json` 中的 `name` 属性
+     *
+     * 以下情况会使用该名称：
+     * - SSR/同构：若首页组件没有通过 `extend()` 设定标题，默认使用该名作为页面标题。
+     * - SPA：模板中的 `<%= inject.title %>` 默认使用该名进行注入替换。
+     */
+    name?: string;
+
+    /**
+     * 项目类型
+     * - `react` [**默认**] React SSR/同构
+     * - `react-spa` React SPA
+     * @default react
+     */
+    type: 'react' | 'react-spa';
+}
