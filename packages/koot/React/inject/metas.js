@@ -3,7 +3,7 @@ const fs = require('fs');
 const { dll } = require('../../defaults/dev-request-uri');
 
 /**
- * 注入: meta 标签 HTML 代码
+ * 注入: meta 标签 HTML 代码，以及其他的 <head> 标签中的注入
  * @param {Object} options
  * @param {String} [options.metaHtml]
  * @param {String} [options.localeId]

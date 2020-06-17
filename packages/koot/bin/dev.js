@@ -663,6 +663,7 @@ const run = async () => {
 
             // 监视 chunkmap 文件，如果修改，进入下一步
             // await Promise.race([
+            // TODO: 改为检查文件内容，如 .files
             await checkFileUpdate(pathChunkmap, contentWaiting);
             //     checkFileUpdate(path.resolve(getDirDevTmp(cwd), 'client-error.log'), '')
             //         .then(encounterError)
