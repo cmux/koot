@@ -32,7 +32,9 @@ const validateIconAndGenerateFiles = async (appConfig) => {
     const folder = getTmp(undefined, 'icons');
 
     const resizeAndSave = async (file, size) => {
-        const buffer = await sharp(file).resize(size, size).toBuffer();
+        const buffer = await sharp(await fs.readFile(file))
+            .resize(size, size)
+            .toBuffer();
         const filename = md5(buffer) + path.extname(file);
         const target = path.resolve(folder, filename);
         await fs.writeFile(target, buffer);
