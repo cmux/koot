@@ -6,7 +6,8 @@ const path = require('path');
 const program = require('commander');
 const chalk = require('chalk');
 
-const before = require('./_before');
+const willValidateConfig = require('./lifecycle/will-validate-config');
+const willBuild = require('./lifecycle/will-build');
 
 const {
     // keyConfigQuiet,
@@ -24,7 +25,6 @@ const spinner = require('../utils/spinner');
 const initNodeEnv = require('../utils/init-node-env');
 // const emptyTempConfigDir = require('../libs/empty-temp-config-dir')
 const getDirTemp = require('../libs/get-dir-tmp');
-const safeguard = require('../libs/safeguard');
 
 const kootWebpackBuild = require('koot-webpack/build');
 
@@ -97,7 +97,7 @@ const run = async () => {
     process.env.WEBPACK_BUILD_ENV = env;
 
     // 清理临时目录
-    await before(program);
+    await willValidateConfig(program);
 
     // 生成配置
     const kootConfig = await validateConfig();
@@ -110,7 +110,9 @@ const run = async () => {
     //     kootConfig[keyConfigQuiet] = true;
     // }
 
-    await safeguard(kootConfig);
+    if (!fromOtherCommand) {
+        await willBuild(kootConfig);
+    }
 
     // Building process =======================================================
 

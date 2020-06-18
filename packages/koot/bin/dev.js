@@ -8,7 +8,8 @@ const chalk = require('chalk');
 const npmRunScript = require('npm-run-script');
 const opn = require('open');
 
-const before = require('./_before');
+const willValidateConfig = require('./lifecycle/will-validate-config');
+const willBuild = require('./lifecycle/will-build');
 
 const contentWaiting = require('../defaults/content-waiting');
 const {
@@ -44,7 +45,6 @@ const getPathnameDevServerStart = require('../utils/get-pathname-dev-server-star
 const getLogMsg = require('../libs/get-log-msg');
 const log = require('../libs/log');
 const confirmTimeout = require('../libs/prompt-timeout');
-const safeguard = require('../libs/safeguard');
 // const terminate = require('../utils/terminate');
 
 const kootWebpackBuildVendorDll = require('koot-webpack/build-vendor-dll');
@@ -90,7 +90,7 @@ const run = async () => {
     // 清除所有临时配置文件
     await removeTempProjectConfig();
     // 清理临时目录
-    await before(program);
+    await willValidateConfig(program);
 
     // 清空 log
     process.stdout.write('\x1B[2J\x1B[0f');
@@ -246,7 +246,7 @@ const run = async () => {
     // 等待一段时间，确保某些硬盘操作的完成
     await sleep(1000);
 
-    await safeguard(kootConfig);
+    await willBuild(kootConfig);
 
     // ========================================================================
     //
@@ -648,7 +648,6 @@ const run = async () => {
 
             // 清空 chunkmap 文件
             await fs.ensureFile(pathChunkmap);
-            await fs.writeFile(pathChunkmap, contentWaiting);
 
             // 清空 server 打包结果文件
             await fs.ensureFile(pathServerJS);
@@ -664,7 +663,23 @@ const run = async () => {
             // 监视 chunkmap 文件，如果修改，进入下一步
             // await Promise.race([
             // TODO: 改为检查文件内容，如 .files
-            await checkFileUpdate(pathChunkmap, contentWaiting);
+            await checkFileUpdate(pathChunkmap, async (content) => {
+                let json;
+                try {
+                    json = JSON.parse(content);
+                } catch (e) {
+                    return false;
+                }
+                if (
+                    typeof json === 'object' &&
+                    typeof json['.files'] === 'object' &&
+                    Object.keys(json['.files']).length &&
+                    typeof json['.entrypoints'] === 'object' &&
+                    Object.keys(json['.entrypoints']).length
+                )
+                    return true;
+                return false;
+            });
             //     checkFileUpdate(path.resolve(getDirDevTmp(cwd), 'client-error.log'), '')
             //         .then(encounterError)
             // ])

@@ -11,7 +11,8 @@ const program = require('commander');
 const npmRunScript = require('npm-run-script');
 const chalk = require('chalk');
 
-const before = require('./_before');
+const willValidateConfig = require('./lifecycle/will-validate-config');
+const willBuild = require('./lifecycle/will-build');
 
 const { filenameBuildFail } = require('../defaults/before-build');
 const sleep = require('../utils/sleep');
@@ -25,7 +26,6 @@ const validateConfigDist = require('../libs/validate-config-dist');
 // const getCwd = require('../utils/get-cwd')
 // const emptyTempConfigDir = require('../libs/empty-temp-config-dir')
 const getDirTemp = require('../libs/get-dir-tmp');
-const safeguard = require('../libs/safeguard');
 const resolveRequire = require('../utils/resolve-require');
 
 program
@@ -61,7 +61,7 @@ const run = async () => {
     process.env.KOOT_TEST_MODE = JSON.stringify(kootTest);
     process.env.KOOT_COMMAND_START = JSON.stringify(true);
 
-    await before(program);
+    await willValidateConfig(program);
 
     // 读取构建配置
     const kootConfig = await validateConfig();
@@ -76,7 +76,7 @@ const run = async () => {
         // emptyTempConfigDir()
     };
 
-    await safeguard(kootConfig);
+    await willBuild(kootConfig);
 
     // ========================================================================
 

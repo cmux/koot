@@ -1,11 +1,13 @@
 #!/usr/bin/env node
+/* eslint-disable no-console */
 
 const fs = require('fs-extra');
 const path = require('path');
 const program = require('commander');
 // const chalk = require('chalk')
 
-const before = require('./_before');
+const willValidateConfig = require('./lifecycle/will-validate-config');
+const willBuild = require('./lifecycle/will-build');
 
 // const __ = require('../utils/translate')
 const validateConfig = require('../libs/validate-config');
@@ -13,7 +15,6 @@ const validateConfig = require('../libs/validate-config');
 const setEnvFromCommand = require('../utils/set-env-from-command');
 const initNodeEnv = require('../utils/init-node-env');
 const getDirTemp = require('../libs/get-dir-tmp');
-const safeguard = require('../libs/safeguard');
 
 const kootWebpackBuild = require('koot-webpack/build');
 
@@ -51,7 +52,7 @@ const run = async () => {
     process.env.WEBPACK_BUILD_STAGE = stage || 'client';
     process.env.WEBPACK_BUILD_ENV = 'prod';
 
-    await before(program);
+    await willValidateConfig(program);
 
     // 处理目录
     const dirAnalyzeBuild = require('../libs/get-dir-dev-tmp')(
@@ -71,7 +72,7 @@ const run = async () => {
         bundleVersionsKeep: false,
     };
 
-    await safeguard(kootConfig);
+    await willBuild(kootConfig);
 
     await kootWebpackBuild({
         analyze: true,

@@ -1,9 +1,9 @@
 const fs = require('fs-extra');
 
-const getDirTemp = require('../libs/get-dir-tmp');
+const getDirTemp = require('../../libs/get-dir-tmp');
 
 /**
- * 所有命令启动前
+ * 针对所有命令：在读取、处理项目配置之前
  * @async
  * @param {Object} [options={}]
  * @param {Boolean} [options.kootDev=false]
@@ -23,7 +23,7 @@ module.exports = async (options = {}) => {
     // 定制环境变量
     {
         const keys = [];
-        args.forEach(arg => {
+        args.forEach((arg) => {
             // if (arg === 'inspect') {
             //     process.env.__INSPECT = JSON.stringify(true);
             //     return;

@@ -25,6 +25,7 @@ module.exports = {
         react: path.resolve(__dirname, '../../../node_modules/react'),
     },
     staticCopyFrom: path.resolve(__dirname, './public'),
+    icon: './src/assets/photo.jpg',
 
     port: 8081,
     // renderCache: true,
@@ -38,7 +39,7 @@ module.exports = {
 
     webpackBefore: async (kootConfigWithExtra = {}) => {
         console.log('WEBPACK BEFORE');
-        // console.log(kootConfigWithExtra);
+        console.log(kootConfigWithExtra);
     },
     // webpackBefore: async (kootConfigWithExtra = {}) => {
     //     const {

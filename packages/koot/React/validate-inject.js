@@ -44,8 +44,8 @@ module.exports = (options = {}) => {
 
         needInjectCritical = {
             styles: false,
-            scripts: false
-        }
+            scripts: false,
+        },
     } = options;
 
     return {
@@ -58,7 +58,7 @@ module.exports = (options = {}) => {
             filemap,
             stylesHtml,
             localeId,
-            compilation
+            compilation,
         }),
 
         react: reactHtml,
@@ -72,7 +72,7 @@ module.exports = (options = {}) => {
             defaultLocaleId,
             reduxHtml,
             SSRState,
-            compilation
-        })
+            compilation,
+        }),
     };
 };
