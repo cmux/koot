@@ -61,9 +61,9 @@ const cheerio = require('cheerio');
 
 // Import local scripts =======================================================
 
-const {
-    buildManifestFilename,
-} = require('../../../packages/koot/defaults/before-build');
+// const {
+//     buildManifestFilename,
+// } = require('../../../packages/koot/defaults/before-build');
 const {
     changeLocaleQueryKey,
     sessionStoreKey,

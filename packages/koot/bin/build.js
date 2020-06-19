@@ -10,8 +10,9 @@ const before = require('./_before');
 
 const {
     keyConfigQuiet,
-    filenameBuilding
+    filenameBuilding,
 } = require('../defaults/before-build');
+const { KOOT_BUILD_START_TIME } = require('../defaults/envs');
 
 const __ = require('../utils/translate');
 const sleep = require('../utils/sleep');
@@ -65,7 +66,7 @@ const run = async () => {
         dest,
         kootDev = false,
         kootTest = false,
-        kootDevelopment = false
+        kootDevelopment = false,
     } = program;
 
     initNodeEnv();
@@ -81,14 +82,14 @@ const run = async () => {
     setEnvFromCommand(
         {
             config,
-            type
+            type,
         },
         fromOtherCommand
     );
 
     process.env.KOOT_TEST_MODE = JSON.stringify(kootTest);
     process.env.KOOT_DEVELOPMENT_MODE = JSON.stringify(kootDevelopment);
-    process.env.KOOT_BUILD_START_TIME = Date.now() + '';
+    process.env[KOOT_BUILD_START_TIME] = Date.now() + '';
 
     const stage = (() => {
         if (_stage) return _stage;
@@ -144,7 +145,7 @@ const run = async () => {
             chalk.green('√ ') +
                 chalk.yellowBright('[koot/build] ') +
                 __('build.complete', {
-                    time: new Date().toLocaleString()
+                    time: new Date().toLocaleString(),
                 })
         );
 
@@ -172,12 +173,12 @@ const after = async (config = {}) => {
     if (fs.existsSync(fileBuilding)) await fs.remove(fileBuilding);
 };
 
-run().catch(err => {
+run().catch((err) => {
     if (!isFromCommandStart())
         spinner(chalk.yellowBright('[koot/build] ')).fail();
 
     if (result && Array.isArray(result.errors) && result.errors.length) {
-        result.errors.forEach(e => console.error(e));
+        result.errors.forEach((e) => console.error(e));
     } else {
         console.error(err);
     }
