@@ -22,6 +22,7 @@ const {
     // filenameBuildFail,
     // filenameDll, filenameDllManifest,
 } = require('../defaults/before-build');
+const { KOOT_DEV_START_TIME } = require('../defaults/envs');
 
 const checkFileUpdate = require('../libs/check-file-change');
 const removeTempBuild = require('../libs/remove-temp-build');
@@ -217,7 +218,7 @@ const run = async () => {
     process.env.SERVER_PORT = devPort;
 
     // 设置其他环境变量
-    process.env.KOOT_DEV_START_TIME = Date.now();
+    process.env[KOOT_DEV_START_TIME] = Date.now();
     if (typeof kootConfig.devServer === 'object')
         process.env.KOOT_DEV_WDS_EXTEND_CONFIG = JSON.stringify(
             kootConfig.devServer

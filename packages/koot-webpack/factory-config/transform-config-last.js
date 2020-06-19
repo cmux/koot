@@ -14,6 +14,10 @@ const {
     WEBPACK_OUTPUT_PATH,
     buildManifestFilename,
 } = require('koot/defaults/before-build');
+const {
+    KOOT_BUILD_START_TIME,
+    KOOT_DEV_START_TIME,
+} = require('koot/defaults/envs');
 const getDirDevDll = require('koot/libs/get-dir-dev-dll');
 
 const transformClientDevDll = require('./transform-config-client-dev-dll');
@@ -203,6 +207,9 @@ const validatePlugins = (config, kootConfigForThisBuild = {}) => {
                         `/[confighash]`
                 ),
                 configHash: function (webpackConfig) {
+                    const envs = { ...process.env };
+                    delete envs[KOOT_BUILD_START_TIME];
+                    delete envs[KOOT_DEV_START_TIME];
                     return require('node-object-hash')({ sort: false }).hash(
                         // ...kootConfigForThisBuild,
                         // ...JSON.parse(
@@ -211,7 +218,7 @@ const validatePlugins = (config, kootConfigForThisBuild = {}) => {
                             .replace(
                                 /config([\\/])(.+?)\.[0-9]+\.js/g,
                                 'config$1$2.**TIMESTAMP**.js'
-                            )
+                            ) + JSON.stringify(envs)
                         // )
                     );
                 },

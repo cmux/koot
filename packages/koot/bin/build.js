@@ -13,6 +13,7 @@ const {
     // keyConfigQuiet,
     filenameBuilding,
 } = require('../defaults/before-build');
+const { KOOT_BUILD_START_TIME } = require('../defaults/envs');
 
 const __ = require('../utils/translate');
 const sleep = require('../utils/sleep');
@@ -83,7 +84,7 @@ const run = async () => {
 
     process.env.KOOT_TEST_MODE = JSON.stringify(kootTest);
     process.env.KOOT_DEVELOPMENT_MODE = JSON.stringify(kootDevelopment);
-    process.env.KOOT_BUILD_START_TIME = Date.now() + '';
+    process.env[KOOT_BUILD_START_TIME] = Date.now() + '';
 
     const stage = (() => {
         if (_stage) return _stage;
