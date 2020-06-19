@@ -2,6 +2,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 
+const { KOOT_BUILD_START_TIME } = require('../defaults/envs');
 const generateFilemap = require('./generate-filemap-from-compilation');
 const getChunkmapPath = require('./get-chunkmap-path');
 const getOutputsPath = require('./get-outputs-path');
@@ -16,7 +17,7 @@ const getDistPath = require('./get-dist-path');
 //     return iter(0);
 // };
 
-const isNotSourcemap = filename => !/\.(js|css)\.map$/i.test(filename);
+const isNotSourcemap = (filename) => !/\.(js|css)\.map$/i.test(filename);
 
 // const log = (obj, spaceCount = 1, deep = 2) => {
 //     if (typeof obj === 'object') {
@@ -79,7 +80,7 @@ module.exports = async (
 
     fs.ensureFileSync(filepathname);
 
-    const getFilePathname = file => {
+    const getFilePathname = (file) => {
         if (process.env.WEBPACK_BUILD_ENV === 'dev') return file;
         // const r = path
         //     .relative(
@@ -115,13 +116,13 @@ module.exports = async (
     // }
 
     if (typeof stats.entrypoints === 'object') {
-        Object.keys(stats.entrypoints).forEach(key => {
+        Object.keys(stats.entrypoints).forEach((key) => {
             const { assets } = stats.entrypoints[key];
             if (!Array.isArray(assets)) return;
             entryChunks[key] = [];
             assets
-                .filter(filename => isNotSourcemap(filename))
-                .forEach(filename =>
+                .filter((filename) => isNotSourcemap(filename))
+                .forEach((filename) =>
                     entryChunks[key].push(getFilePathname(filename))
                 );
         });
@@ -143,8 +144,8 @@ module.exports = async (
 
             if (Array.isArray(o.files))
                 chunkmap[o.name] = o.files
-                    .filter(filename => isNotSourcemap(filename))
-                    .map(filename => getFilePathname(filename));
+                    .filter((filename) => isNotSourcemap(filename))
+                    .map((filename) => getFilePathname(filename));
         }
     }
 
@@ -163,7 +164,7 @@ module.exports = async (
     }
 
     await fs.writeJsonSync(filepathname, json, {
-        spaces: 4
+        spaces: 4,
     });
 
     // ========================================================================
@@ -171,12 +172,12 @@ module.exports = async (
     // ========================================================================
     if (
         process.env.WEBPACK_BUILD_ENV === 'prod' &&
-        typeof process.env.KOOT_BUILD_START_TIME === 'string'
+        typeof process.env[KOOT_BUILD_START_TIME] === 'string'
     ) {
         const assets = compilation.getAssets();
         if (Array.isArray(assets)) {
             const fileOutputs = getOutputsPath();
-            const buildTimestamp = process.env.KOOT_BUILD_START_TIME;
+            const buildTimestamp = process.env[KOOT_BUILD_START_TIME];
             let existResult = {};
 
             try {
@@ -186,23 +187,23 @@ module.exports = async (
             }
 
             const {
-                [process.env.KOOT_BUILD_START_TIME]: list = []
+                [process.env[KOOT_BUILD_START_TIME]]: list = [],
             } = existResult;
 
             /** 本次打包输出的所有文件的列表 */
             assets
                 .filter(
-                    asset =>
+                    (asset) =>
                         typeof asset === 'object' &&
                         typeof asset.name === 'string'
                 )
                 .map(({ name }) => getFilePathname(name))
-                .filter(file => !list.includes(file))
-                .forEach(file => list.push(file));
+                .filter((file) => !list.includes(file))
+                .forEach((file) => list.push(file));
 
             existResult[buildTimestamp] = list.sort();
             fs.writeJsonSync(fileOutputs, existResult, {
-                spaces: 4
+                spaces: 4,
             });
         }
     }

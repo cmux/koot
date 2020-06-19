@@ -1,5 +1,6 @@
 const fs = require('fs-extra');
 const path = require('path');
+const md5 = require('md5');
 
 const validateConfigDist = require('../validate-config-dist');
 const getCwd = require('../../utils/get-cwd');
@@ -16,6 +17,7 @@ const {
     dirConfigTemp: _dirConfigTemp,
     WEBPACK_OUTPUT_PATH,
 } = require('../../defaults/before-build');
+const { KOOT_DEV_START_TIME } = require('../../defaults/envs');
 const {
     scopeNeedTransformPathname,
 } = require('../../defaults/defines-service-worker');
@@ -82,8 +84,8 @@ const validateConfig = async (projectDir = getCwd(), options = {}) => {
         throw new Error(msg);
     }
 
-    if (!process.env.KOOT_DEV_START_TIME)
-        process.env.KOOT_DEV_START_TIME = Date.now();
+    if (!process.env[KOOT_DEV_START_TIME])
+        process.env[KOOT_DEV_START_TIME] = Date.now();
 
     /** @type {String} 存放临时文件的目录 */
     const dirConfigTemp = tmpDir || path.resolve(projectDir, _dirConfigTemp);
@@ -147,7 +149,8 @@ const validateConfig = async (projectDir = getCwd(), options = {}) => {
         dirConfigTemp,
         filenameProjectConfigTempFull.replace(
             /\*/g,
-            process.env.KOOT_DEV_START_TIME
+            // process.env[KOOT_DEV_START_TIME]
+            md5(tmpConfig)
         )
     );
     process.env.KOOT_PROJECT_CONFIG_FULL_PATHNAME = pathTmpConfig;
@@ -157,7 +160,8 @@ const validateConfig = async (projectDir = getCwd(), options = {}) => {
         dirConfigTemp,
         filenameProjectConfigTempPortionServer.replace(
             /\*/g,
-            process.env.KOOT_DEV_START_TIME
+            // process.env[KOOT_DEV_START_TIME]
+            md5(tmpConfigPortionServer)
         )
     );
     process.env.KOOT_PROJECT_CONFIG_PORTION_SERVER_PATHNAME = pathTmpConfigPortionServer;
@@ -171,7 +175,8 @@ const validateConfig = async (projectDir = getCwd(), options = {}) => {
         dirConfigTemp,
         filenameProjectConfigTempPortionClient.replace(
             /\*/g,
-            process.env.KOOT_DEV_START_TIME
+            // process.env[KOOT_DEV_START_TIME]
+            md5(tmpConfigPortionClient)
         )
     );
     process.env.KOOT_PROJECT_CONFIG_PORTION_CLIENT_PATHNAME = pathTmpConfigPortionClient;
@@ -185,7 +190,8 @@ const validateConfig = async (projectDir = getCwd(), options = {}) => {
         dirConfigTemp,
         filenameProjectConfigTempPortionOtherClient.replace(
             /\*/g,
-            process.env.KOOT_DEV_START_TIME
+            // process.env[KOOT_DEV_START_TIME]
+            md5(tmpConfigPortionOtherClient)
         )
     );
     process.env.KOOT_PROJECT_CONFIG_PORTION_OTHER_CLIENT_PATHNAME = pathTmpConfigPortionOtherClient;
