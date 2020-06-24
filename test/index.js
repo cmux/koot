@@ -14,8 +14,8 @@ const run = async () => {
         reactIsomorphic: `./test/cases/react-isomorphic`,
         reactSPA: `./test/cases/react-spa`,
         cli: {
-            all: './packages/koot-cli/__tests__/.+\\.test\\.[jt]sx?$'
-        }
+            all: './packages/koot-cli/__tests__/.+\\.test\\.[jt]sx?$',
+        },
     };
 
     const { value } = await inquirer.prompt({
@@ -25,55 +25,60 @@ const run = async () => {
         choices: [
             {
                 name: 'Full',
-                value: 'FULL'
+                value: 'FULL',
             },
             {
                 name: 'Full (donot init test projects)',
-                value: 'FULL-QUICK'
+                value: 'FULL-QUICK',
             },
             new inquirer.Separator(),
             {
                 name: 'React - Full',
-                value: 'REACT'
+                value: 'REACT',
             },
             {
                 name: 'React - Only Base',
-                value: jestScript.reactBase
+                value: jestScript.reactBase,
             },
             {
                 name: 'React - Only SSR',
-                value: jestScript.reactIsomorphic
+                value: jestScript.reactIsomorphic,
             },
             {
                 name: 'React - Only SPA',
-                value: jestScript.reactSPA
+                value: jestScript.reactSPA,
             },
             new inquirer.Separator(),
             {
                 name: 'Package: koot-cli',
-                value: jestScript.cli.all
+                value: jestScript.cli.all,
             },
             new inquirer.Separator(),
             {
                 name: 'Lib: validate-pathname',
-                value: './test/cases/libs/validate-pathname'
+                value: './test/cases/libs/validate-pathname',
             },
             {
                 name: 'Lib: validate-config',
-                value: './test/cases/.+/validate-config'
+                value: './test/cases/.+/validate-config',
             },
             {
                 name: 'Lib: koot-css-loader',
-                value: './test/cases/libs/koot-css-loader'
+                value: './test/cases/libs/koot-css-loader',
             },
             new inquirer.Separator(),
             {
                 name: 'Functions: koot/i18n',
-                value: './test/cases/i18n'
+                value: './test/cases/i18n',
             },
-            new inquirer.Separator()
+            new inquirer.Separator(),
+            {
+                name: 'Suite: Build Cache',
+                value: './test/cases/build-cache',
+            },
+            new inquirer.Separator(),
         ],
-        default: 'full'
+        default: 'full',
     });
 
     console.log('');
@@ -82,13 +87,13 @@ const run = async () => {
         const jestReactAll = [
             `jest ${jestScript.reactBase}`,
             `jest ${jestScript.reactSPA}`,
-            `jest ${jestScript.reactIsomorphic}`
+            `jest ${jestScript.reactIsomorphic}`,
         ];
 
         const jestAll = [
             `jest "test/((?!need-in-order).)*\\.test\\.[jt]sx?$"`,
             `jest ${jestScript.cli.all}`,
-            ...jestReactAll
+            ...jestReactAll,
         ];
 
         if (value === 'FULL')
