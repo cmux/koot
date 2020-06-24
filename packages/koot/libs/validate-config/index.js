@@ -295,7 +295,11 @@ const finalValidate = async (config = {}) => {
 
     switch (config.target) {
         case 'serverless': {
-            if (process.env.WEBPACK_BUILD_TYPE === 'isomorphic') {
+            if (
+                process.env.WEBPACK_BUILD_TYPE === 'isomorphic' ||
+                config.type === 'react' ||
+                config.type === 'react-app'
+            ) {
                 process.env.KOOT_BUILD_TARGET = 'serverless';
                 if (typeof config.serverPackAll === 'undefined') {
                     config.serverPackAll = true;

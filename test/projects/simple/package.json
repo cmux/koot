@@ -59,7 +59,7 @@
     "private": true,
     "sideEffects": false,
     "koot": {
-        "version": "0.14.0-alpha.21"
+        "version": "0.14.0-alpha.22"
     },
     "devDependencies": {
         "@types/inquirer": "^6.5.0",
