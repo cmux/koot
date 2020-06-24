@@ -119,7 +119,7 @@ describe('测试: 验证配置 (生成临时的核心代码引用文件，返回
                 case 'react':
                 case 'react-app': {
                     if (kootConfig.target === 'serverless')
-                        expect(typeof kootConfig.serverPackAll).toBe(true);
+                        expect(kootConfig.serverPackAll).toBe(true);
                     break;
                 }
                 case 'react-spa': {
