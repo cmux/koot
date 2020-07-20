@@ -37,6 +37,7 @@ _Koot.js_ 0.14 开始原生支持 _Electron_ 项目开发。利用 `koot-cli` �
         -   `compression-webpack-plugin` -> _^4.0.0_
         -   `copy-webpack-plugin` -> _^6.0.1_
         -   `less-loader` -> _^6.1.0_
+    -   如果 `defines` 定义项目为函数，现在会传入属性对象作为第一个参数，目前包含 `localeId`
 
 **koot-electron**
 

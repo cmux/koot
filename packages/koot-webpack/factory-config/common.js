@@ -81,6 +81,8 @@ const plugins = async (
     remainingKootBuildConfig = {},
     options = {}
 ) => {
+    const { localeId, isSPATemplateInject = false } = options;
+
     const _defaultDefines = {};
     Object.keys(defaultDefines).forEach((key) => {
         _defaultDefines[key] = JSON.stringify(defaultDefines[key]);
@@ -102,7 +104,7 @@ const plugins = async (
             __TEST__: false,
             __QA__: false,
             __PREPROD__: false,
-            __KOOT_SPA_TEMPLATE_INJECT__: options.isSPATemplateInject === true,
+            __KOOT_SPA_TEMPLATE_INJECT__: isSPATemplateInject === true,
             // '__SPA__': !!spa,
             // __DIST__: JSON.stringify(process.env.KOOT_DIST_DIR),
 
@@ -119,7 +121,7 @@ const plugins = async (
 
     for (const key in thisDefines) {
         if (typeof thisDefines[key] === 'function')
-            thisDefines[key] = thisDefines[key]();
+            thisDefines[key] = thisDefines[key]({ localeId });
     }
 
     if (env === 'prod') {

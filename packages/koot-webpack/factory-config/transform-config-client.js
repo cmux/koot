@@ -154,6 +154,7 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                     kootConfigForThisBuild,
                     {
                         isSPATemplateInject,
+                        localeId,
                     }
                 )
             );
