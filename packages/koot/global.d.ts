@@ -213,7 +213,6 @@ declare namespace NodeJS {
          * - dev - 开发环境
          */
         WEBPACK_BUILD_ENV: 'prod' | 'dev';
-
         /**
          * 项目类型
          * - ReactApp - React 同构/SSR
@@ -221,6 +220,8 @@ declare namespace NodeJS {
          * - ReactSPA - React SPA
          */
         KOOT_PROJECT_TYPE: 'ReactApp' | 'ReactSPA' | 'ReactElectronSPA';
+        /** EJS 模板内容 */
+        KOOT_HTML_TEMPLATE: string;
         /**
         'KOOT_VERSION',
         'KOOT_PROJECT_NAME',
