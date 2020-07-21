@@ -60,6 +60,8 @@ const doTest = (options = {}) => {
     };
 
     return test(`缓存特征值: ${cacheValue}`, async () => {
+        await fs.ensureDir(cacheFolder);
+        await fs.emptyDir(cacheFolder);
         await doTest(1);
         await doTest(2);
     });
