@@ -7,6 +7,10 @@ const cheerio = require('cheerio');
 const envKey = '__KOOT_TEST_BUILD_CACHE__';
 const elId = '__koot-test-build-cache';
 const projectDir = path.resolve(__dirname, '../projects/standard');
+const cacheFolder = path.resolve(
+    projectDir,
+    'node_modules/.cache/koot-webpack/hard/spa.prod.client'
+);
 
 // ============================================================================
 
@@ -19,10 +23,6 @@ const projectDir = path.resolve(__dirname, '../projects/standard');
 const doTest = (options = {}) => {
     const { cacheValue } = options;
     const command = `npm run build:spa -- ${envKey}=${cacheValue}`;
-    const cacheFolder = path.resolve(
-        projectDir,
-        'node_modules/.cache/koot-webpack/hard/spa.prod.client'
-    );
     let timeFirstBuild;
 
     const getCountInCacheFolder = () =>
@@ -60,14 +60,14 @@ const doTest = (options = {}) => {
     };
 
     return test(`缓存特征值: ${cacheValue}`, async () => {
-        await fs.ensureDir(cacheFolder);
-        await fs.emptyDir(cacheFolder);
         await doTest(1);
         await doTest(2);
     });
 };
 
 describe('测试: 打包缓存', () => {
+    fs.ensureDirSync(cacheFolder);
+    fs.emptyDirSync(cacheFolder);
     doTest({ cacheValue: Date.now() });
     doTest({ cacheValue: Date.now() + 10 });
 });

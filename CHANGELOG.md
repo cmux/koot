@@ -7,10 +7,11 @@ _Koot.js_ 0.14 开始原生支持 _Electron_ 项目开发。利用 `koot-cli` �
 -   **重大改动**
     -   _Node.js_ 最低版本要求提升到 `10.13.0`
     -   更新依赖包 **major** 版本号
+        -   `commander` -> _^6.0.3_
         -   `execa` -> _^4.0.0_
         -   `fs-extra` -> _^9.0.0_
         -   `react-redux` -> _^7.2.0_ ([#45](https://github.com/cmux/koot/issues/45), [#154](https://github.com/cmux/koot/issues/154))
-    -   现在默认不会安装以下依赖包，如有使用需要，请在项目中自行安装
+    -   移除以下依赖包，现在不会默认安装。如有使用需要，请在项目中自行安装
         -   `md5-file`
     -   为今后的某项功能做准备，在客户端/浏览器端生成路由对象的流程，现在采用 _Promise_ 异步方式
     -   移除环境变量 `precess.env.KOOT_SERVER_MODE`，相关能力整合入新的环境变量 `process.env.KOOT_BUILD_TARGET`
@@ -35,9 +36,14 @@ _Koot.js_ 0.14 开始原生支持 _Electron_ 项目开发。利用 `koot-cli` �
 -   **重大改动**
     -   更新依赖包 **major** 版本号
         -   `compression-webpack-plugin` -> _^4.0.0_
-        -   `copy-webpack-plugin` -> _^6.0.1_
-        -   `less-loader` -> _^6.1.0_
+        -   `copy-webpack-plugin` -> _^6.0.3_
+        -   `less-loader` -> _^6.2.0_
+        -   `sass-loader` -> _^9.0.2_
+    -   移除以下依赖包，现在不会默认安装。如有使用需要，请在项目中自行安装
+        -   `node-sass`
     -   如果 `defines` 定义项目为函数，现在会传入属性对象作为第一个参数，目前包含 `localeId`
+-   添加依赖包
+    -   `sass`
 
 **koot-electron**
 
