@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+## [0.13.29] - 2020-07-21
+
+**koot-webpack**
+
+-   优化缓存策略，现在会忽略部分不必要的环境变量 ([#265](https://github.com/cmux/koot/issues/265))
+
 ## [0.13.28] - 2020-06-19
 
 **koot-webpack**

@@ -208,8 +208,14 @@ const validatePlugins = (config, kootConfigForThisBuild = {}) => {
                 ),
                 configHash: function (webpackConfig) {
                     const envs = { ...process.env };
-                    delete envs[KOOT_BUILD_START_TIME];
-                    delete envs[KOOT_DEV_START_TIME];
+                    [
+                        KOOT_BUILD_START_TIME,
+                        KOOT_DEV_START_TIME,
+                        'KOOT_HTML_TEMPLATE',
+                        'Path',
+                        'path',
+                        'PATH',
+                    ].forEach((key) => delete envs[key]);
                     return require('node-object-hash')({ sort: false }).hash(
                         // ...kootConfigForThisBuild,
                         // ...JSON.parse(
