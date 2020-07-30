@@ -25,7 +25,7 @@ class KootCreateManifestPlugin {
             // 如果本次为热更新，不执行后续流程
             if (isHotUpdate(compilation.getStats())) return callback();
 
-            const manifest = {};
+            const manifest = { icons };
             const filename = `manifest.${md5(manifest)}.json`;
 
             // 添加 chunk

@@ -10,6 +10,7 @@ const DevModePlugin = require('../plugins/dev-mode');
 const SpaTemplatePlugin = require('../plugins/spa-template');
 const GenerateChunkmapPlugin = require('../plugins/generate-chunkmap');
 const CreateGeneralCssBundlePlugin = require('../plugins/create-general-css-bundle');
+const CreateManifestPlugin = require('../plugins/create-manifest');
 
 const newPluginWorkbox = require('../libs/new-plugin-workbox');
 const newPluginCopyWebpack = require('../libs/new-plugin-copy');
@@ -21,6 +22,7 @@ const {
     keyConfigClientAssetsPublicPath,
     chunkNameClientRunFirst,
     keyConfigClientServiceWorkerPathname,
+    keyConfigIcons,
     // pathnameSockjs
 } = require('koot/defaults/before-build');
 const { hmrOptions } = require('koot/defaults/webpack-dev-server');
@@ -68,6 +70,7 @@ module.exports = async (kootConfigForThisBuild = {}) => {
         [keyConfigBuildDll]: createDll = false,
         webpackCompilerHook = {},
         exportGzip = true,
+        [keyConfigIcons]: __icons,
     } = kootConfigForThisBuild;
 
     /** @type {String} 默认入口文件 */
@@ -350,6 +353,9 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                                 : (localeId ? localeId : '') +
                                   '.extract.[id].[chunkhash].css'),
                     })
+                );
+                result.plugins.push(
+                    new CreateManifestPlugin({ icons: __icons })
                 );
 
                 if (!analyze) {
