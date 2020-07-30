@@ -55,7 +55,7 @@
         "gitignore-globs": "^0.1.1",
         "glob": "^7.1.6",
         "glob-promise": "^3.4.0",
-        "inquirer": "^7.3.2",
+        "inquirer": "^7.3.3",
         "inquirer-select-directory": "^1.2.0",
         "is-url": "^1.2.4",
         "isbinaryfile": "^4.0.6",

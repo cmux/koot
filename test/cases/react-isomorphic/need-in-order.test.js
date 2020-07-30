@@ -1145,7 +1145,15 @@ describe('测试: React 同构项目', () => {
                 // console.log(stderr)
 
                 expect(typeof stderr).toBe('string');
-                expect(stderr).toBe('');
+                expect(
+                    stderr
+                        .replace(
+                            /\(node:([0-9]+?)\) Warning: No such label 'URL' for console.timeEnd\(\)/g,
+                            ''
+                        )
+                        .replace(/\r/g, '')
+                        .replace(/\n/g, '')
+                ).toBe('');
 
                 await testFilesFromChunkmap(dist, false);
                 await testCodeSplitting(dist);
