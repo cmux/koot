@@ -13,7 +13,7 @@ _Koot.js_ 0.14 开始原生支持 _Electron_ 项目开发。利用 `koot-cli` �
         -   `react-redux` -> _^7.2.0_ ([#45](https://github.com/cmux/koot/issues/45), [#154](https://github.com/cmux/koot/issues/154))
     -   移除以下依赖包，现在不会默认安装。如有使用需要，请在项目中自行安装
         -   `md5-file`
-    -   为今后的某项功能做准备，在客户端/浏览器端生成路由对象的流程，现在采用 _Promise_ 异步方式
+    -   为日后预计开发的某项功能做准备，现在客户端/浏览器端生成路由对象的流程会采用 _Promise_ 异步方式，原则上对已有项目不会造成影响
     -   移除环境变量 `precess.env.KOOT_SERVER_MODE`，相关能力整合入新的环境变量 `process.env.KOOT_BUILD_TARGET`
 -   **新特性**
     -   **新配置项** `target` - 设定项目子类型，目前支持
@@ -37,10 +37,11 @@ _Koot.js_ 0.14 开始原生支持 _Electron_ 项目开发。利用 `koot-cli` �
     -   更新依赖包 **major** 版本号
         -   `compression-webpack-plugin` -> _^4.0.0_
         -   `copy-webpack-plugin` -> _^6.0.3_
+        -   `css-loader` -> _^4.2.0_
         -   `less-loader` -> _^6.2.0_
         -   `sass-loader` -> _^9.0.2_
     -   移除以下依赖包，现在不会默认安装。如有使用需要，请在项目中自行安装
-        -   `node-sass`
+        -   `node-sass` - 替换为 `sass`
     -   如果 `defines` 定义项目为函数，现在会传入属性对象作为第一个参数，目前包含 `localeId`
 -   添加依赖包
     -   `sass`
