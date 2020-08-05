@@ -63,6 +63,8 @@ const middlewareIsomorphic = (options = {}) => {
     const entrypoints = new Map();
     /** @type {Map} 文件名与实际结果的文件名的对应表，从 chunkmap 中抽取 */
     const filemap = new Map();
+    /** @type {Map} 各语种的 manifest */
+    const manifest = new Map();
     /** @type {Map} 样式表 */
     // const styleMap = new Map()
     /** @type {Object} 公用缓存空间 */
@@ -78,6 +80,7 @@ const middlewareIsomorphic = (options = {}) => {
             const thisLocaleId = l.substr(0, 1) === '.' ? l.substr(1) : l;
             entrypoints.set(thisLocaleId, chunkmap[l]['.entrypoints']);
             filemap.set(thisLocaleId, chunkmap[l]['.files']);
+            manifest.set(thisLocaleId, chunkmap[l]);
             const cache = {};
             if (!__DEV__) {
                 extendCacheObject(cache, chunkmap, l);
@@ -88,6 +91,7 @@ const middlewareIsomorphic = (options = {}) => {
     } else {
         entrypoints.set('', chunkmap['.entrypoints']);
         filemap.set('', chunkmap['.files']);
+        manifest.set('', chunkmap);
         const cache = {};
         if (!__DEV__) {
             extendCacheObject(cache, chunkmap);
@@ -163,6 +167,10 @@ const middlewareIsomorphic = (options = {}) => {
             const thisFilemap = filemap.get(
                 i18nType === 'default' ? LocaleId : ''
             );
+            /** @type {Object} 本次请求的 (当前语言的) 客户端文件 manifest */
+            const thisManifest = manifest.get(
+                i18nType === 'default' ? LocaleId : ''
+            );
             /** @type {Object} 本次请求的 (当前语言的) CSS 对照表 */
             const styleMap = {};
             // const thisStyleMap = styleMap.get(i18nType === 'default' ? LocaleId : '')
@@ -216,6 +224,7 @@ const middlewareIsomorphic = (options = {}) => {
                     thisTemplateInjectCache,
                     thisEntrypoints,
                     thisFilemap, //thisStyleMap,
+                    thisManifest,
                     styleMap,
                     globalCache,
 

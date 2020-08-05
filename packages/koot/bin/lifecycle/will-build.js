@@ -23,10 +23,10 @@ module.exports = async (appConfig) => {
 const validateIconAndGenerateFiles = async (appConfig) => {
     const { icon } = appConfig;
     const icons = {
-        // ico: '',
-        // '180x180': '',
-        // '192x192': '',
-        // '512x512': '',
+        // original: '',
+        // 'x180': '',
+        // 'x192': '',
+        // 'x512': '',
     };
     const cwd = getCwd();
     const folder = getTmp(undefined, 'icons');
@@ -38,7 +38,7 @@ const validateIconAndGenerateFiles = async (appConfig) => {
         const filename = md5(buffer) + path.extname(file);
         const target = path.resolve(folder, filename);
         await fs.writeFile(target, buffer);
-        icons[`${size}x${size}`] = target;
+        icons[`x${size}`] = target;
     };
 
     await fs.ensureDir(folder);
@@ -52,6 +52,12 @@ const validateIconAndGenerateFiles = async (appConfig) => {
             await resizeAndSave(file, 192),
             await resizeAndSave(file, 512),
         ]);
+        {
+            const filename = md5(await fs.readFile(file)) + path.extname(file);
+            const target = path.resolve(folder, filename);
+            await fs.copy(file, target);
+            icons.original = target;
+        }
     } else if (typeof icon === 'object') {
     } else {
         return appConfig;

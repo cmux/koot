@@ -24,6 +24,7 @@ _Koot.js_ 0.14 开始原生支持 _Electron_ 项目开发。利用 `koot-cli` �
 -   优化
     -   小幅优化热更新速度 (移除多余的 `webpack/hot` 和 `webpack-dev-server/client` 引用)
 -   添加依赖包
+    -   `favicons`
     -   `sharp`
 
 **koot-boilerplate**

@@ -95,4 +95,7 @@ module.exports = {
 
     /** @type {string} Webpack Dev Server 热更新 Web Socket 地址 */
     pathnameSockjs: `sockjs-node`,
+
+    /** Webpack compilation 对象中的定制属性 - 额外 Meta 标签的 HTML 代码 */
+    compilationKeyHtmlMetaTags: '.htmlMetaTags__',
 };

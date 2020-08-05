@@ -8,6 +8,8 @@ const getChunkmapPath = require('./get-chunkmap-path');
 const getOutputsPath = require('./get-outputs-path');
 const getDistPath = require('./get-dist-path');
 
+const { compilationKeyHtmlMetaTags } = require('../defaults/before-build');
+
 // const times = n => f => {
 //     const iter = i => {
 //         if (i === n) return;
@@ -153,6 +155,10 @@ module.exports = async (
     if (serviceWorkerPathname) {
         chunkmap['service-worker'] = [getFilePathname(serviceWorkerPathname)];
     }
+
+    if (compilation[compilationKeyHtmlMetaTags])
+        chunkmap[compilationKeyHtmlMetaTags] =
+            compilation[compilationKeyHtmlMetaTags];
 
     let json = {};
 

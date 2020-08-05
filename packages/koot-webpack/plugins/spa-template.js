@@ -8,7 +8,7 @@ const chalk = require('chalk');
 
 const { buildManifestFilename } = require('koot/defaults/before-build');
 const writeChunkmap = require('koot/utils/write-chunkmap');
-const getAppType = require('koot/utils/get-app-type');
+// const getAppType = require('koot/utils/get-app-type');
 const __ = require('koot/utils/translate');
 const getDistPath = require('koot/utils/get-dist-path');
 const getCwd = require('koot/utils/get-cwd');
@@ -139,11 +139,12 @@ class SpaTemplatePlugin {
                 serviceWorkerPathname
             );
 
+            const manifest = getChunkmap(localeId, false, true);
             const {
                 '.files': filemap,
                 '.entrypoints': entrypoints,
                 // 'service-worker': serviceWorker
-            } = getChunkmap(localeId, false, true);
+            } = manifest;
 
             // console.log({
             //     serviceWorker,
@@ -177,6 +178,7 @@ class SpaTemplatePlugin {
                             filemap,
                             compilation,
                             entrypoints,
+                            manifest,
                             localeId,
                             localeFileMap: isI18nEnabled
                                 ? locales.reduce((map, [localeId]) => {

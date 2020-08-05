@@ -265,6 +265,7 @@ async function ssr(ctx) {
         injectCache: SSR.thisTemplateInjectCache,
         filemap: SSR.thisFilemap,
         entrypoints: SSR.thisEntrypoints,
+        manifest: SSR.thisManifest,
         localeId: LocaleId,
         title,
         metaHtml,

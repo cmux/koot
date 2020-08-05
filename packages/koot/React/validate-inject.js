@@ -27,6 +27,7 @@ module.exports = (options = {}) => {
     const {
         injectCache = {},
 
+        manifest = {},
         filemap = {},
         entrypoints = {},
         compilation,
@@ -51,7 +52,7 @@ module.exports = (options = {}) => {
     return {
         htmlLang: injectHtmlLang(localeId),
         title,
-        metas: injectMetas({ metaHtml, localeId, compilation }),
+        metas: injectMetas({ manifest, metaHtml, localeId, compilation }),
         styles: injectStyles({
             needInjectCritical: needInjectCritical.styles,
             injectCache,
