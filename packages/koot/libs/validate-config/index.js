@@ -101,7 +101,7 @@ const validateConfig = async (projectDir = getCwd(), options = {}) => {
     await require('./transform-compatible/client-related')(kootConfig);
     await require('./transform-compatible/server-related')(kootConfig);
     await require('./transform-compatible/webpack-related')(kootConfig);
-    await require('./transform-compatible/pwa-related')(kootConfig);
+    await require('./transform-compatible/webapp-related')(kootConfig);
 
     // 清理所有第一级的 undefined 项和空对象
     // 清理所有第一级的空对象

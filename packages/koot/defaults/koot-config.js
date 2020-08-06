@@ -15,6 +15,7 @@ module.exports = {
     i18n: false,
     serviceWorker: true,
     // icon: '', // 模板中会提供默认图标
+    webApp: false,
     aliases: {},
     defines: {},
     electron: (() => {

@@ -1,4 +1,5 @@
-const defaults = require('../../../defaults/service-worker');
+const defaultsServiceWorker = require('../../../defaults/service-worker');
+const defaultsWebApp = require('../../../defaults/web-app');
 
 /**
  * 配置转换 - 兼容性处理 - ServiceWorker 和 PWA 相关
@@ -8,16 +9,22 @@ const defaults = require('../../../defaults/service-worker');
  * @param {Object} config
  * @void
  */
-module.exports = async config => {
+module.exports = async (config) => {
+    // ========================================================================
+    // 旧配置项处理: pwa
+    // ========================================================================
     if (
         typeof config.pwa !== 'undefined' &&
         typeof config.serviceWorker === 'undefined'
     ) {
         config.serviceWorker = config.pwa;
     }
-
     delete config.pwa;
 
+    // ========================================================================
+    // 默认值处理: serviceWorker
+    // 旧配置项处理: serviceWorker
+    // ========================================================================
     if (typeof config.serviceWorker === 'object') {
         const {
             // 移除的项
@@ -28,7 +35,7 @@ module.exports = async config => {
             // 可用项
             filename,
             include,
-            exclude
+            exclude,
         } = config.serviceWorker;
 
         if (!!pathname && !filename) {
@@ -64,13 +71,31 @@ module.exports = async config => {
 
         config.serviceWorker = Object.assign(
             {},
-            defaults,
+            defaultsServiceWorker,
             config.serviceWorker
         );
     } else if (config.serviceWorker === true) {
-        config.serviceWorker = { ...defaults };
+        config.serviceWorker = { ...defaultsServiceWorker };
     } else if (typeof config.serviceWorker === 'undefined') {
-        config.serviceWorker = { ...defaults };
+        config.serviceWorker = { ...defaultsServiceWorker };
+    }
+
+    // ========================================================================
+    // 默认值处理: icon
+    // ========================================================================
+    if (typeof config.icon !== 'string' || typeof config.icon !== 'object')
+        delete config.icon;
+
+    // ========================================================================
+    // 默认值处理: webApp
+    // ========================================================================
+    if (typeof config.icon === 'undefined') {
+        config.webApp = false;
+    } else if (typeof config.webApp === 'object' || config.webApp === true) {
+        config.webApp = {
+            ...defaultsWebApp,
+            ...(config.webApp || {}),
+        };
     }
 
     return config;
