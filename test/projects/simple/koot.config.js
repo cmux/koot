@@ -26,6 +26,9 @@ module.exports = {
     },
     staticCopyFrom: path.resolve(__dirname, './public'),
     icon: './src/assets/photo.jpg',
+    webApp: {
+        themeColor: '#0092f5',
+    },
 
     port: 8081,
     // renderCache: true,
@@ -39,7 +42,7 @@ module.exports = {
 
     webpackBefore: async (kootConfigWithExtra = {}) => {
         console.log('WEBPACK BEFORE');
-        console.log(kootConfigWithExtra);
+        // console.log(kootConfigWithExtra);
     },
     // webpackBefore: async (kootConfigWithExtra = {}) => {
     //     const {

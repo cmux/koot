@@ -71,6 +71,7 @@ module.exports = async (kootConfigForThisBuild = {}) => {
         webpackCompilerHook = {},
         exportGzip = true,
         [keyConfigIcons]: __icons,
+        webApp,
     } = kootConfigForThisBuild;
 
     /** @type {String} 默认入口文件 */
@@ -355,7 +356,11 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                     })
                 );
                 result.plugins.push(
-                    new CreateManifestPlugin({ icons: __icons })
+                    new CreateManifestPlugin({
+                        icons: __icons,
+                        webApp,
+                        localeId: isSeperateLocale ? localeId : undefined,
+                    })
                 );
 
                 if (!analyze) {
