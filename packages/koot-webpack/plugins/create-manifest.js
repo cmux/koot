@@ -1,8 +1,9 @@
+const fs = require('fs-extra');
+const path = require('path');
 const md5 = require('md5');
 const favicons = require('favicons');
 
 const isHotUpdate = require('../libs/is-compilation-hot-update-only');
-const newCompilationChunk = require('../libs/new-compilation-chunk');
 const newCompilationFileDependency = require('../libs/new-compilation-file-dependency');
 
 const { compilationKeyHtmlMetaTags } = require('koot/defaults/before-build');
@@ -15,14 +16,16 @@ class KootCreateManifestPlugin {
         this.settings = settings;
     }
     apply(compiler) {
-        const { icons, webApp, localeId } = this.settings;
+        const { icons, webApp, localeId, outputPath } = this.settings;
 
         compiler.hooks.afterCompile.tapAsync.bind(
             compiler.hooks.afterCompile,
             'KootCreateManifestPlugin'
         )(async (compilation, callback) => {
+            const stats = compilation.getStats();
+
             // 如果本次为热更新，不执行后续流程
-            if (isHotUpdate(compilation.getStats())) return callback();
+            if (isHotUpdate(stats)) return callback();
 
             const subfolder =
                 'webapp.' +
@@ -30,27 +33,47 @@ class KootCreateManifestPlugin {
                     JSON.stringify({
                         ...icons,
                         ...webApp,
-                    })
+                    }) + (localeId || '')
+                ).substr(0, 8);
+
+            const filenameHtmls = md5('htmls');
+            const fileHtmls = path.resolve(
+                outputPath,
+                subfolder,
+                filenameHtmls
+            );
+
+            if (fs.existsSync(fileHtmls)) {
+                compilation[compilationKeyHtmlMetaTags] = await fs.readFile(
+                    fileHtmls,
+                    'utf-8'
                 );
 
-            const res = await new Promise((resolve, reject) => {
-                favicons(
-                    icons.square || icons.original,
-                    {
-                        ...getFaviconsConfig(webApp),
-                        path: `${
-                            process.env.WEBPACK_BUILD_TYPE === 'spa' ? '' : '/'
-                        }${subfolder}`,
-                        lang: localeId || null,
-                    },
-                    (err, res) => {
-                        if (err) return reject(err);
-                        resolve(res);
-                    }
-                );
-            });
+                return callback();
+            }
 
-            for (const { name, contents } of [...res.images, ...res.files]) {
+            const { images, files, html } = await new Promise(
+                (resolve, reject) => {
+                    favicons(
+                        icons.square || icons.original,
+                        {
+                            ...getFaviconsConfig(webApp),
+                            path: `${
+                                process.env.WEBPACK_BUILD_TYPE === 'spa'
+                                    ? ''
+                                    : '/'
+                            }${subfolder}`,
+                            lang: localeId || null,
+                        },
+                        (err, res) => {
+                            if (err) return reject(err);
+                            resolve(res);
+                        }
+                    );
+                }
+            );
+
+            for (const { name, contents } of [...images, ...files]) {
                 newCompilationFileDependency(
                     compilation,
                     `${subfolder}/${name}`,
@@ -74,9 +97,14 @@ class KootCreateManifestPlugin {
             // );
 
             // 添加信息到 compilation
-            compilation[compilationKeyHtmlMetaTags] = Array.isArray(res.html)
-                ? res.html.join('')
-                : res.html;
+            const metaHtml = Array.isArray(html) ? html.join('') : html;
+            compilation[compilationKeyHtmlMetaTags] = metaHtml;
+
+            newCompilationFileDependency(
+                compilation,
+                `${subfolder}/${filenameHtmls}`,
+                metaHtml
+            );
 
             return callback();
         });

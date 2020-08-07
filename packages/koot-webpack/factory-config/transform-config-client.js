@@ -360,6 +360,7 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                         icons: __icons,
                         webApp,
                         localeId: isSeperateLocale ? localeId : undefined,
+                        outputPath: result.output.path,
                     })
                 );
 
