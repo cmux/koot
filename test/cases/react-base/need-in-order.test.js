@@ -692,13 +692,13 @@ const testOutputs = async (dist, countToBe) => {
             .forEach((file) => filesNeedToExist.push(file));
     }
 
-    const filesExist = (
-        await glob(path.resolve(dist, 'public', '**/*'), {
-            dot: true,
-        })
-    )
-        .filter((file) => !fs.lstatSync(file).isDirectory())
-        .map((file) => path.normalize(file));
+    // const filesExist = (
+    //     await glob(path.resolve(dist, 'public', '**/*'), {
+    //         dot: true,
+    //     })
+    // )
+    //     .filter((file) => !fs.lstatSync(file).isDirectory())
+    //     .map((file) => path.normalize(file));
 
     expect(fs.existsSync(dist)).toBe(true);
     expect(fs.existsSync(path.resolve(dist, 'public'))).toBe(true);
@@ -707,7 +707,35 @@ const testOutputs = async (dist, countToBe) => {
     );
     expect(fs.existsSync(fileOutputs)).toBe(true);
     expect(Object.keys(outputs).length).toBe(countToBe);
-    expect(filesNeedToExist.length).toBe(filesExist.length);
+
+    // 不应有空目录
+    async function getEmptyDirCount(directory, count = 0) {
+        // lstat does not follow symlinks (in contrast to stat)
+        const fileStats = await fs.lstat(directory);
+        if (!fileStats.isDirectory()) {
+            return;
+        }
+        const fileNames = await fs.readdir(directory);
+        if (fileNames.length > 0) {
+            const recursiveRemovalPromises = fileNames.map((fileName) =>
+                getEmptyDirCount(path.join(directory, fileName), count)
+            );
+            await Promise.all(recursiveRemovalPromises);
+        } else {
+            count++;
+        }
+
+        // for (const fileName of fileNames) {
+        //     const file = path.resolve(directory, fileName);
+        //     const stat = await fs.lstat(file);
+        //     if (stat.isDirectory()) {
+        //         count++;
+        //     }
+        // }
+
+        return count;
+    }
+    expect(await getEmptyDirCount(dist)).toBe(0);
 };
 
 //
