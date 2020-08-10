@@ -53,6 +53,7 @@ const waitForPort = require('../../libs/get-port-from-child-process');
 const testHtmlRenderedByKoot = require('../../general-tests/html/rendered-by-koot');
 const testFilesFromChunkmap = require('../../general-tests/bundle/check-files-from-chunkmap');
 const checkDistRootFiles = require('../../general-tests/check-dist-root-files');
+const testHtmlWebAppMetaTags = require('../../general-tests/html/web-app-meta-tags');
 
 //
 
@@ -619,6 +620,13 @@ const doTest = async (port, dist, settings = {}) => {
         expect(styles.color).toBe('rgb(255, 255, 255)');
         expect(styles.textAlign).toBe('center');
     }
+
+    // 测试: WebApp 相关 <meta> 标签信息以及文件可用性
+    if (!isDev) {
+        const HTML = await res.text();
+        await testHtmlWebAppMetaTags(HTML, dist);
+    }
+
     await puppeteerTestStyles(page);
     await puppeteerTestCustomEnv(page, customEnv);
     await puppeteerTestInjectScripts(page);

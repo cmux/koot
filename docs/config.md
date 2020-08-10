@@ -114,43 +114,6 @@ module.exports = {
 };
 ```
 
-### icon
-
--   类型: `Pathname` 或 `Object`
--   默认值: _无_
-
-项目图标配置。如果提供了图标，则会用于以下场景，并自动生成相关的信息和代码
-
--   浏览器的网站图标，HTML 中自动添加 `favicon` 信息
--   PWA 的图标，自动生成 `manifest.json` 并在 HTML 中自动添加引用信息
--   Electron 程序的图标，在打包可执行文件时自动添加
-
-```javascript
-module.exports = {
-    /** 默认不提供 */
-    icon: undefined,
-
-    /**
-     * 单一尺寸的图标
-     *
-     * 如果提供的是单一尺寸图标文件，Koot.js 会尝试自动生成适用于不同场景的各种尺寸的版本
-     */
-    icon: './src/assets/icon.png',
-
-    /**
-     * 提供详细的尺寸版本
-     *
-     * - 属性名需要为表示尺寸的数字 (Number)
-     * - Koot.js 会尝试利用最接近的尺寸自动生成适用于不同场景的各种尺寸的版本
-     */
-    icon: {
-        32: './src/assets/icon-32x.png',
-        128: './src/assets/icon-128x.png',
-        512: './src/assets/icon-launcher.png',
-    },
-};
-```
-
 ### i18n
 
 -   类型: `boolean` `Object` 或 `Array[]`
@@ -187,7 +150,7 @@ module.exports = {
 
 ---
 
-## 路由 & 浏览器历史记录
+## 路由 & 客户端历史记录
 
 ### routes
 
@@ -322,6 +285,71 @@ module.exports = {
 
 ## 客户端设置 & 生命周期
 
+### icon
+
+-   类型: `Pathname` 或 `Object`
+-   默认值: _无_
+
+项目图标配置。
+
+-   ⚠ 如果提供了图标，但 `webApp` 选项关闭，不过产生任何结果
+-   如果提供了图标，且 `webApp` 选项开启，生成、渲染的 HTML 代码中将会自动添加有关 `favicon` `manifest` 等信息的 `<meta>` 标签
+-   如果提供了图标，且为 Electron 程序，在打包可执行文件时会自动设置文件图标
+
+```javascript
+module.exports = {
+    /** 默认不提供 */
+    icon: undefined,
+
+    /**
+     * 单一尺寸的图标
+     *
+     * 如果提供的是单一尺寸图标文件，Koot.js 会尝试自动生成适用于不同场景的各种尺寸的版本
+     */
+    icon: './src/assets/icon.png',
+
+    /**
+     * 提供详细的尺寸版本
+     *
+     * - 属性名需要为表示尺寸的数字 (number)
+     * - Koot.js 会尝试利用最接近的尺寸自动生成适用于不同场景的各种尺寸的版本
+     */
+    icon: {
+        32: './src/assets/icon-32x.png',
+        128: './src/assets/icon-128x.png',
+        512: './src/assets/icon-launcher.png',
+    },
+};
+```
+
+### webApp
+
+-   类型: `boolean` 或 `Object`
+-   默认值: 如果提供了 `icon` 为 `true`，否则为 `false`
+
+WebApp / PWA 相关设置。
+
+关于详细配置和自动生成的 `<meta>` 标签的详情，请查阅 [Service Worker & WebApp](/pwa)。
+
+```javascript
+module.exports = {
+    /** 未提供 icon 选项时默认关闭 */
+    icon: undefined,
+    webApp: false,
+
+    /** 提供了 icon，默认开启 */
+    icon: './src/assets/icon.png',
+    webApp: true,
+
+    /**
+     * 详细配置。配置项及其说明详见 Service Worker & WebApp 章节 (链接见上文)
+     */
+    webApp: {
+        [option]: 'value',
+    },
+};
+```
+
 ### serviceWorker
 
 -   类型: `boolean` 或 `Object`
@@ -329,7 +357,7 @@ module.exports = {
 
 自动生成 `service-worker` 脚本文件的设置。
 
-关于详细配置和自动生成的 `service-worker` 脚本文件的详情，请查阅 [Service Worker & PWA](/pwa)。
+关于详细配置和自动生成的 `service-worker` 脚本文件的详情，请查阅 [Service Worker & WebApp](/pwa)。
 
 ```javascript
 module.exports = {
@@ -344,7 +372,7 @@ module.exports = {
     // 禁用自动生成 Service-Worker 文件，禁用自动安装
     serviceWorker: false,
 
-    // 详细配置。配置项及其说明详见 Service Worker & PWA 章节 (链接见上文)
+    // 详细配置。配置项及其说明详见 Service Worker & WebApp (链接见上文)
     serviceWorker: {
         [option]: 'value',
     },
@@ -748,7 +776,7 @@ module.exports = {
 
 ---
 
-## 打包 & Webpack 相关
+## 打包 & Webpack
 
 ### webpackConfig
 

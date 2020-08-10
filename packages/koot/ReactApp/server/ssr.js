@@ -2,7 +2,7 @@
 import React from 'react';
 import { renderToString } from 'react-dom/server';
 import match from 'react-router/lib/match';
-import useRouterHistory from 'react-router/lib/useRouterHistory';
+import doUseRouterHistory from 'react-router/lib/useRouterHistory';
 import createMemoryHistory from 'history/lib/createMemoryHistory';
 import { syncHistoryWithStore } from 'react-router-redux';
 
@@ -74,7 +74,7 @@ async function ssr(ctx) {
                 : '/',
     };
     /* eslint-disable react-hooks/rules-of-hooks */
-    const memoryHistory = useRouterHistory(() => createMemoryHistory(url))(
+    const memoryHistory = doUseRouterHistory(() => createMemoryHistory(url))(
         historyConfig
     );
     /* eslint-enable react-hooks/rules-of-hooks */

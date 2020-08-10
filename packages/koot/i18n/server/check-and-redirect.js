@@ -9,7 +9,7 @@ import isI18nEnabled from '../is-enabled';
  * @param {Object} ctx
  * @returns {Boolean} 是否进行跳转
  */
-const useRouterRedirect = (ctx) => {
+const checkRouterRedirect = (ctx) => {
     if (!isI18nEnabled()) return false;
 
     if (process.env.KOOT_I18N_URL_USE === 'router') {
@@ -74,4 +74,4 @@ const useRouterRedirect = (ctx) => {
     return false;
 };
 
-export default useRouterRedirect;
+export default checkRouterRedirect;

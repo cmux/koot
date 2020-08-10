@@ -2,11 +2,14 @@ const fs = require('fs-extra');
 const path = require('path');
 const md5 = require('md5');
 const favicons = require('favicons');
+const findCacheDir = require('find-cache-dir');
 
 const isHotUpdate = require('../libs/is-compilation-hot-update-only');
 const newCompilationFileDependency = require('../libs/new-compilation-file-dependency');
 
 const { compilationKeyHtmlMetaTags } = require('koot/defaults/before-build');
+const { publicPathPrefix } = require('koot/defaults/webpack-dev-server');
+const sleep = require('koot/utils/sleep');
 
 /**
  * Webpack 插件 - 自动生成 manifest.json
@@ -16,10 +19,18 @@ class KootCreateManifestPlugin {
         this.settings = settings;
     }
     apply(compiler) {
-        const { icons, webApp, localeId, outputPath } = this.settings;
+        const {
+            icons,
+            webApp,
+            localeId,
+            // outputPath,
+            filenamePrefix = '',
+        } = this.settings;
 
-        compiler.hooks.afterCompile.tapAsync.bind(
-            compiler.hooks.afterCompile,
+        // const hook = 'afterCompile'
+        const hook = 'emit';
+        compiler.hooks[hook].tapAsync.bind(
+            compiler.hooks[hook],
             'KootCreateManifestPlugin'
         )(async (compilation, callback) => {
             const stats = compilation.getStats();
@@ -27,27 +38,61 @@ class KootCreateManifestPlugin {
             // 如果本次为热更新，不执行后续流程
             if (isHotUpdate(stats)) return callback();
 
-            const subfolder =
+            // 如果已有结果，不执行
+            if (compilation[compilationKeyHtmlMetaTags]) return callback();
+
+            // 如果没有图标，不执行
+            if (!icons) return callback();
+
+            const subfolderName =
                 'webapp.' +
                 md5(
                     JSON.stringify({
                         ...icons,
                         ...webApp,
-                    }) + (localeId || '')
+                    }) +
+                        (localeId || '') +
+                        (process.env.WEBPACK_BUILD_ENV || '') +
+                        (process.env.WEBPACK_BUILD_TYPE || '')
                 ).substr(0, 8);
-
-            const filenameHtmls = md5('htmls');
-            const fileHtmls = path.resolve(
-                outputPath,
-                subfolder,
-                filenameHtmls
+            const subfolder = filenamePrefix + subfolderName;
+            const cacheFolder = path.resolve(
+                findCacheDir({ name: 'koot-webapp-icons' }),
+                subfolderName
             );
+            // const outputFolder = path.resolve(outputPath, subfolder);
+            const filenameHtmls = md5('htmls');
+            const fileCached = path.resolve(cacheFolder, filenameHtmls);
 
-            if (fs.existsSync(fileHtmls)) {
+            async function addFile(filename, contents) {
+                newCompilationFileDependency(
+                    compilation,
+                    `${subfolder}/${filename}`,
+                    contents
+                );
+                if (filename === 'favicon.ico') {
+                    await sleep(1);
+                    newCompilationFileDependency(
+                        compilation,
+                        filename,
+                        contents
+                    );
+                }
+                await sleep(1);
+            }
+
+            await fs.ensureDir(cacheFolder);
+            if (fs.existsSync(fileCached)) {
                 compilation[compilationKeyHtmlMetaTags] = await fs.readFile(
-                    fileHtmls,
+                    fileCached,
                     'utf-8'
                 );
+                for (const filename of fs.readdirSync(cacheFolder)) {
+                    if (filename === filenameHtmls) continue;
+                    const file = path.resolve(cacheFolder, filename);
+                    const contents = await fs.readFile(file);
+                    await addFile(filename, contents);
+                }
 
                 return callback();
             }
@@ -61,6 +106,8 @@ class KootCreateManifestPlugin {
                             path: `${
                                 process.env.WEBPACK_BUILD_TYPE === 'spa'
                                     ? ''
+                                    : process.env.WEBPACK_BUILD_ENV === 'dev'
+                                    ? `/${publicPathPrefix}/dist/`
                                     : '/'
                             }${subfolder}`,
                             lang: localeId || null,
@@ -74,13 +121,16 @@ class KootCreateManifestPlugin {
             );
 
             for (const { name, contents } of [...images, ...files]) {
-                newCompilationFileDependency(
-                    compilation,
-                    `${subfolder}/${name}`,
-                    contents
-                );
-                if (name === 'favicon.ico')
-                    newCompilationFileDependency(compilation, name, contents);
+                await addFile(name, contents);
+
+                // 文件写入缓存目录
+                await fs
+                    .writeFile(
+                        path.resolve(cacheFolder, name),
+                        contents,
+                        typeof contents === 'string' ? 'utf-8' : undefined
+                    )
+                    .catch((err) => console.error(err));
             }
 
             // const manifest = { icons, webApp };
@@ -100,11 +150,14 @@ class KootCreateManifestPlugin {
             const metaHtml = Array.isArray(html) ? html.join('') : html;
             compilation[compilationKeyHtmlMetaTags] = metaHtml;
 
-            newCompilationFileDependency(
-                compilation,
-                `${subfolder}/${filenameHtmls}`,
-                metaHtml
-            );
+            // newCompilationFileDependency(
+            //     compilation,
+            //     `${subfolder}/${filenameHtmls}`,
+            //     metaHtml
+            // );
+            await fs
+                .writeFile(fileCached, metaHtml, 'utf-8')
+                .catch((err) => console.error(err));
 
             return callback();
         });
@@ -136,6 +189,7 @@ appleStatusBarStyle: "black-translucent"
         ['shortName', 'appShortName'],
         ['description', 'appDescription'],
         ['themeColor', 'theme_color'],
+        ['startUrl', 'start_url'],
     ].forEach(([from, to]) => {
         config[to] = config[from];
         delete config[from];

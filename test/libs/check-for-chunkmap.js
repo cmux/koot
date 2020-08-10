@@ -2,7 +2,8 @@ const fs = require('fs-extra');
 const path = require('path');
 
 const {
-    buildManifestFilename
+    buildManifestFilename,
+    compilationKeyHtmlMetaTags,
 } = require('../../packages/koot/defaults/before-build');
 
 const specialKeys = [
@@ -10,7 +11,8 @@ const specialKeys = [
     '.out',
     '.entrypoints',
     '.files',
-    'service-worker'
+    'service-worker',
+    compilationKeyHtmlMetaTags,
 ];
 
 /**
@@ -29,14 +31,20 @@ module.exports = async (dist, func) => {
 
     /** @type {String[]} 过滤掉特殊 key 后剩余的属性 */
     const restKeys = Object.keys(chunkmap).filter(
-        key => !specialKeys.includes(key)
+        (key) => !specialKeys.includes(key)
     );
+
+    const getMap = (map) => {
+        const { [compilationKeyHtmlMetaTags]: _, ...rest } = map;
+        return rest;
+    };
+
     if (restKeys.length) {
         // 过滤掉特殊 key 后已仍有属性，表示当前 chunkmap 文件为 i18n 开启同时使用拆包方式
         for (const localeId of restKeys) {
-            await func(chunkmap[localeId]);
+            await func(getMap(chunkmap[localeId]));
         }
     } else {
-        await func(chunkmap);
+        await func(getMap(chunkmap));
     }
 };

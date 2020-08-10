@@ -27,6 +27,7 @@ const waitForPort = require('../../libs/get-port-from-child-process');
 const testHtmlRenderedByKoot = require('../../general-tests/html/rendered-by-koot');
 const testFilesFromChunkmap = require('../../general-tests/bundle/check-files-from-chunkmap');
 const checkDistRootFiles = require('../../general-tests/check-dist-root-files');
+const testHtmlWebAppMetaTags = require('../../general-tests/html/web-app-meta-tags');
 const {
     requestHidden404: testRequestHidden404,
     criticalAssetsShouldBeGzip: testAssetsGzip,
@@ -215,6 +216,7 @@ const testFull = (dir, configFileName) => {
                     `-->`;
                 expect(content.includes(checkString)).toBe(true);
 
+                await testHtmlWebAppMetaTags(content, dist);
                 await testHtmlRenderedByKoot(content);
             }
 

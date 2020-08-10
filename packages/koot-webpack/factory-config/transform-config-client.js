@@ -361,6 +361,7 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                         webApp,
                         localeId: isSeperateLocale ? localeId : undefined,
                         outputPath: result.output.path,
+                        filenamePrefix,
                     })
                 );
 
