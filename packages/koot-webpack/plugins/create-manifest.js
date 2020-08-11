@@ -196,5 +196,7 @@ appleStatusBarStyle: "black-translucent"
         delete config[from];
     });
 
+    if (!config.appShortName) config.appShortName = config.appName;
+
     return config;
 };
