@@ -40,6 +40,7 @@ const {
 const removeTempProjectConfig = require('../../../packages/koot/libs/remove-temp-project-config');
 const sleep = require('../../../packages/koot/utils/sleep');
 const postcssTransformDeclUrls = require('../../../packages/koot-webpack/postcss/transform-decl-urls');
+const validateConfig = require('../../../packages/koot/libs/validate-config');
 
 //
 
@@ -156,6 +157,10 @@ const testFull = (dir, configFileName) => {
         });
 
         test(`打包完成后，index.html 与相应的静态资源文件应该存在，且内容应该正确`, async () => {
+            const config = await validateConfig(dir, {
+                configFilename: fileKootConfig,
+            });
+
             // chunkmap
             const fileChunkmap = path.resolve(dist, buildManifestFilename);
             expect(fs.existsSync(fileChunkmap)).toBe(true);
@@ -216,7 +221,7 @@ const testFull = (dir, configFileName) => {
                     `-->`;
                 expect(content.includes(checkString)).toBe(true);
 
-                await testHtmlWebAppMetaTags(content, dist);
+                if (config.webApp) await testHtmlWebAppMetaTags(content, dist);
                 await testHtmlRenderedByKoot(content);
             }
 

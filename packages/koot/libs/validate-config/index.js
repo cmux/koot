@@ -58,6 +58,8 @@ const validateConfig = async (projectDir = getCwd(), options = {}) => {
     const fileConfig =
         typeof process.env.KOOT_BUILD_CONFIG_PATHNAME === 'string'
             ? process.env.KOOT_BUILD_CONFIG_PATHNAME
+            : path.isAbsolute(configFilename)
+            ? configFilename
             : path.resolve(projectDir, configFilename);
 
     // 如果完整配置文件不存在，报错，结束流程

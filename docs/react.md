@@ -35,6 +35,20 @@ class HomePage extends React.Component {
 export default HomePage;
 ```
 
+针对函数组件 (Funtional Component) 的使用
+
+```javascript
+import { extend } from 'koot';
+
+const HomePage = extend({
+    // ...配置对象
+})(() => {
+    // ...
+});
+
+export default HomePage;
+```
+
 **TypeScript**
 
 ```typescript
