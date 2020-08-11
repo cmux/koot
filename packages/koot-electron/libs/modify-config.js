@@ -8,12 +8,14 @@ const sanitize = require('sanitize-filename');
 const resolve = require('resolve');
 const inquirer = require('inquirer');
 const merge = require('lodash/merge');
+const sharp = require('sharp');
 const spinner = require('koot-cli-kit/spinner');
 const spawn = require('koot-cli-kit/spawn');
 
 const {
     keyConfigWebpackSPATemplateInject,
     keyConfigBuildDll,
+    keyConfigIcons,
     CLIENT_ROOT_PATH,
 } = require('koot/defaults/before-build');
 const getDirDevTmp = require('koot/libs/get-dir-dev-tmp');
@@ -91,7 +93,12 @@ const getElectronFilesFolder = (appConfig) =>
 const buildElectronMain = async (appConfig) => {
     const dest = getElectronFilesFolder(appConfig);
     const { electron: electronConfig = {}, dist } = appConfig;
-    const { main, mainOutput, build = {} } = electronConfig;
+    const {
+        main,
+        mainOutput,
+        /** electron-builder 配置对象，会写入到打包结果的 `package.json` 中 */
+        build = {},
+    } = electronConfig;
     const msg = getLogMsg(
         false,
         'electron',
@@ -128,6 +135,7 @@ const buildElectronMain = async (appConfig) => {
     //     dest,
     //     electronConfig,
     //     webpackConfig,
+    // appIcon,
     // });
 
     try {
@@ -250,9 +258,43 @@ const packElectron = async (appConfig) => {
         ],
     });
     const args = [...targets];
+    const cwd = appConfig.dist;
+    const appIcon =
+        typeof appConfig[keyConfigIcons] === 'object'
+            ? appConfig[keyConfigIcons].square ||
+              appConfig[keyConfigIcons].original
+            : undefined;
+    const { build = {} } = await fs.readJson(
+        path.resolve(appConfig.dist, 'package.json')
+    );
+    const {
+        directories: { buildResources },
+    } = build;
+    const buildResourcesFolder = path.isAbsolute(buildResources)
+        ? buildResources
+        : path.resolve(cwd, buildResources);
+
+    // console.log({
+    //     cwd,
+    //     appIcon,
+    //     build,
+    //     buildResourcesFolder,
+    // });
+
+    await fs.ensureDir(buildResourcesFolder);
+
+    if (appIcon) {
+        const image = await sharp(appIcon);
+        const target = path.resolve(buildResourcesFolder, 'icon.png');
+        if ((await image.metadata()).format === 'png') {
+            await fs.copy(appIcon, target);
+        } else {
+            await image.png().toFile(target);
+        }
+    }
 
     await spawn(`electron-builder build ${args.join(' ')}`, {
-        cwd: appConfig.dist,
+        cwd,
     });
 };
 

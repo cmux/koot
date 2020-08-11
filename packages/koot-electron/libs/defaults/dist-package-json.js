@@ -1,5 +1,8 @@
 const { electron = {} } = require('koot/defaults/koot-config');
-const { packedFilesFolderName } = require('../constants');
+const {
+    packedFilesFolderName,
+    buildResourcesFolderName,
+} = require('../constants');
 
 module.exports = {
     name: 'kootjs-electron-app',
@@ -15,6 +18,7 @@ module.exports = {
     version: '0.0.1',
     build: {
         directories: {
+            buildResources: buildResourcesFolderName,
             output: packedFilesFolderName,
         },
     },

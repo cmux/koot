@@ -78,3 +78,4 @@ export function createWindow(
 
 -   _Electron_ 项目必须为 SPA 模式
 -   默认使用 `electron-builder` 进行可执行文件的打包
+-   可在 _Koot.js_ 配置文件中添加 `icon` 属性，在打包可执行文件时会使用设定的图标文件 (详见 [项目配置/icon](/config?id=icon))
