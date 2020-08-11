@@ -12,7 +12,7 @@ const defaultConfig = require('../../../packages/koot/defaults/koot-config');
 const {
     keyFileProjectConfigTempFull,
     keyFileProjectConfigTempPortionServer,
-    keyFileProjectConfigTempPortionClient
+    keyFileProjectConfigTempPortionClient,
 } = require('../../../packages/koot/defaults/before-build');
 const getDirDevTemp = require('../../../packages/koot/libs/get-dir-dev-tmp');
 
@@ -37,11 +37,11 @@ const testOnTheFly = async (
     const requiredKootConfig = {
         template: './src/template.ejs',
         routes: './src/routes',
-        webpackConfig: {}
+        webpackConfig: {},
     };
     const basePackageJson = {
         name: 'koot-test-validate-config',
-        private: true
+        private: true,
     };
 
     const fileKootConfig = path.resolve(tempDir, 'koot.config.js');
@@ -52,20 +52,20 @@ const testOnTheFly = async (
         fileKootConfig,
         `module.exports = ${JSON.stringify({
             ...requiredKootConfig,
-            ...kootConfig
+            ...kootConfig,
         })}`,
         'utf-8'
     );
     await fs.writeJson(filePackageJson, {
         ...basePackageJson,
-        ...packageJson
+        ...packageJson,
     });
 
     const fullConfig = await validateConfig(tempDir);
 
     await fs.remove(tempDir);
 
-    Object.keys(targetTests).forEach(key => {
+    Object.keys(targetTests).forEach((key) => {
         expect(fullConfig[key]).toBe(targetTests[key]);
     });
 };
@@ -74,7 +74,7 @@ describe(`测试: libs/validate-config`, () => {
     const fileKeysToCheck = [
         keyFileProjectConfigTempFull,
         keyFileProjectConfigTempPortionServer,
-        keyFileProjectConfigTempPortionClient
+        keyFileProjectConfigTempPortionClient,
     ];
 
     test(`默认环境 (生产环境)`, async () => {
@@ -95,7 +95,7 @@ describe(`测试: libs/validate-config`, () => {
 
     test(`强行指定开发环境`, async () => {
         const envLast = {
-            WEBPACK_BUILD_ENV: process.env.WEBPACK_BUILD_ENV
+            WEBPACK_BUILD_ENV: process.env.WEBPACK_BUILD_ENV,
         };
         process.env.WEBPACK_BUILD_ENV = 'dev';
 
@@ -114,7 +114,7 @@ describe(`测试: libs/validate-config`, () => {
         expect(buildConfig.dist).toBe(getDirDevTemp(undefined, 'build'));
 
         // 还原环境变量
-        Object.keys(envLast).forEach(key => {
+        Object.keys(envLast).forEach((key) => {
             process.env[key] = envLast[key];
         });
     });
@@ -129,8 +129,8 @@ describe(`测试: libs/validate-config`, () => {
             {},
             {
                 koot: {
-                    baseVersion: '0.8.10'
-                }
+                    baseVersion: '0.8.10',
+                },
             },
             { bundleVersionsKeep: false }
         );
