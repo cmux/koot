@@ -1,6 +1,6 @@
 {
     "name": "koot",
-    "version": "0.14.0-alpha.25",
+    "version": "0.14.0-alpha.26",
     "description": "Koot.js - React SPA & SSR (isomorphic) app framework created by CMUX",
     "main": "index.js",
     "sideEffects": false,
@@ -84,7 +84,7 @@
         "koa-router": "^9.1.0",
         "koa-static": "^5.0.0",
         "koot-cli-kit": "^0.0.2",
-        "koot-webpack": "^0.14.0-alpha.25",
+        "koot-webpack": "^0.14.0-alpha.26",
         "lodash": "^4.17.19",
         "md5": "^2.3.0",
         "npm-run-script": "^0.0.4",
