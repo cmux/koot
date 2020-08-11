@@ -24,7 +24,7 @@ module.exports = {
     devPort: undefined,
 
     // 示例: 指定开发环境采用 8088 端口
-    devPort: 8088
+    devPort: 8088,
 };
 ```
 
@@ -46,9 +46,9 @@ module.exports = {
         'redux-thunk',
         'react-redux',
         'react-router',
-        'react-router-redux'
+        'react-router-redux',
         // 以及其他常见的第三方库/包
-    ]
+    ],
 };
 ```
 
@@ -64,7 +64,7 @@ module.exports = {
 module.exports = {
     // 默认值
     devHmr: {
-        multiStep: false
+        multiStep: false,
     },
 
     // 开发环境下启动多步打包，以进一步加速热更新速度
@@ -73,8 +73,8 @@ module.exports = {
         fullBuildTimeout:
             process.env.WEBPACK_BUILD_TYPE === 'spa' ? 500 : undefined,
         requestTimeout:
-            process.env.WEBPACK_BUILD_TYPE === 'spa' ? undefined : 1000
-    }
+            process.env.WEBPACK_BUILD_TYPE === 'spa' ? undefined : 1000,
+    },
 };
 ```
 
@@ -99,19 +99,19 @@ module.exports = {
         contentBase: './',
         publicPath: TYPE === 'spa' ? '/' : '/dist/',
         headers: {
-            'Access-Control-Allow-Origin': '*'
+            'Access-Control-Allow-Origin': '*',
         },
         open: TYPE === 'spa',
         watchOptions: {
-            ignored: [getDistPath(), path.resolve(getDistPath(), '**/*')]
+            ignored: [getDistPath(), path.resolve(getDistPath(), '**/*')],
         },
-        before: app => {
+        before: (app) => {
             if (appType === 'ReactSPA') {
                 require('../../ReactSPA/dev-server/extend')(app);
             }
             if (typeof before === 'function') return before(app);
-        }
-    }
+        },
+    },
 };
 ```
 
@@ -121,7 +121,7 @@ module.exports = {
 -   默认值: `false`
 -   **仅针对**: 开发环境
 
-设定开发环境中是否应用 _Service Worker_。有关独立配置对象请查阅 [Service Worker & PWA](/pwa)。
+设定开发环境中是否应用 _Service Worker_。有关独立配置对象请查阅 [WebApp & Service Worker](/pwa)。
 
 ```javascript
 module.exports = {
@@ -132,10 +132,10 @@ module.exports = {
     devServiceWorker: true,
 
     // 开发环境中启用 Service Worker，采用独立配置对象
-    // 配置项及其说明详见 Service Worker & PWA 章节 (链接见上文)
+    // 配置项及其说明详见 WebApp & Service Worker 章节 (链接见上文)
     devServiceWorker: {
-        [option]: `value`
-    }
+        [option]: `value`,
+    },
 };
 ```
 
@@ -160,17 +160,17 @@ module.exports = {
     // SSR: 分别指定 `webpack-dev-server` (client) 和服务器打包进程 (server) 分配的内存容量
     devMemoryAllocation: {
         client: 2048,
-        server: 1024
+        server: 1024,
     },
 
     // SSR: 仅指定 `webpack-dev-server` (client) 分配的内存容量
     devMemoryAllocation: {
-        client: 2048
+        client: 2048,
     },
 
     // SSR: 仅指定服务器打包进程 (server) 分配的内存容量
     devMemoryAllocation: {
-        server: 1024
-    }
+        server: 1024,
+    },
 };
 ```

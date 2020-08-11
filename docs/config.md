@@ -292,7 +292,7 @@ module.exports = {
 
 项目图标配置。
 
--   ⚠ 如果提供了图标，但 `webApp` 选项关闭，不过产生任何结果
+-   ⚠️ 如果提供了图标，但 `webApp` 选项关闭，不过产生任何结果
 -   如果提供了图标，且 `webApp` 选项开启，生成、渲染的 HTML 代码中将会自动添加有关 `favicon` `manifest` 等信息的 `<meta>` 标签
 -   如果提供了图标，且为 Electron 程序，在打包可执行文件时会自动设置文件图标
 
@@ -301,24 +301,8 @@ module.exports = {
     /** 默认不提供 */
     icon: undefined,
 
-    /**
-     * 单一尺寸的图标
-     *
-     * 如果提供的是单一尺寸图标文件，Koot.js 会尝试自动生成适用于不同场景的各种尺寸的版本
-     */
+    /** 提供图标文件路径，Koot.js 会尝试自动生成适用于不同场景的各种尺寸的版本 */
     icon: './src/assets/icon.png',
-
-    /**
-     * 提供详细的尺寸版本
-     *
-     * - 属性名需要为表示尺寸的数字 (number)
-     * - Koot.js 会尝试利用最接近的尺寸自动生成适用于不同场景的各种尺寸的版本
-     */
-    icon: {
-        32: './src/assets/icon-32x.png',
-        128: './src/assets/icon-128x.png',
-        512: './src/assets/icon-launcher.png',
-    },
 };
 ```
 
@@ -327,9 +311,9 @@ module.exports = {
 -   类型: `boolean` 或 `Object`
 -   默认值: 如果提供了 `icon` 为 `true`，否则为 `false`
 
-WebApp / PWA 相关设置。
+WebApp / PWA 相关设置。在设定了 App 图标 (`icon` 设置项) 时，_Koot.js_ 会默认自动在生成、渲染的 HTML 代码结果中加入 WebApp 相关的 `<meta>` 和 `<link>` 标签。
 
-关于详细配置和自动生成的 `<meta>` 标签的详情，请查阅 [Service Worker & WebApp](/pwa)。
+关于详细配置和自动生成的 `<meta>` 和 `<link>` 标签的详情，请查阅 [WebApp & Service Worker](/pwa)。
 
 ```javascript
 module.exports = {
@@ -342,7 +326,7 @@ module.exports = {
     webApp: true,
 
     /**
-     * 详细配置。配置项及其说明详见 Service Worker & WebApp 章节 (链接见上文)
+     * 详细配置。配置项及其说明详见 WebApp & Service Worker 章节 (链接见上文)
      */
     webApp: {
         [option]: 'value',
@@ -357,7 +341,7 @@ module.exports = {
 
 自动生成 `service-worker` 脚本文件的设置。
 
-关于详细配置和自动生成的 `service-worker` 脚本文件的详情，请查阅 [Service Worker & WebApp](/pwa)。
+关于详细配置和自动生成的 `service-worker` 脚本文件的详情，请查阅 [WebApp & Service Worker](/pwa)。
 
 ```javascript
 module.exports = {
@@ -372,7 +356,7 @@ module.exports = {
     // 禁用自动生成 Service-Worker 文件，禁用自动安装
     serviceWorker: false,
 
-    // 详细配置。配置项及其说明详见 Service Worker & WebApp (链接见上文)
+    // 详细配置。配置项及其说明详见 WebApp & Service Worker (链接见上文)
     serviceWorker: {
         [option]: 'value',
     },
@@ -1226,7 +1210,7 @@ module.exports = {
 -   默认值: `false`
 -   **仅针对**: 开发环境
 
-设定开发环境中是否应用 _Service Worker_。有关独立配置对象请查阅 [Service Worker & PWA](/pwa)。
+设定开发环境中是否应用 _Service Worker_。有关独立配置对象请查阅 [WebApp & Service Worker](/pwa)。
 
 ```javascript
 module.exports = {
@@ -1237,7 +1221,7 @@ module.exports = {
     devServiceWorker: true,
 
     // 开发环境中启用 Service Worker，采用独立配置对象
-    // 配置项及其说明详见 Service Worker & PWA 章节 (链接见上文)
+    // 配置项及其说明详见 WebApp & Service Worker 章节 (链接见上文)
     devServiceWorker: {
         [option]: `value`,
     },

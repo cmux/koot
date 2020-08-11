@@ -189,6 +189,7 @@ appleStatusBarStyle: "black-translucent"
         ['shortName', 'appShortName'],
         ['description', 'appDescription'],
         ['themeColor', 'theme_color'],
+        ['backgroundColor', 'background'],
         ['startUrl', 'start_url'],
     ].forEach(([from, to]) => {
         config[to] = config[from];

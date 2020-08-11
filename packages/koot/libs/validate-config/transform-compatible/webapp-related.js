@@ -1,5 +1,8 @@
+const getColors = require('get-image-colors');
+
 const defaultsServiceWorker = require('../../../defaults/service-worker');
 const defaultsWebApp = require('../../../defaults/web-app');
+const { keyConfigIcons } = require('../../../defaults/before-build');
 
 const validateIcon = require('../validation/icon');
 
@@ -92,14 +95,26 @@ module.exports = async (config) => {
     // ========================================================================
     // 默认值处理: webApp
     // ========================================================================
-    if (typeof config.icon === 'undefined') {
+    if (typeof config[keyConfigIcons] !== 'object') {
         config.webApp = false;
-    } else if (typeof config.webApp === 'object' || config.webApp === true) {
+    } else if (
+        config.webApp === true ||
+        typeof config.webApp === 'undefined' ||
+        typeof config.webApp === 'object'
+    ) {
         config.webApp = {
             ...defaultsWebApp,
             name: config.name,
             ...(config.webApp || {}),
         };
+
+        if (!config.webApp.themeColor) {
+            const colors = await getColors(
+                config[keyConfigIcons].square || config[keyConfigIcons].original
+            );
+            // console.log({ colors }, colors[0].hex());
+            config.webApp.themeColor = colors[0].hex();
+        }
     }
 
     return config;

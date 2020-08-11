@@ -1,8 +1,72 @@
-# Service-Worker & WebApp
+# WebApp & Service Worker
 
 ---
 
-## Service Worker
+### WebApp
+
+在设定了 App 图标 (`icon` 设置项) 时，_Koot.js_ 会默认自动在生成、渲染的 HTML 代码结果中加入 WebApp 相关的 `<meta>` 和 `<link>` 标签。
+
+⚠️ 只有在设定了 App 图标时该功能才会启用。如果没有设定图标，该功能无法打开。
+
+```javascript
+// Koot.js App 配置文件
+module.exports = {
+    /** 未提供 icon 选项时默认关闭 */
+    icon: undefined,
+    webApp: false,
+
+    /** 提供了 icon，默认开启 */
+    icon: './src/assets/icon.png',
+    webApp: true,
+
+    /** 详细配置。配置项及其说明详见下表 */
+    webApp: {
+        [option]: 'value',
+    },
+};
+```
+
+**`webApp` 选项**
+
+| 项名              | 值类型   | 默认值                          | 解释                                     |
+| ----------------- | -------- | ------------------------------- | ---------------------------------------- |
+| `name`            | `string` | `name` 选项值                   | WebApp 名                                |
+| `shortName`       | `string` | _null_                          | 短名，通常用于桌面图标的名字             |
+| `description`     | `string` | _null_                          | WebApp 描述文字                          |
+| `themeColor`      | `string` | _提供的图标的突出色_            | 移动端浏览器主题颜色、PWA 系统导航条颜色 |
+| `backgroundColor` | `string` | `#212121`                       | PWA 启动时的占位空间背景色               |
+| `display`         | `string` | `#standalone`                   | PWA 启动模式                             |
+| `orientation`     | `string` | `#portrait`                     | PWA 显示旋转方向                         |
+| `scope`           | `string` | `/`                             | WebApp 路径                              |
+| `startUrl`        | `string` | `/?utm_source=web_app_manifest` | WebApp 启动时访问的 URL                  |
+
+**自动生成的内容**
+
+-   网站图标 (`favicon.ico`)
+-   适用于 iOS、PWA、FireFox 等多端、多尺寸的图标
+-   WebApp Manifest 文件 (多用于 PWA)
+-   在生成、渲染的 HTML 代码结果中加入 WebApp 相关的 `<meta>` 和 `<link>` 标签
+    -   网站图标标识
+        -   `link[rel="shortcut icon"]`
+        -   `link[rel="icon"][type="image/png"][sizes="16x16"]`
+        -   `link[rel="icon"][type="image/png"][sizes="32x32"]`
+        -   `link[rel="icon"][type="image/png"][sizes="..."]`
+    -   各尺寸图标的标识
+        -   `link[rel="apple-touch-icon"][sizes="..."]`
+        -   `link[rel="apple-touch-startup-image"]`
+    -   主题色标识
+        -   `meta[name="theme-color"]`
+        -   `meta[name="msapplication-TileColor"]`
+    -   WebApp/PWA 标识
+        -   `link[rel="manifest"]`
+        -   `meta[name="application-name"]`
+    -   移动适配标识
+        -   `meta[name="mobile-web-app-capable"]`
+        -   `meta[name="apple-mobile-web-app-capable"]`
+
+---
+
+### Service Worker
 
 _Koot.js_ 会自动生成 _Service Worker_ 文件并安装。可通过配置调节相应行为，或使用自行编写的 _Service Worker_ 文件。
 
@@ -17,10 +81,10 @@ module.exports = {
      */
     serviceWorker: true,
 
-    // 禁用自动生成 Service-Worker 文件，禁用自动安装
+    /** 禁用自动生成 Service-Worker 文件，禁用自动安装 */
     serviceWorker: false,
 
-    // 详细配置。配置项及其说明详见下表
+    /** 详细配置。配置项及其说明详见下表 */
     serviceWorker: {
         [option]: 'value',
     },
@@ -31,7 +95,7 @@ module.exports = {
 
 | 项名           | 值类型                   | 默认值                                                               | 解释                                                                                                                                                                                                                                        |
 | -------------- | ------------------------ | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `auto`         | `boolean`                | `true`                                                               | 是否自动安装生成的 _Service Worker_<br><br>⚠️ 只能自动安装由 _Koot.js_ 生成的 _Service Worker_ 文件                                                                                                                                         |
+| `auto`         | `boolean`                | _true_                                                               | 是否自动安装生成的 _Service Worker_<br><br>⚠️ 只能自动安装由 _Koot.js_ 生成的 _Service Worker_ 文件                                                                                                                                         |
 | `filename`     | `string`                 | `service-worker.js`                                                  | 生成的 _Service Worker_ 文件的文件名<br><br>启用多语言且为`分别打包`模式（默认模式）时，生成的文件的文件名会在扩展名前插入`.[语言 ID]`，如：`service-worker.zh.js`                                                                          |
 | `scope`        | `string`                 | SSR: `/`<br>SPA (hashHistory): 当前路径<br>SPA (browserHistory): `/` | `auto = true` 时，自动注册 _Service Worker_ 的作用域                                                                                                                                                                                        |
 | `swSrc`        | `string`                 | _undefined_                                                          | 自行制定 _Service Worker_ 模板文件。详见下文                                                                                                                                                                                                |
@@ -93,9 +157,3 @@ module.exports = {
 // http://app.com/logo-large.png
 // -> 本地缓存优先
 ```
-
----
-
-## WebApp
-
-_编写中..._

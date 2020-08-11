@@ -11,7 +11,7 @@
     -   [项目配置](/config)
     -   [模板](/template)
     -   [打包 & Webpack](/webpack)
-    -   [Servie-Worker & WebApp](/pwa)
+    -   [WebApp & Servie-Worker](/pwa)
 
 -   **环境**
 

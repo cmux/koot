@@ -26,9 +26,9 @@ module.exports = {
     },
     staticCopyFrom: path.resolve(__dirname, './public'),
     icon: './src/assets/photo.jpg',
-    webApp: {
-        themeColor: '#0092f5',
-    },
+    // webApp: {
+    //     themeColor: '#0092f5',
+    // },
 
     port: 8081,
     // renderCache: true,
