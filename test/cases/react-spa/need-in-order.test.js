@@ -40,7 +40,7 @@ const {
 const removeTempProjectConfig = require('../../../packages/koot/libs/remove-temp-project-config');
 const sleep = require('../../../packages/koot/utils/sleep');
 const postcssTransformDeclUrls = require('../../../packages/koot-webpack/postcss/transform-decl-urls');
-const validateConfig = require('../../../packages/koot/libs/validate-config');
+// const validateConfig = require('../../../packages/koot/libs/validate-config');
 
 //
 
