@@ -157,9 +157,9 @@ const testFull = (dir, configFileName) => {
         });
 
         test(`打包完成后，index.html 与相应的静态资源文件应该存在，且内容应该正确`, async () => {
-            const config = await validateConfig(dir, {
-                configFilename: fileKootConfig,
-            });
+            // const config = await validateConfig(dir, {
+            //     configFilename: fileKootConfig,
+            // });
 
             // chunkmap
             const fileChunkmap = path.resolve(dist, buildManifestFilename);
