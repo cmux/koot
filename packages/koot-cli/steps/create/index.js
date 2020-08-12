@@ -69,7 +69,7 @@ module.exports = async (options = {}) => {
         // return console.warn(app);
 
         await download(app.dest, app.boilerplate);
-        await modify(app);
+        await modify(app).catch((e) => console.trace(e));
         await install(app);
 
         console.log('');
