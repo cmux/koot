@@ -1,14 +1,16 @@
+/* eslint-disable no-restricted-globals */
+
 import 'regenerator-runtime/runtime';
 import {
     setCacheNameDetails,
     cacheNames,
     skipWaiting,
-    clientsClaim
+    clientsClaim,
 } from 'workbox-core';
 import { precacheAndRoute } from 'workbox-precaching';
 import { registerRoute } from 'workbox-routing';
 import * as workboxStrategies from 'workbox-strategies';
-import sanitize from 'sanitize-filename'
+import sanitize from 'sanitize-filename';
 import { scopeNeedTransformPathname } from 'koot/defaults/defines-service-worker';
 
 self.__WB_DISABLE_DEV_LOGS = true;
@@ -18,15 +20,16 @@ self.__WB_DISABLE_DEV_LOGS = true;
 if (typeof self.__koot !== 'object') {
     self.__koot = {
         env: {
-            WEBPACK_BUILD_ENV: 'prod'
-        }
+            WEBPACK_BUILD_ENV: 'prod',
+        },
     };
 }
 if (self.__koot.scope === scopeNeedTransformPathname)
-    self.__koot.scope = location.pathname
-        .split('/')
-        .slice(0, location.pathname.split('/').length - 1)
-        .join('/') + '/'
+    self.__koot.scope =
+        location.pathname
+            .split('/')
+            .slice(0, location.pathname.split('/').length - 1)
+            .join('/') + '/';
 const isKootAppDevEnv = self.__koot.env.WEBPACK_BUILD_ENV === 'dev';
 
 // Commons ====================================================================
@@ -40,7 +43,9 @@ const getRoute = (pathname, addScope = false) => {
         .join('.');
 
     let p = pathname
-        ? `${addScope ? self.__koot.scope : '/'}${pathname.substr(0, 1) === '/' ? pathname.substr(1) : pathname}`
+        ? `${addScope ? self.__koot.scope : '/'}${
+              pathname.substr(0, 1) === '/' ? pathname.substr(1) : pathname
+          }`
         : `${addScope ? self.__koot.scope : ''}`;
     p = p.replace(/\//g, '\\/');
 
@@ -50,25 +55,23 @@ const getRoute = (pathname, addScope = false) => {
         p = p.substr(0, p.length - 2);
     }
 
-    return new RegExp(`^[a-z]+:\\/\\/[^\/]*?${host}[:]*[0-9]*${p}${suffix}`);
+    return new RegExp(`^[a-z]+:\\/\\/[^/]*?${host}[:]*[0-9]*${p}${suffix}`);
 };
 
 // Workbox Configuration ======================================================
 
 setCacheNameDetails({
     prefix: 'koot',
-    suffix: `cache${
-        self.__koot.localeId ? `-${self.__koot.localeId
-    }` : ''}${
+    suffix: `cache${self.__koot.localeId ? `-${self.__koot.localeId}` : ''}${
         self.__koot.scope && self.__koot.scope !== '/'
             ? `-${sanitize(self.__koot.scope)}`
             : ''
     }`,
     precache: 'pre',
-    runtime: 'rt'
+    runtime: 'rt',
 });
 
-self.addEventListener('message', event => {
+self.addEventListener('message', (event) => {
     if (event.data && event.data.type === 'SKIP_WAITING') {
         skipWaiting();
         clientsClaim();
@@ -80,22 +83,24 @@ self.addEventListener('message', event => {
 if (!isKootAppDevEnv) {
     precacheAndRoute([
         // from webpack build
-        ...self.__WB_MANIFEST
+        ...self.__WB_MANIFEST,
     ]);
     // add home page into `runtime` cache
-    caches.open(cacheNames.runtime).then(cache => cache.add(self.__koot.scope || '/'));
+    caches
+        .open(cacheNames.runtime)
+        .then((cache) => cache.add(self.__koot.scope || '/'));
 }
 
 // Caching Strategy ===========================================================
 
 const cacheRoutes = [
     getRoute(self.__koot.distClientAssetsDirName + '/', true),
-    ...(self.__koot.cacheFirst || []).map(p => getRoute(p)),
-    getRoute('favicon.ico', true)
+    ...(self.__koot.cacheFirst || []).map((p) => getRoute(p)),
+    getRoute('favicon.ico', true),
 ];
 const cacheStrategy = isKootAppDevEnv ? 'NetworkOnly' : 'CacheFirst';
 
-cacheRoutes.forEach(route => {
+cacheRoutes.forEach((route) => {
     // console.log({ route, cacheStrategy });
     registerRoute(route, new workboxStrategies[cacheStrategy](), 'GET');
 });
@@ -103,18 +108,22 @@ cacheRoutes.forEach(route => {
 // Others =====================================================================
 
 [
-    ...(self.__koot.networkOnly || []).map(p => getRoute(p)),
-    'api/'
+    ...(self.__koot.networkOnly || []).map((p) => getRoute(p)),
+    'api/',
     //
-].forEach(route => {
+].forEach((route) => {
     registerRoute(route, new workboxStrategies.NetworkOnly(), 'GET');
 });
 [
-    ...(self.__koot.networkFirst || []).map(p => getRoute(p))
+    ...(self.__koot.networkFirst || []).map((p) => getRoute(p)),
     //
-].forEach(route => {
+].forEach((route) => {
     registerRoute(route, new workboxStrategies.NetworkFirst(), 'GET');
 });
 
 // Base =======================================================================
-registerRoute(getRoute(undefined, true), new workboxStrategies.NetworkFirst(), 'GET');
+registerRoute(
+    getRoute(undefined, true),
+    new workboxStrategies.NetworkFirst(),
+    'GET'
+);

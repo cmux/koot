@@ -11,7 +11,7 @@
     -   [项目配置](/config)
     -   [模板](/template)
     -   [打包 & Webpack](/webpack)
-    -   [Servie-Worker & PWA](/pwa)
+    -   [WebApp & Servie-Worker](/pwa)
 
 -   **环境**
 
@@ -29,6 +29,7 @@
     -   [CSS](/css)
     -   [多语言](/i18n)
     -   [生命周期](/life-cycle)
+    -   [Electron](/electron)
     -   [全局与工具函数](/utilities)
     -   [默认关闭的功能](/disabled)
 

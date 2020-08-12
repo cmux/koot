@@ -6,10 +6,11 @@ const path = require('path');
 const program = require('commander');
 const chalk = require('chalk');
 
-const before = require('./_before');
+const willValidateConfig = require('./lifecycle/will-validate-config');
+const willBuild = require('./lifecycle/will-build');
 
 const {
-    keyConfigQuiet,
+    // keyConfigQuiet,
     filenameBuilding,
 } = require('../defaults/before-build');
 const { KOOT_BUILD_START_TIME } = require('../defaults/envs');
@@ -20,6 +21,7 @@ const setEnvFromCommand = require('../utils/set-env-from-command');
 const getAppType = require('../utils/get-app-type');
 const validateConfig = require('../libs/validate-config');
 const validateConfigDist = require('../libs/validate-config-dist');
+const isFromStartCommand = require('../libs/is-from-start-command');
 const spinner = require('../utils/spinner');
 const initNodeEnv = require('../utils/init-node-env');
 // const emptyTempConfigDir = require('../libs/empty-temp-config-dir')
@@ -41,13 +43,6 @@ program
     .option('--koot-test', 'Koot test mode')
     .option('--koot-development', 'Koot development mode')
     .parse(process.argv);
-
-/** 判断是否是通过 koot-start 命令启动
- * @returns {Boolean}
- */
-const isFromCommandStart = () =>
-    process.env.KOOT_COMMAND_START &&
-    JSON.parse(process.env.KOOT_COMMAND_START);
 
 /** Building result */
 let result;
@@ -73,7 +68,7 @@ const run = async () => {
     // console.log(program)
 
     /** @type {Boolean} 是否为通过 koot-start 命令启动 */
-    const fromCommandStart = isFromCommandStart();
+    const fromCommandStart = isFromStartCommand();
     const fromOtherCommand = kootDev || fromCommandStart;
     if (!fromOtherCommand)
         // 清空 log
@@ -103,7 +98,7 @@ const run = async () => {
     process.env.WEBPACK_BUILD_ENV = env;
 
     // 清理临时目录
-    await before(program);
+    await willValidateConfig(program);
 
     // 生成配置
     const kootConfig = await validateConfig();
@@ -111,9 +106,13 @@ const run = async () => {
     if (dest) kootConfig.dist = validateConfigDist(dest);
 
     // 如果通过 koot-start 命令启动...
-    if (fromCommandStart) {
-        // 安静模式: 非报错 log 不打出
-        kootConfig[keyConfigQuiet] = true;
+    // if (fromCommandStart) {
+    //     // 安静模式: 非报错 log 不打出
+    //     kootConfig[keyConfigQuiet] = true;
+    // }
+
+    if (!fromOtherCommand) {
+        await willBuild(kootConfig);
     }
 
     // Building process =======================================================
@@ -126,7 +125,8 @@ const run = async () => {
         // }
         result = await kootWebpackBuild(kootConfig);
         await after(kootConfig);
-        if (!fromCommandStart) console.log(' ');
+        // if (!fromCommandStart)
+        console.log(' ');
         return;
     }
 
@@ -134,23 +134,26 @@ const run = async () => {
     result = await kootWebpackBuild({ ...kootConfig });
     await sleep(100);
 
-    if (!fromCommandStart) console.log('\n' + ''.padEnd(60, '=') + '\n');
+    // if (!fromCommandStart)
+    console.log('\n' + ''.padEnd(60, '=') + '\n');
     process.env.WEBPACK_BUILD_STAGE = 'server';
     result = await kootWebpackBuild({ ...kootConfig });
     await sleep(100);
 
-    if (!fromCommandStart) console.log('\n' + ''.padEnd(60, '=') + '\n');
-    if (!fromCommandStart)
-        console.log(
-            chalk.green('√ ') +
-                chalk.yellowBright('[koot/build] ') +
-                __('build.complete', {
-                    time: new Date().toLocaleString(),
-                })
-        );
+    // if (!fromCommandStart)
+    console.log('\n' + ''.padEnd(60, '=') + '\n');
+    // if (!fromCommandStart)
+    console.log(
+        chalk.green('√ ') +
+            chalk.yellowBright('[koot/build] ') +
+            __('build.complete', {
+                time: new Date().toLocaleString(),
+            })
+    );
 
     await after(kootConfig);
-    if (!fromCommandStart) console.log(' ');
+    // if (!fromCommandStart)
+    console.log(' ');
 
     // 结束
 };
@@ -174,7 +177,7 @@ const after = async (config = {}) => {
 };
 
 run().catch((err) => {
-    if (!isFromCommandStart())
+    if (!isFromStartCommand())
         spinner(chalk.yellowBright('[koot/build] ')).fail();
 
     if (result && Array.isArray(result.errors) && result.errors.length) {

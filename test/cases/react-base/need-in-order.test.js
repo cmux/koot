@@ -53,6 +53,7 @@ const waitForPort = require('../../libs/get-port-from-child-process');
 const testHtmlRenderedByKoot = require('../../general-tests/html/rendered-by-koot');
 const testFilesFromChunkmap = require('../../general-tests/bundle/check-files-from-chunkmap');
 const checkDistRootFiles = require('../../general-tests/check-dist-root-files');
+const testHtmlWebAppMetaTags = require('../../general-tests/html/web-app-meta-tags');
 
 //
 
@@ -157,6 +158,7 @@ const doTest = async (port, dist, settings = {}) => {
     );
 
     const origin = isNaN(port) ? port : `http://127.0.0.1:${port}`;
+    // console.log({ origin, port, t: typeof port });
 
     const res = await page
         .goto(origin, {
@@ -618,6 +620,13 @@ const doTest = async (port, dist, settings = {}) => {
         expect(styles.color).toBe('rgb(255, 255, 255)');
         expect(styles.textAlign).toBe('center');
     }
+
+    // 测试: WebApp 相关 <meta> 标签信息以及文件可用性
+    if (!isDev) {
+        const HTML = await res.text();
+        await testHtmlWebAppMetaTags(HTML, dist);
+    }
+
     await puppeteerTestStyles(page);
     await puppeteerTestCustomEnv(page, customEnv);
     await puppeteerTestInjectScripts(page);
@@ -691,13 +700,13 @@ const testOutputs = async (dist, countToBe) => {
             .forEach((file) => filesNeedToExist.push(file));
     }
 
-    const filesExist = (
-        await glob(path.resolve(dist, 'public', '**/*'), {
-            dot: true,
-        })
-    )
-        .filter((file) => !fs.lstatSync(file).isDirectory())
-        .map((file) => path.normalize(file));
+    // const filesExist = (
+    //     await glob(path.resolve(dist, 'public', '**/*'), {
+    //         dot: true,
+    //     })
+    // )
+    //     .filter((file) => !fs.lstatSync(file).isDirectory())
+    //     .map((file) => path.normalize(file));
 
     expect(fs.existsSync(dist)).toBe(true);
     expect(fs.existsSync(path.resolve(dist, 'public'))).toBe(true);
@@ -706,7 +715,35 @@ const testOutputs = async (dist, countToBe) => {
     );
     expect(fs.existsSync(fileOutputs)).toBe(true);
     expect(Object.keys(outputs).length).toBe(countToBe);
-    expect(filesNeedToExist.length).toBe(filesExist.length);
+
+    // 不应有空目录
+    async function getEmptyDirCount(directory, count = 0) {
+        // lstat does not follow symlinks (in contrast to stat)
+        const fileStats = await fs.lstat(directory);
+        if (!fileStats.isDirectory()) {
+            return;
+        }
+        const fileNames = await fs.readdir(directory);
+        if (fileNames.length > 0) {
+            const recursiveRemovalPromises = fileNames.map((fileName) =>
+                getEmptyDirCount(path.join(directory, fileName), count)
+            );
+            await Promise.all(recursiveRemovalPromises);
+        } else {
+            count++;
+        }
+
+        // for (const fileName of fileNames) {
+        //     const file = path.resolve(directory, fileName);
+        //     const stat = await fs.lstat(file);
+        //     if (stat.isDirectory()) {
+        //         count++;
+        //     }
+        // }
+
+        return count;
+    }
+    expect(await getEmptyDirCount(dist)).toBe(0);
 };
 
 //
@@ -825,7 +862,10 @@ describe('测试: React 同构项目', () => {
                 );
                 const errors = [];
 
-                const port = await waitForPort(child, / on.*http:.*:([0-9]+)/);
+                const port = await waitForPort(
+                    child,
+                    / started on.*http:.*:([0-9]+)/
+                );
                 child.stderr.on('data', (err) => {
                     errors.push(err);
                 });
@@ -836,6 +876,7 @@ describe('测试: React 同构项目', () => {
                 // })
                 expect(errors.length).toBe(0);
 
+                await sleep(2000);
                 await doTest(port, dist, {
                     isDev: true,
                     customEnv,

@@ -1,5 +1,68 @@
 ## [Unreleased]
 
+_Koot.js_ 0.14 开始原生支持 _Electron_ 项目开发。利用 `koot-cli` 创建新项目时可以根据向导直接创建 _Electron_ 项目并会自动配置完成开发环境。如需手动配置开发环境，如从老的 _Koot.js_ 项目升级，请参见文档 [Electron](https://koot.js.org/#/electron) ([#102](https://github.com/cmux/koot/issues/102))。
+
+**koot**
+
+-   **重大改动**
+    -   _Node.js_ 最低版本要求提升到 `10.13.0`
+    -   更新依赖包 **major** 版本号
+        -   `commander` -> _^6.0.3_
+        -   `execa` -> _^4.0.0_
+        -   `fs-extra` -> _^9.0.0_
+        -   `react-redux` -> _^7.2.0_ ([#45](https://github.com/cmux/koot/issues/45), [#154](https://github.com/cmux/koot/issues/154))
+    -   移除以下依赖包，现在不会默认安装。如有使用需要，请在项目中自行安装
+        -   `md5-file`
+    -   为日后预计开发的某项功能做准备，现在客户端/浏览器端生成路由对象的流程会采用 _Promise_ 异步方式，原则上对已有项目不会造成影响
+    -   移除环境变量 `precess.env.KOOT_SERVER_MODE`，相关能力整合入新的环境变量 `process.env.KOOT_BUILD_TARGET`
+-   **新特性**
+    -   **新配置项** `target` - 设定项目子类型，目前支持
+        -   `serverless` - 仅针对 SSR 项目。替代之前的 `serverless = true'` 配置
+        -   `electron` - 仅针对 SPA 项目
+        -   详情请参见文档 [配置/target](https://koot.js.org/#/config?id=target)
+    -   **新配置项** `icon` - 项目图标配置
+    -   **新配置项** `webApp` - WebApp / PWA 相关设置
+        -   在设定了 App 图标 (icon 设置项) 时，Koot.js 会默认自动在生成、渲染的 HTML 代码结果中加入 WebApp 相关的 <meta> 和 <link> 标签
+        -   详情请参见文档 [WebApp](https://koot.js.org/#/pwa?id=webapp)
+    -   多语言/i18n: `i18n.use = 'subdomain'` - 现在可使用最深层的子域名作为语言标识 ([#220](https://github.com/cmux/koot/issues/220))
+-   优化
+    -   小幅优化热更新速度 (移除多余的 `webpack/hot` 和 `webpack-dev-server/client` 引用)
+-   添加依赖包
+    -   `favicons`
+    -   `get-image-colors`
+    -   `sharp`
+
+**koot-boilerplate**
+
+-   优化
+    -   _PostCSS_ 配置中 `cssnano` 插件配置调整: 禁用 `normalizeWhitespace`
+
+**koot-webpack**
+
+-   **重大改动**
+    -   更新依赖包 **major** 版本号
+        -   `compression-webpack-plugin` -> _^4.0.0_
+        -   `copy-webpack-plugin` -> _^6.0.3_
+        -   `css-loader` -> _^4.2.0_
+        -   `less-loader` -> _^6.2.0_
+        -   `sass-loader` -> _^9.0.2_
+    -   移除以下依赖包，现在不会默认安装。如有使用需要，请在项目中自行安装
+        -   `node-sass` - 替换为 `sass`
+    -   如果 `defines` 定义项目为函数，现在会传入属性对象作为第一个参数，目前包含 `localeId`
+-   添加依赖包
+    -   `sass`
+
+**koot-cli**
+
+-   **重大改动**
+    -   _Node.js_ 最低版本要求提升到 `10.13.0`
+
+**koot-electron**
+
+-   新的 NPM 包，包含 _Electron_ 项目开发相关内容。参见文档 [Electron](https://koot.js.org/#/electron)
+
+---
+
 ## [0.13.29] - 2020-07-21
 
 **koot-webpack**
@@ -254,6 +317,8 @@
 -   服务器端打包时现在会强制忽略以下 _Babel_ 插件，用以实现原生的 _async/await_
     -   `@babel/plugin-transform-regenerator`
     -   `@babel/plugin-transform-async-to-generator`
+
+---
 
 ## [0.12.7] - 2020-03-02
 

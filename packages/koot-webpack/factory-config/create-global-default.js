@@ -12,13 +12,15 @@ const common = require('./common');
 module.exports = async (kootBuildConfig = {}, options = {}) => {
     const { WEBPACK_BUILD_ENV: ENV, WEBPACK_BUILD_STAGE: STAGE } = process.env;
 
-    return await common.factory({
-        env: ENV,
-        stage: STAGE,
+    return await common.factory(
+        {
+            env: ENV,
+            stage: STAGE,
 
-        spa: false,
-        options,
+            spa: false,
 
-        ...kootBuildConfig
-    });
+            ...kootBuildConfig
+        },
+        options
+    );
 };

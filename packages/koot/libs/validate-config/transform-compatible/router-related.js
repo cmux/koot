@@ -22,9 +22,4 @@ module.exports = async (config) => {
         config.historyType = config.client.historyType;
         delete config.client.historyType;
     }
-
-    if (!config.historyType) {
-        const type = process.env.KOOT_PROJECT_TYPE || config.type || '';
-        config.historyType = /spa$/i.test(type) ? 'hash' : 'browser';
-    }
 };

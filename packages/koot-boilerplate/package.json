@@ -1,7 +1,7 @@
 {
     "name": "koot-boilerplate",
     "private": true,
-    "version": "0.13.29",
+    "version": "0.14.0-alpha.26",
     "description": "Boilerplate project for koot.js app",
     "author": {
         "name": "diablohu",
@@ -30,23 +30,23 @@
         "axios": "^0.19.2",
         "bind-event": "^1.1.2",
         "classnames": "^2.2.6",
-        "koot": "^0.13.29"
+        "koot": "^0.14.0-alpha.26"
     },
     "devDependencies": {
         "@types/classnames": "^2.2.10",
-        "autoprefixer": "^9.7.4",
+        "autoprefixer": "^9.8.6",
         "babel-eslint": "^10.1.0",
         "cssnano": "^4.1.10",
-        "eslint": "^6.8.0",
-        "eslint-config-koot": "^1.7.0",
-        "husky": "^4.2.3",
-        "lint-staged": "^10.0.8",
+        "eslint": "^7.6.0",
+        "eslint-config-koot": "^1.7.1",
+        "husky": "^4.2.5",
+        "lint-staged": "^10.2.11",
         "normalize.css": "^8.0.1",
-        "prettier": "^1.19.1",
-        "prettier-eslint": "^9.0.1",
+        "prettier": "^2.0.5",
+        "prettier-eslint": "^11.0.0",
         "redux-logger": "^3.0.6",
-        "svg-url-loader": "^5.0.0",
-        "url-loader": "^4.0.0"
+        "svg-url-loader": "^6.0.0",
+        "url-loader": "^4.1.0"
     },
     "bugs": {
         "url": "https://github.com/cmux/koot/issues"
@@ -64,5 +64,8 @@
         "*.{json,md,css,less,sass,scss}": [
             "prettier --write"
         ]
+    },
+    "koot": {
+        "version": "0.14.0-alpha.25"
     }
 }

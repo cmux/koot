@@ -26,20 +26,10 @@ SSR 与 SPA 模式均默认使用 HTML 模板文件。HTML 模板文件采用 `.
     <meta name="format-detection" content="address=no">
     <meta name="format-detection" content="telephone=no">
     <meta name="HandheldFriendly" content="true">
-    <meta name="mobile-web-app-capable" content="yes">
-
-    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 
     <!-- IE/Edge/Multi-engine -->
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-
-    <!-- iOS Safari -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-    <!-- Customize -->
-    <meta name="theme-color" content="#0092f5" />
 
     <%- inject.metas %>
     <%- inject.styles %>
@@ -70,7 +60,7 @@ SSR 与 SPA 模式均默认使用 HTML 模板文件。HTML 模板文件采用 `.
 // File: /koot.config.js
 module.exports = {
     // ...
-    templateInject: './src/index.inject.js'
+    templateInject: './src/index.inject.js',
     // ...
 };
 ```
@@ -80,7 +70,7 @@ module.exports = {
 
 export default {
     performanceInfos: () => `<!-- rendered: ${new Date().toISOString()} -->`,
-    svgIconPack: __SVG_ICON_PACK__
+    svgIconPack: __SVG_ICON_PACK__,
 };
 ```
 
@@ -107,14 +97,14 @@ export default {
 
 以下注入项会默认启用，只要模板中有对应的 `inject.[*]` 即会自动替换为对应结果
 
-| 注入变量 | 内容说明                         |
-| -------- | -------------------------------- |
-| htmlLang | 当前请求匹配到的语言 ID          |
-| title    | 页面标题，受多语言影响           |
-| metas    | &lt;meta&gt; 标签                |
-| styles   | 同构结果的全部 CSS 代码          |
-| react    | 同构结果的全部 HTML 代码         |
-| scripts  | 默认使用的外部 JS 代码和文件引用 |
+| 注入变量 | 内容说明                                                   |
+| -------- | ---------------------------------------------------------- |
+| htmlLang | 当前请求匹配到的语言 ID                                    |
+| title    | 页面标题，受多语言影响                                     |
+| metas    | &lt;meta&gt; 标签，包含 Web App 相关信息、多语言跳转链接等 |
+| styles   | 同构结果的全部 CSS 代码                                    |
+| react    | 同构结果的全部 HTML 代码                                   |
+| scripts  | 默认使用的外部 JS 代码和文件引用                           |
 
 ---
 

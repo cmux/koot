@@ -41,6 +41,7 @@ module.exports = require('babel-loader').custom((babel) => {
             __typescript,
             __server,
             __routes,
+            __spaTemplateInject,
             ...loader
         }) {
             Object.assign(customOptions, {
@@ -49,6 +50,7 @@ module.exports = require('babel-loader').custom((babel) => {
                 __typescript,
                 __server,
                 __routes,
+                __spaTemplateInject,
             });
             // Pull out any custom options that the loader might have.
             return {
@@ -69,6 +71,7 @@ module.exports = require('babel-loader').custom((babel) => {
                 __react,
                 __typescript = false,
                 __server = false,
+                __spaTemplateInject = false,
                 __routes,
             } = customOptions;
             const { presets, plugins, ...options } = cfg.options;
@@ -103,7 +106,7 @@ module.exports = require('babel-loader').custom((babel) => {
                         // '@babel/plugin-transform-regenerator',
                         // '@babel/plugin-transform-async-to-generator'
                     ];
-                    if (isServer) {
+                    if (isServer || __spaTemplateInject) {
                         thisPreset.options.targets = {
                             node: true,
                         };
@@ -115,7 +118,7 @@ module.exports = require('babel-loader').custom((babel) => {
                             '@babel/plugin-transform-async-to-generator'
                         );
                     }
-                    // console.log(thisPreset);
+                    // console.log(__spaTemplateInject, thisPreset);
                 }
             });
 

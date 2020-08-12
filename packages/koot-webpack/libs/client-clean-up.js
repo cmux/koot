@@ -1,4 +1,5 @@
 const fs = require('fs-extra');
+const fsPromises = require('fs').promises;
 const path = require('path');
 const glob = require('glob-promise');
 
@@ -6,9 +7,10 @@ const {
     keyConfigBuildDll,
     CLIENT_ROOT_PATH,
     filenameBuilding,
-    filenameBuildFail
+    filenameBuildFail,
 } = require('koot/defaults/before-build');
 const getOutputsFile = require('koot/utils/get-outputs-path');
+const resolveRequire = require('koot/utils/resolve-require');
 
 // ============================================================================
 
@@ -71,25 +73,31 @@ const determine = async (config = {}) => {
     );
     const ignore = [
         path.resolve(clientRoot, filenameBuilding),
-        path.resolve(clientRoot, filenameBuildFail)
+        path.resolve(clientRoot, filenameBuildFail),
     ];
     if (process.env.WEBPACK_BUILD_TYPE === 'spa') {
-        ignore.push(path.resolve(clientRoot, '.server/**/*'));
+        if (process.env.KOOT_BUILD_TARGET === 'electron') {
+            resolveRequire('koot-electron', 'libs/modify-client-clean-up')
+                .getIgnores(clientRoot)
+                .forEach((glob) => ignore.push(glob));
+        } else {
+            ignore.push(path.resolve(clientRoot, '.server/**/*'));
+        }
     }
     /** @type {string[]} 目前存在的文件列表 */
     const filesStored = (
         await glob(path.resolve(clientRoot, '**/*'), {
             dot: true,
-            ignore
+            ignore,
         })
     )
-        .filter(file => !fs.lstatSync(file).isDirectory())
-        .map(file => path.normalize(file));
+        .filter((file) => !fs.lstatSync(file).isDirectory())
+        .map((file) => path.normalize(file));
 
     if (forceCleanAll) {
         // 标记当前所有文件为需要清理
-        Object.keys(outputs).forEach(id => listIds.push(id));
-        filesStored.forEach(file => listFiles.push(file));
+        Object.keys(outputs).forEach((id) => listIds.push(id));
+        filesStored.forEach((file) => listFiles.push(file));
     } else {
         /** 需要保留的最近打包数 */
         const preserveCount =
@@ -97,21 +105,23 @@ const determine = async (config = {}) => {
 
         /** outputs.json 中已存在的时间戳 ID，按时间排序，由新到旧 */
         const existTimestampIds = Object.keys(outputs)
-            .map(id => parseInt(id))
+            .map((id) => parseInt(id))
             .sort((a, b) => b - a)
-            .map(id => id + '');
+            .map((id) => id + '');
 
         // 按时间戳将最近 preserveCount 次之外的时间戳 ID 添加到 listIds
-        existTimestampIds.slice(preserveCount).forEach(id => listIds.push(id));
+        existTimestampIds
+            .slice(preserveCount)
+            .forEach((id) => listIds.push(id));
 
         /** @type {string[]} 需要保留的文件列表 */
         const filesPreserved = [];
         // 按时间戳将最近 preserveCount 次打包的文件列表追加到 filesPreserved
-        existTimestampIds.slice(0, preserveCount).forEach(id => {
+        existTimestampIds.slice(0, preserveCount).forEach((id) => {
             outputs[id]
-                .map(file => path.resolve(dist, file))
-                .filter(file => !filesPreserved.includes(file))
-                .forEach(file => filesPreserved.push(file));
+                .map((file) => path.resolve(dist, file))
+                .filter((file) => !filesPreserved.includes(file))
+                .forEach((file) => filesPreserved.push(file));
         });
 
         // console.log({
@@ -123,8 +133,8 @@ const determine = async (config = {}) => {
 
         // 比对两个 Array，将不属于 filesPreserved 的文件追加到 listFiles
         filesStored
-            .filter(file => !filesPreserved.includes(file))
-            .forEach(file => listFiles.push(file));
+            .filter((file) => !filesPreserved.includes(file))
+            .forEach((file) => listFiles.push(file));
     }
 };
 
@@ -154,27 +164,66 @@ const clean = async (config = {}) => {
     let finalList = listFiles;
     if (Object.keys(outputs).length) {
         const latestId = Object.keys(outputs)
-            .map(id => parseInt(id))
+            .map((id) => parseInt(id))
             .sort((a, b) => b - a)
-            .map(id => id + '')[0];
-        const latestFiles = outputs[latestId].map(file =>
+            .map((id) => id + '')[0];
+        const latestFiles = outputs[latestId].map((file) =>
             path.resolve(dist, file)
         );
-        finalList = listFiles.filter(file => !latestFiles.includes(file));
+        finalList = listFiles.filter((file) => !latestFiles.includes(file));
     }
     // console.log({ listIds, finalList });
 
-    listIds.forEach(id => delete outputs[id]);
+    listIds.forEach((id) => delete outputs[id]);
     for (const file of finalList) {
         await fs.remove(file);
     }
 
     await fs.writeJson(fileOutputs, outputs, {
-        spaces: 4
+        spaces: 4,
     });
+
+    // 移除所有空目录
+    await removeEmptyDirectories(dist);
 };
 
 module.exports = {
     determine,
-    clean
+    clean,
 };
+
+// ============================================================================
+/**
+ * Recursively removes empty directories from the given directory.
+ *
+ * If the directory itself is empty, it is also removed.
+ *
+ * Code taken from: https://gist.github.com/jakub-g/5903dc7e4028133704a4
+ *
+ * https://gist.github.com/fixpunkt/fe32afe14fbab99d9feb4e8da7268445
+ *
+ * @param {string} directory Path to the directory to clean up
+ */
+async function removeEmptyDirectories(directory) {
+    // lstat does not follow symlinks (in contrast to stat)
+    const fileStats = await fsPromises.lstat(directory);
+    if (!fileStats.isDirectory()) {
+        return;
+    }
+    let fileNames = await fsPromises.readdir(directory);
+    if (fileNames.length > 0) {
+        const recursiveRemovalPromises = fileNames.map((fileName) =>
+            removeEmptyDirectories(path.join(directory, fileName))
+        );
+        await Promise.all(recursiveRemovalPromises);
+
+        // re-evaluate fileNames; after deleting subdirectory
+        // we may have parent directory empty now
+        fileNames = await fsPromises.readdir(directory);
+    }
+
+    if (fileNames.length === 0) {
+        // console.log('Removing: ', directory);
+        await fsPromises.rmdir(directory);
+    }
+}

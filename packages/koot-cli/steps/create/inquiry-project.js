@@ -29,6 +29,8 @@ const appTypes = ['react', 'react-spa'];
 // const boilerplateTypes = ['base', 'serverless'];
 /** @type {ServerMode[]} */
 const serverModes = ['normal', 'serverless'];
+/** @type {SPAMode[]} */
+const spaModes = ['web', 'electron'];
 
 // ============================================================================
 
@@ -41,8 +43,9 @@ const serverModes = ['normal', 'serverless'];
 module.exports = async (options = {}) => {
     /** @type {AppInfo} */
     const app = {
-        cwd: process.cwd()
+        cwd: process.cwd(),
     };
+    /** 通过问询，扩展 app 对象 */
     const prompt = async (options = {}) => {
         const answers = await inquirer.prompt(
             Array.isArray(options) ? options : [options]
@@ -70,10 +73,10 @@ module.exports = async (options = {}) => {
         type: 'input',
         name: 'name',
         message: _('project_name_required'),
-        validate: input => {
+        validate: (input) => {
             if (input === 0 || input) return true;
             return _('project_name_needed');
-        }
+        },
     });
 
     // ========================================================================
@@ -84,7 +87,7 @@ module.exports = async (options = {}) => {
     await prompt({
         type: 'input',
         name: 'description',
-        message: _('project_description')
+        message: _('project_description'),
     });
 
     // ========================================================================
@@ -96,12 +99,12 @@ module.exports = async (options = {}) => {
         type: 'list',
         name: 'type',
         message: _('project_type'),
-        choices: appTypes.map(value => ({
+        choices: appTypes.map((value) => ({
             name: _('project_types')[value],
             value,
-            short: _('project_types')[value + '_short']
+            short: _('project_types')[value + '_short'],
         })),
-        default: appTypes[0]
+        default: appTypes[0],
     });
 
     // ========================================================================
@@ -126,7 +129,7 @@ module.exports = async (options = {}) => {
 
     // ========================================================================
     //
-    // 服务器模式
+    // SSR - 服务器模式
     //
     // ========================================================================
     if (app.boilerplate !== 'serverless' && app.type === 'react') {
@@ -134,11 +137,29 @@ module.exports = async (options = {}) => {
             type: 'list',
             name: 'serverMode',
             message: _('project_server_mode'),
-            choices: serverModes.map(value => ({
+            choices: serverModes.map((value) => ({
                 name: _('project_server_modes')[value],
                 value,
-                short: _('project_server_modes')[value + '_short']
-            }))
+                short: _('project_server_modes')[value + '_short'],
+            })),
+        });
+    }
+
+    // ========================================================================
+    //
+    // SPA - Electron
+    //
+    // ========================================================================
+    if (app.type === 'react-spa') {
+        await prompt({
+            type: 'list',
+            name: 'spaMode',
+            message: _('project_spa_mode'),
+            choices: spaModes.map((value) => ({
+                name: _('project_spa_modes')[value],
+                value,
+                short: _('project_spa_modes')[value + '_short'],
+            })),
         });
     }
 
@@ -150,7 +171,7 @@ module.exports = async (options = {}) => {
     await prompt({
         type: 'input',
         name: 'author',
-        message: _('project_author')
+        message: _('project_author'),
     });
     // 分析用户名
     if (typeof app.author === 'number') {
@@ -159,7 +180,7 @@ module.exports = async (options = {}) => {
     if (typeof app.author === 'string' && app.author !== '') {
         const name = app.author;
         app.author = {
-            name
+            name,
         };
         const waiting = spinner();
         const email = await npmEmail(name).catch(() => {});
@@ -184,7 +205,7 @@ module.exports = async (options = {}) => {
                 return {
                     name: _('project_project_dir_types')['sub'] + ` (${dest})`,
                     value: path.resolve(app.cwd, dest),
-                    short: dest
+                    short: dest,
                 };
             })(),
             (() => {
@@ -192,15 +213,15 @@ module.exports = async (options = {}) => {
                 return {
                     name: _('project_project_dir_types')['curr'] + ` (${dest})`,
                     value: path.resolve(app.cwd, dest),
-                    short: dest
+                    short: dest,
                 };
             })(),
             {
                 name: _('project_project_dir_types')['input'],
-                value: true
+                value: true,
                 // short: '...'
-            }
-        ]
+            },
+        ],
     });
     if (app.dest === true) {
         Object.assign(
@@ -209,7 +230,7 @@ module.exports = async (options = {}) => {
                 type: 'directory',
                 name: 'dest',
                 message: _('project_project_dir_select'),
-                basePath: `./`
+                basePath: `./`,
             })
         );
     }
@@ -228,9 +249,9 @@ module.exports = async (options = {}) => {
             ([key, value]) => ({
                 name: value,
                 value: key,
-                short: _('project_package_managers')[key + '_short']
+                short: _('project_package_managers')[key + '_short'],
             })
-        )
+        ),
     });
 
     // ========================================================================

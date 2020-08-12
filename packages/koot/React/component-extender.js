@@ -414,7 +414,11 @@ export default (options = {}) => (WrappedComponent) => {
     //     KootComponent = hot(module)(KootComponent)
     // }
 
-    // console.log(WrappedComponent);
+    // if (typeof styles === 'object' &&
+    //     typeof styles.wrapper === 'string'
+    // ) {
+    //     KootComponent = ImportStyle(styles)(KootComponent)
+    // }
     let KootComponent = hoistStatics(KootReactComponent, WrappedComponent);
 
     // if (typeof styles === 'object' &&
@@ -424,15 +428,28 @@ export default (options = {}) => (WrappedComponent) => {
     // }
 
     if (_connect === true) {
-        KootComponent = connect(() => ({}))(KootComponent);
+        KootComponent = connect(() => ({}), undefined, undefined, {
+            forwardRef: true,
+        })(KootComponent);
     } else if (typeof _connect === 'function') {
-        KootComponent = connect(_connect)(KootComponent);
+        KootComponent = connect(_connect, undefined, undefined, {
+            forwardRef: true,
+        })(KootComponent);
     } else if (Array.isArray(_connect)) {
+        if (typeof _connect[3] !== 'object') _connect[3] = {};
+        _connect[3].forwardRef = true;
         KootComponent = connect(..._connect)(KootComponent);
     }
 
     // return KootComponent;
     return React.forwardRef((props, ref) => {
+        if (props.forwardedRef)
+            return (
+                <KootComponent
+                    {...props}
+                    kootForwardedRef={props.forwardedRef}
+                />
+            );
         if (ref) return <KootComponent {...props} kootForwardedRef={ref} />;
         return <KootComponent {...props} />;
     });

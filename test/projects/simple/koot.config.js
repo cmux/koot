@@ -22,8 +22,13 @@ module.exports = {
         '~base.less': path.resolve('./src/constants/less/base.less'),
         '~Assets': path.resolve('./src/assets'),
         '~/': path.resolve('./src'),
+        react: path.resolve(__dirname, '../../../node_modules/react'),
     },
     staticCopyFrom: path.resolve(__dirname, './public'),
+    icon: './src/assets/photo.jpg',
+    // webApp: {
+    //     themeColor: '#0092f5',
+    // },
 
     port: 8081,
     // renderCache: true,
@@ -35,9 +40,10 @@ module.exports = {
         return {};
     },
 
-    // webpackBefore: async (kootConfigWithExtra = {}) => {
-    //     console.log(kootConfigWithExtra);
-    // },
+    webpackBefore: async (kootConfigWithExtra = {}) => {
+        console.log('WEBPACK BEFORE');
+        // console.log(kootConfigWithExtra);
+    },
     // webpackBefore: async (kootConfigWithExtra = {}) => {
     //     const {
     //         __WEBPACK_OUTPUT_PATH,
@@ -58,7 +64,7 @@ module.exports = {
     //         __CLIENT_ROOT_PATH
     //     });
     // },
-    classNameHashLength: 1,
+    classNameHashLength: 10,
     // bundleVersionsKeep: false,
     distClientAssetsDirName: '/\\test-includes\\/',
     moduleCssFilenameTest: [

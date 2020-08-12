@@ -30,7 +30,7 @@ module.exports = {
         ['store', ''],
         ['cookiesToStore', ''],
         ['client', {}],
-        ['server', {}]
+        ['server', {}],
     ],
     typesSPA: ['spa', 'reactspa', 'react-spa'],
 
@@ -43,10 +43,12 @@ module.exports = {
     // 其他项目配置项名
     keyConfigQuiet: '__QUIET__',
     keyConfigOutputPathShouldBe: '__OUTPUT_PATH_SHOULD_BE__',
-    keyConfigWebpackSPATemplateInject: '__SPA_TEMPLATE_INJECT__',
+    keyConfigWebpackSPATemplateInject:
+        '__KOOT_WEBPACK_CONFIG_FOR_SPA_TEMPLATE_INJECT__',
     keyConfigWebpackSPAServer: '__SPA_SERVER__',
     keyConfigClientAssetsPublicPath: '__CLIENT_ASSETS_PUBLIC_PATH__',
     keyConfigClientServiceWorkerPathname: '__CLIENT_SERVICE_WORKER_PATHNAME__',
+    keyConfigIcons: '__APP_ICONS__',
     WEBPACK_OUTPUT_PATH: '__WEBPACK_OUTPUT_PATH',
     CLIENT_ROOT_PATH: '__CLIENT_ROOT_PATH',
     WEBPACK_MODIFIED_PUBLIC_PATH: '__WEBPACK_MODIFIED_PUBLIC_PATH',
@@ -89,5 +91,11 @@ module.exports = {
     /** @type {string} 打包结果目录中的文件对照表文件名 */
     buildManifestFilename: '.koot-public-manifest.json',
     /** @type {string} 打包结果目录中输出文件总集文件名 */
-    buildOutputsFilename: '.koot-public-outputs.json'
+    buildOutputsFilename: '.koot-public-outputs.json',
+
+    /** @type {string} Webpack Dev Server 热更新 Web Socket 地址 */
+    pathnameSockjs: `sockjs-node`,
+
+    /** Webpack compilation 对象中的定制属性 - 额外 Meta 标签的 HTML 代码 */
+    compilationKeyHtmlMetaTags: '.htmlMetaTags__',
 };

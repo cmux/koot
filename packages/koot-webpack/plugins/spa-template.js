@@ -8,7 +8,7 @@ const chalk = require('chalk');
 
 const { buildManifestFilename } = require('koot/defaults/before-build');
 const writeChunkmap = require('koot/utils/write-chunkmap');
-const getAppType = require('koot/utils/get-app-type');
+// const getAppType = require('koot/utils/get-app-type');
 const __ = require('koot/utils/translate');
 const getDistPath = require('koot/utils/get-dist-path');
 const getCwd = require('koot/utils/get-cwd');
@@ -35,6 +35,7 @@ class SpaTemplatePlugin {
         this.template = settings.template;
         this.serviceWorkerPathname = settings.serviceWorkerPathname;
         this.locales = settings.locales;
+        this.appTypeUse = settings.appTypeUse;
     }
 
     apply(compiler) {
@@ -44,6 +45,7 @@ class SpaTemplatePlugin {
             template,
             serviceWorkerPathname,
             locales,
+            appTypeUse,
         } = this;
 
         const filename = `index${localeId ? `.${localeId}` : ''}.html`;
@@ -127,7 +129,6 @@ class SpaTemplatePlugin {
             compiler.hooks[hookStep],
             'SpaTemplatePlugin'
         )(async (compilation, callback) => {
-            const appType = await getAppType();
             const isI18nEnabled = Array.isArray(locales) && locales.length;
 
             // 获取并写入 chunkmap
@@ -138,11 +139,12 @@ class SpaTemplatePlugin {
                 serviceWorkerPathname
             );
 
+            const manifest = getChunkmap(localeId, false, true);
             const {
                 '.files': filemap,
                 '.entrypoints': entrypoints,
                 // 'service-worker': serviceWorker
-            } = getChunkmap(localeId, false, true);
+            } = manifest;
 
             // console.log({
             //     serviceWorker,
@@ -160,7 +162,7 @@ class SpaTemplatePlugin {
                     : process.env.KOOT_HTML_TEMPLATE;
 
             const renderTemplate = (() => {
-                switch (appType) {
+                switch (appTypeUse) {
                     case 'ReactSPA': {
                         return require(`koot/React/render-template`);
                     }
@@ -170,12 +172,13 @@ class SpaTemplatePlugin {
                 return () => '';
             })();
             const defaultInject = (() => {
-                switch (appType) {
+                switch (appTypeUse) {
                     case 'ReactSPA': {
                         const inject = require(`koot/ReactSPA/inject`)({
                             filemap,
                             compilation,
                             entrypoints,
+                            manifest,
                             localeId,
                             localeFileMap: isI18nEnabled
                                 ? locales.reduce((map, [localeId]) => {

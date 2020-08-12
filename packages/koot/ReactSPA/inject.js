@@ -8,11 +8,12 @@ module.exports = (options = {}) => {
         localeFileMap,
         defaultLocaleId,
 
+        manifest,
         filemap,
         entrypoints,
         compilation,
 
-        needInjectCritical
+        needInjectCritical,
     } = options;
 
     return validateInject({
@@ -22,6 +23,7 @@ module.exports = (options = {}) => {
         localeFileMap,
         defaultLocaleId,
 
+        manifest,
         filemap,
         entrypoints,
         compilation,
@@ -32,6 +34,6 @@ module.exports = (options = {}) => {
         stylesHtml: '',
         reduxHtml: '',
 
-        needInjectCritical
+        needInjectCritical,
     });
 };

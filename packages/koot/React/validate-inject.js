@@ -27,6 +27,7 @@ module.exports = (options = {}) => {
     const {
         injectCache = {},
 
+        manifest = {},
         filemap = {},
         entrypoints = {},
         compilation,
@@ -44,21 +45,21 @@ module.exports = (options = {}) => {
 
         needInjectCritical = {
             styles: false,
-            scripts: false
-        }
+            scripts: false,
+        },
     } = options;
 
     return {
         htmlLang: injectHtmlLang(localeId),
         title,
-        metas: injectMetas({ metaHtml, localeId, compilation }),
+        metas: injectMetas({ manifest, metaHtml, localeId, compilation }),
         styles: injectStyles({
             needInjectCritical: needInjectCritical.styles,
             injectCache,
             filemap,
             stylesHtml,
             localeId,
-            compilation
+            compilation,
         }),
 
         react: reactHtml,
@@ -72,7 +73,7 @@ module.exports = (options = {}) => {
             defaultLocaleId,
             reduxHtml,
             SSRState,
-            compilation
-        })
+            compilation,
+        }),
     };
 };

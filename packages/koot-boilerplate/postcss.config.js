@@ -9,6 +9,7 @@ module.exports = {
                         removeAll: true,
                     },
                     camelCase: true,
+                    normalizeWhitespace: false,
                     zindex: false,
                 },
             ],

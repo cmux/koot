@@ -22,29 +22,29 @@ if (__DEV__) {
         const nativeConsole = {
             log: window.console.log,
             info: window.console.info,
-            error: window.console.error
+            error: window.console.error,
         };
         window.__KOOT_DEV_NATIVE_CONSOLE__ = nativeConsole;
 
         const lastLog = {
             WDS: {
                 time: undefined,
-                log: undefined
+                log: undefined,
             },
             HMR: {
                 time: undefined,
-                log: undefined
-            }
+                log: undefined,
+            },
         };
-        const throttleHotLog = level => {
-            window.console[level] = function() {
+        const throttleHotLog = (level) => {
+            window.console[level] = function () {
                 try {
                     const args = Array.from(arguments);
 
                     // throttle `WDS` and `HMR` logs
-                    const needThrottle = type => {
+                    const needThrottle = (type) => {
                         const regex = new RegExp(`^\\[${type}\\]`);
-                        if (!args.some(arg => regex.test(arg))) return false;
+                        if (!args.some((arg) => regex.test(arg))) return false;
 
                         const { [type]: last } = lastLog;
                         const now = Date.now();
@@ -52,7 +52,7 @@ if (__DEV__) {
                         const { time: lastTime, log: lastLogStr } = last;
                         lastLog[type] = {
                             time: now,
-                            log: nowLogStr
+                            log: nowLogStr,
                         };
                         // console.warn(type, last, now - lastTime)
 
@@ -77,43 +77,38 @@ if (__DEV__) {
 
         const warningShowed = {
             reactRouterV3: false,
-            reactReduxV5: false
+            reactReduxV5: false,
         };
-        window.console.error = function() {
+        window.console.error = function () {
             try {
                 const args = Array.from(arguments);
 
-                // filter out `react-redux v5` & `react-router v3` warnings/erros
+                // filter out SSR not matching error
+                // will fix this by using koot's own async component
+                // SOON™
                 if (
-                    args.some(arg =>
+                    args.some((arg) =>
                         /^Warning: Did not expect server HTML to contain a <%s> in <%s>\.$/.test(
                             arg
                         )
-                    ) ||
-                    (args.some(arg =>
-                        /^Warning: Legacy context API has been detected within a strict-mode tree/.test(
-                            arg
-                        )
+                    )
+                )
+                    return;
+
+                // filter out react-router v3` warnings/errors
+                if (
+                    (/^Warning: Legacy context API has been detected within a strict-mode tree/.test(
+                        args[0]
                     ) &&
-                        args.some(
-                            arg =>
-                                arg === 'Link' ||
-                                arg === 'Connect(KootReactComponent), Link'
-                        )) ||
-                    (args.some(arg =>
-                        /^Warning: Unsafe lifecycle methods were found within a strict-mode tree/.test(
-                            arg
-                        )
+                        args.some((arg) => arg === 'Link')) ||
+                    (/^Warning: Using UNSAFE_[a-zA-Z]+ in strict mode/.test(
+                        args[0]
                     ) &&
-                        args.some(arg =>
-                            /^componentWillReceiveProps: Please update the following components to use static getDerivedStateFromProps instead: .*?Link($|\n|\r)/.test(
-                                arg
-                            )
-                        ))
+                        /(Link)(\r|\n|,|\(|$)/.test(args[1]))
                 ) {
                     if (!warningShowed.reactRouterV3) {
                         console.warn(
-                            '\n\n[koot] Koot.js is now using `react-router` v3 which will be upgraded to new version in future.\n\n\n'
+                            '\n[koot] Koot.js is now using `react-router` v3 which will be upgraded to newer version in future.\n\n'
                         );
                         warningShowed.reactRouterV3 = true;
                     }

@@ -27,6 +27,7 @@ const waitForPort = require('../../libs/get-port-from-child-process');
 const testHtmlRenderedByKoot = require('../../general-tests/html/rendered-by-koot');
 const testFilesFromChunkmap = require('../../general-tests/bundle/check-files-from-chunkmap');
 const checkDistRootFiles = require('../../general-tests/check-dist-root-files');
+const testHtmlWebAppMetaTags = require('../../general-tests/html/web-app-meta-tags');
 const {
     requestHidden404: testRequestHidden404,
     criticalAssetsShouldBeGzip: testAssetsGzip,
@@ -39,6 +40,7 @@ const {
 const removeTempProjectConfig = require('../../../packages/koot/libs/remove-temp-project-config');
 const sleep = require('../../../packages/koot/utils/sleep');
 const postcssTransformDeclUrls = require('../../../packages/koot-webpack/postcss/transform-decl-urls');
+// const validateConfig = require('../../../packages/koot/libs/validate-config');
 
 //
 
@@ -141,12 +143,24 @@ const testFull = (dir, configFileName) => {
             // console.log(stderr)
 
             expect(typeof stderr).toBe('string');
-            expect(stderr).toBe('');
+            expect(
+                stderr
+                    .replace(
+                        /\(node:([0-9]+?)\) Warning: No such label 'URL' for console.timeEnd\(\)/g,
+                        ''
+                    )
+                    .replace(/\r/g, '')
+                    .replace(/\n/g, '')
+            ).toBe('');
 
             await afterTest(dir, '[Production] 使用 koot-build 命令进行打包');
         });
 
         test(`打包完成后，index.html 与相应的静态资源文件应该存在，且内容应该正确`, async () => {
+            // const config = await validateConfig(dir, {
+            //     configFilename: fileKootConfig,
+            // });
+
             // chunkmap
             const fileChunkmap = path.resolve(dist, buildManifestFilename);
             expect(fs.existsSync(fileChunkmap)).toBe(true);
@@ -207,6 +221,7 @@ const testFull = (dir, configFileName) => {
                     `-->`;
                 expect(content.includes(checkString)).toBe(true);
 
+                if (config.webApp) await testHtmlWebAppMetaTags(content, dist);
                 await testHtmlRenderedByKoot(content);
             }
 

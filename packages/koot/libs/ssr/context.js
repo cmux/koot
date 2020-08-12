@@ -18,6 +18,7 @@
                     thisTemplateInjectCache,
                     thisEntrypoints,
                     thisFilemap, //thisStyleMap,
+                    thisManifest,
                     styleMap,
                     connectedComponents: __DEV__
                         ? (global[SSRContext]

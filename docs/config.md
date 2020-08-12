@@ -26,7 +26,7 @@ module.exports = {
 
 ---
 
-## 项目信息
+## 项目基本信息
 
 ### name
 
@@ -37,6 +37,8 @@ module.exports = {
 
 -   同构：若首页组件没有通过 `extend()` 设定标题，默认使用该名作为页面标题。
 -   SPA：模板中的 `<%= inject.title %>` 默认使用该名进行注入替换。
+
+_TODO_: 支持定制不同语种的项目名
 
 ### type
 
@@ -52,6 +54,26 @@ module.exports = {
 
     // React SPA
     type: 'react-spa',
+};
+```
+
+### target
+
+-   类型: `string`
+-   默认值: _无_
+
+项目子类型
+
+```javascript
+module.exports = {
+    // 默认值：无指定
+    target: '',
+
+    // Serverless 模式 SSR
+    target: 'serverless',
+
+    // Electron 模式 SPA
+    target: 'electron',
 };
 ```
 
@@ -92,6 +114,44 @@ module.exports = {
 };
 ```
 
+### i18n
+
+-   类型: `boolean` `Object` 或 `Array[]`
+-   默认值: `false`
+
+多语言配置。
+
+关于详细配置、多语言的使用、语言包规则等内容，请查阅 [多语言 (i18n)](/i18n)。
+
+```javascript
+module.exports = {
+    // 不启用多语言支持 (默认值)
+    i18n: false,
+
+    /** 简易配置
+     * - `Array` 中每一个元素为 `Array`，其内第一个元素为**语种ID**，第二个元素为**语言包文件路径**
+     * - 采用该配置方式时，其他多语言相关选项均采用默认值（见下）
+     * - 第一行为默认语种
+     * - 语言包可以为 JSON 文件，也可以为以 `module.exports` 方式输出 JSON 的 JavaScript 文件
+     */
+    i18n: [
+        ['zh', './src/locales/zh.json'],
+        ['zh-tw', './src/locales/zh-tw.json'],
+        // ['en', './src/locales/en.json'],
+        ['en', './src/locales/en.js'],
+    ],
+
+    // 详细配置。配置项及其说明详见多语言章节 (链接见上文)
+    i18n: {
+        [option]: 'value',
+    },
+};
+```
+
+---
+
+## 路由 & 客户端历史记录
+
 ### routes
 
 -   类型: `Pathname:Object`
@@ -123,6 +183,10 @@ module.exports = {
     historyType: 'hash',
 };
 ```
+
+---
+
+## 数据存储 & Store
 
 ### store
 
@@ -217,35 +281,54 @@ module.exports = {
 };
 ```
 
-### i18n
+---
 
--   类型: `boolean` `Object` 或 `Array[]`
--   默认值: `false`
+## 客户端设置 & 生命周期
 
-多语言配置。
+### icon
 
-关于详细配置、多语言的使用、语言包规则等内容，请查阅 [多语言 (i18n)](/i18n)。
+-   类型: `Pathname` 或 `Object`
+-   默认值: _无_
+
+项目图标配置。
+
+-   ⚠️ 如果提供了图标，但 `webApp` 选项关闭，不过产生任何结果
+-   如果提供了图标，且 `webApp` 选项开启，生成、渲染的 HTML 代码中将会自动添加有关 `favicon` `manifest` 等信息的 `<meta>` 标签
+-   如果提供了图标，且为 Electron 程序，在打包可执行文件时会自动设置文件图标
 
 ```javascript
 module.exports = {
-    // 不启用多语言支持 (默认值)
-    i18n: false,
+    /** 默认不提供 */
+    icon: undefined,
 
-    /** 简易配置
-     * - `Array` 中每一个元素为 `Array`，其内第一个元素为**语种ID**，第二个元素为**语言包文件路径**
-     * - 采用该配置方式时，其他多语言相关选项均采用默认值（见下）
-     * - 第一行为默认语种
-     * - 语言包可以为 JSON 文件，也可以为以 `module.exports` 方式输出 JSON 的 JavaScript 文件
+    /** 提供图标文件路径，Koot.js 会尝试自动生成适用于不同场景的各种尺寸的版本 */
+    icon: './src/assets/icon.png',
+};
+```
+
+### webApp
+
+-   类型: `boolean` 或 `Object`
+-   默认值: 如果提供了 `icon` 为 `true`，否则为 `false`
+
+WebApp / PWA 相关设置。在设定了 App 图标 (`icon` 设置项) 时，_Koot.js_ 会默认自动在生成、渲染的 HTML 代码结果中加入 WebApp 相关的 `<meta>` 和 `<link>` 标签。
+
+关于详细配置和自动生成的 `<meta>` 和 `<link>` 标签的详情，请查阅 [WebApp & Service Worker](/pwa)。
+
+```javascript
+module.exports = {
+    /** 未提供 icon 选项时默认关闭 */
+    icon: undefined,
+    webApp: false,
+
+    /** 提供了 icon，默认开启 */
+    icon: './src/assets/icon.png',
+    webApp: true,
+
+    /**
+     * 详细配置。配置项及其说明详见 WebApp & Service Worker 章节 (链接见上文)
      */
-    i18n: [
-        ['zh', './src/locales/zh.json'],
-        ['zh-tw', './src/locales/zh-tw.json'],
-        // ['en', './src/locales/en.json'],
-        ['en', './src/locales/en.js'],
-    ],
-
-    // 详细配置。配置项及其说明详见多语言章节 (链接见上文)
-    i18n: {
+    webApp: {
         [option]: 'value',
     },
 };
@@ -258,7 +341,7 @@ module.exports = {
 
 自动生成 `service-worker` 脚本文件的设置。
 
-关于详细配置和自动生成的 `service-worker` 脚本文件的详情，请查阅 [Service Worker & PWA](/pwa)。
+关于详细配置和自动生成的 `service-worker` 脚本文件的详情，请查阅 [WebApp & Service Worker](/pwa)。
 
 ```javascript
 module.exports = {
@@ -273,78 +356,28 @@ module.exports = {
     // 禁用自动生成 Service-Worker 文件，禁用自动安装
     serviceWorker: false,
 
-    // 详细配置。配置项及其说明详见 Service Worker & PWA 章节 (链接见上文)
+    // 详细配置。配置项及其说明详见 WebApp & Service Worker (链接见上文)
     serviceWorker: {
         [option]: 'value',
     },
 };
 ```
 
-### aliases
+### electron
 
 -   类型: `Object`
--   默认值: `{}` (空对象)
+-   默认值: _空对象_
 
-定义文件、路径别名。可在任何项目代码中使用。该功能使用 `webpack.resolve.alias` 实现。
-
-> 项目代码指所有经过 _Webpack_ 处理的 _JavaScript_ 文件的代码。通常来说，除了 _Koot.js_ 项目配置文件 (`koot.config.js`)、_Babel_ 配置文件 (`babel.config.js`) 等配置文件外，其他所有的代码文件都会经过 _Webpack_ 处理。
-
-```javascript
-const path = require('path');
-module.exports = {
-    // 默认值
-    aliases: {},
-
-    // 示例
-    aliases: {
-        '@src': path.resolve('./src'),
-        '@assets': path.resolve('./src/assets'),
-        '~base.less': path.resolve('./src/assets/css/base.less'),
-    },
-};
-```
-
-```javascript
-// 针对上述示例的代码
-import App from '@src/components/app';
-```
-
-```less
-// 针对上述示例的代码
-import '~base.less';
-```
-
-### defines
-
--   类型: `Object`
--   默认值: `{}` (空对象)
-
-定义 JavaScript 代码中的常量。可在任何 JavaScript 项目代码中使用。使用 Webpack 插件 `DefinePlugin` 实现。
-
-> 项目代码指所有经过 _Webpack_ 处理的 _JavaScript_ 文件的代码。通常来说，除了 _Koot.js_ 项目配置文件 (`koot.config.js`)、_Babel_ 配置文件 (`babel.config.js`) 等配置文件外，其他所有的代码文件都会经过 _Webpack_ 处理。
+Electron 程序以及打包可执行文件的相关配置，具体配置内容和方式请查阅 [Electron/相关配置项](/electron?id=相关配置项)。
 
 ```javascript
 module.exports = {
-    // 默认值
-    defines: {},
-
-    // 示例
-    defines: {
-        __QA__: JSON.stringify(false),
+    // 详细配置。配置项及其说明详见 Electron 章节 (链接见上文)
+    electron: {
+        [option]: 'value',
     },
 };
 ```
-
-```javascript
-// 针对上述示例的代码
-const apiBase = __QA__
-    ? `http://qa-api.project.com/`
-    : `https://api.project.com/`;
-```
-
----
-
-## 客户端生命周期
 
 ### before
 
@@ -486,24 +519,6 @@ export default (...args) => {
 -   **仅针对**: 服务器端
 
 服务器启动端口号。（开发环境默认会使用该端口号）
-
-### serverless
-
--   类型: `string`
--   默认值: _无_
--   **仅针对**: 同构/SSR 项目，生产环境，服务器端
-
-Web 服务器是否为 _Serverless_ 模式
-
-```javascript
-module.exports = {
-    // 默认值：标准 Node.js 服务器
-    serverless: false,
-
-    // 输出的 Web 服务器为 Serverless
-    serverless: true,
-};
-```
 
 ### renderCache
 
@@ -745,7 +760,7 @@ module.exports = {
 
 ---
 
-## 打包 & Webpack 相关
+## 打包 & Webpack
 
 ### webpackConfig
 
@@ -1020,7 +1035,69 @@ module.exports = {
 
 ---
 
-## 开发环境
+## 开发环境 & 开发设置
+
+### aliases
+
+-   类型: `Object`
+-   默认值: `{}` (空对象)
+
+定义文件、路径别名。可在任何项目代码中使用。该功能使用 `webpack.resolve.alias` 实现。
+
+> 项目代码指所有经过 _Webpack_ 处理的 _JavaScript_ 文件的代码。通常来说，除了 _Koot.js_ 项目配置文件 (`koot.config.js`)、_Babel_ 配置文件 (`babel.config.js`) 等配置文件外，其他所有的代码文件都会经过 _Webpack_ 处理。
+
+```javascript
+const path = require('path');
+module.exports = {
+    // 默认值
+    aliases: {},
+
+    // 示例
+    aliases: {
+        '@src': path.resolve('./src'),
+        '@assets': path.resolve('./src/assets'),
+        '~base.less': path.resolve('./src/assets/css/base.less'),
+    },
+};
+```
+
+```javascript
+// 针对上述示例的代码
+import App from '@src/components/app';
+```
+
+```less
+// 针对上述示例的代码
+import '~base.less';
+```
+
+### defines
+
+-   类型: `Object`
+-   默认值: `{}` (空对象)
+
+定义 JavaScript 代码中的常量。可在任何 JavaScript 项目代码中使用。使用 Webpack 插件 `DefinePlugin` 实现。
+
+> 项目代码指所有经过 _Webpack_ 处理的 _JavaScript_ 文件的代码。通常来说，除了 _Koot.js_ 项目配置文件 (`koot.config.js`)、_Babel_ 配置文件 (`babel.config.js`) 等配置文件外，其他所有的代码文件都会经过 _Webpack_ 处理。
+
+```javascript
+module.exports = {
+    // 默认值
+    defines: {},
+
+    // 示例
+    defines: {
+        __QA__: JSON.stringify(false),
+    },
+};
+```
+
+```javascript
+// 针对上述示例的代码
+const apiBase = __QA__
+    ? `http://qa-api.project.com/`
+    : `https://api.project.com/`;
+```
 
 ### devPort
 
@@ -1133,7 +1210,7 @@ module.exports = {
 -   默认值: `false`
 -   **仅针对**: 开发环境
 
-设定开发环境中是否应用 _Service Worker_。有关独立配置对象请查阅 [Service Worker & PWA](/pwa)。
+设定开发环境中是否应用 _Service Worker_。有关独立配置对象请查阅 [WebApp & Service Worker](/pwa)。
 
 ```javascript
 module.exports = {
@@ -1144,7 +1221,7 @@ module.exports = {
     devServiceWorker: true,
 
     // 开发环境中启用 Service Worker，采用独立配置对象
-    // 配置项及其说明详见 Service Worker & PWA 章节 (链接见上文)
+    // 配置项及其说明详见 WebApp & Service Worker 章节 (链接见上文)
     devServiceWorker: {
         [option]: `value`,
     },

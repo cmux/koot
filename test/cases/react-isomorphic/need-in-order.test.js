@@ -3,48 +3,44 @@
  *
  * 不同的 Koot 配置会分别使用不同的配置，用以测试多种结果。以下是已有的案例
  *
- * **store**
- * - 默认
+ * **默认**
+ * - store
  *     - 提供创建 store 的方法
  *     - 使用 koot 封装的 createStore 方法
  *     - 提供的 reducer 是 Object
  *     - 提供 enhancer
- * - 二号
+ * - cookiesToStore: true,
+ * - sessionStore: true (全部开启)
+ * - distClientAssetsDirName | 没有配置 (默认 `includes`)
+ *
+ * **二号**
+ * - store
  *     - 提供创建 store 的方法
  *     - 使用 koot 封装的 createStore 方法
  *     - 提供的 reducer 是 Function
- * - 三号
+ * - cookiesToStore: "all",
+ * - sessionStore: "all" (全部开启)
+ * - distClientAssetsDirName: "__assets__"
+ * - i18n.use: 'router'
+ *
+ * **三号**
+ * - store
  *     - 提供创建 store 的方法
  *     - 使用自定函数
- * - 0.6版配置
- *     - 仅提供 reducer 列表
+ * - cookiesToStore: ['kootTest2', 'kootTest3'],
+ * - sessionStore | 部分开启，同时混入无效设置
  *
- * **cookiesToStore**
- * - 默认: `true`
- * - 二号: `"all"`
- * - 三号: `['kootTest2', 'kootTest3']`
- * - 0.6版配置: `false`
- *
- * **sessionStore**
- * - 默认
- *     - `true` (全部开启)
- * - 二号
- *     - `"all"` (全部开启)
- * - 三号
- *     - 部分开启，同时混入无效设置
- * - 0.6版配置
- *     - 禁用
- *
- * **distClientAssetsDirName**
- * - 默认
- *     - 没有配置 (默认 `includes`)
- * - 二号
- *     - `"__assets__"`
- *
- * 四号：
- * - 调整了 Webpack 配置的 `output.publicPath`
+ * **四号**
+ * - routes: 异步函数
+ * - 调整了 Webpack 配置的 `output.publicPath`,
  * - serverPackAll: true
- * - 其他内容同默认
+ * - i18n.use: 'subdomain'
+ *
+ * **0.6版**
+ * - store
+ *     - 仅提供 reducer 列表
+ * - cookiesToStore: false,
+ * - sessionStore: false
  */
 
 // Import modules =============================================================
@@ -228,7 +224,7 @@ const testDevelopment = (
         });
         const errors = [];
 
-        const port = await waitForPort(child, / on.*http:.*:([0-9]+)/);
+        const port = await waitForPort(child, / started on.*http:.*:([0-9]+)/);
         child.stderr.on('data', (err) => {
             errors.push(err);
         });
@@ -346,18 +342,20 @@ const testCodeSplitting = async (dist) => {
  * @param {Number} port
  * @param {Object} settings
  * @param {Object} [settings.kootConfig={}] Koot 配置对象
- * @param {Object} [settings.i18nUseRouter=false] 多语言使用路由模式
+ * @param {Object} [settings.i18nUse='router'|'subdomain'] 多语言使用路由模式
  */
 const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
     const context = await browser.createIncognitoBrowserContext();
-    const origin = isNaN(port) ? port : `http://127.0.0.1:${port}`;
+    const origin = isNaN(port) ? port : `http://localhost:${port}`;
     const {
         kootConfig = {},
-        i18nUseRouter = false,
+        i18nUse,
         isDev = false,
         selectorForStoreEnhancer,
         cookiesToStore,
     } = settings;
+    const i18nUseRouter = i18nUse === 'router';
+    const i18nUseSubdomain = i18nUse === 'subdomain';
 
     const getLocaleId = getLocaleIdFromPage;
     const getSSRState = getSSRStateFromPage;
@@ -383,6 +381,26 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
             }
             return result;
         });
+
+    const getHref = (pathname, localeId, params = {}) => {
+        if (pathname.substr(0, 1) !== '/') pathname = '/' + pathname;
+        if (localeId && !i18nUseRouter && !i18nUseSubdomain)
+            params[changeLocaleQueryKey] = localeId;
+        const paramStr = Object.keys(params).length
+            ? (pathname.includes('?') ? '&' : '?') +
+              Object.entries(params)
+                  .map(([key, value]) => `${key}=${value}`)
+                  .join('&')
+            : '';
+        if (localeId && i18nUseRouter)
+            return `${origin}/${localeId}${pathname}${paramStr}`;
+        if (localeId && i18nUseSubdomain)
+            return `${origin.replace(
+                '://',
+                `://${localeId}.`
+            )}${pathname}${paramStr}`;
+        return `${origin}${pathname}${paramStr}`;
+    };
 
     const page = await context.newPage();
     const failedResponse = [];
@@ -436,6 +454,14 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
             // 页面是否已跳转
             const pageUrl = await page.url();
             expect(new RegExp(`^${origin}/.+`).test(pageUrl)).toBe(true);
+        } else if (i18nUseSubdomain) {
+            // 页面是否已跳转
+            const pageUrl = await page.url();
+            expect(
+                new RegExp(`^${origin.replace('://', '://[a-zA-Z-_]+.')}`).test(
+                    pageUrl
+                )
+            ).toBe(true);
         }
 
         // 测试：点击 Link 组件的路由跳转
@@ -474,71 +500,6 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         }
     }
 
-    // 测试: 到其他语种的链接
-    {
-        await breath();
-
-        const testLinksToOtherLang = async (
-            toLocaleId = '',
-            urlAppend = ''
-        ) => {
-            const gotoUrl = i18nUseRouter
-                ? `${origin}/${toLocaleId}${urlAppend}`
-                : `${origin}${urlAppend}${
-                      urlAppend.includes('?') ? '&' : '?'
-                  }${changeLocaleQueryKey}=${toLocaleId}`;
-            await page.goto(gotoUrl, {
-                waitUntil: defaultWaitUtil,
-            });
-
-            const localeId = await page.evaluate(() =>
-                document
-                    .querySelector('meta[name="koot-locale-id"]')
-                    .getAttribute('content')
-            );
-            const linksToOtherLang = await page.$$eval(
-                `link[rel="alternate"][hreflang][href]:not([hreflang="${localeId}"])`,
-                (els) =>
-                    Array.from(els).map((el) => ({
-                        lang: el.getAttribute('hreflang'),
-                        href: el.getAttribute('href'),
-                    }))
-            );
-            /** @type {Object[]} */
-            const linksToSameLang = await page.$$eval(
-                `link[rel="alternate"][hreflang="${localeId}"][href]`,
-                (els) =>
-                    Array.from(els).map((el) => ({
-                        lang: el.getAttribute('hreflang'),
-                        href: el.getAttribute('href'),
-                    }))
-            );
-
-            expect(linksToSameLang.length).toBe(0);
-            expect(Array.isArray(linksToOtherLang)).toBe(true);
-            expect(linksToOtherLang.length).toBeGreaterThan(0);
-
-            for (const o of linksToOtherLang) {
-                const { lang, href } = o;
-                await page.goto(href, {
-                    waitUntil: 'networkidle0',
-                });
-                const localeId = await page.evaluate(() =>
-                    document
-                        .querySelector('meta[name="koot-locale-id"]')
-                        .getAttribute('content')
-                );
-                expect(lang).toBe(localeId);
-            }
-        };
-        await testLinksToOtherLang();
-        await testLinksToOtherLang(`zh`);
-        await testLinksToOtherLang(`zh-tw`);
-        await testLinksToOtherLang('', '?test=a');
-        await testLinksToOtherLang('zh', '?test=a');
-        await testLinksToOtherLang('zh-tw', '?test=a');
-    }
-
     // 测试: 并发请求 state 是否正确
     if (!isDev) {
         await breath();
@@ -547,9 +508,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
             new Promise(async (resolve) => {
                 const pageDelayed = await context.newPage();
                 const localeIdDelayed = 'en';
-                const gotoUrlDelayed = i18nUseRouter
-                    ? `${origin}/${localeIdDelayed}/delayed`
-                    : `${origin}/delayed?${changeLocaleQueryKey}=${localeIdDelayed}`;
+                const gotoUrlDelayed = getHref('/delayed', localeIdDelayed);
                 await pageDelayed.goto(gotoUrlDelayed, {
                     waitUntil: defaultWaitUtil,
                 });
@@ -559,9 +518,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
             }),
             new Promise(async (resolve) => {
                 const localeId = 'zh';
-                const gotoUrl = i18nUseRouter
-                    ? `${origin}/${localeId}`
-                    : `${origin}?${changeLocaleQueryKey}=${localeId}`;
+                const gotoUrl = getHref('', localeId);
                 await page.goto(gotoUrl, {
                     waitUntil: defaultWaitUtil,
                 });
@@ -941,9 +898,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         let expectG, expectL;
         const values = {};
         const getValue = async (localeId) => {
-            const gotoUrl = i18nUseRouter
-                ? `${origin}/${localeId}/test-server-cache`
-                : `${origin}/test-server-cache?${changeLocaleQueryKey}=${localeId}`;
+            const gotoUrl = getHref('test-server-cache', localeId);
             const context = await browser.createIncognitoBrowserContext();
             const page = await context.newPage();
             const res = await page.goto(gotoUrl, {
@@ -1084,9 +1039,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
     {
         const context = await browser.createIncognitoBrowserContext();
         const page = await context.newPage();
-        const gotoUrl = i18nUseRouter
-            ? `${origin}/zh/test-server-ctx-redirect`
-            : `${origin}/test-server-ctx-redirect`;
+        const gotoUrl = getHref('test-server-ctx-redirect', 'zh');
 
         await page.goto(gotoUrl, {
             waitUntil: 'networkidle0',
@@ -1095,10 +1048,8 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
 
         await context.close();
 
-        if (i18nUseRouter) {
-            expect(ensureUrlTrailingSlash(origin + '/zh')).toBe(
-                ensureUrlTrailingSlash(result)
-            );
+        if (i18nUseRouter || i18nUseSubdomain) {
+            expect(getHref('', 'zh')).toBe(ensureUrlTrailingSlash(result));
         } else {
             expect(ensureUrlTrailingSlash(origin)).toBe(
                 ensureUrlTrailingSlash(result)
@@ -1194,7 +1145,15 @@ describe('测试: React 同构项目', () => {
                 // console.log(stderr)
 
                 expect(typeof stderr).toBe('string');
-                expect(stderr).toBe('');
+                expect(
+                    stderr
+                        .replace(
+                            /\(node:([0-9]+?)\) Warning: No such label 'URL' for console.timeEnd\(\)/g,
+                            ''
+                        )
+                        .replace(/\r/g, '')
+                        .replace(/\n/g, '')
+                ).toBe('');
 
                 await testFilesFromChunkmap(dist, false);
                 await testCodeSplitting(dist);
@@ -1368,7 +1327,7 @@ describe('测试: React 同构项目', () => {
                     'koot.config.i18n-use-router.js',
                     'isomorphic-i18n_use_router',
                     {
-                        i18nUseRouter: true,
+                        i18nUse: 'router',
                         cookiesToStore: 'all',
                     }
                 );
@@ -1387,7 +1346,10 @@ describe('测试: React 同构项目', () => {
                     '四号 / output.publicPath',
                     dir,
                     'koot.config.public-path.js',
-                    'isomorphic-public_path'
+                    'isomorphic-public_path',
+                    {
+                        i18nUse: 'subdomain',
+                    }
                 );
 
                 testFull(

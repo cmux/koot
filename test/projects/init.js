@@ -10,7 +10,7 @@ const symlinkDir = require('symlink-dir');
 const spinner = require('../../packages/koot/utils/spinner');
 const getProjects = require('./get');
 
-const internalPackages = ['koot', 'koot-webpack'];
+const internalPackages = ['koot', 'koot-webpack', 'koot-electron'];
 
 /**
  * 初始化所有测试项目
@@ -29,7 +29,7 @@ module.exports = async () => {
  * @async
  * @param {String} name 项目名
  */
-const initProject = async name => {
+const initProject = async (name) => {
     const cwd = path.resolve(__dirname, name);
     const filePackagejson = path.resolve(cwd, 'package.json');
     const pkgKoot = await fs.readJson(
@@ -41,7 +41,7 @@ const initProject = async name => {
     // const title = `测试项目 ${name}`
     const titleInTerminal = '测试项目 ' + chalk.yellow(name);
 
-    const error = err => {
+    const error = (err) => {
         spinner(titleInTerminal).fail();
         console.error(err);
     };
@@ -59,8 +59,11 @@ const initProject = async name => {
         // 将 koot 的所有依赖替换入目标项目的 dev-dependencies
         pkg.devDependencies = {
             ...pkgKoot.dependencies,
-            ...pkgKootWebpack.dependencies
+            ...pkgKootWebpack.dependencies,
         };
+        // for (const dep of Object.keys(pkg.devDependencies)) {
+        //     pkg.devDependencies[dep] = `file:../../../node_modules/${dep}`;
+        // }
 
         // 移除所有内部包依赖
         for (const internalPackage of internalPackages) {
@@ -89,7 +92,7 @@ const initProject = async name => {
 
         // 写入文件
         await fs.writeJson(filePackagejson, pkg, {
-            spaces: 4
+            spaces: 4,
         });
     }
 
@@ -100,7 +103,7 @@ const initProject = async name => {
             // 'npm install --no-package-lock',
             'yarn install --no-lockfile',
             {
-                cwd
+                cwd,
             }
         );
         waiting.stop();
@@ -120,7 +123,7 @@ const initProject = async name => {
         await symlinkDir(
             path.resolve(__dirname, '../../packages', name),
             path.resolve(cwd, 'node_modules', name)
-        ).catch(err => {
+        ).catch((err) => {
             console.error(err);
         });
         // console.log(

@@ -6,6 +6,7 @@
  * @property {AppType} type 项目类型
  * @property {BoilerplateType} boilerplate 摸板类型
  * @property {ServerMode} serverMode 服务器模式
+ * @property {SPAMode} spaMode SPA 类型
  * @property {string|AuthorObject} [author] 开发者
  * @property {string} dest 目标目录 / 项目存放目录
  * @property {boolean} destExists 目标目录是否存在
@@ -21,6 +22,9 @@
  */
 /**
  * @typedef {("normal"|"serverless")} ServerMode
+ */
+/**
+ * @typedef {("web"|"electron")} SPAMode
  */
 /**
  * @typedef {Object} AuthorObject

@@ -213,6 +213,13 @@ declare namespace NodeJS {
          * - dev - 开发环境
          */
         WEBPACK_BUILD_ENV: 'prod' | 'dev';
+        /**
+         * 项目类型
+         * - ReactApp - React 同构/SSR
+         *     - serverless 属于 ReactApp
+         * - ReactSPA - React SPA
+         */
+        KOOT_PROJECT_TYPE: 'ReactApp' | 'ReactSPA' | 'ReactElectronSPA';
         /** EJS 模板内容 */
         KOOT_HTML_TEMPLATE: string;
         /**
@@ -245,10 +252,43 @@ declare namespace NodeJS {
          */
         KOOT_SSR_PUBLIC_PATH: string;
         /**
-         * 服务器模式
-         * - _空_ - 默认模式
-         * - serverless
+         * 构建目标
+         * - _空_ - 默认
+         * - serverless - Serverless App (SSR)
+         * - electron - Electron App (SPA)
          */
-        KOOT_SERVER_MODE: '' | 'serverless';
+        KOOT_BUILD_TARGET: '' | 'serverless' | 'electron';
+        /**
+         * 多语言项目种，URL 采用何种方式区分语种、切换语种
+         * - **query** (默认)
+         *     - URL 上无任何标识时，匹配默认语种
+         *     - 添加 `hl` 参数时，会切换语种。如 `https://site.com/page-1/?hl=zh-cn`
+         * - router - 一级路由为语种
+         * - subdomain - 最深层的子域名为语种
+         */
+        KOOT_I18N_URL_USE: 'query' | 'router' | 'subdomain';
     }
+}
+
+// ============================================================================
+
+declare interface KootAppConfig {
+    /**
+     * 项目名称
+     *
+     * 默认值: `package.json` 中的 `name` 属性
+     *
+     * 以下情况会使用该名称：
+     * - SSR/同构：若首页组件没有通过 `extend()` 设定标题，默认使用该名作为页面标题。
+     * - SPA：模板中的 `<%= inject.title %>` 默认使用该名进行注入替换。
+     */
+    name?: string;
+
+    /**
+     * 项目类型
+     * - `react` [**默认**] React SSR/同构
+     * - `react-spa` React SPA
+     * @default react
+     */
+    type: 'react' | 'react-spa';
 }

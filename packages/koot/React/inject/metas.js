@@ -1,16 +1,18 @@
 const fs = require('fs');
 
 const { dll } = require('../../defaults/dev-request-uri');
+const { compilationKeyHtmlMetaTags } = require('../../defaults/before-build');
 
 /**
- * 注入: meta 标签 HTML 代码
+ * 注入: meta 标签 HTML 代码，以及其他的 <head> 标签中的注入
  * @param {Object} options
+ * @param {Object} [options.manifest]
  * @param {String} [options.metaHtml]
  * @param {String} [options.localeId]
  * @param {Object} [options.compilation]
  * @returns {String}
  */
-module.exports = ({ metaHtml = '' }) => {
+module.exports = ({ metaHtml = '', manifest = {} }) => {
     let r = getDevExtra();
 
     if (typeof __KOOT_INJECT_METAS_START__ === 'undefined') {
@@ -22,6 +24,8 @@ module.exports = ({ metaHtml = '' }) => {
     } else {
         r += `<!--${__KOOT_INJECT_METAS_START__}-->${metaHtml}<!--${__KOOT_INJECT_METAS_END__}-->`;
     }
+
+    r += manifest[compilationKeyHtmlMetaTags] || '';
 
     return r;
 };

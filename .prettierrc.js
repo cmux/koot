@@ -7,5 +7,5 @@ module.exports = {
     semi: true,
     bracketSpacing: true,
     eslintIntegration: true,
-    endOfLine: 'lf'
+    endOfLine: 'lf',
 };

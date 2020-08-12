@@ -3,6 +3,7 @@ require('../../types');
 const fs = require('fs-extra');
 const path = require('path');
 const chalk = require('chalk');
+const latestVersion = require('latest-version');
 
 const _ = require('../../lib/translate');
 const spinner = require('../../lib/spinner');
@@ -13,7 +14,7 @@ const spinner = require('../../lib/spinner');
  * @param {AppInfo} app
  * @returns {Promise<void>}
  */
-module.exports = async app => {
+module.exports = async (app) => {
     const msgModifying = chalk.whiteBright(_('modifying_boilerplate'));
     const waitingDownloading = spinner(msgModifying + '...');
     const { dest } = app;
@@ -31,7 +32,7 @@ module.exports = async app => {
         const packageJson = await fs.readJson(packageJsonFile);
         const extend = {
             version: '1.0.0',
-            koot: {}
+            koot: {},
         };
 
         if (typeof app.name === 'string') extend.name = app.name;
@@ -48,6 +49,14 @@ module.exports = async app => {
             delete packageJson.author;
         }
 
+        if (app.spaMode === 'electron') {
+            extend.devDependencies = {
+                ...packageJson.devDependencies,
+            };
+            extend.devDependencies['koot-electron'] =
+                '^' + (await latestVersion('koot-electron'));
+        }
+
         // 确认当前 Koot.js 版本，添加至特定字段
         require('../../lib/modify-package-json/add-koot-version.js')(
             dest,
@@ -58,10 +67,10 @@ module.exports = async app => {
             packageJsonFile,
             {
                 ...packageJson,
-                ...extend
+                ...extend,
             },
             {
-                spaces: 4
+                spaces: 4,
             }
         );
     }
@@ -74,7 +83,7 @@ module.exports = async app => {
     {
         const properties = [
             ['name', 'name'],
-            ['type', 'type']
+            ['type', 'type'],
         ];
         const kootConfigFile = path.resolve(dest, 'koot.config.js');
         const kootConfig = require(kootConfigFile);
@@ -93,11 +102,19 @@ module.exports = async app => {
             );
         }
 
-        // 添加 serverless: true
+        // 添加 serverless
         if (app.serverMode === 'serverless') {
             content = content.replace(
-                /\n(\s*).*?更多选项请查阅文档.+?\n+.+?\n.+?Webpack/gm,
-                (str, $1) => `\n${$1}serverless: true,` + str
+                /\n(\s*).*?更多选项请查阅文档.+?\n+.+?\n.+?客户端生命周期/gm,
+                (str, $1) => `${$1}target: 'serverless',\n` + str
+            );
+        }
+
+        // 添加 electron
+        if (app.spaMode === 'electron') {
+            content = content.replace(
+                /\n(\s*).*?更多选项请查阅文档.+?\n+.+?\n.+?客户端生命周期/gm,
+                (str, $1) => `${$1}target: 'electron',\n` + str
             );
         }
 

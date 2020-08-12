@@ -4,6 +4,7 @@ const mount = require('koa-mount');
 const betterProxy = require('koa-better-http-proxy');
 const proxy = require('koa-proxies');
 
+const { pathnameSockjs } = require('../../defaults/before-build');
 const { publicPathPrefix } = require('../../defaults/webpack-dev-server');
 const getWDSport = require('../../utils/get-webpack-dev-server-port');
 const getPathnameDevServerStart = require('../../utils/get-pathname-dev-server-start');
@@ -35,12 +36,12 @@ const run = async () => {
                 'koot-test': true,
                 'process.env.SERVER_PORT': process.env.SERVER_PORT,
                 __SERVER_PORT__,
-                port
+                port,
             })
         );
     }
 
-    // console.log({ port, portServer })
+    // console.log({ port, portServer, portWebpackDevServer })
 
     // 创建 KOA 服务器
     const app = new Koa();
@@ -53,7 +54,7 @@ const run = async () => {
             betterProxy('localhost', {
                 port: portWebpackDevServer,
                 // 修改代理服务器请求返回结果
-                userResDecorator: function(proxyRes, proxyResData, ctx) {
+                userResDecorator: function (proxyRes, proxyResData, ctx) {
                     const data = proxyResData.toString('utf8');
 
                     if (/\ufffd/.test(data) === true) return proxyResData;
@@ -62,6 +63,7 @@ const run = async () => {
 
                     // 替换 localhost 请求地址为当前代理服务器地址
                     // 替换代理服务器地址的 sockjs-node 为 localhost 原始地址
+                    // console.log(ctx.href);
                     return data
                         .replace(
                             /:\/\/localhost:([0-9]+)/gm,
@@ -69,16 +71,21 @@ const run = async () => {
                         )
                         .replace(
                             new RegExp(
-                                `://${origin}/${publicPathPrefix}/sockjs-node/`,
+                                `://${origin}/${publicPathPrefix}/${pathnameSockjs}/`,
                                 'mg'
                             ),
-                            `://localhost:${portWebpackDevServer}/sockjs-node/`
+                            `://${ctx.hostname}:${portWebpackDevServer}/${pathnameSockjs}/`
                         )
                         .replace(
-                            /(socketUrl\s*=\s*url.format\({\s*protocol:\s*protocol,\s*auth:\s*urlParts.auth,\s*hostname:\s*hostname,\s*port:\s*)(port)/gm,
-                            `$1${portWebpackDevServer}`
+                            /(socketUrl\s*=\s*url.format\({\s*protocol:\s*protocol,\s*auth:\s*urlParts.auth,\s*hostname:\s*)(hostname)(,\s*port:\s*)(port)/gm,
+                            `$1"${ctx.hostname}"$3${portWebpackDevServer}`
                         );
-                }
+                    // .replace(
+                    //     /:\/\/localhost&sockHost=localhost&sockPort=[0-9]+/gm,
+                    //     `://${ctx.hostname}&sockHost=${ctx.hostname}&sockPort=${portWebpackDevServer}`
+                    // )
+                    // .replace(/localhost/gm, ctx.hostname)
+                },
             })
         );
         app.use(mount(`/${publicPathPrefix}`, proxyWebpackDevServer));
@@ -86,9 +93,10 @@ const run = async () => {
 
     // 代理服务器 -> WSD 代理服务器
     {
-        const { proxy: proxyConfig } = JSON.parse(
+        const { proxy: proxyConfig = {} } = JSON.parse(
             process.env.KOOT_DEV_WDS_EXTEND_CONFIG
         );
+        proxyConfig[pathnameSockjs] = true;
         if (typeof proxyConfig === 'object') {
             for (const route of Object.keys(proxyConfig)) {
                 const { changeOrigin = false } = proxyConfig[route];
@@ -98,11 +106,11 @@ const run = async () => {
                 );
                 const wdsProxy = new Koa();
                 const R = route.substr(0, 1) === '/' ? route : `/${route}`;
-                wdsProxy.use(async ctx => {
+                wdsProxy.use(async (ctx) => {
                     return proxy('/', {
-                        target: `http://localhost:${portWebpackDevServer}${R}`,
+                        target: `http://${ctx.hostname}:${portWebpackDevServer}${R}`,
                         changeOrigin,
-                        logs: true
+                        logs: true,
                     })(ctx);
                 });
                 // wdsProxy.use(async () => {
@@ -121,12 +129,11 @@ const run = async () => {
     {
         const proxyMain = new Koa();
         const regex = new RegExp(`^/((?!${routesProxy.join('|')}).*)`);
-        // console.log({ regex });
         proxyMain.use(
             proxy(regex, {
-                target: `http://localhost:${portServer}`,
+                target: `http://127.0.0.1:${portServer}`,
                 changeOrigin: false,
-                logs: false
+                logs: false,
             })
         );
         app.use(mount(proxyMain));

@@ -29,10 +29,10 @@ const extendAndFilterDistPackageDependencies = async (dependencies = {}) => {
     const ignores = [
         /^koot$/,
         /^koot-webpack$/,
-        /^@types\//
+        /^@types\//,
         // ...require('../../constants/ignored-dist-modules')
     ];
-    if (process.env.KOOT_SERVER_MODE === 'serverless') {
+    if (process.env.KOOT_BUILD_TARGET === 'serverless') {
         ignores.push(/^pm2$/);
     }
 
@@ -45,8 +45,8 @@ const extendAndFilterDistPackageDependencies = async (dependencies = {}) => {
     Object.assign(dependencies, packageKoot.dependencies);
 
     // 处理过滤
-    Object.keys(dependencies).forEach(dep => {
-        if (ignores.some(regex => regex.test(dep))) delete dependencies[dep];
+    Object.keys(dependencies).forEach((dep) => {
+        if (ignores.some((regex) => regex.test(dep))) delete dependencies[dep];
     });
 
     return dependencies;
@@ -79,7 +79,7 @@ module.exports = async (kootConfig = {}) => {
      * @param {string} filenameWithoutDot 不包含 `.` 的文件名
      * @void
      */
-    const writeDotFile = async filenameWithoutDot => {
+    const writeDotFile = async (filenameWithoutDot) => {
         const content = await fs.readFile(
             path.resolve(__dirname, 'dot-files', filenameWithoutDot),
             'utf-8'
@@ -96,7 +96,7 @@ module.exports = async (kootConfig = {}) => {
      * @param {string} templateFilename 模板文件名
      * @returns {string}
      */
-    const getTemplateContent = async templateFilename =>
+    const getTemplateContent = async (templateFilename) =>
         await fs.readFile(
             path.resolve(__dirname, 'templates', templateFilename),
             'utf-8'
@@ -133,18 +133,18 @@ module.exports = async (kootConfig = {}) => {
             Object.assign(pkg, {
                 dependencies: await extendAndFilterDistPackageDependencies(
                     packageProject.dependencies
-                )
+                ),
             });
         }
 
         // 复制 ./files 下的所有文件到打包结果目录
         await fs.copy(path.resolve(__dirname, 'files'), dist, {
-            overwrite: true
+            overwrite: true,
         });
 
         // 写入 package.json
         await fs.writeJson(path.resolve(dist, 'package.json'), pkg, {
-            spaces: 4
+            spaces: 4,
         });
 
         // if (kootTest) {
@@ -160,7 +160,7 @@ module.exports = async (kootConfig = {}) => {
         //     await fs.writeJson(path.resolve(dist, 'package.json'), pkg);
         // }
 
-        if (process.env.KOOT_SERVER_MODE !== 'serverless') {
+        if (process.env.KOOT_BUILD_TARGET !== 'serverless') {
             dotfiles.push('dockerignore');
 
             // 写入 Dockerfile

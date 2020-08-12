@@ -20,14 +20,14 @@ module.exports = () => {
 
     return glob
         .sync(path.resolve(dirDevDll, '**/*'), {
-            dot: true
+            dot: true,
         })
-        .map(file => {
+        .map((file) => {
             let route = path.relative(dirDevDll, file);
             if (route.substr(0, 1) !== '/') route = '/' + route;
             return {
                 file,
-                route
+                route,
             };
         });
 };

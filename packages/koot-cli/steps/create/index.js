@@ -19,8 +19,8 @@ const modify = require('./modify-boilerplate');
 const commands = {
     dev: {
         yarn: 'yarn dev',
-        npm: 'npm run dev'
-    }
+        npm: 'npm run dev',
+    },
 };
 
 // ============================================================================
@@ -69,8 +69,8 @@ module.exports = async (options = {}) => {
         // return console.warn(app);
 
         await download(app.dest, app.boilerplate);
-        await install(app);
         await modify(app);
+        await install(app);
 
         console.log('');
 

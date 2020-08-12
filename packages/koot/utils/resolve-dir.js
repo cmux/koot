@@ -8,12 +8,12 @@ const getCwd = require('./get-cwd');
  * @param {string} moduleId
  * @returns {string}
  */
-module.exports = moduleId => {
+module.exports = (moduleId = 'koot') => {
     let file;
     try {
-        file = resolve.sync('koot', { basedir: getCwd() });
+        file = resolve.sync(moduleId, { basedir: getCwd() });
     } catch (e) {
-        file = resolve.sync('koot', { basedir: __dirname });
+        file = resolve.sync(moduleId, { basedir: __dirname });
     }
 
     if (!file || !fs.existsSync(file))

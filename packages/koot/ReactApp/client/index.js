@@ -10,7 +10,7 @@ import routerMatch from 'react-router/lib/match';
 import {
     localeId as LocaleId,
     store as Store,
-    history as History
+    history as History,
 } from '../../index';
 
 // ----------------------------------------------------------------------------
@@ -35,7 +35,7 @@ const maxRouterMatchTime = 5 * 1000;
  * @param {*} v
  * @returns {Boolean}
  */
-const isPromise = v => {
+const isPromise = (v) => {
     return typeof v === 'object' && typeof v.then === 'function';
 };
 
@@ -44,23 +44,23 @@ const isPromise = v => {
  * @param {Function|Promise} func
  * @returns {Promise}
  */
-const parseLifecycleMethod = func => {
+const parseLifecycleMethod = (func) => {
     /** @type {Object} 生命周期方法传入的参数 */
     const argsLifecycle = {
         store: Store,
         history: History,
-        localeId: LocaleId
+        localeId: LocaleId,
     };
 
     if (typeof func === 'function') {
         const result = func(argsLifecycle);
         if (isPromise(result)) return result;
-        return new Promise(resolve => resolve());
+        return new Promise((resolve) => resolve());
     }
 
     if (isPromise(func)) return func;
 
-    return new Promise(resolve => resolve());
+    return new Promise((resolve) => resolve());
 };
 
 // ----------------------------------------------------------------------------
@@ -72,8 +72,6 @@ const onRouterUpdate = clientConfig.routerUpdate || clientConfig.onRouterUpdate;
 const onHistoryUpdate =
     clientConfig.historyUpdate || clientConfig.onHistoryUpdate;
 
-/** @type {Object} 路由配置 */
-const routes = validateRouterConfig(routerConfig);
 /** @type {Object} 路由根组件 props */
 const routerProps = {
     onUpdate: (...args) => {
@@ -84,7 +82,7 @@ const routerProps = {
         }
         // if (__DEV__) console.log('router onUpdate', self.__LATHPATHNAME__, location.pathname)
         if (typeof onRouterUpdate === 'function') onRouterUpdate(...args);
-    }
+    },
 };
 
 // 从 SSR 结果中初始化当前环境的语种
@@ -95,102 +93,108 @@ i18nRegister();
 // eslint-disable-next-line no-console
 if (__DEV__) console.log(`🚩 [koot/client] callback: before`);
 parseLifecycleMethod(before)
-    .then(() => {
-        addSessionStoreSaveEventHandlerOnPageUnload();
+    .then(() => validateRouterConfig(routerConfig))
+    .then(
+        (
+            /** @type {Object} 路由配置 */
+            routes
+        ) => {
+            addSessionStoreSaveEventHandlerOnPageUnload();
 
-        History.listen(location => {
-            // 回调: browserHistoryOnUpdate
-            // 正常路由跳转时，URL发生变化后瞬间会触发，顺序在react组件读取、渲染之前
-            // if (__DEV__) {
-            //     console.log('🌏 browserHistory update', location)
-            // }
-            Store.dispatch(actionUpdate(location));
+            History.listen((location) => {
+                // 回调: browserHistoryOnUpdate
+                // 正常路由跳转时，URL发生变化后瞬间会触发，顺序在react组件读取、渲染之前
+                // if (__DEV__) {
+                //     console.log('🌏 browserHistory update', location)
+                // }
+                Store.dispatch(actionUpdate(location));
 
-            if (__DEV__ && logCountHistoryUpdate < 2) {
-                // eslint-disable-next-line no-console
-                console.log(`🚩 [koot/client] callback: onHistoryUpdate`, [
-                    location,
-                    Store
-                ]);
-                logCountHistoryUpdate++;
-            }
-
-            if (typeof onHistoryUpdate === 'function')
-                onHistoryUpdate(location, Store);
-        });
-
-        // const thisHistory = syncHistoryWithStore(History, Store)
-
-        // require('react-router/lib/match')({ history, routes }, (err, ...args) => {
-        //     console.log({ err, ...args })
-        //     if (err) {
-        //         console.log(err.stack)
-        //     }
-        // })
-        // return hydrate(
-        //     <Root
-        //         store={Store}
-        //         // history={thisHistory}
-        //         history={History}
-        //         routes={routes}
-        //         // onError={(...args) => console.log('route onError', ...args)}
-        //         // onUpdate={(...args) => console.log('route onUpdate', ...args)}
-        //         {...routerProps}
-        //     />,
-        //     document.getElementById('root')
-        // )
-        let isRendered = false;
-        const doHydrate = () => {
-            if (isRendered) return;
-            hydrate(
-                <Root
-                    store={Store}
-                    // history={thisHistory}
-                    history={History}
-                    routes={routes}
-                    // onError={(...args) => console.log('route onError', ...args)}
-                    // onUpdate={(...args) => console.log('route onUpdate', ...args)}
-                    {...routerProps}
-                />,
-                document.getElementById('root')
-            );
-            isRendered = true;
-        };
-
-        let isRouterMatchComplete = false;
-        return Promise.race([
-            new Promise((resolve, reject) =>
-                setTimeout(() => {
-                    if (!isRouterMatchComplete)
-                        reject(new Error('routerMatch timeout'));
-                }, maxRouterMatchTime)
-            ),
-            new Promise((resolve, reject) => {
-                try {
-                    routerMatch({ history: History, routes }, (
-                        err /*, redirectLocation, renderProps*/
-                    ) => {
-                        isRouterMatchComplete = true;
-                        if (err) return reject(err);
-                        // console.log('\nrouter match', { err, ...args })
-                        resolve();
-                    });
-                } catch (e) {
-                    isRouterMatchComplete = true;
-                    reject(e);
+                if (__DEV__ && logCountHistoryUpdate < 2) {
+                    // eslint-disable-next-line no-console
+                    console.log(`🚩 [koot/client] callback: onHistoryUpdate`, [
+                        location,
+                        Store,
+                    ]);
+                    logCountHistoryUpdate++;
                 }
-            })
-        ])
-            .then(doHydrate)
-            .catch(err => {
-                // eslint-disable-next-line no-console
-                console.log(
-                    '\n⚛️Page may flash blank due to `react-router` match failed!'
-                );
-                console.error(err);
-                doHydrate();
+
+                if (typeof onHistoryUpdate === 'function')
+                    onHistoryUpdate(location, Store);
             });
-    })
+
+            // const thisHistory = syncHistoryWithStore(History, Store)
+
+            // require('react-router/lib/match')({ history, routes }, (err, ...args) => {
+            //     console.log({ err, ...args })
+            //     if (err) {
+            //         console.log(err.stack)
+            //     }
+            // })
+            // return hydrate(
+            //     <Root
+            //         store={Store}
+            //         // history={thisHistory}
+            //         history={History}
+            //         routes={routes}
+            //         // onError={(...args) => console.log('route onError', ...args)}
+            //         // onUpdate={(...args) => console.log('route onUpdate', ...args)}
+            //         {...routerProps}
+            //     />,
+            //     document.getElementById('root')
+            // )
+            let isRendered = false;
+            const doHydrate = () => {
+                if (isRendered) return;
+                hydrate(
+                    <Root
+                        store={Store}
+                        // history={thisHistory}
+                        history={History}
+                        routes={routes}
+                        // onError={(...args) => console.log('route onError', ...args)}
+                        // onUpdate={(...args) => console.log('route onUpdate', ...args)}
+                        {...routerProps}
+                    />,
+                    document.getElementById('root')
+                );
+                isRendered = true;
+            };
+
+            let isRouterMatchComplete = false;
+            return Promise.race([
+                new Promise((resolve, reject) =>
+                    setTimeout(() => {
+                        if (!isRouterMatchComplete)
+                            reject(new Error('routerMatch timeout'));
+                    }, maxRouterMatchTime)
+                ),
+                new Promise((resolve, reject) => {
+                    try {
+                        routerMatch({ history: History, routes }, (
+                            err /*, redirectLocation, renderProps*/
+                        ) => {
+                            isRouterMatchComplete = true;
+                            if (err) return reject(err);
+                            // console.log('\nrouter match', { err, ...args })
+                            resolve();
+                        });
+                    } catch (e) {
+                        isRouterMatchComplete = true;
+                        reject(e);
+                    }
+                }),
+            ])
+                .then(doHydrate)
+                .catch((err) => {
+                    // eslint-disable-next-line no-console
+                    console.log(
+                        '\n⚛️Page may flash blank due to `react-router` match failed!'
+                    );
+                    console.error(err);
+                    doHydrate();
+                });
+        }
+    )
     .then(() => {
         // 生命周期: 客户端流程结束
         if (__DEV__) {

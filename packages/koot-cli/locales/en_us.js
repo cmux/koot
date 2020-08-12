@@ -39,7 +39,7 @@ module.exports = {
         react: 'SSR (Server-Side Rendering)',
         react_short: 'SSR',
         'react-spa': 'SPA (Single-Page App)',
-        'react-spa_short': 'SPA'
+        'react-spa_short': 'SPA',
     },
     project_boilerplate: 'Boilerplate',
     project_boilerplates: {
@@ -48,26 +48,33 @@ module.exports = {
         serverless: 'Serverless mode for Base boilerplate',
         serverless_short: 'Serverless',
         'cm-system': 'System (Recommended for Admin/System App)',
-        'cm-system_short': 'System'
+        'cm-system_short': 'System',
     },
     project_server_mode: 'Server mode',
     project_server_modes: {
         normal: 'Normal KOA Server',
         normal_short: 'Normal',
         serverless: 'Serverless',
-        serverless_short: 'Serverless'
+        serverless_short: 'Serverless',
+    },
+    project_spa_mode: 'SPA Type',
+    project_spa_modes: {
+        web: 'Web App',
+        web_short: 'Web',
+        electron: 'Electron App',
+        electron_short: 'Electron',
     },
     project_project_dir: 'Source directory (*)',
     project_project_dir_types: {
         sub: 'Sub folder with app name',
         curr: 'Current folder',
-        input: 'Select...'
+        input: 'Select...',
     },
     project_project_dir_select: 'Select source directory',
     project_package_manager: 'Package manager',
     project_package_managers: {
         yarn: 'Yarn (v1)',
-        npm: 'NPM'
+        npm: 'NPM',
     },
     project_dist_dir: 'Dist-directory (*)',
     project_dist_dir_needed: "Please input project's dist-directory",
@@ -122,5 +129,5 @@ module.exports = {
     'upgrade_0.9.0_warning_1':
         'Koot 0.9 introduces brand new file structure for client bundles of SSR project.',
     'upgrade_0.9.0_warning_2':
-        'But for compatibility reason, when upgrading by using CLI tool, this new feature is disabled. If you are interested in this new feature, you can enable it manually. See doc for details -> [https://koot.js.org/#/config?id=bundleversionskeep]'
+        'But for compatibility reason, when upgrading by using CLI tool, this new feature is disabled. If you are interested in this new feature, you can enable it manually. See doc for details -> [https://koot.js.org/#/config?id=bundleversionskeep]',
 };

@@ -58,6 +58,8 @@ const validateConfig = async (projectDir = getCwd(), options = {}) => {
     const fileConfig =
         typeof process.env.KOOT_BUILD_CONFIG_PATHNAME === 'string'
             ? process.env.KOOT_BUILD_CONFIG_PATHNAME
+            : path.isAbsolute(configFilename)
+            ? configFilename
             : path.resolve(projectDir, configFilename);
 
     // 如果完整配置文件不存在，报错，结束流程
@@ -101,7 +103,7 @@ const validateConfig = async (projectDir = getCwd(), options = {}) => {
     await require('./transform-compatible/client-related')(kootConfig);
     await require('./transform-compatible/server-related')(kootConfig);
     await require('./transform-compatible/webpack-related')(kootConfig);
-    await require('./transform-compatible/pwa-related')(kootConfig);
+    await require('./transform-compatible/webapp-related')(kootConfig);
 
     // 清理所有第一级的 undefined 项和空对象
     // 清理所有第一级的空对象
@@ -253,25 +255,73 @@ const finalValidate = async (config = {}) => {
         delete config.webpack;
     }
 
-    // 配置项: serverless
-    if (config.serverless === true) {
-        // 更新环境变量
-        process.env.KOOT_SERVER_MODE = 'serverless';
-        if (typeof config.serverPackAll === 'undefined') {
-            config.serverPackAll = true;
+    // Electron 相关默认值
+    if (/electron/i.test(config.type || '')) {
+        config.type = /^react/i.test(config.type)
+            ? 'react-spa'
+            : /^electron/i.test(config.type)
+            ? 'react-spa'
+            : config.type.split('electron').join('-').replace(/-+/g, '-');
+        if (!/spa$/.test(config.type || ''))
+            config.type = (config.type + '-spa').replace(/-+/g, '-');
+        config.target = 'electron';
+    }
+
+    // SPA 相关默认值
+    if (/spa$/.test(config.type || '')) {
+        process.env.WEBPACK_BUILD_TYPE = 'spa';
+        // historyType === 'hashHistory' && serviceWorker.scope === '/'
+        if (
+            /^hash/.test(config.historyType) &&
+            (typeof config.serviceWorker !== 'object' ||
+                !config.serviceWorker.scope ||
+                config.serviceWorker.scope === '/')
+        ) {
+            if (typeof config.serviceWorker !== 'object')
+                config.serviceWorker = {};
+            config.serviceWorker.scope = scopeNeedTransformPathname;
         }
     }
 
-    // SPA && historyType === 'browserHistory' && serviceWorker.scope === '/'
-    if (
-        /spa$/.test(config.type || '') &&
-        /^hash/.test(config.historyType) &&
-        (typeof config.serviceWorker !== 'object' ||
-            !config.serviceWorker.scope ||
-            config.serviceWorker.scope === '/')
-    ) {
-        if (typeof config.serviceWorker !== 'object') config.serviceWorker = {};
-        config.serviceWorker.scope = scopeNeedTransformPathname;
+    // 配置项: serverless
+    if (config.serverless === true) {
+        config.target = 'serverless';
+        delete config.serverless;
+    }
+
+    // historyType 默认值
+    if (!config.historyType) {
+        config.historyType =
+            process.env.WEBPACK_BUILD_TYPE === 'spa' ? 'hash' : 'browser';
+    }
+
+    switch (config.target) {
+        case 'serverless': {
+            if (
+                process.env.WEBPACK_BUILD_TYPE === 'isomorphic' ||
+                config.type === 'react' ||
+                config.type === 'react-app'
+            ) {
+                process.env.KOOT_BUILD_TARGET = 'serverless';
+                if (typeof config.serverPackAll === 'undefined') {
+                    config.serverPackAll = true;
+                }
+            }
+            break;
+        }
+        case 'electron': {
+            if (process.env.WEBPACK_BUILD_TYPE === 'spa') {
+                process.env.KOOT_PROJECT_TYPE = 'ReactElectronSPA';
+                process.env.KOOT_BUILD_TARGET = 'electron';
+            }
+            break;
+        }
+        default: {
+        }
+    }
+
+    if (config.target !== 'electron') {
+        delete config.electron;
     }
 
     // 添加 placeholder

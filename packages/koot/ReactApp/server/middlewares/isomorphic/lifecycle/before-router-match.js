@@ -1,11 +1,11 @@
 import { TELL_CLIENT_URL, SYNC_COOKIE } from '../../../../action-types';
-import i18nUseRouterRedirect from '../../../../../i18n/server/use-router-redirect';
+import i18nCheckAndRedirect from '../../../../../i18n/server/check-and-redirect';
 // import isI18nEnabled from '../../../../../i18n/is-enabled'
 import log from '../../../../../libs/log';
 
 const beforeRouterMatch = async ({ store, ctx, syncCookie, callback }) => {
-    // 如果 i18n URL 使用 router 方式同时判定需要跳转，此时进行处理
-    const needRedirect = i18nUseRouterRedirect(ctx);
+    // 如果 i18n 判定需要跳转，此时进行处理
+    const needRedirect = i18nCheckAndRedirect(ctx);
     if (needRedirect) return needRedirect;
 
     // 告诉前端，当前的url是啥
@@ -21,13 +21,13 @@ const beforeRouterMatch = async ({ store, ctx, syncCookie, callback }) => {
         if (cookies === true) {
             store.dispatch({
                 type: SYNC_COOKIE,
-                data: ctx.headers.cookie || ''
+                data: ctx.headers.cookie || '',
             });
         } else {
             const data = {};
             if (cookies === 'all') {
                 const theCookies = ctx.headers.cookie || '';
-                theCookies.split(';').forEach(str => {
+                theCookies.split(';').forEach((str) => {
                     const crumbs = str.split('=');
                     if (crumbs.length > 1) {
                         const [key, ...values] = crumbs;
@@ -39,7 +39,7 @@ const beforeRouterMatch = async ({ store, ctx, syncCookie, callback }) => {
 
                 if (Array.isArray(cookies)) {
                     // 获取需要的cookie值
-                    cookies.forEach(c => {
+                    cookies.forEach((c) => {
                         data[c] = ctx.cookies.get(c);
                     });
                 }

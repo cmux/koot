@@ -11,7 +11,7 @@ const checkForChunkmap = require('../../libs/check-for-chunkmap');
  * @param {String} dist
  */
 module.exports = async (dist, isDev = true) => {
-    const check = async chunkmap => {
+    const check = async (chunkmap) => {
         const filesToCheck = [];
         const filenames = [];
         const addFile = (filename, pathname) => {
@@ -31,8 +31,6 @@ module.exports = async (dist, isDev = true) => {
         };
         addFiles();
 
-        // console.log({ dist, chunkmap, filesToCheck });
-
         for (const file of filesToCheck) {
             let f = path.resolve(dist, file);
             if (!fs.existsSync(f) && /^public\//.test(file)) {
@@ -45,7 +43,7 @@ module.exports = async (dist, isDev = true) => {
                     dist,
                     file,
                     pathname: f,
-                    pathnameBeforeChange: path.resolve(dist, file)
+                    pathnameBeforeChange: path.resolve(dist, file),
                 });
             }
             expect(exist).toBe(true);

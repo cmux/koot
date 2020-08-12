@@ -11,7 +11,8 @@ const program = require('commander');
 const npmRunScript = require('npm-run-script');
 const chalk = require('chalk');
 
-const before = require('./_before');
+const willValidateConfig = require('./lifecycle/will-validate-config');
+const willBuild = require('./lifecycle/will-build');
 
 const { filenameBuildFail } = require('../defaults/before-build');
 const sleep = require('../utils/sleep');
@@ -25,6 +26,7 @@ const validateConfigDist = require('../libs/validate-config-dist');
 // const getCwd = require('../utils/get-cwd')
 // const emptyTempConfigDir = require('../libs/empty-temp-config-dir')
 const getDirTemp = require('../libs/get-dir-tmp');
+const resolveRequire = require('../utils/resolve-require');
 
 program
     .version(require('../package').version, '-v, --version')
@@ -53,12 +55,13 @@ const run = async () => {
     setEnvFromCommand({
         config,
         type,
-        port
+        port,
     });
 
     process.env.KOOT_TEST_MODE = JSON.stringify(kootTest);
+    process.env.KOOT_COMMAND_START = JSON.stringify(true);
 
-    await before(program);
+    await willValidateConfig(program);
 
     // 读取构建配置
     const kootConfig = await validateConfig();
@@ -72,6 +75,17 @@ const run = async () => {
         // 删除过程中创建的临时文件
         // emptyTempConfigDir()
     };
+
+    await willBuild(kootConfig);
+
+    // ========================================================================
+
+    const { start: extraStart } =
+        process.env.KOOT_PROJECT_TYPE === 'ReactElectronSPA'
+            ? resolveRequire('koot-electron', 'libs/command-start.js')
+            : {};
+
+    // ========================================================================
 
     // 打包
     if (build) {
@@ -87,10 +101,10 @@ const run = async () => {
             (kootTest ? ` --koot-test` : '');
 
         const stderr = '';
-        await new Promise(resolve => {
+        await new Promise((resolve) => {
             const child = spawn('koot-build', buildCmdArgs.split(' '), {
                 stdio: 'inherit',
-                shell: true
+                shell: true,
             });
             child.on('close', () => {
                 resolve();
@@ -161,6 +175,13 @@ const run = async () => {
 
     await afterBuild();
 
+    // ========================================================================
+
+    if (process.env.KOOT_PROJECT_TYPE === 'ReactElectronSPA') {
+        if (typeof extraStart === 'function') await extraStart(dist);
+        return;
+    }
+
     // 运行服务器
     const pathServerJS = path.resolve(
         dist,
@@ -198,12 +219,12 @@ const run = async () => {
     const child = npmRunScript(cmd, {});
     // console.log('child', child)
     await new Promise((resolve, reject) => {
-        child.once('error', error => {
+        child.once('error', (error) => {
             console.trace(error);
             process.exit(1);
             reject(error);
         });
-        child.once('exit', exitCode => {
+        child.once('exit', (exitCode) => {
             // console.trace('exit in', exitCode)
             resolve(exitCode);
             // process.exit(exitCode)

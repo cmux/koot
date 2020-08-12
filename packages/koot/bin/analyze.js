@@ -1,11 +1,13 @@
 #!/usr/bin/env node
+/* eslint-disable no-console */
 
 const fs = require('fs-extra');
 const path = require('path');
 const program = require('commander');
 // const chalk = require('chalk')
 
-const before = require('./_before');
+const willValidateConfig = require('./lifecycle/will-validate-config');
+const willBuild = require('./lifecycle/will-build');
 
 // const __ = require('../utils/translate')
 const validateConfig = require('../libs/validate-config');
@@ -38,7 +40,7 @@ const run = async () => {
 
     setEnvFromCommand({
         config,
-        type
+        type,
     });
 
     const stage =
@@ -50,7 +52,7 @@ const run = async () => {
     process.env.WEBPACK_BUILD_STAGE = stage || 'client';
     process.env.WEBPACK_BUILD_ENV = 'prod';
 
-    await before(program);
+    await willValidateConfig(program);
 
     // 处理目录
     const dirAnalyzeBuild = require('../libs/get-dir-dev-tmp')(
@@ -67,12 +69,14 @@ const run = async () => {
         ...(await validateConfig()),
 
         dist: dirAnalyzeBuild,
-        bundleVersionsKeep: false
+        bundleVersionsKeep: false,
     };
+
+    await willBuild(kootConfig);
 
     await kootWebpackBuild({
         analyze: true,
-        ...kootConfig
+        ...kootConfig,
     });
 
     // 清理临时目录

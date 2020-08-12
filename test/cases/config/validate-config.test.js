@@ -6,15 +6,15 @@ const validateConfig = require('../../../packages/koot/libs/validate-config');
 const samplesDir = path.resolve(__dirname, 'samples');
 const samples = fs
     .readdirSync(samplesDir)
-    .filter(filename => {
+    .filter((filename) => {
         const file = path.resolve(samplesDir, filename);
         const lstat = fs.lstatSync(file);
         return !lstat.isDirectory();
     })
-    .map(filename => ({
+    .map((filename) => ({
         name: path.parse(filename).name,
         file: path.resolve(samplesDir, filename),
-        filename
+        filename,
     }));
 
 // ============================================================================
@@ -68,7 +68,7 @@ describe('测试: 验证配置 (生成临时的核心代码引用文件，返回
     for (const {
         name,
         // file,
-        filename
+        filename,
     } of samples) {
         test(`类型: ${name}`, async () => {
             const resultDir = path.resolve(samplesDir, name);
@@ -80,7 +80,7 @@ describe('测试: 验证配置 (生成临时的核心代码引用文件，返回
             try {
                 kootConfig = await validateConfig(samplesDir, {
                     configFilename: filename,
-                    tmpDir: resultDir
+                    tmpDir: resultDir,
                 });
             } catch (e) {
                 err = e;
@@ -99,7 +99,7 @@ describe('测试: 验证配置 (生成临时的核心代码引用文件，返回
             expect(typeof kootConfig.pwa).toBe('undefined');
             expect(
                 ['boolean', 'object'].some(
-                    t => typeof kootConfig.serviceWorker === t
+                    (t) => typeof kootConfig.serviceWorker === t
                 ) && !Array.isArray(kootConfig.serviceWorker)
             ).toBe(true);
             expect(
@@ -114,6 +114,24 @@ describe('测试: 验证配置 (生成临时的核心代码引用文件，返回
             expect(kootConfig.moduleCssFilenameTest).toBeInstanceOf(RegExp);
             expect(typeof kootConfig.devPort).toBe('number');
             expect(typeof kootConfig.webpackConfig).toBe('function');
+
+            switch (kootConfig.type) {
+                case 'react':
+                case 'react-app': {
+                    if (kootConfig.target === 'serverless')
+                        expect(kootConfig.serverPackAll).toBe(true);
+                    break;
+                }
+                case 'react-spa': {
+                    expect(typeof kootConfig.target).not.toBe('serverless');
+                    if (kootConfig.target === 'electron')
+                        expect(typeof kootConfig.electron).toBe('object');
+                    else expect(typeof kootConfig.electron).toBe('undefined');
+                    break;
+                }
+                default: {
+                }
+            }
         });
     }
 });

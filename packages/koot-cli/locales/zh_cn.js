@@ -39,7 +39,7 @@ module.exports = {
         react: '同构 / SSR (Server-Side Rendering)',
         react_short: '同构 / SSR',
         'react-spa': '单页 / SPA (Single-Page App)',
-        'react-spa_short': '单页 / SPA'
+        'react-spa_short': '单页 / SPA',
     },
     project_boilerplate: '模板',
     project_boilerplates: {
@@ -48,26 +48,33 @@ module.exports = {
         serverless: 'Serverless 模式的基础模板',
         serverless_short: 'Serverless',
         'cm-system': '系统模板 (推荐管理/后台系统项目使用)',
-        'cm-system_short': '系统'
+        'cm-system_short': '系统',
     },
     project_server_mode: '服务器模式',
     project_server_modes: {
         normal: '标准 KOA 服务器',
         normal_short: '标准',
         serverless: 'Serverless',
-        serverless_short: 'Serverless'
+        serverless_short: 'Serverless',
+    },
+    project_spa_mode: 'SPA 类型',
+    project_spa_modes: {
+        web: 'Web App',
+        web_short: 'Web',
+        electron: 'Electron App',
+        electron_short: 'Electron',
     },
     project_project_dir: '项目代码目录 (*)',
     project_project_dir_types: {
         sub: '以项目名命名的子目录',
         curr: '当前目录',
-        input: '选择...'
+        input: '选择...',
     },
     project_project_dir_select: '选择代码目录',
     project_package_manager: '包管理器',
     project_package_managers: {
         yarn: 'Yarn (v1)',
-        npm: 'NPM'
+        npm: 'NPM',
     },
     project_dist_dir: '打包结果目录 (*)',
     project_dist_dir_needed: '请输入项目打包结果目录',
@@ -121,5 +128,5 @@ module.exports = {
     'upgrade_0.9.0_warning_1':
         'Koot 0.9 中针对 SSR 项目引入了全新的客户端打包结果文件结构。',
     'upgrade_0.9.0_warning_2':
-        '为了兼容性起见，使用 cli 工具升级的项目，客户端打包结果文件结构不会变化。如果你对该新功能有兴趣，可手动开启，详情青参见文档 -> [https://koot.js.org/#/config?id=bundleversionskeep]'
+        '为了兼容性起见，使用 cli 工具升级的项目，客户端打包结果文件结构不会变化。如果你对该新功能有兴趣，可手动开启，详情青参见文档 -> [https://koot.js.org/#/config?id=bundleversionskeep]',
 };

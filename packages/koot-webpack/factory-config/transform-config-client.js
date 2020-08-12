@@ -3,7 +3,6 @@ const path = require('path');
 const webpack = require('webpack');
 const DefaultWebpackConfig = require('webpack-config').default;
 
-const CopyWebpackPlugin = require('copy-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const KootI18nPlugin = require('../plugins/i18n');
@@ -11,6 +10,10 @@ const DevModePlugin = require('../plugins/dev-mode');
 const SpaTemplatePlugin = require('../plugins/spa-template');
 const GenerateChunkmapPlugin = require('../plugins/generate-chunkmap');
 const CreateGeneralCssBundlePlugin = require('../plugins/create-general-css-bundle');
+const CreateManifestPlugin = require('../plugins/create-manifest');
+
+const newPluginWorkbox = require('../libs/new-plugin-workbox');
+const newPluginCopyWebpack = require('../libs/new-plugin-copy');
 
 const {
     keyConfigBuildDll,
@@ -19,6 +22,8 @@ const {
     keyConfigClientAssetsPublicPath,
     chunkNameClientRunFirst,
     keyConfigClientServiceWorkerPathname,
+    keyConfigIcons,
+    // pathnameSockjs
 } = require('koot/defaults/before-build');
 const { hmrOptions } = require('koot/defaults/webpack-dev-server');
 
@@ -30,7 +35,6 @@ const createTargetDefaultConfig = require('./create-target-default');
 const transformConfigExtendDefault = require('./transform-config-extend-default');
 const transformConfigLast = require('./transform-config-last');
 const transformOutputPublicpath = require('./transform-output-publicpath');
-const newPluginWorkbox = require('../libs/new-plugin-workbox');
 
 const getCwd = require('koot/utils/get-cwd');
 // const getWDSport = require('koot/utils/get-webpack-dev-server-port');
@@ -52,7 +56,8 @@ const getSpaLocaleFileId = require('koot/libs/get-spa-locale-file-id');
 module.exports = async (kootConfigForThisBuild = {}) => {
     const {
         webpackConfig: config,
-        appType,
+        // appType,
+        appTypeUse,
         i18n,
         dist,
         template,
@@ -65,11 +70,13 @@ module.exports = async (kootConfigForThisBuild = {}) => {
         [keyConfigBuildDll]: createDll = false,
         webpackCompilerHook = {},
         exportGzip = true,
+        [keyConfigIcons]: __icons,
+        webApp,
     } = kootConfigForThisBuild;
 
     /** @type {String} 默认入口文件 */
     const defaultClientEntry = require('../libs/get-koot-file')(
-        `${appType}/client`
+        `${appTypeUse}/client`
     );
     /** 基于存放目录名的文件名前缀 */
     const filenamePrefix =
@@ -151,6 +158,7 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                     kootConfigForThisBuild,
                     {
                         isSPATemplateInject,
+                        localeId,
                     }
                 )
             );
@@ -239,14 +247,14 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                         //     'webpack/hot/only-dev-server'
                         // );
                         // result.entry[key].unshift(
-                        //     `webpack-dev-server/client?http://localhost:${getWDSport()}/sockjs-node/`
+                        //     `webpack-dev-server/client?http://localhost:${getWDSport()}/${pathnameSockjs}/`
                         // );
                     }
                     // result.entry.client = [
                     //     'react-hot-loader/patch',
                     //     ...result.entry.client
                     // ];
-                    // result.entry[entryClientHMR] = `webpack-dev-server/client?http://localhost:${getWDSport()}/sockjs-node/`
+                    // result.entry[entryClientHMR] = `webpack-dev-server/client?http://localhost:${getWDSport()}/${pathnameSockjs}/`
                 }
                 // const fileRunFirst = path.resolve(
                 //     __dirname,
@@ -347,6 +355,15 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                                   '.extract.[id].[chunkhash].css'),
                     })
                 );
+                result.plugins.push(
+                    new CreateManifestPlugin({
+                        icons: __icons,
+                        webApp,
+                        localeId: isSeperateLocale ? localeId : undefined,
+                        outputPath: result.output.path,
+                        filenamePrefix,
+                    })
+                );
 
                 if (!analyze) {
                     result.plugins.push(
@@ -410,6 +427,7 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                                 kootConfigForThisBuild[
                                     keyConfigClientServiceWorkerPathname
                                 ],
+                            appTypeUse,
                         })
                     );
                 } else {
@@ -431,7 +449,7 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                     !index
                 ) {
                     result.plugins.push(
-                        new CopyWebpackPlugin(
+                        newPluginCopyWebpack(
                             staticAssets.map((from) => ({
                                 from,
                                 to:

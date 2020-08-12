@@ -19,18 +19,20 @@ const isServerBundlingAllModules = require('../libs/is-server-bundling-all-modul
 const outputPath = 'dist';
 
 // 执行顺序，从右到左
-const factory = async ({
-    env = process.env.WEBPACK_BUILD_ENV,
-    stage = process.env.WEBPACK_BUILD_STAGE,
-    // spa = false,
+const factory = async (
+    {
+        env = process.env.WEBPACK_BUILD_ENV,
+        stage = process.env.WEBPACK_BUILD_STAGE,
+        // spa = false,
 
-    aliases = {},
-    defines = {},
-    css = {},
-    options = {},
-    [keyConfigBuildDll]: createDll = false,
-    ...remainingKootBuildConfig
-}) => {
+        aliases = {},
+        defines = {},
+        css = {},
+        [keyConfigBuildDll]: createDll = false,
+        ...remainingKootBuildConfig
+    },
+    options = {}
+) => {
     // const useSpCssLoader = {
     //     loader: 'sp-css-loader',
     //     options: {
@@ -46,13 +48,16 @@ const factory = async ({
 
     return {
         module: {
-            rules: createModuleRules({
-                aliases,
-                defines,
-                css,
-                createDll,
-                ...remainingKootBuildConfig,
-            }),
+            rules: createModuleRules(
+                {
+                    aliases,
+                    defines,
+                    css,
+                    createDll,
+                    ...remainingKootBuildConfig,
+                },
+                options
+            ),
         },
         resolve: {
             ...resolve,
@@ -76,6 +81,8 @@ const plugins = async (
     remainingKootBuildConfig = {},
     options = {}
 ) => {
+    const { localeId, isSPATemplateInject = false } = options;
+
     const _defaultDefines = {};
     Object.keys(defaultDefines).forEach((key) => {
         _defaultDefines[key] = JSON.stringify(defaultDefines[key]);
@@ -97,7 +104,7 @@ const plugins = async (
             __TEST__: false,
             __QA__: false,
             __PREPROD__: false,
-            __KOOT_SPA_TEMPLATE_INJECT__: options.isSPATemplateInject === true,
+            __KOOT_SPA_TEMPLATE_INJECT__: isSPATemplateInject === true,
             // '__SPA__': !!spa,
             // __DIST__: JSON.stringify(process.env.KOOT_DIST_DIR),
 
@@ -114,7 +121,7 @@ const plugins = async (
 
     for (const key in thisDefines) {
         if (typeof thisDefines[key] === 'function')
-            thisDefines[key] = thisDefines[key]();
+            thisDefines[key] = thisDefines[key]({ localeId });
     }
 
     if (env === 'prod') {
@@ -128,6 +135,7 @@ const plugins = async (
     const envsToDefine = [
         'KOOT_VERSION',
         'KOOT_PROJECT_NAME',
+        'KOOT_PROJECT_TYPE',
         'KOOT_DIST_DIR',
         'KOOT_I18N',
         'KOOT_I18N_TYPE',
@@ -143,7 +151,7 @@ const plugins = async (
         'KOOT_DEV_DLL_FILE_CLIENT',
         'KOOT_DEV_DLL_FILE_SERVER',
         'KOOT_SESSION_STORE',
-        'KOOT_SERVER_MODE',
+        'KOOT_BUILD_TARGET',
         'KOOT_SSR_PUBLIC_PATH',
         'WEBPACK_BUILD_TYPE',
         'WEBPACK_BUILD_ENV',

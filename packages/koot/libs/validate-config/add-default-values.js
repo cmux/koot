@@ -1,10 +1,11 @@
 const fs = require('fs-extra');
 const path = require('path');
 const semver = require('semver');
+const merge = require('lodash/merge');
 
 const defaultValues = require('../../defaults/koot-config');
 const {
-    keyKootBaseVersion
+    keyKootBaseVersion,
     // typesSPA
 } = require('../../defaults/before-build');
 
@@ -23,7 +24,7 @@ module.exports = async (projectDir, config) => {
         return koot.baseVersion || undefined;
     })();
 
-    Object.keys(defaultValues).forEach(key => {
+    Object.keys(defaultValues).forEach((key) => {
         if (typeof config[key] === 'undefined') {
             if (
                 key === 'bundleVersionsKeep' &&
@@ -34,6 +35,15 @@ module.exports = async (projectDir, config) => {
             } else {
                 config[key] = defaultValues[key];
             }
+        } else if (
+            typeof config[key] === typeof defaultValues[key] &&
+            typeof config[key] === 'object' &&
+            !(config[key] instanceof RegExp) &&
+            !(defaultValues[key] instanceof RegExp) &&
+            !Array.isArray(config[key]) &&
+            !Array.isArray(defaultValues[key])
+        ) {
+            config[key] = merge({}, config[key], defaultValues[key]);
         }
     });
 
@@ -46,6 +56,8 @@ module.exports = async (projectDir, config) => {
     if (!config.name) {
         if (fs.existsSync(filePackageJson)) {
             config.name = require(filePackageJson).name;
+            if (typeof config.webApp === 'object' && !config.webApp.name)
+                config.webApp.name = config.name;
         }
     }
 
@@ -61,8 +73,8 @@ module.exports = async (projectDir, config) => {
                         'redux-thunk',
                         'react-redux',
                         'react-router',
-                        'react-router-redux'
-                    ]
+                        'react-router-redux',
+                    ],
                 },
                 optimization: {
                     splitChunks: {
@@ -70,11 +82,11 @@ module.exports = async (projectDir, config) => {
                             commons: {
                                 name: 'commons',
                                 chunks: 'initial',
-                                minChunks: 2
-                            }
-                        }
-                    }
-                }
+                                minChunks: 2,
+                            },
+                        },
+                    },
+                },
             };
         };
     }

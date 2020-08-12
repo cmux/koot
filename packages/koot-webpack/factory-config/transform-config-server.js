@@ -4,10 +4,11 @@ const webpack = require('webpack');
 const DefaultWebpackConfig = require('webpack-config').default;
 // const ExtraWatchWebpackPlugin = require('extra-watch-webpack-plugin').default
 
-const CopyWebpackPlugin = require('copy-webpack-plugin');
 const KootI18nPlugin = require('../plugins/i18n');
 const DevModePlugin = require('../plugins/dev-mode');
 const ModifyServerBundlePlugin = require('../plugins/modify-server-bundle');
+
+const newPluginCopyWebpack = require('../libs/new-plugin-copy');
 
 const {
     keyConfigBuildDll,
@@ -34,15 +35,17 @@ const getModuleVersion = require('koot/utils/get-module-version');
 module.exports = async (kootBuildConfig = {}) => {
     const {
         webpackConfig: config = {},
-        appType,
+        appTypeUse,
         dist,
         // [keyConfigClientAssetsPublicPath]: __clientAssetsPublicPath,
         i18n,
         staticCopyFrom: staticAssets,
         template,
-        serverless = false,
+        target,
         [keyConfigBuildDll]: createDll = false,
     } = kootBuildConfig;
+
+    const serverless = target === 'serverless';
 
     const {
         WEBPACK_BUILD_TYPE: TYPE,
@@ -56,7 +59,7 @@ module.exports = async (kootBuildConfig = {}) => {
         process.env.WEBPACK_BUILD_STAGE === 'server' &&
             process.env.WEBPACK_BUILD_ENV === 'prod' &&
             process.env.WEBPACK_BUILD_TYPE === 'isomorphic' &&
-            (serverless || process.env.KOOT_SERVER_MODE === 'serverless')
+            (serverless || process.env.KOOT_BUILD_TARGET === 'serverless')
     );
 
     const configTargetDefault = await createTargetDefaultConfig(
@@ -119,7 +122,7 @@ module.exports = async (kootBuildConfig = {}) => {
 
     if (i18n && Array.isArray(i18n.locales) && i18n.locales.length > 0) {
         result.plugins.push(
-            new CopyWebpackPlugin(
+            newPluginCopyWebpack(
                 i18n.locales.map((arr) => {
                     return {
                         from: arr[2],
@@ -150,14 +153,16 @@ module.exports = async (kootBuildConfig = {}) => {
         // 'core-js/stable',
         // path.resolve(__dirname, '../../../defaults/server-stage-0.js'),
         require('../libs/get-koot-file')(
-            appType + `/server` + (isServerless ? '/index-serverless.js' : '')
+            appTypeUse +
+                `/server` +
+                (isServerless ? '/index-serverless.js' : '')
         ),
     ];
     const otherEntries = {};
     if (isSPAProd) {
     } else {
         const fileSSR = require('../libs/get-koot-file')(
-            `${appType}/server/ssr.js`
+            `${appTypeUse}/server/ssr.js`
         );
         if (ENV !== 'dev' && fs.existsSync(fileSSR)) {
             otherEntries.ssr = [fileSSR];
@@ -257,7 +262,7 @@ module.exports = async (kootBuildConfig = {}) => {
             if (ENV === 'dev') {
                 if (Array.isArray(staticAssets))
                     config.plugins.push(
-                        new CopyWebpackPlugin(
+                        newPluginCopyWebpack(
                             staticAssets.map((from) => ({
                                 from,
                                 to: path.relative(

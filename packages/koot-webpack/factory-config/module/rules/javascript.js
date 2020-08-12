@@ -17,18 +17,20 @@ const getBabelLoaderDefaults = ({ createDll = false }) => ({
  * @param {Object} options
  * @returns {Array} rules
  */
-module.exports = (kootBuildConfig = {}) => {
+module.exports = (kootBuildConfig = {}, options = {}) => {
     const env = process.env.WEBPACK_BUILD_ENV;
     const stage = process.env.WEBPACK_BUILD_STAGE;
     const stageServer = stage === 'server';
 
     const { createDll = false, routes } = kootBuildConfig;
+    const { isSPATemplateInject = false } = options;
 
     //
 
     const ruleUseBabelLoader = (options = {}) => {
         options.__server = stageServer;
         options.__routes = routes;
+        options.__spaTemplateInject = isSPATemplateInject;
 
         options = Object.assign(
             {},

@@ -7,6 +7,10 @@ const cheerio = require('cheerio');
 const envKey = '__KOOT_TEST_BUILD_CACHE__';
 const elId = '__koot-test-build-cache';
 const projectDir = path.resolve(__dirname, '../projects/standard');
+const cacheFolder = path.resolve(
+    projectDir,
+    'node_modules/.cache/koot-webpack/hard/spa.prod.client'
+);
 
 // ============================================================================
 
@@ -17,20 +21,15 @@ const projectDir = path.resolve(__dirname, '../projects/standard');
  * @param {*} options
  */
 const doTest = (options = {}) => {
-    const { cacheValue } = options;
-    const command = `npm run build:spa -- ${envKey}=${cacheValue}`;
-    const cacheFolder = path.resolve(
-        projectDir,
-        'node_modules/.cache/koot-webpack/hard/spa.prod.client'
-    );
     let timeFirstBuild;
 
     const getCountInCacheFolder = () =>
         fs.existsSync(cacheFolder) ? fs.readdirSync(cacheFolder).length : 0;
 
-    const doTest = async (phaseCount = 1) => {
+    const doTest = async (phaseCount = 1, cacheValue) => {
         const timeStart = Date.now();
         const countFoldersInCacheBefore = getCountInCacheFolder();
+        const command = `npm run build:spa -- ${envKey}=${cacheValue}`;
 
         await spawn(command, {
             cwd: projectDir,
@@ -59,17 +58,22 @@ const doTest = (options = {}) => {
         expect($(`#${elId}`).text().trim()).toBe('' + cacheValue);
     };
 
-    return test(`缓存特征值: ${cacheValue}`, async () => {
-        await fs.ensureDir(cacheFolder);
-        await fs.emptyDir(cacheFolder);
-        await doTest(1);
-        await doTest(2);
+    return test(`_`, async () => {
+        const now = Date.now();
+
+        await doTest(1, now);
+        await doTest(2, now);
+
+        await doTest(1, now + 10);
+        await doTest(2, now + 10);
     });
 };
 
 describe('测试: 打包缓存', () => {
+    fs.ensureDirSync(cacheFolder);
+    fs.emptyDirSync(cacheFolder);
     doTest({ cacheValue: Date.now() });
-    doTest({ cacheValue: Date.now() + 10 });
+    // doTest({ cacheValue: Date.now() + 10 });
 });
 
 // ============================================================================

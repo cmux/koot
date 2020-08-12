@@ -11,73 +11,47 @@ const path = require('path');
 
 module.exports = {
     /**************************************************************************
-     * 项目信息
+     * 项目基本信息
      *************************************************************************/
-
     type: 'react',
     dist: './dist',
-
     template: './src/index.ejs',
     templateInject: './src/index.inject.js',
-
-    routes: './src/routes',
-
-    store: './src/store',
-    cookiesToStore: true,
-
     i18n: [
         ['zh', './src/locales/zh.js'],
         ['en', './src/locales/en.js'],
     ],
 
-    aliases: {
-        '@src': path.resolve('./src'),
-        '@assets': path.resolve('./src/assets'),
-        '@components': path.resolve('./src/components'),
-        '@constants': path.resolve('./src/constants'),
-        '@locales': path.resolve('./src/locales'),
-        '@routes': path.resolve('./src/routes'),
-        '@server': path.resolve('./src/server'),
-        '@store': path.resolve('./src/store'),
-        '@views': path.resolve('./src/views'),
-        '~vars.less': path.resolve('./src/constants/less/_all.less'),
-        '@types': path.resolve('./types'),
-    },
-
-    defines: {
-        __SVG_ICON_PACK__: JSON.stringify(
-            fs.readFileSync(
-                path.resolve(__dirname, './src/assets/symbol-defs.svg'),
-                'utf-8'
-            )
-        ).replace(/\n/g, ''),
-    },
-
-    staticCopyFrom: path.resolve(__dirname, './src/assets/public'),
-
-    // 更多选项请查阅文档...
+    /**************************************************************************
+     * 路由 & 客户端历史记录
+     *************************************************************************/
+    routes: './src/routes',
 
     /**************************************************************************
-     * 客户端生命周期
+     * 数据存储 & Store
      *************************************************************************/
+    store: './src/store',
 
-    // 选项请查阅文档...
+    /**************************************************************************
+     * 客户端设置 & 生命周期
+     *************************************************************************/
+    icon: './src/assets/app-icon.png',
+    webApp: {
+        themeColor: '#0092f5',
+    },
 
     /**************************************************************************
      * 服务器端设置 & 生命周期
      *************************************************************************/
-
     port: 8081,
     proxyRequestOrigin: {
         protocol: 'https',
     },
     serverBefore: './src/server/before.js',
-    // 更多选项请查阅文档...
 
     /**************************************************************************
-     * Webpack 相关
+     * 打包 & Webpack
      *************************************************************************/
-
     // ! 请查阅文档中有关 Webpack 设定的注意事项
     // ! https://koot.js.org/#/config?id=webpackconfig
     webpackConfig: async () => ({
@@ -125,12 +99,35 @@ module.exports = {
             ],
         },
     }),
-    // 更多选项请查阅文档...
+    staticCopyFrom: path.resolve(__dirname, './src/assets/public'),
 
     /**************************************************************************
-     * 开发环境
+     * 开发环境 & 开发设置
      *************************************************************************/
-
+    aliases: {
+        '@src': path.resolve('./src'),
+        '@assets': path.resolve('./src/assets'),
+        '@components': path.resolve('./src/components'),
+        '@constants': path.resolve('./src/constants'),
+        '@locales': path.resolve('./src/locales'),
+        '@routes': path.resolve('./src/routes'),
+        '@server': path.resolve('./src/server'),
+        '@store': path.resolve('./src/store'),
+        '@views': path.resolve('./src/views'),
+        '~vars.less': path.resolve('./src/constants/less/_all.less'),
+        '@types': path.resolve('./types'),
+    },
+    defines: {
+        __SVG_ICON_PACK__: JSON.stringify(
+            fs.readFileSync(
+                path.resolve(__dirname, './src/assets/symbol-defs.svg'),
+                'utf-8'
+            )
+        ).replace(/\n/g, ''),
+    },
     devPort: 3088,
-    // 更多选项请查阅文档...
+
+    /**************************************************************************
+     * 更多选项请查阅[文档](http://localhost:3000/#/config)
+     *************************************************************************/
 };

@@ -286,6 +286,7 @@ const i18n = async ({
 
     // 处理配置
     let useRouter = false;
+    let useSubdomain = false;
     let cookieKey = defaults.cookieKey;
     const locales = {};
     const parseLocalesFromArray = (arr) => {
@@ -305,11 +306,38 @@ const i18n = async ({
         parseLocalesFromArray(i18n);
     } else if (typeof i18n === 'object') {
         if (!isSPA && i18n.use === 'router') useRouter = true;
+        if (!isSPA && i18n.use === 'subdomain') useSubdomain = true;
         if (i18n.cookieKey) cookieKey = i18n.cookieKey;
         parseLocalesFromArray(i18n.locales);
     } else {
         return;
     }
+
+    const getUrl = (origin, pathname, localeId, params = {}) => {
+        if (pathname.substr(0, 1) !== '/') pathname = '/' + pathname;
+        if (localeId && !useRouter && !useSubdomain)
+            params[changeLocaleQueryKey] = localeId;
+        const [route, uriSearch = ''] = pathname.split('?');
+        const paramStr =
+            '?' +
+            uriSearch +
+            (Object.keys(params).length
+                ? (!!uriSearch ? '&' : '') +
+                  Object.entries(params)
+                      .map(([key, value]) => `${key}=${value}`)
+                      .join('&')
+                : '');
+
+        if (localeId && useRouter)
+            return `${origin}/${localeId}${route}${paramStr}`;
+        if (localeId && useSubdomain)
+            return `${origin.replace(
+                '://',
+                `://${localeId}.`
+            )}${route}${paramStr}`;
+        if (isSPA) return `${origin}/${paramStr}#${route}`;
+        return `${origin}${route}${paramStr}`;
+    };
 
     // 开始测试
     const needToClose = !browser;
@@ -321,7 +349,7 @@ const i18n = async ({
     const context = await browser.createIncognitoBrowserContext();
     const page = await context.newPage();
 
-    // 跳转链接
+    // 多语言渲染 #1
     {
         /**
          * 测试目标语种
@@ -332,13 +360,14 @@ const i18n = async ({
          */
         const testTargetLocaleId = async (localeId, infos = {}) => {
             const route = isSPA ? '/static' : '/extend';
-            const gotoUrl = useRouter
-                ? `${origin}${isSPA ? '/#' : ''}/${localeId}${route}`
-                : `${origin}${
-                      isSPA
-                          ? `/?${changeLocaleQueryKey}=${localeId}#${route}`
-                          : `${route}?${changeLocaleQueryKey}=${localeId}`
-                  }`;
+            const gotoUrl = getUrl(origin, route, localeId);
+            // const gotoUrl = useRouter
+            //     ? `${origin}${isSPA ? '/#' : ''}/${localeId}${route}`
+            //     : `${origin}${
+            //           isSPA
+            //               ? `/?${changeLocaleQueryKey}=${localeId}#${route}`
+            //               : `${route}?${changeLocaleQueryKey}=${localeId}`
+            //       }`;
 
             const res = await page.goto(gotoUrl, {
                 waitUntil: defaultWaitUtil,
@@ -422,16 +451,17 @@ const i18n = async ({
         }
     }
 
-    // 测试: i18n / 多语言
+    // 多语言渲染 #2
     {
         const toLocaleId = 'zh';
-        const gotoUrl = useRouter
-            ? `${origin}${isSPA ? '/#' : ''}/${toLocaleId}/`
-            : `${origin}${
-                  isSPA
-                      ? `/?${changeLocaleQueryKey}=${toLocaleId}#/`
-                      : `/?${changeLocaleQueryKey}=${toLocaleId}`
-              }`;
+        const gotoUrl = getUrl(origin, '/', toLocaleId);
+        // const gotoUrl = useRouter
+        //     ? `${origin}${isSPA ? '/#' : ''}/${toLocaleId}/`
+        //     : `${origin}${
+        //           isSPA
+        //               ? `/?${changeLocaleQueryKey}=${toLocaleId}#/`
+        //               : `/?${changeLocaleQueryKey}=${toLocaleId}`
+        //       }`;
 
         const context = await browser.createIncognitoBrowserContext();
         const page = await context.newPage();
@@ -474,6 +504,75 @@ const i18n = async ({
         }
 
         await context.close();
+    }
+
+    // 到其他语种的链接
+    {
+        const testLinksToOtherLang = async (
+            toLocaleId = '',
+            urlAppend = ''
+        ) => {
+            const gotoUrl = getUrl(origin, urlAppend, toLocaleId);
+            await page.goto(gotoUrl, {
+                waitUntil: defaultWaitUtil,
+            });
+
+            const localeId = await page.evaluate(() =>
+                document
+                    .querySelector('meta[name="koot-locale-id"]')
+                    .getAttribute('content')
+            );
+            const linksToOtherLang = await page.$$eval(
+                `link[rel="alternate"][hreflang][href]:not([hreflang="${localeId}"])`,
+                (els) =>
+                    Array.from(els).map((el) => ({
+                        lang: el.getAttribute('hreflang'),
+                        href: el.getAttribute('href'),
+                    }))
+            );
+            /** @type {Object[]} */
+            const linksToSameLang = await page.$$eval(
+                `link[rel="alternate"][hreflang="${localeId}"][href]`,
+                (els) =>
+                    Array.from(els).map((el) => ({
+                        lang: el.getAttribute('hreflang'),
+                        href: el.getAttribute('href'),
+                    }))
+            );
+
+            expect(linksToSameLang.length).toBe(isSPA ? 1 : 0);
+            expect(Array.isArray(linksToOtherLang)).toBe(true);
+            expect(linksToOtherLang.length).toBeGreaterThan(0);
+
+            for (const o of linksToOtherLang) {
+                const { lang, href } = o;
+                await page.goto(
+                    /:\/\//.test(href) ? href : `${origin}/${href}`,
+                    {
+                        waitUntil: 'networkidle0',
+                    }
+                );
+                const localeId = await page.evaluate(() =>
+                    document
+                        .querySelector('meta[name="koot-locale-id"]')
+                        .getAttribute('content')
+                );
+                // console.log({
+                //     toLocaleId,
+                //     urlAppend,
+                //     lang,
+                //     href,
+                //     localeId
+                // });
+                expect(lang).toBe(localeId);
+            }
+        };
+        await testLinksToOtherLang();
+        await testLinksToOtherLang(`zh`);
+        await testLinksToOtherLang(`zh-tw`);
+        await testLinksToOtherLang('', '?test=a');
+        await testLinksToOtherLang('zh', '?test=a');
+        await testLinksToOtherLang('zh-tw', '?test=a');
     }
 
     await context.close();

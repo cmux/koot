@@ -15,7 +15,7 @@
  * @param {Object} config
  * @void
  */
-module.exports = async config => {
+module.exports = async (config) => {
     if (typeof config.moduleCssFilenameTest !== 'undefined') {
         delete config.css;
     } else if (
@@ -47,7 +47,7 @@ module.exports = async config => {
         ['webpackAfter', 'afterBuild'],
         ['internalLoaderOptions', 'internalLoadersOptions'],
         ['devDll', 'dll'],
-        ['devHmr', 'hmr']
+        ['devHmr', 'hmr'],
     ];
 
     keys.forEach(([key, keyInWebpack]) => transform(key, keyInWebpack));
