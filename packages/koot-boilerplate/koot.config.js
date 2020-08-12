@@ -6,7 +6,7 @@
  * 配置文档请查阅: [https://koot.js.org/#/config]
  */
 
-const fs = require('fs-extra');
+const fs = require('fs');
 const path = require('path');
 
 module.exports = {
