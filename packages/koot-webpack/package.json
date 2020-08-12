@@ -1,6 +1,6 @@
 {
     "name": "koot-webpack",
-    "version": "0.14.0-alpha.26",
+    "version": "0.14.0",
     "description": "Creates Webpack configuration for Koot.js app.",
     "sideEffects": false,
     "scripts": {},
