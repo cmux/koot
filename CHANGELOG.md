@@ -50,6 +50,11 @@ _Koot.js_ 0.14 开始原生支持 _Electron_ 项目开发。利用 `koot-cli` �
 -   添加依赖包
     -   `sass`
 
+**koot-cli**
+
+-   **重大改动**
+    -   _Node.js_ 最低版本要求提升到 `10.0.0`
+
 **koot-electron**
 
 -   新的 NPM 包，包含 _Electron_ 项目开发相关内容。参见文档 [Electron](https://koot.js.org/#/electron)

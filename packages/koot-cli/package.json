@@ -45,7 +45,7 @@
         "url": "https://github.com/cmux/koot-cli/issues"
     },
     "engines": {
-        "node": ">=8.9.0"
+        "node": ">=10.0.0"
     },
     "dependencies": {
         "axios": "^0.19.2",
@@ -61,7 +61,7 @@
         "isbinaryfile": "^4.0.6",
         "latest-version": "^5.1.0",
         "npm-email": "^3.2.1",
-        "ora": "^4.0.5",
+        "ora": "^5.0.0",
         "os-locale": "^5.0.0",
         "package-json": "^6.5.0",
         "sanitize-filename": "^1.6.3",
