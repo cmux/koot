@@ -20,8 +20,10 @@ _Koot.js_ 0.14 开始原生支持 _Electron_ 项目开发。利用 `koot-cli` �
         -   `serverless` - 仅针对 SSR 项目。替代之前的 `serverless = true'` 配置
         -   `electron` - 仅针对 SPA 项目
         -   详情请参见文档 [配置/target](https://koot.js.org/#/config?id=target)
-    -   **新配置项** `icon`
-    -   **新配置项** `webApp`
+    -   **新配置项** `icon` - 项目图标配置
+    -   **新配置项** `webApp` - WebApp / PWA 相关设置
+        -   在设定了 App 图标 (icon 设置项) 时，Koot.js 会默认自动在生成、渲染的 HTML 代码结果中加入 WebApp 相关的 <meta> 和 <link> 标签
+        -   详情请参见文档 [WebApp](https://koot.js.org/#/pwa?id=webapp)
     -   多语言/i18n: `i18n.use = 'subdomain'` - 现在可使用最深层的子域名作为语言标识 ([#220](https://github.com/cmux/koot/issues/220))
 -   优化
     -   小幅优化热更新速度 (移除多余的 `webpack/hot` 和 `webpack-dev-server/client` 引用)
@@ -53,7 +55,7 @@ _Koot.js_ 0.14 开始原生支持 _Electron_ 项目开发。利用 `koot-cli` �
 **koot-cli**
 
 -   **重大改动**
-    -   _Node.js_ 最低版本要求提升到 `10.0.0`
+    -   _Node.js_ 最低版本要求提升到 `10.13.0`
 
 **koot-electron**
 

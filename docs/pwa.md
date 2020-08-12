@@ -40,7 +40,7 @@ module.exports = {
 | `scope`           | `string` | `/`                             | WebApp 路径                              |
 | `startUrl`        | `string` | `/?utm_source=web_app_manifest` | WebApp 启动时访问的 URL                  |
 
-**自动生成的内容**
+##### 自动生成的内容
 
 -   网站图标 (`favicon.ico`)
 -   适用于 iOS、PWA、FireFox 等多端、多尺寸的图标
@@ -106,7 +106,7 @@ module.exports = {
 | `networkOnly`  | `string[]`               | `[]`                                                                 | 扩展“仅通过网络”请求策略的地址<br><br>详情见下文<a href="#/pwa?id=扩展缓存规则">扩展缓存规则</a>                                                                                                                                            |
 | 其他选项       |                          |                                                                      | 其他所有选项会直接传入 `workbox-webpack-plugin` 提供的 `InjectManifest` 插件。<br><br>详细配置文档请参阅[官方文档](https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-webpack-plugin.InjectManifest.html) |
 
-### 模板文件
+##### 模板文件
 
 _Koot.js_ 采用 `workbox-webpack-plugin` 提供的 `InjectManifest` 插件生成 _Service Worker_ 文件。该插件会将 _Workbox_ 引用代码和预先缓存列表注入到指定的模板文件中，后输出到 _Webpack_ 结果目录。
 
@@ -120,7 +120,7 @@ _Koot.js_ 采用 `workbox-webpack-plugin` 提供的 `InjectManifest` 插件生�
 
 参考: [Koot.js 的默认模板文件](https://github.com/cmux/koot/blob/master/packages/koot-webpack/libs/new-plugin-workbox.js)
 
-### 默认缓存规则
+##### 默认缓存规则
 
 客户端打包中的所有 _JavaScript_ 和 _CSS_ 结果文件均会被初始缓存。首页 (`pathname === '/'`) 也会被初始缓存。
 
@@ -133,7 +133,7 @@ _Koot.js_ 采用 `workbox-webpack-plugin` 提供的 `InjectManifest` 插件生�
 | `/api/`            | 仅通过网络   | 　                                                |
 | _不满足任何条件时_ | 网络请求优先 | 　                                                |
 
-### 扩展缓存规则
+##### 扩展缓存规则
 
 可通过 `cacheFirst` `networkFirst` `networkOnly` 选项扩展缓存策略。
 
