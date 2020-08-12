@@ -70,7 +70,7 @@
         "workbox-webpack-plugin": "^5.1.3"
     },
     "devDependencies": {
-        "koot": "^0.14.0-alpha.26"
+        "koot": "^0.14.0"
     },
     "gitHead": "f4c58c48692337068d99c7fbbcd9640f2201a3e6"
 }
