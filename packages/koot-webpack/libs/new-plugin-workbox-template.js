@@ -8,7 +8,10 @@ import {
     clientsClaim,
 } from 'workbox-core';
 import { precacheAndRoute } from 'workbox-precaching';
-import { registerRoute } from 'workbox-routing';
+import {
+    registerRoute,
+    // setDefaultHandler
+} from 'workbox-routing';
 import * as workboxStrategies from 'workbox-strategies';
 import sanitize from 'sanitize-filename';
 import { scopeNeedTransformPathname } from 'koot/defaults/defines-service-worker';
@@ -121,7 +124,7 @@ cacheRoutes.forEach((route) => {
     registerRoute(route, new workboxStrategies.NetworkFirst(), 'GET');
 });
 
-// Base =======================================================================
+// Default ====================================================================
 registerRoute(
     getRoute(undefined, true),
     new workboxStrategies.NetworkFirst(),
