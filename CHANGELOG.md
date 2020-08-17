@@ -2,6 +2,14 @@
 
 ---
 
+## [0.14.1] - 2020-08-17
+
+**koot**
+
+-   优化
+    -   优化 `name` 配置项默认值的生成方式
+    -   现在 `extend()` 高阶组件中，在使用 `pageinfo` 时如果没有 `title` 属性，会默认采用 `name` 配置值
+
 ## [0.14.0] - 2020-08-12
 
 _Koot.js_ 0.14 开始原生支持 _Electron_ 项目开发。利用 `koot-cli` 创建新项目时可以根据向导直接创建 _Electron_ 项目并会自动配置完成开发环境。如需手动配置开发环境，如从老的 _Koot.js_ 项目升级，请参见文档 [Electron](https://koot.js.org/#/electron) ([#102](https://github.com/cmux/koot/issues/102))。
@@ -26,7 +34,7 @@ _Koot.js_ 0.14 开始原生支持 _Electron_ 项目开发。利用 `koot-cli` �
         -   详情请参见文档 [配置/target](https://koot.js.org/#/config?id=target)
     -   **新配置项** `icon` - 项目图标配置
     -   **新配置项** `webApp` - WebApp / PWA 相关设置
-        -   在设定了 App 图标 (icon 设置项) 时，Koot.js 会默认自动在生成、渲染的 HTML 代码结果中加入 WebApp 相关的 <meta> 和 <link> 标签
+        -   在设定了 App 图标 (icon 设置项) 时，Koot.js 会默认自动在生成、渲染的 HTML 代码结果中加入 WebApp 相关的 `<meta>` 和 `<link>` 标签
         -   详情请参见文档 [WebApp](https://koot.js.org/#/pwa?id=webapp)
     -   多语言/i18n: `i18n.use = 'subdomain'` - 现在可使用最深层的子域名作为语言标识 ([#220](https://github.com/cmux/koot/issues/220))
 -   优化

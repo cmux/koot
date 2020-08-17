@@ -6,17 +6,21 @@ export default {
     name: 'app-root',
 
     indexRoute: {
-        component: require('@views/home').default
+        component: require('@views/home').default,
     },
 
     childRoutes: [
         {
             path: '/route-test/:testId',
-            component: require('@views/route-test').default
+            component: require('@views/route-test').default,
         },
         {
             path: '/sass-test',
-            component: require('@views/sass-test').default
-        }
-    ]
+            component: require('@views/sass-test').default,
+        },
+        {
+            path: '/no-title-only-metas-test',
+            component: require('@views/no-title-only-metas').default,
+        },
+    ],
 };

@@ -95,6 +95,7 @@ _Object_ `styles` 组件 CSS
         -   返回值：_Object_
             -   _string_ `title` 新的页面标题
             -   _Array_ `metas` 新的页面 meta 标签信息
+-   如果没有提供 `title`，会默认采用项目配置中的 `name` 值，如果该值也未提供，则会默认使用 `package.json` 的 `name` 属性
 
 `data` 同构数据相关
 

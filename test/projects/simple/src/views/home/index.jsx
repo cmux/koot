@@ -1,5 +1,6 @@
 import React from 'react';
 import { extend } from 'koot';
+import { Link } from 'react-router';
 import clientUpdatePageinfo from 'koot/utils/client-update-pageinfo';
 
 import Issue68 from '@components/issue-68';
@@ -21,6 +22,9 @@ const PageHome = ({ className }) => {
                 voluptate in labore occaecat ipsum dolore ex ullamco enim Lorem
                 anim est nulla. Aliquip laborum sunt excepteur eu consequat nisi
                 duis.
+                <Link to="/no-title-only-metas-test">
+                    /no-title-only-metas-test
+                </Link>
             </p>
 
             <div className="bg-container">
