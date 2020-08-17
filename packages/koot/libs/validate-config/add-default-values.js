@@ -56,8 +56,6 @@ module.exports = async (projectDir, config) => {
     if (!config.name) {
         if (fs.existsSync(filePackageJson)) {
             config.name = require(filePackageJson).name;
-            if (typeof config.webApp === 'object' && !config.webApp.name)
-                config.webApp.name = config.name;
         }
     }
 

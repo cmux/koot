@@ -1,0 +1,11 @@
+{
+    "name": "koot-test",
+    "private": true,
+    "version": "0.14.0",
+    "license": "none",
+    "engines": {
+        "node": ">=10.13.0"
+    },
+    "scripts": {},
+    "dependencies": {}
+}

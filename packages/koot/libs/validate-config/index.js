@@ -324,6 +324,13 @@ const finalValidate = async (config = {}) => {
         delete config.electron;
     }
 
+    /**
+     * `webApp` - 添加默认值
+     */
+    if (typeof config.webApp === 'object') {
+        if (!config.webApp.name) config.webApp.name = config.name;
+    }
+
     // 添加 placeholder
     config[WEBPACK_OUTPUT_PATH] = undefined;
 

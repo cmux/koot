@@ -138,7 +138,7 @@ module.exports = async (kootConfig = {}) => {
     const appType = await getAppType();
 
     /** @type {String} 项目名 */
-    const appName = await readBaseConfig('name');
+    const appName = kootConfig.name || (await readBaseConfig('name'));
     process.env.KOOT_PROJECT_NAME = appName;
 
     // 抽取环境变量

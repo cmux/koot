@@ -13,6 +13,7 @@ import {
     // setDefaultHandler
 } from 'workbox-routing';
 import * as workboxStrategies from 'workbox-strategies';
+// import { CacheableResponsePlugin } from 'workbox-cacheable-response';
 import sanitize from 'sanitize-filename';
 import { scopeNeedTransformPathname } from 'koot/defaults/defines-service-worker';
 

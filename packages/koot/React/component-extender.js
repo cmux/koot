@@ -229,7 +229,7 @@ export default (options = {}) => (WrappedComponent) => {
                     : to ||
                       doPageinfo(getStore(), this.getRenderProps(), pageinfo);
 
-            clientUpdatePageInfo(title, metas);
+            clientUpdatePageInfo(title || process.env.KOOT_PROJECT_NAME, metas);
         }
         getRenderProps() {
             return getRenderPropsFromComponentProps(this.props);

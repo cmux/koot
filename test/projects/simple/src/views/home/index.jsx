@@ -11,6 +11,7 @@ import TestModuleCSS from './test-module-css';
 import styles from './styles.component.less';
 
 const PageHome = ({ className }) => {
+    // throw new Error('hahaha');
     return (
         <div className={className}>
             <h2>Boilerplate (Simple)</h2>

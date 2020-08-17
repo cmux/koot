@@ -21,7 +21,7 @@ let inited = false;
 /** @type {Pageinfo} */
 const infoToChange = {
     title: '',
-    metas: []
+    metas: [],
 };
 let changeTimeout = undefined;
 
@@ -87,14 +87,14 @@ const doUpdate = () => {
 
     // 替换 metas
     const head = document.getElementsByTagName('head')[0];
-    getInjectedMetaTags().forEach(el => head.removeChild(el));
+    getInjectedMetaTags().forEach((el) => head.removeChild(el));
 
-    injectedMetaTags.forEach(el => {
+    injectedMetaTags.forEach((el) => {
         if (el && el.parentNode) el.parentNode.removeChild(el);
     });
     injectedMetaTags = metas
-        .filter(meta => typeof meta === 'object')
-        .map(meta => {
+        .filter((meta) => typeof meta === 'object')
+        .map((meta) => {
             const el = document.createElement('meta');
             for (var key in meta) {
                 el.setAttribute(key, meta[key]);

@@ -11,6 +11,7 @@ const samples = fs
         const lstat = fs.lstatSync(file);
         return !lstat.isDirectory();
     })
+    .filter((filename) => path.extname(filename) === '.js')
     .map((filename) => ({
         name: path.parse(filename).name,
         file: path.resolve(samplesDir, filename),
@@ -75,6 +76,8 @@ describe('测试: 验证配置 (生成临时的核心代码引用文件，返回
             await fs.ensureDir(resultDir);
             await fs.emptyDir(resultDir);
 
+            const configJson = require(path.resolve(samplesDir, filename));
+
             let err;
             let kootConfig;
             try {
@@ -89,6 +92,13 @@ describe('测试: 验证配置 (生成临时的核心代码引用文件，返回
             expect(typeof err).toBe('undefined');
 
             expect(typeof kootConfig).toBe('object');
+            // 如果没有设定 name，会有默认值
+            if (typeof configJson.name !== 'string') {
+                expect(typeof kootConfig.name).toBe('string');
+                expect(kootConfig.name).toBe(
+                    require(path.resolve(samplesDir, 'package.json')).name
+                );
+            }
             expect(typeof kootConfig.template).toBe('string');
             expect(typeof kootConfig.routes).toBe('string');
             expect(typeof kootConfig.store).toBe('string');

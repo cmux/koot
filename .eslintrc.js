@@ -9,7 +9,7 @@ module.exports = {
         es6: true,
         mocha: true,
         jquery: true,
-        jest: true
+        jest: true,
     },
     globals: {
         __SERVER_PORT__: 'readonly',
@@ -19,9 +19,9 @@ module.exports = {
         __KOOT_PROJECT_CONFIG_PATHNAME__: 'readonly',
         __STYLE_TAG_GLOBAL_ATTR_NAME__: 'readonly',
         __STYLE_TAG_MODULE_ATTR_NAME__: 'readonly',
-        __KOOT_SPA_TEMPLATE_INJECT__: 'readonly'
+        __KOOT_SPA_TEMPLATE_INJECT__: 'readonly',
     },
     rules: {
         // 'no-console': 0
-    }
+    },
 };
