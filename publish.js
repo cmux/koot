@@ -3,8 +3,8 @@
 const fs = require('fs-extra');
 const path = require('path');
 const inquirer = require('inquirer');
-// const crlf = require('crlf');
-// const glob = require('glob-promise');
+const crlf = require('crlf');
+const glob = require('glob-promise');
 
 const runScript = require('./libs/run-script');
 const logWelcome = require('./libs/log/welcome');
@@ -22,12 +22,11 @@ const prePublish = async () => {
     const title = 'pre-publish';
     const waiting = spinner(title + '...');
 
-    // const packages = await glob(
-    //     path.resolve(__dirname, 'packages/*/package.json')
-    // );
-    // const bins = [];
+    const packages = await glob(
+        path.resolve(__dirname, 'packages/*/package.json')
+    );
+    const bins = [];
 
-    /*
     // 汇总所有 bin 文件
     for (const packageJson of packages) {
         const dir = path.dirname(packageJson);
@@ -46,16 +45,15 @@ const prePublish = async () => {
             });
         });
     }
-    */
 
     // git commit
-    const git = require('simple-git/promise')(__dirname);
     const complete = () => {
         waiting.stop();
         spinner(title).succeed();
         console.log(' ');
     };
     try {
+        const git = require('simple-git/promise')(__dirname);
         const { modified = [] } = await git.status();
         if (modified.length) {
             await git.add('./*');
