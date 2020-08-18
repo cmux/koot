@@ -214,6 +214,10 @@ const validateConfig = async (projectDir = getCwd(), options = {}) => {
 
 // 调整构建配置对象
 const finalValidate = async (config = {}) => {
+    const isSPA =
+        /spa$/.test(config.type || '') ||
+        process.env.WEBPACK_BUILD_TYPE === 'spa';
+
     // 改变配置项: dest -> dist
     if (typeof config.dest !== 'undefined') {
         config.dist = config.dest;
@@ -267,8 +271,13 @@ const finalValidate = async (config = {}) => {
         config.target = 'electron';
     }
 
+    // historyType 默认值
+    if (!config.historyType) {
+        config.historyType = isSPA ? 'hash' : 'browser';
+    }
+
     // SPA 相关默认值
-    if (/spa$/.test(config.type || '')) {
+    if (isSPA) {
         process.env.WEBPACK_BUILD_TYPE = 'spa';
         // historyType === 'hashHistory' && serviceWorker.scope === '/'
         if (
@@ -289,12 +298,6 @@ const finalValidate = async (config = {}) => {
         delete config.serverless;
     }
 
-    // historyType 默认值
-    if (!config.historyType) {
-        config.historyType =
-            process.env.WEBPACK_BUILD_TYPE === 'spa' ? 'hash' : 'browser';
-    }
-
     switch (config.target) {
         case 'serverless': {
             if (
@@ -310,7 +313,7 @@ const finalValidate = async (config = {}) => {
             break;
         }
         case 'electron': {
-            if (process.env.WEBPACK_BUILD_TYPE === 'spa') {
+            if (isSPA) {
                 process.env.KOOT_PROJECT_TYPE = 'ReactElectronSPA';
                 process.env.KOOT_BUILD_TARGET = 'electron';
             }

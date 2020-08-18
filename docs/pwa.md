@@ -137,9 +137,17 @@ _Koot.js_ 采用 `workbox-webpack-plugin` 提供的 `InjectManifest` 插件生�
 
 可通过 `cacheFirst` `networkFirst` `networkOnly` 选项扩展缓存策略。
 
-选项需传入 `string[]`，数组的每一个元素为路由地址。
+选项需传入 `Array<string|RegExp|Function>`，数组的每一个元素为路由地址。
 
-如果字符串最后一个字符为 `/`，则表示该条路由为路径。
+-   如果为字符串
+    -   只会分析当前域 (`origin`) 下的 `GET` 请求
+    -   会自动添加前缀字段，多为取分 SPA 的前缀路径
+    -   如果最后一个字符为 `/`，则表示该条路由为路径
+-   如果为正则表达式
+    -   只会分析当前域 (`origin`) 下的 `GET` 请求
+-   如果为函数
+    -   格式为 `({url: URL, request: Request, event: ExtendableEvent}): boolean` (详见 [Workbox 相关文档](https://developers.google.com/web/tools/workbox/modules/workbox-routing#matching_and_handling_in_routes))
+    -   完全使用传入的函数的逻辑，不会做其他多余判断
 
 示例:
 

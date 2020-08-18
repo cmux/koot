@@ -4,7 +4,12 @@ const fs = require('fs');
 const path = require('path');
 
 // const ignore = "koot-@(cli|boilerplate|boilerplate-*)"
-const ignore = 'koot-@(cli|boilerplate-legacy)';
+const ignore = `koot-@(${[
+    'cli',
+    'boilerplate-legacy',
+    'boilerplate-system',
+    'boilerplate-web',
+].join('|')})`;
 
 const runCmd = async (msg, cmd, options = {}) => {
     if (!cmd || typeof cmd === 'object') return await runCmd(cmd, cmd, options);
@@ -16,11 +21,11 @@ const runCmd = async (msg, cmd, options = {}) => {
 
     // spawn
     const chunks = cmd.split(' ');
-    await new Promise(resolve => {
+    await new Promise((resolve) => {
         const child = require('child_process').spawn(chunks.shift(), chunks, {
             stdio: 'inherit',
             shell: true,
-            ...options
+            ...options,
         });
         child.on('close', () => {
             resolve();
@@ -52,7 +57,7 @@ const run = async () => {
         `Install deps for koot-cli`,
         `npm install --no-package-lock"`,
         {
-            cwd: path.resolve(__dirname, './packages/koot-cli')
+            cwd: path.resolve(__dirname, './packages/koot-cli'),
         }
     );
     await runCmd(`Install deps for test projects`, `node test/pre-test.js"`);
@@ -64,4 +69,4 @@ const run = async () => {
     console.log('');
 };
 
-run().catch(err => console.error(err));
+run().catch((err) => console.error(err));

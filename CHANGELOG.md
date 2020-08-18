@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+**koot**
+
+-   优化
+    -   `serviceWorker` 的 `cacheFirst` `networkFirst` `networkOnly` 扩展缓存策略选项，其数组 (`Array`) 内现在可以直接传入正则表达式和用以分析请求的函数，请参见文档 [Service Worker/扩展缓存规则](/pwa?id=扩展缓存规则)
+
 ---
 
 ## [0.14.2] - 2020-08-17
