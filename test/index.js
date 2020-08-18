@@ -41,12 +41,12 @@ const run = async () => {
                 value: jestScript.reactBase,
             },
             {
-                name: 'React - Only SSR',
-                value: jestScript.reactIsomorphic,
-            },
-            {
                 name: 'React - Only SPA',
                 value: jestScript.reactSPA,
+            },
+            {
+                name: 'React - Only SSR',
+                value: jestScript.reactIsomorphic,
             },
             new inquirer.Separator(),
             {
