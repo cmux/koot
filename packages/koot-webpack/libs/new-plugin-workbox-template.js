@@ -117,7 +117,7 @@ const cacheStrategy = isKootAppDevEnv ? 'NetworkOnly' : 'CacheFirst';
 
 cacheRoutes.forEach((route) => {
     // console.log({ route, cacheStrategy });
-    registerRoute(route, new workboxStrategies[cacheStrategy](), 'GET');
+    registerRoute(route, new workboxStrategies[cacheStrategy]());
 });
 
 // Others =====================================================================
@@ -127,18 +127,14 @@ cacheRoutes.forEach((route) => {
     'api/',
     //
 ].forEach((route) => {
-    registerRoute(route, new workboxStrategies.NetworkOnly(), 'GET');
+    registerRoute(route, new workboxStrategies.NetworkOnly());
 });
 [
     ...(self.__koot.networkFirst || []).map((p) => getRoute(p)),
     //
 ].forEach((route) => {
-    registerRoute(route, new workboxStrategies.NetworkFirst(), 'GET');
+    registerRoute(route, new workboxStrategies.NetworkFirst());
 });
 
 // Default ====================================================================
-registerRoute(
-    getRoute(undefined, true),
-    new workboxStrategies.NetworkFirst(),
-    'GET'
-);
+registerRoute(getRoute(undefined, true), new workboxStrategies.NetworkFirst());
