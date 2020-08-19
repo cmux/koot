@@ -3,7 +3,7 @@ import * as fullConfig from '__KOOT_PROJECT_CONFIG_PORTION_OTHER_CLIENT_PATHNAME
 import React from 'react';
 import { hydrate } from 'react-dom';
 // import { syncHistoryWithStore } from 'react-router-redux'
-import routerMatch from 'react-router/lib/match';
+import { match as routerMatch } from 'react-router';
 
 // ----------------------------------------------------------------------------
 

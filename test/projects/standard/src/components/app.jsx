@@ -73,6 +73,7 @@ class App extends React.Component {
 
         const serverStartTime = getStore().__kootTestServerStartTime;
         const pathnameTestImg = __('test_img');
+        // console.log('App.jsx', this.props);
 
         return (
             <React.StrictMode>

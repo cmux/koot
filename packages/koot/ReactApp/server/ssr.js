@@ -1,8 +1,7 @@
 // import 'regenerator-runtime/runtime';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
-import match from 'react-router/lib/match';
-import doUseRouterHistory from 'react-router/lib/useRouterHistory';
+import { match, useRouterHistory as doUseRouterHistory } from 'react-router';
 import createMemoryHistory from 'history/lib/createMemoryHistory';
 import { syncHistoryWithStore } from 'react-router-redux';
 
@@ -62,10 +61,6 @@ async function ssr(ctx) {
     const { redux: reduxConfigRaw = {} } = kootConfig;
     const reduxConfig = await validateReduxConfig(reduxConfigRaw);
 
-    // 生成/清理 Store
-    // console.log('\x1b[36m⚑\x1b[0m' + ' Store created')
-    const Store = initStore(reduxConfig);
-
     // 生成 History
     const historyConfig = {
         basename:
@@ -77,7 +72,11 @@ async function ssr(ctx) {
     const memoryHistory = doUseRouterHistory(() => createMemoryHistory(url))(
         historyConfig
     );
-    /* eslint-enable react-hooks/rules-of-hooks */
+
+    // 生成/清理 Store
+    // console.log('\x1b[36m⚑\x1b[0m' + ' Store created')
+    const Store = initStore(reduxConfig);
+
     /** @type {Object} 已生成的 History 实例 */
     const History = syncHistoryWithStore(memoryHistory, Store);
 

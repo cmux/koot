@@ -1,6 +1,6 @@
 import React from 'react';
 import { Provider } from 'react-redux';
-import RouterContext from 'react-router/lib/RouterContext';
+import { RouterContext } from 'react-router';
 
 // import { idDivStylesContainer, StyleMapContext } from '../../React/styles'
 

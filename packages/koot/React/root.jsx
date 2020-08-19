@@ -1,7 +1,7 @@
 import { hot } from 'react-hot-loader/root';
 import React from 'react';
 import { Provider } from 'react-redux';
-import Router from 'react-router/lib/Router';
+import { Router } from 'react-router';
 
 import { markInited } from './client-update-page-info';
 
@@ -27,7 +27,11 @@ class Root extends React.Component {
         return (
             // <StyleMapContext.Provider value={{}}>
             <Provider store={this.props.store}>
-                <Router history={this.props.history} {...this.props}>
+                <Router
+                    history={this.props.history}
+                    store={this.props.store}
+                    {...this.props}
+                >
                     {this.props.routes}
                 </Router>
             </Provider>
