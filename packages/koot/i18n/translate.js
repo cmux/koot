@@ -1,7 +1,7 @@
 import get from 'lodash/get';
 
 import { get as getSSRContext, resetLocaleId } from '../libs/ssr/context';
-import locales, { setLocales } from './locales';
+import locales, { setLocales, getLocalesObject } from './locales';
 
 export let l = undefined;
 const resetL = () => {
@@ -45,6 +45,10 @@ const doCorrect = () => {
         return;
     }
 
+    if (__CLIENT__ && !__SPA__ && __DEV__) {
+        l = getLocalesObject();
+        return;
+    };
     if (__CLIENT__ && !__SPA__) return;
     if (isSPACorrected && __SPA__) return;
     if (
