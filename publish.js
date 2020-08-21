@@ -63,7 +63,7 @@ const prePublish = async () => {
     } catch (e) {
         if (
             e.message === 'No staged files match any of provided globs.' ||
-            /No staged files found.$/.test(e.message)
+            /No staged files found./.test(e.message)
         )
             complete();
         else console.error(e);
