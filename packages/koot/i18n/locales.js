@@ -12,7 +12,7 @@ const __devLocales = {};
  * - 服务器端: 所有语种语言包合集对象
  * @returns {Object}
  */
-const getLocalesObject = () => {
+export const getLocalesObject = () => {
     if (__SERVER__) {
         if (__DEV__) {
             return __devLocales;

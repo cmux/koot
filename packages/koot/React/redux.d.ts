@@ -3,7 +3,7 @@ import {
     Middleware,
     Reducer,
     StoreEnhancer,
-    ReducersMapObject
+    ReducersMapObject,
 } from 'redux';
 
 //
@@ -24,9 +24,10 @@ type AppEnhancers = Array<StoreEnhancer>;
 
 //
 
-/** 创建 _Redux store_ 时需要用到的内部数据 */
-export interface reduxForCreateStore {
+export interface ReduxForCreateStore {
     readonly reducers: ReducersMapObject;
-    readonly initialState: Object;
+    readonly initialState: Record<string, any>;
     readonly middlewares: Array<Middleware>;
 }
+/** 创建 _Redux store_ 时需要用到的内部数据 */
+export const reduxForCreateStore: ReduxForCreateStore;
