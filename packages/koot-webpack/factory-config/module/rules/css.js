@@ -66,8 +66,9 @@ module.exports = (kootBuildConfig = {}) => {
         // https://github.com/webpack-contrib/less-loader/issues/350
         const {
             lessOptions,
-            prependData,
-            appendData,
+            prependData = {},
+            appendData = {},
+            additionaldata = {},
             sourceMap,
             implementation,
             ...rest
@@ -79,8 +80,11 @@ module.exports = (kootBuildConfig = {}) => {
             loader: 'less-loader',
             options: {
                 lessOptions,
-                prependData,
-                appendData,
+                additionaldata: {
+                    ...prependData,
+                    ...additionaldata,
+                    ...appendData,
+                },
                 sourceMap,
                 implementation,
             },

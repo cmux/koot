@@ -1,16 +1,15 @@
 /**
  * @module kootConfig
- * 
+ *
  * Koot.js 项目配置
- * 
+ *
  * 配置文档请查阅: [https://koot.js.org/#/config]
  */
 
-const fs = require('fs-extra')
-const path = require('path')
+const fs = require('fs-extra');
+const path = require('path');
 
 module.exports = {
-
     /**************************************************************************
      * 项目信息
      *************************************************************************/
@@ -44,9 +43,9 @@ module.exports = {
         '@store': path.resolve('./src/store'),
         '@views': path.resolve('./src/views'),
         '@server': path.resolve('./server'),
-        "~base.less": path.resolve('./src/constants/less/base.less'),
-        "~Assets": path.resolve('./src/assets'),
-        "~/": path.resolve('./src')
+        '~base.less': path.resolve('./src/constants/less/base.less'),
+        '~Assets': path.resolve('./src/assets'),
+        '~/': path.resolve('./src'),
     },
     defines: {
         __QA__: JSON.stringify(false),
@@ -54,14 +53,7 @@ module.exports = {
 
     staticCopyFrom: path.resolve(__dirname, './public'),
 
-
-
-
-
-
-
-
-
+    icon: 'non-exist-file.png',
 
     /**************************************************************************
      * 客户端生命周期
@@ -71,15 +63,6 @@ module.exports = {
     after: './src/services/lifecycle/after',
     onRouterUpdate: './src/services/lifecycle/on-router-update',
     onHistoryUpdate: './src/services/lifecycle/on-history-update',
-
-
-
-
-
-
-
-
-
 
     /**************************************************************************
      * 服务器端设置 & 生命周期
@@ -98,61 +81,43 @@ module.exports = {
         index: 'test.photo.jpg',
         defer: false,
         gzip: true,
-        extensions: false
+        extensions: false,
     },
     serverBefore: './server/lifecycle/before',
     serverAfter: './server/lifecycle/after',
     serverOnRender: './server/lifecycle/on-render',
-
-
-
-
-
-
-
-
-
 
     /**************************************************************************
      * Webpack 相关
      *************************************************************************/
 
     webpackConfig: async () => {
-        const ENV = process.env.WEBPACK_BUILD_ENV
-        if (ENV === 'dev') return await require('./config/webpack/dev')
-        if (ENV === 'prod') return await require('./config/webpack/prod')
-        return {}
+        const ENV = process.env.WEBPACK_BUILD_ENV;
+        if (ENV === 'dev') return await require('./config/webpack/dev');
+        if (ENV === 'prod') return await require('./config/webpack/prod');
+        return {};
     },
     webpackBefore: async (/* kootConfig */) => {
-        console.log('\n\n💢 webpackBefore')
+        console.log('\n\n💢 webpackBefore');
         if (process.env.WEBPACK_BUILD_STAGE === 'client') {
-            const dist = process.env.KOOT_DIST_DIR
-            await fs.remove(path.resolve(dist, 'public'))
-            await fs.remove(path.resolve(dist, 'server'))
+            const dist = process.env.KOOT_DIST_DIR;
+            await fs.remove(path.resolve(dist, 'public'));
+            await fs.remove(path.resolve(dist, 'server'));
         }
-        return
+        return;
     },
     webpackAfter: async () => {
-        console.log('\n\n💢 webpackAfter')
-        return
+        console.log('\n\n💢 webpackAfter');
+        return;
     },
     moduleCssFilenameTest: /\.(component|module)/,
     internalLoaderOptions: {
         'less-loader': {
             modifyVars: {
-                'color-background': '#faa'
+                'color-background': '#faa',
             },
-        }
+        },
     },
-
-
-
-
-
-
-
-
-
 
     /**************************************************************************
      * 开发模式
@@ -170,10 +135,9 @@ module.exports = {
         'koot',
     ],
     devHmr: {
-        multiStep: false
+        multiStep: false,
     },
     devServer: {
-        quiet: true
+        quiet: true,
     },
-
-}
+};

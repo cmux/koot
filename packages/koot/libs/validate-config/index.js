@@ -51,8 +51,14 @@ const __ = require('../../utils/translate');
  * @param {String} [options.tmpDir] 存放临时文件的目录
  * @returns {Object} 打包配置对象
  */
-const validateConfig = async (projectDir = getCwd(), options = {}) => {
+const validateConfig = async (projectDir, options = {}) => {
     const { configFilename = 'koot.config.js', tmpDir } = options;
+
+    if (projectDir) {
+        process.env.KOOT_CWD = projectDir;
+    } else {
+        projectDir = getCwd();
+    }
 
     /** @type {String} 配置文件路径名 */
     const fileConfig =

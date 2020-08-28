@@ -15,7 +15,7 @@
         "url": "https://github.com/cmux/koot.git"
     },
     "engines": {
-        "node": ">=10.13.0"
+        "node": ">=10.16.0"
     },
     "scripts": {
         "start": "koot-start",
@@ -27,7 +27,7 @@
         "up": "yarn upgrade-interactive --latest"
     },
     "dependencies": {
-        "axios": "^0.19.2",
+        "axios": "^0.20.0",
         "bind-event": "^1.1.2",
         "classnames": "^2.2.6",
         "koot": "^0.14.4"
@@ -40,9 +40,9 @@
         "eslint": "^7.7.0",
         "eslint-config-koot": "^1.7.1",
         "husky": "^4.2.5",
-        "lint-staged": "^10.2.11",
+        "lint-staged": "^10.2.13",
         "normalize.css": "^8.0.1",
-        "prettier": "^2.0.5",
+        "prettier": "^2.1.1",
         "prettier-eslint": "^11.0.0",
         "redux-logger": "^3.0.6",
         "svg-url-loader": "^6.0.0",

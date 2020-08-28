@@ -45,10 +45,10 @@
         "url": "https://github.com/cmux/koot-cli/issues"
     },
     "engines": {
-        "node": ">=10.13.0"
+        "node": ">=10.16.0"
     },
     "dependencies": {
-        "axios": "^0.19.2",
+        "axios": "^0.20.0",
         "chalk": "^4.1.0",
         "download-git-repo": "^3.0.2",
         "fs-extra": "^9.0.1",

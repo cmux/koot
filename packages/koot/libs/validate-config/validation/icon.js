@@ -6,6 +6,7 @@ const md5 = require('md5');
 const { keyConfigIcons } = require('../../../defaults/before-build');
 const getTmp = require('../../../libs/get-dir-dev-tmp');
 const getCwd = require('../../../utils/get-cwd');
+const rgbToHex = require('../../../utils/rgb-to-hex');
 
 // ============================================================================
 
@@ -23,6 +24,7 @@ module.exports = async (appConfig, outputDir) => {
         // 'x180': '',
         // 'x192': '',
         // 'x512': '',
+        // dominantColor: '',
     };
     const cwd = getCwd();
     const folder = outputDir || getTmp(undefined, 'icons');
@@ -43,11 +45,18 @@ module.exports = async (appConfig, outputDir) => {
     if (typeof icon === 'string') {
         const file = path.isAbsolute(icon) ? icon : path.resolve(cwd, icon);
         if (!fs.existsSync(file)) return appConfig;
+
+        const image = await sharp(await fs.readFile(file));
+        const { width, height } = await image.metadata();
+        const { dominant } = await image.stats();
+
         // await Promise.all([
         //     await resizeAndSave(file, 180),
         //     await resizeAndSave(file, 192),
         //     await resizeAndSave(file, 512),
         // ]);
+
+        icons.dominantColor = rgbToHex(dominant.r, dominant.g, dominant.b);
 
         // 添加源文件
         {
@@ -59,8 +68,6 @@ module.exports = async (appConfig, outputDir) => {
 
         // 添加方形
         {
-            const image = await sharp(await fs.readFile(file));
-            const { width, height } = await image.metadata();
             const buffer = await image
                 .resize(Math.min(width, height), Math.min(width, height))
                 .toBuffer();
