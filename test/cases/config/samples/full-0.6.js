@@ -15,15 +15,14 @@
 /**
  * @callback cacheSet
  * 缓存存储方法
- * @param {String} url 
- * @param {String} html 
+ * @param {String} url
+ * @param {String} html
  */
 
-const fs = require('fs-extra')
-const path = require('path')
+const fs = require('fs-extra');
+const path = require('path');
 
 module.exports = {
-
     /** @type {String} 项目名称 */
     name: 'Koot Boilerplate',
 
@@ -68,7 +67,7 @@ module.exports = {
         onHistoryUpdate: './src/services/lifecycle/on-history-update',
     },
 
-    /** 
+    /**
      * @type {(Object)} 服务器端端相关配置
      * @namespace
      * @property {Object} [koaStatic] - KOA 静态资源服务器扩展配置
@@ -92,7 +91,7 @@ module.exports = {
             index: 'index.html',
             defer: false,
             gzip: true,
-            extensions: false
+            extensions: false,
         },
         renderCache: {
             maxAge: 10 * 1000,
@@ -106,19 +105,21 @@ module.exports = {
         after: './server/lifecycle/after',
         // onRender: './server/lifecycle/on-render',
         onRender: {
-            beforeDataToStore: './server/lifecycle/on-render-before-data-to-store',
-            afterDataToStore: './server/lifecycle/on-render-after-data-to-store',
+            beforeDataToStore:
+                './server/lifecycle/on-render-before-data-to-store',
+            afterDataToStore:
+                './server/lifecycle/on-render-after-data-to-store',
         },
     },
 
-    /** 
+    /**
      * @type {String} 打包目标目录
      * 默认会在该目录下建立 public 和 server 目录，分别对应 web 服务器和服务器执行代码
      * 注：如果为相对路径，请确保第一个字符为 '.'
      */
     dist: './dist/',
 
-    /** 
+    /**
      * @type {Object} Webpack 相关配置
      * @namespace
      * @property {Object|Function} config Webpack 配置对象或生成方法，可为异步方法
@@ -128,21 +129,21 @@ module.exports = {
      */
     webpack: {
         config: async () => {
-            const ENV = process.env.WEBPACK_BUILD_ENV
-            if (ENV === 'dev') return await require('./config/webpack/dev')
-            if (ENV === 'prod') return await require('./config/webpack/prod')
-            return {}
+            const ENV = process.env.WEBPACK_BUILD_ENV;
+            if (ENV === 'dev') return await require('./config/webpack/dev');
+            if (ENV === 'prod') return await require('./config/webpack/prod');
+            return {};
         },
         beforeBuild: async (/*args*/) => {
             if (process.env.WEBPACK_BUILD_STAGE === 'client') {
-                const dist = process.env.KOOT_DIST_DIR
-                await fs.remove(path.resolve(dist, 'public'))
-                await fs.remove(path.resolve(dist, 'server'))
+                const dist = process.env.KOOT_DIST_DIR;
+                await fs.remove(path.resolve(dist, 'public'));
+                await fs.remove(path.resolve(dist, 'server'));
             }
-            return
+            return;
         },
         afterBuild: async () => {
-            return
+            return;
         },
         defines: {
             __QA__: JSON.stringify(false),
@@ -163,21 +164,21 @@ module.exports = {
         internalLoadersOptions: {
             'less-loader': {
                 modifyVars: {
-                    'base-font-size': '40px'
+                    'base-font-size': '40px',
                 },
-                aaa: 'bbb'
-            }
-        }
+                aaa: 'bbb',
+            },
+        },
     },
 
-    /** 
+    /**
      * @type {Object}
      * 目录或文件别名
-     * 
+     *
      * 在项目内的 JavaScript 和 CSS/LESS/SASS 中的引用方法均可直接使用这些别名，如
      *      - JavaScript: require('@app/create.js')
      *      - LESS:       @import "~base.less"
-     * 
+     *
      * 建议使用绝对路径
      */
     aliases: {
@@ -189,9 +190,9 @@ module.exports = {
         '@store': path.resolve('./src/store'),
         '@views': path.resolve('./src/views'),
         '@server': path.resolve('./server'),
-        "~base.less": path.resolve('./src/constants/less/base.less'),
-        "~Assets": path.resolve('./src/assets'),
-        "~/": path.resolve('./src')
+        '~base.less': path.resolve('./src/constants/less/base.less'),
+        '~Assets': path.resolve('./src/assets'),
+        '~/': path.resolve('./src'),
     },
 
     /**
@@ -206,7 +207,7 @@ module.exports = {
         fileBasename: {
             normal: /\.g/,
             component: /^((?!\.g\.).)*/,
-        }
+        },
     },
 
     /** @type {(Number|Object|String)} 服务器运行端口 */
@@ -230,14 +231,14 @@ module.exports = {
             ['zh', './src/locales/zh.json'],
             ['zh-tw', './src/locales/zh-tw.json'],
             ['en', './src/locales/en.json'],
-        ]
+        ],
     },
 
-    /** 
+    /**
      * @type {(Object|boolean)}
      * PWA相关设置，仅在生产环境(ENV:prod)下生效
      * 默认启用
-     * 
+     *
      * @namespace
      * @property {Boolean} [auto=true] - 是否自动注册 service-worker
      * @property {String} [pathname="/service-worker.js"] - service-worker 文件输出路径
@@ -254,12 +255,10 @@ module.exports = {
         // template: path.resolve('./src/sw-template.js'),
         // initialCache: '/**/*',
         // initialCacheAppend: [// real urls],
-        initialCacheIgonre: [
-            '/dev-*',
-        ]
+        initialCacheIgonre: ['/dev-*'],
     },
 
-    /** 
+    /**
      * @type {Object}
      * 开发模式设置
      * 除了提到的选项，其他所有选项均会扩展 webpack-dev-server 的设置
@@ -274,15 +273,14 @@ module.exports = {
         proxy: {
             '/root': {
                 target: 'http://localhost:8083/',
-                pathRewrite: { '^/root': '' }
-            }
-        }
+                pathRewrite: { '^/root': '' },
+            },
+        },
     },
 
-    /** 
+    /**
      * @type {String}
      * 静态资源文件存放路径，打包时会自动复制该目录下的所有文件到打包目录下，方便直接使用
      */
     staticAssets: path.resolve(__dirname, './public'),
-
-}
+};

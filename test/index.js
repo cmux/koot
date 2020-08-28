@@ -71,6 +71,10 @@ const run = async () => {
                 name: 'Functions: koot/i18n',
                 value: './test/cases/i18n',
             },
+            {
+                name: 'Functions: factory webpack config',
+                value: './test/cases/config/factory-webpack-config',
+            },
             new inquirer.Separator(),
             {
                 name: 'Suite: Build Cache',

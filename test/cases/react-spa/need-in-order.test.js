@@ -149,6 +149,10 @@ const testFull = (dir, configFileName) => {
                         /\(node:([0-9]+?)\) Warning: No such label 'URL' for console.timeEnd\(\)/g,
                         ''
                     )
+                    .replace(
+                        /\*\* \(sharp:([0-9]+?)\): WARNING \*\*: ([0-9:.]+?): jpegsave_buffer: no property named `subsample_mode'/g,
+                        ''
+                    )
                     .replace(/\r/g, '')
                     .replace(/\n/g, '')
             ).toBe('');
