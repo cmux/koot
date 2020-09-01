@@ -1120,16 +1120,6 @@ describe('测试: React 同构项目', () => {
     for (const project of projectsToUse) {
         const { name, dir } = project;
         describe(`项目: ${name}`, () => {
-            testDevelopment(
-                '0.6版配置',
-                dir,
-                'koot.config.old-0.6.js',
-                'isomorphic-config_old_0.6',
-                {
-                    cookiesToStore: false,
-                }
-            );
-            return;
             test(`[prod] 使用 koot-build 命令进行打包`, async () => {
                 await beforeTest(dir);
                 await emptyDist(path.resolve(dir, 'dist'));
