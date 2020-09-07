@@ -25,6 +25,7 @@ const {
     keyConfigIcons,
     // pathnameSockjs
 } = require('koot/defaults/before-build');
+const { LOCALEID, SSRSTATE } = require('koot/defaults/defines-window');
 const { hmrOptions } = require('koot/defaults/webpack-dev-server');
 
 // const {
@@ -195,7 +196,7 @@ module.exports = async (kootConfigForThisBuild = {}) => {
             if (localeId)
                 result.plugins.push(
                     new webpack.DefinePlugin({
-                        __KOOT_LOCALEID__: JSON.stringify(localeId),
+                        [LOCALEID]: JSON.stringify(localeId),
                     })
                 );
             delete result.optimization.minimizer;
@@ -399,7 +400,7 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                                     '\\\\'
                                 )}'\n` +
                                     `import { setLocales } from 'koot/i18n/locales'\n` +
-                                    `window.__KOOT_SSR_STATE__ = {
+                                    `window.${SSRSTATE} = {
                                     localeId: '${localeId}',
                                     locales
                                 };` +

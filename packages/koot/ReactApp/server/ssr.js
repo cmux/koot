@@ -194,11 +194,21 @@ async function ssr(ctx) {
         callback: lifecycle.beforePreRender,
     });
 
+    const rootProps = {
+        store: Store,
+        history: History,
+        localeId: LocaleId,
+        locales: SSR.locales,
+        styles: SSR.styleMap,
+        ctx,
+        ...renderProps,
+    };
+
     // 确定当前访问匹配到的组件
     SSR[needConnectComponents] = true;
     SSR.connectedComponents = [];
     try {
-        renderToString(<RootIsomorphic store={Store} {...renderProps} />);
+        renderToString(<RootIsomorphic {...rootProps} />);
     } catch (e) {}
     SSR[needConnectComponents] = false;
 
@@ -229,9 +239,7 @@ async function ssr(ctx) {
     });
 
     // SSR
-    const reactHtml = renderToString(
-        <RootIsomorphic store={Store} {...renderProps} />
-    );
+    const reactHtml = renderToString(<RootIsomorphic {...rootProps} />);
 
     // console.log({
     //     // __KOOT_SSR__,

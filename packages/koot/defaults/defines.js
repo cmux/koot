@@ -6,5 +6,5 @@ module.exports = {
     // hl 这个参数名是参考了Instargram
     changeLocaleQueryKey: 'hl',
 
-    sessionStoreKey: '__KOOT_SESSION_STORE__'
+    sessionStoreKey: '__KOOT_SESSION_STORE__',
 };

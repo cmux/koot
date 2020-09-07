@@ -29,6 +29,7 @@
 
 // ============================================================================
 
+const { LOCALEID: ClientLocaleId } = require('../../defaults/defines-window');
 const {
     ssrContext: SSRContext,
     koaContext: KOAContext,
@@ -87,7 +88,7 @@ function set(ctx) {
 // ============================================================================
 
 const getLocaleId = () => {
-    if (__CLIENT__) return window.__KOOT_LOCALEID__ || '';
+    if (__CLIENT__) return window[ClientLocaleId] || '';
     if (__SERVER__) {
         if (__DEV__) return global.__KOOT_LOCALEID__;
         return get().LocaleId;

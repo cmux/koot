@@ -3,6 +3,7 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { Router } from 'react-router';
 
+import RootContext, { createValue as createContextValue } from './root-context';
 import { markInited } from './client-update-page-info';
 
 // import { StyleMapContext } from './styles'
@@ -24,17 +25,23 @@ class Root extends React.Component {
         console.error("!! Error caught at Koot's Root component !!", err, info);
     }
     render() {
+        const { store, history, routes, locales, ...props } = this.props;
         return (
             // <StyleMapContext.Provider value={{}}>
-            <Provider store={this.props.store}>
-                <Router
-                    history={this.props.history}
-                    store={this.props.store}
-                    {...this.props}
-                >
-                    {this.props.routes}
-                </Router>
-            </Provider>
+            <RootContext.Provider
+                value={createContextValue({
+                    store,
+                    history,
+                    localeId: props.localeId,
+                    locales,
+                })}
+            >
+                <Provider store={store}>
+                    <Router history={history} store={store} {...props}>
+                        {routes}
+                    </Router>
+                </Provider>
+            </RootContext.Provider>
             // </StyleMapContext.Provider>
         );
     }

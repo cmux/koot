@@ -7,6 +7,7 @@ const path = require('path');
 const chalk = require('chalk');
 
 const { buildManifestFilename } = require('koot/defaults/before-build');
+const { LOCALEID } = require('koot/defaults/defines-window');
 const writeChunkmap = require('koot/utils/write-chunkmap');
 // const getAppType = require('koot/utils/get-app-type');
 const __ = require('koot/utils/translate');
@@ -218,7 +219,7 @@ class SpaTemplatePlugin {
                 })(
                     // eslint-disable-next-line no-eval
                     eval(
-                        `const __KOOT_LOCALEID__ = '${localeId}';\n` +
+                        `const ${LOCALEID} = '${localeId}';\n` +
                             fs.readFileSync(inject, 'utf-8')
                     )
                 );

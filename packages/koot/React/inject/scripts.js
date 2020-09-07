@@ -7,6 +7,11 @@ const {
 } = require('../../defaults/before-build');
 const defaultEntrypoints = require('../../defaults/entrypoints');
 const {
+    LOCALEID,
+    SSRSTATE,
+    SPALOCALEFILEMAP,
+} = require('../../defaults/defines-window');
+const {
     scopeNeedTransformPathname,
 } = require('../../defaults/defines-service-worker');
 const readClientFile = require('../../utils/read-client-file');
@@ -179,16 +184,14 @@ module.exports = ({
     if (isSPAi18nEnabled) {
         return (
             `<script type="text/javascript" ${scriptTagEntryAttributeName}="*run-first-spa-locales">` +
-            `window.__KOOT_SPA_LOCALE_FILE_MAP__ = ${JSON.stringify(
-                localeFileMap
-            )};` +
+            `window.${SPALOCALEFILEMAP} = ${JSON.stringify(localeFileMap)};` +
             (SPAi18nNeedWaiting
                 ? `window.__KOOT_SCRIPTS__ = {` +
                   `addAfterLocale: function(name, src) {` +
                   `if (` +
-                  `window.__KOOT_LOCALEID__ && ` +
-                  `typeof window.__KOOT_SSR_STATE__ === 'object' && ` +
-                  `typeof window.__KOOT_SSR_STATE__.locales === 'object'` +
+                  `window.${LOCALEID} && ` +
+                  `typeof window.${SSRSTATE} === 'object' && ` +
+                  `typeof window.${SSRSTATE}.locales === 'object'` +
                   `) {` +
                   `var fjs = document.getElementsByTagName('script')[0];` +
                   `var js = document.createElement('script');` +
@@ -204,7 +207,7 @@ module.exports = ({
                   `fjs.parentNode.insertBefore(js, fjs);` +
                   `return;` +
                   `}` +
-                  `console.warn(name, src, window.__KOOT_LOCALEID__);` +
+                  `console.warn(name, src, window.${LOCALEID});` +
                   `return setTimeout(() => {` +
                   `window.__KOOT_SCRIPTS__.addAfterLocale(name, src);` +
                   `}, 10);` +
@@ -221,8 +224,8 @@ module.exports = ({
     return (
         `<script type="text/javascript">` +
         (reduxHtml ? reduxHtml : `window.__REDUX_STATE__ = {};`) +
-        `window.__KOOT_LOCALEID__ = "${SSRState.localeId || ''}";` +
-        `window.__KOOT_SSR_STATE__ = ${getSSRStateString(SSRState)};` +
+        `window.${LOCALEID} = "${SSRState.localeId || ''}";` +
+        `window.${SSRSTATE} = ${getSSRStateString(SSRState)};` +
         `</script>` +
         // getClientRunFirstJS(localeId, compilation) +
         injectCache[scriptsRunFirst] +

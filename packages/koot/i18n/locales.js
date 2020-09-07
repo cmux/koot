@@ -1,7 +1,4 @@
-/* global
-    __KOOT_SSR_STATE__:false
-*/
-
+const { SSRSTATE } = require('../defaults/defines-window');
 const { get: getSSRContext } = require('../libs/ssr/context');
 
 const __devLocales = {};
@@ -19,8 +16,8 @@ export const getLocalesObject = () => {
         } else return getSSRContext().locales || false;
     }
     if (__CLIENT__) {
-        if (typeof __KOOT_SSR_STATE__ === 'object') {
-            return __KOOT_SSR_STATE__.locales;
+        if (typeof window[SSRSTATE] === 'object') {
+            return window[SSRSTATE].locales;
         }
     }
     return false;

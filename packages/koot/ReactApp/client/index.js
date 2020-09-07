@@ -21,6 +21,7 @@ import Root from '../../React/root.jsx';
 import { addEventHandlerOnPageUnload as addSessionStoreSaveEventHandlerOnPageUnload } from '../../React/client-session-store';
 
 import i18nRegister from '../../i18n/register/isomorphic.client';
+import { getLocalesObject } from '../../i18n/locales';
 
 let logCountRouterUpdate = 0;
 let logCountHistoryUpdate = 0;
@@ -151,6 +152,8 @@ parseLifecycleMethod(before)
                         // history={thisHistory}
                         history={History}
                         routes={routes}
+                        localeId={LocaleId}
+                        locales={getLocalesObject()}
                         // onError={(...args) => console.log('route onError', ...args)}
                         // onUpdate={(...args) => console.log('route onUpdate', ...args)}
                         {...routerProps}

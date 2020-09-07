@@ -4,8 +4,10 @@ import { connect } from 'react-redux';
 // import PropTypes from 'prop-types'
 import hoistStatics from 'hoist-non-react-statics';
 
-import { getStore } from '../';
-import { needConnectComponents } from '../defaults/defines-server';
+import {
+    needConnectComponents,
+    ssrContext as SSRContext,
+} from '../defaults/defines-server';
 
 //
 
@@ -21,7 +23,8 @@ import {
 import clientUpdatePageInfo from './client-update-page-info';
 import { RESET_CERTAIN_STATE } from './redux';
 import isRenderSafe from './is-render-safe';
-import { get as getSSRContext } from '../libs/ssr/context';
+
+import RootContext from './root-context';
 
 //
 
@@ -31,7 +34,6 @@ let everMounted = false;
 //     title: '',
 //     metas: []
 // }
-const styleMap = {};
 
 /**
  * @type {Number}
@@ -215,19 +217,19 @@ export default (options = {}) => (WrappedComponent) => {
 
         //
 
-        // static contextType = StyleMapContext
-
-        //
-
         clientUpdatePageInfo(to) {
             if (!__CLIENT__) return;
             if (!hasPageinfo) return;
 
             const { title, metas } =
                 typeof to === 'function'
-                    ? doPageinfo(getStore(), this.getRenderProps(), to)
+                    ? doPageinfo(this.context.store, this.getRenderProps(), to)
                     : to ||
-                      doPageinfo(getStore(), this.getRenderProps(), pageinfo);
+                      doPageinfo(
+                          this.context.store,
+                          this.getRenderProps(),
+                          pageinfo
+                      );
 
             clientUpdatePageInfo(title || process.env.KOOT_PROJECT_NAME, metas);
         }
@@ -240,7 +242,10 @@ export default (options = {}) => (WrappedComponent) => {
         state = {
             loaded:
                 typeof dataCheck === 'function'
-                    ? dataCheck(getStore().getState(), this.getRenderProps())
+                    ? dataCheck(
+                          this.context.store.getState(),
+                          this.getRenderProps()
+                      )
                     : undefined,
         };
         mounted = false;
@@ -248,15 +253,15 @@ export default (options = {}) => (WrappedComponent) => {
 
         //
 
-        constructor(props /*, context*/) {
-            super(props /*, context*/);
+        constructor(props, context) {
+            super(props, context);
 
             /**
              * _服务器端_
              * 将组件注册到同构渲染对象中
              */
             if (__SERVER__) {
-                let SSR = getSSRContext();
+                const { [SSRContext]: SSR } = context.ctx;
                 if (SSR[needConnectComponents]) {
                     if (__DEV__) {
                         // console.log(options.name || '__');
@@ -266,7 +271,6 @@ export default (options = {}) => (WrappedComponent) => {
                     if (Array.isArray(SSR.connectedComponents))
                         SSR.connectedComponents.unshift(KootComponent);
                 }
-                SSR = undefined;
             }
 
             if (!isRenderSafe()) return;
@@ -284,14 +288,12 @@ export default (options = {}) => (WrappedComponent) => {
 
         /**
          * 获取 styleMap
-         * - 服务器端: 返回全局常量中的对照表
-         * - 客户端: 直接返回本文件内的 styleMap
+         * - 服务器端: 全局常量中的对照表
+         * - 客户端: 静态对象 styles
          */
         getStyleMap(/*context*/) {
-            // console.log('extend', { LocaleId })
-            if (__SERVER__) return getSSRContext().styleMap;
-            return styleMap;
-            // return context
+            if (__SERVER__) return this.context.styles;
+            return KootReactComponent.styles;
         }
 
         //
@@ -309,14 +311,16 @@ export default (options = {}) => (WrappedComponent) => {
             this.mounted = true;
 
             if (!this.state.loaded && typeof dataFetch !== 'undefined') {
-                doFetchData(getStore(), this.getRenderProps(), dataFetch).then(
-                    () => {
-                        if (!this.mounted) return;
-                        this.setState({
-                            loaded: true,
-                        });
-                    }
-                );
+                doFetchData(
+                    this.context.store,
+                    this.getRenderProps(),
+                    dataFetch
+                ).then(() => {
+                    if (!this.mounted) return;
+                    this.setState({
+                        loaded: true,
+                    });
+                });
             }
 
             this.clientUpdatePageInfo();
@@ -395,6 +399,9 @@ export default (options = {}) => (WrappedComponent) => {
             return <WrappedComponent {...props} />;
         }
     }
+
+    KootReactComponent.contextType = RootContext;
+    KootReactComponent.styles = {};
 
     if (typeof dataFetch !== 'undefined') {
         KootReactComponent.onServerRenderStoreExtend = ({

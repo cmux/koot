@@ -8,6 +8,11 @@ import {
     store as Store,
     getHistory,
 } from '../../index';
+import {
+    LOCALEID,
+    SSRSTATE,
+    SPALOCALEFILEMAP,
+} from '../../defaults/defines-window';
 import { actionUpdate } from '../../React/realtime-location';
 import Root from '../../React/root.jsx';
 import validateRouterConfig from '../../React/validate/router-config';
@@ -30,9 +35,9 @@ let logCountHistoryUpdate = 0;
 const checkSPAI18n = () =>
     Boolean(
         process.env.WEBPACK_BUILD_TYPE === 'spa' &&
-            typeof window.__KOOT_SPA_LOCALE_FILE_MAP__ === 'object' &&
-            window.__KOOT_LOCALEID__ &&
-            typeof window.__KOOT_SSR_STATE__.locales === 'undefined'
+            typeof window[SPALOCALEFILEMAP] === 'object' &&
+            window[LOCALEID] &&
+            typeof window[SSRSTATE].locales === 'undefined'
     );
 
 const run = ({ router, client }) =>
@@ -189,6 +194,8 @@ const run = ({ router, client }) =>
                             store={Store}
                             history={history}
                             routes={routes}
+                            localeId={window[LOCALEID]}
+                            locales={window[SSRSTATE].locales}
                             {...ext}
                         />,
                         document.getElementById('root')
