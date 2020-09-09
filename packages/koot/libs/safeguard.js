@@ -9,6 +9,9 @@ const resolve = require('resolve');
 const log = require('./log');
 const __ = require('../utils/translate');
 const getCwd = require('../utils/get-cwd');
+const getAppType = require('../utils/get-app-type');
+const getAppTypeString = require('../utils/get-app-type-string');
+const envUpdateAppType = require('./env/update-app-type');
 
 /**
  * Safeguard mechanism for koot commands. If error occurs, throw Error
@@ -16,15 +19,29 @@ const getCwd = require('../utils/get-cwd');
  * @void
  */
 const safeguard = async (kootConfig = {}) => {
-    const isElectronApp =
-        kootConfig.target === 'electron' ||
-        process.env.KOOT_BUILD_TARGET === 'electron';
+    // ========================================================================
+    //
+    // Ensure App Type related env
+    //
+    // ========================================================================
+    const appType = await getAppType();
+    if (!appType) envUpdateAppType(getAppTypeString(kootConfig.type));
+    if (!(await getAppType())) {
+        console.log(' ');
+        log('error', __('safeguard.INVALID_CONFIG', { key: 'type' }));
+        console.log(' ');
+        console.log(' ');
+        throw new Error('INVALID_CONFIG:type');
+    }
 
     // ========================================================================
     //
     // Electron
     //
     // ========================================================================
+    const isElectronApp =
+        kootConfig.target === 'electron' ||
+        process.env.KOOT_BUILD_TARGET === 'electron';
     if (isElectronApp) {
         await new Promise((r, reject) => {
             resolve('koot-electron', { basedir: getCwd() }, (err, res) => {
