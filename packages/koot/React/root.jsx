@@ -3,6 +3,7 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { Router } from 'react-router';
 
+import { DEV_NATIVE_CONSOLE } from '../defaults/defines-window';
 import RootContext, { createValue as createContextValue } from './root-context';
 import { markInited } from './client-update-page-info';
 
@@ -11,9 +12,9 @@ import { markInited } from './client-update-page-info';
 class Root extends React.Component {
     componentDidMount() {
         markInited();
-        if (typeof window.__KOOT_DEV_NATIVE_CONSOLE__ === 'object') {
+        if (typeof window[DEV_NATIVE_CONSOLE] === 'object') {
             setTimeout(() => {
-                Object.entries(window.__KOOT_DEV_NATIVE_CONSOLE__).forEach(
+                Object.entries(window[DEV_NATIVE_CONSOLE]).forEach(
                     ([key, value]) => {
                         window.console[key] = value;
                     }

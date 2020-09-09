@@ -1,5 +1,5 @@
 import { store, localeId as LocaleId } from '../../';
-import { SSRSTATE } from '../../defaults/defines-window';
+import { REDUXSTATE, SSRSTATE } from '../../defaults/defines-window';
 import { I18N_INIT } from '../action-types';
 import setCookie from '../set-cookie';
 
@@ -21,10 +21,10 @@ export default (o = {}) => {
         )
             localeId = window[SSRSTATE].localeId;
         else if (
-            typeof __REDUX_STATE__ === 'object' &&
-            typeof __REDUX_STATE__.localeId !== 'undefined'
+            typeof window[REDUXSTATE] === 'object' &&
+            typeof window[REDUXSTATE].localeId !== 'undefined'
         )
-            localeId = __REDUX_STATE__.localeId;
+            localeId = window[REDUXSTATE].localeId;
     }
 
     if (typeof localeId === 'undefined') return;

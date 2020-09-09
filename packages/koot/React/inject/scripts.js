@@ -8,6 +8,7 @@ const {
 const defaultEntrypoints = require('../../defaults/entrypoints');
 const {
     LOCALEID,
+    REDUXSTATE,
     SSRSTATE,
     SPALOCALEFILEMAP,
 } = require('../../defaults/defines-window');
@@ -223,7 +224,7 @@ module.exports = ({
 
     return (
         `<script type="text/javascript">` +
-        (reduxHtml ? reduxHtml : `window.__REDUX_STATE__ = {};`) +
+        (reduxHtml ? reduxHtml : `window.${REDUXSTATE} = {};`) +
         `window.${LOCALEID} = "${SSRState.localeId || ''}";` +
         `window.${SSRSTATE} = ${getSSRStateString(SSRState)};` +
         `</script>` +

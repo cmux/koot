@@ -1,5 +1,6 @@
 import {
     LOCALEID,
+    REDUXSTATE,
     SSRSTATE,
     SPALOCALEFILEMAP,
 } from '../../defaults/defines-window';
@@ -8,7 +9,7 @@ import getLang from '../../i18n/spa/get-lang';
 
 (() => {
     window[LOCALEID] = parseLocaleId(getLang()) || '';
-    window.__REDUX_STATE__ = { localeId: window[LOCALEID] };
+    window[REDUXSTATE] = { localeId: window[LOCALEID] };
     window[SSRSTATE] = {
         localeId: window[LOCALEID],
         locales: undefined,

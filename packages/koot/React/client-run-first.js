@@ -1,17 +1,18 @@
 import 'regenerator-runtime/runtime';
 import { syncHistoryWithStore } from 'react-router-redux';
 import * as portionConfig from '__KOOT_PROJECT_CONFIG_PORTION_CLIENT_PATHNAME__';
+import { STORE, HISTORY, DEV_NATIVE_CONSOLE } from '../defaults/defines-window';
 import validateReduxConfig from './validate/redux-config';
 import History from './history';
 
-window.__KOOT_STORE__ = ((reduxConfig = {}) => {
+window[STORE] = ((reduxConfig = {}) => {
     if (typeof reduxConfig.factoryStore === 'function')
         return reduxConfig.factoryStore();
     if (typeof reduxConfig.store === 'object') return reduxConfig.store;
     return {};
 })(validateReduxConfig(portionConfig.redux));
 
-window.__KOOT_HISTORY__ = syncHistoryWithStore(History, window.__KOOT_STORE__);
+window[HISTORY] = syncHistoryWithStore(History, window[STORE]);
 
 // console filter
 // https://stackoverflow.com/questions/6659312/is-there-a-way-to-filter-output-in-google-chromes-console
@@ -24,7 +25,7 @@ if (__DEV__) {
             info: window.console.info,
             error: window.console.error,
         };
-        window.__KOOT_DEV_NATIVE_CONSOLE__ = nativeConsole;
+        window[DEV_NATIVE_CONSOLE] = nativeConsole;
 
         const lastLog = {
             WDS: {

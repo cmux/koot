@@ -29,7 +29,11 @@
 
 // ============================================================================
 
-const { LOCALEID: ClientLocaleId } = require('../../defaults/defines-window');
+const {
+    LOCALEID: ClientLocaleId,
+    STORE: ClientStore,
+    HISTORY: ClientHistory,
+} = require('../../defaults/defines-window');
 const {
     ssrContext: SSRContext,
     koaContext: KOAContext,
@@ -108,7 +112,7 @@ const resetLocaleId = (newValue) => {
 // ============================================================================
 
 const getStore = () => {
-    if (__CLIENT__) return window.__KOOT_STORE__;
+    if (__CLIENT__) return window[ClientStore];
     if (__SERVER__) {
         if (__DEV__) return global.__KOOT_STORE__;
         return get().Store;
@@ -123,7 +127,7 @@ const resetStore = (newValue) => {
 // ============================================================================
 
 const getHistory = () => {
-    if (__CLIENT__) return window.__KOOT_HISTORY__;
+    if (__CLIENT__) return window[ClientHistory];
     if (__SERVER__) {
         if (__DEV__) return global.__KOOT_HISTORY__;
         return get().History;

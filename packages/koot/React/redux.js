@@ -7,16 +7,21 @@ import {
 } from 'redux';
 import { routerReducer, routerMiddleware } from 'react-router-redux';
 import thunk from 'redux-thunk';
+
+import { REDUXSTATE } from '../defaults/defines-window';
+
 import {
     reducer as realtimeLocationReducer,
     REALTIME_LOCATION_REDUCER_NAME,
 } from './realtime-location';
 import { SERVER_REDUCER_NAME, serverReducer } from '../ReactApp/server/redux';
+
 import {
     reducerLocaleId as i18nReducerLocaleId,
     // reducerLocales as i18nReducerLocales,
 } from '../i18n/redux';
 import isI18nEnabled from '../i18n/is-enabled';
+
 // import history from "__KOOT_CLIENT_REQUIRE_HISTORY__"
 import history from './history';
 import { load as loadSessionStore } from './client-session-store';
@@ -62,7 +67,7 @@ if (isI18nEnabled()) {
  * @type {Object}
  */
 export const initialState = (() => {
-    if (__CLIENT__) return merge(window.__REDUX_STATE__, loadSessionStore());
+    if (__CLIENT__) return merge(window[REDUXSTATE], loadSessionStore());
     if (__SERVER__) return {};
 })();
 

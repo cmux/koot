@@ -2,6 +2,7 @@ import {
     ssrContext as SSRContext,
     koaContext as KOAContext,
 } from './defaults/defines-server';
+import { CACHE } from './defaults/defines-window';
 import isRenderSafe from './React/is-render-safe';
 import {
     get as getSSRContext,
@@ -45,9 +46,8 @@ export { getLocaleId, resetLocaleId, resetStore, resetHistory };
 export const getCache = (localeId) => {
     if (!isRenderSafe()) return {};
     if (__CLIENT__) {
-        if (typeof window.__KOOT_CACHE__ !== 'object')
-            window.__KOOT_CACHE__ = {};
-        return window.__KOOT_CACHE__;
+        if (typeof window[CACHE] !== 'object') window[CACHE] = {};
+        return window[CACHE];
     }
     if (__SERVER__) {
         const cache = getSSRContext().globalCache;
@@ -84,7 +84,4 @@ if (__DEV__) {
     global.__KOOT_SSR_SET_CTX__ = (v) => {
         global[KOAContext] = v;
     };
-    // if (__CLIENT__) {
-    //     window.__DEV_KOOT_GET_STYLES__ = getStyles;
-    // }
 }
