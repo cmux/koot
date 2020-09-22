@@ -59,7 +59,9 @@ module.exports = async (appConfig, outputDir) => {
 
         // 添加方形
         {
-            const image = await sharp(await fs.readFile(file));
+            const image = await sharp(await fs.readFile(file)).catch((err) =>
+                console.warn(err.message)
+            );
             const { width, height } = await image.metadata();
             const buffer = await image
                 .resize(Math.min(width, height), Math.min(width, height))
