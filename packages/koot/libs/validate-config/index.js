@@ -270,17 +270,6 @@ const finalValidate = async (config = {}) => {
     // SPA 相关默认值
     if (/spa$/.test(config.type || '')) {
         process.env.WEBPACK_BUILD_TYPE = 'spa';
-        // historyType === 'hashHistory' && serviceWorker.scope === '/'
-        if (
-            /^hash/.test(config.historyType) &&
-            (typeof config.serviceWorker !== 'object' ||
-                !config.serviceWorker.scope ||
-                config.serviceWorker.scope === '/')
-        ) {
-            if (typeof config.serviceWorker !== 'object')
-                config.serviceWorker = {};
-            config.serviceWorker.scope = scopeNeedTransformPathname;
-        }
     }
 
     // 配置项: serverless
@@ -293,6 +282,18 @@ const finalValidate = async (config = {}) => {
     if (!config.historyType) {
         config.historyType =
             process.env.WEBPACK_BUILD_TYPE === 'spa' ? 'hash' : 'browser';
+    }
+
+    // Service Worker scope 默认值
+    // 需要在 historyType 最终确定后进行
+    if (
+        /^hash/.test(config.historyType) &&
+        (typeof config.serviceWorker !== 'object' ||
+            !config.serviceWorker.scope ||
+            config.serviceWorker.scope === '/')
+    ) {
+        if (typeof config.serviceWorker !== 'object') config.serviceWorker = {};
+        config.serviceWorker.scope = scopeNeedTransformPathname;
     }
 
     switch (config.target) {
