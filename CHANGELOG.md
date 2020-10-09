@@ -2,6 +2,13 @@
 
 ---
 
+## [0.14.9] - 2020-09-22
+
+**koot**
+
+-   优化
+    -   针对使用 `hashHistory` 的 SPA 项目，现在确保默认的 _Service Worker_ 作用域 (Scope) 为当前路径 (`location.pathname`)
+
 ## [0.14.8] - 2020-09-22
 
 **koot**
