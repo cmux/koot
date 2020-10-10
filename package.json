@@ -78,6 +78,10 @@
             "eslint --fix",
             "prettier --write"
         ],
+        "*.{ts,tsx}": [
+            "eslint --fix",
+            "prettier --write"
+        ],
         "*.{xxxxxx}": [
             "tsc --noEmit"
         ],
