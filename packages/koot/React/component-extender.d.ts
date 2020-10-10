@@ -9,7 +9,7 @@ import {
     ComponentClass,
     Component,
     ComponentState,
-    RefObject
+    RefObject,
 } from 'react';
 import { Store, Dispatch } from 'redux';
 import {
@@ -17,7 +17,7 @@ import {
     MapDispatchToPropsNonObject,
     MapDispatchToPropsParam,
     MergeProps,
-    Options as ReactReduxOptions
+    Options as ReactReduxOptions,
 } from 'react-redux';
 
 // ============================================================================
@@ -53,6 +53,7 @@ class HOC extends Component {}
 export function extend<P = {}, S = ComponentState>(options: {
     // connect?: Connect;
     connect?:
+        | true
         | MapStateToPropsParam<any, P, S>
         | [null | undefined | MapStateToPropsParam<any, P, S>]
         | [

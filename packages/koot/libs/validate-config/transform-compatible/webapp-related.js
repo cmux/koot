@@ -88,7 +88,7 @@ module.exports = async (config) => {
     // ========================================================================
     if (typeof config.icon !== 'string' && typeof config.icon !== 'object')
         delete config.icon;
-    else await validateIcon(config);
+    else await validateIcon(config).catch((err) => console.warn(err.message));
 
     // ========================================================================
     // 默认值处理: webApp

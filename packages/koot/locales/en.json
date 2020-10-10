@@ -7,6 +7,7 @@
         "ReactElectronSPA": "React SPA (Electron)"
     },
     "safeguard": {
+        "INVALID_CONFIG": "Invalid config: ${key}",
         "NEED_PACKAGE_KOOT_ELECTRON": "Missing dependency: 'koot-electron'. Please install using 'npm install' or 'yarn add' command."
     },
     "validateConfig": {
