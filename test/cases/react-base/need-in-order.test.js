@@ -137,7 +137,7 @@ const doTest = async (port, dist, settings = {}) => {
             ...defaultViewport,
             deviceScaleFactor: scale,
         });
-        await page.waitFor(200);
+        await page.waitForTimeout(200);
     };
 
     const context = await browser.createIncognitoBrowserContext();

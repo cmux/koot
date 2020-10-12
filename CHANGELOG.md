@@ -1,13 +1,22 @@
 ## [Unreleased]
 
+**注意事项**
+
+-   _Koot.js_ 暂不支持 _PostCSS **8**_，请勿手动升级
+    -   需要等待 `cssnano` 依赖包更新支持
+
 **koot**
 
 -   **重大改动**
     -   _Node.js_ 最低版本要求提升到 `10.16.0`
     -   更新依赖包 **major** 版本号
-        -   `typescript` -> _^4.0.2_
+        -   `koa-convert` -> _^2.0.0_
+        -   `koa-helmet` -> _^6.0.0_
+        -   `typescript` -> _^4.0.3_
     -   移除以下依赖包，现在不会默认安装。如有使用需要，请在项目中自行安装
         -   `get-image-colors`
+        -   `isomorphic-fetch`
+        -   `yargs`
 -   优化
     -   `serviceWorker` 的 `cacheFirst` `networkFirst` `networkOnly` 扩展缓存策略选项，其数组 (`Array`) 内现在可以直接传入正则表达式和用以分析请求的函数，请参见文档 [Service Worker/扩展缓存规则](/pwa?id=扩展缓存规则)
 
@@ -15,15 +24,18 @@
 
 -   **重大改动**
     -   更新依赖包 **major** 版本号
-        -   `electron` -> _^10.1.0_
+        -   `electron` -> _^10.1.3_
 
 **koot-webpack**
 
 -   **重大改动**
     -   更新依赖包 **major** 版本号
-        -   `compression-webpack-plugin` -> _^5.0.1_
+        -   `compression-webpack-plugin` -> _^6.0.3_
         -   `less-loader` -> _^7.0.0_
+        -   `mini-css-extract-plugin` -> _^1.0.0_
         -   `sass-loader` -> _^10.0.1_
+        -   `style-loader` -> _^2.0.0_
+        -   `thread-loader` -> _^3.0.0_
 
 ---
 

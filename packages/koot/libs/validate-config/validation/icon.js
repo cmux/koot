@@ -42,48 +42,52 @@ module.exports = async (appConfig, outputDir) => {
     await fs.ensureDir(folder);
     await fs.emptyDir(folder);
 
-    if (typeof icon === 'string') {
-        const file = path.isAbsolute(icon) ? icon : path.resolve(cwd, icon);
-        if (!fs.existsSync(file)) return appConfig;
+    try {
+        if (typeof icon === 'string') {
+            const file = path.isAbsolute(icon) ? icon : path.resolve(cwd, icon);
+            if (!fs.existsSync(file)) return appConfig;
 
-        const image = await sharp(await fs.readFile(file)).catch((err) =>
-            console.warn(err.message)
-        );
-        const { width, height } = await image.metadata();
-        const { dominant } = await image.stats();
+            const image = await sharp(await fs.readFile(file));
+            const { width, height } = await image.metadata();
+            const { dominant } = await image.stats();
 
-        // await Promise.all([
-        //     await resizeAndSave(file, 180),
-        //     await resizeAndSave(file, 192),
-        //     await resizeAndSave(file, 512),
-        // ]);
+            // await Promise.all([
+            //     await resizeAndSave(file, 180),
+            //     await resizeAndSave(file, 192),
+            //     await resizeAndSave(file, 512),
+            // ]);
 
-        icons.dominantColor = rgbToHex(dominant.r, dominant.g, dominant.b);
+            icons.dominantColor = rgbToHex(dominant.r, dominant.g, dominant.b);
 
-        // 添加源文件
-        {
-            const filename = md5(await fs.readFile(file)) + path.extname(file);
-            const target = path.resolve(folder, filename);
-            await fs.copy(file, target);
-            icons.original = target;
+            // 添加源文件
+            {
+                const filename =
+                    md5(await fs.readFile(file)) + path.extname(file);
+                const target = path.resolve(folder, filename);
+                await fs.copy(file, target);
+                icons.original = target;
+            }
+
+            // 添加方形
+            {
+                const buffer = await image
+                    .resize(Math.min(width, height), Math.min(width, height))
+                    .toBuffer();
+                const filename = md5(buffer) + path.extname(file);
+                const target = path.resolve(folder, filename);
+                await fs.writeFile(target, buffer);
+                icons.square = target;
+            }
+        } else if (typeof icon === 'object') {
+        } else {
+            return appConfig;
         }
 
-        // 添加方形
-        {
-            const buffer = await image
-                .resize(Math.min(width, height), Math.min(width, height))
-                .toBuffer();
-            const filename = md5(buffer) + path.extname(file);
-            const target = path.resolve(folder, filename);
-            await fs.writeFile(target, buffer);
-            icons.square = target;
-        }
-    } else if (typeof icon === 'object') {
-    } else {
+        appConfig[keyConfigIcons] = icons;
+
+        return appConfig;
+    } catch (err) {
+        console.warn(err.message);
         return appConfig;
     }
-
-    appConfig[keyConfigIcons] = icons;
-
-    return appConfig;
 };

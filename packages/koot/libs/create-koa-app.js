@@ -9,7 +9,11 @@ const removeSlashes = require('./koa-middlewares/remove-slashes');
  */
 const create = () => {
     const app = new Koa();
-    app.use(helmet());
+    app.use(
+        helmet({
+            contentSecurityPolicy: false,
+        })
+    );
     app.use(removeSlashes);
 
     return app;

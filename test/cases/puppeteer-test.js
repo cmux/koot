@@ -383,7 +383,11 @@ const i18n = async ({
             const pageTitle = await page.evaluate(
                 () => document.querySelector('title').innerText
             );
-            expect(new RegExp(`^${infos.title}`).test(pageTitle)).toBe(true);
+            const testTitle = new RegExp(`^${infos.title}`).test(pageTitle);
+            if (!testTitle) {
+                console.warn('title not match', infos.title, pageTitle);
+            }
+            expect(testTitle).toBe(true);
 
             // 测试页面简介正确
             const pageDescription = await page.evaluate(

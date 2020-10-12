@@ -470,7 +470,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
             // await page.click('a[href$="/static"]');
             await Promise.all([
                 page
-                    .waitFor(`#main > [data-koot-test-page="static"]`, {
+                    .waitForSelector(`#main > [data-koot-test-page="static"]`, {
                         timeout: 5000,
                     })
                     .catch((e) => {
@@ -802,7 +802,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
                 waitUntil: 'networkidle0',
             });
             await Promise.all([
-                page.waitFor(`[data-koot-test-page="page-ts"]`),
+                page.waitForSelector(`[data-koot-test-page="page-ts"]`),
                 page.click('a[href$="/ts"]'),
             ]);
 
@@ -848,7 +848,9 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
                 waitUntil: 'networkidle0',
             });
             await Promise.all([
-                page.waitFor(`[data-koot-test-page="page-test-pageinfo-deep"]`),
+                page.waitForSelector(
+                    `[data-koot-test-page="page-test-pageinfo-deep"]`
+                ),
                 // page.click('a[href$="/test-pageinfo-deep"]'),
                 page.evaluate(() => {
                     document
