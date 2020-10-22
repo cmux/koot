@@ -6,7 +6,14 @@ const transformFixDefaultExport = require('./transform-fix-default-export');
 
 // ============================================================================
 
-const appendPresetOptions = (preset, appendOptions = {}, defaultOptions = {}) =>
+/**
+ * 修改 Preset 对象的选项
+ * - 因为 Babel 不允许直接修改 Preset 的值，实际为根据传入的 Preset 生成一个全新的对象并返回
+ * @param {ConfigItem} preset
+ * @param {Object} appendOptions
+ * @param {Object} defaultOptions
+ */
+const modifyPresetOptions = (preset, appendOptions = {}, defaultOptions = {}) =>
     createConfigItem(
         [
             preset.file.request,
@@ -132,14 +139,10 @@ module.exports = require('babel-loader').custom((babel) => {
                             '@babel/plugin-transform-async-to-generator'
                         );
                     }
-                    newPresets[index] = appendPresetOptions(
-                        preset,
-                        undefined,
-                        options
-                    );
+                    newPresets[index] = modifyPresetOptions(preset, options);
                 }
                 if (/^@babel\/preset-react$/.test(preset.file.request)) {
-                    newPresets[index] = appendPresetOptions(preset, undefined, {
+                    newPresets[index] = modifyPresetOptions(preset, {
                         runtime: 'automatic',
                     });
                 }
