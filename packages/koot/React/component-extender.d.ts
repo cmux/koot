@@ -50,7 +50,10 @@ interface ExtendComponent<P, S> {
 }
 class HOC extends Component {}
 
-export function extend<P = {}, S = ComponentState>(options: {
+export function extend<
+    P = Record<string, unknown>,
+    S = ComponentState
+>(options: {
     // connect?: Connect;
     connect?:
         | true

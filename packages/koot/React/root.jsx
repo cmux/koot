@@ -1,5 +1,5 @@
 import { hot } from 'react-hot-loader/root';
-import React from 'react';
+import { Component } from 'react';
 import { Provider } from 'react-redux';
 import { Router } from 'react-router';
 
@@ -9,7 +9,7 @@ import { markInited } from './client-update-page-info';
 
 // import { StyleMapContext } from './styles'
 
-class Root extends React.Component {
+class Root extends Component {
     componentDidMount() {
         markInited();
         if (typeof window[DEV_NATIVE_CONSOLE] === 'object') {

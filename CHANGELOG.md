@@ -12,11 +12,16 @@
     -   更新依赖包 **major** 版本号
         -   `koa-convert` -> _^2.0.0_
         -   `koa-helmet` -> _^6.0.0_
+        -   `react` -> _^17.0.0_
+        -   `react-dom` -> _^17.0.0_
         -   `typescript` -> _^4.0.3_
     -   移除以下依赖包，现在不会默认安装。如有使用需要，请在项目中自行安装
         -   `get-image-colors`
         -   `isomorphic-fetch`
         -   `yargs`
+    -   _Koot.js_ 现已支持全新的 _JSX_ 转译引擎，现在开发 _React_ 组件时不要需要引用 `react`
+        -   已有项目在使用 `koot-cli` 升级时，会运行一次 _React_ 官方提供的 `codemod` 脚本，尝试修改所有 JSX 文件
+        -   相关信息请查阅 [React 官方文档](https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html)
 -   优化
     -   `serviceWorker` 的 `cacheFirst` `networkFirst` `networkOnly` 扩展缓存策略选项，其数组 (`Array`) 内现在可以直接传入正则表达式和用以分析请求的函数，请参见文档 [Service Worker/扩展缓存规则](/pwa?id=扩展缓存规则)
 
@@ -30,9 +35,10 @@
 
 -   **重大改动**
     -   更新依赖包 **major** 版本号
+        -   `@hot-loader/react-dom` -> _^17.0.0_
         -   `compression-webpack-plugin` -> _^6.0.3_
         -   `less-loader` -> _^7.0.0_
-        -   `mini-css-extract-plugin` -> _^1.0.0_
+        -   `mini-css-extract-plugin` -> _^1.1.1_
         -   `sass-loader` -> _^10.0.1_
         -   `style-loader` -> _^2.0.0_
         -   `thread-loader` -> _^3.0.0_

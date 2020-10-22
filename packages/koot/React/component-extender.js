@@ -1,4 +1,4 @@
-import React from 'react';
+import { Component, forwardRef } from 'react';
 import { connect } from 'react-redux';
 // import { hot } from 'react-hot-loader'
 // import PropTypes from 'prop-types'
@@ -205,7 +205,7 @@ export default (options = {}) => (WrappedComponent) => {
             : undefined;
 
     // 装饰组件
-    class KootReactComponent extends React.Component {
+    class KootReactComponent extends Component {
         static onServerRenderHtmlExtend = ({ store, renderProps = {} }) => {
             const { title, metas } = doPageinfo(
                 store,
@@ -449,7 +449,7 @@ export default (options = {}) => (WrappedComponent) => {
     }
 
     // return KootComponent;
-    return React.forwardRef((props, ref) => {
+    return forwardRef((props, ref) => {
         if (props.forwardedRef)
             return (
                 <KootComponent

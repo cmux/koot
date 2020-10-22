@@ -9,7 +9,12 @@ module.exports = function (api) {
                     modules: false,
                 },
             ],
-            '@babel/preset-react',
+            [
+                '@babel/preset-react',
+                {
+                    runtime: 'automatic',
+                },
+            ],
             '@babel/preset-flow',
         ],
         compact: 'auto',

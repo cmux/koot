@@ -1,7 +1,26 @@
 const fs = require('fs-extra');
 const path = require('path');
+const { createConfigItem } = require('@babel/core/lib/config/item');
 const getCwd = require('koot/utils/get-cwd');
 const transformFixDefaultExport = require('./transform-fix-default-export');
+
+// ============================================================================
+
+const appendPresetOptions = (preset, appendOptions = {}, defaultOptions = {}) =>
+    createConfigItem(
+        [
+            preset.file.request,
+            {
+                ...defaultOptions,
+                ...(preset.options || {}),
+                ...appendOptions,
+            },
+        ],
+        {
+            dirname: preset.dirname,
+            type: 'preset',
+        }
+    );
 
 /**
  * 检查 Plugin 对象的请求文件的名字
@@ -24,6 +43,8 @@ const testPluginName = (pluginObject, regExp) => {
         regExp.test(pluginObject.file.request)
     );
 };
+
+// ============================================================================
 
 module.exports = require('babel-loader').custom((babel) => {
     // function myPlugin() {
@@ -91,34 +112,36 @@ module.exports = require('babel-loader').custom((babel) => {
                           }
                         : {},
                 ]);
-                // console.log(newPresets);
             }
             newPresets.forEach((preset, index) => {
-                if (
-                    typeof preset.file === 'object' &&
-                    /^@babel\/preset-env$/.test(preset.file.request)
-                ) {
-                    const thisPreset = newPresets[index];
-                    if (typeof thisPreset.options !== 'object')
-                        thisPreset.options = {};
-                    thisPreset.options.modules = false;
-                    thisPreset.options.exclude = [
-                        // '@babel/plugin-transform-regenerator',
-                        // '@babel/plugin-transform-async-to-generator'
-                    ];
+                if (!typeof preset.file === 'object') return;
+                if (/^@babel\/preset-env$/.test(preset.file.request)) {
+                    const options = {
+                        modules: false,
+                        exclude: [...((preset.options || {}).exclude || [])],
+                    };
                     if (isServer || __spaTemplateInject) {
-                        thisPreset.options.targets = {
+                        options.targets = {
                             node: true,
                         };
-                        thisPreset.options.ignoreBrowserslistConfig = true;
-                        thisPreset.options.exclude.push(
+                        options.ignoreBrowserslistConfig = true;
+                        options.exclude.push(
                             '@babel/plugin-transform-regenerator'
                         );
-                        thisPreset.options.exclude.push(
+                        options.exclude.push(
                             '@babel/plugin-transform-async-to-generator'
                         );
                     }
-                    // console.log(__spaTemplateInject, thisPreset);
+                    newPresets[index] = appendPresetOptions(
+                        preset,
+                        undefined,
+                        options
+                    );
+                }
+                if (/^@babel\/preset-react$/.test(preset.file.request)) {
+                    newPresets[index] = appendPresetOptions(preset, undefined, {
+                        runtime: 'automatic',
+                    });
                 }
             });
 
