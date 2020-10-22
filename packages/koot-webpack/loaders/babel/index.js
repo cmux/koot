@@ -122,29 +122,38 @@ module.exports = require('babel-loader').custom((babel) => {
             }
             newPresets.forEach((preset, index) => {
                 if (!typeof preset.file === 'object') return;
-                if (/^@babel\/preset-env$/.test(preset.file.request)) {
-                    const options = {
-                        modules: false,
-                        exclude: [...((preset.options || {}).exclude || [])],
-                    };
-                    if (isServer || __spaTemplateInject) {
-                        options.targets = {
-                            node: true,
+                try {
+                    if (/^@babel\/preset-env$/.test(preset.file.request)) {
+                        const options = {
+                            modules: false,
+                            exclude: [
+                                ...((preset.options || {}).exclude || []),
+                            ],
                         };
-                        options.ignoreBrowserslistConfig = true;
-                        options.exclude.push(
-                            '@babel/plugin-transform-regenerator'
-                        );
-                        options.exclude.push(
-                            '@babel/plugin-transform-async-to-generator'
+                        if (isServer || __spaTemplateInject) {
+                            options.targets = {
+                                node: true,
+                            };
+                            options.ignoreBrowserslistConfig = true;
+                            options.exclude.push(
+                                '@babel/plugin-transform-regenerator'
+                            );
+                            options.exclude.push(
+                                '@babel/plugin-transform-async-to-generator'
+                            );
+                        }
+                        newPresets[index] = modifyPresetOptions(
+                            preset,
+                            options
                         );
                     }
-                    newPresets[index] = modifyPresetOptions(preset, options);
-                }
-                if (/^@babel\/preset-react$/.test(preset.file.request)) {
-                    newPresets[index] = modifyPresetOptions(preset, {
-                        runtime: 'automatic',
-                    });
+                    if (/^@babel\/preset-react$/.test(preset.file.request)) {
+                        newPresets[index] = modifyPresetOptions(preset, {
+                            runtime: 'automatic',
+                        });
+                    }
+                } catch (e) {
+                    return;
                 }
             });
 

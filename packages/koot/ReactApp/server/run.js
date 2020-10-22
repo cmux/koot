@@ -28,7 +28,7 @@ import middlewareStatic from './middlewares/static';
 
 // require('@babel/register')
 // require('@babel/polyfill')
-require('isomorphic-fetch');
+// require('isomorphic-fetch');
 const fs = require('fs-extra');
 // const path = require('path');
 // const chalk = require('chalk');
