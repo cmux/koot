@@ -1,10 +1,10 @@
 import { hot } from 'react-hot-loader';
-import React from 'react';
+import { forwardRef } from 'react';
 
 export default (theModule) => (WrappedComponent) => {
     if (!WrappedComponent.__KOOT_HOT__) {
         const Hot = hot(theModule)(WrappedComponent);
-        WrappedComponent.__KOOT_HOT__ = React.forwardRef((props, ref) => {
+        WrappedComponent.__KOOT_HOT__ = forwardRef((props, ref) => {
             if (ref) return <Hot {...props} forwardedRef={ref} />;
             return <Hot {...props} />;
         });

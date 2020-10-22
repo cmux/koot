@@ -1,4 +1,4 @@
-import React from 'react';
+import { Component } from 'react';
 import { extend } from 'koot';
 
 import {
@@ -25,7 +25,7 @@ const check = (props) => {
         ]);
     },
 })
-class TS extends React.Component {
+class TS extends Component {
     // componentDidMount() {
     //     console.log('componentDidMount', this.props)
     //     if (check(this.props)) return

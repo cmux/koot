@@ -1,6 +1,5 @@
 import * as fullConfig from '__KOOT_PROJECT_CONFIG_PORTION_OTHER_CLIENT_PATHNAME__';
 
-import React from 'react';
 import { hydrate } from 'react-dom';
 // import { syncHistoryWithStore } from 'react-router-redux'
 import { match as routerMatch } from 'react-router';

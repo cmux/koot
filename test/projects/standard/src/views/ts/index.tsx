@@ -1,10 +1,10 @@
-import React from 'react';
+import { ComponentClass } from 'react';
 import { extend } from 'koot';
 
 import svg from '@assets/typescript.svg';
 import styles from './index.module.less';
 
-const TSComponentExample: React.ComponentClass = extend({
+const TSComponentExample: ComponentClass = extend({
     pageinfo: (/*state, renderProps*/) => ({
         title: `TypeScript - ${__('title')}`,
         metas: [{ description: 'TypeScript' }, { 'page-name': 'ts' }],

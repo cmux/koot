@@ -1,4 +1,3 @@
-import React from 'react';
 import { extend } from 'koot';
 import Button from 'biz-components/components/button';
 

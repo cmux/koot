@@ -1,5 +1,4 @@
 // import 'regenerator-runtime/runtime';
-import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { match, useRouterHistory as doUseRouterHistory } from 'react-router';
 import createMemoryHistory from 'history/lib/createMemoryHistory';

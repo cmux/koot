@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC, Component, ReactNode } from 'react';
 import { extend, ExtendedProps } from 'koot';
 import { Link } from 'react-router';
 
@@ -53,7 +53,7 @@ const TSFunctionalComponent = extend<ComponentProps>({
 
 export default TSFunctionalComponent;
 
-export const UseTSFunctionalComponent: React.FC = (): JSX.Element => (
+export const UseTSFunctionalComponent: FC = (): JSX.Element => (
     <TSFunctionalComponent customProps="B" />
 );
 
@@ -66,13 +66,13 @@ export const UseTSFunctionalComponent: React.FC = (): JSX.Element => (
     }),
     styles,
 })
-class TSComponentClass extends React.Component<ExtendedProps & ComponentProps> {
+class TSComponentClass extends Component<ExtendedProps & ComponentProps> {
     testProperty(): number {
         let a = 1;
         a++;
         return a;
     }
-    render(): React.ReactNode {
+    render(): ReactNode {
         return (
             <div
                 className={this.props.className}
@@ -97,6 +97,6 @@ class TSComponentClass extends React.Component<ExtendedProps & ComponentProps> {
 
 export { TSComponentClass };
 
-export const UseTSComponentClass: React.FC = (): JSX.Element => (
+export const UseTSComponentClass: FC = (): JSX.Element => (
     <TSComponentClass customProps="B" />
 );

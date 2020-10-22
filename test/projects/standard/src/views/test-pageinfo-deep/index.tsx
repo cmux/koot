@@ -1,7 +1,7 @@
-import React from 'react';
+import { ComponentClass } from 'react';
 import { extend } from 'koot';
 
-const TSComponentExample: React.ComponentClass = extend<{}>({
+const TSComponentExample: ComponentClass = extend<{}>({
     pageinfo: (/*state, renderProps*/) => ({
         title: `test-pageinfo-deep - ${__('title')}`,
         metas: [

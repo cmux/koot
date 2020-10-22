@@ -18,7 +18,6 @@ import Root from '../../React/root.jsx';
 import validateRouterConfig from '../../React/validate/router-config';
 import { addEventHandlerOnPageUnload as addSessionStoreSaveEventHandlerOnPageUnload } from '../../React/client-session-store';
 
-const React = require('react');
 // import {
 //     reducerLocaleId as i18nReducerLocaleId,
 //     reducerLocales as i18nReducerLocales,

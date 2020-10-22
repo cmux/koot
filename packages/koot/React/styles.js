@@ -1,10 +1,10 @@
-// import React from 'react'
+// import { Component, createContext } from 'react'
 
 /**
  * 生成 StyleMapContext
  */
 // export const createStyleMapContext = () => {
-//     return React.createContext({})
+//     return createContext({})
 // }
 
 // export let StyleMapContext = createStyleMapContext()
@@ -15,7 +15,7 @@
  */
 export const checkAndWriteIntoHead = (styleMap = {}) => {
     if (typeof styleMap !== 'object') return;
-    Object.keys(styleMap).forEach(wrapper => {
+    Object.keys(styleMap).forEach((wrapper) => {
         const style = styleMap[wrapper];
         const el = document.querySelector(
             `style[${__STYLE_TAG_MODULE_ATTR_NAME__}=${wrapper}]`
@@ -57,14 +57,14 @@ export const append = (styleMap = {}, style) => {
     // const styleMap = getStyleMap(passedMap)
 
     if (Array.isArray(style))
-        return style.forEach(theStyle => append(styleMap, theStyle));
+        return style.forEach((theStyle) => append(styleMap, theStyle));
 
     if (typeof style !== 'object') return;
 
     if (!styleMap[style.wrapper]) {
         styleMap[style.wrapper] = {
             css: style.css,
-            count: 1
+            count: 1,
         };
     } else {
         styleMap[style.wrapper].count++;
@@ -84,7 +84,7 @@ export const remove = (styleMap = {}, style) => {
     // const styleMap = getStyleMap(passedMap)
 
     if (Array.isArray(style))
-        return style.forEach(theStyle => remove(theStyle));
+        return style.forEach((theStyle) => remove(theStyle));
 
     if (typeof style !== 'object') return;
 
@@ -121,7 +121,7 @@ export const remove = (styleMap = {}, style) => {
 // /**
 //  * React 组件: 样式表内容容器
 //  */
-// export class StylesContainer extends React.Component {
+// export class StylesContainer extends Component {
 //     static contextType = StyleMapContext
 //     render() {
 //         return (

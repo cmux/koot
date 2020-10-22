@@ -1,4 +1,3 @@
-import React from 'react';
 import { extend } from 'koot';
 
 import photo from '@assets/photo.jpg';
@@ -8,11 +7,11 @@ export default extend({
         title: `${__('pages.static.title')} - ${__('title')}`,
         metas: [
             { description: __('pages.static.description') },
-            { 'page-name': 'static' }
-        ]
+            { 'page-name': 'static' },
+        ],
     }),
     styles: require('./styles.less'),
-    name: 'PageStatic'
+    name: 'PageStatic',
 })(({ className, params: { noComponentGiven } }) => {
     // console.log(A)
     return (

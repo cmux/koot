@@ -1,4 +1,4 @@
-import React from 'react';
+import { Component, StrictMode } from 'react';
 import { Link } from 'react-router';
 import {
     getStore,
@@ -36,7 +36,7 @@ let stateShowed = false;
     styles,
     name: 'App',
 })
-class App extends React.Component {
+class App extends Component {
     componentDidMount() {
         if (__DEV__) {
             console.log('redux store', getStore());
@@ -76,7 +76,7 @@ class App extends React.Component {
         // console.log('App.jsx', this.props);
 
         return (
-            <React.StrictMode>
+            <StrictMode>
                 <div id="app" className={this.props.className}>
                     <Nav />
                     <Main children={this.props.children} />
@@ -109,7 +109,7 @@ class App extends React.Component {
                         </span>
                     )}
                 </div>
-            </React.StrictMode>
+            </StrictMode>
         );
     }
 }

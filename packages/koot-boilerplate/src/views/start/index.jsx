@@ -1,4 +1,3 @@
-import React from 'react';
 import { extend } from 'koot';
 import { Link } from 'react-router';
 
