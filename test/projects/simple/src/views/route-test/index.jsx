@@ -1,4 +1,3 @@
-import React from 'react';
 import { extend } from 'koot';
 
 if (__CLIENT__) window.__KOOT_TEST_ROUTE__ = {};
@@ -10,12 +9,12 @@ const PageTestRoute = extend({
             window.__KOOT_TEST_ROUTE__.propsInConnect = ownProps;
         }
         return {
-            testId: ownProps.params.testId
+            testId: ownProps.params.testId,
         };
     },
     pageinfo: {
-        title: 'route test'
-    }
+        title: 'route test',
+    },
 })(({ testId, updatePageinfo, ...props }) => {
     if (__CLIENT__) window.__KOOT_TEST_ROUTE__.props = props;
     return (
@@ -28,7 +27,7 @@ const PageTestRoute = extend({
                     onClick={() =>
                         updatePageinfo({
                             title: 'TEST ROUTE',
-                            metas: [{ 'test-route': 'test-route' }]
+                            metas: [{ 'test-route': 'test-route' }],
                         })
                     }
                 >

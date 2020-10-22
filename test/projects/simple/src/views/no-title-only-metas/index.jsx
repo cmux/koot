@@ -1,4 +1,4 @@
-import React from 'react';
+import { memo } from 'react';
 import { extend } from 'koot';
 
 import styles from './index.module.less';
@@ -14,7 +14,7 @@ const NoTitleOnlyMetas = extend({
     },
     styles,
 })(
-    React.memo(
+    memo(
         ({
             className,
             children,

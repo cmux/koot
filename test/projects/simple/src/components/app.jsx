@@ -1,4 +1,4 @@
-import React from 'react';
+import { Component, StrictMode } from 'react';
 import { store, history, extend } from 'koot';
 import clientGetStyles from 'koot/utils/client-get-styles';
 
@@ -19,7 +19,7 @@ let stateShowed = false;
     },
     styles,
 })
-class App extends React.Component {
+class App extends Component {
     componentDidMount() {
         if (__DEV__) {
             console.log('redux store', store);
@@ -38,7 +38,7 @@ class App extends React.Component {
     }
     render() {
         return (
-            <React.StrictMode>
+            <StrictMode>
                 <div
                     id="app"
                     className={this.props.className}
@@ -49,7 +49,7 @@ class App extends React.Component {
                     <Nav />
                     <Main children={this.props.children} />
                 </div>
-            </React.StrictMode>
+            </StrictMode>
         );
     }
 }

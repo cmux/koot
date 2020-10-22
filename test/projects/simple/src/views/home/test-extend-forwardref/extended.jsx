@@ -1,4 +1,4 @@
-import React from 'react';
+import { memo } from 'react';
 import { extend } from 'koot';
 
 import styles from './extended.module.less';
@@ -9,7 +9,7 @@ const Extended = extend({
     connect: true,
     styles,
 })(
-    React.memo(({ forwardedRef, className, ...props }) => {
+    memo(({ forwardedRef, className, ...props }) => {
         if (__CLIENT__) console.warn('forwardedRef', forwardedRef, props);
         return (
             <div
