@@ -105,16 +105,16 @@ module.exports = async (app) => {
         // 添加 serverless
         if (app.serverMode === 'serverless') {
             content = content.replace(
-                /\n(\s*).*?更多选项请查阅文档.+?\n+.+?\n.+?客户端生命周期/gm,
-                (str, $1) => `${$1}target: 'serverless',\n` + str
+                /\n(\s*)\/[*]+\n(\s*)\* 路由 & 客户端历史记录/gm,
+                (str, $1) => `${$1}target: 'serverless',` + str
             );
         }
 
         // 添加 electron
         if (app.spaMode === 'electron') {
             content = content.replace(
-                /\n(\s*).*?更多选项请查阅文档.+?\n+.+?\n.+?客户端生命周期/gm,
-                (str, $1) => `${$1}target: 'electron',\n` + str
+                /\n(\s*)\/[*]+\n(\s*)\* 路由 & 客户端历史记录/gm,
+                (str, $1) => `${$1}target: 'electron',` + str
             );
         }
 
