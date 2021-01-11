@@ -99,6 +99,21 @@ module.exports = {
             ],
         },
     }),
+    internalLoaderOptions: {
+        'less-loader': {
+            lessOptions: {
+                /**************************************************************
+                 * Koot.js 在 0.15 之后采用 Less.js v4，其默认的数值计算行为方式有变化。
+                 * 以下设置将其强制改回 Less.js v3 的默认方式。同时这也是我们团队内部更加习惯的方式。
+                 *
+                 * 如果想使用 Less.js v4 的默认方式，只需要将这一行配置移除。
+                 *
+                 * 有关详情，请查阅 Less.js 官方文档: http://lesscss.org/usage/#less-options-math
+                 *************************************************************/
+                math: 'always',
+            },
+        },
+    },
     staticCopyFrom: path.resolve(__dirname, './src/assets/public'),
 
     /**************************************************************************
