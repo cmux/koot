@@ -74,6 +74,13 @@ module.exports = {
         },
         defaultModuleCssFilenameTest,
     ],
+    internalLoaderOptions: {
+        'less-loader': {
+            lessOptions: {
+                math: 'always',
+            },
+        },
+    },
 
     // serverPackAll: true,
     // serverPackAll: false,

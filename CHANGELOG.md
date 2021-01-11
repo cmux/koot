@@ -10,8 +10,10 @@
 -   **重大改动**
     -   _Node.js_ 最低版本要求提升到 `10.16.0`
     -   更新依赖包 **major** 版本号
+        -   `execa` -> _^5.0.0_
         -   `koa-convert` -> _^2.0.0_
         -   `koa-helmet` -> _^6.0.0_
+        -   `koa-router` -> _^10.0.0_
         -   `react` -> _^17.0.0_
         -   `react-dom` -> _^17.0.0_
         -   `typescript` -> _^4.0.3_
@@ -37,9 +39,13 @@
     -   更新依赖包 **major** 版本号
         -   `@hot-loader/react-dom` -> _^17.0.0_
         -   `compression-webpack-plugin` -> _^6.0.3_
-        -   `less-loader` -> _^7.0.0_
-        -   `mini-css-extract-plugin` -> _^1.1.1_
-        -   `sass-loader` -> _^10.0.1_
+        -   `css-loader` -> _^5.0.1_
+        -   `less` -> _^4.1.0_
+        -   `less-loader` -> _^7.2.1_
+        -   `mini-css-extract-plugin` -> _^1.3.3_
+        -   `postcss` -> _^8.2.4_
+        -   `postcss-loader` -> _^4.1.0_
+        -   `sass-loader` -> _^10.1.0_
         -   `style-loader` -> _^2.0.0_
         -   `thread-loader` -> _^3.0.0_
 

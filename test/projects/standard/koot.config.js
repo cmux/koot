@@ -134,6 +134,9 @@ module.exports = {
     ],
     internalLoaderOptions: {
         'less-loader': {
+            lessOptions: {
+                math: 'always',
+            },
             modifyVars: {
                 'base-font-size': '40px',
             },
