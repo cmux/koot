@@ -1,13 +1,9 @@
 ## [Unreleased]
 
-**注意事项**
-
--   _Koot.js_ 暂不支持 _PostCSS **8**_，请勿手动升级
-    -   需要等待 `cssnano` 依赖包更新支持
-
 **koot**
 
 -   **重大改动**
+    -   此次更新包含诸多重大改动，对于已有项目的升级，请参阅[升级指南](https://koot.js.org/#/migration/0.14-to-0.15)
     -   _Node.js_ 最低版本要求提升到 `10.16.0`
     -   更新依赖包 **major** 版本号
         -   `execa` -> _^5.0.0_
@@ -31,11 +27,12 @@
 
 -   **重大改动**
     -   更新依赖包 **major** 版本号
-        -   `electron` -> _^10.1.3_
+        -   `electron` -> _^11.1.1_
 
 **koot-webpack**
 
 -   **重大改动**
+    -   此次更新包含诸多重大改动，对于已有项目的升级，请参阅[升级指南](https://koot.js.org/#/migration/0.14-to-0.15)
     -   更新依赖包 **major** 版本号
         -   `@hot-loader/react-dom` -> _^17.0.0_
         -   `compression-webpack-plugin` -> _^6.0.3_
