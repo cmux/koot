@@ -12,6 +12,8 @@ beforeAll(async () => {
     // await require('./before')();
 });
 
+const dotFilesIgnore = ['.git', '.cz-config.js'];
+
 describe('测试: 下载模板', () => {
     test(`向已存在的目录中新建项目`, async () => {
         let error;
@@ -22,12 +24,13 @@ describe('测试: 下载模板', () => {
         const readmeContent = `KOOT CLI TEST`;
         const junk = path.resolve(target, 'junk.junk');
         const junkContent = `KOOT CLI JUNK`;
+
         const dotFiles = (
             await glob(
                 path.relative(dirOriginal, path.resolve(dirOriginal, '.*'))
             )
         )
-            .filter((filename) => filename !== '.git')
+            .filter((filename) => dotFilesIgnore.every((v) => filename !== v))
             .map((filename) => path.resolve(target, filename));
 
         await fs.ensureDir(target);
@@ -48,7 +51,10 @@ describe('测试: 下载模板', () => {
         const readmeNewContent = await fs.readFile(readme, 'utf-8');
         const junkExists = fs.existsSync(junk);
         const junkNewContent = await fs.readFile(junk, 'utf-8');
-        const dotFilesExist = dotFiles.every((file) => fs.existsSync(file));
+        const dotFilesExist = dotFiles.map((file) => ({
+            file,
+            exists: fs.existsSync(file),
+        }));
 
         await fs.remove(target);
 
@@ -57,6 +63,6 @@ describe('测试: 下载模板', () => {
         expect(readmeNewContent).not.toBe(readmeContent);
         expect(junkExists).toBe(true);
         expect(junkNewContent).toBe(junkContent);
-        expect(dotFilesExist).toBe(true);
+        expect(dotFilesExist.every((v) => v.exists === true)).toBe(true);
     });
 });

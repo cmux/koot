@@ -27,7 +27,7 @@
 
 -   **重大改动**
     -   更新依赖包 **major** 版本号
-        -   `electron` -> _^11.1.1_
+        -   `electron` -> _^11.2.0_
 
 **koot-webpack**
 
@@ -42,7 +42,7 @@
         -   `mini-css-extract-plugin` -> _^1.3.3_
         -   `postcss` -> _^8.2.4_
         -   `postcss-loader` -> _^4.1.0_
-        -   `sass-loader` -> _^10.1.0_
+        -   `sass-loader` -> _^10.1.1_
         -   `style-loader` -> _^2.0.0_
         -   `thread-loader` -> _^3.0.0_
 
