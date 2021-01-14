@@ -205,10 +205,11 @@ module.exports = async (kootBuildConfig = {}) => {
     } else {
         if (typeof result.stats !== 'object') result.stats = {};
         Object.assign(result.stats, {
+            preset: 'minimal',
             // copied from `'minimal'`
             all: false,
             modules: true,
-            maxModules: 0,
+            // maxModules: 0,
             errors: true,
             warnings: true,
             // our additional options

@@ -1,9 +1,8 @@
 const fs = require('fs-extra');
 const path = require('path');
 const webpack = require('webpack');
-const findCacheDir = require('find-cache-dir');
-// const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
-const HardSourceWebpackPlugin = require('@diablohu/hard-source-webpack-plugin'); // unofficial patch
+// const findCacheDir = require('find-cache-dir');
+// const HardSourceWebpackPlugin = require('@diablohu/hard-source-webpack-plugin'); // unofficial patch
 
 const {
     keyConfigBuildDll,
@@ -12,15 +11,16 @@ const {
     keyConfigWebpackSPATemplateInject,
     keyConfigWebpackSPAServer,
     WEBPACK_OUTPUT_PATH,
-    buildManifestFilename,
+    // buildManifestFilename,
 } = require('koot/defaults/before-build');
-const {
-    KOOT_BUILD_START_TIME,
-    KOOT_DEV_START_TIME,
-} = require('koot/defaults/envs');
+// const {
+//     KOOT_BUILD_START_TIME,
+//     KOOT_DEV_START_TIME,
+// } = require('koot/defaults/envs');
 const getDirDevDll = require('koot/libs/get-dir-dev-dll');
 
 const transformClientDevDll = require('./transform-config-client-dev-dll');
+const transformModifyForWebpack5 = require('./transform/modify-for-webpack-version/5.0');
 const forWebpackVersion = require('../libs/for-webpack-version');
 
 /**
@@ -106,18 +106,7 @@ const validate = (config, kootConfigForThisBuild, index = 0) => {
         // config.node.process = false;
     });
 
-    // 针对 Webpack 5 处理
-    forWebpackVersion('>= 5.0.0', () => {
-        // 确保 `mode` 存在
-        if (typeof config.mode === 'undefined') {
-            config.mode = 'production';
-        }
-        // 移除已删除的选项
-        if (typeof config.node === 'object') {
-            delete config.node.Buffer;
-            delete config.node.process;
-        }
-    });
+    transformModifyForWebpack5(config);
 
     // 修改本次打包的 Koot 完整配置对象
     if (
@@ -186,14 +175,20 @@ const validatePlugins = (config, kootConfigForThisBuild = {}) => {
         (plugin) => typeof plugin !== 'undefined' && plugin !== null
     );
 
-    // 添加缓存插件
-    // const useHardSourceCache = false;
     if (
         // useHardSourceCache &&
         ENV !== 'dev' &&
         process.env.WEBPACK_BUILD_STAGE === 'client' &&
         !config[keyConfigWebpackSPATemplateInject]
     ) {
+        if (typeof config.cache === 'undefined') {
+            config.cache = {
+                type: 'filesystem',
+            };
+        }
+        /*
+    // 添加缓存插件
+    // const useHardSourceCache = false;
         config.plugins.push(
             new HardSourceWebpackPlugin({
                 cacheDirectory: findCacheDir({
@@ -265,6 +260,7 @@ const validatePlugins = (config, kootConfigForThisBuild = {}) => {
         config.plugins.push(
             new HardSourceWebpackPlugin.ExcludeModulePlugin(ignores)
         );
+    */
     }
 };
 

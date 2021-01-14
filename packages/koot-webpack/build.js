@@ -555,10 +555,11 @@ module.exports = async (kootConfig = {}) => {
                 //     version: false,
                 // },
                 stats: {
+                    preset: 'minimal',
                     // copied from `'minimal'`
                     all: false,
                     modules: true,
-                    maxModules: 0,
+                    // maxModules: 0,
                     errors: true,
                     warnings: true,
                     // our additional options
@@ -834,6 +835,8 @@ module.exports = async (kootConfig = {}) => {
     // 服务端开发环境
     if (STAGE === 'server' && ENV === 'dev' && !createDll) {
         await beforeEachBuild();
+        // const compiler = webpack(webpackConfig);
+        // compiler.watch();
         await webpack(webpackConfig, async (err, stats) => {
             buildingComplete();
 
@@ -893,7 +896,7 @@ module.exports = async (kootConfig = {}) => {
         try {
             await beforeEachBuild();
             await new Promise((resolve, reject) => {
-                webpack(webpackConfig, async (err, stats) => {
+                webpack(webpackConfig, (err, stats) => {
                     if (err && !stats) {
                         buildingComplete();
                         reject(
@@ -934,13 +937,44 @@ module.exports = async (kootConfig = {}) => {
                     buildingComplete();
                     if (!quietMode) console.log(' ');
 
-                    if (!analyze && !quietMode)
+                    if (!analyze && !quietMode) {
+                        console.log(stats.toJson());
+
+                        let time = 0;
+                        const outputPaths = [];
+                        const files = [];
+
+                        function parseStats(stats) {
+                            if (
+                                Array.isArray(stats.children) &&
+                                stats.children.length
+                            ) {
+                                for (const child of stats.children) {
+                                    parseStats(child);
+                                }
+                                return;
+                            }
+                            time += stats.time;
+                            if (!outputPaths.includes(stats.outputPath))
+                                outputPaths.push(stats.outputPath);
+                        }
+                        parseStats(stats.toJson());
+
+                        console.log(chalk.green('  成功输出文件'));
                         console.log(
-                            stats.toString({
-                                chunks: false, // Makes the build much quieter
-                                colors: true,
-                            })
+                            `    总计用时 ${chalk.cyanBright(`${time}ms`)}`
                         );
+                        console.log(`    输出路径`);
+                        for (const p of outputPaths) {
+                            console.log(`      ${chalk.cyanBright(p)}`);
+                        }
+                        // console.log(
+                        //     stats.toString({
+                        //         chunks: false, // Makes the build much quieter
+                        //         colors: true,
+                        //     })
+                        // );
+                    }
 
                     resolve();
                 });

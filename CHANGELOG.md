@@ -35,16 +35,21 @@
     -   此次更新包含诸多重大改动，对于已有项目的升级，请参阅[升级指南](https://koot.js.org/#/migration/0.14-to-0.15)
     -   更新依赖包 **major** 版本号
         -   `@hot-loader/react-dom` -> _^17.0.0_
-        -   `compression-webpack-plugin` -> _^6.0.3_
+        -   `compression-webpack-plugin` -> _^7.1.2_
+        -   `copy-webpack-plugin` -> _^7.0.0_
         -   `css-loader` -> _^5.0.1_
         -   `less` -> _^4.1.0_
         -   `less-loader` -> _^7.2.1_
-        -   `mini-css-extract-plugin` -> _^1.3.3_
+        -   `mini-css-extract-plugin` -> _^1.3.4_
         -   `postcss` -> _^8.2.4_
         -   `postcss-loader` -> _^4.1.0_
         -   `sass-loader` -> _^10.1.1_
         -   `style-loader` -> _^2.0.0_
         -   `thread-loader` -> _^3.0.0_
+        -   `webpack` -> _^5.14.0_
+        -   `webpack-bundle-analyzer` -> _^4.3.0_
+        -   `webpack-dev-middleware` -> _^4.0.4_
+        -   `workbox-webpack-plugin` -> _^6.0.2_
 
 ---
 

@@ -1,8 +1,9 @@
 module.exports = {
     extends: ['@commitlint/config-conventional'],
     rules: {
+        'type-case': [0],
         'type-enum': [
-            0,
+            2,
             'always',
             [
                 'feat',
@@ -13,6 +14,7 @@ module.exports = {
                 'test',
                 'revert',
                 'deps',
+                'WIP',
             ],
         ],
     },

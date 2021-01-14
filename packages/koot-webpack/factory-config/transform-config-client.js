@@ -469,7 +469,7 @@ module.exports = async (kootConfigForThisBuild = {}) => {
 
             // 生产环境专用
             if (ENV === 'prod' && exportGzip) {
-                result.plugins.push(new CompressionPlugin({ cache: true }));
+                result.plugins.push(new CompressionPlugin(/*{ cache: true }*/));
             }
         }
 

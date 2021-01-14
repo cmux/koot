@@ -5,7 +5,7 @@ const resolve = require('enhanced-resolve');
 const {
     keyConfigBuildDll,
     filenameDll,
-    filenameDllManifest
+    filenameDllManifest,
 } = require('koot/defaults/before-build');
 const defaultModules = require('koot/defaults/dev-dll-modules');
 const getDirDevDll = require('koot/libs/get-dir-dev-dll');
@@ -21,7 +21,7 @@ const transformClientDevDll = async (
     const {
         [keyConfigBuildDll]: createDll = false,
         // dist,
-        devDll: webpackDll = []
+        devDll: webpackDll = [],
     } = kootConfigForThisBuild;
 
     if (!createDll) return config;
@@ -41,7 +41,7 @@ const transformClientDevDll = async (
     /** @type {string[]} 依据本地安装的依赖包最终过滤的 DLL 内容列表 */
     const library = [];
     for (const m of rawList) {
-        await new Promise(r => {
+        await new Promise((r) => {
             resolve(getCwd(), m, (err, result) => {
                 if (!err && typeof result === 'string' && !!result)
                     library.push(m);
@@ -51,15 +51,15 @@ const transformClientDevDll = async (
     }
 
     result.entry = {
-        library
+        library,
     };
 
     // console.log('result.entry.library', result.entry.library)
     result.output = {
         filename: filenameDll,
-        library: '[name]_[hash]',
+        library: '[name]_[contenthash]',
         // path: STAGE === 'server' ? path.resolve(dist, 'server') : dist
-        path: getDirDevDll()
+        path: getDirDevDll(),
     };
     process.env.KOOT_DEV_DLL_FILE_CLIENT = path.resolve(
         getDirDevDll(undefined, 'client'),
@@ -73,7 +73,7 @@ const transformClientDevDll = async (
         new webpack.DllPlugin({
             // context: path.resolve(__dirname, '../../../../'),
             path: path.resolve(result.output.path, filenameDllManifest),
-            name: '[name]_[hash]'
+            name: '[name]_[contenthash]',
         })
     );
     return result;

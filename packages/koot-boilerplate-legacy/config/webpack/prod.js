@@ -1,7 +1,7 @@
-const factoryConfig = require('./_factory')
+const factoryConfig = require('./_factory');
 
 module.exports = (async () => {
-    const defaults = await factoryConfig()
+    const defaults = await factoryConfig();
 
     // 针对生产环境的定制配置
     const config = {
@@ -36,14 +36,14 @@ module.exports = (async () => {
             splitChunks: {
                 cacheGroups: {
                     commons: {
-                        name: "commons",
-                        chunks: "initial",
-                        minChunks: 2
-                    }
-                }
-            }
-        }
-    }
+                        name: 'commons',
+                        chunks: 'initial',
+                        minChunks: 2,
+                    },
+                },
+            },
+        },
+    };
 
-    return Object.assign({}, defaults, config)
-})()
+    return Object.assign({}, defaults, config);
+})();

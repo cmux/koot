@@ -3,7 +3,7 @@ const common = require('../common');
 
 const factoryConfig = async (
     {
-        pathRun
+        pathRun,
         // CLIENT_DEV_PORT,
     },
     kootConfig = {}
@@ -15,22 +15,22 @@ const factoryConfig = async (
         devtool: 'source-map',
         target: 'async-node',
         node: {
-            __dirname: true
+            __dirname: true,
         },
-        watch: false,
+        // watch: false,
         output: {
             filename: '[name].js',
             chunkFilename: 'chunk.[chunkhash].js',
-            path: `${pathRun}/${common.outputPath}/server`
+            path: `${pathRun}/${common.outputPath}/server`,
             // publicPath: `/[need_set_in_app:__webpack_public_path__]/`,
             // publicPath: `/`,
         },
         plugins: [
             new webpack.DefinePlugin({
-                __SPA__: false
-            })
+                __SPA__: false,
+            }),
         ],
-        externals: common.filterExternalsModules(kootConfig)
+        externals: common.filterExternalsModules(kootConfig),
     };
 };
 

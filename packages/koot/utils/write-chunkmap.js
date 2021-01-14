@@ -52,16 +52,16 @@ module.exports = async (
     if (typeof compilation !== 'object') return {};
 
     const stats = compilation.getStats().toJson();
+    const { outputPath } = stats;
 
     const chunkmap = {};
     const entryChunks = {};
 
     // const dirRelative = path.relative(getDistPath(), stats.compilation.outputOptions.path).replace(`\\`, '/')
     const dirRelative = path
-        .relative(getDistPath(), stats.outputPath)
+        .relative(getDistPath(), outputPath)
         .replace(/\\/g, '/');
     const filepathname = getChunkmapPath();
-    const { outputPath } = stats;
 
     if (pathPublic) {
         const relative = path
@@ -83,16 +83,17 @@ module.exports = async (
     fs.ensureFileSync(filepathname);
 
     const getFilePathname = (file) => {
-        if (process.env.WEBPACK_BUILD_ENV === 'dev') return file;
+        const filename = typeof file === 'object' ? file.name : file;
+        if (process.env.WEBPACK_BUILD_ENV === 'dev') return filename;
         // const r = path
         //     .relative(
         //         path.resolve(getDistPath(), '..'),
         //         path.resolve(dirname, file)
         //     )
         //     .replace(/\\/g, '/');
-        // console.log('\n', getDistPath(), stats.outputPath, {dirname, file, r})
+        // console.log('\n', getDistPath(), outputPath, {dirname, file, r})
         return path
-            .relative(getDistPath(), path.resolve(stats.outputPath, file))
+            .relative(getDistPath(), path.resolve(outputPath, filename))
             .replace(/\\/g, '/');
         // return r
     };

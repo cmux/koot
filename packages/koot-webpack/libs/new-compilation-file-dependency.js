@@ -19,7 +19,7 @@ module.exports = (compilation, filename, content = '') => {
     }
     compilation.assets[filename] = {
         source: () => content,
-        size: () => content.length
+        size: () => content.length,
     };
 
     return compilation;

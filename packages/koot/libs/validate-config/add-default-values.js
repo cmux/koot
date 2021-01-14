@@ -78,7 +78,7 @@ module.exports = async (projectDir, config) => {
                     splitChunks: {
                         cacheGroups: {
                             commons: {
-                                name: 'commons',
+                                idHint: 'commons',
                                 chunks: 'initial',
                                 minChunks: 2,
                             },

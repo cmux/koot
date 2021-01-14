@@ -5,8 +5,8 @@
 // } = require('webpack/lib/javascript/JavascriptParserHelpers');
 const {
     addParsedVariableToModule,
-    toConstantDependency
-} = require('webpack/lib/ParserHelpers');
+    toConstantDependency,
+} = require('webpack/lib/javascript/JavascriptParserHelpers');
 const ConstDependency = require('webpack/lib/dependencies/ConstDependency');
 const NullFactory = require('webpack/lib/NullFactory');
 // const getCwd = require('koot/utils/get-cwd');
@@ -33,7 +33,7 @@ class I18nPlugin {
         stage = process.env.WEBPACK_BUILD_STAGE,
         functionName = '__',
         localeId,
-        localeFile
+        localeFile,
     }) {
         this.stage = stage;
         this.functionName = functionName;
@@ -77,15 +77,15 @@ class I18nPlugin {
                     new ConstDependency.Template()
                 );
 
-                const handler = parser => {
+                const handler = (parser) => {
                     // for (let key in parser.hooks) console.log(key)
 
                     parser.hooks.call
                         .for(functionName)
-                        .tap('I18nPlugin', function(node) {
+                        .tap('I18nPlugin', function (node) {
                             const request = [].concat([
                                 'koot/i18n/translate',
-                                'default'
+                                'default',
                             ]);
                             // const nameIdentifier = tempFunctionName
                             let expression = `require(${JSON.stringify(
@@ -94,7 +94,7 @@ class I18nPlugin {
                             if (request.length > 1) {
                                 expression += request
                                     .slice(1)
-                                    .map(r => `[${JSON.stringify(r)}]`)
+                                    .map((r) => `[${JSON.stringify(r)}]`)
                                     .join('');
                             }
                             addParsedVariableToModule(
