@@ -1,6 +1,6 @@
 {
     "name": "koot",
-    "version": "0.14.9",
+    "version": "0.14.11",
     "description": "Koot.js - React SPA & SSR (isomorphic) app framework created by CMUX",
     "main": "index.js",
     "sideEffects": false,
