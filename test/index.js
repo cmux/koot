@@ -68,6 +68,11 @@ const run = async () => {
             },
             new inquirer.Separator(),
             {
+                name: 'Util: transform-error',
+                value: './test/cases/utils/transform-error',
+            },
+            new inquirer.Separator(),
+            {
                 name: 'Functions: koot/i18n',
                 value: './test/cases/i18n',
             },
