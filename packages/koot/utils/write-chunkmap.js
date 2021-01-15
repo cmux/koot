@@ -164,7 +164,9 @@ module.exports = async (
     let json = {};
 
     if (localeId) {
-        json = fs.readJsonSync(filepathname);
+        try {
+            json = fs.readJsonSync(filepathname);
+        } catch (e) {}
         json[`.${localeId}`] = chunkmap;
     } else {
         json = chunkmap;

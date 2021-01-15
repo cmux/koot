@@ -22,6 +22,9 @@
         -   相关信息请查阅 [React 官方文档](https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html)
 -   优化
     -   `serviceWorker` 的 `cacheFirst` `networkFirst` `networkOnly` 扩展缓存策略选项，其数组 (`Array`) 内现在可以直接传入正则表达式和用以分析请求的函数，请参见文档 [Service Worker/扩展缓存规则](/pwa?id=扩展缓存规则)
+-   添加依赖包
+    -   `cli-table`
+    -   `filesize`
 
 **koot-electron**
 

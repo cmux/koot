@@ -4,7 +4,7 @@
 //     toConstantDependency
 // } = require('webpack/lib/javascript/JavascriptParserHelpers');
 const {
-    addParsedVariableToModule,
+    // addParsedVariableToModule,
     toConstantDependency,
 } = require('webpack/lib/javascript/JavascriptParserHelpers');
 const ConstDependency = require('webpack/lib/dependencies/ConstDependency');
@@ -12,21 +12,21 @@ const NullFactory = require('webpack/lib/NullFactory');
 // const getCwd = require('koot/utils/get-cwd');
 const readLocaleFileSync = require('koot/i18n/read-locale-file-sync');
 
-// const addParsedVariableToModule = (parser, name, expression) => {
-//     if (!parser.state.current.addVariable) return false;
-//     const deps = [];
-//     parser.parse(expression, {
-//         current: {
-//             addDependency: dep => {
-//                 dep.userRequest = name;
-//                 deps.push(dep);
-//             }
-//         },
-//         module: parser.state.module
-//     });
-//     parser.state.current.addVariable(name, expression, deps);
-//     return true;
-// };
+const addParsedVariableToModule = (parser, name, expression) => {
+    if (!parser.state.current.addVariable) return false;
+    const deps = [];
+    parser.parse(expression, {
+        current: {
+            addDependency: (dep) => {
+                dep.userRequest = name;
+                deps.push(dep);
+            },
+        },
+        module: parser.state.module,
+    });
+    parser.state.current.addVariable(name, expression, deps);
+    return true;
+};
 
 class I18nPlugin {
     constructor({

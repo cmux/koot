@@ -48,6 +48,7 @@ const updateKootInPackageJson = require('koot/libs/update-koot-in-package-json')
 const kootPackageJson = require('koot/package.json');
 
 const buildClient = require('./build-client');
+const buildServerProd = require('./building/server-prod');
 
 // 调试webpack模式
 // const DEBUG = 1
@@ -367,6 +368,7 @@ module.exports = async (kootConfig = {}) => {
                 afterEmit: () => buildingComplete(),
                 done: after,
             },
+            [keyConfigQuiet]: quietMode,
         })
     ).catch((err) => {
         console.error('生成打包配置时发生错误! \n', err);
@@ -436,13 +438,15 @@ module.exports = async (kootConfig = {}) => {
               )
             : undefined;
     /** Webpack 单次执行完成 */
-    const buildingComplete = () => {
+    const buildingComplete = (persistSpinnerMsg = false) => {
         building = false;
         if (spinnerBuilding) {
             if (result.hasError()) {
                 spinnerBuilding.fail();
-            } else {
+            } else if (!persistSpinnerMsg) {
                 spinnerBuilding.stop();
+            } else {
+                spinnerBuilding.succeed();
             }
         }
     };
@@ -859,134 +863,18 @@ module.exports = async (kootConfig = {}) => {
     }
 
     // 服务端打包
-    if (STAGE === 'server' /* && ENV === 'prod'*/) {
-        // process.env.NODE_ENV = 'production'
-        // process.env.WEBPACK_SERVER_PUBLIC_PATH =
-        //     (typeof webpackConfigs.output === 'object' && webpackConfigs.output.publicPath)
-        //         ? webpackConfigs.output.publicPath
-        //         : ''
+    if (STAGE === 'server' /* && ENV === 'prod'*/)
+        return await buildServerProd({
+            appConfig,
+            resultStats: result,
 
-        // 确定 chunkmap
-        // 如果没有设定，创建空文件
-        if (!fs.pathExistsSync(pathnameChunkmap)) {
-            await fs.ensureFile(pathnameChunkmap);
-            process.env.WEBPACK_CHUNKMAP = '';
-            // console.log(chalk.green('√ ') + chalk.greenBright('Chunkmap') + ` file does not exist. Crated an empty one.`)
-        } else {
-            try {
-                process.env.WEBPACK_CHUNKMAP = JSON.stringify(
-                    await fs.readJson(pathnameChunkmap)
-                );
-            } catch (e) {
-                process.env.WEBPACK_CHUNKMAP = '';
-            }
-        }
+            beforeEachBuild,
+            afterEachBuild: buildingComplete,
+            onError: buildingError,
+            onComplete: after,
 
-        /** @type {Boolean} Webpack 自我输出过错误信息 */
-        let webpackLoggedError = false;
-
-        const error = (err) => {
-            if (!webpackLoggedError) {
-                buildingError(err);
-                console.error(err);
-            }
-            throw err;
-        };
-
-        try {
-            await beforeEachBuild();
-            await new Promise((resolve, reject) => {
-                webpack(webpackConfig, (err, stats) => {
-                    if (err && !stats) {
-                        buildingComplete();
-                        reject(
-                            `webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`
-                        );
-                        return error(err);
-                    }
-
-                    const info = stats.toJson();
-
-                    if (stats.hasWarnings()) {
-                        result.addWarning(info.warnings);
-                    }
-
-                    if (stats.hasErrors()) {
-                        buildingComplete();
-                        console.log(
-                            stats.toString({
-                                chunks: false,
-                                colors: true,
-                            })
-                        );
-                        webpackLoggedError = true;
-                        reject(
-                            `webpack error: [${TYPE}-${STAGE}-${ENV}] ${info.errors}`
-                        );
-                        return error(info.errors);
-                    }
-
-                    if (err) {
-                        buildingComplete();
-                        reject(
-                            `webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`
-                        );
-                        return error(err);
-                    }
-
-                    buildingComplete();
-                    if (!quietMode) console.log(' ');
-
-                    if (!analyze && !quietMode) {
-                        console.log(stats.toJson());
-
-                        let time = 0;
-                        const outputPaths = [];
-                        const files = [];
-
-                        function parseStats(stats) {
-                            if (
-                                Array.isArray(stats.children) &&
-                                stats.children.length
-                            ) {
-                                for (const child of stats.children) {
-                                    parseStats(child);
-                                }
-                                return;
-                            }
-                            time += stats.time;
-                            if (!outputPaths.includes(stats.outputPath))
-                                outputPaths.push(stats.outputPath);
-                        }
-                        parseStats(stats.toJson());
-
-                        console.log(chalk.green('  成功输出文件'));
-                        console.log(
-                            `    总计用时 ${chalk.cyanBright(`${time}ms`)}`
-                        );
-                        console.log(`    输出路径`);
-                        for (const p of outputPaths) {
-                            console.log(`      ${chalk.cyanBright(p)}`);
-                        }
-                        // console.log(
-                        //     stats.toString({
-                        //         chunks: false, // Makes the build much quieter
-                        //         colors: true,
-                        //     })
-                        // );
-                    }
-
-                    resolve();
-                });
-            });
-
-            await after();
-        } catch (e) {
-            error(e);
-        }
-
-        return result;
-    }
+            log,
+        });
 
     return result;
 };

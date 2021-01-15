@@ -59,7 +59,7 @@
     "private": true,
     "sideEffects": false,
     "koot": {
-        "version": "0.14.9"
+        "version": "0.14.11"
     },
     "devDependencies": {
         "@types/inquirer": "^7.3.1",
@@ -72,6 +72,7 @@
         "chalk": "^4.1.0",
         "classlist-polyfill": "^1.2.0",
         "cli-spinners": "^2.5.0",
+        "cli-table": "^0.3.4",
         "commander": "^6.2.1",
         "cookie": "^0.4.1",
         "copyfiles": "^2.4.1",
@@ -80,6 +81,7 @@
         "es5-shim": "^4.5.15",
         "execa": "^5.0.0",
         "favicons": "^6.2.0",
+        "filesize": "^6.1.0",
         "fs-extra": "^9.0.1",
         "glob": "^7.1.6",
         "glob-promise": "^3.4.0",
