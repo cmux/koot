@@ -58,10 +58,8 @@ module.exports = async (appConfig, outputDir) => {
         }
 
         // 添加方形
-        {
-            const image = await sharp(await fs.readFile(file)).catch((err) =>
-                console.warn(err.message)
-            );
+        try {
+            const image = await sharp(await fs.readFile(file));
             const { width, height } = await image.metadata();
             const buffer = await image
                 .resize(Math.min(width, height), Math.min(width, height))
@@ -70,6 +68,8 @@ module.exports = async (appConfig, outputDir) => {
             const target = path.resolve(folder, filename);
             await fs.writeFile(target, buffer);
             icons.square = target;
+        } catch (e) {
+            return appConfig;
         }
     } else if (typeof icon === 'object') {
     } else {
