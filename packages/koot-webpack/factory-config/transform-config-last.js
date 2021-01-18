@@ -22,6 +22,7 @@ const getDirDevDll = require('koot/libs/get-dir-dev-dll');
 const transformClientDevDll = require('./transform-config-client-dev-dll');
 const transformModifyForWebpack5 = require('./transform/modify-for-webpack-version/5.0');
 const forWebpackVersion = require('../libs/for-webpack-version');
+const ensureConfigName = require('../libs/ensure-webpack-config/name');
 
 /**
  * Webpack 配置处理 - 最终处理
@@ -76,6 +77,8 @@ const validate = (config, kootConfigForThisBuild, index = 0) => {
                 );
         }
     }
+
+    ensureConfigName(config);
 
     // console.log('')
     // console.log('kootConfigForThisBuild', kootConfigForThisBuild)

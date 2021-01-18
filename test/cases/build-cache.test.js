@@ -7,10 +7,15 @@ const cheerio = require('cheerio');
 const envKey = '__KOOT_TEST_BUILD_CACHE__';
 const elId = '__koot-test-build-cache';
 const projectDir = path.resolve(__dirname, '../projects/standard');
-const cacheFolder = path.resolve(
-    projectDir,
-    'node_modules/.cache/koot-webpack/hard/spa.prod.client'
-);
+const cacheFolder = path.resolve(projectDir, 'node_modules/.cache/webpack');
+// const cacheName = 'default-production';
+
+// ============================================================================
+
+/*
+2021/1/18
+-  改为使用 Webpack 5 内置的缓存机制，不再对缓存目录数目进行检测，只检测是否存在缓存目录
+ */
 
 // ============================================================================
 
@@ -23,12 +28,12 @@ const cacheFolder = path.resolve(
 const doTest = (options = {}) => {
     let timeFirstBuild;
 
-    const getCountInCacheFolder = () =>
-        fs.existsSync(cacheFolder) ? fs.readdirSync(cacheFolder).length : 0;
+    // const getCountInCacheFolder = () =>
+    //     fs.existsSync(cacheFolder) ? fs.readdirSync(cacheFolder).length : 0;
 
     const doTest = async (phaseCount = 1, cacheValue) => {
         const timeStart = Date.now();
-        const countFoldersInCacheBefore = getCountInCacheFolder();
+        // const countFoldersInCacheBefore = getCountInCacheFolder();
         const command = `npm run build:spa -- ${envKey}=${cacheValue}`;
 
         await spawn(command, {
@@ -40,13 +45,13 @@ const doTest = (options = {}) => {
             // 第一次打包
             // 检查：生成了新的缓存目录
             timeFirstBuild = Date.now() - timeStart;
-            expect(getCountInCacheFolder() - countFoldersInCacheBefore).toBe(1);
+            // expect(getCountInCacheFolder() - countFoldersInCacheBefore).toBe(1);
         } else {
             // 后续打包
             // 检查：耗时更少
             // 检查：没有生成新缓存目录
             expect(Date.now() - timeStart < timeFirstBuild).toBe(true);
-            expect(getCountInCacheFolder() - countFoldersInCacheBefore).toBe(0);
+            // expect(getCountInCacheFolder() - countFoldersInCacheBefore).toBe(0);
         }
 
         // 通用

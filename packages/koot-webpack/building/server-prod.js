@@ -1,19 +1,11 @@
 /* eslint-disable no-console */
 
 const fs = require('fs-extra');
-const path = require('path');
-const chalk = require('chalk');
 const webpack = require('webpack');
-const CliTable = require('cli-table');
-const filesize = require('filesize');
 
-const {
-    keyConfigQuiet,
-    WEBPACK_OUTPUT_PATH,
-} = require('koot/defaults/before-build');
-
-const elapse = require('koot/libs/elapse.js');
 // const __ = require('koot/utils/translate');
+
+const statsHandling = require('../libs/building-webpack-stats-handling');
 
 async function buildServerProd({
     appConfig = {},
@@ -26,13 +18,7 @@ async function buildServerProd({
 
     log,
 } = {}) {
-    const {
-        webpackConfig,
-        pathnameChunkmap,
-        analyze = false,
-        [keyConfigQuiet]: quietMode = false,
-        [WEBPACK_OUTPUT_PATH]: outputPath,
-    } = appConfig;
+    const { webpackConfig, pathnameChunkmap } = appConfig;
     const {
         WEBPACK_BUILD_TYPE: TYPE,
         WEBPACK_BUILD_ENV: ENV,
@@ -105,7 +91,7 @@ async function buildServerProd({
                     // console.log(' ');
                     // console.log(' ');
                     // console.log(' ');
-                    console.log(' ');
+                    // console.log(' ');
                     if (Array.isArray(info.erros)) {
                         for (const e of info.erros) error(e, false);
                     }
@@ -113,7 +99,7 @@ async function buildServerProd({
                     //     `webpack error: [${TYPE}-${STAGE}-${ENV}] ${info.errors}`
                     // );
                     // return error(info.errors);
-                    return;
+                    return resolve();
                 }
 
                 if (err) {
@@ -125,92 +111,7 @@ async function buildServerProd({
                 afterEachBuild(true);
                 // if (!quietMode) console.log(' ');
 
-                if (!analyze && !quietMode) {
-                    // console.log(info);
-
-                    let time = 0;
-                    const outputPaths = [];
-                    const files = [];
-
-                    function parseStats(stats) {
-                        if (
-                            Array.isArray(stats.children) &&
-                            stats.children.length
-                        ) {
-                            for (const child of stats.children) {
-                                parseStats(child);
-                            }
-                            return;
-                        }
-                        time += stats.time;
-                        if (!outputPaths.includes(stats.outputPath))
-                            outputPaths.push(stats.outputPath);
-                        // console.log(
-                        //     'assetsByChunkName:',
-                        //     stats.assetsByChunkName
-                        // );
-                        // console.log('assets:', stats.assets);
-                        // console.log('chunks:', stats.chunks);
-                        if (Array.isArray(stats.chunks)) {
-                            for (const chunk of stats.chunks) {
-                                for (const f of chunk.files) files.push(f);
-                                for (const f of chunk.auxiliaryFiles)
-                                    files.push(f);
-                            }
-                        }
-                    }
-                    parseStats(info);
-
-                    // log(
-                    //     'success',
-                    //     'build',
-                    //     __('build.building')
-                    // );
-                    console.log(
-                        `  > 该阶段用时 ${chalk.cyanBright(elapse(time))}`
-                    );
-                    for (const p of outputPaths.slice(1)) {
-                        console.log(`             ${chalk.cyanBright(p)}`);
-                    }
-                    console.log(`  > 文件`);
-                    const table = new CliTable({
-                        chars: {
-                            top: '',
-                            'top-mid': '',
-                            'top-left': '',
-                            'top-right': '',
-                            bottom: '',
-                            'bottom-mid': '',
-                            'bottom-left': '',
-                            'bottom-right': '',
-                            left: '',
-                            'left-mid': '',
-                            mid: '',
-                            'mid-mid': '',
-                            right: '',
-                            'right-mid': '',
-                            middle: ' ',
-                        },
-                        style: { 'padding-left': 0, 'padding-right': 0 },
-                        colAligns: ['left', 'right'],
-                    });
-                    for (const pathname of files) {
-                        const file = path.resolve(outputPath, pathname);
-                        const lstat = fs.lstatSync(file);
-                        table.push([
-                            `    ${chalk.cyanBright(pathname)}`,
-                            filesize(lstat.size, { round: 1 }),
-                        ]);
-                    }
-                    console.log(table.toString());
-                    // console.log(appConfig);
-                    // console.log(
-                    //     stats.toString({
-                    //         chunks: false, // Makes the build much quieter
-                    //         colors: true,
-                    //     })
-                    // );
-                }
+                statsHandling(appConfig, err, stats);
 
                 resolve();
             });

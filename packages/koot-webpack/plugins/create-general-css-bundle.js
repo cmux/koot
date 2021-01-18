@@ -23,16 +23,17 @@ class CreateGeneralCssBundlePlugin {
     apply(compiler) {
         const { filenamePrefix } = this;
 
-        compiler.hooks.emit.tap(
+        const compilerHook = 'make';
+        // const compilerHook = 'emit';
+
+        compiler.hooks[compilerHook].tap(
             'CreateGeneralCssBundlePlugin',
             (compilation) => {
-                compilation.hooks.processAssets.tapPromise(
-                    {
-                        name: 'CreateGeneralCssBundlePlugin',
-                        stage: Compilation.PROCESS_ASSETS_STAGE_ADDITIONS,
-                    },
+                compilation.hooks.additionalAssets.tapPromise(
+                    'CreateGeneralCssBundlePlugin',
                     async () => {
                         const stats = compilation.getStats();
+                        const { chunkGraph } = compilation;
 
                         // 如果本次为热更新，不执行后续流程
                         if (isHotUpdate(compilation.getStats())) return;
@@ -42,17 +43,14 @@ class CreateGeneralCssBundlePlugin {
                         /** @type {Array} 已打包输出的 CSS 文件 */
                         const cssFiles = [];
 
-                        for (const chunkId in stats.compilation.chunks) {
-                            const chunk = stats.compilation.chunks[chunkId];
-                            if (Array.isArray(chunk.files)) {
-                                chunk.files
-                                    .filter((filename) =>
-                                        /\.css$/i.test(filename)
-                                    )
-                                    .forEach((filename) => {
-                                        cssFiles.push(filename);
-                                    });
-                            }
+                        for (const chunk of stats.compilation.chunks) {
+                            // const chunk = stats.compilation.chunks[chunkId];
+                            try {
+                                for (const file of chunk.files) {
+                                    if (/\.css$/i.test(file))
+                                        cssFiles.push(file);
+                                }
+                            } catch (e) {}
                         }
 
                         // 拼接抽出的 CSS 文件的内容
@@ -91,19 +89,17 @@ class CreateGeneralCssBundlePlugin {
                                 : '.small') +
                             `.css`;
 
+                        console.log({ filenamePrefix, filename });
+
                         // 添加 chunk
-                        const chunk = new Chunk(chunkNameExtractCss);
-                        const id = Array.isArray(compilation.chunks)
-                            ? compilation.chunks.length
-                            : compilation.chunks.size;
-                        chunk.files = [filename];
+                        const chunk = compilation.addChunk(chunkNameExtractCss);
+                        chunk.files.add(filename);
+                        const id = compilation.chunks.size;
+                        // chunk.files = [filename];
                         chunk.id = id;
                         chunk.ids = [id];
-                        if (Array.isArray(compilation.chunks)) {
-                            compilation.chunks.push(chunk);
-                        } else {
-                            compilation.chunks.add(chunk);
-                        }
+                        // chunk.hash = md5(content);
+                        // compilation.chunks.add(chunk);
 
                         // 写入 Webpack 文件流
                         newCompilationFileDependency(
@@ -111,6 +107,7 @@ class CreateGeneralCssBundlePlugin {
                             filename,
                             content
                         );
+                        console.log(stats.compilation.chunks, filename);
 
                         // 针对 SPA 类型: 输出额外的版本，其内的资源引用相对路径不会包含 publicPath
                         if (process.env.WEBPACK_BUILD_TYPE === 'spa') {
@@ -125,14 +122,16 @@ class CreateGeneralCssBundlePlugin {
                                 `.css`;
 
                             // 添加 chunk
-                            const chunk = new Chunk(
+                            const chunk = compilation.addChunk(
                                 chunkNameExtractCssForImport
                             );
-                            const id = compilation.chunks.length;
-                            chunk.files = [thisFilename];
+                            chunk.files.add(filename);
+                            const id = compilation.chunks.size;
+                            // chunk.files = [thisFilename];
                             chunk.id = id;
                             chunk.ids = [id];
-                            compilation.chunks.push(chunk);
+                            // chunk.hash = md5(content);
+                            // compilation.chunks.add(chunk);
 
                             const root = postcss.parse(content);
                             postcssTransformDeclUrls(root, {

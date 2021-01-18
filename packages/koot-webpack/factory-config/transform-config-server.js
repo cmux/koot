@@ -9,6 +9,7 @@ const DevModePlugin = require('../plugins/dev-mode');
 const ModifyServerBundlePlugin = require('../plugins/modify-server-bundle');
 
 const newPluginCopyWebpack = require('../libs/new-plugin-copy');
+const ensureConfigName = require('../libs/ensure-webpack-config/name');
 
 const {
     keyConfigBuildDll,
@@ -86,6 +87,7 @@ module.exports = async (kootBuildConfig = {}) => {
     await transformConfigExtendDefault(result, kootBuildConfig);
 
     Object.assign(result.output, configTargetDefault.output);
+    ensureConfigName(result, 'server');
 
     // output =================================================================
     result.output = {

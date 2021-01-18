@@ -48,6 +48,7 @@ const updateKootInPackageJson = require('koot/libs/update-koot-in-package-json')
 const kootPackageJson = require('koot/package.json');
 
 const buildClient = require('./build-client');
+const buildClientProd = require('./building/client-prod');
 const buildServerProd = require('./building/server-prod');
 
 // 调试webpack模式
@@ -373,7 +374,7 @@ module.exports = async (kootConfig = {}) => {
     ).catch((err) => {
         console.error('生成打包配置时发生错误! \n', err);
     });
-    const { webpackConfig, i18n, devServer = {}, pathnameChunkmap } = appConfig;
+    const { webpackConfig, i18n, devServer = {} } = appConfig;
 
     /*if (TYPE === 'spa' && typeof !!kootConfig.i18n) {
         log(
@@ -500,6 +501,18 @@ module.exports = async (kootConfig = {}) => {
     //     await after()
     //     return result
     // }
+
+    const buildParams = {
+        appConfig,
+        resultStats: result,
+
+        beforeEachBuild,
+        afterEachBuild: buildingComplete,
+        onError: buildingError,
+        onComplete: after,
+
+        log,
+    };
 
     // CLIENT / DEV
     if (STAGE === 'client' && ENV === 'dev' && !createDll) {
@@ -651,183 +664,8 @@ module.exports = async (kootConfig = {}) => {
     }
 
     // CLIENT / PROD
-    if (STAGE === 'client' /* && ENV === 'prod'*/) {
-        // process.env.NODE_ENV = 'production'
-        if (!fs.existsSync(pathnameChunkmap) && !createDll) {
-            await fs.ensureFile(pathnameChunkmap);
-            await fs.writeJson(
-                pathnameChunkmap,
-                {},
-                {
-                    spaces: 4,
-                }
-            );
-        }
-
-        let spinnerBuildingSingle;
-        let errorEncountered = false;
-
-        // 执行打包
-        const build = async (config, onComplete = buildingComplete) => {
-            const {
-                [keyConfigWebpackSPATemplateInject]: isSPATemplateInject = false,
-            } = config;
-            delete config[keyConfigWebpackSPATemplateInject];
-
-            /** @type {Boolean} Webpack 自我输出过错误信息 */
-            // let webpackLoggedError = false
-
-            const error = (err) => {
-                errorEncountered = true;
-
-                if (spinnerBuildingSingle) spinnerBuildingSingle.stop();
-
-                // if (!webpackLoggedError) {
-                //     buildingError(err)
-                // }
-
-                throw err;
-            };
-
-            try {
-                await beforeEachBuild();
-                const compiler = webpack(config);
-                // console.log('compiler')
-                await new Promise((resolve, reject) => {
-                    compiler.run(async (err, stats) => {
-                        if (err && !stats) {
-                            onComplete();
-                            reject(
-                                `webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`
-                            );
-                            return error(err);
-                        }
-
-                        const info = stats.toJson();
-
-                        if (stats.hasWarnings()) {
-                            result.addWarning(info.warnings);
-                        }
-
-                        if (stats.hasErrors()) {
-                            onComplete();
-                            console.log(
-                                stats.toString({
-                                    chunks: false,
-                                    colors: true,
-                                })
-                            );
-                            // webpackLoggedError = true
-                            reject(
-                                `webpack error: [${TYPE}-${STAGE}-${ENV}] ${info.errors}`
-                            );
-                            return error(info.errors);
-                        }
-
-                        if (err) {
-                            onComplete();
-                            reject(
-                                `webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`
-                            );
-                            return error(err);
-                        }
-
-                        onComplete();
-
-                        // 非分析模式: log stats
-                        if (!analyze && !quietMode) {
-                            if (isSPATemplateInject) {
-                            } else {
-                                console.log(
-                                    stats.toString({
-                                        assets: false,
-                                        builtAt: true,
-                                        colors: true,
-                                        // modules: false,
-                                    })
-                                );
-                            }
-                        }
-
-                        setTimeout(() => resolve(), 100);
-
-                        if (typeof compiler.close === 'function')
-                            compiler.close();
-                    });
-                });
-            } catch (e) {
-                error(e);
-            }
-        };
-
-        if (Array.isArray(webpackConfig)) {
-            buildingComplete();
-            // console.log(' ')
-            // let index = 0
-            const onComplete = (localeId) => {
-                if (spinnerBuildingSingle) {
-                    if (result.hasError()) {
-                        spinnerBuildingSingle.fail();
-                    } else {
-                        spinnerBuildingSingle.stop();
-                        if (localeId)
-                            setTimeout(() => {
-                                console.log(' ');
-                                log(
-                                    'success',
-                                    'build',
-                                    chalk.green(`${localeId}`)
-                                );
-                            });
-                    }
-                }
-            };
-            for (const config of webpackConfig) {
-                if (errorEncountered) break;
-                console.log(' ');
-
-                const localeId = (() => {
-                    const ids = config.plugins.filter(
-                        (plugin) =>
-                            plugin && typeof plugin.localeId === 'string'
-                    );
-                    if (ids.length)
-                        return ids.reduce((prev, cur) => cur.localeId);
-                    return false;
-                })();
-                spinnerBuildingSingle = (() => {
-                    if (kootTest) return undefined;
-                    if (quietMode) return undefined;
-                    if (localeId)
-                        return spinner(
-                            (
-                                chalk.yellowBright('[koot/build] ') +
-                                __('build.building_locale', {
-                                    locale: localeId,
-                                })
-                            ).replace(
-                                new RegExp(' ' + localeId + '\\)'),
-                                ` ${chalk.green(localeId)})`
-                            )
-                        );
-                    return spinner(
-                        chalk.yellowBright('[koot/build] ') +
-                            __('build.building')
-                    );
-                })();
-                await build(config, () => onComplete(localeId)).catch(
-                    buildingError
-                );
-                // index++
-            }
-        } else {
-            await build(webpackConfig).catch(buildingError);
-            // console.log(' ')
-        }
-
-        await after();
-        return result;
-    }
+    if (STAGE === 'client' /* && ENV === 'prod'*/)
+        return await buildClientProd(buildParams);
 
     // if (STAGE === 'server' && ENV === 'dev' && createDll) {
     //     buildingComplete()
@@ -864,17 +702,7 @@ module.exports = async (kootConfig = {}) => {
 
     // 服务端打包
     if (STAGE === 'server' /* && ENV === 'prod'*/)
-        return await buildServerProd({
-            appConfig,
-            resultStats: result,
-
-            beforeEachBuild,
-            afterEachBuild: buildingComplete,
-            onError: buildingError,
-            onComplete: after,
-
-            log,
-        });
+        return await buildServerProd(buildParams);
 
     return result;
 };

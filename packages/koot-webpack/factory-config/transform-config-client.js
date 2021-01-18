@@ -15,6 +15,8 @@ const CreateManifestPlugin = require('../plugins/create-manifest');
 const newPluginWorkbox = require('../libs/new-plugin-workbox');
 const newPluginCopyWebpack = require('../libs/new-plugin-copy');
 
+const ensureConfigName = require('../libs/ensure-webpack-config/name');
+
 const {
     keyConfigBuildDll,
     keyConfigOutputPathShouldBe,
@@ -181,6 +183,7 @@ module.exports = async (kootConfigForThisBuild = {}) => {
             } catch (e) {
                 optimization.occurrenceOrder = false;
             }
+            ensureConfigName(result, 'spa-template-inject');
             Object.assign(result, {
                 target: 'async-node',
                 entry: validatePathname(templateInject, getCwd()),
@@ -201,6 +204,8 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                 );
             delete result.optimization.minimizer;
         } else {
+            ensureConfigName(result, 'client');
+
             // 处理 output
             result.output = {
                 path: outputPath,
