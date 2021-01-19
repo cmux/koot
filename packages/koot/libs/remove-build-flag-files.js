@@ -1,9 +1,10 @@
-const fs = require('fs-extra')
-const path = require('path')
+const fs = require('fs-extra');
+const path = require('path');
 
 const {
-    filenameBuilding, filenameBuildFail,
-} = require('../defaults/before-build')
+    filenameBuilding,
+    filenameBuildFail,
+} = require('../defaults/before-build');
 
 /**
  * 清理打包标记文件
@@ -15,16 +16,12 @@ module.exports = async (
     dist = process.env.KOOT_DIST_DIR,
     removeFailFlagFile = false
 ) => {
-    const filesToRemove = [
-        filenameBuilding,
-    ]
+    const filesToRemove = [filenameBuilding];
 
-    if (removeFailFlagFile)
-        filesToRemove.push(filenameBuildFail)
+    if (removeFailFlagFile) filesToRemove.push(filenameBuildFail);
 
-    for (let filename of filesToRemove) {
-        const file = path.resolve(dist, filename)
-        if (fs.existsSync(file))
-            await fs.remove(file)
+    for (const filename of filesToRemove) {
+        const file = path.resolve(dist, filename);
+        if (fs.existsSync(file)) await fs.remove(file);
     }
-}
+};

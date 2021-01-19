@@ -84,7 +84,8 @@ const run = async () => {
 
     process.env.KOOT_TEST_MODE = JSON.stringify(kootTest);
     process.env.KOOT_DEVELOPMENT_MODE = JSON.stringify(kootDevelopment);
-    process.env[KOOT_BUILD_START_TIME] = Date.now() + '';
+    if (!process.env[KOOT_BUILD_START_TIME])
+        process.env[KOOT_BUILD_START_TIME] = Date.now() + '';
 
     const stage = (() => {
         if (_stage) return _stage;

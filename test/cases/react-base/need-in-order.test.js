@@ -82,6 +82,7 @@ const defaultViewport = {
 };
 
 let browser;
+let context;
 beforeAll(() =>
     puppeteer
         .launch({
@@ -101,7 +102,11 @@ afterAll(() => {
 
 let lastTime;
 beforeEach(() => (lastTime = Date.now()));
-afterEach(() => {});
+afterEach(async () => {
+    try {
+        await context.close();
+    } catch (e) {}
+});
 
 //
 
@@ -140,7 +145,7 @@ const doTest = async (port, dist, settings = {}) => {
         await page.waitForTimeout(200);
     };
 
-    const context = await browser.createIncognitoBrowserContext();
+    context = await browser.createIncognitoBrowserContext();
     const page = await context.newPage();
     // await page.setJavaScriptEnabled(enableJavascript)
     if (!enableJavascript) {
@@ -231,7 +236,6 @@ const doTest = async (port, dist, settings = {}) => {
         // expect(resultNative[1]).not.toBe(resultNative[2]);
     }
 
-    // TODO: manually test HERE
     // 测试: react-router v3 兼容相关的属性
     {
         const context = await browser.createIncognitoBrowserContext();
@@ -643,7 +647,7 @@ const doTest = async (port, dist, settings = {}) => {
             await page.evaluate((route) => {
                 document.querySelector(`a[href$="${route}"]`).click();
             }, route);
-            await sleep(100);
+            await sleep(1000);
             const titleCSR = await page.evaluate(() => document.title);
             expect(titleCSR).toBe(titleExpectToBe);
             await page.close();
@@ -674,8 +678,13 @@ const doTest = async (port, dist, settings = {}) => {
     if (!isDev) await testAssetsGzip(origin, dist, browser);
 
     // TODO: 在设置了 sw 时有 sw 注册且没有报错
+    // TODO: 开发环境热更新
 
-    // 测试: 没有失败的请求
+    // 关闭
+    await page.close();
+    await context.close();
+
+    // 检查: 没有失败的请求
     if (failedResponse.length) {
         // eslint-disable-next-line no-console
         console.log(
@@ -683,14 +692,11 @@ const doTest = async (port, dist, settings = {}) => {
             failedResponse.map((res) => ({
                 status: res.status(),
                 url: res.url(),
+                ref: res.ref.url(),
             }))
         );
     }
     expect(failedResponse.length).toBe(0);
-
-    // 结束测试
-    await page.close();
-    await context.close();
 };
 
 /**
@@ -702,6 +708,9 @@ const beforeTest = async (cwd) => {
     // 重置
     await exec(`pm2 kill`);
     await removeTempProjectConfig(cwd);
+    await fs.remove(path.resolve(cwd, 'dist'));
+    await fs.remove(path.resolve(cwd, 'logs'));
+    await fs.remove(path.resolve(cwd, 'node_modules/.cache'));
 };
 
 /**

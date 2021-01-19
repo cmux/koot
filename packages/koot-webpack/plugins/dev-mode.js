@@ -1,6 +1,6 @@
 const fs = require('fs-extra');
 const path = require('path');
-
+const { Compilation } = require('webpack');
 const { ConcatSource } = require('webpack-sources');
 
 // const { filenameDll } = require('koot/defaults/before-build')
@@ -41,36 +41,50 @@ class DevModePlugin {
 
         // compilation - [server / dev] 如果存在 DLL 结果，写入到 index.js 文件开端
         if (STAGE === 'server' && ENV === 'dev') {
-            compiler.hooks.compilation.tap('DevModePlugin', (compilation) => {
-                compilation.hooks.optimizeChunkAssets.tap(
-                    'DevModePlugin',
-                    (chunks) => {
-                        if (typeof this.dist !== 'string' || !this.dist) return;
+            compiler.hooks.thisCompilation.tap(
+                'KootDevModePlugin',
+                (compilation) => {
+                    compilation.hooks.processAssets.tap(
+                        {
+                            name: 'KootDevModePlugin',
+                            stage:
+                                /**
+                                 * Generate the html after minification and dev tooling is done
+                                 */
+                                Compilation.PROCESS_ASSETS_STAGE_OPTIMIZE_INLINE,
+                        },
+                        (compilationAssets) => {
+                            if (typeof this.dist !== 'string' || !this.dist)
+                                return;
 
-                        const {
-                            KOOT_DEV_DLL_FILE_SERVER: fileDll,
-                        } = process.env;
-                        if (!fileDll || !fs.existsSync(fileDll)) return;
+                            const {
+                                KOOT_DEV_DLL_FILE_SERVER: fileDll,
+                            } = process.env;
+                            if (!fileDll || !fs.existsSync(fileDll)) return;
 
-                        for (const chunk of chunks) {
-                            if (!chunk.canBeInitial()) {
-                                continue;
+                            for (const chunk of [...compilation.chunks]) {
+                                if (!chunk.canBeInitial()) {
+                                    continue;
+                                }
+                                // console.log(chunk);
+                                [...chunk.files]
+                                    .filter(
+                                        (filename) => filename === 'index.js'
+                                    )
+                                    .forEach((filename) => {
+                                        compilation.assets[
+                                            filename
+                                        ] = new ConcatSource(
+                                            fs.readFileSync(fileDll, 'utf-8'),
+                                            '\n',
+                                            compilation.assets[filename]
+                                        );
+                                    });
                             }
-                            chunk.files
-                                .filter((filename) => filename === 'index.js')
-                                .forEach((filename) => {
-                                    compilation.assets[
-                                        filename
-                                    ] = new ConcatSource(
-                                        fs.readFileSync(fileDll, 'utf-8'),
-                                        '\n',
-                                        compilation.assets[filename]
-                                    );
-                                });
                         }
-                    }
-                );
-            });
+                    );
+                }
+            );
         }
 
         compiler.hooks.afterCompile.tap.bind(

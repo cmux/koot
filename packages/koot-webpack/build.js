@@ -597,6 +597,7 @@ module.exports = async (kootConfig = {}) => {
                 // 打开页面的操作由 /bin/dev.js 管理并执行
                 // open: TYPE === 'spa',
                 open: false,
+                // watch: true,
                 watchOptions: {
                     // aggregateTimeout: 20 * 1000,
                     ignored: [
@@ -604,7 +605,7 @@ module.exports = async (kootConfig = {}) => {
                         // 'node_modules',
                         getDistPath(),
                         path.resolve(getDistPath(), '**/*'),
-                    ],
+                    ].map((v) => v.replace(/\\/g, '/')),
                 },
                 before: (app) => {
                     if (
@@ -623,8 +624,8 @@ module.exports = async (kootConfig = {}) => {
             extendDevServerOptions
         );
 
-        // console.log('\n\ndevServer')
-        // console.log(devServerConfig)
+        // console.log('\n\ndevServer');
+        // console.log(devServerConfig);
 
         // more config
         // http://webpack.github.io/docs/webpack-dev-server.html

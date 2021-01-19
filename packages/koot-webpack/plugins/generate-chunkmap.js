@@ -24,7 +24,7 @@ class GenerateChunkmap {
         const outputPath = this.outputPath;
         const serviceWorkerPathname = this.serviceWorkerPathname;
 
-        // const TYPE = process.env.WEBPACK_BUILD_TYPE;
+        const TYPE = process.env.WEBPACK_BUILD_TYPE;
         const STAGE = process.env.WEBPACK_BUILD_STAGE;
 
         if (STAGE !== 'client') return;
@@ -52,30 +52,32 @@ class GenerateChunkmap {
         });
 
         // asset 占位
-        compiler.hooks.thisCompilation.tap(
-            'GenerateChunkmap',
-            (compilation) => {
-                compilation.hooks.processAssets.tapAsync(
-                    {
-                        name: 'GenerateChunkmap',
-                        stage: Compilation.PROCESS_ASSETS_STAGE_OPTIMIZE_SIZE,
-                    },
-                    (compilationAssets, callback) => {
-                        compilationEmitAsset(
-                            compilation,
-                            buildManifestFilename,
-                            ``
-                        );
-                        compilationEmitAsset(
-                            compilation,
-                            buildOutputsFilename,
-                            ``
-                        );
-                        callback();
-                    }
-                );
-            }
-        );
+        if (TYPE === 'spa')
+            compiler.hooks.thisCompilation.tap(
+                'GenerateChunkmap',
+                (compilation) => {
+                    compilation.hooks.processAssets.tapAsync(
+                        {
+                            name: 'GenerateChunkmap',
+                            stage:
+                                Compilation.PROCESS_ASSETS_STAGE_OPTIMIZE_SIZE,
+                        },
+                        (compilationAssets, callback) => {
+                            compilationEmitAsset(
+                                compilation,
+                                buildManifestFilename,
+                                ``
+                            );
+                            compilationEmitAsset(
+                                compilation,
+                                buildOutputsFilename,
+                                ``
+                            );
+                            callback();
+                        }
+                    );
+                }
+            );
     }
 }
 

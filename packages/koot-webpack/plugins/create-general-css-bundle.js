@@ -32,8 +32,9 @@ class CreateGeneralCssBundlePlugin {
                         stage: Compilation.PROCESS_ASSETS_STAGE_OPTIMIZE_SIZE,
                     },
                     (compilationAssets, callback) => {
-                        const stats = compilation.getStats();
+                        // console.log('CreateGeneralCssBundlePlugin');
 
+                        const stats = compilation.getStats();
                         // 如果本次为热更新，不执行后续流程
                         if (isHotUpdate(compilation.getStats()))
                             return callback();

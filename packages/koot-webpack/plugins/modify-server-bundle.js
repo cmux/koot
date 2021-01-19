@@ -25,6 +25,8 @@ class ModifyServerBundlePlugin {
                 compiler.hooks.afterEmit,
                 'ModifyServerBundlePlugin'
             )(async (compilation, callback) => {
+                // console.log('ModifyServerBundlePlugin');
+
                 const {
                     outputPath,
                     assetsByChunkName,

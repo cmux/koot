@@ -85,65 +85,70 @@ async function buildClientProd({
             // const compiler = webpack(config);
             // console.log('compiler')
             await new Promise((resolve, reject) => {
+                // console.log(config);
                 // compiler.run(async (err, stats) => {
-                webpack(config, async (err, stats) => {
-                    if (err && !stats) {
-                        thisAfterEachBuild();
-                        reject(
-                            `webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`
-                        );
-                        return error(err);
-                    }
-
-                    const info = stats.toJson();
-
-                    if (stats.hasWarnings()) {
-                        if (Array.isArray(info.warnings)) {
-                            for (const e of info.warnings)
-                                resultStats.addWarning(e);
-                        } else {
-                            resultStats.addWarning(info.warnings);
-                        }
-                    }
-
-                    if (stats.hasErrors()) {
-                        thisAfterEachBuild();
-                        console.log(
-                            stats.toString({
-                                chunks: false,
-                                colors: true,
-                            })
-                        );
-                        if (Array.isArray(info.erros)) {
-                            for (const e of info.erros) error(e, false);
-                            return resolve();
-                        } else {
-                            // webpackLoggedError = true
+                try {
+                    webpack(config, async (err, stats) => {
+                        if (err && !stats) {
+                            thisAfterEachBuild();
                             reject(
-                                `webpack error: [${TYPE}-${STAGE}-${ENV}] ${info.errors}`
+                                `webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`
                             );
-                            return error(info.errors);
+                            return error(err);
                         }
-                    }
 
-                    if (err) {
+                        const info = stats.toJson();
+
+                        if (stats.hasWarnings()) {
+                            if (Array.isArray(info.warnings)) {
+                                for (const e of info.warnings)
+                                    resultStats.addWarning(e);
+                            } else {
+                                resultStats.addWarning(info.warnings);
+                            }
+                        }
+
+                        if (stats.hasErrors()) {
+                            thisAfterEachBuild();
+                            console.log(
+                                stats.toString({
+                                    chunks: false,
+                                    colors: true,
+                                })
+                            );
+                            if (Array.isArray(info.erros)) {
+                                for (const e of info.erros) error(e, false);
+                                return resolve();
+                            } else {
+                                // webpackLoggedError = true
+                                reject(
+                                    `webpack error: [${TYPE}-${STAGE}-${ENV}] ${info.errors}`
+                                );
+                                return error(info.errors);
+                            }
+                        }
+
+                        if (err) {
+                            thisAfterEachBuild();
+                            reject(
+                                `webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`
+                            );
+                            return error(err);
+                        }
+
                         thisAfterEachBuild();
-                        reject(
-                            `webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`
-                        );
-                        return error(err);
-                    }
 
-                    thisAfterEachBuild();
+                        statsHandling(appConfig, err, stats, {
+                            forceQuiet: isSPATemplateInject,
+                        });
 
-                    statsHandling(appConfig, err, stats, {
-                        forceQuiet: isSPATemplateInject,
+                        setTimeout(() => resolve(), 100);
+
+                        // if (typeof compiler.close === 'function') compiler.close();
                     });
-
-                    setTimeout(() => resolve(), 100);
-
-                    // if (typeof compiler.close === 'function') compiler.close();
-                });
+                } catch (e) {
+                    reject(e);
+                }
             });
         } catch (e) {
             error(e);

@@ -57,7 +57,7 @@ const transformClientDevDll = async (
     // console.log('result.entry.library', result.entry.library)
     result.output = {
         filename: filenameDll,
-        library: '[name]_[contenthash]',
+        library: '[name]_[fullhash]',
         // path: STAGE === 'server' ? path.resolve(dist, 'server') : dist
         path: getDirDevDll(),
     };
@@ -73,7 +73,7 @@ const transformClientDevDll = async (
         new webpack.DllPlugin({
             // context: path.resolve(__dirname, '../../../../'),
             path: path.resolve(result.output.path, filenameDllManifest),
-            name: '[name]_[contenthash]',
+            name: '[name]_[fullhash]',
         })
     );
     return result;

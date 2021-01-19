@@ -35,9 +35,11 @@ class KootCreateManifestPlugin {
                 compilation.hooks.processAssets.tapAsync(
                     {
                         name: 'KootCreateManifestPlugin',
-                        stage: Compilation.PROCESS_ASSETS_STAGE_OPTIMIZE_SIZE,
+                        stage: Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL,
                     },
                     async (compilationAssets, callback) => {
+                        // console.log('KootCreateManifestPlugin');
+
                         const stats = compilation.getStats();
 
                         // 如果本次为热更新，不执行后续流程
@@ -171,10 +173,10 @@ class KootCreateManifestPlugin {
                         const metaHtml = Array.isArray(html)
                             ? html.join('')
                             : html;
-                        // compilation[compilationKeyHtmlMetaTags] = metaHtml;
+                        compilation[compilationKeyHtmlMetaTags] = metaHtml;
                         compilationEmitAsset(
                             compilation,
-                            compilationKeyHtmlMetaTags,
+                            `${subfolder}/${filenameHtmls}`,
                             metaHtml
                         );
 

@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 const fs = require('fs-extra');
 const path = require('path');
 
@@ -187,7 +186,8 @@ module.exports = async (
         json = chunkmap;
     }
 
-    await fs.writeJsonSync(filepathname, json, {
+    // fs.unlinkSync(filepathname);
+    fs.writeJsonSync(filepathname, json, {
         spaces: 4,
     });
 
@@ -231,6 +231,8 @@ module.exports = async (
                 .forEach((file) => list.push(file));
 
             existResult[buildTimestamp] = list.sort();
+
+            // fs.unlinkSync(fileOutputs);
             fs.writeJsonSync(fileOutputs, existResult, {
                 spaces: 4,
             });

@@ -58,10 +58,10 @@
         "style-loader": "^2.0.0",
         "thread-loader": "^3.0.1",
         "universal-alias-loader": "^1.2.2",
-        "webpack": "^5.14.0",
+        "webpack": "^5.15.0",
         "webpack-bundle-analyzer": "^4.3.0",
         "webpack-config": "^7.5.0",
-        "webpack-dev-middleware": "^4.0.4",
+        "webpack-dev-middleware": "^4.1.0",
         "webpack-dev-server": "^3.11.2",
         "webpack-hot-middleware": "^2.25.0",
         "workbox-webpack-plugin": "^6.0.2"
