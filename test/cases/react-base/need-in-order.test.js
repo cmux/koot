@@ -231,6 +231,7 @@ const doTest = async (port, dist, settings = {}) => {
         // expect(resultNative[1]).not.toBe(resultNative[2]);
     }
 
+    // TODO: manually test HERE
     // 测试: react-router v3 兼容相关的属性
     {
         const context = await browser.createIncognitoBrowserContext();

@@ -46,7 +46,8 @@ module.exports = async (
     compilation,
     localeId,
     pathPublic,
-    serviceWorkerPathname
+    serviceWorkerPathname,
+    { allAssetsMap = true } = {}
     // extraAssets = []
 ) => {
     if (typeof compilation !== 'object') return {};
@@ -136,21 +137,35 @@ module.exports = async (
     chunkmap['.files'] = generateFilemap(compilation, dirRelative);
 
     // 生成所有入口和代码片段所输出的文件的对照表
-    if (Array.isArray(stats.chunks)) {
-        // console.log(stats.chunks)
-        // for (let id in stats.compilation.chunks) {
-        //     const o = stats.compilation.chunks[id]
-        for (const id in stats.chunks) {
-            const o = stats.chunks[id];
-            if (typeof o.name === 'undefined' || o.name === null) continue;
-            chunkmap[o.name] = o.files;
+    // for (const chunk of compilation.chunks) {
+    //     const { name, idNameHints, files } = chunk;
+    //     const thisName = name || [...idNameHints][0];
 
-            if (Array.isArray(o.files))
-                chunkmap[o.name] = o.files
-                    .filter((filename) => isNotSourcemap(filename))
-                    .map((filename) => getFilePathname(filename));
-        }
-    }
+    //     if ([...files].every((filename) => !/\.(js|css)$/i.test(filename)))
+    //         continue;
+    //     if (typeof thisName === 'undefined' || thisName === null) continue;
+
+    //     const thisFiles = [...files];
+    //     if (Array.isArray(thisFiles) && thisFiles.length) {
+    //         chunkmap[thisName] = thisFiles
+    //             .filter((filename) => isNotSourcemap(filename))
+    //             .map((filename) => getFilePathname(filename));
+    //     }
+    // }
+    // if (Array.isArray(stats.chunks)) {
+    //     for (const id in stats.chunks) {
+    //         const o = stats.chunks[id];
+    //         if (typeof o.name === 'undefined' || o.name === null) continue;
+
+    //         chunkmap[o.name] = o.files;
+
+    //         if (Array.isArray(o.files)) {
+    //             chunkmap[o.name] = o.files
+    //                 .filter((filename) => isNotSourcemap(filename))
+    //                 .map((filename) => getFilePathname(filename));
+    //         }
+    //     }
+    // }
 
     // 添加 service-worker
     if (serviceWorkerPathname) {
@@ -180,6 +195,7 @@ module.exports = async (
     // 输出的文件列表
     // ========================================================================
     if (
+        allAssetsMap &&
         process.env.WEBPACK_BUILD_ENV === 'prod' &&
         typeof process.env[KOOT_BUILD_START_TIME] === 'string'
     ) {

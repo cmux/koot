@@ -176,20 +176,18 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                 concatenateModules: false,
                 minimize: false,
             };
-            try {
-                if (parseInt(getModuleVersion('webpack')) < 5) {
-                    optimization.occurrenceOrder = false;
-                }
-            } catch (e) {
-                optimization.occurrenceOrder = false;
-            }
             ensureConfigName(result, 'spa-template-inject');
             Object.assign(result, {
-                target: 'async-node',
+                mode: 'development',
+                target: 'node',
                 entry: validatePathname(templateInject, getCwd()),
                 output: {
                     filename: getFilenameSPATemplateInject(localeId),
                     path: getDirTemp(),
+                    library: {
+                        type: 'commonjs',
+                        name: 'commonJS',
+                    },
                 },
                 optimization,
                 [keyConfigWebpackSPATemplateInject]: true,

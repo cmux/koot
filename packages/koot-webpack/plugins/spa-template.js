@@ -223,7 +223,10 @@ async function tapEmitAssets(options = {}, failReason, compilation, callback) {
         compilation,
         localeId,
         undefined,
-        serviceWorkerPathname
+        serviceWorkerPathname,
+        {
+            allAssetsMap: false,
+        }
     );
 
     const manifest = getChunkmap(localeId, false, true);
@@ -305,12 +308,15 @@ async function tapEmitAssets(options = {}, failReason, compilation, callback) {
             const file = path.resolve(dir, md5(content) + '.js');
             await fs.writeFile(file, content, 'utf-8');
             thisModule = require(file);
+            console.log({ thisModule });
             await fs.unlink(file);
         }
 
         if (typeof thisModule.default === 'object') return thisModule.default;
         return thisModule || {};
     })();
+
+    // console.log({ projectInject });
 
     const thisInject = {
         ...defaultInject,

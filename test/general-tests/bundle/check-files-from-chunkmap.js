@@ -20,9 +20,14 @@ module.exports = async (dist, isDev = true) => {
             if (!filenames.includes(filename)) filenames.push(filename);
         };
         const addFiles = (obj = chunkmap) => {
+            // console.log(obj);
             if (typeof obj !== 'object') return;
             Object.entries(obj).forEach(([key, value]) => {
-                if (typeof value === 'object') {
+                if (Array.isArray(value)) {
+                    value.forEach((file) => {
+                        addFile(key, file);
+                    });
+                } else if (typeof value === 'object') {
                     addFiles(value);
                 } else if (typeof value === 'string') {
                     addFile(key, value);
