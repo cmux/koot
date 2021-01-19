@@ -56,7 +56,7 @@ async function buildClientProd({
     let errorEncountered = false;
 
     // 执行打包
-    const build = async (config, onComplete = afterEachBuild) => {
+    const build = async (config, thisAfterEachBuild = afterEachBuild) => {
         const {
             [keyConfigWebpackSPATemplateInject]: isSPATemplateInject = false,
         } = config;
@@ -88,7 +88,7 @@ async function buildClientProd({
                 // compiler.run(async (err, stats) => {
                 webpack(config, async (err, stats) => {
                     if (err && !stats) {
-                        onComplete();
+                        thisAfterEachBuild();
                         reject(
                             `webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`
                         );
@@ -107,7 +107,7 @@ async function buildClientProd({
                     }
 
                     if (stats.hasErrors()) {
-                        onComplete();
+                        thisAfterEachBuild();
                         console.log(
                             stats.toString({
                                 chunks: false,
@@ -127,14 +127,14 @@ async function buildClientProd({
                     }
 
                     if (err) {
-                        onComplete();
+                        thisAfterEachBuild();
                         reject(
                             `webpack error: [${TYPE}-${STAGE}-${ENV}] ${err}`
                         );
                         return error(err);
                     }
 
-                    onComplete();
+                    thisAfterEachBuild();
 
                     statsHandling(appConfig, err, stats, {
                         forceQuiet: isSPATemplateInject,
@@ -154,7 +154,7 @@ async function buildClientProd({
         afterEachBuild();
         // console.log(' ')
         // let index = 0
-        const thisComplete = (localeId) => {
+        const thisAfterEachBuild = (localeId) => {
             if (spinnerBuildingSingle) {
                 if (resultStats.hasError()) {
                     spinnerBuildingSingle.fail();
@@ -199,7 +199,9 @@ async function buildClientProd({
                 return false;
             })();
             spinnerBuildingSingle = createSpinner(localeId);
-            await build(config, () => thisComplete(localeId)).catch(onError);
+            await build(config, () => thisAfterEachBuild(localeId)).catch(
+                onError
+            );
             // index++
         }
     } else {

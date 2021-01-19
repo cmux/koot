@@ -184,6 +184,8 @@ module.exports = async (
         typeof process.env[KOOT_BUILD_START_TIME] === 'string'
     ) {
         const assets = compilation.getAssets();
+        // console.log(Object.keys(stats));
+        // console.log(stats.assets.map(({ name }) => name));
         if (Array.isArray(assets)) {
             const fileOutputs = getOutputsPath();
             const buildTimestamp = process.env[KOOT_BUILD_START_TIME];
@@ -198,6 +200,8 @@ module.exports = async (
             const {
                 [process.env[KOOT_BUILD_START_TIME]]: list = [],
             } = existResult;
+
+            // console.log(assets);
 
             /** 本次打包输出的所有文件的列表 */
             assets

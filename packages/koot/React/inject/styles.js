@@ -2,7 +2,7 @@ const {
     chunkNameExtractCss,
     chunkNameExtractCssForImport,
     styleTagGlobalAttributeName,
-    thresholdStylesExtracted
+    thresholdStylesExtracted,
 } = require('../../defaults/before-build');
 const readClientFile = require('../../utils/read-client-file');
 const getClientFilePath = require('../../utils/get-client-file-path');
@@ -25,7 +25,7 @@ module.exports = ({
     // filemap,
     stylesHtml,
     localeId,
-    compilation
+    compilation,
 }) => {
     if (typeof injectCache[styles] === 'undefined') {
         injectCache[styles] = getExtracted(localeId, compilation);
@@ -108,7 +108,7 @@ const combineFilePaths = (...args) => {
     if (!Array.isArray(pathnames)) pathnames = [pathnames];
     return pathnames
         .map(
-            pathname =>
+            (pathname) =>
                 `<link id="__koot-extracted-styles" media="all" rel="stylesheet" href="${pathname}" ${styleTagGlobalAttributeName} />`
         )
         .join('');

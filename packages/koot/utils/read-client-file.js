@@ -49,7 +49,7 @@ const readClientFile = (
                 typeof compilation.assets[filemap[filename]] !== 'undefined'
             ) {
                 const asset = compilation.assets[filemap[filename]];
-                // console.log(filename, filemap[filename])
+                // console.log(filename, filemap[filename], asset);
                 // if (!asset._value) {
                 //     console.log(asset)
                 // }

@@ -5,6 +5,7 @@ const fs = require('fs-extra');
 const path = require('path');
 // const ejs = require('ejs')
 const chalk = require('chalk');
+const md5 = require('md5');
 const { Compilation } = require('webpack');
 
 const { buildManifestFilename } = require('koot/defaults/before-build');
@@ -20,7 +21,7 @@ const validateTemplate = require('koot/libs/validate-template');
 const getSpaLocaleFileId = require('koot/libs/get-spa-locale-file-id');
 const generateHtmlRedirectMetas = require('koot/i18n/generate-html-redirect-metas');
 
-const newCompilationFileDependency = require('../libs/new-compilation-file-dependency');
+const compilationEmitAsset = require('../libs/compilation-emit-asset');
 
 // ============================================================================
 
@@ -53,7 +54,7 @@ class SpaTemplatePlugin {
         const filename = `index${localeId ? `.${localeId}` : ''}.html`;
 
         // 失败原因
-        let fail = false;
+        const fail = false;
 
         // 如果环境变量中未找到模板结果，分析 koot.js，获取结果
         if (!process.env.KOOT_HTML_TEMPLATE) {
@@ -109,187 +110,60 @@ class SpaTemplatePlugin {
         }
 
         // [生产环境] emit - 添加占位文件
-        // if (process.env.WEBPACK_BUILD_ENV === 'prod') {
-        //     compiler.hooks.emit.tap('SpaTemplatePlugin', (compilation) => {
-        //         compilation.hooks.processAssets.tapPromise(
-        //             {
-        //                 name: 'SpaTemplatePlugin',
-        //                 stage: Compilation.PROCESS_ASSETS_STAGE_ADDITIONS,
-        //             },
-        //             async () => {
-        //                 console.log({
-        //                     filename,
-        //                     buildManifestFilename,
-        //                 });
-        //                 newCompilationFileDependency(compilation, filename, '');
-        //                 newCompilationFileDependency(
-        //                     compilation,
-        //                     buildManifestFilename,
-        //                     ''
-        //                 );
-        //             }
-        //         );
-        //     });
-        // }
+        if (process.env.WEBPACK_BUILD_ENV === 'prod') {
+            compiler.hooks.thisCompilation.tap(
+                'SpaTemplatePlugin',
+                (compilation) => {
+                    compilation.hooks.processAssets.tapAsync(
+                        {
+                            name: 'SpaTemplatePlugin',
+                            stage:
+                                Compilation.PROCESS_ASSETS_STAGE_OPTIMIZE_SIZE,
+                        },
+                        (compilationAssets, callback) => {
+                            compilationEmitAsset(compilation, filename, '');
+                            compilationEmitAsset(
+                                compilation,
+                                buildManifestFilename,
+                                ''
+                            );
+                            callback();
+                        }
+                    );
+                }
+            );
+        }
 
-        // hook: 在文件吐出时修改模板文件代码
-        const hookStep =
-            process.env.WEBPACK_BUILD_ENV === 'prod' ? 'emit' : 'emit';
-        compiler.hooks.afterCompile.tap(
+        // 吐出文件: manifest 和 index.html
+        compiler.hooks.thisCompilation.tap(
             'KootSpaTemplatePlugin',
             (compilation) => {
-                compilation.hooks.additionalAssets.tapAsync(
-                    'KootSpaTemplatePlugin',
-                    async (callback) => {
-                        console.log('-_________________-');
-                        console.log('-_________________-');
-                        console.log('-_________________-');
-                        console.log('-_________________-');
-                        console.log('-_________________-');
-                        const isI18nEnabled =
-                            Array.isArray(locales) && locales.length;
-
-                        // 获取并写入 chunkmap
-                        await writeChunkmap(
+                compilation.hooks.processAssets.tapAsync(
+                    {
+                        name: 'KootSpaTemplatePlugin',
+                        stage:
+                            /**
+                             * Generate the html after minification and dev tooling is done
+                             */
+                            Compilation.PROCESS_ASSETS_STAGE_OPTIMIZE_INLINE,
+                    },
+                    async (compilationAssets, callback) => {
+                        await tapEmitAssets(
+                            {
+                                localeId,
+                                inject,
+                                template,
+                                serviceWorkerPathname,
+                                locales,
+                                appTypeUse,
+                                filename,
+                            },
+                            fail,
                             compilation,
-                            localeId,
-                            undefined,
-                            serviceWorkerPathname
+                            callback
                         );
-
-                        const manifest = getChunkmap(localeId, false, true);
-                        const {
-                            '.files': filemap,
-                            '.entrypoints': entrypoints,
-                            // 'service-worker': serviceWorker
-                        } = manifest;
-
-                        // console.log({
-                        //     serviceWorker,
-                        //     KOOT_PWA_PATHNAME: process.env.KOOT_PWA_PATHNAME
-                        // });
-
-                        // 如果环境变量中未找到模板结果，报错并返回
-                        if (
-                            typeof process.env.KOOT_HTML_TEMPLATE !== 'string'
-                        ) {
-                            fail = __('build.spa_template_not_found');
-                            return callback();
-                        }
-                        const templateStr =
-                            process.env.WEBPACK_BUILD_ENV === 'dev'
-                                ? await validateTemplate(template)
-                                : process.env.KOOT_HTML_TEMPLATE;
-
-                        const renderTemplate = (() => {
-                            switch (appTypeUse) {
-                                case 'ReactSPA': {
-                                    return require(`koot/React/render-template`);
-                                }
-                                default: {
-                                }
-                            }
-                            return () => '';
-                        })();
-                        const defaultInject = (() => {
-                            switch (appTypeUse) {
-                                case 'ReactSPA': {
-                                    const inject = require(`koot/ReactSPA/inject`)(
-                                        {
-                                            filemap,
-                                            compilation,
-                                            entrypoints,
-                                            manifest,
-                                            localeId,
-                                            localeFileMap: isI18nEnabled
-                                                ? locales.reduce(
-                                                      (map, [localeId]) => {
-                                                          map[localeId] =
-                                                              filemap[
-                                                                  getSpaLocaleFileId(
-                                                                      localeId
-                                                                  ) + '.js'
-                                                              ];
-                                                          return map;
-                                                      },
-                                                      {}
-                                                  )
-                                                : undefined,
-                                            defaultLocaleId: isI18nEnabled
-                                                ? locales[0][0]
-                                                : undefined,
-                                            needInjectCritical: require(`koot/React/inject/is-need-inject-critical`)(
-                                                templateStr
-                                            ),
-                                        }
-                                    );
-                                    return inject;
-                                }
-                                default: {
-                                }
-                            }
-                            return {};
-                        })();
-                        // console.log(Object.assign({}, defaultInject, inject))
-
-                        const projectInject = (() => {
-                            if (!inject) return {};
-                            if (typeof inject !== 'string') return {};
-                            if (!fs.existsSync(inject)) return {};
-                            return ((thisModule) => {
-                                if (typeof thisModule.default === 'object')
-                                    return thisModule.default;
-                                if (typeof thisModule === 'object')
-                                    return thisModule;
-                                return {};
-                            })(
-                                // eslint-disable-next-line no-eval
-                                eval(
-                                    `const ${LOCALEID} = '${localeId}';\n` +
-                                        fs.readFileSync(inject, 'utf-8')
-                                )
-                            );
-                        })();
-
-                        const thisInject = {
-                            ...defaultInject,
-                            ...projectInject,
-                        };
-                        if (isI18nEnabled)
-                            thisInject.metas += generateHtmlRedirectMetas({
-                                availableLocaleIds: locales.map(
-                                    ([localeId]) => localeId
-                                ),
-                            });
-                        const html = renderTemplate({
-                            template: templateStr,
-                            inject: thisInject,
-                            compilation,
-                            localeId,
-                        });
-
-                        newCompilationFileDependency(
-                            compilation,
-                            filename,
-                            html
-                        );
-
-                        console.log(filename, html);
-
-                        // 生产环境：写入文件
-                        if (process.env.WEBPACK_BUILD_ENV === 'prod') {
-                            const pathname = path.resolve(
-                                getDirDistPublic(getDistPath()),
-                                filename
-                            );
-                            await fs.ensureFile(pathname);
-                            await fs.writeFile(pathname, html, 'utf-8');
-                        }
-
-                        return callback();
                     }
                 );
-                console.log(compilation.hooks.additionalAssets);
             }
         );
 
@@ -328,3 +202,142 @@ class SpaTemplatePlugin {
 }
 
 module.exports = SpaTemplatePlugin;
+
+// ============================================================================
+
+async function tapEmitAssets(options = {}, failReason, compilation, callback) {
+    const {
+        localeId,
+        inject,
+        template,
+        serviceWorkerPathname,
+        locales,
+        appTypeUse,
+        filename,
+    } = options;
+
+    const isI18nEnabled = Array.isArray(locales) && locales.length;
+
+    // 获取并写入 chunkmap
+    await writeChunkmap(
+        compilation,
+        localeId,
+        undefined,
+        serviceWorkerPathname
+    );
+
+    const manifest = getChunkmap(localeId, false, true);
+    const {
+        '.files': filemap,
+        '.entrypoints': entrypoints,
+        // 'service-worker': serviceWorker
+    } = manifest;
+
+    // console.log({
+    //     serviceWorker,
+    //     KOOT_PWA_PATHNAME: process.env.KOOT_PWA_PATHNAME
+    // });
+
+    // 如果环境变量中未找到模板结果，报错并返回
+    if (typeof process.env.KOOT_HTML_TEMPLATE !== 'string') {
+        failReason = __('build.spa_template_not_found');
+        return callback();
+    }
+    const templateStr =
+        process.env.WEBPACK_BUILD_ENV === 'dev'
+            ? await validateTemplate(template)
+            : process.env.KOOT_HTML_TEMPLATE;
+
+    const renderTemplate = (() => {
+        switch (appTypeUse) {
+            case 'ReactSPA': {
+                return require(`koot/React/render-template`);
+            }
+            default: {
+            }
+        }
+        return () => '';
+    })();
+    const defaultInject = (() => {
+        switch (appTypeUse) {
+            case 'ReactSPA': {
+                const inject = require(`koot/ReactSPA/inject`)({
+                    filemap,
+                    compilation,
+                    entrypoints,
+                    manifest,
+                    localeId,
+                    localeFileMap: isI18nEnabled
+                        ? locales.reduce((map, [localeId]) => {
+                              map[localeId] =
+                                  filemap[getSpaLocaleFileId(localeId) + '.js'];
+                              return map;
+                          }, {})
+                        : undefined,
+                    defaultLocaleId: isI18nEnabled ? locales[0][0] : undefined,
+                    needInjectCritical: require(`koot/React/inject/is-need-inject-critical`)(
+                        templateStr
+                    ),
+                });
+                return inject;
+            }
+            default: {
+            }
+        }
+        return {};
+    })();
+    // console.log(Object.assign({}, defaultInject, inject))
+
+    const projectInject = await (async () => {
+        if (!inject) return {};
+        if (typeof inject !== 'string') return {};
+        if (!fs.existsSync(inject)) return {};
+
+        const content =
+            `const ${LOCALEID} = '${localeId}';\n` +
+            fs.readFileSync(inject, 'utf-8');
+
+        // eslint-disable-next-line no-eval
+        let thisModule = eval(content);
+
+        if (typeof thisModule !== 'object') {
+            const dir = path.dirname(inject);
+            const file = path.resolve(dir, md5(content) + '.js');
+            await fs.writeFile(file, content, 'utf-8');
+            thisModule = require(file);
+            await fs.unlink(file);
+        }
+
+        if (typeof thisModule.default === 'object') return thisModule.default;
+        return thisModule || {};
+    })();
+
+    const thisInject = {
+        ...defaultInject,
+        ...projectInject,
+    };
+    if (isI18nEnabled)
+        thisInject.metas += generateHtmlRedirectMetas({
+            availableLocaleIds: locales.map(([localeId]) => localeId),
+        });
+    const html = renderTemplate({
+        template: templateStr,
+        inject: thisInject,
+        compilation,
+        localeId,
+    });
+
+    compilationEmitAsset(compilation, filename, html);
+
+    // 生产环境：写入文件
+    if (process.env.WEBPACK_BUILD_ENV === 'prod') {
+        const pathname = path.resolve(
+            getDirDistPublic(getDistPath()),
+            filename
+        );
+        await fs.ensureFile(pathname);
+        await fs.writeFile(pathname, html, 'utf-8');
+    }
+
+    return callback();
+}
