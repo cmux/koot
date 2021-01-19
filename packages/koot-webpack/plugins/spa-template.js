@@ -8,7 +8,10 @@ const chalk = require('chalk');
 const md5 = require('md5');
 const { Compilation } = require('webpack');
 
-const { buildManifestFilename } = require('koot/defaults/before-build');
+const {
+    buildManifestFilename,
+    GLOBAL_VAR_BUILD_COMPILATION_FOR_SPA_INJECTION,
+} = require('koot/defaults/before-build');
 const { LOCALEID } = require('koot/defaults/defines-window');
 const writeChunkmap = require('koot/utils/write-chunkmap');
 // const getAppType = require('koot/utils/get-app-type');
@@ -246,6 +249,9 @@ async function tapEmitAssets(options = {}, failReason, compilation, callback) {
         failReason = __('build.spa_template_not_found');
         return callback();
     }
+
+    global[GLOBAL_VAR_BUILD_COMPILATION_FOR_SPA_INJECTION] = compilation;
+
     const templateStr =
         process.env.WEBPACK_BUILD_ENV === 'dev'
             ? await validateTemplate(template)
@@ -344,6 +350,8 @@ async function tapEmitAssets(options = {}, failReason, compilation, callback) {
         await fs.ensureFile(pathname);
         await fs.writeFile(pathname, html, 'utf-8');
     }
+
+    global[GLOBAL_VAR_BUILD_COMPILATION_FOR_SPA_INJECTION] = undefined;
 
     return callback();
 }

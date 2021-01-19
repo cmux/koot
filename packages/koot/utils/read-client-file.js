@@ -1,7 +1,13 @@
 const fs = require('fs');
 const path = require('path');
 const isUrl = require('is-url');
+// const { sources } = require('webpack');
 
+const getSourceContent = require('koot-webpack/libs/get-source-content');
+
+const {
+    GLOBAL_VAR_BUILD_COMPILATION_FOR_SPA_INJECTION,
+} = require('../defaults/before-build');
 const getFilePath = require('./get-client-file-path');
 const generateFilemap = require('./generate-filemap-from-compilation');
 const getDistPath = require('./get-dist-path');
@@ -33,35 +39,47 @@ const readClientFile = (
             true
         );
 
+    const fileExtName = path.extname(filename);
+    const filenameWithoutExtname = path.basename(filename, fileExtName);
+
+    if (!compilation)
+        compilation =
+            global[GLOBAL_VAR_BUILD_COMPILATION_FOR_SPA_INJECTION] || undefined;
+
     // 如果提供了 webpack compilation 数据，尝试从其中查询对应文件的最终内容并返回
     if (typeof compilation === 'object') {
         const filemap = generateFilemap(compilation);
         if (typeof filemap === 'object') {
-            // console.log('\n' + filename)
-            // console.log(`typeof filemap["${filename}"]`, typeof filemap[filename])
-            // console.log(`typeof compilation.assets["${filemap[filename]}"]`, typeof compilation.assets[filemap[filename]])
-            // for (let key in compilation) {
-            //     console.log(key)
-            // }
+            // console.log(compilation.chunks);
 
-            if (
-                typeof filemap[filename] === 'string' &&
-                typeof compilation.assets[filemap[filename]] !== 'undefined'
-            ) {
-                const asset = compilation.assets[filemap[filename]];
-                // console.log(filename, filemap[filename], asset);
-                // if (!asset._value) {
-                //     console.log(asset)
-                // }
-                // console.log('typeof asset.source', typeof asset.source)
-                if (typeof asset.source === 'function') return asset.source();
-                if (typeof asset._value !== 'undefined') return asset._value;
-                if (typeof asset._cachedSource !== 'undefined')
-                    return asset._cachedSource;
-                // return '123'
-            }
+            const files = [];
+
+            // 根据文件名/特征名从查找特定 chunk，利用其内的文件列表
+            [...compilation.chunks]
+                .filter(
+                    ({ name }) =>
+                        name === filename || name === filenameWithoutExtname
+                )
+                .forEach((chunk) => {
+                    [...chunk.files].forEach((file) => {
+                        files.push(file);
+                    });
+                });
+
+            // 如果上述操作不存在有效的文件，利用 koot 生成的 manifest 查询
+            if (!files.length) files.push(filename);
+
+            // console.log({ filename, files });
+
+            // 如果有文件，直接使用，查询 asset
+            return files
+                .filter((filename) => path.extname(filename) === fileExtName)
+                .map((file) => getSourceContent(compilation.getAsset(file)))
+                .join('\n');
         }
     }
+
+    // console.log(filename, filenameWithoutExtname);
 
     // 在打包结果中寻找指定文件
     let pathnames = getFilePath(filename, localeId, isPathname, true);

@@ -28,7 +28,7 @@ module.exports = (compilation, dirRelative) => {
     for (const chunk of compilation.chunks) {
         const { name, idNameHints, files } = chunk;
 
-        const thisName = name || [...idNameHints][0];
+        const thisName = name || [...idNameHints].join('~');
 
         if (typeof thisName === 'undefined' || thisName === null) continue;
         if ([...files].every((filename) => !/\.(js|css)$/i.test(filename)))

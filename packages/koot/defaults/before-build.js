@@ -98,4 +98,8 @@ module.exports = {
 
     /** Webpack compilation 对象中的定制属性 - 额外 Meta 标签的 HTML 代码 */
     compilationKeyHtmlMetaTags: '.htmlMetaTags__',
+
+    /** 针对 SPA 打包时模板 injection 操作需要的 Webpack compilation 对象对应的全局变量名 */
+    GLOBAL_VAR_BUILD_COMPILATION_FOR_SPA_INJECTION:
+        '__KOOT_GLOBAL_VAR_BUILD_COMPILATION_FOR_SPA_INJECTION__',
 };
