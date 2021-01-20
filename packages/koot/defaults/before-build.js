@@ -45,6 +45,7 @@ module.exports = {
     keyConfigOutputPathShouldBe: '__OUTPUT_PATH_SHOULD_BE__',
     keyConfigWebpackSPATemplateInject:
         '__KOOT_WEBPACK_CONFIG_FOR_SPA_TEMPLATE_INJECT__',
+    keyConfigWebpackLocaleId: '__KOOT_WEBPACK_CONFIG_LOCALE_ID__',
     keyConfigWebpackSPAServer: '__SPA_SERVER__',
     keyConfigClientAssetsPublicPath: '__CLIENT_ASSETS_PUBLIC_PATH__',
     keyConfigClientServiceWorkerPathname: '__CLIENT_SERVICE_WORKER_PATHNAME__',

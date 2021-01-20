@@ -21,6 +21,7 @@ const {
     keyConfigBuildDll,
     keyConfigOutputPathShouldBe,
     keyConfigWebpackSPATemplateInject,
+    keyConfigWebpackLocaleId,
     keyConfigClientAssetsPublicPath,
     chunkNameClientRunFirst,
     keyConfigClientServiceWorkerPathname,

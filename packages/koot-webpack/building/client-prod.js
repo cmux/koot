@@ -8,6 +8,7 @@ const {
     keyConfigQuiet,
     keyConfigBuildDll,
     keyConfigWebpackSPATemplateInject,
+    keyConfigWebpackLocaleId,
 } = require('koot/defaults/before-build');
 
 const __ = require('koot/utils/translate');
@@ -61,6 +62,7 @@ async function buildClientProd({
             [keyConfigWebpackSPATemplateInject]: isSPATemplateInject = false,
         } = config;
         delete config[keyConfigWebpackSPATemplateInject];
+        delete config[keyConfigWebpackLocaleId];
         // if (isSPATemplateInject) {
         //     config[keyConfigQuiet] = true;
         // }
@@ -196,13 +198,14 @@ async function buildClientProd({
             if (errorEncountered) break;
             console.log(' ');
 
-            const localeId = (() => {
-                const ids = config.plugins.filter(
-                    (plugin) => plugin && typeof plugin.localeId === 'string'
-                );
-                if (ids.length) return ids.reduce((prev, cur) => cur.localeId);
-                return false;
-            })();
+            // const localeId = (() => {
+            //     const ids = config.plugins.filter(
+            //         (plugin) => plugin && typeof plugin.localeId === 'string'
+            //     );
+            //     if (ids.length) return ids.reduce((prev, cur) => cur.localeId);
+            //     return false;
+            // })();
+            const { [keyConfigWebpackLocaleId]: localeId } = config;
             spinnerBuildingSingle = createSpinner(localeId);
             await build(config, () => thisAfterEachBuild(localeId)).catch(
                 onError

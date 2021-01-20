@@ -1,4 +1,8 @@
 const createGlobalDefaultConfig = require('./create-global-default');
+const {
+    keyConfigWebpackLocaleId,
+    // pathnameSockjs
+} = require('koot/defaults/before-build');
 
 /**
  * Webpack 配置处理 - 确保默认值
@@ -55,6 +59,8 @@ module.exports = async (config = {}, kootBuildConfig = {}, options = {}) => {
     // for (let key of Object.keys(configGlobalDefault.resolve)) {
 
     // }
+
+    if (options.localeId) config[keyConfigWebpackLocaleId] = options.localeId;
 
     return config;
 };

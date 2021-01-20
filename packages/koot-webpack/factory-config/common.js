@@ -46,7 +46,7 @@ const factory = async (
         aliases['react-dom'] = '@hot-loader/react-dom';
     }
 
-    return {
+    const def = {
         module: {
             rules: createModuleRules(
                 {
@@ -71,6 +71,8 @@ const factory = async (
             options
         ),
     };
+
+    return def;
 };
 
 // 执行顺序, 先 -> 后

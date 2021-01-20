@@ -17,8 +17,9 @@
         -   `get-image-colors`
         -   `isomorphic-fetch`
         -   `yargs`
-    -   _Koot.js_ 现已支持全新的 _JSX_ 转译引擎，现在开发 _React_ 组件时不要需要引用 `react`
-        -   已有项目在使用 `koot-cli` 升级时，会运行一次 _React_ 官方提供的 `codemod` 脚本，尝试修改所有 JSX 文件
+-   **新特性**
+    -   现已支持全新的 _JSX_ 转译引擎
+        -   该功能对从 0.15 之前版本升级而来的项目默认关闭，如需开启请参阅[升级指南](https://koot.js.org/#/migration/0.14-to-0.15)
         -   相关信息请查阅 [React 官方文档](https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html)
 -   优化
     -   `serviceWorker` 的 `cacheFirst` `networkFirst` `networkOnly` 扩展缓存策略选项，其数组 (`Array`) 内现在可以直接传入正则表达式和用以分析请求的函数，请参见文档 [Service Worker/扩展缓存规则](/pwa?id=扩展缓存规则)
@@ -36,6 +37,7 @@
 
 -   **重大改动**
     -   此次更新包含诸多重大改动，对于已有项目的升级，请参阅[升级指南](https://koot.js.org/#/migration/0.14-to-0.15)
+    -   内置的多语言处理方式改为 _Babel_ 插件，原 _Webpack_ 插件现已弃用
     -   更新依赖包 **major** 版本号
         -   `@hot-loader/react-dom` -> _^17.0.0_
         -   `compression-webpack-plugin` -> _^7.1.2_
@@ -49,7 +51,7 @@
         -   `sass-loader` -> _^10.1.1_
         -   `style-loader` -> _^2.0.0_
         -   `thread-loader` -> _^3.0.0_
-        -   `webpack` -> _^5.14.0_
+        -   `webpack` -> _^5.16.0_
         -   `webpack-bundle-analyzer` -> _^4.3.0_
         -   `webpack-dev-middleware` -> _^4.0.4_
         -   `workbox-webpack-plugin` -> _^6.0.2_
