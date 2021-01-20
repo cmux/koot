@@ -1,14 +1,13 @@
 // const getDirDevCache = require('koot/libs/get-dir-dev-cache')
 
-const findCacheDir = require('find-cache-dir');
+// const findCacheDir = require('find-cache-dir');
+const md5 = require('md5');
 
-const getBabelLoaderDefaults = ({ createDll = false }) => ({
-    cacheDirectory: findCacheDir({ name: 'koot-webpack', thunk: true })(
-        `babel/${process.env.WEBPACK_BUILD_TYPE}` +
-            `.${process.env.WEBPACK_BUILD_ENV}` +
-            `.${process.env.WEBPACK_BUILD_STAGE}` +
-            (createDll ? '.dll' : '')
-    ),
+const getBabelLoaderDefaults = (name) => ({
+    // cacheDirectory: findCacheDir({ name: 'babel-loader', thunk: true })(
+    //     ['koot', name].join('-')
+    // ),
+    cacheDirectory: false,
     cacheCompression: false,
 });
 
@@ -34,7 +33,16 @@ module.exports = (kootBuildConfig = {}, options = {}) => {
 
         options = Object.assign(
             {},
-            getBabelLoaderDefaults({ createDll }),
+            getBabelLoaderDefaults(
+                md5(
+                    [
+                        process.env.WEBPACK_BUILD_TYPE,
+                        process.env.WEBPACK_BUILD_ENV,
+                        process.env.WEBPACK_BUILD_STAGE,
+                        createDll ? '.dll' : '',
+                    ].join()
+                )
+            ),
             options,
             {
                 __i18n: i18n,
@@ -56,7 +64,6 @@ module.exports = (kootBuildConfig = {}, options = {}) => {
         }
 
         if (stageServer) {
-            // options.cacheIdentifier = 'koot-webpack-server-bundling';
             options.babelrc = false;
             // options.cacheCompression = false;
         }

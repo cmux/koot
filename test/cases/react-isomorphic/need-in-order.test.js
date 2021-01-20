@@ -262,6 +262,7 @@ const beforeTest = async (cwd) => {
     // 重置
     await exec(`pm2 kill`);
     await removeTempProjectConfig(cwd);
+    // await fs.remove(path.resolve(cwd, 'node_modules/.cache'));
 };
 
 /**
@@ -835,6 +836,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
             const page = await context.newPage();
             const res = await page.goto(origin + '/test-pageinfo-deep', {
                 waitUntil: 'networkidle0',
+                timeout: 10000,
             });
             const HTML = await res.text();
             const $ = cheerio.load(HTML);
@@ -856,17 +858,31 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
             await page.goto(origin, {
                 waitUntil: 'networkidle0',
             });
-            await Promise.all([
-                page.waitForSelector(
-                    `[data-koot-test-page="page-test-pageinfo-deep"]`
-                ),
-                // page.click('a[href$="/test-pageinfo-deep"]'),
-                page.evaluate(() => {
-                    document
-                        .querySelector('a[href$="/test-pageinfo-deep"]')
-                        .click();
-                }),
-            ]);
+            await page.waitForSelector('a[href$="/test-pageinfo-deep"]');
+            await page.evaluate(() => {
+                document
+                    .querySelector('a[href$="/test-pageinfo-deep"]')
+                    .click();
+            });
+            // console.log(1);
+            await page.waitForSelector(
+                `[data-koot-test-page="page-test-pageinfo-deep"]`,
+                {
+                    timeout: 5000,
+                }
+            );
+            // console.log(2);
+            // await Promise.all([
+            //     page.waitForSelector(
+            //         `[data-koot-test-page="page-test-pageinfo-deep"]`
+            //     ),
+            //     // page.click('a[href$="/test-pageinfo-deep"]'),
+            //     page.evaluate(() => {
+            //         document
+            //             .querySelector('a[href$="/test-pageinfo-deep"]')
+            //             .click();
+            //     }),
+            // ]);
 
             const titleCSR = await page.evaluate(() => document.title);
 
@@ -1131,6 +1147,8 @@ describe('测试: React 同构项目', () => {
     for (const project of projectsToUse) {
         const { name, dir } = project;
         describe(`项目: ${name}`, () => {
+            fs.removeSync(path.resolve(dir, 'node_modules/.cache'));
+
             test(`[prod] 使用 koot-build 命令进行打包`, async () => {
                 await beforeTest(dir);
                 await emptyDist(path.resolve(dir, 'dist'));
@@ -1224,6 +1242,38 @@ describe('测试: React 同构项目', () => {
                     '[prod] 使用 koot-start (--no-build) 命令启动服务器并访问'
                 );
             });
+
+            testProduction(
+                '二号 / i18n.use="router"',
+                dir,
+                'koot.config.i18n-use-router.js',
+                'isomorphic-i18n_use_router',
+                {
+                    i18nUse: 'router',
+                    cookiesToStore: 'all',
+                }
+            );
+
+            testProduction(
+                '三号 / bundleVersionsKeep=false',
+                dir,
+                'koot.config.no-bundles-keep.js',
+                'isomorphic-no_bundles_keep',
+                {
+                    cookiesToStore: ['kootTest2', 'kootTest3'],
+                }
+            );
+
+            testProduction(
+                '四号 / output.publicPath',
+                dir,
+                'koot.config.public-path.js',
+                'isomorphic-public_path',
+                {
+                    i18nUse: 'subdomain',
+                }
+            );
+            return;
             if (fullTest) {
                 test(`[prod] 使用 koot-start (--no-build) 命令启动服务器并访问 (自定义端口号)`, async () => {
                     await beforeTest(dir);

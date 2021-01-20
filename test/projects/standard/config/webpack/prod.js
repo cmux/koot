@@ -11,7 +11,8 @@ module.exports = async () => {
             // publicPath: "/aaa/",
             // filename: `core.[chunkhash].js`,
             // chunkFilename: `chunk.[chunkhash].js`
-        }
+        },
+        devtool: 'source-map',
 
         // optimization: webpackOptimizationProd()
     };

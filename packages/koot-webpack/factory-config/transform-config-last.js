@@ -2,7 +2,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const webpack = require('webpack');
 const md5 = require('md5');
-// const findCacheDir = require('find-cache-dir');
+const findCacheDir = require('find-cache-dir');
 // const HardSourceWebpackPlugin = require('@diablohu/hard-source-webpack-plugin'); // unofficial patch
 
 const {
@@ -124,6 +124,54 @@ const validate = (config, kootConfigForThisBuild, index = 0) => {
     // delete config[keyConfigWebpackSPATemplateInject];
     delete config[keyConfigWebpackSPAServer];
 
+    // 添加缓存配置
+    {
+        const cacheIdentifier =
+            'koot-' +
+            md5(
+                [
+                    config.name,
+                    config.mode,
+                    JSON.stringify(kootConfigForThisBuild),
+                ].join('~')
+            );
+        if (
+            process.env.WEBPACK_BUILD_ENV !== 'dev' &&
+            process.env.WEBPACK_BUILD_STAGE === 'client' &&
+            !config[keyConfigWebpackSPATemplateInject]
+        ) {
+            if (typeof config.cache === 'undefined') {
+                config.cache = {
+                    type: 'filesystem',
+                    name: cacheIdentifier,
+                };
+            }
+        }
+        // 给 babel loader 添加缓存目录设定
+        function modifyRule(rule) {
+            if (Array.isArray(rule.oneOf)) {
+                for (const _rule of rule.oneOf) modifyRule(_rule);
+                return;
+            }
+            if (!Array.isArray(rule.use)) return;
+            for (const { loader, options } of rule.use) {
+                if (
+                    /koot-webpack\\loaders\\babel\\index\.js$/.test(loader) &&
+                    typeof options === 'object'
+                ) {
+                    options.cacheDirectory = findCacheDir({
+                        name: 'babel-loader',
+                        thunk: true,
+                    })(cacheIdentifier);
+                    // console.log(loader, options);
+                }
+            }
+        }
+        for (const rule of config.module.rules) {
+            modifyRule(rule);
+        }
+    }
+
     return config;
 };
 
@@ -179,27 +227,13 @@ const validatePlugins = (config, kootConfigForThisBuild = {}) => {
         (plugin) => typeof plugin !== 'undefined' && plugin !== null
     );
 
-    if (
-        // useHardSourceCache &&
-        ENV !== 'dev' &&
-        process.env.WEBPACK_BUILD_STAGE === 'client' &&
-        !config[keyConfigWebpackSPATemplateInject]
-    ) {
-        if (typeof config.cache === 'undefined') {
-            config.cache = {
-                type: 'filesystem',
-                name:
-                    'koot-' +
-                    md5(
-                        [
-                            config.name,
-                            config.mode,
-                            JSON.stringify(kootConfigForThisBuild),
-                        ].join('~')
-                    ),
-            };
-        }
-        /*
+    // if (
+    //     // useHardSourceCache &&
+    //     ENV !== 'dev' &&
+    //     process.env.WEBPACK_BUILD_STAGE === 'client' &&
+    //     !config[keyConfigWebpackSPATemplateInject]
+    // ) {
+    /*
     // 添加缓存插件
     // const useHardSourceCache = false;
         config.plugins.push(
@@ -274,7 +308,7 @@ const validatePlugins = (config, kootConfigForThisBuild = {}) => {
             new HardSourceWebpackPlugin.ExcludeModulePlugin(ignores)
         );
     */
-    }
+    // }
 };
 
 const validateModuleRules = (config, kootConfigForThisBuild = {}) => {

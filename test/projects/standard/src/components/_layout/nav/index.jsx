@@ -31,11 +31,11 @@ const Nav = (props) => {
     ];
 
     if (!__SPA__) {
-        console.log(
-            'testtest',
-            `__('pages.extend.title')`,
-            __('pages.extend.title')
-        );
+        // console.log(
+        //     'testtest',
+        //     `__('pages.extend.title')`,
+        //     __('pages.extend.title')
+        // );
         items.splice(1, 0, {
             title: __('pages.extend.title'),
             to: '/extend',
