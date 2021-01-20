@@ -1,3 +1,12 @@
+/*
+
+Webpack 5 修改了插件编写方式，Koot i18n 实现变得困难。
+为了达成最快的迁移，我选择了改用 Babel 插件的方式。
+该 Webpack 插件目前已废弃，如果日后有更好的实现会考虑复用。
+—— Diablohu (胡昕) 2021/01/20
+
+ */
+
 // const fs = require('fs-extra');
 // const path = require('path');
 // const {

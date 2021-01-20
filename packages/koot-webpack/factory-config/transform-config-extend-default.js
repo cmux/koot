@@ -23,7 +23,7 @@ module.exports = async (config = {}, kootBuildConfig = {}, options = {}) => {
             } else {
                 config.module.rules = [
                     ...configGlobalDefault.module.rules,
-                    ...config.module.rules
+                    ...config.module.rules,
                 ];
             }
         }
@@ -41,7 +41,7 @@ module.exports = async (config = {}, kootBuildConfig = {}, options = {}) => {
         } else {
             config.plugins = [
                 ...configGlobalDefault.plugins,
-                ...config.plugins
+                ...config.plugins,
             ];
         }
     }

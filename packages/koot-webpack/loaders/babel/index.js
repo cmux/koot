@@ -1,6 +1,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 const { createConfigItem } = require('@babel/core/lib/config/item');
+
 const getCwd = require('koot/utils/get-cwd');
 const transformFixDefaultExport = require('./transform-fix-default-export');
 
@@ -70,6 +71,7 @@ module.exports = require('babel-loader').custom((babel) => {
             __server,
             __routes,
             __spaTemplateInject,
+            __i18n,
             ...loader
         }) {
             Object.assign(customOptions, {
@@ -79,6 +81,7 @@ module.exports = require('babel-loader').custom((babel) => {
                 __server,
                 __routes,
                 __spaTemplateInject,
+                __i18n,
             });
             // Pull out any custom options that the loader might have.
             return {
@@ -101,6 +104,7 @@ module.exports = require('babel-loader').custom((babel) => {
                 __server = false,
                 __spaTemplateInject = false,
                 __routes,
+                __i18n,
             } = customOptions;
             const { presets, plugins, ...options } = cfg.options;
             const isServer =
@@ -208,6 +212,17 @@ module.exports = require('babel-loader').custom((babel) => {
                     },
                 ]);
                 // console.log(newPlugins);
+            }
+
+            if (
+                !__createDll &&
+                typeof __i18n === 'object' &&
+                __i18n.functionName
+            ) {
+                newPlugins.push([
+                    path.resolve(__dirname, './plugins/i18n.js'),
+                    __i18n,
+                ]);
             }
 
             const thisOptions = {

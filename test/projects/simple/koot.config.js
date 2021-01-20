@@ -41,6 +41,7 @@ module.exports = {
     },
 
     webpackBefore: async (kootConfigWithExtra = {}) => {
+        // eslint-disable-next-line no-console
         console.log('WEBPACK BEFORE');
         // console.log(kootConfigWithExtra);
     },

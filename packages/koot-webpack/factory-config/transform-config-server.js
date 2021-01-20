@@ -4,7 +4,7 @@ const webpack = require('webpack');
 const DefaultWebpackConfig = require('webpack-config').default;
 // const ExtraWatchWebpackPlugin = require('extra-watch-webpack-plugin').default
 
-const KootI18nPlugin = require('../plugins/i18n');
+// const KootI18nPlugin = require('../plugins/i18n');
 const DevModePlugin = require('../plugins/dev-mode');
 const ModifyServerBundlePlugin = require('../plugins/modify-server-bundle');
 
@@ -63,6 +63,11 @@ module.exports = async (kootBuildConfig = {}) => {
             (serverless || process.env.KOOT_BUILD_TARGET === 'serverless')
     );
 
+    const i18nConfig = {
+        stage: STAGE,
+        functionName: i18n ? i18n.expr : undefined,
+    };
+
     const configTargetDefault = await createTargetDefaultConfig(
         {
             pathRun: getCwd(),
@@ -84,7 +89,9 @@ module.exports = async (kootBuildConfig = {}) => {
             typeof config.output.publicPath === 'string'
     );
 
-    await transformConfigExtendDefault(result, kootBuildConfig);
+    await transformConfigExtendDefault(result, kootBuildConfig, {
+        i18n: i18nConfig,
+    });
 
     Object.assign(result.output, configTargetDefault.output);
     ensureConfigName(result, 'server');
@@ -114,10 +121,7 @@ module.exports = async (kootBuildConfig = {}) => {
         new webpack.optimize.LimitChunkCountPlugin({
             maxChunks: 1,
         }),
-        new KootI18nPlugin({
-            stage: STAGE,
-            functionName: i18n ? i18n.expr : undefined,
-        }),
+        // new KootI18nPlugin(i18nConfig),
         new ModifyServerBundlePlugin({ isServerless }),
         ...result.plugins,
     ];

@@ -77,23 +77,26 @@ const addCommand = async (name, command, cwd) => {
 /**
  * 测试项目开始前
  * @async
- * @param {String} cpd Current Project Directory
+ * @param {String} cwd Current Project Directory
  * @param {String} dist
  */
-const beforeTest = async (cpd) => {
-    await removeTempProjectConfig(cpd);
+const beforeTest = async (cwd) => {
+    await removeTempProjectConfig(cwd);
+    await fs.remove(path.resolve(cwd, 'dist'));
+    await fs.remove(path.resolve(cwd, 'logs'));
+    await fs.remove(path.resolve(cwd, 'node_modules/.cache'));
 };
 
 /**
  * 测试项目结束后
  * @async
- * @param {String} cpd Current Project Directory
+ * @param {String} cwd Current Project Directory
  * @param {String} dist
  * @param {String} title
  */
-const afterTest = async (cpd /*, title*/) => {
+const afterTest = async (cwd /*, title*/) => {
     await sleep(2 * 1000);
-    await removeTempProjectConfig(cpd);
+    await removeTempProjectConfig(cwd);
 
     // console.log(chalk.green('√ ') + title)
 };
@@ -101,7 +104,6 @@ const afterTest = async (cpd /*, title*/) => {
 //
 
 const testFull = (dir, configFileName) => {
-    const start = Date.now();
     const forceChangeType = !configFileName;
     const fileKootConfig = path.resolve(
         dir,
@@ -109,7 +111,8 @@ const testFull = (dir, configFileName) => {
     );
     const fileKootConfigRel = path.relative(dir, fileKootConfig);
 
-    return describe(`配置文件: ${configFileName || '默认'}`, () => {
+    return describe(`🧶 配置文件: ${configFileName || '默认'}`, () => {
+        const start = Date.now();
         const config = require(fileKootConfig);
         const dest = forceChangeType ? 'dist-spa-test' : config.dist;
         const dist = path.resolve(dir, dest);
@@ -349,7 +352,7 @@ const testFull = (dir, configFileName) => {
             console.log(
                 chalk.green('√ ') +
                     chalk.green(`${(Date.now() - start) / 1000}s `) +
-                    configFileName
+                    (configFileName || '默认')
             );
         });
 

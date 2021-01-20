@@ -5,7 +5,7 @@ const DefaultWebpackConfig = require('webpack-config').default;
 
 const CompressionPlugin = require('compression-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const KootI18nPlugin = require('../plugins/i18n');
+// const KootI18nPlugin = require('../plugins/i18n');
 const DevModePlugin = require('../plugins/dev-mode');
 const SpaTemplatePlugin = require('../plugins/spa-template');
 const GenerateChunkmapPlugin = require('../plugins/generate-chunkmap');
@@ -131,6 +131,22 @@ module.exports = async (kootConfigForThisBuild = {}) => {
         /** @type {String} 打包结果目录 */
         const outputPath = getDirDistPublic(dist);
 
+        /** i18n 配置对象，提供给 babel 插件使用 */
+        const i18nConfig = {
+            stage: STAGE,
+            functionName: i18n ? i18n.expr : undefined,
+            localeId: i18n
+                ? isSeperateLocale
+                    ? localeId
+                    : undefined
+                : undefined,
+            localeFile: i18n
+                ? isSeperateLocale
+                    ? localeFile
+                    : undefined
+                : undefined,
+        };
+
         /** @type {Object} 默认配置 */
         const configTargetDefault = await createTargetDefaultConfig({
             pathRun: getCwd(),
@@ -162,6 +178,7 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                     {
                         isSPATemplateInject,
                         localeId,
+                        i18n: i18nConfig,
                     }
                 )
             );
@@ -290,22 +307,7 @@ module.exports = async (kootConfigForThisBuild = {}) => {
 
             // 添加默认插件
             // i18n 插件
-            result.plugins.unshift(
-                new KootI18nPlugin({
-                    stage: STAGE,
-                    functionName: i18n ? i18n.expr : undefined,
-                    localeId: i18n
-                        ? isSeperateLocale
-                            ? localeId
-                            : undefined
-                        : undefined,
-                    localeFile: i18n
-                        ? isSeperateLocale
-                            ? localeFile
-                            : undefined
-                        : undefined,
-                })
-            );
+            // result.plugins.unshift(new KootI18nPlugin(i18nConfig));
 
             // 开发环境辅助插件与其他能力
             if (ENV === 'dev') {

@@ -23,7 +23,7 @@ module.exports = (kootBuildConfig = {}, options = {}) => {
     const stageServer = stage === 'server';
 
     const { createDll = false, routes } = kootBuildConfig;
-    const { isSPATemplateInject = false } = options;
+    const { isSPATemplateInject = false, i18n } = options;
 
     //
 
@@ -35,7 +35,10 @@ module.exports = (kootBuildConfig = {}, options = {}) => {
         options = Object.assign(
             {},
             getBabelLoaderDefaults({ createDll }),
-            options
+            options,
+            {
+                __i18n: i18n,
+            }
         );
 
         if (process.env.WEBPACK_BUILD_ENV === 'dev') {
