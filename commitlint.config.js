@@ -11,6 +11,7 @@ module.exports = {
                 'docs',
                 'style',
                 'refactor',
+                'perf',
                 'test',
                 'revert',
                 'deps',

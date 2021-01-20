@@ -1,6 +1,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 const webpack = require('webpack');
+const md5 = require('md5');
 // const findCacheDir = require('find-cache-dir');
 // const HardSourceWebpackPlugin = require('@diablohu/hard-source-webpack-plugin'); // unofficial patch
 
@@ -187,6 +188,15 @@ const validatePlugins = (config, kootConfigForThisBuild = {}) => {
         if (typeof config.cache === 'undefined') {
             config.cache = {
                 type: 'filesystem',
+                name:
+                    'koot-' +
+                    md5(
+                        [
+                            config.name,
+                            config.mode,
+                            JSON.stringify(kootConfigForThisBuild),
+                        ].join('~')
+                    ),
             };
         }
         /*

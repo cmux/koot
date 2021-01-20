@@ -305,7 +305,16 @@ const emptyDist = async (dir) => {
 const testCodeSplitting = async (dist) => {
     const check = (chunkmap) => {
         const { '.files': files } = chunkmap;
-        const { 'client.js': client, 'PageHome.js': home } = files;
+        const { 'client.js': client } = files;
+        let { 'PageHome.js': home } = files;
+
+        if (!home) {
+            Object.keys(files)
+                .filter((filename) => /^PageHome_[0-9]+\.js$/.test(filename))
+                .forEach((filename) => {
+                    if (!home) home = files[filename];
+                });
+        }
 
         expect(
             fs
