@@ -1,6 +1,6 @@
 const fs = require('fs-extra');
 const path = require('path');
-const webpack = require('webpack');
+// const webpack = require('webpack');
 const DefaultWebpackConfig = require('webpack-config').default;
 // const ExtraWatchWebpackPlugin = require('extra-watch-webpack-plugin').default
 
@@ -16,16 +16,16 @@ const {
     // keyConfigClientAssetsPublicPath,
     keyConfigWebpackSPAServer,
 } = require('koot/defaults/before-build');
+const getCwd = require('koot/utils/get-cwd');
+const getDirDistPublic = require('koot/libs/get-dir-dist-public');
+// const getDirDevTmp = require('koot/libs/get-dir-dev-tmp');
+const getModuleVersion = require('koot/utils/get-module-version');
 
 const createTargetDefaultConfig = require('./create-target-default');
 const transformConfigExtendDefault = require('./transform-config-extend-default');
 const transformConfigLast = require('./transform-config-last');
 const transformOutputPublicpath = require('./transform-output-publicpath');
-
-const getCwd = require('koot/utils/get-cwd');
-const getDirDistPublic = require('koot/libs/get-dir-dist-public');
-// const getDirDevTmp = require('koot/libs/get-dir-dev-tmp');
-const getModuleVersion = require('koot/utils/get-module-version');
+const LimitChunkCountPlugin = require('../plugins/limit-chunk-count');
 
 /**
  * Webpack 配置处理 - 服务器端配置
@@ -118,10 +118,10 @@ module.exports = async (kootBuildConfig = {}) => {
     // ========================================================================
 
     result.plugins = [
-        new webpack.optimize.LimitChunkCountPlugin({
+        // new KootI18nPlugin(i18nConfig),
+        new LimitChunkCountPlugin({
             maxChunks: 1,
         }),
-        // new KootI18nPlugin(i18nConfig),
         new ModifyServerBundlePlugin({ isServerless }),
         ...result.plugins,
     ];
