@@ -150,9 +150,6 @@ const testProduction = (
     return test(testName, async () => {
         await beforeTest(dir);
 
-        // TODO: TS 打包有奇怪的缓存问题，暂时先在每次测试前删除缓存
-        // await fs.remove(path.resolve(dir, 'node_modules/.cache'));
-
         const config = require(path.resolve(dir, configFilename));
         const dist = path.resolve(dir, config.dist);
         const commandName = `${commandTestBuild}-${script}-production`;
@@ -1244,39 +1241,6 @@ describe('测试: React 同构项目', () => {
                     '[prod] 使用 koot-start (--no-build) 命令启动服务器并访问'
                 );
             });
-
-            testProduction(
-                '二号 / i18n.use="router"',
-                dir,
-                'koot.config.i18n-use-router.js',
-                'isomorphic-i18n_use_router',
-                {
-                    i18nUse: 'router',
-                    cookiesToStore: 'all',
-                }
-            );
-
-            testProduction(
-                '三号 / bundleVersionsKeep=false',
-                dir,
-                'koot.config.no-bundles-keep.js',
-                'isomorphic-no_bundles_keep',
-                {
-                    cookiesToStore: ['kootTest2', 'kootTest3'],
-                }
-            );
-            return;
-
-            testProduction(
-                '四号 / output.publicPath',
-                dir,
-                'koot.config.public-path.js',
-                'isomorphic-public_path',
-                {
-                    i18nUse: 'subdomain',
-                }
-            );
-            return;
             if (fullTest) {
                 test(`[prod] 使用 koot-start (--no-build) 命令启动服务器并访问 (自定义端口号)`, async () => {
                     await beforeTest(dir);
