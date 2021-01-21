@@ -1,4 +1,4 @@
-jest.setTimeout(5 * 60 * 1 * 1000);
+jest.setTimeout(15 * 60 * 1 * 1000);
 
 const fs = require('fs-extra');
 const path = require('path');
@@ -65,13 +65,13 @@ const doTest = (options = {}) => {
             });
             // console.log(fs.readFileSync(file, 'utf-8'));
 
+            // console.log(phaseCount, Date.now() - timeStart, timeFirstBuild);
             if (phaseCount === 1) {
                 // 第一次打包
                 // 检查：生成了新的缓存目录
                 timeFirstBuild = Date.now() - timeStart;
                 // expect(getCountInCacheFolder() - countFoldersInCacheBefore).toBe(1);
             } else {
-                // console.log(Date.now() - timeStart, timeFirstBuild);
                 // 后续打包
                 // 检查：耗时更少
                 // 检查：没有生成新缓存目录

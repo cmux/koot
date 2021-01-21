@@ -1,6 +1,8 @@
 import { ComponentClass } from 'react';
 import { extend } from 'koot';
 
+// import styles from './index.module.less';
+
 const TSComponentExample: ComponentClass = extend<{}>({
     pageinfo: (/*state, renderProps*/) => ({
         title: `test-pageinfo-deep - ${__('title')}`,
@@ -9,7 +11,7 @@ const TSComponentExample: ComponentClass = extend<{}>({
             { 'page-name': 'test-pageinfo-deep' },
         ],
     }),
-    styles: require('./index.module.less'),
+    // styles,
 })(({ className }) => (
     <div className={className} data-koot-test-page="page-test-pageinfo-deep">
         <A />

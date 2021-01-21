@@ -150,6 +150,9 @@ const testProduction = (
     return test(testName, async () => {
         await beforeTest(dir);
 
+        // TODO: TS 打包有奇怪的缓存问题，暂时先在每次测试前删除缓存
+        // await fs.remove(path.resolve(dir, 'node_modules/.cache'));
+
         const config = require(path.resolve(dir, configFilename));
         const dist = path.resolve(dir, config.dist);
         const commandName = `${commandTestBuild}-${script}-production`;
@@ -1148,7 +1151,6 @@ describe('测试: React 同构项目', () => {
         const { name, dir } = project;
         describe(`项目: ${name}`, () => {
             fs.removeSync(path.resolve(dir, 'node_modules/.cache'));
-
             test(`[prod] 使用 koot-build 命令进行打包`, async () => {
                 await beforeTest(dir);
                 await emptyDist(path.resolve(dir, 'dist'));
@@ -1263,6 +1265,7 @@ describe('测试: React 同构项目', () => {
                     cookiesToStore: ['kootTest2', 'kootTest3'],
                 }
             );
+            return;
 
             testProduction(
                 '四号 / output.publicPath',
