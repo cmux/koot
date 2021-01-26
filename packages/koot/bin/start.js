@@ -13,6 +13,7 @@ const chalk = require('chalk');
 
 const willValidateConfig = require('./lifecycle/will-validate-config');
 const willBuild = require('./lifecycle/will-build');
+const didBuild = require('./lifecycle/did-build');
 
 const { filenameBuildFail } = require('../defaults/before-build');
 const sleep = require('../utils/sleep');
@@ -46,7 +47,14 @@ program
 const run = async () => {
     // console.log('================')
 
-    const { build, dest, config, type, port, kootTest = false } = program;
+    const {
+        build,
+        dest,
+        config,
+        type,
+        port,
+        kootTest = false,
+    } = program.opts();
 
     if (!kootTest)
         // 清空 log
@@ -174,6 +182,9 @@ const run = async () => {
     }
 
     await afterBuild();
+
+    // 打包流程完成
+    await didBuild(kootConfig);
 
     // ========================================================================
 

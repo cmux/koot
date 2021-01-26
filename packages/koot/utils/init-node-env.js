@@ -3,6 +3,7 @@ const fs = require('fs-extra');
 
 const defaultsServiceWorker = require('../defaults/service-worker');
 const defaultI18n = require('../defaults/i18n');
+// const { KOOT_BUILD_START_TIME } = require('../defaults/envs')
 
 /**
  * 初始化 node.js 环境变量
@@ -125,7 +126,7 @@ module.exports = () => {
         KOOT_BUILD_TARGET: '',
 
         // 打包开始时间
-        // KOOT_BUILD_START_TIME: ''
+        // [KOOT_BUILD_START_TIME]: ''
     };
     for (const key in defaults) {
         if (typeof process.env[key] === 'undefined') {

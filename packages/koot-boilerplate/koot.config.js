@@ -6,9 +6,12 @@
  * 配置文档请查阅: [https://koot.js.org/#/config]
  */
 
+require('koot/typedef');
+
 const fs = require('fs');
 const path = require('path');
 
+/** @type {AppConfig} */
 module.exports = {
     /**************************************************************************
      * 项目基本信息

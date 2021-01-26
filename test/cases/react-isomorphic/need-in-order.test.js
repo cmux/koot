@@ -1148,6 +1148,7 @@ describe('测试: React 同构项目', () => {
         const { name, dir } = project;
         describe(`项目: ${name}`, () => {
             fs.removeSync(path.resolve(dir, 'node_modules/.cache'));
+
             test(`[prod] 使用 koot-build 命令进行打包`, async () => {
                 await beforeTest(dir);
                 await emptyDist(path.resolve(dir, 'dist'));

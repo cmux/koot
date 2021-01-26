@@ -10,6 +10,7 @@ const opn = require('open');
 
 const willValidateConfig = require('./lifecycle/will-validate-config');
 const willBuild = require('./lifecycle/will-build');
+const didBuild = require('./lifecycle/did-build');
 
 const contentWaiting = require('../defaults/content-waiting');
 const {
@@ -109,7 +110,7 @@ const run = async () => {
         dll = true,
         kootTest = false,
         kootDevelopment = false,
-    } = program;
+    } = program.opts();
 
     initNodeEnv();
     setEnvFromCommand({
@@ -225,7 +226,7 @@ const run = async () => {
         );
 
     // 判断是否自动打开浏览器访问
-    let { open } = program;
+    let { open } = program.opts();
     if (process.env.KOOT_PROJECT_TYPE === 'ReactElectronSPA') {
         open = false;
     } else if (!stageFromCommand && (typeof open === 'undefined' || open)) {
@@ -466,6 +467,8 @@ const run = async () => {
             });
 
             // console.log(' ')
+            // 打包流程完成
+            await didBuild(kootConfig);
 
             await new Promise((resolve) => {
                 setTimeout(() => {
@@ -742,6 +745,9 @@ const run = async () => {
                         env: chalk.green('dev'),
                     })
             );
+
+            // 打包流程完成
+            await didBuild(kootConfig);
 
             // 启动服务器
             await start('run');

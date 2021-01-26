@@ -671,6 +671,20 @@ const doTest = async (port, dist, settings = {}) => {
         await context.close();
     }
 
+    // [配置文件] `beforeBuild` `afterBuild`
+    {
+        const testFile = path.resolve(dist, '_test-life-cycle.txt');
+        const content = await fs.readFile(testFile, 'utf-8');
+        const match = /^before mark: (\d+)\n/.exec(content);
+
+        expect(match.length).toBe(2);
+
+        const ts = match[1];
+        const regex = new RegExp(`^before mark: ${ts}\\nafter mark: ${ts}\\n$`);
+
+        expect(regex.test(content)).toBe(true);
+    }
+
     await puppeteerTestStyles(page);
     await puppeteerTestCustomEnv(page, customEnv);
     await puppeteerTestInjectScripts(page);

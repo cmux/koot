@@ -7,7 +7,7 @@ const cheerio = require('cheerio');
 const envKey = '__KOOT_TEST_BUILD_CACHE__';
 const elId = '__koot-test-build-cache';
 const projectDir = path.resolve(__dirname, '../projects/standard');
-const cacheFolder = path.resolve(projectDir, 'node_modules/.cache/webpack');
+const cacheFolder = path.resolve(projectDir, 'node_modules/.cache');
 const sleep = require('../../packages/koot/utils/sleep');
 // const cacheName = 'default-production';
 

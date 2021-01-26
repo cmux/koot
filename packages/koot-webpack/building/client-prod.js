@@ -1,5 +1,7 @@
 /* eslint-disable no-console */
 
+require('koot/typedef');
+
 const fs = require('fs-extra');
 const chalk = require('chalk');
 const webpack = require('webpack');
@@ -16,6 +18,13 @@ const spinner = require('koot/utils/spinner');
 
 const statsHandling = require('../libs/building-webpack-stats-handling');
 
+/**
+ * @async
+ * 打包: 客户端 | 生产环境
+ * @param {Object} param
+ * @param {AppConfig} param.appConfig
+ * @returns {Object} result 结果对象
+ */
 async function buildClientProd({
     appConfig = {},
     resultStats = {},

@@ -6,6 +6,7 @@
     -   此次更新包含诸多重大改动，对于已有项目的升级，请参阅[升级指南](https://koot.js.org/#/migration/0.14-to-0.15)
     -   _Node.js_ 最低版本要求提升到 `10.16.0`
     -   更新依赖包 **major** 版本号
+        -   `commander` -> _^7.0.0_
         -   `execa` -> _^5.0.0_
         -   `koa-convert` -> _^2.0.0_
         -   `koa-helmet` -> _^6.0.0_
@@ -21,6 +22,10 @@
     -   现已支持全新的 _JSX_ 转译引擎
         -   该功能对从 0.15 之前版本升级而来的项目默认关闭，如需开启请参阅[升级指南](https://koot.js.org/#/migration/0.14-to-0.15)
         -   相关信息请查阅 [React 官方文档](https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html)
+    -   **新配置项** `beforeBuild` - 生命周期方法: 打包即将开始时
+        -   详情请参见文档 [生命周期](https://koot.js.org/#/life-cycle?id=打包)
+    -   **新配置项** `afterBuild` - 生命周期方法: 打包刚刚完成时
+        -   详情请参见文档 [生命周期](https://koot.js.org/#/life-cycle?id=打包)
 -   优化
     -   `serviceWorker` 的 `cacheFirst` `networkFirst` `networkOnly` 扩展缓存策略选项，其数组 (`Array`) 内现在可以直接传入正则表达式和用以分析请求的函数，请参见文档 [Service Worker/扩展缓存规则](/pwa?id=扩展缓存规则)
 -   添加依赖包
@@ -44,15 +49,15 @@
         -   `copy-webpack-plugin` -> _^7.0.0_
         -   `css-loader` -> _^5.0.1_
         -   `less` -> _^4.1.0_
-        -   `less-loader` -> _^7.2.1_
+        -   `less-loader` -> _^7.3.0_
         -   `mini-css-extract-plugin` -> _^1.3.4_
         -   `postcss` -> _^8.2.4_
-        -   `postcss-loader` -> _^4.1.0_
+        -   `postcss-loader` -> _^4.2.0_
         -   `sass-loader` -> _^10.1.1_
         -   `style-loader` -> _^2.0.0_
         -   `thread-loader` -> _^3.0.0_
-        -   `webpack` -> _^5.16.0_
-        -   `webpack-bundle-analyzer` -> _^4.3.0_
+        -   `webpack` -> _^5.17.0_
+        -   `webpack-bundle-analyzer` -> _^4.4.0_
         -   `webpack-dev-middleware` -> _^4.0.4_
         -   `workbox-webpack-plugin` -> _^6.0.2_
 

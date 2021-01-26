@@ -8,12 +8,12 @@ const chalk = require('chalk');
 
 const willValidateConfig = require('./lifecycle/will-validate-config');
 const willBuild = require('./lifecycle/will-build');
+const didBuild = require('./lifecycle/did-build');
 
 const {
     // keyConfigQuiet,
     filenameBuilding,
 } = require('../defaults/before-build');
-const { KOOT_BUILD_START_TIME } = require('../defaults/envs');
 
 const __ = require('../utils/translate');
 const sleep = require('../utils/sleep');
@@ -62,7 +62,7 @@ const run = async () => {
         kootDev = false,
         kootTest = false,
         kootDevelopment = false,
-    } = program;
+    } = program.opts();
 
     initNodeEnv();
     // console.log(program)
@@ -84,8 +84,6 @@ const run = async () => {
 
     process.env.KOOT_TEST_MODE = JSON.stringify(kootTest);
     process.env.KOOT_DEVELOPMENT_MODE = JSON.stringify(kootDevelopment);
-    if (!process.env[KOOT_BUILD_START_TIME])
-        process.env[KOOT_BUILD_START_TIME] = Date.now() + '';
 
     const stage = (() => {
         if (_stage) return _stage;
@@ -154,6 +152,12 @@ const run = async () => {
 
     await after(kootConfig);
     // if (!fromCommandStart)
+
+    // 打包流程完成
+    if (!fromOtherCommand) {
+        await didBuild(kootConfig);
+    }
+
     console.log(' ');
 
     // 结束
