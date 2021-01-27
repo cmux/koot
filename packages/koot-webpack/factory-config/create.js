@@ -120,7 +120,7 @@ module.exports = async (kootConfig = {}) => {
         // ====================================================================
         if (ENV === 'prod' && STAGE === 'client' && TYPE === 'spa') {
             process.env.WEBPACK_BUILD_STAGE = 'server';
-            if (!Array.isArray(config)) config = config[0];
+            if (!Array.isArray(config)) config = [config];
             config = [
                 ...config,
                 ...(await transformConfigServer(kootBuildConfig))
