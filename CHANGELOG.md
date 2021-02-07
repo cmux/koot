@@ -7,6 +7,7 @@
     -   _Node.js_ 最低版本要求提升到 `10.16.0`
     -   更新依赖包 **major** 版本号
         -   `commander` -> _^7.0.0_
+        -   `glob-promise` -> _^4.0.1_
         -   `execa` -> _^5.0.0_
         -   `koa-convert` -> _^2.0.0_
         -   `koa-helmet` -> _^6.0.0_
@@ -36,7 +37,7 @@
 
 -   **重大改动**
     -   更新依赖包 **major** 版本号
-        -   `electron` -> _^11.2.0_
+        -   `electron` -> _^11.2.3_
 
 **koot-webpack**
 
@@ -48,18 +49,18 @@
         -   `compression-webpack-plugin` -> _^7.1.2_
         -   `copy-webpack-plugin` -> _^7.0.0_
         -   `css-loader` -> _^5.0.1_
-        -   `less` -> _^4.1.0_
-        -   `less-loader` -> _^7.3.0_
-        -   `mini-css-extract-plugin` -> _^1.3.4_
-        -   `postcss` -> _^8.2.4_
-        -   `postcss-loader` -> _^4.2.0_
-        -   `sass-loader` -> _^10.1.1_
+        -   `less` -> _^4.1.1_
+        -   `less-loader` -> _^8.0.0_
+        -   `mini-css-extract-plugin` -> _^1.3.5_
+        -   `postcss` -> _^8.2.5_
+        -   `postcss-loader` -> _^5.0.0_
+        -   `sass-loader` -> _^11.0.0_
         -   `style-loader` -> _^2.0.0_
         -   `thread-loader` -> _^3.0.0_
-        -   `webpack` -> _^5.17.0_
+        -   `webpack` -> _^5.21.1_
         -   `webpack-bundle-analyzer` -> _^4.4.0_
         -   `webpack-dev-middleware` -> _^4.0.4_
-        -   `workbox-webpack-plugin` -> _^6.0.2_
+        -   `workbox-webpack-plugin` -> _^6.1.0_
 
 ---
 

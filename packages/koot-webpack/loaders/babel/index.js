@@ -151,11 +151,11 @@ module.exports = require('babel-loader').custom((babel) => {
                             options
                         );
                     }
-                    if (/^@babel\/preset-react$/.test(preset.file.request)) {
-                        newPresets[index] = modifyPresetOptions(preset, {
-                            runtime: 'automatic',
-                        });
-                    }
+                    // if (/^@babel\/preset-react$/.test(preset.file.request)) {
+                    //     newPresets[index] = modifyPresetOptions(preset, {
+                    //         runtime: 'automatic',
+                    //     });
+                    // }
                 } catch (e) {
                     return;
                 }
