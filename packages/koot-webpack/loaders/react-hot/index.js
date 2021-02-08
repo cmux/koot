@@ -95,7 +95,7 @@ function transformSourceForExportClassDirectly(source) {
 
 // getters
 
-const customHotLoaderAbsolutePath = getKootFile('React/hoc/dev-hot.js');
+const customHotLoaderAbsolutePath = getKootFile('React/hoc/dev-hot.jsx');
 const customHotLoader = fs.existsSync(customHotLoaderAbsolutePath)
     ? customHotLoaderAbsolutePath.replace(/\\/g, '\\\\')
     : 'koot/React/hoc/dev-hot';

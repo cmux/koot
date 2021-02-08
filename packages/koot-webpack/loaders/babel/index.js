@@ -1,9 +1,15 @@
 const fs = require('fs-extra');
 const path = require('path');
 const { createConfigItem } = require('@babel/core/lib/config/item');
+const semver = require('semver');
 
+// const { KOOT_REACT_RUNTIME } = require('koot/defaults/envs');
 const getCwd = require('koot/utils/get-cwd');
 const transformFixDefaultExport = require('./transform-fix-default-export');
+
+const { version: reactVersion } = require('react/package.json');
+
+const getKootFile = require('../../libs/get-koot-file');
 
 // ============================================================================
 
@@ -54,6 +60,11 @@ const testPluginName = (pluginObject, regExp) => {
 
 // ============================================================================
 
+/** _Koot.js_ 所在路径 */
+const kootPathname = path.dirname(getKootFile('package.json'));
+
+// ============================================================================
+
 module.exports = require('babel-loader').custom((babel) => {
     // function myPlugin() {
     //     return {
@@ -97,19 +108,33 @@ module.exports = require('babel-loader').custom((babel) => {
             //     return cfg.options;
             // }
 
+            let { __typescript = false } = customOptions;
             const {
                 __createDll,
                 __react,
-                __typescript = false,
                 __server = false,
                 __spaTemplateInject = false,
                 __routes,
                 __i18n,
             } = customOptions;
-            const { presets, plugins, ...options } = cfg.options;
+            const {
+                presets,
+                plugins,
+                filename,
+                root,
+                ...options
+            } = cfg.options;
             const isServer =
                 __server || process.env.WEBPACK_BUILD_STAGE === 'server';
+            const isKootModule = !/^\.\./.test(
+                path.relative(kootPathname, filename)
+            );
+            let isReactClassic = false;
             // console.log({ options });
+
+            // make sure some settings correct ================================
+            // if (!__react) __react = /\.(jsx|tsx)$/.test(filename);
+            if (!__typescript) __typescript = /\.(ts|tsx)$/.test(filename);
 
             // presets ========================================================
             const newPresets = [...presets];
@@ -151,11 +176,63 @@ module.exports = require('babel-loader').custom((babel) => {
                             options
                         );
                     }
-                    // if (/^@babel\/preset-react$/.test(preset.file.request)) {
-                    //     newPresets[index] = modifyPresetOptions(preset, {
-                    //         runtime: 'automatic',
-                    //     });
-                    // }
+
+                    /**
+                     * 对于 Koot 内部的 JSX/TSX 文件，根据 React 版本检查 @babel/preset-react 配置，做出相应修改
+                     * - 如果 >= 18 && runtime === 'classic' -> SET KOOT_REACT_RUNTIME = 'classic'
+                     * - 如果 ^17.0.0 && runtime !== 'automatic' -> SET KOOT_REACT_RUNTIME = 'classic'
+                     */
+                    if (
+                        // __react &&
+                        isKootModule &&
+                        /\.(jsx|tsx)$/.test(filename) &&
+                        /^@babel\/preset-react$/.test(preset.file.request)
+                    ) {
+                        //     newPresets[index] = modifyPresetOptions(preset, {
+                        //         runtime: 'automatic',
+                        // });
+                        const reactRuntime = preset.options
+                            ? preset.options.runtime
+                            : undefined;
+                        isReactClassic =
+                            (semver.satisfies(reactVersion, '^17.0.0') &&
+                                reactRuntime !== 'automatic') ||
+                            (semver.satisfies(reactVersion, '>=18') &&
+                                reactRuntime === 'classic');
+                        // console.log({
+                        //     filename,
+                        //     reactRuntime,
+                        //     reactVersion,
+                        //     satisfied17: semver.satisfies(
+                        //         reactVersion,
+                        //         '^17.0.0'
+                        //     ),
+                        //     satisfied18: semver.satisfies(reactVersion, '>=18'),
+                        //     isReactClassic,
+                        // });
+                        // console.log('\n\n ', {
+                        //     filename,
+                        //     kootPathname,
+                        //     relativePath: path.relative(kootPathname, filename),
+                        //     isKootModule: !/^\.\./.test(
+                        //         path.relative(kootPathname, filename)
+                        //     ),
+                        // });
+                        // if (semver.satisfies(reactVersion, '^17.0.0')) {
+                        //     process.env.KOOT_REACT_RUNTIME =
+                        //         reactRuntime === 'automatic'
+                        //             ? 'automatic'
+                        //             : 'classic';
+                        // } else if (semver.satisfies(reactVersion, '>=18')) {
+                        //     process.env.KOOT_REACT_RUNTIME =
+                        //         reactRuntime !== 'classic'
+                        //             ? 'automatic'
+                        //             : 'classic';
+                        // } else {
+                        //     process.env.KOOT_REACT_RUNTIME = 'classic';
+                        // }
+                        // console.log(process.env.KOOT_REACT_RUNTIME);
+                    }
                 } catch (e) {
                     return;
                 }
@@ -187,7 +264,6 @@ module.exports = require('babel-loader').custom((babel) => {
                 // newPlugins.push(require('extract-hoc/babel'));
                 newPlugins.push(require('react-hot-loader/babel'));
             }
-
             if (!__createDll && !isServer) {
                 let pathname = path.resolve(getCwd(), __routes);
                 if (fs.lstatSync(pathname).isDirectory()) pathname += '/index';
@@ -213,7 +289,6 @@ module.exports = require('babel-loader').custom((babel) => {
                 ]);
                 // console.log(newPlugins);
             }
-
             if (
                 !__createDll &&
                 typeof __i18n === 'object' &&
@@ -221,6 +296,16 @@ module.exports = require('babel-loader').custom((babel) => {
             ) {
                 newPlugins.push([
                     path.resolve(__dirname, './plugins/i18n.js'),
+                    __i18n,
+                ]);
+            }
+            if (isReactClassic) {
+                // console.log({ filename, isReactClassic });
+                newPlugins.push([
+                    path.resolve(
+                        __dirname,
+                        './plugins/react-classic-import.js'
+                    ),
                     __i18n,
                 ]);
             }
@@ -236,9 +321,19 @@ module.exports = require('babel-loader').custom((babel) => {
         },
 
         result(result) {
+            const {
+                __createDll,
+                __react,
+                // __typescript = false,
+                // __server = false,
+                // __spaTemplateInject = false,
+                // __routes,
+                // __i18n,
+            } = customOptions;
+
             if (
-                !customOptions.__createDll &&
-                customOptions.__react &&
+                !__createDll &&
+                __react &&
                 process.env.WEBPACK_BUILD_ENV === 'dev' &&
                 process.env.WEBPACK_BUILD_STAGE === 'client'
             ) {

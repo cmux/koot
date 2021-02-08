@@ -3,7 +3,7 @@ const readLocaleFileSync = require('koot/i18n/read-locale-file-sync');
 const locales = {};
 const definitions = {};
 
-const BABEL_I18N_MODIFIED = Symbol('__KOOT_BABEL_I18N_MODIFIED_KOOT_');
+const BABEL_I18N_MODIFIED = Symbol('__KOOT_BABEL_PLUGIN_I18N_MODIFIED_KOOT__');
 
 module.exports = (babel) => {
     const { types: t } = babel;

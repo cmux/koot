@@ -168,7 +168,7 @@ module.exports = async (kootBuildConfig = {}) => {
     if (isSPAProd) {
     } else {
         const fileSSR = require('../libs/get-koot-file')(
-            `${appTypeUse}/server/ssr.js`
+            `${appTypeUse}/server/ssr.jsx`
         );
         if (ENV !== 'dev' && fs.existsSync(fileSSR)) {
             otherEntries.ssr = [fileSSR];

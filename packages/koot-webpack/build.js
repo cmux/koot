@@ -225,8 +225,8 @@ module.exports = async (kootConfig = {}) => {
             fs.emptyDirSync(path.resolve(dist, `server`));
             // fs.removeSync(path.resolve(dist, `./server/index.js`))
             // fs.removeSync(path.resolve(dist, `./server/index.js.map`))
-            // fs.removeSync(path.resolve(dist, `./server/ssr.js`))
-            // fs.removeSync(path.resolve(dist, `./server/ssr.js.map`))
+            // fs.removeSync(path.resolve(dist, `./server/ssr.jsx`))
+            // fs.removeSync(path.resolve(dist, `./server/ssr.jsx.map`))
         }
 
         // 开发环境

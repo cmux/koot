@@ -1,0 +1,56 @@
+@import '~base.less';
+
+.component {
+    color: #800;
+    p {
+        line-height: inherit;
+    }
+
+    .bg-container {
+        @gutter: 20px;
+        margin-right: (0 - @gutter);
+        &::after {
+            content: '';
+            overflow: hidden;
+            display: block;
+            width: 100%;
+            height: 0;
+            clear: both;
+        }
+        .bg {
+            display: block;
+            float: left;
+            width: 50%;
+            margin: 0 0 @gutter 0;
+            border-right: @gutter solid transparent;
+            background: no-repeat 50% 50%;
+            background-size: cover;
+            position: relative;
+            & > .inner {
+                display: block;
+                width: 100%;
+                height: 0;
+                padding-bottom: percentage(2/3);
+            }
+            &[data-bg-type='base'] {
+                background-image: url('~Assets/bg-base.png');
+            }
+            &[data-bg-type='base-relative'] {
+                background-image: url('../../assets/bg-base.png');
+            }
+            &[data-bg-type='responsive'] {
+                background-image: -webkit-image-set(
+                    url('~Assets/bg-1x.png') 1x,
+                    url('~Assets/bg-1.5x.png') 1.5x,
+                    url('~Assets/bg-2x.png') 2x
+                );
+            }
+            &[data-bg-type='responsive-native'] {
+                background-image: image-set(
+                    '~Assets/bg-1x.png' 1x,
+                    '~Assets/bg-2x.png' 2x
+                );
+            }
+        }
+    }
+}

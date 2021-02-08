@@ -200,7 +200,7 @@ const plugins = async (
             (() => {
                 if (/^React/.test(process.env.KOOT_PROJECT_TYPE))
                     return require('../libs/get-koot-file')(
-                        'React/component-extender.js'
+                        'React/component-extender.jsx'
                     );
             })(),
         ],

@@ -86,6 +86,11 @@ const run = async () => {
                 value: './test/cases/build-cache',
             },
             new inquirer.Separator(),
+            {
+                name: 'Babel Plugins',
+                value: './test/cases/babel-plugins',
+            },
+            new inquirer.Separator(),
         ],
         default: 'full',
     });

@@ -1,0 +1,25 @@
+@import '~base.less';
+
+.component {
+    .component {
+        font-size: 20px;
+    }
+
+    .wrapper {
+        .component {
+            font-weight: 900;
+        }
+    }
+
+    & ~ .component {
+        color: #0088bb;
+    }
+
+    & + .component {
+        font-style: italic;
+    }
+
+    &[data-a='.component'] {
+        color: #008800;
+    }
+}

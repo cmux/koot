@@ -64,10 +64,9 @@ process.env.KOOT_TEST_MODE = JSON.stringify(true);
 
 const projects = require('../../projects/get')();
 
-const projectsToUse = projects.filter(
-    (project) =>
-        // Array.isArray(project.type) && project.type.includes('react-isomorphic')
-        project.name === 'simple'
+const projectsToUse = projects.filter((project) =>
+    // Array.isArray(project.type) && project.type.includes('react-isomorphic')
+    ['simple', 'simple2'].includes(project.name)
 );
 
 const commandTestBuild = 'koot-basetest';
