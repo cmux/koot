@@ -58,6 +58,18 @@ const testPluginName = (pluginObject, regExp) => {
     );
 };
 
+/** 检查是否存在某个特定的 preset */
+const hasPreset = (presets, regex) =>
+    presets.some((preset) => regex.test(preset.file.request));
+
+const reactHotLoaderClientBlacklist = [
+    'koot/React/component-extender.jsx',
+    'koot/React/hoc/dev-hot.jsx',
+    'koot/ReactApp/client/index.jsx',
+    'koot/ReactApp/server/ssr.jsx',
+    'koot/ReactSPA/client/run.jsx',
+];
+
 // ============================================================================
 
 /** _Koot.js_ 所在路径 */
@@ -108,7 +120,7 @@ module.exports = require('babel-loader').custom((babel) => {
             //     return cfg.options;
             // }
 
-            let { __typescript = false } = customOptions;
+            const { __typescript: __typescript__ = false } = customOptions;
             const {
                 __createDll,
                 __react,
@@ -117,13 +129,8 @@ module.exports = require('babel-loader').custom((babel) => {
                 __routes,
                 __i18n,
             } = customOptions;
-            const {
-                presets,
-                plugins,
-                filename,
-                root,
-                ...options
-            } = cfg.options;
+            const { presets, plugins, ...options } = cfg.options;
+            const { filename } = options;
             const isServer =
                 __server || process.env.WEBPACK_BUILD_STAGE === 'server';
             const isKootModule = !/^\.\./.test(
@@ -134,11 +141,15 @@ module.exports = require('babel-loader').custom((babel) => {
 
             // make sure some settings correct ================================
             // if (!__react) __react = /\.(jsx|tsx)$/.test(filename);
-            if (!__typescript) __typescript = /\.(ts|tsx)$/.test(filename);
+            // const __typescript = __typescript__ || /\.(ts|tsx)$/.test(filename);
+            const __typescript = __typescript__ || /\.(ts|tsx)$/.test(filename);
 
             // presets ========================================================
             const newPresets = [...presets];
-            if (__typescript) {
+            if (
+                __typescript &&
+                !hasPreset(newPresets, /@babel\/preset-typescript/)
+            ) {
                 newPresets.unshift([
                     require('@babel/preset-typescript').default,
                     __react
@@ -259,6 +270,7 @@ module.exports = require('babel-loader').custom((babel) => {
             if (
                 !__createDll &&
                 __react &&
+                !isKootModule &&
                 process.env.WEBPACK_BUILD_ENV === 'dev'
             ) {
                 // newPlugins.push(require('extract-hoc/babel'));

@@ -1,3 +1,4 @@
+/* __KOOT_DEV_NO_REACT_HOT_INJECT__ */
 // import 'regenerator-runtime/runtime';
 import { renderToString } from 'react-dom/server';
 import { match, useRouterHistory as doUseRouterHistory } from 'react-router';

@@ -1,3 +1,4 @@
+/* __KOOT_DEV_NO_REACT_HOT_INJECT__ */
 import { hot } from 'react-hot-loader';
 import { forwardRef } from 'react';
 

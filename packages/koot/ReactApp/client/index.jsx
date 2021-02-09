@@ -1,3 +1,4 @@
+/* __KOOT_DEV_NO_REACT_HOT_INJECT__ */
 import * as fullConfig from '__KOOT_PROJECT_CONFIG_PORTION_OTHER_CLIENT_PATHNAME__';
 
 import { hydrate } from 'react-dom';

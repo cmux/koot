@@ -1,3 +1,4 @@
+/* __KOOT_DEV_NO_REACT_HOT_INJECT__ */
 import ReactDOM from 'react-dom';
 import history from '../../React/history';
 

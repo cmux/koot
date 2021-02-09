@@ -12,6 +12,8 @@ function AddReactHotLoader(source) {
     if (!__react) return source;
     if (!source || !/^\s*export\s+default/m.exec(source)) return source;
     if (/(\/|\\|^)root\.jsx$/.test(this.resourcePath)) return source;
+    if (/\/\*\s+__KOOT_DEV_NO_REACT_HOT_INJECT__\s+\*\//g.test(source))
+        return source;
 
     let theSource = getImportLine() + source;
 

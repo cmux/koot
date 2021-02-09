@@ -1,3 +1,4 @@
+/* __KOOT_DEV_NO_REACT_HOT_INJECT__ */
 import { Component, forwardRef } from 'react';
 import { connect } from 'react-redux';
 // import { hot } from 'react-hot-loader'
