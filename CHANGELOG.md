@@ -20,15 +20,16 @@
         -   `isomorphic-fetch`
         -   `yargs`
 -   **新特性**
-    -   现已支持全新的 _JSX_ 转译引擎
+    -   现已支持全新的 _JSX_ 转译引擎 ([#282](https://github.com/cmux/koot/issues/282))
         -   该功能对从 0.15 之前版本升级而来的项目默认关闭，如需开启请参阅[升级指南](https://koot.js.org/#/migration/0.14-to-0.15)
         -   相关信息请查阅 [React 官方文档](https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html)
-    -   **新配置项** `beforeBuild` - 生命周期方法: 打包即将开始时
+    -   **新配置项** `beforeBuild` - 生命周期方法: 打包即将开始时 ([#288](https://github.com/cmux/koot/issues/288))
         -   详情请参见文档 [生命周期](https://koot.js.org/#/life-cycle?id=打包)
-    -   **新配置项** `afterBuild` - 生命周期方法: 打包刚刚完成时
+    -   **新配置项** `afterBuild` - 生命周期方法: 打包刚刚完成时 ([#288](https://github.com/cmux/koot/issues/288))
         -   详情请参见文档 [生命周期](https://koot.js.org/#/life-cycle?id=打包)
 -   优化
     -   `serviceWorker` 的 `cacheFirst` `networkFirst` `networkOnly` 扩展缓存策略选项，其数组 (`Array`) 内现在可以直接传入正则表达式和用以分析请求的函数，请参见文档 [Service Worker/扩展缓存规则](/pwa?id=扩展缓存规则)
+    -   SPA 项目打包结果中附带的简易服务器现在支持 `serverBefore` 和 `serverAfter` 生命周期 ([#292](https://github.com/cmux/koot/issues/292))
 -   添加依赖包
     -   `cli-table`
     -   `filesize`
@@ -43,7 +44,7 @@
 
 -   **重大改动**
     -   此次更新包含诸多重大改动，对于已有项目的升级，请参阅[升级指南](https://koot.js.org/#/migration/0.14-to-0.15)
-    -   内置的多语言处理方式改为 _Babel_ 插件，原 _Webpack_ 插件现已弃用
+    -   内置的多语言处理方式改为 _Babel_ 插件，原 _Webpack_ 插件现已弃用 ([#215](https://github.com/cmux/koot/issues/215))
     -   更新依赖包 **major** 版本号
         -   `@hot-loader/react-dom` -> _^17.0.0_
         -   `compression-webpack-plugin` -> _^7.1.2_

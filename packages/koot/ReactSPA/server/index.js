@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 
 import 'regenerator-runtime/runtime';
-// import { server as serverConfig } from '__KOOT_PROJECT_CONFIG_PORTION_SERVER_PATHNAME__';
+import { server as serverConfig } from '__KOOT_PROJECT_CONFIG_PORTION_SERVER_PATHNAME__';
 
 import createKoaApp from '../../libs/create-koa-app';
 import koaStaticDefaults from '../../defaults/koa-static';
@@ -22,7 +22,7 @@ const startSPAServer = async () => {
     if (process.env.WEBPACK_BUILD_ENV === 'dev') return;
 
     console.log(`\r\n  \x1b[93m[koot/server]\x1b[0m initializing...`);
-    // const { before: serverBefore, after: serverAfter } = serverConfig;
+    const { before: serverBefore, after: serverAfter } = serverConfig;
 
     // 决定服务器启动端口
     // 如果端口不可用，取消启动流程
@@ -33,6 +33,9 @@ const startSPAServer = async () => {
     // 创建 Koa 实例 (app)
     /** @type {Koa} Koa 服务器实例 */
     const app = createKoaApp();
+
+    // 生命周期: 服务器启动前
+    if (typeof serverBefore === 'function') await serverBefore(app);
 
     // 挂载中间件: 静态服务器
     app.use(
@@ -47,14 +50,11 @@ const startSPAServer = async () => {
         )
     );
 
-    // 生命周期: 服务器启动前
-    // if (typeof serverBefore === 'function') await serverBefore(app);
-
     // 生命周期: 服务器即将启动
-    // if (typeof serverAfter === 'function') await serverAfter(app);
+    if (typeof serverAfter === 'function') await serverAfter(app);
 
     // 启动服务器
-    await new Promise(resolve => {
+    await new Promise((resolve) => {
         app.listen(port);
         setTimeout(() => {
             console.log(
@@ -64,14 +64,14 @@ const startSPAServer = async () => {
             console.log(' ');
             return resolve();
         });
-    }).catch(err => {
+    }).catch((err) => {
         if (err instanceof Error)
             err.message = errorMsg('KOA_APP_LAUNCH', err.message);
         throw err;
     });
 };
 
-startSPAServer().catch(err => {
+startSPAServer().catch((err) => {
     console.error(err);
 });
 
