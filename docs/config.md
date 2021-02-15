@@ -69,10 +69,10 @@ module.exports = {
     // 默认值：无指定
     target: '',
 
-    // Serverless 模式 SSR
+    // Serverless 模式 (仅限 SSR 项目)
     target: 'serverless',
 
-    // Electron 模式 SPA
+    // Electron 模式 (仅限 SPA 项目)
     target: 'electron',
 };
 ```
