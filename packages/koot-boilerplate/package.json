@@ -1,7 +1,7 @@
 {
     "name": "koot-boilerplate",
     "private": true,
-    "version": "0.15.0-alpha.1",
+    "version": "0.15.0-alpha.2",
     "description": "Boilerplate project for koot.js app",
     "author": {
         "name": "diablohu",
@@ -31,7 +31,7 @@
         "axios": "^0.21.1",
         "bind-event": "^1.1.2",
         "classnames": "^2.2.6",
-        "koot": "^0.15.0-alpha.1"
+        "koot": "^0.15.0-alpha.2"
     },
     "devDependencies": {
         "@types/classnames": "^2.2.11",
