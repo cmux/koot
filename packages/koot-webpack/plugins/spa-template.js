@@ -314,10 +314,12 @@ async function tapEmitAssets(options = {}, failReason, compilation, callback) {
             const file = path.resolve(dir, md5(content) + '.js');
             await fs.writeFile(file, content, 'utf-8');
             thisModule = require(file);
-            console.log({ thisModule });
             await fs.unlink(file);
         }
 
+        // console.log({ thisModule });
+        if (typeof thisModule.commonJS === 'object')
+            thisModule = thisModule.commonJS;
         if (typeof thisModule.default === 'object') return thisModule.default;
         return thisModule || {};
     })();
@@ -328,6 +330,7 @@ async function tapEmitAssets(options = {}, failReason, compilation, callback) {
         ...defaultInject,
         ...projectInject,
     };
+    // console.log({ projectInject });
     if (isI18nEnabled)
         thisInject.metas += generateHtmlRedirectMetas({
             availableLocaleIds: locales.map(([localeId]) => localeId),

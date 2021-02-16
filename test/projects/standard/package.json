@@ -79,7 +79,7 @@
     "private": true,
     "sideEffects": false,
     "koot": {
-        "version": "0.14.12"
+        "version": "0.15.0-alpha.1"
     },
     "devDependencies": {
         "@types/inquirer": "^7.3.1",
