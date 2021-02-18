@@ -201,10 +201,11 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                 output: {
                     filename: getFilenameSPATemplateInject(localeId),
                     path: getDirTemp(),
-                    library: {
-                        type: 'commonjs',
-                        name: 'commonJS',
-                    },
+                    // library: {
+                    //     type: 'commonjs',
+                    //     name: 'commonJS',
+                    // },
+                    libraryTarget: 'commonjs',
                 },
                 optimization,
                 [keyConfigWebpackSPATemplateInject]: true,

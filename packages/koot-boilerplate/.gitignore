@@ -39,3 +39,4 @@ jspm_packages
 node_modules/
 /logs/
 /dist/
+.husky

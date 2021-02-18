@@ -81,7 +81,7 @@ const doTest = (options = {}) => {
 
             // 通用
             // 检查：打包结果有变化的特征值
-            const HTML = await fs.readFile(path.resolve(dist, 'index.html'));
+            const HTML = await fs.readFile(file);
             const $ = cheerio.load(HTML);
             expect($(`#${elId}`).text().trim()).toBe('' + cacheValue);
 

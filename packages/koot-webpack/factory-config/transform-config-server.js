@@ -142,12 +142,13 @@ module.exports = async (kootBuildConfig = {}) => {
     }
 
     if (ENV === 'dev') {
+        result.watch = true;
         result.watchOptions = {
             ignored: [
                 // /node_modules/,
                 // 'node_modules',
                 dist,
-                path.resolve(dist, '**/*'),
+                // path.resolve(dist, '**/*'),
             ],
         };
     }
