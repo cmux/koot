@@ -12,7 +12,7 @@ beforeAll(async () => {
     // await require('./before')();
 });
 
-const dotFilesIgnore = ['.git', '.cz-config.js'];
+const dotFilesIgnore = ['.git', '.husky', '.cz-config.js'];
 
 describe('测试: 下载模板', () => {
     test(`向已存在的目录中新建项目`, async () => {
