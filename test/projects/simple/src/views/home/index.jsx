@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { extend } from 'koot';
 import { Link } from 'react-router';
 import clientUpdatePageinfo from 'koot/utils/client-update-pageinfo';
@@ -10,7 +11,7 @@ import TestModuleCSS from './test-module-css';
 
 import styles from './styles.component.less';
 
-const PageHome = ({ className }) => {
+const PageHome = memo(({ className }) => {
     // throw new Error('hahaha');
     return (
         <div className={className}>
@@ -53,13 +54,19 @@ const PageHome = ({ className }) => {
             <TestModuleCSS />
         </div>
     );
-};
+});
 
-const Bg = ({ className, type }) => (
+// console.log(memo);
+const Bg = memo(({ className, type }) => (
     <div className={className} data-bg-type={type}>
         <div className="inner" />
     </div>
-);
+));
+// const Bg = ({ className, type }) => (
+//     <div className={className} data-bg-type={type}>
+//         <div className="inner" />
+//     </div>
+// );
 
 const IssueTest = ({ className = '', ...props }) => (
     <div
