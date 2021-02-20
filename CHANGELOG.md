@@ -62,6 +62,8 @@
         -   `webpack-bundle-analyzer` -> _^4.4.0_
         -   `webpack-dev-middleware` -> _^4.0.4_
         -   `workbox-webpack-plugin` -> _^6.1.0_
+    -   开发环境中，`React.memo()` 现在会被自动替换为组件本身
+        -   出于某些限制，目前 _Koot.js_ 仍在使用 `react-hot-loader`，其作者已经表示不再维护，目前已知对 `memo()` 组件的热更新支持不佳。为了缓解这一问题做出如上改动，从而使热更新可用，但这样一来和生产环境地结果就有了一定的偏差，在开发时请注意。
 
 ---
 
