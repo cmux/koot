@@ -29,7 +29,7 @@ class KootReactRenderCache {
         if (options === true) options = {};
         const {
             maxAge = defaults.maxAge,
-            maxCount = defaults.maxCount
+            maxCount = defaults.maxCount,
         } = options;
 
         this.list = new Map();
@@ -94,7 +94,7 @@ class KootReactRenderCache {
         this.cachedUrls.push(url);
         this.list.set(url, {
             html,
-            time: Date.now()
+            time: Date.now(),
         });
     }
 
