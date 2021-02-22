@@ -6,6 +6,7 @@ const path = require('path');
 // const ignore = "koot-@(cli|boilerplate|boilerplate-*)"
 const ignore = `koot-@(${[
     'cli',
+    'boilerplate',
     'boilerplate-legacy',
     'boilerplate-system',
     'boilerplate-web',

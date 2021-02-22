@@ -27,7 +27,7 @@
         "node": ">= 8.9.0"
     },
     "dependencies": {
-        "electron": "^11.2.3",
+        "electron": "^11.3.0",
         "electron-builder": "^22.9.1"
     },
     "devDependencies": {
