@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Babel Plugin: react-replace-memo-in-dev test1 1`] = `
+"import React from 'react';
+
+const A = () => 'abc';"
+`;
+
+exports[`Babel Plugin: react-replace-memo-in-dev test2 1`] = `
+"import React2 from 'react';
+
+const A = () => 'abc';"
+`;
+
+exports[`Babel Plugin: react-replace-memo-in-dev test3 1`] = `
+"import React, { memo } from 'react';
+
+const A = () => 'abc';"
+`;
+
+exports[`Babel Plugin: react-replace-memo-in-dev test4 1`] = `
+"import React, { memo as memo2 } from 'react';
+
+const A = () => 'abc';"
+`;

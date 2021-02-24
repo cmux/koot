@@ -504,6 +504,11 @@ const i18n = async ({
                 /__KOOT_TEST_LOCALE_TRANSLATE_FUNCTION_ONLY_RESULT__\|\|[^(]+?\(['"]\/test-img-zh\.png['"]/.test(
                     content
                 )
+            ).toBe(false);
+            expect(
+                /__KOOT_TEST_LOCALE_TRANSLATE_FUNCTION_ONLY_RESULT__\|\|\/test-img-zh\.png\|\|__/.test(
+                    content
+                )
             ).toBe(true);
         }
 

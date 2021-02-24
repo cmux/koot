@@ -85,7 +85,7 @@
         "koa-static": "^5.0.0",
         "koot-cli-kit": "^0.0.2",
         "koot-webpack": "^0.15.0-alpha.2",
-        "lodash": "^4.17.20",
+        "lodash": "^4.17.21",
         "md5": "^2.3.0",
         "npm-run-script": "^0.0.4",
         "open": "^7.4.2",
@@ -103,11 +103,11 @@
         "resolve": "^1.20.0",
         "rimraf": "^3.0.2",
         "sanitize-filename": "1.6.3",
-        "sharp": "^0.27.1",
+        "sharp": "^0.27.2",
         "sp-koa-views": "^1.0.1",
         "sync-request": "^6.1.0",
         "terminate": "^2.1.2",
-        "typescript": "^4.1.5",
+        "typescript": "^4.2.2",
         "xmlify": "^1.1.0"
     },
     "gitHead": "f4c58c48692337068d99c7fbbcd9640f2201a3e6"

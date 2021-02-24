@@ -60,10 +60,10 @@
         -   `sass-loader` -> _^11.0.0_
         -   `style-loader` -> _^2.0.0_
         -   `thread-loader` -> _^3.0.0_
-        -   `webpack` -> _^5.23.0_ ([#215](https://github.com/cmux/koot/issues/215))
+        -   `webpack` -> _^5.24.1_ ([#215](https://github.com/cmux/koot/issues/215))
         -   `webpack-bundle-analyzer` -> _^4.4.0_
         -   `webpack-dev-middleware` -> _^4.0.4_
-        -   `workbox-webpack-plugin` -> _^6.1.0_
+        -   `workbox-webpack-plugin` -> _^6.1.1_
 
 ---
 
