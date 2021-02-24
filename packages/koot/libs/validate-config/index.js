@@ -1,6 +1,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 const md5 = require('md5');
+const merge = require('lodash/merge');
 
 const validateConfigDist = require('../validate-config-dist');
 const getCwd = require('../../utils/get-cwd');
@@ -16,6 +17,7 @@ const {
     propertiesToExtract: _propertiesToExtract,
     dirConfigTemp: _dirConfigTemp,
     WEBPACK_OUTPUT_PATH,
+    keyConfigOriginalFull,
 } = require('../../defaults/before-build');
 const { KOOT_DEV_START_TIME } = require('../../defaults/envs');
 const {
@@ -99,6 +101,9 @@ const validateConfig = async (projectDir, options = {}) => {
     const dirConfigTemp = tmpDir || path.resolve(projectDir, _dirConfigTemp);
     // 确保该临时目录存在
     await fs.ensureDir(dirConfigTemp);
+
+    // 处理前的配置
+    kootConfig[keyConfigOriginalFull] = merge({}, kootConfig);
 
     // 兼容性处理 (将老版本的配置转换为最新配置)
     await require('./transform-compatible/template-inject')(kootConfig);

@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+require('koot/typedef');
 
 process.env.DO_WEBPACK = true;
 
@@ -26,6 +27,7 @@ const {
     filenameBuildFail,
     WEBPACK_OUTPUT_PATH,
     CLIENT_ROOT_PATH,
+    keyConfigOriginalFull,
 } = require('koot/defaults/before-build');
 
 const __ = require('koot/utils/translate');
@@ -69,7 +71,7 @@ process.env.DO_WEBPACK = false;
 /**
  * Webpack 打包
  * @async
- * @param {Object} kootConfig
+ * @param {AppConfig} kootConfig
  * @param {Boolean} [kootConfig.analyze=false] 是否为打包分析（analyze）模式
  * @returns {Object}
  */
@@ -385,7 +387,10 @@ module.exports = async (kootConfig = {}) => {
     } else */ if (
         typeof i18n === 'object'
     ) {
-        if (TYPE === 'spa') {
+        if (
+            TYPE === 'spa' &&
+            !Array.isArray(appConfig[keyConfigOriginalFull].i18n)
+        ) {
             if (i18n.type !== 'store') {
                 i18n.type = 'store';
                 log(
