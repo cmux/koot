@@ -544,24 +544,26 @@ module.exports = {
      *           每条结果最多保存时间, 单位: 毫秒 (ms)
      * @property {number} [maxCount=50]
      *           根据 URL 保留的结果条目数
-     * @property {(url)=>string|boolean} [get]
+     * @property {(url,ctx)=>string|boolean} [get]
      *           自定义缓存检查与吐出方法。存在时, maxAge 和 maxCount 设置将被忽略
      *           参数 url - 请求的完整的 URL
+     *           参数 ctx - 本次请求的 KOA Context
      *           返回 false 时，表示该 URL 没有缓存结果
-     * @property {(url,html)=>void} [set]
+     * @property {(url,html,ctx)=>void} [set]
      *           自定义缓存存储方法。存在时, maxAge 和 maxCount 设置将被忽略
      *           参数 url - 请求的完整的 URL
      *           参数 html - 服务器渲染结果
+     *           参数 ctx - 本次请求的 KOA Context
      */
     renderCache: {
         maxAge: 5000,
         maxCount: 50,
-        get: (url) => {
+        get: (url, ctx) => {
             // 自实现的缓存结果获取逻辑
             // return false
             return '完整渲染结果';
         },
-        set: (url, html) => {
+        set: (url, html, ctx) => {
             // 自实现的缓存结果存储逻辑
         },
     },
