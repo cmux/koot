@@ -34,6 +34,8 @@
         -   渲染缓存的 `get` 和 `set` 方法现在均新增一个参数，值为本次请求的 _KOA Context_ ([#294](https://github.com/cmux/koot/issues/294))
     -   SPA 项目
         -   打包结果中附带的简易服务器现在支持 `serverBefore` 和 `serverAfter` 生命周期 ([#292](https://github.com/cmux/koot/issues/292))
+-   错误修正
+    -   修复在 `extend()` 高阶组件的 `pageinfo` 方法没有返回 `title` 时，页面标题被清空的问题
 -   添加依赖包
     -   `cli-table`
     -   `filesize`

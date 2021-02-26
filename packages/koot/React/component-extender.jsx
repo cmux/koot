@@ -102,7 +102,7 @@ const doPageinfo = (store, props, pageinfo) => {
     if (!isRenderSafe()) return {};
 
     const defaultPageInfo = {
-        title: '',
+        title: undefined,
         metas: [],
     };
 

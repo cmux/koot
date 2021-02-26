@@ -160,7 +160,12 @@ const executeComponentLifecycle = async ({ store, renderProps, ctx }) => {
                 ctx,
             });
 
-            const hasTitle = !!thisTitle;
+            // console.log({
+            //     thisTitle,
+            //     type: typeof thisTitle,
+            //     result: process.env.KOOT_PROJECT_NAME,
+            // });
+            const hasTitle = typeof thisTitle !== 'undefined';
             const hasMeta = Array.isArray(thisMetas) && thisMetas.length;
 
             if (hasTitle) result.title = thisTitle;

@@ -46,6 +46,7 @@ const {
     injectScripts: puppeteerTestInjectScripts,
     requestHidden404: testRequestHidden404,
     criticalAssetsShouldBeGzip: testAssetsGzip,
+    pageinfoOnlyMetas: puppeteerPageinfoOnlyMetas,
 } = require('../puppeteer-test');
 const addCommand = require('../../libs/add-command-to-package-json');
 const terminate = require('../../libs/terminate-process');
@@ -631,45 +632,6 @@ const doTest = async (port, dist, settings = {}) => {
         await testHtmlWebAppMetaTags(HTML, dist);
     }
 
-    // 测试: 如果 pageinfo 没有提供 title，此时的默认值
-    {
-        const route = `/no-title-only-metas-test`;
-        const titleExpectToBe = 'Koot Boilerplate';
-        const context = await browser.createIncognitoBrowserContext();
-
-        // 从首页点击链接跳转
-        {
-            const page = await context.newPage();
-            await page.goto(origin, {
-                waitUntil: 'networkidle0',
-            });
-            await page.evaluate((route) => {
-                document.querySelector(`a[href$="${route}"]`).click();
-            }, route);
-            await sleep(1000);
-            const titleCSR = await page.evaluate(() => document.title);
-            expect(titleCSR).toBe(titleExpectToBe);
-            await page.close();
-        }
-
-        // 直接访问
-        {
-            const page = await context.newPage();
-            const res = await page.goto(origin + route, {
-                waitUntil: 'networkidle0',
-            });
-            const HTML = await res.text();
-            const $ = cheerio.load(HTML);
-            const titleSSR = $('head title').text();
-            const titleCSR = await page.evaluate(() => document.title);
-            expect(titleSSR).toBe(titleCSR);
-            expect(titleCSR).toBe(titleExpectToBe);
-            await page.close();
-        }
-
-        await context.close();
-    }
-
     // [配置文件] `beforeBuild` `afterBuild`
     {
         const testFile = path.resolve(dist, '_test-life-cycle.txt');
@@ -687,6 +649,7 @@ const doTest = async (port, dist, settings = {}) => {
     await puppeteerTestStyles(page);
     await puppeteerTestCustomEnv(page, customEnv);
     await puppeteerTestInjectScripts(page);
+    await puppeteerPageinfoOnlyMetas({ origin, browser });
     await testRequestHidden404(origin, browser);
     if (!isDev) await testAssetsGzip(origin, dist, browser);
 

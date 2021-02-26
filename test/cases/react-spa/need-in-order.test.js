@@ -33,6 +33,7 @@ const {
     criticalAssetsShouldBeGzip: testAssetsGzip,
     clientLifecycles: testClientLifecycles,
     i18n: testI18n,
+    // pageinfoOnlyMetas: puppeteerPageinfoOnlyMetas,
 } = require('../puppeteer-test');
 
 //
@@ -291,6 +292,11 @@ const testFull = (dir, configFileName) => {
                 await testRequestHidden404(origin, browser);
                 await testAssetsGzip(origin, dist);
                 await testClientLifecycles(origin, browser);
+                // await puppeteerPageinfoOnlyMetas({
+                //     origin,
+                //     browser,
+                //     isSPA: true,
+                // });
 
                 await page.goto(origin + '/#/static');
 

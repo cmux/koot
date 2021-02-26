@@ -13,6 +13,7 @@ const {
 const {
     buildManifestFilename,
 } = require('../../packages/koot/defaults/before-build');
+const sleep = require('../../packages/koot/utils/sleep');
 
 // ============================================================================
 
@@ -588,6 +589,59 @@ const i18n = async ({
     if (needToClose) await browser.close();
 };
 
+/**
+ * puppeteer 测试
+ *
+ * pageinfo 提供了 metas 但没有提供 title，此时页面标题应不会变化
+ * @async
+ * @param {Object} options
+ * @param {boolean} [options.isSPA=false]
+ * @param {Object} [options.browser]
+ * @returns {Promise<void>}
+ */
+const pageinfoOnlyMetas = async ({ origin, browser, isSPA = false }) => {
+    const route = (isSPA ? '#' : '') + `/no-title-only-metas-test`;
+    const titleExpectToBe = 'Koot Boilerplate';
+    const context = await browser.createIncognitoBrowserContext();
+
+    // 从首页点击链接跳转
+    {
+        const page = await context.newPage();
+        await page.goto(origin, {
+            waitUntil: 'networkidle0',
+        });
+        await page.evaluate((route) => {
+            document.querySelector(`a[href~="${route}"]`).click();
+        }, route);
+        await sleep(1000);
+        const titleCSR = await page.evaluate(() => document.title);
+        expect(titleCSR).toBe(titleExpectToBe);
+        await page.close();
+    }
+
+    // 直接访问
+    {
+        const page = await context.newPage();
+        const res = await page.goto(origin + route, {
+            waitUntil: 'networkidle0',
+        });
+
+        const titleCSR = await page.evaluate(() => document.title);
+        expect(titleCSR).toBe(titleExpectToBe);
+
+        if (!isSPA) {
+            const HTML = await res.text();
+            const $ = cheerio.load(HTML);
+            const titleSSR = $('head title').text();
+            expect(titleSSR).toBe(titleCSR);
+        }
+
+        await page.close();
+    }
+
+    await context.close();
+};
+
 module.exports = {
     styles,
     customEnv,
@@ -596,4 +650,5 @@ module.exports = {
     criticalAssetsShouldBeGzip,
     clientLifecycles,
     i18n,
+    pageinfoOnlyMetas,
 };
