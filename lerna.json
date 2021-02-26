@@ -1,12 +1,19 @@
 {
-    "version": "0.15.0-alpha.2",
-    "packages": ["packages/*"],
+    "version": "0.15.0-alpha.3",
+    "packages": [
+        "packages/*"
+    ],
     "command": {
         "bootstrap": {
-            "npmClientArgs": ["--no-package-lock"]
+            "npmClientArgs": [
+                "--no-package-lock"
+            ]
         },
         "publish": {
-            "ignoreChanges": ["**/__tests__/**", "**/*.md"]
+            "ignoreChanges": [
+                "**/__tests__/**",
+                "**/*.md"
+            ]
         }
     }
 }
