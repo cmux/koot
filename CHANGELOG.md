@@ -36,6 +36,7 @@
         -   打包结果中附带的简易服务器现在支持 `serverBefore` 和 `serverAfter` 生命周期 ([#292](https://github.com/cmux/koot/issues/292))
 -   错误修正
     -   修复在 `extend()` 高阶组件的 `pageinfo` 方法没有返回 `title` 时，页面标题被清空的问题
+    -   修复在 SPA 项目中如果没有启用多语言，初次访问开发环境时会报告 _Redux_ 相关错误，提示无法辨识的 _Key_ ([#230](https://github.com/cmux/koot/issues/230))
 -   添加依赖包
     -   `cli-table`
     -   `filesize`

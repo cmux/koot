@@ -21,6 +21,7 @@ import {
     // reducerLocales as i18nReducerLocales,
 } from '../i18n/redux';
 import isI18nEnabled from '../i18n/is-enabled';
+import filterState from '../libs/filter-state';
 
 // import history from "__KOOT_CLIENT_REQUIRE_HISTORY__"
 import history from './history';
@@ -67,7 +68,8 @@ if (isI18nEnabled()) {
  * @type {Object}
  */
 export const initialState = (() => {
-    if (__CLIENT__) return merge(window[REDUXSTATE], loadSessionStore());
+    if (__CLIENT__)
+        return filterState(merge(window[REDUXSTATE], loadSessionStore()));
     if (__SERVER__) return {};
 })();
 

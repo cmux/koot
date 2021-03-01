@@ -42,7 +42,7 @@ export const save = () => {
     ) {
         // 根据配置对象存储
         const parse = (obj, accumulatedKey = '') => {
-            Object.keys(obj).forEach(key => {
+            Object.keys(obj).forEach((key) => {
                 const currentAccumulatedKey =
                     accumulatedKey + `[${JSON.stringify(key)}]`;
                 if (typeof obj[key] === 'object') {

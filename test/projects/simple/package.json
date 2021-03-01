@@ -29,6 +29,7 @@
         "dev:no-open": "koot-dev --no-open",
         "dev:custom-port": "koot-dev --no-open --port 8081",
         "dev:electron": "koot-dev --config koot.config.electron.js",
+        "dev:spa": "koot-dev --type spa",
         "analyze": "koot-analyze",
         "analyze:spa": "koot-analyze --type react-spa",
         "eslint": "eslint \"src/**/*.+(js|jsx)\"",

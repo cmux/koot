@@ -188,13 +188,13 @@ class SpaTemplatePlugin {
                             );
                         });
                     } else {
-                        console.log(
-                            chalk.green('√ ') +
-                                chalk.yellowBright('[koot/build] ') +
-                                __('build.spa_template_emitted', {
-                                    file: chalk.green(`/${filename}`),
-                                })
-                        );
+                        // console.log(
+                        //     chalk.green('√ ') +
+                        //         chalk.yellowBright('[koot/build] ') +
+                        //         __('build.spa_template_emitted', {
+                        //             file: chalk.green(`/${filename}`),
+                        //         })
+                        // );
                     }
                 });
             }
