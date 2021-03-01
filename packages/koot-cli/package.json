@@ -45,7 +45,7 @@
         "url": "https://github.com/cmux/koot-cli/issues"
     },
     "engines": {
-        "node": ">=10.16.0"
+        "node": ">=12.0.0"
     },
     "dependencies": {
         "axios": "^0.21.1",
@@ -54,8 +54,8 @@
         "fs-extra": "^9.1.0",
         "gitignore-globs": "^0.1.1",
         "glob": "^7.1.6",
-        "glob-promise": "^4.0.1",
-        "inquirer": "^7.3.3",
+        "glob-promise": "^4.1.0",
+        "inquirer": "^8.0.0",
         "inquirer-select-directory": "^1.2.0",
         "is-url": "^1.2.4",
         "isbinaryfile": "^4.0.6",
