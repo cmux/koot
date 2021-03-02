@@ -3,7 +3,9 @@ const fs = require('fs-extra');
 
 const defaultsServiceWorker = require('../defaults/service-worker');
 const defaultI18n = require('../defaults/i18n');
-// const { KOOT_BUILD_START_TIME } = require('../defaults/envs')
+// const {
+//     KOOT_BUILD_START_TIME, KOOT_CLIENT_PUBLIC_PATH
+// } = require('../defaults/envs')
 
 /**
  * 初始化 node.js 环境变量
@@ -116,6 +118,7 @@ module.exports = () => {
         KOOT_SESSION_STORE: JSON.stringify(false),
 
         KOOT_SSR_PUBLIC_PATH: JSON.stringify('/'),
+        // [KOOT_CLIENT_PUBLIC_PATH]: '',
 
         /** @type {string}
          * 构建目标

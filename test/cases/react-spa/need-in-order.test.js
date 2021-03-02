@@ -14,6 +14,7 @@ const JSDOM = require('jsdom').JSDOM;
 const puppeteer = require('puppeteer');
 const chalk = require('chalk');
 const postcss = require('postcss');
+const cheerio = require('cheerio');
 
 //
 
@@ -22,6 +23,7 @@ const {
     chunkNameExtractCssForImport,
     buildManifestFilename,
 } = require('koot/defaults/before-build');
+const { KOOT_CLIENT_PUBLIC_PATH } = require('koot/defaults/envs');
 const terminate = require('../../libs/terminate-process');
 const waitForPort = require('../../libs/get-port-from-child-process');
 const testHtmlRenderedByKoot = require('../../general-tests/html/rendered-by-koot');
@@ -104,7 +106,7 @@ const afterTest = async (cwd /*, title*/) => {
 
 //
 
-const testFull = (dir, configFileName) => {
+const testFull = (dir, configFileName, issueNum) => {
     const forceChangeType = !configFileName;
     const fileKootConfig = path.resolve(
         dir,
@@ -246,121 +248,208 @@ const testFull = (dir, configFileName) => {
             await testFilesFromChunkmap(dist, false);
         });
 
-        test(`[prod] 简易服务器可用 & JS 执行正确`, async () => {
-            const fileServerJS = path.resolve(dist, './.server/index.js');
-            expect(fs.existsSync(fileServerJS)).toBe(true);
+        async function testServer(title, testFunc) {
+            test(title, async () => {
+                const fileServerJS = path.resolve(dist, './.server/index.js');
+                expect(fs.existsSync(fileServerJS)).toBe(true);
 
-            const port = config.port;
-            const errors = [];
-
-            const browser = await puppeteer.launch({
-                headless: true,
-            });
-            const context = await browser.createIncognitoBrowserContext();
-
-            const testSpaServer = async (cwd) => {
-                // console.log({
-                //     command: `node ${fileServerJS}`,
-                //     cwd
-                // });
-                const child = execSync(`node ${fileServerJS}`, {
-                    cwd,
-                });
+                const port = config.port;
                 const errors = [];
-                child.stderr.on('data', (err) => {
-                    errors.push(err);
+
+                const browser = await puppeteer.launch({
+                    headless: true,
                 });
-
-                await waitForPort(child);
-
-                const origin = isNaN(port) ? port : `http://127.0.0.1:${port}`;
                 const context = await browser.createIncognitoBrowserContext();
 
-                const page = await context.newPage();
-                const failedResponse = [];
-                require('../../libs/puppeteer/page-event-response-failed-response')(
-                    page,
-                    failedResponse
+                await testFunc({ cwd: dir, fileServerJS, port, browser }).catch(
+                    (e) => {
+                        errors.push(e);
+                    }
                 );
-
-                const res = await page.goto(origin, {
-                    waitUntil: 'networkidle0',
+                await testFunc({
+                    cwd: dist,
+                    fileServerJS,
+                    port,
+                    browser,
+                }).catch((e) => {
+                    errors.push(e);
                 });
-                const html = await res.text();
 
-                await testHtmlRenderedByKoot(html);
-                await testRequestHidden404(origin, browser);
-                await testAssetsGzip(origin, dist);
-                await testClientLifecycles(origin, browser);
-                // await puppeteerPageinfoOnlyMetas({
-                //     origin,
-                //     browser,
-                //     isSPA: true,
-                // });
+                await context.close();
+                await browser.close();
 
-                await page.goto(origin + '/#/static');
-
-                await page.close();
-
-                // 测试: 没有失败的请求
-                if (failedResponse.length) {
-                    console.log(
-                        'failedResponse',
-                        failedResponse.map((res) => ({
-                            status: res.status(),
-                            url: res.url(),
-                        }))
-                    );
-                }
-                expect(failedResponse.length).toBe(0);
                 if (errors.length) {
                     errors.forEach((e) => console.error(e));
                 }
+
                 expect(errors.length).toBe(0);
 
-                // 测试: 多语言
-                if (config.i18n) {
-                    await testI18n({
-                        browser,
-                        origin,
-                        i18n: config.i18n,
-                        isDev: false,
-                        isSPA: true,
-                        cwd: dir,
-                        dist,
-                    });
-                }
+                if (fs.existsSync(dist)) fs.removeSync(dist);
 
-                // 结束测试
-                await terminate(child.pid);
-            };
-
-            await testSpaServer(dir).catch((e) => {
-                errors.push(e);
+                console.log(
+                    chalk.green('√ ') +
+                        chalk.green(`${(Date.now() - start) / 1000}s `) +
+                        (configFileName || '默认')
+                );
             });
-            await testSpaServer(dist).catch((e) => {
-                errors.push(e);
-            });
+        }
+        switch (issueNum) {
+            case 249: {
+                testServer(
+                    `#249 | \`historyType === 'browser'\` 同时设定了 Webpack 的 \`output.publicPath\` 时，后者无效`,
+                    async ({ cwd, port, fileServerJS, browser }) => {
+                        // console.log({
+                        //     command: `node ${fileServerJS}`,
+                        //     cwd
+                        // });
+                        const child = execSync(`node ${fileServerJS}`, {
+                            cwd,
+                        });
+                        const errors = [];
+                        child.stderr.on('data', (err) => {
+                            errors.push(err);
+                        });
 
-            // TODO: 在设置了 sw 时有 sw 注册且没有报错
+                        await waitForPort(child);
 
-            await context.close();
-            await browser.close();
+                        const origin = isNaN(port)
+                            ? port
+                            : `http://127.0.0.1:${port}`;
+                        const context = await browser.createIncognitoBrowserContext();
 
-            if (errors.length) {
-                errors.forEach((e) => console.error(e));
+                        const page = await context.newPage();
+                        const failedResponse = [];
+                        require('../../libs/puppeteer/page-event-response-failed-response')(
+                            page,
+                            failedResponse
+                        );
+
+                        const res = await page.goto(origin, {
+                            waitUntil: 'networkidle0',
+                        });
+                        const html = await res.text();
+                        const $ = cheerio.load(html);
+                        const checkRegExp = new RegExp(
+                            `^${config[KOOT_CLIENT_PUBLIC_PATH]}`
+                        );
+                        for (const s of $('script[src][data-koot-entry]')) {
+                            // console.log(s.attribs.src);
+                            const src = s.attribs.src;
+                            if (src)
+                                expect(checkRegExp.test(s.attribs.src)).toBe(
+                                    true
+                                );
+                        }
+
+                        await page.close();
+
+                        // 测试: 没有失败的请求
+                        if (failedResponse.length) {
+                            console.log(
+                                'failedResponse',
+                                failedResponse.map((res) => ({
+                                    status: res.status(),
+                                    url: res.url(),
+                                }))
+                            );
+                        }
+                        expect(failedResponse.length).toBe(0);
+                        if (errors.length) {
+                            errors.forEach((e) => console.error(e));
+                        }
+                        expect(errors.length).toBe(0);
+
+                        // 结束测试
+                        await terminate(child.pid);
+                    }
+                );
+                break;
             }
+            default:
+                testServer(
+                    `[prod] 简易服务器可用 & JS 执行正确`,
+                    async ({ cwd, port, fileServerJS, browser }) => {
+                        // console.log({
+                        //     command: `node ${fileServerJS}`,
+                        //     cwd
+                        // });
+                        const child = execSync(`node ${fileServerJS}`, {
+                            cwd,
+                        });
+                        const errors = [];
+                        child.stderr.on('data', (err) => {
+                            errors.push(err);
+                        });
 
-            expect(errors.length).toBe(0);
+                        await waitForPort(child);
 
-            if (fs.existsSync(dist)) fs.removeSync(dist);
+                        const origin = isNaN(port)
+                            ? port
+                            : `http://127.0.0.1:${port}`;
+                        const context = await browser.createIncognitoBrowserContext();
 
-            console.log(
-                chalk.green('√ ') +
-                    chalk.green(`${(Date.now() - start) / 1000}s `) +
-                    (configFileName || '默认')
-            );
-        });
+                        const page = await context.newPage();
+                        const failedResponse = [];
+                        require('../../libs/puppeteer/page-event-response-failed-response')(
+                            page,
+                            failedResponse
+                        );
+
+                        const res = await page.goto(origin, {
+                            waitUntil: 'networkidle0',
+                        });
+                        const html = await res.text();
+
+                        await testHtmlRenderedByKoot(html);
+                        await testRequestHidden404(origin, browser);
+                        await testAssetsGzip(origin, dist);
+                        await testClientLifecycles(origin, browser);
+                        // await puppeteerPageinfoOnlyMetas({
+                        //     origin,
+                        //     browser,
+                        //     isSPA: true,
+                        // });
+
+                        await page.goto(origin + '/#/static');
+
+                        await page.close();
+
+                        // 测试: 没有失败的请求
+                        if (failedResponse.length) {
+                            console.log(
+                                'failedResponse',
+                                failedResponse.map((res) => ({
+                                    status: res.status(),
+                                    url: res.url(),
+                                }))
+                            );
+                        }
+                        expect(failedResponse.length).toBe(0);
+                        if (errors.length) {
+                            errors.forEach((e) => console.error(e));
+                        }
+                        expect(errors.length).toBe(0);
+
+                        // 测试: 多语言
+                        if (config.i18n) {
+                            await testI18n({
+                                browser,
+                                origin,
+                                i18n: config.i18n,
+                                isDev: false,
+                                isSPA: true,
+                                cwd: dir,
+                                dist,
+                            });
+                        }
+
+                        // TODO: 在设置了 sw 时有 sw 注册且没有报错
+
+                        // 结束测试
+                        await terminate(child.pid);
+                    }
+                );
+        }
 
         // TODO: 测试: 所有 Webpack 结果资源的访问
 
@@ -376,6 +465,7 @@ describe('测试: React SPA 项目', () => {
             testFull(dir, 'koot.build.spa-1.js');
             testFull(dir, 'koot.build.spa-2.js');
             testFull(dir, 'koot.build.spa-3.js');
+            testFull(dir, 'koot.build.spa-#249.js', 249);
         });
     }
 });

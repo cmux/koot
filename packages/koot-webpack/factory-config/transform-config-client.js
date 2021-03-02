@@ -27,6 +27,7 @@ const {
     keyConfigIcons,
     // pathnameSockjs
 } = require('koot/defaults/before-build');
+const { KOOT_CLIENT_PUBLIC_PATH } = require('koot/defaults/envs');
 const { LOCALEID, SSRSTATE } = require('koot/defaults/defines-window');
 const { hmrOptions } = require('koot/defaults/webpack-dev-server');
 
@@ -249,6 +250,9 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                     filenamePrefix + result.output.filename;
                 result.output.chunkFilename =
                     filenamePrefix + result.output.chunkFilename;
+            }
+            if (isPublicPathProvided) {
+                process.env[KOOT_CLIENT_PUBLIC_PATH] = result.output.publicPath;
             }
 
             // 处理 entry

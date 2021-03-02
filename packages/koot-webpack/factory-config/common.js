@@ -6,6 +6,7 @@ const webpack = require('webpack');
 const createModuleRules = require('./module/rules');
 const KootResetCssLoaderPlugin = require('../plugins/reset-css-loader');
 const defaultDefines = require('koot/defaults/defines');
+const { KOOT_CLIENT_PUBLIC_PATH } = require('koot/defaults/envs');
 const {
     keyConfigBuildDll,
     styleTagGlobalAttributeName,
@@ -160,6 +161,7 @@ const plugins = async (
         'WEBPACK_CHUNKMAP',
         'WEBPACK_DEV_SERVER_PORT',
         // "WEBPACK_SERVER_PUBLIC_PATH",
+        KOOT_CLIENT_PUBLIC_PATH,
     ];
     if (
         remainingKootBuildConfig.sessionStore === true ||

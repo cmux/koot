@@ -1,3 +1,4 @@
+const { KOOT_CLIENT_PUBLIC_PATH } = require('../defaults/envs');
 const getWDSport = require('./get-webpack-dev-server-port');
 
 let publicPath;
@@ -18,21 +19,19 @@ module.exports = (isSSRReading = false) => {
         (typeof __DEV__ !== 'undefined' && __DEV__);
 
     if (process.env.WEBPACK_BUILD_TYPE === 'spa') {
-        if (isDev || /^browser/.test(process.env.KOOT_HISTORY_TYPE)) {
-            publicPath = '/';
-            publicPathSSRReading = publicPath;
-        } else {
-            publicPath = '';
-            publicPathSSRReading = publicPath;
-        }
+        publicPath = isDev
+            ? '/'
+            : /^browser/.test(process.env.KOOT_HISTORY_TYPE)
+            ? typeof process.env[KOOT_CLIENT_PUBLIC_PATH] === 'string'
+                ? process.env[KOOT_CLIENT_PUBLIC_PATH]
+                : '/'
+            : '';
+        publicPathSSRReading = publicPath;
     } else if (isDev) {
         const port = getWDSport();
         const origin =
             typeof global.koaCtxOrigin === 'string'
-                ? global.koaCtxOrigin
-                      .split(':')
-                      .slice(0, 2)
-                      .join(':')
+                ? global.koaCtxOrigin.split(':').slice(0, 2).join(':')
                 : 'http://localhost';
         publicPath = `${origin}:${port}/dist/`;
         publicPathSSRReading = publicPath;

@@ -57,7 +57,8 @@
         "koot-buildtest-spa-build-config-koot_build_spa-2_js": "koot-build --koot-test --config koot.build.spa-2.js",
         "koot-buildtest-spa-build-config-koot_build_spa-3_js": "koot-build --koot-test --config koot.build.spa-3.js",
         "koot-buildtest-isomorphic-public_path-production": "koot-start --koot-test --config koot.config.public-path.js",
-        "koot-buildtest-isomorphic-public_path-development": "koot-dev --no-open --koot-test --config koot.config.public-path.js"
+        "koot-buildtest-isomorphic-public_path-development": "koot-dev --no-open --koot-test --config koot.config.public-path.js",
+        "koot-buildtest-spa-build-config-koot_build_spa-#249_js": "koot-build --koot-test --config koot.build.spa-#249.js"
     },
     "dependencies": {
         "autoprefixer": "10.2.1",
