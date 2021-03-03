@@ -1,12 +1,14 @@
 import { createStore } from 'koot';
+import * as appReducers from './reducers';
 
 /**
  * @type {Object|Function} 项目使用的 reducer，接受以下格式/形式
- * - reducer 函数
- * - `combineReducer` 返回的函数结果
- * - 类型是 _Object_ 的 reducer 对照表
+ * 1. reducer 函数
+ * 2. `combineReducer` 返回的函数结果
+ * 3. 类型是 _Object_ 的 reducer 对照表
+ * 本例中使用第 3 类 (`appReducers`)
  */
-const appReducer = undefined;
+// const appReducer = undefined;
 
 /** @type {Array} 项目使用的 middleware 列表 */
 const appMiddlewares = [];
@@ -19,4 +21,4 @@ if (__CLIENT__ && __DEV__) appMiddlewares.push(require('redux-logger').default);
  *
  * 本例为 Redux 最基本的写法
  */
-export default () => createStore(appReducer, appMiddlewares);
+export default () => createStore(appReducers, appMiddlewares);

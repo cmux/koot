@@ -11,6 +11,8 @@
         "paths": {
             "@src": ["./src"],
             "@src/*": ["./src/*"],
+            "@actions": ["./src/actions"],
+            "@actions/*": ["./src/actions/*"],
             "@assets": ["./src/assets"],
             "@assets/*": ["./src/assets/*"],
             "@components": ["./src/components"],

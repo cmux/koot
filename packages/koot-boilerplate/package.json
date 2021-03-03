@@ -24,7 +24,7 @@
         "analyze": "koot-analyze",
         "eslint": "eslint \"src/**/*.+(js|jsx)\"",
         "check-types": "tsc --noEmit",
-        "postinstall": "husky install",
+        "prepare": "husky install",
         "up": "yarn upgrade-interactive --latest"
     },
     "dependencies": {
@@ -65,8 +65,5 @@
         "*.{json,md,css,less,sass,scss}": [
             "prettier --write"
         ]
-    },
-    "koot": {
-        "version": "0.14.0-alpha.25"
     }
 }

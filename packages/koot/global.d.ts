@@ -1,6 +1,7 @@
 /// <reference types="node" />
 /// <reference types="react" />
 /// <reference types="react-dom" />
+import { LocationShape } from 'react-router/lib/PropTypes';
 
 // ============================================================================
 
@@ -291,4 +292,22 @@ declare interface KootAppConfig {
      * @default react
      */
     type: 'react' | 'react-spa';
+}
+
+// ============================================================================
+
+declare module 'react-redux' {
+    interface DefaultRootState extends KootRootState {
+        localeId: string;
+        routing: {
+            locationBeforeTransitions: LocationShape;
+        };
+        server: {
+            cookie?:
+                | string
+                | {
+                      [key: string]: string;
+                  };
+        };
+    }
 }
