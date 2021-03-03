@@ -11,6 +11,8 @@ module.exports = (babel) => {
         name: 'koot-babel-i18n-plugin',
         visitor: {
             CallExpression: (path, state) => {
+                if (path[BABEL_I18N_MODIFIED]) return;
+
                 const _callee = path.node.callee;
                 const {
                     opts: { stage, functionName, localeId, localeFile },
@@ -89,14 +91,32 @@ module.exports = (babel) => {
                         // path.replaceWith(
                         //     t.callExpression(
                         //         t.identifier(functionName),
-                        //         [newArg0].concat(_arguments.slice(1))
+                        //         [code].concat(_arguments.slice(1))
                         //     )
                         // );
+                        let modified = false;
                         const newSource = `${functionName}(${code}, ${_arguments
                             .slice(1)
-                            .map((n) => `"${n.value}"`)
+                            .map((n) => {
+                                if (n.value) return `"${n.value}"`;
+                                if (typeof n.start === 'undefined')
+                                    modified = true;
+                                return state.file.code.substr(
+                                    n.start,
+                                    n.end - n.start
+                                );
+                            })
                             .join(',')})`;
+
+                        if (modified) return;
+
                         path.replaceWithSourceString(newSource);
+                        path[BABEL_I18N_MODIFIED] = true;
+                        // console.log({
+                        //     arguments: _arguments,
+                        //     newSource,
+                        //     path,
+                        // });
                         // console.log({ stage, localeId, thisDefinitions });
                         // console.log({ newSource, newNode: path.node });
                     }

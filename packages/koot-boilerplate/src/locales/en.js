@@ -1,3 +1,5 @@
+/* eslint-disable no-template-curly-in-string */
+
 module.exports = {
     title: 'Koot.js Tech Demo',
     intro: ['React full-stack development framework', 'Also for SPA'],
@@ -59,7 +61,7 @@ module.exports = {
                 {
                     title: 'Create Redux store',
                     content:
-                        'Koot.js uses Redux for its store management, but it is up to you creating your own Redux store. If you need data-isomorphic capability, you must create a Redux store.',
+                        'Koot.js uses Redux for its store management. This boilerplate comes with a basic Store created. Read document below to learn more.',
                     doc: '/config?id=store',
                 },
                 {
@@ -71,6 +73,8 @@ module.exports = {
             ],
             bonus: 'Bonus',
             bonusComponentInTS: 'Write in TypeScript',
+            bonusUpdateAppType:
+                'Update Random Value in Store (Current: ${current})',
         },
         ts: {
             title: 'TypeScript',

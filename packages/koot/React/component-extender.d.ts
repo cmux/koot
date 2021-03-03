@@ -8,7 +8,7 @@ import {
     FC,
     ComponentClass,
     Component,
-    ComponentState,
+    // ComponentState,
     RefObject,
 } from 'react';
 import { Store, Dispatch } from 'redux';
@@ -18,6 +18,7 @@ import {
     MapDispatchToPropsParam,
     MergeProps,
     Options as ReactReduxOptions,
+    DefaultRootState,
 } from 'react-redux';
 
 // ============================================================================
@@ -52,7 +53,8 @@ class HOC extends Component {}
 
 export function extend<
     P = Record<string, unknown>,
-    S = ComponentState
+    // S = ComponentState
+    S = DefaultRootState
 >(options: {
     // connect?: Connect;
     connect?:

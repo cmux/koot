@@ -23,6 +23,11 @@ export interface AppState {
     type?: string;
     session?: string;
 }
+declare module 'react-redux' {
+    interface DefaultRootState {
+        app: AppState;
+    }
+}
 
 // Redux Action ===============================================================
 interface UpdateAppTypeAction

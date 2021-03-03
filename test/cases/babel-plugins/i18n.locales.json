@@ -1,0 +1,10 @@
+{
+    "test": "TEST",
+    "object": {
+        "value1": "O_VALUE_1",
+        "value_with_parameter": "O_VALUE_PARA_${insert}",
+        "nest": {
+            "value1": "O_NEST_VALUE_1"
+        }
+    }
+}
