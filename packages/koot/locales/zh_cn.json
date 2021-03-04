@@ -8,7 +8,8 @@
     },
     "safeguard": {
         "INVALID_CONFIG": "无效的配置: ${key}",
-        "NEED_PACKAGE_KOOT_ELECTRON": "缺少依赖包: 'koot-electron'。请使用 'npm install' 或 'yarn add' 进行安装。"
+        "NEED_PACKAGE_KOOT_ELECTRON": "缺少依赖包: 'koot-electron'。请使用 'npm install' 或 'yarn add' 进行安装。",
+        "NODE_LOCAL_VERSION_NOT_SATISFIED": "系统 Node.js 版本不符合要求。要求: ${require} | 本地系统: ${local}"
     },
     "validateConfig": {
         "error": {
