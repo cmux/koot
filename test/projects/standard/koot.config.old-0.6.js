@@ -169,6 +169,10 @@ module.exports = {
                 },
                 aaa: 'bbb',
             },
+            'ts-loader': {
+                context: __dirname,
+                configFile: path.resolve(__dirname, './tsconfog.json'),
+            },
         },
     },
 
@@ -194,6 +198,7 @@ module.exports = {
         '~base.less': path.resolve('./src/constants/less/base.less'),
         '~Assets': path.resolve('./src/assets'),
         '~/': path.resolve('./src'),
+        react: path.resolve(__dirname, '../../../node_modules/react'),
     },
 
     /**
