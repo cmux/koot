@@ -28,6 +28,7 @@
         -   详情请参见文档 [生命周期](https://koot.js.org/#/life-cycle?id=打包)
     -   **新配置项** `afterBuild` - 生命周期方法: 打包刚刚完成时 ([#288](https://github.com/cmux/koot/issues/288))
         -   详情请参见文档 [生命周期](https://koot.js.org/#/life-cycle?id=打包)
+    -   在进行打包、启动开发环境之前，现在会进行 _Node.js_ 版本检查，如果不通过，会终止流程 ([#274](https://github.com/cmux/koot/issues/274))
 -   优化
     -   `serviceWorker` 的 `cacheFirst` `networkFirst` `networkOnly` 扩展缓存策略选项，其数组 (`Array`) 内现在可以直接传入正则表达式和用以分析请求的函数，请参见文档 [Service Worker/扩展缓存规则](/pwa?id=扩展缓存规则)
     -   SSR 项目
