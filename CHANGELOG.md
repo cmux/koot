@@ -59,17 +59,17 @@
     -   更新依赖包 **major** 版本号
         -   `@hot-loader/react-dom` -> _^17.0.0_
         -   `compression-webpack-plugin` -> _^7.1.2_
-        -   `copy-webpack-plugin` -> _^7.0.0_
+        -   `copy-webpack-plugin` -> _^8.0.0_
         -   `css-loader` -> _^5.1.1_
         -   `less` -> _^4.1.1_
         -   `less-loader` -> _^8.0.0_
         -   `mini-css-extract-plugin` -> _^1.3.9_
-        -   `postcss` -> _^8.2.5_ ([#285](https://github.com/cmux/koot/issues/285))
-        -   `postcss-loader` -> _^5.0.0_
+        -   `postcss` -> _^8.2.7_ ([#285](https://github.com/cmux/koot/issues/285))
+        -   `postcss-loader` -> _^5.1.0_
         -   `sass-loader` -> _^11.0.0_
         -   `style-loader` -> _^2.0.0_
         -   `thread-loader` -> _^3.0.0_
-        -   `webpack` -> _^5.24.2_ ([#215](https://github.com/cmux/koot/issues/215))
+        -   `webpack` -> _^5.24.3_ ([#215](https://github.com/cmux/koot/issues/215))
         -   `webpack-bundle-analyzer` -> _^4.4.0_
         -   `webpack-dev-middleware` -> _^4.0.4_
         -   `workbox-webpack-plugin` -> _^6.1.1_
