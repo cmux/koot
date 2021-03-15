@@ -12,7 +12,8 @@ const spinner = require('../../lib/spinner');
 const inquiry = require('./inquiry-project');
 const download = require('./download-boilerplate');
 const install = require('./install-deps');
-const modify = require('./modify-boilerplate');
+const modifyPackageJson = require('./modify-package-json');
+const modifyBoilerplate = require('./modify-boilerplate');
 
 // ============================================================================
 
@@ -69,8 +70,9 @@ module.exports = async (options = {}) => {
         // return console.warn(app);
 
         await download(app.dest, app.boilerplate);
-        await modify(app).catch((e) => console.trace(e));
+        await modifyPackageJson(app).catch((e) => console.trace(e));
         await install(app);
+        await modifyBoilerplate(app).catch((e) => console.trace(e));
 
         console.log('');
 
