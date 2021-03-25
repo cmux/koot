@@ -124,6 +124,7 @@ module.exports = {
      *************************************************************************/
     aliases: {
         '@src': path.resolve('./src'),
+        '@actions': path.resolve('./src/actions'),
         '@assets': path.resolve('./src/assets'),
         '@components': path.resolve('./src/components'),
         '@constants': path.resolve('./src/constants'),
