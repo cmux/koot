@@ -189,7 +189,11 @@ const validatePlugins = (config, kootConfigForThisBuild = {}) => {
     // 如果没有 plugins 项，创建空 Array
     if (!Array.isArray(config.plugins)) config.plugins = [];
 
-    if (ENV === 'dev' && !kootConfigForThisBuild[keyConfigBuildDll]) {
+    if (
+        ENV === 'dev' &&
+        !config[keyConfigWebpackSPATemplateInject] &&
+        !kootConfigForThisBuild[keyConfigBuildDll]
+    ) {
         // 如果查有 DLL 结果文件，添加 DllReferencePlugin
         // const file = STAGE === 'server'
         //     ? path.resolve(kootConfigForThisBuild.dist, 'server', filenameDllManifest)
