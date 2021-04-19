@@ -73,6 +73,9 @@
         -   `webpack-bundle-analyzer` -> _^4.4.0_
         -   `webpack-dev-middleware` -> _^4.0.4_
         -   `workbox-webpack-plugin` -> _^6.1.1_
+-   添加依赖包
+    -   `@babel/plugin-proposal-nullish-coalescing-operator`
+    -   `@babel/plugin-proposal-optional-chaining`
 
 ---
 
