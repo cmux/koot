@@ -11,6 +11,7 @@ const examples = [
     `__('object', 'value_with_parameter')`,
     `__('object.value_with_parameter', {insert: 'TEST'})`,
     `__('object', 'value_with_parameter', {insert: 'TEST'})`,
+    `__(\`object\`, 'value_with_parameter', {insert: 'TEST'})`,
 
     `const t = "value1"; __('object', t)`,
 

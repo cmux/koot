@@ -59,10 +59,13 @@ module.exports = (babel) => {
                     if (
                         thisDefinitions &&
                         Array.isArray(_arguments) &&
-                        t.isStringLiteral(_arguments[0])
+                        (t.isStringLiteral(_arguments[0]) ||
+                            t.isTemplateLiteral(_arguments[0]))
                     ) {
                         const arg = _arguments[0];
-                        const key = arg.value;
+                        const key = t.isTemplateLiteral(_arguments[0])
+                            ? arg.quasis.map((n) => n.value.cooked).join('')
+                            : arg.value;
                         const code =
                             stage === 'client'
                                 ? JSON.stringify(
