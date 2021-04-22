@@ -15,7 +15,7 @@ module.exports = (kootBuildConfig = {}) => {
     const regExpKootModules = /koot-component/;
 
     const {
-        aliases = {},
+        // aliases = {},
         moduleCssFilenameTest = defaultModuleCssFilenameTest,
         internalLoaderOptions = {},
         classNameHashLength = defaultClassNameHashLength,
@@ -48,12 +48,12 @@ module.exports = (kootBuildConfig = {}) => {
                     : undefined,
         },
     };
-    const useUniversalAliasLoader = {
-        loader: 'universal-alias-loader',
-        options: {
-            alias: aliases,
-        },
-    };
+    // const useUniversalAliasLoader = {
+    //     loader: 'universal-alias-loader',
+    //     options: {
+    //         alias: aliases,
+    //     },
+    // };
     const useLessLoader = (() => {
         const options = {
             lessOptions: {
@@ -106,8 +106,10 @@ module.exports = (kootBuildConfig = {}) => {
         let use = [
             'postcss-loader',
             // >> LESS / SASS loader inset here <<
-            useUniversalAliasLoader,
+            // useUniversalAliasLoader,
         ];
+        // const loaderOffset = -1
+        const loaderOffset = 0;
 
         switch (type) {
             case 'component': {
@@ -127,14 +129,22 @@ module.exports = (kootBuildConfig = {}) => {
             Object.keys(tests).forEach((key) => {
                 const useThis = [...use];
                 if (key === 'less') {
-                    useThis.splice(useThis.length - 1, 0, useLessLoader);
+                    useThis.splice(
+                        useThis.length + loaderOffset,
+                        0,
+                        useLessLoader
+                    );
                     rulesLESS.push({
                         test: tests[key],
                         use: useThis,
                         ...rule,
                     });
                 } else if (key === 'sass') {
-                    useThis.splice(useThis.length - 1, 0, useSassLoader);
+                    useThis.splice(
+                        useThis.length + loaderOffset,
+                        0,
+                        useSassLoader
+                    );
                     rulesSASS.push({
                         test: tests[key],
                         use: useThis,
@@ -151,14 +161,14 @@ module.exports = (kootBuildConfig = {}) => {
         } else if (test instanceof RegExp) {
             const str = test.toString();
             if (/\.less/.test(str)) {
-                use.splice(use.length - 1, 0, useLessLoader);
+                use.splice(use.length + loaderOffset, 0, useLessLoader);
                 rulesLESS.push({
                     test: test,
                     use,
                     ...rule,
                 });
             } else if (/\.(scss|sass)/.test(str)) {
-                use.splice(use.length - 1, 0, useSassLoader);
+                use.splice(use.length + loaderOffset, 0, useSassLoader);
                 rulesSASS.push({
                     test: test,
                     use,
@@ -173,14 +183,14 @@ module.exports = (kootBuildConfig = {}) => {
             }
         } else if (test) {
             if (/\.less$/.test(test)) {
-                use.splice(use.length - 1, 0, useLessLoader);
+                use.splice(use.length + loaderOffset, 0, useLessLoader);
                 rulesLESS.push({
                     test: test,
                     use,
                     ...rule,
                 });
             } else if (/\.(scss|sass)$/.test(test)) {
-                use.splice(use.length - 1, 0, useSassLoader);
+                use.splice(use.length + loaderOffset, 0, useSassLoader);
                 rulesSASS.push({
                     test: test,
                     use,
@@ -196,12 +206,12 @@ module.exports = (kootBuildConfig = {}) => {
         } else {
             {
                 const useThis = [...use];
-                useThis.splice(useThis.length - 1, 0, useLessLoader);
+                useThis.splice(useThis.length + loaderOffset, 0, useLessLoader);
                 rulesLESS.push({ use: useThis, ...rule });
             }
             {
                 const useThis = [...use];
-                useThis.splice(useThis.length - 1, 0, useSassLoader);
+                useThis.splice(useThis.length + loaderOffset, 0, useSassLoader);
                 rulesSASS.push({ use: useThis, ...rule });
             }
             rulesCSS.push({ use, ...rule });
