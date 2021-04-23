@@ -8,10 +8,25 @@ import parseLocaleId from '../../i18n/parse-locale-id';
 import getLang from '../../i18n/spa/get-lang';
 
 (() => {
-    window[LOCALEID] = parseLocaleId(getLang()) || '';
-    window[REDUXSTATE] = { localeId: window[LOCALEID] };
+    let i18nSettings;
+    try {
+        i18nSettings = JSON.parse(process.env.KOOT_I18N);
+    } catch (e) {
+        i18nSettings = false;
+    }
+    // console.log({i18nSettings})
+
+    window[REDUXSTATE] = {};
+
+    // FIX: https://github.com/cmux/koot/issues/230
+    if (i18nSettings !== false) {
+        window[LOCALEID] = parseLocaleId(getLang()) || '';
+        window[REDUXSTATE].localeId = window[LOCALEID];
+        // window[SSRSTATE].localeId = window[LOCALEID]
+    }
+
     window[SSRSTATE] = {
-        localeId: window[LOCALEID],
+        localeId: window[LOCALEID] || '',
         locales: undefined,
     };
 
