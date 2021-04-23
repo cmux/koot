@@ -17,6 +17,6 @@ module.exports = async (html) => {
     //     )} --\\>`
     // );
 
-    if (!result) console.warn(version, checkStr);
+    if (!result) console.warn({ version, checkStr, html });
     expect(result).toBe(true);
 };

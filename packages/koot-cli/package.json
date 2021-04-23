@@ -49,7 +49,7 @@
     },
     "dependencies": {
         "axios": "^0.21.1",
-        "chalk": "^4.1.0",
+        "chalk": "^4.1.1",
         "download-git-repo": "^3.0.2",
         "fs-extra": "^9.1.0",
         "gitignore-globs": "^0.1.1",
@@ -61,11 +61,11 @@
         "isbinaryfile": "^4.0.6",
         "latest-version": "^5.1.0",
         "npm-email": "^3.2.1",
-        "ora": "^5.3.0",
+        "ora": "^5.4.0",
         "os-locale": "^5.0.0",
         "package-json": "^6.5.0",
         "sanitize-filename": "^1.6.3",
-        "semver": "^7.3.4"
+        "semver": "^7.3.5"
     },
     "files": [
         "/bin",

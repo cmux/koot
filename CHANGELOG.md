@@ -6,15 +6,15 @@
     -   此次更新包含诸多重大改动，对于已有项目的升级，请参阅[升级指南](https://koot.js.org/#/migration/0.14-to-0.15)
     -   _Node.js_ 最低版本要求提升到 `12.0.0`
     -   更新依赖包 **major** 版本号
-        -   `commander` -> _^7.0.0_
+        -   `commander` -> _^7.2.0_
         -   `glob-promise` -> _^4.0.1_
         -   `execa` -> _^5.0.0_
         -   `koa-convert` -> _^2.0.0_
-        -   `koa-helmet` -> _^6.0.0_
+        -   `koa-helmet` -> _^6.1.0_
         -   `koa-router` -> _^10.0.0_
-        -   `react` -> _^17.0.0_
-        -   `react-dom` -> _^17.0.0_
-        -   `typescript` -> _^4.0.3_
+        -   `react` -> _^17.0.2_
+        -   `react-dom` -> _^17.0.2_
+        -   `typescript` -> _^4.2.4_
     -   移除以下依赖包，现在不会默认安装。如有使用需要，请在项目中自行安装
         -   `get-image-colors`
         -   `isomorphic-fetch`
@@ -47,7 +47,7 @@
 
 -   **重大改动**
     -   更新依赖包 **major** 版本号
-        -   `electron` -> _^12.0.0_
+        -   `electron` -> _^12.0.5_
 
 **koot-webpack**
 
@@ -56,23 +56,25 @@
     -   内置的多语言处理方式改为 _Babel_ 插件，原 _Webpack_ 插件现已弃用 ([#215](https://github.com/cmux/koot/issues/215))
     -   开发环境中，`React.memo()` 现在会被自动替换为组件本身 ([#282](https://github.com/cmux/koot/issues/282))
         -   出于某些限制，目前 _Koot.js_ 仍在使用 `react-hot-loader`，其作者已经表示不再维护，目前已知对 `memo()` 组件的热更新支持不佳。为了缓解这一问题做出如上改动，从而使热更新可用，但这样一来和生产环境地结果就有了一定的偏差，在开发时请注意。
+    -   移除 _CSS_ 处理时的 `universal-alias-loader` 逻辑
+        -   新版 _Webpack_ 已默认支持 `css-loader` 使用 `resolve.alias` 配置，该 _Loader_ 不再需要
     -   更新依赖包 **major** 版本号
         -   `@hot-loader/react-dom` -> _^17.0.0_
         -   `compression-webpack-plugin` -> _^7.1.2_
-        -   `copy-webpack-plugin` -> _^8.0.0_
-        -   `css-loader` -> _^5.1.2_
+        -   `copy-webpack-plugin` -> _^8.1.1_
+        -   `css-loader` -> _^5.2.4_
         -   `less` -> _^4.1.1_
-        -   `less-loader` -> _^8.0.0_
-        -   `mini-css-extract-plugin` -> _^1.3.9_
-        -   `postcss` -> _^8.2.8_ ([#285](https://github.com/cmux/koot/issues/285))
+        -   `less-loader` -> _^8.1.1_
+        -   `mini-css-extract-plugin` -> _^1.5.0_
+        -   `postcss` -> _^8.2.12_ ([#285](https://github.com/cmux/koot/issues/285))
         -   `postcss-loader` -> _^5.2.0_
         -   `sass-loader` -> _^11.0.0_
         -   `style-loader` -> _^2.0.0_
-        -   `thread-loader` -> _^3.0.0_
-        -   `webpack` -> _^5.25.1_ ([#215](https://github.com/cmux/koot/issues/215))
-        -   `webpack-bundle-analyzer` -> _^4.4.0_
+        -   `thread-loader` -> _^3.0.3_
+        -   `webpack` -> _^5.35.0_ ([#215](https://github.com/cmux/koot/issues/215))
+        -   `webpack-bundle-analyzer` -> _^4.4.1_
         -   `webpack-dev-middleware` -> _^4.0.4_
-        -   `workbox-webpack-plugin` -> _^6.1.1_
+        -   `workbox-webpack-plugin` -> _^6.1.5_
 -   添加依赖包
     -   `@babel/plugin-proposal-nullish-coalescing-operator`
     -   `@babel/plugin-proposal-optional-chaining`
