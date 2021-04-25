@@ -1,6 +1,6 @@
 {
     "name": "create-koot-app",
-    "version": "0.15.0-beta.8",
+    "version": "0.15.0-beta.9",
     "description": "Create Koot.js apps.",
     "main": "index.js",
     "sideEffects": false,
