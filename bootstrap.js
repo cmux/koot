@@ -4,13 +4,19 @@ const fs = require('fs');
 const path = require('path');
 
 // const ignore = "koot-@(cli|boilerplate|boilerplate-*)"
-const ignore = `koot-@(${[
-    'cli',
-    'boilerplate',
-    'boilerplate-legacy',
-    'boilerplate-system',
-    'boilerplate-web',
-].join('|')})`;
+const individualPackages = ['create-koot-app', 'koot-cli'];
+const ignore =
+    '@(' +
+    [
+        ...[
+            'boilerplate',
+            'boilerplate-legacy',
+            'boilerplate-system',
+            'boilerplate-web',
+        ].map((name) => `koot-${name}`),
+        ...individualPackages,
+    ].join('|') +
+    ')';
 
 const runCmd = async (msg, cmd, options = {}) => {
     if (!cmd || typeof cmd === 'object') return await runCmd(cmd, cmd, options);
@@ -34,6 +40,20 @@ const runCmd = async (msg, cmd, options = {}) => {
     });
 };
 
+async function prepareIndividualPackage(pName) {
+    const cwd = path.resolve(__dirname, './packages', pName);
+
+    if (!fs.existsSync(cwd)) return;
+
+    await runCmd(
+        `Install deps for ${pName}`,
+        `npm install --no-package-lock"`,
+        {
+            cwd,
+        }
+    );
+}
+
 const run = async () => {
     // 检查 `lerna` 是否安装到本地依赖
     const lernaInstalled = fs.existsSync(
@@ -54,13 +74,9 @@ const run = async () => {
         `Run: lerna bootstrap`,
         `lerna bootstrap --hoist --ignore "${ignore}"`
     );
-    await runCmd(
-        `Install deps for koot-cli`,
-        `npm install --no-package-lock"`,
-        {
-            cwd: path.resolve(__dirname, './packages/koot-cli'),
-        }
-    );
+    for (const pName of individualPackages) {
+        await prepareIndividualPackage(pName);
+    }
     await runCmd(`Install deps for test projects`, `node test/pre-test.js"`);
 
     //
