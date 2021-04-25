@@ -14,7 +14,13 @@ const spinner = require('./packages/koot/utils/spinner');
 
 // ============================================================================
 
-const defaultChecked = ['koot', 'koot-cli', 'koot-electron', 'koot-webpack'];
+const defaultChecked = [
+    'create-koot-app',
+    'koot',
+    'koot-cli',
+    'koot-electron',
+    'koot-webpack',
+];
 
 // ============================================================================
 
