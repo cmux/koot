@@ -3,11 +3,11 @@ const path = require('path');
 const chalk = require('chalk');
 const isUrl = require('is-url');
 
-const vars = require('../../lib/vars');
-const getLocales = require('../../lib/get-locales');
+const ensureLocales = require('../../lib/ensure-locales');
 const _ = require('../../lib/translate');
 const checkIsCMNetwork = require('../../lib/check-is-cm-network');
 const spinner = require('../../lib/spinner');
+const { welcome: logWelcome } = require('../../lib/log');
 
 const inquiry = require('./inquiry-project');
 const download = require('./download-boilerplate');
@@ -41,10 +41,13 @@ module.exports = async (options = {}) => {
     /** 目标目录是否已经存在 */
     let destExists = false;
 
+    /** 检查命令中是否包含 `next` 关键字 */
+    const isNext = [...process.argv].includes('next');
+
     try {
         const { showWelcome = true } = options;
 
-        vars.locales = await getLocales();
+        await ensureLocales();
 
         /** 当前是否在 CM 内网 */
         const isCMNetwork = await checkIsCMNetwork();
@@ -52,14 +55,15 @@ module.exports = async (options = {}) => {
         waiting.stop();
 
         if (showWelcome) {
-            // 根据是否在 CM 内网输出欢迎信息
-            console.log('');
-            if (isCMNetwork)
-                console.log(chalk.cyanBright(_('welcomeCM')) + '\n');
-            console.log(chalk.cyanBright(_('welcome')));
-            console.log(_('required_info'));
-            console.log('');
+            await logWelcome();
         }
+
+        spinner(_('about_to_create_new_project')).info();
+        if (isNext) {
+            spinner(_('create_new_project_using_next_boilerplate')).info();
+        }
+        spinner(_('required_info')).info();
+        console.log('');
 
         const app = await inquiry({ isCMNetwork });
 

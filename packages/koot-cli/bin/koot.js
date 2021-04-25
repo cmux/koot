@@ -7,19 +7,18 @@ const inquirer = require('inquirer');
 const semver = require('semver');
 
 const vars = require('../lib/vars');
-const getLocales = require('../lib/get-locales');
 const spinner = require('../lib/spinner');
+const ensureLocales = require('../lib/ensure-locales');
 const _ = require('../lib/translate');
+const { welcome: logWelcome } = require('../lib/log');
 
 const stepCheckUpdate = require('../steps/check-update');
 const stepCreate = require('../steps/create');
 const stepUpgrade = require('../steps/upgrade');
 
 const run = async () => {
-    vars.locales = await getLocales();
-
-    console.log('');
-    console.log(chalk.cyanBright(_('welcome')));
+    await ensureLocales();
+    await logWelcome();
 
     if (await stepCheckUpdate()) return;
 
@@ -52,19 +51,19 @@ const run = async () => {
             choices: [
                 {
                     name: _('ok'),
-                    value: true
+                    value: true,
                 },
                 {
                     name: _('cancel'),
-                    value: false
-                }
+                    value: false,
+                },
             ],
-            default: true
+            default: true,
         });
         if (!confirm.value) return;
         return await stepUpgrade({
             showWelcome: false,
-            needConfirm: false
+            needConfirm: false,
         });
     }
 
@@ -85,28 +84,28 @@ const run = async () => {
                 'dev',
                 'analyze',
                 'build',
-                'start'
+                'start',
                 // 'upgrade'
             ]
-                .map(key => ({
+                .map((key) => ({
                     name:
                         chalk.yellow(`koot-${key}`) +
                         // + chalk.reset(' ')
                         ' ' +
                         _(`welcome_exist_select_${key}`),
-                    value: key
+                    value: key,
                 }))
                 .concat({
                     name: _(`welcome_exist_select_upgrade`),
-                    value: 'upgrade'
+                    value: 'upgrade',
                 }),
-            default: 'dev'
+            default: 'dev',
         });
         switch (next.value) {
             case 'upgrade': {
                 return await stepUpgrade({
                     showWelcome: false,
-                    needConfirm: true
+                    needConfirm: true,
                 });
             }
             default: {
@@ -131,9 +130,8 @@ const run = async () => {
         /*
         如果当前目录的项目不是 Koot.js 项目，自动运行 koot-create
         */
-        spinner(_('about_to_create_new_project')).warn();
         await stepCreate({
-            showWelcome: false
+            showWelcome: false,
         });
     }
 };

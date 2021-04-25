@@ -1,6 +1,6 @@
 module.exports = {
     welcomeCM: 'Hello, fellow cheetah~',
-    welcome: 'Welcome to Koot CLI :)',
+    welcome: 'Thanks for using Koot.js :)',
 
     please_wait: 'Please wait...',
     aborted: 'Aborted.',
@@ -12,7 +12,8 @@ module.exports = {
     invalid_input: 'Invalid input',
     dir_exist: 'Directory existed',
 
-    about_to_create_new_project: 'About to create a new Koot.js project...',
+    about_to_create_new_project: 'About to create a new Koot.js app',
+    create_new_project_using_next_boilerplate: 'Using NEXT boilerplate',
     welcome_exist_select: 'Please select command:',
     welcome_exist_select_dev: 'Enter dev mode',
     welcome_exist_select_analyze: 'Analyze bundles',

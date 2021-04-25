@@ -1,6 +1,6 @@
 module.exports = {
     welcomeCM: '小豹你好~',
-    welcome: '欢迎使用 Koot CLI :)',
+    welcome: '欢迎使用 Koot.js :)',
 
     please_wait: '请稍候……',
     aborted: '已终止。',
@@ -12,7 +12,8 @@ module.exports = {
     invalid_input: '格式错误',
     dir_exist: '目录已存在',
 
-    about_to_create_new_project: '创建全新 Koot.js 项目...',
+    about_to_create_new_project: '准备创建全新的 Koot.js 项目',
+    create_new_project_using_next_boilerplate: '使用模板: NEXT',
     welcome_exist_select: '请选择命令:',
     welcome_exist_select_dev: '进入开发环境',
     welcome_exist_select_analyze: '分析打包结果',
