@@ -1,21 +1,13 @@
-# koot-cli
+# create-koot-app
 
-用以建立 *Koot.js* 项目的 CLI 工具。
+用以建立 _Koot.js_ 项目的 CLI 工具。
 
-A CLI for creating *Koot.js* project.
-
-## 安装 / Install
-
-```sh
-npm install -g koot-cli
---or
-yarn global add koot-cli
-```
+A CLI for creating _Koot.js_ app.
 
 ## 使用 / Usage
 
-### 建立新项目 / Create new project
-
 ```sh
-koot-create
+> npx create-koot-app
+--or
+> yarn create koot-app
 ```
