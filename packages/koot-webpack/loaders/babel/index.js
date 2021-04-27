@@ -5,7 +5,7 @@ const semver = require('semver');
 
 // const { KOOT_REACT_RUNTIME } = require('koot/defaults/envs');
 const getCwd = require('koot/utils/get-cwd');
-const transformFixDefaultExport = require('./transform-fix-default-export');
+// const transformFixDefaultExport = require('./transform-fix-default-export');
 
 const { version: reactVersion } = require('react/package.json');
 
@@ -279,7 +279,8 @@ module.exports = require('babel-loader').custom((babel) => {
                 !__createDll &&
                 __react &&
                 !isKootModule &&
-                process.env.WEBPACK_BUILD_ENV === 'dev'
+                process.env.WEBPACK_BUILD_ENV === 'dev' &&
+                !isServer
             ) {
                 newPlugins.push(require.resolve('react-refresh/babel'));
             }
@@ -340,24 +341,24 @@ module.exports = require('babel-loader').custom((babel) => {
         },
 
         result(result) {
-            const {
-                __createDll,
-                __react,
-                // __typescript = false,
-                // __server = false,
-                // __spaTemplateInject = false,
-                // __routes,
-                // __i18n,
-            } = customOptions;
+            // const {
+            // __createDll,
+            // __react,
+            // __typescript = false,
+            // __server = false,
+            // __spaTemplateInject = false,
+            // __routes,
+            // __i18n,
+            // } = customOptions;
 
-            if (
-                !__createDll &&
-                __react &&
-                process.env.WEBPACK_BUILD_ENV === 'dev' &&
-                process.env.WEBPACK_BUILD_STAGE === 'client'
-            ) {
-                result.code = transformFixDefaultExport(result.code);
-            }
+            // if (
+            //     !__createDll &&
+            //     __react &&
+            //     process.env.WEBPACK_BUILD_ENV === 'dev' &&
+            //     process.env.WEBPACK_BUILD_STAGE === 'client'
+            // ) {
+            //     result.code = transformFixDefaultExport(result.code);
+            // }
 
             // if (!customOptions.__createDll) {
             //     const { code, ...remainings } = result;

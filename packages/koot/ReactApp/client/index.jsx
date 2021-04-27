@@ -7,11 +7,7 @@ import { match as routerMatch } from 'react-router';
 
 // ----------------------------------------------------------------------------
 
-import {
-    localeId as LocaleId,
-    store as Store,
-    history as History,
-} from '../../index';
+import { getStore, getHistory, getLocaleId } from '../../index';
 
 // ----------------------------------------------------------------------------
 
@@ -48,9 +44,9 @@ const isPromise = (v) => {
 const parseLifecycleMethod = (func) => {
     /** @type {Object} 生命周期方法传入的参数 */
     const argsLifecycle = {
-        store: Store,
-        history: History,
-        localeId: LocaleId,
+        store: getStore(),
+        history: getHistory(),
+        localeId: getLocaleId(),
     };
 
     if (typeof func === 'function') {
@@ -100,6 +96,10 @@ parseLifecycleMethod(before)
             /** @type {Object} 路由配置 */
             routes
         ) => {
+            const History = getHistory();
+            const Store = getStore();
+            const LocaleId = getLocaleId();
+
             addSessionStoreSaveEventHandlerOnPageUnload();
 
             History.listen((location) => {

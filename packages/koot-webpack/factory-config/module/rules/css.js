@@ -48,6 +48,12 @@ module.exports = (kootBuildConfig = {}) => {
         loader: require.resolve('../../../loaders/css'),
         options: kootPostCSSOptions,
     };
+    const usPostcssLoader = {
+        loader: require.resolve('postcss-loader'),
+        options: {
+            postcssOptions: { kootPostCSSOptions },
+        },
+    };
     // const useUniversalAliasLoader = {
     //     loader: 'universal-alias-loader',
     //     options: {
@@ -104,10 +110,7 @@ module.exports = (kootBuildConfig = {}) => {
 
     const validateCssRule = ({ test, tests, type, ...rule }) => {
         let use = [
-            {
-                loader: 'postcss-loader',
-                postcssOptions: kootPostCSSOptions,
-            },
+            usPostcssLoader,
             // >> LESS / SASS loader inset here <<
             // useUniversalAliasLoader,
         ];
@@ -297,7 +300,7 @@ module.exports = (kootBuildConfig = {}) => {
     const useLastNormalLoaders = [
         useLastLoaderForNormal,
         'css-loader',
-        'postcss-loader',
+        usPostcssLoader,
     ].filter((item) => !!item);
     rules.push({
         test: /\.css$/,
