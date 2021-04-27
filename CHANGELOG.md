@@ -54,8 +54,6 @@
 -   **重大改动**
     -   此次更新包含诸多重大改动，对于已有项目的升级，请参阅[升级指南](https://koot.js.org/#/migration/0.14-to-0.15)
     -   内置的多语言处理方式改为 _Babel_ 插件，原 _Webpack_ 插件现已弃用 ([#215](https://github.com/cmux/koot/issues/215))
-    -   开发环境中，`React.memo()` 现在会被自动替换为组件本身 ([#282](https://github.com/cmux/koot/issues/282))
-        -   出于某些限制，目前 _Koot.js_ 仍在使用 `react-hot-loader`，其作者已经表示不再维护，目前已知对 `memo()` 组件的热更新支持不佳。为了缓解这一问题做出如上改动，从而使热更新可用，但这样一来和生产环境地结果就有了一定的偏差，在开发时请注意。
     -   移除 _CSS_ 处理时的 `universal-alias-loader` 逻辑
         -   新版 _Webpack_ 已默认支持 `css-loader` 使用 `resolve.alias` 配置，该 _Loader_ 不再需要
     -   更新依赖包 **major** 版本号

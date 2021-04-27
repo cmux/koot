@@ -52,7 +52,7 @@ module.exports = function (api) {
             // '@babel/plugin-syntax-dynamic-import',
 
             // other
-            'react-hot-loader/babel',
+            // 'react-hot-loader/babel',
         ],
     };
 };
