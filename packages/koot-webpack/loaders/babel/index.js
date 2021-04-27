@@ -328,19 +328,6 @@ module.exports = require('babel-loader').custom((babel) => {
                     __i18n,
                 ]);
             }
-            if (
-                !__createDll &&
-                !isServer &&
-                __react &&
-                !isKootModule &&
-                process.env.WEBPACK_BUILD_ENV === 'dev'
-            )
-                newPlugins.push([
-                    path.resolve(
-                        __dirname,
-                        './plugins/react-replace-memo-in-dev.js'
-                    ),
-                ]);
 
             const thisOptions = {
                 ...options,

@@ -4,7 +4,8 @@ const {
 } = require('./_state');
 
 /**
- * 判断是否存在 react 的引用，如果没有，自动添加
+ * 替换 memo 为普通模式
+ * @deprecated 改用 Fast Refresh 进行热更新后已无需要，本文件保留，作为开发 Babel 插件的参照
  * @param {*} babel
  */
 module.exports = (babel) => {
