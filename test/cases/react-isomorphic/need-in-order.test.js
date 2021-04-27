@@ -973,6 +973,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         await test(origin + `/test-modify-state`, true);
         await test(origin, false);
 
+        await page.close();
         await context.close();
     }
 
@@ -1051,6 +1052,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
             routing: { locationBeforeTransitions: L },
         } = await getSSRStateFromScriptTag(page);
 
+        await page.close();
         await context.close();
 
         expect(
@@ -1073,6 +1075,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         });
         const result = await page.evaluate(() => window.location.href);
 
+        await page.close();
         await context.close();
 
         if (i18nUseRouter || i18nUseSubdomain) {

@@ -1,4 +1,4 @@
-import { extend, localeId } from 'koot';
+import { extend } from 'koot';
 
 import TS from '@components/ts';
 

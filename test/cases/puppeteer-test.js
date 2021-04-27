@@ -160,6 +160,7 @@ const requestHidden404 = async (origin, browser) => {
         waitUntil: 'networkidle0',
     });
 
+    await page.close();
     await context.close();
     if (needToClose) await browser.close();
 
@@ -197,6 +198,7 @@ const criticalAssetsShouldBeGzip = async (origin, dist, browser) => {
     const headers = res.headers();
     const text = await res.text();
 
+    await page.close();
     await context.close();
     if (needToClose) await browser.close();
 
@@ -247,6 +249,7 @@ const clientLifecycles = async (origin, browser) => {
     await page.goto(origin, {
         waitUntil: 'networkidle0',
     });
+    await page.close();
     await context.close();
     if (needToClose) await browser.close();
 
@@ -513,6 +516,7 @@ const i18n = async ({
             ).toBe(true);
         }
 
+        await page.close();
         await context.close();
     }
 
@@ -585,6 +589,7 @@ const i18n = async ({
         await testLinksToOtherLang('zh-tw', '?test=a');
     }
 
+    await page.close();
     await context.close();
     if (needToClose) await browser.close();
 };

@@ -267,6 +267,8 @@ module.exports = require('babel-loader').custom((babel) => {
                     return false;
                 if (testPluginName(plugin, /^react-hot-loader(\/|\\)babel$/))
                     return false;
+                if (testPluginName(plugin, /^react-refresh(\/|\\)babel$/))
+                    return false;
                 if (testPluginName(plugin, 'transform-regenerator'))
                     return false;
 
@@ -282,7 +284,15 @@ module.exports = require('babel-loader').custom((babel) => {
                 process.env.WEBPACK_BUILD_ENV === 'dev' &&
                 !isServer
             ) {
-                newPlugins.push(require.resolve('react-refresh/babel'));
+                newPlugins.push([
+                    require.resolve('react-refresh/babel'),
+                    {
+                        skipEnvCheck: Boolean(
+                            process.env.KOOT_TEST_MODE &&
+                                JSON.parse(process.env.KOOT_TEST_MODE)
+                        ),
+                    },
+                ]);
             }
             if (!__createDll && !isServer) {
                 let pathname = path.resolve(getCwd(), __routes);

@@ -324,6 +324,8 @@ const doTest = async (port, dist, settings = {}) => {
 
             return results;
         }, testLocation);
+
+        await page.close();
         await context.close();
 
         expect(typeof testResults).toBe('object');
@@ -360,6 +362,7 @@ const doTest = async (port, dist, settings = {}) => {
             };
         });
 
+        await page.close();
         await context.close();
 
         expect(title).toBe('TEST ROUTE');
@@ -429,6 +432,7 @@ const doTest = async (port, dist, settings = {}) => {
                 changedMetas
             );
 
+            await page.close();
             await context.close();
 
             return result2;
@@ -447,6 +451,8 @@ const doTest = async (port, dist, settings = {}) => {
             waitUntil: 'networkidle2',
         });
         const title = await page.evaluate(() => document.title);
+
+        await page.close();
         await context.close();
 
         expect(title.includes('Policies') || title.includes('隐私政策')).toBe(
@@ -467,7 +473,8 @@ const doTest = async (port, dist, settings = {}) => {
             () => window.__REDUX_STOER_RUN_COUNT__
         );
 
-        // await context.close();
+        await page.close();
+        await context.close();
 
         expect(count).toBe(1);
     }
@@ -493,6 +500,7 @@ const doTest = async (port, dist, settings = {}) => {
             };
         });
 
+        await page.close();
         await context.close();
 
         expect(container).toBe(20);
@@ -521,6 +529,7 @@ const doTest = async (port, dist, settings = {}) => {
             };
         });
 
+        await page.close();
         await context.close();
 
         expect(hasGlobal).toBe(true);
@@ -555,6 +564,7 @@ const doTest = async (port, dist, settings = {}) => {
             };
         });
 
+        await page.close();
         await context.close();
 
         expect(valueHasChanged).toBe(true);
@@ -571,6 +581,7 @@ const doTest = async (port, dist, settings = {}) => {
             return document.title;
         });
 
+        await page.close();
         await context.close();
 
         expect(title).toBe('Koot Boilerplate (Simple)');
@@ -599,6 +610,9 @@ const doTest = async (port, dist, settings = {}) => {
                 classNameCSR,
             };
         }, selector);
+
+        await page.close();
+        await context.close();
 
         expect(classNameSSR.includes('success')).toBe(false);
         expect(classNameCSR.includes('success')).toBe(true);

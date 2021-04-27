@@ -55,6 +55,7 @@ const projectsToUse = projects.filter(
         project.name === 'standard'
 );
 const commandTestBuild = 'koot-buildtest';
+const headless = true;
 
 //
 
@@ -257,7 +258,7 @@ const testFull = (dir, configFileName, issueNum) => {
                 const errors = [];
 
                 const browser = await puppeteer.launch({
-                    headless: true,
+                    headless,
                 });
                 const context = await browser.createIncognitoBrowserContext();
 
@@ -316,7 +317,6 @@ const testFull = (dir, configFileName, issueNum) => {
                             ? port
                             : `http://127.0.0.1:${port}`;
                         const context = await browser.createIncognitoBrowserContext();
-
                         const page = await context.newPage();
                         const failedResponse = [];
                         require('../../libs/puppeteer/page-event-response-failed-response')(
@@ -342,6 +342,7 @@ const testFull = (dir, configFileName, issueNum) => {
                         }
 
                         await page.close();
+                        await context.close();
 
                         // 测试: 没有失败的请求
                         if (failedResponse.length) {
@@ -387,7 +388,6 @@ const testFull = (dir, configFileName, issueNum) => {
                             ? port
                             : `http://127.0.0.1:${port}`;
                         const context = await browser.createIncognitoBrowserContext();
-
                         const page = await context.newPage();
                         const failedResponse = [];
                         require('../../libs/puppeteer/page-event-response-failed-response')(
@@ -413,6 +413,7 @@ const testFull = (dir, configFileName, issueNum) => {
                         await page.goto(origin + '/#/static');
 
                         await page.close();
+                        await context.close();
 
                         // 测试: 没有失败的请求
                         if (failedResponse.length) {

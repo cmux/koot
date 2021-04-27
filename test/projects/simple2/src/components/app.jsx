@@ -1,5 +1,5 @@
 import React, { Component, StrictMode } from 'react';
-import { store, history, extend } from 'koot';
+import { getStore, getHistory, extend } from 'koot';
 import clientGetStyles from 'koot/utils/client-get-styles';
 
 import Nav from './_layout/nav';
@@ -22,8 +22,8 @@ let stateShowed = false;
 class App extends Component {
     componentDidMount() {
         if (__DEV__) {
-            console.log('redux store', store);
-            console.log('history', history);
+            console.log('redux store', getStore());
+            console.log('history', getHistory());
         }
         if (__CLIENT__) {
             window.__KOOT_TEXT_GET_STYLES__ = clientGetStyles;
