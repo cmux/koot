@@ -103,7 +103,7 @@ const projectsToUse = projects.filter(
 const commandTestBuild = 'koot-buildtest';
 /** @type {Boolean} 是否进行完整测试。如果为否，仅测试一次打包结果 */
 const fullTest = true;
-const headless = true;
+const headless = false;
 
 // Jest configuration =========================================================
 
@@ -606,15 +606,24 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
             // 点击 GET DATA
             const selectorBtn =
                 '#koot-debug [data-section="app-name"] [data-button="get-data"]';
-            await Promise.all([
-                page.click(selectorBtn),
-                page.waitForSelector(selectorBtn, {
-                    hidden: true,
-                }),
-                // page.waitForResponse(response =>
-                //     /\/app-name$/.test(response.url())
-                // )
-            ]);
+            await page.waitForSelector(selectorBtn);
+            // await page.click(selectorBtn);
+            await page.evaluate(
+                (selector) => document.querySelector(selector).click(),
+                selectorBtn
+            );
+            await page.evaluate(
+                (selector) =>
+                    new Promise((resolve) => {
+                        const polling = setInterval(() => {
+                            if (!document.querySelector(selector)) {
+                                clearInterval(polling);
+                                resolve();
+                            }
+                        }, 100);
+                    }),
+                selectorBtn
+            );
 
             const before = await page.evaluate(() => {
                 return {
@@ -813,7 +822,11 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
             });
             await Promise.all([
                 page.waitForSelector(`[data-koot-test-page="page-ts"]`),
-                page.click('a[href$="/ts"]'),
+                // page.click('a[href$="/ts"]'),
+                page.evaluate(
+                    (selector) => document.querySelector(selector).click(),
+                    'a[href$="/ts"]'
+                ),
             ]);
 
             const titleCSR = await page.evaluate(() => document.title);

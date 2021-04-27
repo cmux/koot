@@ -1,7 +1,7 @@
 import get from 'lodash/get';
 import set from 'lodash/set';
 
-import { store as Store } from '../';
+import { getStore } from '../';
 import { sessionStoreKey } from '../defaults/defines';
 import filterState from '../libs/filter-state';
 
@@ -30,7 +30,7 @@ export const save = () => {
     if (!able) return;
 
     /** @type {Object} 排除掉黑名单内的项目后的 state 对象 */
-    const state = filterState(Store.getState());
+    const state = filterState(getStore().getState());
 
     let saveState = {};
 
