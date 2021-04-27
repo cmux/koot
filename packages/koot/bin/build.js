@@ -114,6 +114,19 @@ const run = async () => {
         await willBuild(kootConfig);
     }
 
+    /** 流程结束 */
+    async function finish() {
+        await after(kootConfig);
+        // if (!fromCommandStart)
+
+        // 打包流程完成
+        if (!fromOtherCommand) {
+            await didBuild(kootConfig);
+        }
+
+        console.log(' ');
+    }
+
     // Building process =======================================================
 
     // 如果提供了 stage，仅针对该 stage 执行打包
@@ -123,10 +136,7 @@ const run = async () => {
         //     console.log(chalk.redBright('× '))
         // }
         result = await kootWebpackBuild(kootConfig);
-        await after(kootConfig);
-        // if (!fromCommandStart)
-        console.log(' ');
-        return;
+        return await finish();
     }
 
     // 如过没有提供 stage，自动相继打包 client 和 server
@@ -150,17 +160,7 @@ const run = async () => {
             })
     );
 
-    await after(kootConfig);
-    // if (!fromCommandStart)
-
-    // 打包流程完成
-    if (!fromOtherCommand) {
-        await didBuild(kootConfig);
-    }
-
-    console.log(' ');
-
-    // 结束
+    return await finish();
 };
 
 const after = async (config = {}) => {
