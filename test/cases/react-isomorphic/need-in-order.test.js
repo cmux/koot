@@ -103,7 +103,7 @@ const projectsToUse = projects.filter(
 const commandTestBuild = 'koot-buildtest';
 /** @type {Boolean} 是否进行完整测试。如果为否，仅测试一次打包结果 */
 const fullTest = true;
-const headless = false;
+const headless = true;
 
 // Jest configuration =========================================================
 
