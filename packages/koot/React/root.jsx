@@ -1,4 +1,3 @@
-import { hot } from 'react-hot-loader/root';
 import { Component } from 'react';
 import { Provider } from 'react-redux';
 import { Router } from 'react-router';
@@ -47,15 +46,4 @@ class Root extends Component {
         );
     }
 }
-// export default Root;
-export default hot(Root);
-
-// let e = Root;
-
-// if (__DEV__) {
-//     const { hot } = require('react-hot-loader/root');
-//     // setConfig({ logLevel: 'debug' })
-//     e = hot(Root);
-// }
-
-// export default e;
+export default Root;

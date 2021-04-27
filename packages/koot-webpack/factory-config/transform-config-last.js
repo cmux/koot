@@ -3,7 +3,6 @@ const path = require('path');
 const webpack = require('webpack');
 const md5 = require('md5');
 const findCacheDir = require('find-cache-dir');
-// const HardSourceWebpackPlugin = require('@diablohu/hard-source-webpack-plugin'); // unofficial patch
 
 const {
     keyConfigBuildDll,
@@ -230,89 +229,6 @@ const validatePlugins = (config, kootConfigForThisBuild = {}) => {
     config.plugins = config.plugins.filter(
         (plugin) => typeof plugin !== 'undefined' && plugin !== null
     );
-
-    // if (
-    //     // useHardSourceCache &&
-    //     ENV !== 'dev' &&
-    //     process.env.WEBPACK_BUILD_STAGE === 'client' &&
-    //     !config[keyConfigWebpackSPATemplateInject]
-    // ) {
-    /*
-    // 添加缓存插件
-    // const useHardSourceCache = false;
-        config.plugins.push(
-            new HardSourceWebpackPlugin({
-                cacheDirectory: findCacheDir({
-                    name: 'koot-webpack',
-                    thunk: true,
-                })(
-                    `hard/${process.env.WEBPACK_BUILD_TYPE}` +
-                        `.${process.env.WEBPACK_BUILD_ENV}` +
-                        `.${process.env.WEBPACK_BUILD_STAGE}` +
-                        (kootConfigForThisBuild.createDll ? '.dll' : '') +
-                        `/[confighash]`
-                ),
-                configHash: function (webpackConfig) {
-                    const envs = { ...process.env };
-                    [
-                        KOOT_BUILD_START_TIME,
-                        KOOT_DEV_START_TIME,
-                        'KOOT_HTML_TEMPLATE',
-                        'Path',
-                        'path',
-                        'PATH',
-                    ].forEach((key) => delete envs[key]);
-                    return require('node-object-hash')({ sort: false }).hash(
-                        // ...kootConfigForThisBuild,
-                        // ...JSON.parse(
-                        JSON.stringify(webpackConfig)
-                            // .replace(/koot-[0-9]+/g, 'koot-**TIMESTAMP**')
-                            .replace(
-                                /config([\\/])(.+?)\.[0-9]+\.js/g,
-                                'config$1$2.**TIMESTAMP**.js'
-                            ) + JSON.stringify(envs)
-                        // )
-                    );
-                },
-                info: {
-                    mode: 'none',
-                    level: 'error',
-                },
-            })
-        );
-        const ignores = [
-            {
-                test: /mini-css-extract-plugin[\\/]dist[\\/]loader/,
-            },
-            {
-                test: /file-loader/,
-            },
-            {
-                test: new RegExp(buildManifestFilename.replace(/\./g, '\\.')),
-            },
-            {
-                test: /koot[\\/]ReactSPA[\\/].+/,
-            },
-            {
-                test: /koot-electron/,
-            },
-        ];
-        if (process.env.WEBPACK_BUILD_STAGE === 'server') {
-            // ignores.push({
-            //     test: /koot[\\/].+?[\\/]server[\\/](run|ssr)\.(j|t)s(x|$)/
-            // });
-            ignores.push({
-                test: /koot[\\/]/,
-            });
-            ignores.push({
-                test: /koot-webpack[\\/]/,
-            });
-        }
-        config.plugins.push(
-            new HardSourceWebpackPlugin.ExcludeModulePlugin(ignores)
-        );
-    */
-    // }
 };
 
 const validateModuleRules = (config, kootConfigForThisBuild = {}) => {

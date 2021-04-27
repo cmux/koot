@@ -6,7 +6,8 @@ import history from '../../React/history';
 
 import {
     // localeId as LocaleId,
-    store as Store,
+    // store as Store,
+    getStore,
     getHistory,
 } from '../../index';
 import {
@@ -58,6 +59,8 @@ const run = ({ router, client }) =>
         .then((routes) => {
             if (__DEV__) console.warn('CLIENT RUN');
             addSessionStoreSaveEventHandlerOnPageUnload();
+
+            const Store = getStore();
 
             // console.log({
             //     router,

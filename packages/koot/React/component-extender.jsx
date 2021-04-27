@@ -1,7 +1,6 @@
 /* __KOOT_DEV_NO_REACT_HOT_INJECT__ */
 import { Component, forwardRef } from 'react';
 import { connect } from 'react-redux';
-// import { hot } from 'react-hot-loader'
 // import PropTypes from 'prop-types'
 import hoistStatics from 'hoist-non-react-statics';
 
@@ -415,12 +414,6 @@ export default (options = {}) => (WrappedComponent) => {
                 dataFetch
             );
     }
-
-    // if (_hot && __DEV__ && __CLIENT__) {
-    //     const { hot, setConfig } = require('react-hot-loader')
-    //     setConfig({ logLevel: 'debug' })
-    //     KootComponent = hot(module)(KootComponent)
-    // }
 
     // if (typeof styles === 'object' &&
     //     typeof styles.wrapper === 'string'

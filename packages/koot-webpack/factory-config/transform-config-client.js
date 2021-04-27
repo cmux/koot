@@ -5,6 +5,8 @@ const DefaultWebpackConfig = require('webpack-config').default;
 
 const CompressionPlugin = require('compression-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+
 // const KootI18nPlugin = require('../plugins/i18n');
 const DevModePlugin = require('../plugins/dev-mode');
 const SpaTemplatePlugin = require('../plugins/spa-template');
@@ -268,19 +270,7 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                     for (const key in result.entry) {
                         if (!Array.isArray(result.entry[key]))
                             result.entry[key] = [result.entry[key]];
-                        // result.entry[key].unshift('react-hot-loader/patch');
-                        // result.entry[key].unshift(
-                        //     'webpack/hot/only-dev-server'
-                        // );
-                        // result.entry[key].unshift(
-                        //     `webpack-dev-server/client?http://localhost:${getWDSport()}/${pathnameSockjs}/`
-                        // );
                     }
-                    // result.entry.client = [
-                    //     'react-hot-loader/patch',
-                    //     ...result.entry.client
-                    // ];
-                    // result.entry[entryClientHMR] = `webpack-dev-server/client?http://localhost:${getWDSport()}/${pathnameSockjs}/`
                 }
                 // const fileRunFirst = path.resolve(
                 //     __dirname,
@@ -308,6 +298,11 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                     removeEmptyChunks: false,
                     splitChunks: false,
                 });
+                if (!createDll) {
+                    Object.assign(result.optimization, {
+                        runtimeChunk: 'single',
+                    });
+                }
             }
 
             // 添加默认插件
@@ -333,18 +328,10 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                 } catch (e) {
                     result.plugins.push(new webpack.NamedModulesPlugin());
                 }
-                result.plugins.push(
-                    new webpack.HotModuleReplacementPlugin(
-                        Object.assign({}, hmrOptions, webpackHmr)
-                    )
-                );
                 // if (!createDll) {
                 //     if (typeof result.resolve !== 'object') result.resolve = {};
                 //     if (typeof result.resolve.alias !== 'object')
                 //         result.resolve.alias = {};
-                //     if (!result.resolve.alias['react-dom'])
-                //         result.resolve.alias['react-dom'] =
-                //             '@hot-loader/react-dom';
                 // }
             }
 
@@ -465,6 +452,16 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                     );
                 }
 
+                // 开发环境专用
+                if (ENV === 'dev') {
+                    result.plugins.push(
+                        new webpack.HotModuleReplacementPlugin(
+                            Object.assign({}, hmrOptions, webpackHmr)
+                        )
+                    );
+                    result.plugins.push(new ReactRefreshWebpackPlugin());
+                }
+
                 // 生产环境专用
                 if (ENV === 'prod' && exportGzip) {
                     result.plugins.push(
@@ -482,6 +479,14 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                             ],
                     })
                 );
+            }
+
+            // 强制将 client 入口移动至最后
+            // https://github.com/webpack/webpack-dev-server/issues/2792
+            if (result.entry.client) {
+                const clientEntry = result.entry.client;
+                delete result.entry.client;
+                result.entry.client = clientEntry;
             }
         }
 

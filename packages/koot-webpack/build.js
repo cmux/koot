@@ -622,7 +622,7 @@ module.exports = async (kootConfig = {}) => {
                     if (typeof before === 'function') return before(app);
                 },
                 hot: true,
-                hotOnly: true,
+                // hotOnly: true,
                 // sockHost: 'localhost',
                 sockPort: port,
             },

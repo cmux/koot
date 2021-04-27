@@ -48,13 +48,3 @@ export default Root;
 //                 .join('')
 //         }}
 //     />
-
-// let e = Root
-
-// if (__DEV__) {
-//     const { hot, setConfig } = require('react-hot-loader')
-//     setConfig({ logLevel: 'debug' })
-//     e = hot(module)(Root)
-// }
-
-// export default e

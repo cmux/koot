@@ -75,9 +75,14 @@
         -   `webpack-bundle-analyzer` -> _^4.4.1_
         -   `webpack-dev-middleware` -> _^4.0.4_
         -   `workbox-webpack-plugin` -> _^6.1.5_
+    -   移除以下依赖包，现在不会默认安装，已无需要
+        -   `@diablohu/hard-source-webpack-plugin`
+        -   `@hot-loader/react-dom`
+        -   `react-hot-loader`
 -   添加依赖包
     -   `@babel/plugin-proposal-nullish-coalescing-operator`
     -   `@babel/plugin-proposal-optional-chaining`
+    -   `@pmmmwh/react-refresh-webpack-plugin`
 
 ---
 

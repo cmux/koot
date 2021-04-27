@@ -34,19 +34,19 @@ module.exports = (kootBuildConfig = {}) => {
         'less-loader': lessLoaderConfig = {},
         'sass-loader': sassLoaderConfig = {},
     } = internalLoaderOptions;
+    // Koot 相关 PostCSS 插件的配置
+    const kootPostCSSOptions = {
+        length: classNameHashLength,
+        mode: 'replace',
+        readable: env === 'dev' ? true : false,
+        prefixToRemove:
+            process.env.WEBPACK_BUILD_TYPE === 'spa' && distClientAssetsDirName
+                ? `${distClientAssetsDirName}/`
+                : undefined,
+    };
     const useSpCssLoader = {
         loader: require.resolve('../../../loaders/css'),
-        options: {
-            // length: env === 'dev' ? 32 : 4,
-            length: classNameHashLength,
-            mode: 'replace',
-            readable: env === 'dev' ? true : false,
-            prefixToRemove:
-                process.env.WEBPACK_BUILD_TYPE === 'spa' &&
-                distClientAssetsDirName
-                    ? `${distClientAssetsDirName}/`
-                    : undefined,
-        },
+        options: kootPostCSSOptions,
     };
     // const useUniversalAliasLoader = {
     //     loader: 'universal-alias-loader',
@@ -104,7 +104,10 @@ module.exports = (kootBuildConfig = {}) => {
 
     const validateCssRule = ({ test, tests, type, ...rule }) => {
         let use = [
-            'postcss-loader',
+            {
+                loader: 'postcss-loader',
+                postcssOptions: kootPostCSSOptions,
+            },
             // >> LESS / SASS loader inset here <<
             // useUniversalAliasLoader,
         ];

@@ -43,10 +43,6 @@ const factory = async (
     //     }
     // }
 
-    if (stage === 'client' && env === 'dev') {
-        aliases['react-dom'] = '@hot-loader/react-dom';
-    }
-
     const def = {
         module: {
             rules: createModuleRules(

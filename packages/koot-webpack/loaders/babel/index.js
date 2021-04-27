@@ -64,7 +64,6 @@ const hasPreset = (presets, regex) =>
 
 // const reactHotLoaderClientBlacklist = [
 //     'koot/React/component-extender.jsx',
-//     'koot/React/hoc/dev-hot.jsx',
 //     'koot/ReactApp/client/index.jsx',
 //     'koot/ReactApp/server/ssr.jsx',
 //     'koot/ReactSPA/client/run.jsx',
@@ -282,8 +281,7 @@ module.exports = require('babel-loader').custom((babel) => {
                 !isKootModule &&
                 process.env.WEBPACK_BUILD_ENV === 'dev'
             ) {
-                // newPlugins.push(require('extract-hoc/babel'));
-                newPlugins.push(require('react-hot-loader/babel'));
+                newPlugins.push(require.resolve('react-refresh/babel'));
             }
             if (!__createDll && !isServer) {
                 let pathname = path.resolve(getCwd(), __routes);

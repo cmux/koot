@@ -124,13 +124,6 @@ module.exports = (kootBuildConfig = {}, options = {}) => {
     const ruleUseLoaders = (options = {}) => {
         const use = [ruleUseBabelLoader(options)];
 
-        if (!createDll && env === 'dev' && stage === 'client') {
-            use.push({
-                loader: require.resolve('../../../loaders/react-hot'),
-                options,
-            });
-        }
-
         if (!createDll && env === 'prod' && stage === 'client') return use;
 
         return [
@@ -182,7 +175,6 @@ module.exports = (kootBuildConfig = {}, options = {}) => {
                         // sourceMaps: 'both',
                         __react: true,
                     }),
-                    // require.resolve('../../../loaders/react-hot')
                 ],
             },
             {
@@ -192,12 +184,6 @@ module.exports = (kootBuildConfig = {}, options = {}) => {
                         __react: true,
                         __typescript: true,
                     }),
-                    // {
-                    //     loader: require.resolve('../../../loaders/react-hot'),
-                    //     options: {
-                    //         __typescript: true
-                    //     }
-                    // }
                 ],
             },
         ];
