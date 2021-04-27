@@ -6,13 +6,13 @@ module.exports = [
     'koot',
 
     // React
-    // 'react',
-    // 'react-dom',
+    'react',
+    'react-dom',
     'redux',
     'react-redux',
     'react-router',
     'react-router-redux',
-    // 'prop-types',
+    'prop-types',
 
     // Ant-Design related
     'antd',

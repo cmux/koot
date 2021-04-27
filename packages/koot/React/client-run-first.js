@@ -18,6 +18,9 @@ window[HISTORY] = syncHistoryWithStore(History, window[STORE]);
 // https://stackoverflow.com/questions/6659312/is-there-a-way-to-filter-output-in-google-chromes-console
 if (__DEV__) {
     (() => {
+        // eslint-disable-next-line no-console
+        console.info('💕 [DEV] Thanks for using Koot.js');
+
         window.console = window.console || { log: 0 };
 
         const nativeConsole = {
