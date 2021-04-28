@@ -99,14 +99,14 @@ const run = async () => {
 
     const script = (() => {
         const jestReactAll = [
-            `jest ${jestScript.reactBase}`,
-            `jest ${jestScript.reactSPA}`,
-            `jest ${jestScript.reactIsomorphic}`,
+            `jest ${jestScript.reactBase} --detectOpenHandles`,
+            `jest ${jestScript.reactSPA} --detectOpenHandles`,
+            `jest ${jestScript.reactIsomorphic} --detectOpenHandles`,
         ];
 
         const jestAll = [
-            `jest "test/((?!need-in-order).)*\\.test\\.[jt]sx?$"`,
-            `jest ${jestScript.cli.all}`,
+            `jest "test/((?!need-in-order).)*\\.test\\.[jt]sx?$" --detectOpenHandles`,
+            `jest ${jestScript.cli.all} --detectOpenHandles`,
             ...jestReactAll,
         ];
 
@@ -117,7 +117,7 @@ const run = async () => {
 
         if (value === 'REACT') return [...jestReactAll].join(' && ');
 
-        return `jest ${value}`;
+        return `jest ${value} --detectOpenHandles`;
     })();
 
     await runScript(script);
