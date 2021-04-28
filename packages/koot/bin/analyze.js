@@ -52,6 +52,7 @@ const run = async () => {
 
     process.env.WEBPACK_BUILD_STAGE = stage || 'client';
     process.env.WEBPACK_BUILD_ENV = 'prod';
+    process.env.WEBPACK_ANALYZE = JSON.stringify(true);
 
     await willValidateConfig(program);
 
@@ -71,6 +72,7 @@ const run = async () => {
 
         dist: dirAnalyzeBuild,
         bundleVersionsKeep: false,
+        analyze: true,
     };
 
     await willBuild(kootConfig);

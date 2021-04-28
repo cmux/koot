@@ -85,8 +85,6 @@ const run = async () => {
         // emptyTempConfigDir()
     };
 
-    await willBuild(kootConfig);
-
     // ========================================================================
 
     const { start: extraStart } =
@@ -98,6 +96,8 @@ const run = async () => {
 
     // 打包
     if (build) {
+        await willBuild(kootConfig);
+
         // const building = spinner(chalk.yellowBright('[koot/build] ') + __('build.building'))
         const fileBuildFail = path.resolve(dist, filenameBuildFail);
 
@@ -180,12 +180,12 @@ const run = async () => {
         }
         // building.succeed()
         await sleep(100);
+
+        // 打包流程完成
+        await didBuild(kootConfig);
     }
 
     await afterBuild();
-
-    // 打包流程完成
-    await didBuild(kootConfig);
 
     // ========================================================================
 
