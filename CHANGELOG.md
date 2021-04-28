@@ -29,6 +29,7 @@
     -   **新配置项** `afterBuild` - 生命周期方法: 打包刚刚完成时 ([#288](https://github.com/cmux/koot/issues/288))
         -   详情请参见文档 [生命周期](https://koot.js.org/#/life-cycle?id=打包)
     -   在进行打包、启动开发环境之前，现在会进行 _Node.js_ 版本检查，如果不通过，会终止流程 ([#274](https://github.com/cmux/koot/issues/274))
+    -   _React_ 热更新现在改用官方的 _Fast Refresh_ 机制，理论上热更新效率会有提升，原则上对已有项目不会造成影响。相关信息请查阅 [React 官方讨论帖](https://github.com/facebook/react/issues/16604)
 -   优化
     -   `serviceWorker` 的 `cacheFirst` `networkFirst` `networkOnly` 扩展缓存策略选项，其数组 (`Array`) 内现在可以直接传入正则表达式和用以分析请求的函数，请参见文档 [Service Worker/扩展缓存规则](/pwa?id=扩展缓存规则)
     -   SSR 项目
@@ -64,12 +65,12 @@
         -   `less` -> _^4.1.1_
         -   `less-loader` -> _^8.1.1_
         -   `mini-css-extract-plugin` -> _^1.5.0_
-        -   `postcss` -> _^8.2.12_ ([#285](https://github.com/cmux/koot/issues/285))
+        -   `postcss` -> _^8.2.13_ ([#285](https://github.com/cmux/koot/issues/285))
         -   `postcss-loader` -> _^5.2.0_
         -   `sass-loader` -> _^11.0.0_
         -   `style-loader` -> _^2.0.0_
         -   `thread-loader` -> _^3.0.3_
-        -   `webpack` -> _^5.35.0_ ([#215](https://github.com/cmux/koot/issues/215))
+        -   `webpack` -> _^5.36.0_ ([#215](https://github.com/cmux/koot/issues/215))
         -   `webpack-bundle-analyzer` -> _^4.4.1_
         -   `webpack-dev-middleware` -> _^4.0.4_
         -   `workbox-webpack-plugin` -> _^6.1.5_

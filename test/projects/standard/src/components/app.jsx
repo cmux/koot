@@ -4,7 +4,7 @@ import {
     getStore,
     // getCache,
     // getLocaleId,
-    history,
+    getHistory,
     // localeId,
     extend,
 } from 'koot';
@@ -40,7 +40,7 @@ class App extends Component {
     componentDidMount() {
         if (__DEV__) {
             console.log('redux store', getStore());
-            console.log('history', history);
+            console.log('history', getHistory);
         }
         if (__CLIENT__)
             console.log(

@@ -4,7 +4,7 @@ import {
     initialState,
     middlewares,
 } from '../redux';
-import filterState from '../../libs/filter-state';
+// import filterState from '../../libs/filter-state';
 
 /**
  * 验证 Redux 配置
@@ -24,11 +24,13 @@ const validateReduxConfig = (kootConfigRedux = {}) => {
             theReducers[reducerName] = defaultReducers[reducerName];
         });
         // console.log({ theReducers, initialState });
-        const theInitialState = filterState({ ...initialState });
+        // const theInitialState = filterState({ ...initialState });
+        // console.log({ initialState, theInitialState });
         reduxConfig.factoryStore = () =>
             createStore(
                 combineReducers(theReducers),
-                theInitialState,
+                // theInitialState,
+                initialState,
                 applyMiddleware(...middlewares)
             );
     } else if (typeof kootConfigRedux.store === 'function') {

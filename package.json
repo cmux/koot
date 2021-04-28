@@ -55,7 +55,7 @@
         "cheerio": "^1.0.0-rc.6",
         "crlf": "^1.1.1",
         "cz-customizable": "^6.3.0",
-        "eslint": "^7.24.0",
+        "eslint": "^7.25.0",
         "eslint-config-koot": "^3.1.1",
         "fs-extra": "^9.1.0",
         "husky": "^6.0.0",
