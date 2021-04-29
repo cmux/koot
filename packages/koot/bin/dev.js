@@ -550,7 +550,7 @@ const run = async () => {
                         config.node_args = `--max-old-space-size=${devMemoryAllocationServer}`;
                     break;
                 }
-                case 'run': {
+                case 'ssr': {
                     Object.assign(config, {
                         script: pathServerJS,
                         watch: path.dirname(pathServerJS),
@@ -749,8 +749,8 @@ const run = async () => {
             // 打包流程完成
             await didBuild(kootConfig);
 
-            // 启动服务器
-            await start('run');
+            // 启动 SSR 服务器
+            await start('ssr');
 
             // 监视服务器启动标识文件，如果修改，进入下一步
             const errServerRun = await checkFileUpdate(

@@ -111,7 +111,8 @@ if (__DEV__) {
                         /(Link)(\r|\n|,|\(|$)/.test(args[1]))
                 ) {
                     if (!warningShowed.reactRouterV3) {
-                        console.warn(
+                        // eslint-disable-next-line no-console
+                        console.info(
                             '\n[koot] Koot.js is now using `react-router` v3 which will be upgraded to newer version in future.\n\n'
                         );
                         warningShowed.reactRouterV3 = true;

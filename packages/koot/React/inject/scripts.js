@@ -123,8 +123,11 @@ module.exports = ({
             if (Array.isArray(entrypoints[key])) {
                 r += entrypoints[key]
                     .filter((file) => /\.(js|jsx|mjs|ejs)$/.test(file))
+                    // 将第一次请求时产生的热更新过滤掉
+                    .filter((file) => !/\.hot-update\.js$/.test(file))
                     .map((file) => {
-                        // console.log(file)
+                        // const isDevHot = /\.hot-update\.js$/.test(file)
+                        // console.log(key, file, isDevHot)
                         // if (isDev)
                         // return `<script type="text/javascript" src="${getClientFilePath(true, file)}" defer></script>`
                         // return `<script type="text/javascript" src="${getClientFilePath(
@@ -256,6 +259,11 @@ const combineFilePaths = (name, ...args) => {
             .join('');
     }
 
+    // console.log({
+    //     name,
+    //     args: [...args],
+    //     pathnames
+    // })
     return pathnames
         .map(
             (pathname) =>

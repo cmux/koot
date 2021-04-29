@@ -6,6 +6,7 @@ const proxy = require('koa-proxies');
 
 const { pathnameSockjs } = require('../../defaults/before-build');
 const { publicPathPrefix } = require('../../defaults/webpack-dev-server');
+const getFlagFile = require('../../libs/get-flag-file');
 const getWDSport = require('../../utils/get-webpack-dev-server-port');
 const getPathnameDevServerStart = require('../../utils/get-pathname-dev-server-start');
 // const log = require('../../libs/log');
@@ -20,7 +21,9 @@ const getPathnameDevServerStart = require('../../utils/get-pathname-dev-server-s
  *
  */
 const run = async () => {
-    const { port, portServer } = await fs.readJson(getPathnameDevServerStart());
+    const { port, portServer: portSSRServer } = await fs.readJson(
+        getPathnameDevServerStart()
+    );
     const portWebpackDevServer = getWDSport();
 
     /** 代理到其他地点的路由 */
@@ -41,7 +44,7 @@ const run = async () => {
         );
     }
 
-    // console.log({ port, portServer, portWebpackDevServer })
+    // console.log({ port, portSSRServer, portWebpackDevServer })
 
     // 创建 KOA 服务器
     const app = new Koa();
@@ -129,18 +132,32 @@ const run = async () => {
     {
         const proxyMain = new Koa();
         const regex = new RegExp(`^/((?!${routesProxy.join('|')}).*)`);
-        proxyMain.use(
-            proxy(regex, {
-                target: `http://127.0.0.1:${portServer}`,
+        /** 等待 flag 文件的超时设定 */
+        const timeout = 2 * 1000;
+        proxyMain.use(async (ctx, next) => {
+            const flagFile = getFlagFile.devBuildingServer();
+            // console.log(flagFile, fs.existsSync(flagFile))
+            await new Promise((resolve) => {
+                const s = Date.now();
+                const waiting = () =>
+                    setTimeout(async () => {
+                        if (!fs.existsSync(flagFile)) return resolve();
+                        if (Date.now() - s > timeout) return resolve();
+                        waiting();
+                    }, 100);
+                waiting();
+            });
+            await proxy(regex, {
+                target: `http://127.0.0.1:${portSSRServer}`,
                 changeOrigin: false,
                 logs: false,
-            })
-        );
+            })(ctx, next);
+        });
         app.use(mount(proxyMain));
     }
     // console.log({
     //     portWebpackDevServer,
-    //     portServer,
+    //     portSSRServer,
     //     port,
     //     publicPathPrefix,
     //     mount,

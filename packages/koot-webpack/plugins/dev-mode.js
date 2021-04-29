@@ -4,8 +4,9 @@ const { Compilation } = require('webpack');
 const { ConcatSource } = require('webpack-sources');
 
 // const { filenameDll } = require('koot/defaults/before-build')
-const isHotUpdate = require('../libs/is-compilation-hot-update-only');
 const getCWD = require('koot/utils/get-cwd');
+const getFlagFile = require('koot/libs/get-flag-file');
+const isHotUpdate = require('../libs/is-compilation-hot-update-only');
 
 // let opened = false
 
@@ -39,8 +40,8 @@ class DevModePlugin {
             callback();
         });
 
-        // compilation - [server / dev] 如果存在 DLL 结果，写入到 index.js 文件开端
         if (STAGE === 'server' && ENV === 'dev') {
+            // 如果存在 DLL 结果，写入到 index.js 文件开端
             compiler.hooks.thisCompilation.tap(
                 'KootDevModePlugin',
                 (compilation) => {
@@ -83,6 +84,15 @@ class DevModePlugin {
                             }
                         }
                     );
+                }
+            );
+            // 每次打包前，新建一个 flag 文件
+            compiler.hooks.watchRun.tap(
+                'KootDevModePlugin',
+                async (compilation) => {
+                    const file = getFlagFile.devBuildingServer();
+                    fs.ensureFileSync(file);
+                    fs.writeFile(file, new Date().toLocaleString(), 'utf-8');
                 }
             );
         }
