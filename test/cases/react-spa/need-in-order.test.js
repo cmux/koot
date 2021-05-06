@@ -55,7 +55,7 @@ const projectsToUse = projects.filter(
         project.name === 'standard'
 );
 const commandTestBuild = 'koot-buildtest';
-const headless = true;
+const headless = false;
 
 //
 
@@ -325,7 +325,7 @@ const testFull = (dir, configFileName, issueNum) => {
                         );
 
                         const res = await page.goto(origin, {
-                            waitUntil: 'networkidle0',
+                            waitUntil: 'load',
                         });
                         const html = await res.text();
                         const $ = cheerio.load(html);
@@ -396,7 +396,7 @@ const testFull = (dir, configFileName, issueNum) => {
                         );
 
                         const res = await page.goto(origin, {
-                            waitUntil: 'networkidle0',
+                            waitUntil: 'load',
                         });
                         const html = await res.text();
 

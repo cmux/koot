@@ -157,7 +157,7 @@ const requestHidden404 = async (origin, browser) => {
     const context = await browser.createIncognitoBrowserContext();
     const page = await context.newPage();
     const res = await page.goto(`${origin}/.hidden-picture.jpg`, {
-        waitUntil: 'networkidle0',
+        waitUntil: 'load',
     });
 
     await page.close();
@@ -247,7 +247,7 @@ const clientLifecycles = async (origin, browser) => {
         }
     });
     await page.goto(origin, {
-        waitUntil: 'networkidle0',
+        waitUntil: 'load',
     });
     await page.close();
     await context.close();
@@ -287,6 +287,7 @@ const i18n = async ({
     const defaults = require('../../packages/koot/defaults/i18n');
     const defaultWaitUtil =
         isDev || isSPA ? 'networkidle2' : 'domcontentloaded';
+    const defaultWaitUtil2 = isDev || isSPA ? 'networkidle2' : 'load';
 
     // 处理配置
     let useRouter = false;
@@ -353,7 +354,7 @@ const i18n = async ({
     const context = await browser.createIncognitoBrowserContext();
     const page = await context.newPage();
 
-    // 多语言渲染 #1
+    // console.log('多语言渲染 #1');
     {
         /**
          * 测试目标语种
@@ -459,7 +460,7 @@ const i18n = async ({
         }
     }
 
-    // 多语言渲染 #2
+    // console.log('多语言渲染 #2');
     {
         const toLocaleId = 'zh';
         const gotoUrl = getUrl(origin, '/', toLocaleId);
@@ -475,7 +476,7 @@ const i18n = async ({
         const page = await context.newPage();
 
         const res = await page.goto(gotoUrl, {
-            waitUntil: 'networkidle0',
+            waitUntil: 'networkidle2',
         });
 
         const HTML = await res.text();
@@ -520,7 +521,7 @@ const i18n = async ({
         await context.close();
     }
 
-    // 到其他语种的链接
+    // console.log('到其他语种的链接');
     {
         const testLinksToOtherLang = async (
             toLocaleId = '',
@@ -563,7 +564,7 @@ const i18n = async ({
                 await page.goto(
                     /:\/\//.test(href) ? href : `${origin}/${href}`,
                     {
-                        waitUntil: 'networkidle0',
+                        waitUntil: defaultWaitUtil2,
                     }
                 );
                 const localeId = await page.evaluate(() =>
@@ -613,7 +614,7 @@ const pageinfoOnlyMetas = async ({ origin, browser, isSPA = false }) => {
     {
         const page = await context.newPage();
         await page.goto(origin, {
-            waitUntil: 'networkidle0',
+            waitUntil: 'load',
         });
         await page.evaluate((route) => {
             document.querySelector(`a[href~="${route}"]`).click();
@@ -628,7 +629,7 @@ const pageinfoOnlyMetas = async ({ origin, browser, isSPA = false }) => {
     {
         const page = await context.newPage();
         const res = await page.goto(origin + route, {
-            waitUntil: 'networkidle0',
+            waitUntil: 'load',
         });
 
         const titleCSR = await page.evaluate(() => document.title);

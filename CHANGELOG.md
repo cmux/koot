@@ -7,6 +7,7 @@
     -   _Node.js_ 最低版本要求提升到 `12.0.0`
     -   更新依赖包 **major** 版本号
         -   `commander` -> _^7.2.0_
+        -   `fs-extra` -> _^10.0.0_
         -   `glob-promise` -> _^4.0.1_
         -   `execa` -> _^5.0.0_
         -   `koa-convert` -> _^2.0.0_
@@ -48,7 +49,7 @@
 
 -   **重大改动**
     -   更新依赖包 **major** 版本号
-        -   `electron` -> _^12.0.5_
+        -   `electron` -> _^12.0.6_
 
 **koot-webpack**
 
@@ -64,13 +65,13 @@
         -   `css-loader` -> _^5.2.4_
         -   `less` -> _^4.1.1_
         -   `less-loader` -> _^8.1.1_
-        -   `mini-css-extract-plugin` -> _^1.5.0_
-        -   `postcss` -> _^8.2.13_ ([#285](https://github.com/cmux/koot/issues/285))
+        -   `mini-css-extract-plugin` -> _^1.6.0_
+        -   `postcss` -> _^8.2.14_ ([#285](https://github.com/cmux/koot/issues/285))
         -   `postcss-loader` -> _^5.2.0_
         -   `sass-loader` -> _^11.0.0_
         -   `style-loader` -> _^2.0.0_
         -   `thread-loader` -> _^3.0.3_
-        -   `webpack` -> _^5.36.0_ ([#215](https://github.com/cmux/koot/issues/215))
+        -   `webpack` -> _^5.36.2_ ([#215](https://github.com/cmux/koot/issues/215))
         -   `webpack-bundle-analyzer` -> _^4.4.1_
         -   `webpack-dev-middleware` -> _^4.0.4_
         -   `workbox-webpack-plugin` -> _^6.1.5_

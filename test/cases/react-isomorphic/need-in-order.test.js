@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 /**
  * React SSR 完全测试
  *
@@ -427,7 +429,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
 
     const defaultWaitUtil = isDev ? 'networkidle2' : 'domcontentloaded';
 
-    // 测试: 页面基本结构
+    // console.log('页面基本结构');
     {
         const res = await page
             .goto(origin, {
@@ -510,7 +512,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         }
     }
 
-    // 测试: 并发请求 state 是否正确
+    // console.log('并发请求 state 是否正确');
     if (!isDev) {
         await breath();
 
@@ -539,7 +541,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         ]);
     }
 
-    // 测试: 访问没有指定组件的路由
+    // console.log('访问没有指定组件的路由');
     {
         await breath();
 
@@ -561,7 +563,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         const urlNoGiven = `${origin}/static/${name}`;
         const res = await page
             .goto(urlNoGiven, {
-                waitUntil: 'networkidle0',
+                waitUntil: 'load',
             })
             .catch();
 
@@ -577,28 +579,28 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         expect(featureString).toBe(name);
     }
 
-    // 测试: 利用 staticCopyFrom 配置复制的文件可访问
+    // console.log('利用 staticCopyFrom 配置复制的文件可访问');
     {
         await breath();
 
         const testUrl = `${origin}/__test.txt`;
         const testContent = 'TEST';
         const res = await page.goto(testUrl, {
-            waitUntil: 'networkidle0',
+            waitUntil: 'load',
         });
         const result = await res.text();
         expect(res.ok()).toBe(true);
         expect(result).toBe(testContent);
     }
 
-    // 测试：sessionStore
+    // console.log('测试：sessionStore');
     {
         await breath();
 
         const context = await browser.createIncognitoBrowserContext();
         const page = await context.newPage();
         await page.goto(origin, {
-            waitUntil: 'networkidle0',
+            waitUntil: 'load',
         });
 
         const { sessionStore = defaultKootConfig.sessionStore } = kootConfig;
@@ -634,7 +636,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
             before.stateBefore = filterState(before.stateBefore);
             before.ssrState = filterState(before.ssrState);
 
-            await page.reload({ waitUntil: 'networkidle0' });
+            await page.reload({ waitUntil: 'load' });
 
             const after = {
                 ...(await page.evaluate((sessionStoreKey) => {
@@ -731,7 +733,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         await context.close();
     }
 
-    // 测试：使用 TypeScript 编写的组件
+    // console.log('使用 TypeScript 编写的组件');
     {
         await breath();
 
@@ -743,7 +745,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         expect(el).not.toBe(null);
     }
 
-    // 测试：extend 高阶组件的 SSR 控制
+    // console.log('extend 高阶组件的 SSR 控制');
     {
         await breath();
 
@@ -751,7 +753,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         const page = await context.newPage();
 
         const res = await page.goto(origin, {
-            waitUntil: 'networkidle0',
+            waitUntil: 'load',
         });
 
         const HTML = await res.text();
@@ -776,7 +778,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         await context.close();
     }
 
-    // 测试：页面信息应来自深部组件，而非外部父级
+    // console.log('页面信息应来自深部组件，而非外部父级');
     {
         await breath();
 
@@ -787,7 +789,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
             const context = await browser.createIncognitoBrowserContext();
             const page = await context.newPage();
             const res = await page.goto(origin + '/ts', {
-                waitUntil: 'networkidle0',
+                waitUntil: 'load',
             });
             const HTML = await res.text();
             const $ = cheerio.load(HTML);
@@ -818,7 +820,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
             const context = await browser.createIncognitoBrowserContext();
             const page = await context.newPage();
             await page.goto(origin, {
-                waitUntil: 'networkidle0',
+                waitUntil: 'load',
             });
             await Promise.all([
                 page.waitForSelector(`[data-koot-test-page="page-ts"]`),
@@ -848,7 +850,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
             const context = await browser.createIncognitoBrowserContext();
             const page = await context.newPage();
             const res = await page.goto(origin + '/test-pageinfo-deep', {
-                waitUntil: 'networkidle0',
+                waitUntil: 'load',
                 timeout: 10000,
             });
             const HTML = await res.text();
@@ -869,7 +871,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
             const context = await browser.createIncognitoBrowserContext();
             const page = await context.newPage();
             await page.goto(origin, {
-                waitUntil: 'networkidle0',
+                waitUntil: 'load',
             });
             await page.waitForSelector('a[href$="/test-pageinfo-deep"]');
             await page.evaluate(() => {
@@ -906,7 +908,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         }
     }
 
-    // 测试: Store enhancer
+    // console.log('Store enhancer');
     if (typeof selectorForStoreEnhancer === 'string') {
         await breath();
 
@@ -930,7 +932,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         expect(value1).toBe(value2);
     }
 
-    // 测试: 服务器端公共缓存空间
+    // console.log('服务器端公共缓存空间');
     {
         await breath();
 
@@ -966,7 +968,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         expect(values.zh2).toBe(expectG + expectL);
     }
 
-    // 测试: 非匹配的组件，其相 store 关函数不应运行
+    // console.log('非匹配的组件，其 store 相关函数不应运行');
     {
         await breath();
 
@@ -990,7 +992,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         await context.close();
     }
 
-    // 测试: cookiesToStore
+    // console.log('cookiesToStore');
     if (typeof cookiesToStore !== 'undefined') {
         await breath();
 
@@ -1050,7 +1052,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         }
     }
 
-    // 测试: SSR Store 路由信息
+    // console.log('SSR Store 路由信息');
     {
         const pathname = '/extend';
         const search = '?a=1';
@@ -1077,14 +1079,14 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         expect(L.search).toBe(search);
     }
 
-    // 测试: 服务器端获取 koa ctx
+    // console.log('服务器端获取 koa ctx');
     {
         const context = await browser.createIncognitoBrowserContext();
         const page = await context.newPage();
         const gotoUrl = getHref('test-server-ctx-redirect', 'zh');
 
         await page.goto(gotoUrl, {
-            waitUntil: 'networkidle0',
+            waitUntil: 'load',
         });
         const result = await page.evaluate(() => window.location.href);
 
@@ -1120,7 +1122,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
 
     // TODO: 在设置了 sw 时有 sw 注册且没有报错
 
-    // 其他公用测试
+    console.log('多语言/i18n');
     await testI18n({
         browser,
         origin,
@@ -1130,9 +1132,15 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         cwd: dir,
         dist,
     });
+    console.log('script 标签注入');
     await puppeteerTestInjectScripts(page);
+    console.log('隐藏的 404 请求');
     await testRequestHidden404(origin, browser);
-    if (!isDev) await testAssetsGzip(origin, dist, browser);
+    if (!isDev) {
+        console.log('静态资源 Gzip');
+        await testAssetsGzip(origin, dist, browser);
+    }
+    console.log('客户端生命周期');
     await testClientLifecycles(origin, browser);
 
     // 测试: 没有失败的请求
