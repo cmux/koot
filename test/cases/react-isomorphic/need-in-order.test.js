@@ -414,6 +414,10 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         return `${origin}${pathname}${paramStr}`;
     };
 
+    const _log = (...args) => {
+        if (false) console.log(...args);
+    };
+
     const page = await context.newPage();
     const failedResponse = [];
     require('../../libs/puppeteer/page-event-response-failed-response')(
@@ -429,7 +433,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
 
     const defaultWaitUtil = isDev ? 'networkidle2' : 'domcontentloaded';
 
-    // console.log('页面基本结构');
+    _log('页面基本结构');
     {
         const res = await page
             .goto(origin, {
@@ -512,7 +516,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         }
     }
 
-    // console.log('并发请求 state 是否正确');
+    _log('并发请求 state 是否正确');
     if (!isDev) {
         await breath();
 
@@ -541,7 +545,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         ]);
     }
 
-    // console.log('访问没有指定组件的路由');
+    _log('访问没有指定组件的路由');
     {
         await breath();
 
@@ -579,7 +583,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         expect(featureString).toBe(name);
     }
 
-    // console.log('利用 staticCopyFrom 配置复制的文件可访问');
+    _log('利用 staticCopyFrom 配置复制的文件可访问');
     {
         await breath();
 
@@ -593,7 +597,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         expect(result).toBe(testContent);
     }
 
-    // console.log('测试：sessionStore');
+    _log('测试：sessionStore');
     {
         await breath();
 
@@ -733,7 +737,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         await context.close();
     }
 
-    // console.log('使用 TypeScript 编写的组件');
+    _log('使用 TypeScript 编写的组件');
     {
         await breath();
 
@@ -745,7 +749,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         expect(el).not.toBe(null);
     }
 
-    // console.log('extend 高阶组件的 SSR 控制');
+    _log('extend 高阶组件的 SSR 控制');
     {
         await breath();
 
@@ -778,7 +782,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         await context.close();
     }
 
-    // console.log('页面信息应来自深部组件，而非外部父级');
+    _log('页面信息应来自深部组件，而非外部父级');
     {
         await breath();
 
@@ -908,7 +912,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         }
     }
 
-    // console.log('Store enhancer');
+    _log('Store enhancer');
     if (typeof selectorForStoreEnhancer === 'string') {
         await breath();
 
@@ -932,7 +936,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         expect(value1).toBe(value2);
     }
 
-    // console.log('服务器端公共缓存空间');
+    _log('服务器端公共缓存空间');
     {
         await breath();
 
@@ -968,7 +972,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         expect(values.zh2).toBe(expectG + expectL);
     }
 
-    // console.log('非匹配的组件，其 store 相关函数不应运行');
+    _log('非匹配的组件，其 store 相关函数不应运行');
     {
         await breath();
 
@@ -992,7 +996,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         await context.close();
     }
 
-    // console.log('cookiesToStore');
+    _log('cookiesToStore');
     if (typeof cookiesToStore !== 'undefined') {
         await breath();
 
@@ -1052,7 +1056,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         }
     }
 
-    // console.log('SSR Store 路由信息');
+    _log('SSR Store 路由信息');
     {
         const pathname = '/extend';
         const search = '?a=1';
@@ -1079,7 +1083,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         expect(L.search).toBe(search);
     }
 
-    // console.log('服务器端获取 koa ctx');
+    _log('服务器端获取 koa ctx');
     {
         const context = await browser.createIncognitoBrowserContext();
         const page = await context.newPage();
@@ -1122,7 +1126,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
 
     // TODO: 在设置了 sw 时有 sw 注册且没有报错
 
-    console.log('多语言/i18n');
+    _log('多语言/i18n');
     await testI18n({
         browser,
         origin,
@@ -1132,15 +1136,15 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         cwd: dir,
         dist,
     });
-    console.log('script 标签注入');
+    _log('script 标签注入');
     await puppeteerTestInjectScripts(page);
-    console.log('隐藏的 404 请求');
+    _log('隐藏的 404 请求');
     await testRequestHidden404(origin, browser);
     if (!isDev) {
-        console.log('静态资源 Gzip');
+        _log('静态资源 Gzip');
         await testAssetsGzip(origin, dist, browser);
     }
-    console.log('客户端生命周期');
+    _log('客户端生命周期');
     await testClientLifecycles(origin, browser);
 
     // 测试: 没有失败的请求
