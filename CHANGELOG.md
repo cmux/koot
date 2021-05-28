@@ -2,9 +2,9 @@
 
 **koot**
 
--   **重大改动**
+-   **⚠ 重大改动 ⚠**
     -   此次更新包含诸多重大改动，对于已有项目的升级，请参阅[升级指南](https://koot.js.org/#/migration/0.14-to-0.15)
-    -   _Node.js_ 最低版本要求提升到 `12.0.0`
+    -   _Node.js_ 最低版本要求提升到 `12.13.0`
     -   更新依赖包 **major** 版本号
         -   `commander` -> _^7.2.0_
         -   `fs-extra` -> _^10.0.0_
@@ -15,7 +15,7 @@
         -   `koa-router` -> _^10.0.0_
         -   `react` -> _^17.0.2_
         -   `react-dom` -> _^17.0.2_
-        -   `typescript` -> _^4.2.4_
+        -   `typescript` -> _^4.3.2_
     -   移除以下依赖包，现在不会默认安装。如有使用需要，请在项目中自行安装
         -   `get-image-colors`
         -   `isomorphic-fetch`
@@ -47,33 +47,33 @@
 
 **koot-electron**
 
--   **重大改动**
+-   **⚠ 重大改动 ⚠**
     -   更新依赖包 **major** 版本号
-        -   `electron` -> _^12.0.6_
+        -   `electron` -> _^13.0.1_
 
 **koot-webpack**
 
--   **重大改动**
+-   **⚠ 重大改动 ⚠**
     -   此次更新包含诸多重大改动，对于已有项目的升级，请参阅[升级指南](https://koot.js.org/#/migration/0.14-to-0.15)
     -   内置的多语言处理方式改为 _Babel_ 插件，原 _Webpack_ 插件现已弃用 ([#215](https://github.com/cmux/koot/issues/215))
     -   移除 _CSS_ 处理时的 `universal-alias-loader` 逻辑
         -   新版 _Webpack_ 已默认支持 `css-loader` 使用 `resolve.alias` 配置，该 _Loader_ 不再需要
     -   更新依赖包 **major** 版本号
         -   `@hot-loader/react-dom` -> _^17.0.0_
-        -   `compression-webpack-plugin` -> _^7.1.2_
-        -   `copy-webpack-plugin` -> _^8.1.1_
-        -   `css-loader` -> _^5.2.4_
+        -   `compression-webpack-plugin` -> _^8.0.0_
+        -   `copy-webpack-plugin` -> _^9.0.0_
+        -   `css-loader` -> _^5.2.6_
         -   `less` -> _^4.1.1_
-        -   `less-loader` -> _^8.1.1_
+        -   `less-loader` -> _^9.0.0_
         -   `mini-css-extract-plugin` -> _^1.6.0_
-        -   `postcss` -> _^8.2.14_ ([#285](https://github.com/cmux/koot/issues/285))
-        -   `postcss-loader` -> _^5.2.0_
-        -   `sass-loader` -> _^11.0.0_
+        -   `postcss` -> _^8.3.0_ ([#285](https://github.com/cmux/koot/issues/285))
+        -   `postcss-loader` -> _^5.3.0_
+        -   `sass-loader` -> _^11.1.1_
         -   `style-loader` -> _^2.0.0_
-        -   `thread-loader` -> _^3.0.3_
-        -   `webpack` -> _^5.36.2_ ([#215](https://github.com/cmux/koot/issues/215))
-        -   `webpack-bundle-analyzer` -> _^4.4.1_
-        -   `webpack-dev-middleware` -> _^4.0.4_
+        -   `thread-loader` -> _^3.0.4_
+        -   `webpack` -> _^5.37.1_ ([#215](https://github.com/cmux/koot/issues/215))
+        -   `webpack-bundle-analyzer` -> _^4.4.2_
+        -   `webpack-dev-middleware` -> _^4.3.0_
         -   `workbox-webpack-plugin` -> _^6.1.5_
     -   移除以下依赖包，现在不会默认安装，已无需要
         -   `@diablohu/hard-source-webpack-plugin`
