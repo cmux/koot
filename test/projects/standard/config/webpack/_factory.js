@@ -19,45 +19,54 @@ module.exports = async () => {
             critical: path.resolve(src, './critical.js'),
 
             // 自行添加的入口
-            specialEntry: path.resolve(src, './special-entry.js')
+            specialEntry: path.resolve(src, './special-entry.js'),
         },
 
         module: {
             rules: [
                 {
                     test: /\.(ico|gif|jpg|jpeg|png|webp)$/,
+                    type: 'asset/resource',
+                    generator: {
+                        filename: `assets/[hash:32][ext]`,
+                    },
+                },
+                /*
+                {
+                    test: /\.(ico|gif|jpg|jpeg|png|webp)$/,
                     loader: 'file-loader',
                     options: {
                         context: 'static',
-                        name: 'assets/[hash:32].[ext]'
+                        name: 'assets/[hash:32].[ext]',
                         // esModule: false
                         // emitFile: Boolean(
                         //     process.env.WEBPACK_BUILD_STAGE === 'client'
                         // )
-                    }
+                    },
                     // loader:
                     //     'file-loader?context=static&name=assets/[hash:32].[ext]&aaa=bbb'
                 },
+                */
                 {
                     test: /\.svg$/,
                     loader: 'svg-url-loader',
                     exclude: /node_modules/,
                     options: {
-                        noquotes: true
+                        noquotes: true,
                         // esModule: false
-                    }
-                }
-            ]
+                    },
+                },
+            ],
         },
 
         plugins: [
-            undefined // Koot.js: 处理 webpack 配置时会自动过滤掉 null、undefined 等无意义的项
+            undefined, // Koot.js: 处理 webpack 配置时会自动过滤掉 null、undefined 等无意义的项
         ],
 
         resolve: {
             alias: {
-                __AAA__: 'aaa'
-            }
-        }
+                __AAA__: 'aaa',
+            },
+        },
     };
 };

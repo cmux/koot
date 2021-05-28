@@ -27,6 +27,8 @@ const transformConfigLast = require('./transform-config-last');
 const transformOutputPublicpath = require('./transform-output-publicpath');
 const LimitChunkCountPlugin = require('../plugins/limit-chunk-count');
 
+const webpackConfigServerDefaults = require('./_defaults/server');
+
 /**
  * Webpack 配置处理 - 服务器端配置
  * @async
@@ -80,7 +82,8 @@ module.exports = async (kootBuildConfig = {}) => {
     /** @type {Object} 当前环境的 webpack 配置对象 */
     const result = new DefaultWebpackConfig()
         .merge(configTargetDefault)
-        .merge(config);
+        .merge(config)
+        .defaults(webpackConfigServerDefaults);
 
     const isPublicPathProvided = Boolean(
         process.env.WEBPACK_BUILD_ENV === 'prod' &&

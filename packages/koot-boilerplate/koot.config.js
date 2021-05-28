@@ -75,20 +75,22 @@ module.exports = {
         module: {
             rules: [
                 /**
-                 * Koot.js 会为以下类型的文件自动添加 loader，无需进行配置
-                 * - `js` `mjs` `jsx`
-                 * - `css` `sass` `less`
+                 * Koot.js 会为以下类型的文件自动添加 rule/loader，无需进行配置
+                 * - `js` `mjs` `jsx` `ts` `tsx`
+                 * - `css` `sass` `scss` `less`
                  */
                 {
                     test: /\.(ico|gif|jpg|jpeg|png|webp)$/,
-                    loader: 'url-loader',
-                    options: {
-                        limit: 2 * 1024,
+                    type: 'asset',
+                    parser: {
+                        dataUrlCondition: {
+                            maxSize: 2 * 1024, // 2kb
+                        },
                     },
                 },
                 {
                     test: /\.(ttf|ttc|eot|woff|woff2)$/,
-                    loader: 'file-loader',
+                    type: 'asset/source',
                 },
                 {
                     test: /\.svg$/,

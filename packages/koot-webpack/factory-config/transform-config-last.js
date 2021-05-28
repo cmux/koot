@@ -268,7 +268,6 @@ const validateModuleRules = (config, kootConfigForThisBuild = {}) => {
                 });
             }
             switch (loader) {
-                // TODO: Webpack 5 - 改为使用 Asset Module
                 case 'file-loader':
                 case 'url-loader':
                 case 'svg-url-loader': {
@@ -302,6 +301,16 @@ const validateModuleRules = (config, kootConfigForThisBuild = {}) => {
             return { loader, options };
         };
         const validateRule = (rule) => {
+            // Webpack 5 - Asset Module
+            // use `module.generator` to config base options
+            // if (/^asset/.test(rule.type)) {
+            //     if (
+            //         typeof rule.emitFile === 'undefined' &&
+            //         process.env.WEBPACK_BUILD_STAGE === 'server'
+            //     ) {
+            //         rule.emitFile = false;
+            //     }
+            // }
             if (typeof rule.loader === 'string') {
                 const { loader, options } = validateLoader(
                     rule.loader,
