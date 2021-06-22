@@ -2,6 +2,7 @@
 /// <reference path="global.d.ts" />
 
 import { Store } from 'redux';
+import { DefaultRootState } from 'react-redux';
 import { History } from 'history';
 import Koa from 'koa';
 
@@ -33,7 +34,7 @@ declare namespace Koot {
      *
      * > **⚠️** 当前仅有 `vm` 模式，在未来会加入其他模式
      */
-    const getStore: () => Store;
+    const getStore: () => Store<DefaultRootState>;
 
     /**
      * 获取封装后的 History 对象
