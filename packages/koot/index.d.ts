@@ -3,6 +3,7 @@
 
 import { Store } from 'redux';
 import { DefaultRootState } from 'react-redux';
+import { ThunkAction } from 'redux-thunk';
 import { History } from 'history';
 import Koa from 'koa';
 
@@ -34,7 +35,7 @@ declare namespace Koot {
      *
      * > **⚠️** 当前仅有 `vm` 模式，在未来会加入其他模式
      */
-    const getStore: () => Store<DefaultRootState>;
+    const getStore: () => Store<DefaultRootState, ThunkAction | A>;
 
     /**
      * 获取封装后的 History 对象
