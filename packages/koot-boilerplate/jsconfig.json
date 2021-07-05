@@ -9,6 +9,7 @@
         "jsx": "react",
         "baseUrl": ".",
         "paths": {
+            "@/*": ["./src/*"],
             "@src": ["./src"],
             "@src/*": ["./src/*"],
             "@actions": ["./src/actions"],

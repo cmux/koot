@@ -125,6 +125,7 @@ module.exports = {
      * 开发环境 & 开发设置
      *************************************************************************/
     aliases: {
+        '@/': path.resolve('./src/'),
         '@src': path.resolve('./src'),
         '@actions': path.resolve('./src/actions'),
         '@assets': path.resolve('./src/assets'),
