@@ -90,7 +90,7 @@ module.exports = {
                 },
                 {
                     test: /\.(ttf|ttc|eot|woff|woff2)$/,
-                    type: 'asset/source',
+                    type: 'asset/resource',
                 },
                 {
                     test: /\.svg$/,
