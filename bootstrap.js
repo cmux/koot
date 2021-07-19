@@ -47,7 +47,7 @@ async function prepareIndividualPackage(pName) {
 
     await runCmd(
         `Install deps for ${pName}`,
-        `npm install --no-package-lock"`,
+        `npm install --no-package-lock --legacy-peer-deps`,
         {
             cwd,
         }
@@ -68,7 +68,7 @@ const run = async () => {
     }
     await runCmd(
         `Install deps for root directory`,
-        'npm install --no-package-lock'
+        'npm install --no-package-lock --legacy-peer-deps'
     );
     await runCmd(
         `Run: lerna bootstrap`,

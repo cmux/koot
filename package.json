@@ -7,7 +7,7 @@
         "bootstrap": "node bootstrap.js",
         "publish": "node ./publish.js",
         "test": "node ./test/index.js",
-        "reset": "npm i fs-extra --no-save && node ./reset.js && node bootstrap.js",
+        "reset": "npm i fs-extra --no-save --legacy-peer-deps && node ./reset.js && node bootstrap.js",
         "lerna:changed": "lerna changed",
         "eslint:koot": "eslint \"packages/koot/!(node_modules|logs|dist|dist*|test)/**/*.+(js|jsx)\"",
         "check-types": "tsc --noEmit",
