@@ -235,6 +235,9 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                 chunkFilename:
                     configTargetDefaultOutput.chunkFilename ||
                     `chunk.[chunkhash].js`,
+                assetModuleFilename:
+                    configTargetDefaultOutput.assetModuleFilename ||
+                    `asset.[hash][ext][query]`,
                 ...(result.output || {}),
             };
             if (result.output.publicPath)
@@ -252,6 +255,8 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                     filenamePrefix + result.output.filename;
                 result.output.chunkFilename =
                     filenamePrefix + result.output.chunkFilename;
+                result.output.assetModuleFilename =
+                    filenamePrefix + result.output.assetModuleFilename;
             }
             if (isPublicPathProvided) {
                 process.env[KOOT_CLIENT_PUBLIC_PATH] = result.output.publicPath;
