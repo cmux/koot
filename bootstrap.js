@@ -45,13 +45,9 @@ async function prepareIndividualPackage(pName) {
 
     if (!fs.existsSync(cwd)) return;
 
-    await runCmd(
-        `Install deps for ${pName}`,
-        `npm install --no-package-lock --legacy-peer-deps`,
-        {
-            cwd,
-        }
-    );
+    await runCmd(`Install deps for ${pName}`, `npm install --no-package-lock`, {
+        cwd,
+    });
 }
 
 const run = async () => {
@@ -68,7 +64,7 @@ const run = async () => {
     }
     await runCmd(
         `Install deps for root directory`,
-        'npm install --no-package-lock --legacy-peer-deps'
+        'npm install --no-package-lock --force'
     );
     await runCmd(
         `Run: lerna bootstrap`,

@@ -14,9 +14,6 @@
         "prepare": "husky install",
         "commit": "node ./node_modules/cz-customizable/standalone.js"
     },
-    "workspaces": [
-        "packages/*"
-    ],
     "repository": {
         "type": "git",
         "url": "https://github.com/cmux/koot"
