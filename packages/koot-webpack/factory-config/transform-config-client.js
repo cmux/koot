@@ -229,15 +229,14 @@ module.exports = async (kootConfigForThisBuild = {}) => {
             result.output = {
                 path: outputPath,
                 publicPath: __clientAssetsPublicPath,
-                filename:
-                    configTargetDefaultOutput.filename ||
-                    `entry.[chunkhash].js`,
-                chunkFilename:
-                    configTargetDefaultOutput.chunkFilename ||
-                    `chunk.[chunkhash].js`,
-                assetModuleFilename:
-                    configTargetDefaultOutput.assetModuleFilename ||
-                    `asset.[hash][ext][query]`,
+                ...[
+                    ['filename', `entry.[chunkhash].js`],
+                    ['chunkFilename', `chunk.[chunkhash].js`],
+                    ['assetModuleFilename', `asset.[hash][ext][query]`],
+                ].reduce((output, [key, def]) => {
+                    output[key] = configTargetDefaultOutput[key] || def;
+                    return output;
+                }, {}),
                 ...(result.output || {}),
             };
             if (result.output.publicPath)
@@ -251,12 +250,12 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                 result.output.filename = `entry-[id]-[name].js`;
                 result.output.chunkFilename = `chunk-[id]-[name].js`;
             } else if (typeof filenamePrefix === 'string') {
-                result.output.filename =
-                    filenamePrefix + result.output.filename;
-                result.output.chunkFilename =
-                    filenamePrefix + result.output.chunkFilename;
-                result.output.assetModuleFilename =
-                    filenamePrefix + result.output.assetModuleFilename;
+                ['filename', 'chunkFilename', 'assetModuleFilename'].forEach(
+                    (key) => {
+                        result.output[key] =
+                            filenamePrefix + result.output[key];
+                    }
+                );
             }
             if (isPublicPathProvided) {
                 process.env[KOOT_CLIENT_PUBLIC_PATH] = result.output.publicPath;
@@ -409,9 +408,8 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                                     `setLocales(locales);`,
                                 'utf-8'
                             );
-                            result.entry[
-                                getSpaLocaleFileId(localeId)
-                            ] = pathname;
+                            result.entry[getSpaLocaleFileId(localeId)] =
+                                pathname;
                         }
                     }
                     result.plugins.push(
