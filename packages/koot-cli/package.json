@@ -16,7 +16,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/cmux/koot-cli"
+        "url": "https://github.com/cmux/koot"
     },
     "keywords": [
         "react",
@@ -42,10 +42,10 @@
         }
     ],
     "bugs": {
-        "url": "https://github.com/cmux/koot-cli/issues"
+        "url": "https://github.com/cmux/koot/issues"
     },
     "engines": {
-        "node": ">=12.0.0"
+        "node": ">=12.20.0"
     },
     "dependencies": {
         "axios": "^0.21.1",

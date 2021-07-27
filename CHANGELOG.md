@@ -4,13 +4,14 @@
 
 -   **⚠ 重大改动 ⚠**
     -   此次更新包含诸多重大改动，对于已有项目的升级，请参阅[升级指南](https://koot.js.org/#/migration/0.14-to-0.15)
-    -   _Node.js_ 最低版本要求提升到 `12.13.0`
+    -   _Node.js_ 最低版本要求提升到 `12.20.0`
     -   更新依赖包 **major** 版本号
         -   `commander` -> _^8.0.0_
         -   `filesize` -> _^7.0.0_
         -   `fs-extra` -> _^10.0.0_
         -   `glob-promise` -> _^4.0.1_
         -   `execa` -> _^5.1.1_
+        -   `js-cookie` -> _^3.0.0_
         -   `koa-convert` -> _^2.0.0_
         -   `koa-helmet` -> _^6.1.0_
         -   `koa-router` -> _^10.0.0_
@@ -68,12 +69,12 @@
         -   `less` -> _^4.1.1_
         -   `less-loader` -> _^10.0.1_
         -   `mini-css-extract-plugin` -> _^2.1.0_
-        -   `postcss` -> _^8.3.5_ ([#285](https://github.com/cmux/koot/issues/285))
+        -   `postcss` -> _^8.3.6_ ([#285](https://github.com/cmux/koot/issues/285))
         -   `postcss-loader` -> _^6.1.1_
         -   `sass-loader` -> _^12.1.0_
-        -   `style-loader` -> _^3.0.0_
+        -   `style-loader` -> _^3.2.1_
         -   `thread-loader` -> _^3.0.4_
-        -   `webpack` -> _^5.45.1_ ([#215](https://github.com/cmux/koot/issues/215))
+        -   `webpack` -> _^5.46.0_ ([#215](https://github.com/cmux/koot/issues/215))
         -   `webpack-bundle-analyzer` -> _^4.4.2_
         -   `webpack-dev-middleware` -> _^5.0.0_
         -   `workbox-webpack-plugin` -> _^6.1.5_
@@ -1883,7 +1884,7 @@ _Koot.js_ 0.14 开始原生支持 _Electron_ 项目开发。利用 `koot-cli` �
 **2018-09-14**
 
 -   **ReactApp** (React 同构)
-    -   当多语言（i18n）启用时，在 `<head>` 中自动生成跳转到相应的其他语种的链接的 `pageinfo`ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo``ImportStyle`Reacthttps<link>` 标签
+    -   当多语言（i18n）启用时，在 `<head>` 中自动生成跳转到相应的其他语种的链接的 `pageinfo`ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo``ImportStyle`Reacthttps<link>` 标签
 -   内部代码
     -   `hl` 修改为全局常量
 

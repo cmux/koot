@@ -43,13 +43,13 @@
     },
     "homepage": "https://github.com/cmux/koot",
     "engines": {
-        "node": ">=12.13.0"
+        "node": ">=12.20.0"
     },
     "dependencies": {
         "@types/inquirer": "^7.3.3",
         "@types/lodash": "^4.14.171",
-        "@types/node": "^16.3.3",
-        "@types/react": "^17.0.14",
+        "@types/node": "^16.4.3",
+        "@types/react": "^17.0.15",
         "@types/react-dom": "^17.0.9",
         "@types/react-redux": "^7.1.18",
         "@types/react-router": "npm:@types/react-router@^3.0.25",
@@ -73,7 +73,7 @@
         "inquirer": "^8.1.2",
         "is-port-reachable": "^3.0.0",
         "is-url": "^1.2.4",
-        "js-cookie": "^2.2.1",
+        "js-cookie": "^3.0.0",
         "koa": "^2.13.1",
         "koa-better-http-proxy": "^0.2.9",
         "koa-body": "^4.2.0",
