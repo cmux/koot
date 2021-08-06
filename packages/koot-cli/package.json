@@ -49,7 +49,7 @@
     },
     "dependencies": {
         "axios": "^0.21.1",
-        "chalk": "^4.1.1",
+        "chalk": "^4.1.2",
         "download-git-repo": "^3.0.2",
         "fs-extra": "^10.0.0",
         "gitignore-globs": "^0.1.1",

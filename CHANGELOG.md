@@ -6,7 +6,7 @@
     -   此次更新包含诸多重大改动，对于已有项目的升级，请参阅[升级指南](https://koot.js.org/#/migration/0.14-to-0.15)
     -   _Node.js_ 最低版本要求提升到 `12.20.0`
     -   更新依赖包 **major** 版本号
-        -   `commander` -> _^8.0.0_
+        -   `commander` -> _^8.1.0_
         -   `filesize` -> _^7.0.0_
         -   `fs-extra` -> _^10.0.0_
         -   `glob-promise` -> _^4.0.1_
@@ -52,7 +52,7 @@
 
 -   **⚠ 重大改动 ⚠**
     -   更新依赖包 **major** 版本号
-        -   `electron` -> _^13.1.7_
+        -   `electron` -> _^13.1.8_
 
 **koot-webpack**
 
@@ -62,22 +62,21 @@
     -   移除 _CSS_ 处理时的 `universal-alias-loader` 逻辑
         -   新版 _Webpack_ 已默认支持 `css-loader` 使用 `resolve.alias` 配置，该 _Loader_ 不再需要
     -   更新依赖包 **major** 版本号
-        -   `@hot-loader/react-dom` -> _^17.0.0_
         -   `compression-webpack-plugin` -> _^8.0.1_
         -   `copy-webpack-plugin` -> _^9.0.1_
         -   `css-loader` -> _^6.2.0_
         -   `less` -> _^4.1.1_
         -   `less-loader` -> _^10.0.1_
-        -   `mini-css-extract-plugin` -> _^2.1.0_
+        -   `mini-css-extract-plugin` -> _^2.2.0_
         -   `postcss` -> _^8.3.6_ ([#285](https://github.com/cmux/koot/issues/285))
         -   `postcss-loader` -> _^6.1.1_
         -   `sass-loader` -> _^12.1.0_
         -   `style-loader` -> _^3.2.1_
         -   `thread-loader` -> _^3.0.4_
-        -   `webpack` -> _^5.46.0_ ([#215](https://github.com/cmux/koot/issues/215))
+        -   `webpack` -> _^5.48.0_ ([#215](https://github.com/cmux/koot/issues/215))
         -   `webpack-bundle-analyzer` -> _^4.4.2_
         -   `webpack-dev-middleware` -> _^5.0.0_
-        -   `workbox-webpack-plugin` -> _^6.1.5_
+        -   `workbox-webpack-plugin` -> _^6.2.0_
     -   移除以下依赖包，现在不会默认安装，已无需要
         -   `@diablohu/hard-source-webpack-plugin`
         -   `@hot-loader/react-dom`
@@ -1884,7 +1883,7 @@ _Koot.js_ 0.14 开始原生支持 _Electron_ 项目开发。利用 `koot-cli` �
 **2018-09-14**
 
 -   **ReactApp** (React 同构)
-    -   当多语言（i18n）启用时，在 `<head>` 中自动生成跳转到相应的其他语种的链接的 `pageinfo`ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo``ImportStyle`Reacthttps<link>` 标签
+    -   当多语言（i18n）启用时，在 `<head>` 中自动生成跳转到相应的其他语种的链接的 `pageinfo`ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps<link>` 标签
 -   内部代码
     -   `hl` 修改为全局常量
 

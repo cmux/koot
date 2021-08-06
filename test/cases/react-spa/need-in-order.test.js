@@ -316,7 +316,8 @@ const testFull = (dir, configFileName, issueNum) => {
                         const origin = isNaN(port)
                             ? port
                             : `http://127.0.0.1:${port}`;
-                        const context = await browser.createIncognitoBrowserContext();
+                        const context =
+                            await browser.createIncognitoBrowserContext();
                         const page = await context.newPage();
                         const failedResponse = [];
                         require('../../libs/puppeteer/page-event-response-failed-response')(
@@ -387,7 +388,8 @@ const testFull = (dir, configFileName, issueNum) => {
                         const origin = isNaN(port)
                             ? port
                             : `http://127.0.0.1:${port}`;
-                        const context = await browser.createIncognitoBrowserContext();
+                        const context =
+                            await browser.createIncognitoBrowserContext();
                         const page = await context.newPage();
                         const failedResponse = [];
                         require('../../libs/puppeteer/page-event-response-failed-response')(
