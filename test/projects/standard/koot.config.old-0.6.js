@@ -220,7 +220,7 @@ module.exports = {
     // port: 3080,
     port: {
         dev: 8083,
-        prod: 8081,
+        prod: 8881,
     },
 
     /** @type {(Boolean|Array[]|Object)} 多语言配置 */

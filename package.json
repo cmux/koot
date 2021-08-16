@@ -59,14 +59,14 @@
         "inquirer": "^8.1.2",
         "is-valid-path": "^0.1.1",
         "jest": "^27.0.6",
-        "jsdom": "^16.7.0",
+        "jsdom": "^17.0.0",
         "lerna": "^4.0.0",
         "lerna-wizard": "^1.1.1",
-        "lint-staged": "^11.1.1",
+        "lint-staged": "^11.1.2",
         "prettier": "^2.3.2",
         "prettier-eslint": "^13.0.0",
         "puppeteer": "^10.2.0",
-        "simple-git": "^2.42.0",
+        "simple-git": "^2.44.0",
         "symlink-dir": "^5.0.1"
     },
     "husky": {

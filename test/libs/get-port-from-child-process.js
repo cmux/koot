@@ -5,11 +5,11 @@
  * @param {RegExp} regex
  * @returns {Number} port
  */
-const waitForPort = async (child, regex = /port.*\[32m([0-9]+)/) =>
-    await new Promise(resolve => {
+const waitForPort = async (child, regex = /port.*\[3[0-9]m([0-9]+)/) =>
+    await new Promise((resolve) => {
         let port;
 
-        child.stdout.on('data', msg => {
+        child.stdout.on('data', (msg) => {
             // console.log(msg)
             try {
                 const obj = JSON.parse(msg);

@@ -34,7 +34,7 @@ module.exports = {
     //     themeColor: '#0092f5',
     // },
 
-    port: 8081,
+    port: 8881,
     // renderCache: true,
 
     webpackConfig: async () => {
@@ -105,7 +105,7 @@ module.exports = {
     devServer: {
         proxy: {
             // '/proxy-1': {
-            //     target: 'http://10.60.204.111:8080',
+            //     target: 'http://10.60.204.111:8980',
             //     changeOrigin: true,
             //     pathRewrite: { '^/proxy-1': '' }
             // },
