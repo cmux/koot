@@ -1339,8 +1339,10 @@ describe('测试: React 同构项目', () => {
 
                     await waitForPort(child);
                     // const port = await getPortFromConfig(dir)
-                    const port = require(path.resolve(dir, 'koot.config.js'))
-                        .port;
+                    const port = require(path.resolve(
+                        dir,
+                        'koot.config.js'
+                    )).port;
                     child.stderr.on('data', (err) => {
                         errors.push(err);
                     });

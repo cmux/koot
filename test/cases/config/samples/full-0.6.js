@@ -213,7 +213,7 @@ module.exports = {
     /** @type {(Number|Object|String)} 服务器运行端口 */
     // port: 3080,
     port: {
-        dev: 8083,
+        dev: 8983,
         prod: 8881,
     },
 
@@ -272,7 +272,7 @@ module.exports = {
         // historyApiFallback: false,
         proxy: {
             '/root': {
-                target: 'http://localhost:8083/',
+                target: 'http://localhost:8983/',
                 pathRewrite: { '^/root': '' },
             },
         },
