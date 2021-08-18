@@ -301,16 +301,25 @@ const validateModuleRules = (config, kootConfigForThisBuild = {}) => {
             return { loader, options };
         };
         const validateRule = (rule) => {
-            // Webpack 5 - Asset Module
-            // use `module.generator` to config base options
-            // if (/^asset/.test(rule.type)) {
-            //     if (
-            //         typeof rule.emitFile === 'undefined' &&
-            //         process.env.WEBPACK_BUILD_STAGE === 'server'
-            //     ) {
-            //         rule.emitFile = false;
-            //     }
-            // }
+            /*
+                Webpack 5 - Asset Module
+
+                use `module.generator` to config base options instead
+                file: koot-webpack/factory-config/_defaults/server.js
+
+                [2021/08/19] due to a Webpack bug, re-enabled this method
+                https://github.com/webpack/webpack/issues/14022
+            */
+            if (/^asset/.test(rule.type)) {
+                if (
+                    typeof rule.generator?.emit === 'undefined' &&
+                    process.env.WEBPACK_BUILD_STAGE === 'server'
+                ) {
+                    if (typeof rule.generator === 'undefined')
+                        rule.generator = {};
+                    rule.generator.emit = false;
+                }
+            }
             if (typeof rule.loader === 'string') {
                 const { loader, options } = validateLoader(
                     rule.loader,

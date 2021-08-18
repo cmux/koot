@@ -2,11 +2,11 @@ module.exports = {
     module: {
         generator: {
             asset: {
-                emit: false,
+                // emit: false,
             },
             'asset/inline': {},
             'asset/resource': {
-                emit: false,
+                // emit: false,
                 filename: 'static/[hash][ext]',
             },
         },
