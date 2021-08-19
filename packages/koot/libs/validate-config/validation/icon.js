@@ -47,6 +47,8 @@ module.exports = async (appConfig, outputDir) => {
             const file = path.isAbsolute(icon) ? icon : path.resolve(cwd, icon);
             if (!fs.existsSync(file)) return appConfig;
 
+            // console.log('1', sharp)
+
             const image = await sharp(await fs.readFile(file));
             const { width, height } = await image.metadata();
             const { dominant } = await image.stats();

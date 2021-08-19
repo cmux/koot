@@ -11,6 +11,7 @@
         -   `fs-extra` -> _^10.0.0_
         -   `glob-promise` -> _^4.0.1_
         -   `execa` -> _^5.1.1_
+        -   `filesize` -> _^8.0.0_
         -   `js-cookie` -> _^3.0.0_
         -   `koa-convert` -> _^2.0.0_
         -   `koa-helmet` -> _^6.1.0_
@@ -52,7 +53,7 @@
 
 -   **⚠ 重大改动 ⚠**
     -   更新依赖包 **major** 版本号
-        -   `electron` -> _^13.1.8_
+        -   `electron` -> _^13.2.1_
 
 **koot-webpack**
 
@@ -76,6 +77,7 @@
         -   `webpack` -> _^5.48.0_ ([#215](https://github.com/cmux/koot/issues/215))
         -   `webpack-bundle-analyzer` -> _^4.4.2_
         -   `webpack-dev-middleware` -> _^5.0.0_
+        -   `webpack-dev-server` -> _^4.0.0_ ([官方升级指南](https://github.com/webpack/webpack-dev-server/blob/master/migration-v4.md))
         -   `workbox-webpack-plugin` -> _^6.2.0_
     -   移除以下依赖包，现在不会默认安装，已无需要
         -   `@diablohu/hard-source-webpack-plugin`
@@ -1883,7 +1885,7 @@ _Koot.js_ 0.14 开始原生支持 _Electron_ 项目开发。利用 `koot-cli` �
 **2018-09-14**
 
 -   **ReactApp** (React 同构)
-    -   当多语言（i18n）启用时，在 `<head>` 中自动生成跳转到相应的其他语种的链接的 `pageinfo`ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps<link>` 标签
+    -   当多语言（i18n）启用时，在 `<head>` 中自动生成跳转到相应的其他语种的链接的 `pageinfo`ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps<link>` 标签
 -   内部代码
     -   `hl` 修改为全局常量
 

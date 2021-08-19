@@ -11,6 +11,7 @@ const spinner = require('../../packages/koot/utils/spinner');
 const getProjects = require('./get');
 
 const internalPackages = ['koot', 'koot-webpack', 'koot-electron'];
+const linkPackages = ['sharp'];
 
 /**
  * 初始化所有测试项目
@@ -75,6 +76,23 @@ const initProject = async (name) => {
             delete pkg.devDependencies[internalPackage];
         }
 
+        // 处理需要创建 link 的包
+        for (const name of linkPackages) {
+            ['dependencies', 'devDependencies', 'optionalDependencies'].some(
+                (type) => {
+                    if (typeof pkg[type] !== 'object') return false;
+                    if (typeof pkg[type][name] === 'string') {
+                        pkg[type][name] = `file:../../../node_modules/${name}`;
+                        return true;
+                    }
+                    return false;
+                }
+            );
+
+            const loc = path.resolve(cwd, 'node_modules', name);
+            if (fs.existsSync(loc)) await fs.remove(loc);
+        }
+
         // 添加命令
         const commands = [
             // ['isomorphic-build', 'koot-build --env prod --koot-test'],
@@ -108,7 +126,7 @@ const initProject = async (name) => {
         );
         waiting.stop();
         if (stderr) {
-            if (!/^npm WARN/.test(stderr)) {
+            if (!/^npm WARN/.test(stderr) || /^warning /.test(stderr)) {
                 console.warn(stderr);
             } else {
                 error(stderr);
@@ -118,19 +136,17 @@ const initProject = async (name) => {
     }
 
     // symlink 内部包
-    for (const name of internalPackages) {
-        // await fs.remove(path.resolve(cwd, 'node_modules', name));
-        await symlinkDir(
-            path.resolve(__dirname, '../../packages', name),
-            path.resolve(cwd, 'node_modules', name)
-        ).catch((err) => {
-            console.error(err);
-        });
-        // console.log(
-        //     path.resolve(__dirname, '../../packages', name),
-        //     path.resolve(cwd, 'node_modules', name),
-        //     r
-        // );
+    for (const name of [...internalPackages]) {
+        const target = path.resolve(__dirname, '../../packages', name);
+        const loc = path.resolve(cwd, 'node_modules', name);
+        if (fs.existsSync(loc)) await fs.remove(loc);
+        await symlinkDir(target, loc)
+            .then(() => {
+                console.log(`symlink ${loc} => ${target}`);
+            })
+            .catch((err) => {
+                console.error(err);
+            });
     }
 
     // 标记成功

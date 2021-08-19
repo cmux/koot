@@ -9,6 +9,7 @@ const path = require('path');
 const chalk = require('chalk');
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
+const semver = require('semver');
 
 const resetCssLoader = require('./loaders/css/reset');
 
@@ -35,6 +36,7 @@ const spinner = require('koot/utils/spinner');
 const getDistPath = require('koot/utils/get-dist-path');
 const getAppType = require('koot/utils/get-app-type');
 const readBaseConfig = require('koot/utils/read-base-config');
+const getModuleVersion = require('koot/utils/get-module-version');
 // const getCwd = require('koot/utils/get-cwd');
 // const sleep = require('koot/utils/sleep')
 
@@ -51,6 +53,7 @@ const kootPackageJson = require('koot/package.json');
 
 const buildClient = require('./build-client');
 const buildClientProd = require('./building/client-prod');
+const buildClientDev = require('./building/client-dev');
 const buildServerProd = require('./building/server-prod');
 
 // 调试webpack模式
@@ -339,9 +342,8 @@ module.exports = async (kootConfig = {}) => {
                 process.env.WEBPACK_DEV_SERVER_PORT = existResult;
             } else {
                 // 如果上述临时文件不存在，从配置中解析结果
-                process.env.WEBPACK_DEV_SERVER_PORT = await validateWebpackDevServerPort(
-                    kootConfig.devPort
-                );
+                process.env.WEBPACK_DEV_SERVER_PORT =
+                    await validateWebpackDevServerPort(kootConfig.devPort);
                 // 将 webpack-dev-server 端口写入临时文件
                 await fs.writeFile(
                     pathnameTemp,
@@ -376,7 +378,7 @@ module.exports = async (kootConfig = {}) => {
     ).catch((err) => {
         console.error('生成打包配置时发生错误! \n', err);
     });
-    const { webpackConfig, i18n, devServer = {} } = appConfig;
+    const { webpackConfig, i18n } = appConfig;
 
     /*if (TYPE === 'spa' && typeof !!kootConfig.i18n) {
         log(
@@ -384,9 +386,7 @@ module.exports = async (kootConfig = {}) => {
             'build',
             chalk.redBright(__('build.spa_i18n_disabled_temporarily'))
         );
-    } else */ if (
-        typeof i18n === 'object'
-    ) {
+    } else */ if (typeof i18n === 'object') {
         if (
             TYPE === 'spa' &&
             !Array.isArray(appConfig[keyConfigOriginalFull].i18n)
@@ -511,16 +511,32 @@ module.exports = async (kootConfig = {}) => {
         appConfig,
         resultStats: result,
 
+        appType,
+
         beforeEachBuild,
         afterEachBuild: buildingComplete,
         onError: buildingError,
         onComplete: after,
 
+        getStatus: () => ({
+            building,
+        }),
+
         log,
+        logEmptyLine,
     };
 
     // CLIENT / DEV
     if (STAGE === 'client' && ENV === 'dev' && !createDll) {
+        if (
+            semver.satisfies(
+                semver.coerce(getModuleVersion('webpack-dev-server')),
+                '>= 5'
+            )
+        ) {
+            return await buildClientDev(buildParams);
+        }
+
         // await sleep(20 * 1000)
         await beforeEachBuild();
 
@@ -548,6 +564,7 @@ module.exports = async (kootConfig = {}) => {
         }
 
         const compiler = webpack(configsClientDev);
+        const { devServer = {} } = appConfig;
         const {
             before,
             headers = {},
