@@ -531,7 +531,7 @@ module.exports = async (kootConfig = {}) => {
         if (
             semver.satisfies(
                 semver.coerce(getModuleVersion('webpack-dev-server')),
-                '>= 5'
+                '>= 4'
             )
         ) {
             return await buildClientDev(buildParams);

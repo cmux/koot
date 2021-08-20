@@ -9,7 +9,8 @@ const WebpackDevServer = require('webpack-dev-server');
 const {
     keyConfigWebpackSPATemplateInject,
 } = require('koot/defaults/before-build');
-const getDistPath = require('koot/utils/get-dist-path');
+const getCwd = require('koot/utils/get-cwd');
+// const getDistPath = require('koot/utils/get-dist-path');
 
 const buildClient = require('../build-client');
 
@@ -42,6 +43,36 @@ async function buildClientDev({
 
     const configsSPATemplateInject = [];
     const configsClientDev = [];
+    const watchFiles = [
+        'template',
+        'i18n',
+        'routes',
+        'store',
+        // 'staticCopyFrom',
+    ].reduce((list, key) => {
+        const value = appConfig[key];
+        if (typeof value === 'undefined') return list;
+
+        switch (key) {
+            case 'i18n': {
+                // console.log(key, value);
+                if (Array.isArray(value?.locales)) {
+                    for (const [, , file] of value.locales) {
+                        list.push(file);
+                    }
+                }
+                break;
+            }
+            // case 'staticCopyFrom': {
+            //     break;
+            // }
+            default: {
+                list.push(path.resolve(getCwd(), value));
+            }
+        }
+
+        return list;
+    }, []);
 
     if (Array.isArray(webpackConfig)) {
         webpackConfig.forEach((config) => {
@@ -75,15 +106,16 @@ async function buildClientDev({
         headers: optionHeaders = {},
         devMiddleware: optionDevMiddleware = {},
         client: optionClient = {},
-        static: optionStatic = {},
-        watchOptions: optionWatch,
+        watchFiles: optionWatchFiles,
 
         publicPath: v3_publicPath,
         stats: v3_stats,
-        watch: v3_watch,
         clientLogLevel: v3_clientLogLevel,
         quiet: v3_quiet,
-        contentBase: v3_contentBase,
+
+        watch: IGNORED_v3_watch,
+        watchOptions: IGNORED_v3_watchOptions,
+        contentBase: IGNORED_v3_contentBase,
 
         // port,
         ...extendDevServerOptions
@@ -137,21 +169,11 @@ async function buildClientDev({
             ...optionClient,
         },
 
-        static: {
-            directory: v3_contentBase ?? './',
-            // watch: true,
-            watch: optionWatch ??
-                v3_watch ?? {
-                    // aggregateTimeout: 20 * 1000,
-                    ignored: [
-                        // /node_modules/,
-                        // 'node_modules',
-                        getDistPath(),
-                        path.resolve(getDistPath(), '**/*'),
-                    ].map((v) => v.replace(/\\/g, '/')),
-                },
-            ...optionStatic,
-        },
+        watchFiles: Array.isArray(optionWatchFiles)
+            ? [...watchFiles, ...optionWatchFiles]
+            : typeof optionWatchFiles === 'object'
+            ? { ...optionWatchFiles }
+            : [...watchFiles],
 
         onBeforeSetupMiddleware: (devServer) => {
             if (appType === 'ReactSPA' || appType === 'ReactElectronSPA') {
