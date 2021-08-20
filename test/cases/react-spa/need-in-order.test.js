@@ -429,7 +429,10 @@ const testFull = (dir, configFileName, issueNum) => {
                         }
                         expect(failedResponse.length).toBe(0);
                         if (errors.length) {
-                            errors.forEach((e) => console.error(e));
+                            errors.forEach((e) => {
+                                console.log('!ERROR!');
+                                console.trace(e);
+                            });
                         }
                         expect(errors.length).toBe(0);
 
