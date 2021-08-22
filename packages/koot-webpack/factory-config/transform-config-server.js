@@ -15,6 +15,7 @@ const {
     keyConfigBuildDll,
     // keyConfigClientAssetsPublicPath,
     keyConfigWebpackSPAServer,
+    defaultAssetModuleFilename,
 } = require('koot/defaults/before-build');
 const getCwd = require('koot/utils/get-cwd');
 const getDirDistPublic = require('koot/libs/get-dir-dist-public');
@@ -46,6 +47,7 @@ module.exports = async (kootBuildConfig = {}) => {
         template,
         target,
         [keyConfigBuildDll]: createDll = false,
+        distClientAssetsDirName,
     } = kootBuildConfig;
 
     const serverless = target === 'serverless';
@@ -69,6 +71,12 @@ module.exports = async (kootBuildConfig = {}) => {
         stage: STAGE,
         functionName: i18n ? i18n.expr : undefined,
     };
+
+    /** 基于存放目录名的文件名前缀 */
+    const filenamePrefix =
+        process.env.WEBPACK_BUILD_ENV === 'prod' && distClientAssetsDirName
+            ? `${distClientAssetsDirName}/`
+            : '';
 
     const configTargetDefault = await createTargetDefaultConfig(
         {
@@ -104,6 +112,7 @@ module.exports = async (kootBuildConfig = {}) => {
         publicPath: '/',
         filename: `[name].js`,
         chunkFilename: `chunk.[chunkhash].js`,
+        assetModuleFilename: `${filenamePrefix}${defaultAssetModuleFilename}`,
         ...(result.output || {}),
     };
     if (result.output.publicPath)

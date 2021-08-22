@@ -27,6 +27,7 @@ const {
     chunkNameClientRunFirst,
     keyConfigClientServiceWorkerPathname,
     keyConfigIcons,
+    defaultAssetModuleFilename,
     // pathnameSockjs
 } = require('koot/defaults/before-build');
 const { KOOT_CLIENT_PUBLIC_PATH } = require('koot/defaults/envs');
@@ -232,7 +233,7 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                 ...[
                     ['filename', `entry.[chunkhash].js`],
                     ['chunkFilename', `chunk.[chunkhash].js`],
-                    ['assetModuleFilename', `asset.[hash][ext][query]`],
+                    ['assetModuleFilename', defaultAssetModuleFilename],
                 ].reduce((output, [key, def]) => {
                     output[key] = configTargetDefaultOutput[key] || def;
                     return output;
@@ -408,8 +409,9 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                                     `setLocales(locales);`,
                                 'utf-8'
                             );
-                            result.entry[getSpaLocaleFileId(localeId)] =
-                                pathname;
+                            result.entry[
+                                getSpaLocaleFileId(localeId)
+                            ] = pathname;
                         }
                     }
                     result.plugins.push(

@@ -61,6 +61,8 @@ module.exports = {
     chunkNameExtractCss: '__KOOT__EXTRACT__CSS__',
     chunkNameExtractCssForImport: '__KOOT__EXTRACT__CSS__NO__PUBLIC__PATH__',
     chunkNameClientRunFirst: '__KOOT__CLIENT__RUN__FIRST__',
+    /** Asset Module 默认文件名 */
+    defaultAssetModuleFilename: 'asset.[hash][ext][query]',
 
     // [开发环境] 临时文件名
     filenameWebpackDevServerPortTemp: '.dev_webpack-dev-server_port',
