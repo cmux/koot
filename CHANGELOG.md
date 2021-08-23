@@ -1,10 +1,80 @@
 ## [Unreleased]
 
-**koot**
+## [0.15.0] - 2021-08-23
 
--   **⚠ 重大改动 ⚠**
-    -   此次更新包含诸多重大改动，对于已有项目的升级，请参阅[升级指南](https://koot.js.org/#/migration/0.14-to-0.15)
-    -   _Node.js_ 最低版本要求提升到 `12.20.0`
+**⚠ 重大改动 ⚠**
+
+-   此次更新包含诸多重大改动，对于已有项目的升级，请参阅[升级指南](https://koot.js.org/#/migration/0.14-to-0.15)
+-   从 `koot` 直接引用 `store` `history` `localeId` 的方式已被完全弃用，请改用 `getStore()` `getHistory()` `getLocaleId()`
+
+    -   _0.14_:
+
+    ```javascript
+    import { store, history, localeId } from 'koot';
+    if (localeId === 'zh') {
+        console.log(store.getState());
+        history.push('/index');
+    }
+    ```
+
+    -   _0.15_:
+
+    ```javascript
+    import { getStore, getHistory, getLocaleId } from 'koot';
+    if (getLocaleId() === 'zh') {
+        console.log(getStore().getState());
+        getHistory().push('/index');
+    }
+    ```
+
+-   _Node.js_ 最低版本要求提升到 `12.20.0`
+-   内置的多语言处理方式改为 _Babel_ 插件，原 _Webpack_ 插件现已弃用 ([#215](https://github.com/cmux/koot/issues/215))
+    -   原则上对已有项目不会造成影响。如遇问题请[进行反馈](https://github.com/cmux/koot/issues/215)
+-   重大依赖库版本更新。_Koot.js_ 内部已存在部分兼容性处理，原则上对已有项目不会造成影响，如遇到相关问题可点击对应的问题链接进行反馈
+    -   `react` -> _^17.0.2_ ([新版本官方介绍](https://reactjs.org/blog/2020/10/20/react-v17.html))
+    -   `react-dom` -> _^17.0.2_
+    -   `postcss` -> _^8.3.6_ ([#285](https://github.com/cmux/koot/issues/285))
+    -   `webpack` -> _^5.51.1_ ([#215](https://github.com/cmux/koot/issues/215))
+    -   `webpack-dev-server` -> _^4.0.0_ ([#301](https://github.com/cmux/koot/issues/301)) ([官方升级指南](https://github.com/webpack/webpack-dev-server/blob/master/migration-v4.md))
+-   移除以下依赖包，现在不会默认安装。如有使用需要，请在项目中自行安装
+
+    -   `@diablohu/hard-source-webpack-plugin`
+    -   `@hot-loader/react-dom`
+    -   `get-image-colors`
+    -   `isomorphic-fetch`
+    -   `react-hot-loader`
+    -   `yargs`
+
+**新特性**
+
+-   现已支持全新的 _JSX_ 转译引擎 ([#282](https://github.com/cmux/koot/issues/282))
+    -   该功能对从 0.15 之前版本升级而来的项目默认关闭，如需开启请参阅[升级指南](https://koot.js.org/#/migration/0.14-to-0.15)
+    -   使用 `koot-cli` 创建的新项目会使用该新特性
+    -   相关信息请查阅 [React 官方文档](https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html)
+-   **新配置项** `beforeBuild` - 生命周期方法: 打包即将开始时 ([#288](https://github.com/cmux/koot/issues/288))
+    -   详情请参见文档 [生命周期](https://koot.js.org/#/life-cycle?id=打包)
+-   **新配置项** `afterBuild` - 生命周期方法: 打包刚刚完成时 ([#288](https://github.com/cmux/koot/issues/288))
+    -   详情请参见文档 [生命周期](https://koot.js.org/#/life-cycle?id=打包)
+-   在进行打包、启动开发环境之前，现在会进行 _Node.js_ 版本检查，如果不通过，会终止流程 ([#274](https://github.com/cmux/koot/issues/274))
+-   _React_ 组件的热更新现在改用官方的 _Fast Refresh_ 机制，理论上热更新效率会有提升，原则上对已有项目不会造成负面影响。相关信息请查阅 [React 官方讨论帖](https://github.com/facebook/react/issues/16604)
+
+**优化**
+
+-   `serviceWorker` 的 `cacheFirst` `networkFirst` `networkOnly` 扩展缓存策略选项，其数组 (`Array`) 内现在可以直接传入正则表达式和用以分析请求的函数，请参见文档 [Service Worker/扩展缓存规则](/pwa?id=扩展缓存规则)
+-   SSR 项目
+    -   渲染缓存的 `get` 和 `set` 方法现在均新增一个参数，值为本次请求的 _KOA Context_ ([#294](https://github.com/cmux/koot/issues/294))
+-   SPA 项目
+    -   打包结果中附带的简易服务器现在支持 `serverBefore` 和 `serverAfter` 生命周期 ([#292](https://github.com/cmux/koot/issues/292))
+
+**错误修正**
+
+-   `extend()` 高阶组件的 `pageinfo` 方法没有返回 `title` 时，页面标题被清空的问题
+-   SPA 项目中如果没有启用多语言，初次访问开发环境时会报告 _Redux_ 相关错误，提示无法辨识的 _Key_ 的问题 ([#230](https://github.com/cmux/koot/issues/230))
+-   SPA 项目中如果设定了 `historyType` 为 `browser` 同时 _Webpack_ 配置中设定了 `output.publicPath`，后者不生效的问题 ([#249](https://github.com/cmux/koot/issues/249))
+
+**各子包其他改动**
+
+-   **koot**
     -   更新依赖包 **major** 版本号
         -   `commander` -> _^8.1.0_
         -   `filesize` -> _^7.0.0_
@@ -20,46 +90,14 @@
         -   `react` -> _^17.0.2_
         -   `react-dom` -> _^17.0.2_
         -   `typescript` -> _^4.3.4_
-    -   移除以下依赖包，现在不会默认安装。如有使用需要，请在项目中自行安装
-        -   `get-image-colors`
-        -   `isomorphic-fetch`
-        -   `yargs`
--   **新特性**
-    -   现已支持全新的 _JSX_ 转译引擎 ([#282](https://github.com/cmux/koot/issues/282))
-        -   该功能对从 0.15 之前版本升级而来的项目默认关闭，如需开启请参阅[升级指南](https://koot.js.org/#/migration/0.14-to-0.15)
-        -   使用 `koot-cli` 创建的新项目会使用该新特性
-        -   相关信息请查阅 [React 官方文档](https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html)
-    -   **新配置项** `beforeBuild` - 生命周期方法: 打包即将开始时 ([#288](https://github.com/cmux/koot/issues/288))
-        -   详情请参见文档 [生命周期](https://koot.js.org/#/life-cycle?id=打包)
-    -   **新配置项** `afterBuild` - 生命周期方法: 打包刚刚完成时 ([#288](https://github.com/cmux/koot/issues/288))
-        -   详情请参见文档 [生命周期](https://koot.js.org/#/life-cycle?id=打包)
-    -   在进行打包、启动开发环境之前，现在会进行 _Node.js_ 版本检查，如果不通过，会终止流程 ([#274](https://github.com/cmux/koot/issues/274))
-    -   _React_ 热更新现在改用官方的 _Fast Refresh_ 机制，理论上热更新效率会有提升，原则上对已有项目不会造成影响。相关信息请查阅 [React 官方讨论帖](https://github.com/facebook/react/issues/16604)
--   优化
-    -   `serviceWorker` 的 `cacheFirst` `networkFirst` `networkOnly` 扩展缓存策略选项，其数组 (`Array`) 内现在可以直接传入正则表达式和用以分析请求的函数，请参见文档 [Service Worker/扩展缓存规则](/pwa?id=扩展缓存规则)
-    -   SSR 项目
-        -   渲染缓存的 `get` 和 `set` 方法现在均新增一个参数，值为本次请求的 _KOA Context_ ([#294](https://github.com/cmux/koot/issues/294))
-    -   SPA 项目
-        -   打包结果中附带的简易服务器现在支持 `serverBefore` 和 `serverAfter` 生命周期 ([#292](https://github.com/cmux/koot/issues/292))
--   错误修正
-    -   修复在 `extend()` 高阶组件的 `pageinfo` 方法没有返回 `title` 时，页面标题被清空的问题
-    -   修复在 SPA 项目中如果没有启用多语言，初次访问开发环境时会报告 _Redux_ 相关错误，提示无法辨识的 _Key_ 的问题 ([#230](https://github.com/cmux/koot/issues/230))
-    -   修复在 SPA 项目中如果设定了 `historyType` 为 `browser` 同时 _Webpack_ 配置中设定了 `output.publicPath`，后者不生效的问题 ([#249](https://github.com/cmux/koot/issues/249))
--   添加依赖包
-    -   `cli-table`
-    -   `filesize`
-
-**koot-electron**
-
--   **⚠ 重大改动 ⚠**
+    -   添加依赖包
+        -   `cli-table`
+        -   `filesize`
+-   **koot-electron**
     -   更新依赖包 **major** 版本号
         -   `electron` -> _^13.2.1_
+-   **koot-webpack**
 
-**koot-webpack**
-
--   **⚠ 重大改动 ⚠**
-    -   此次更新包含诸多重大改动，对于已有项目的升级，请参阅[升级指南](https://koot.js.org/#/migration/0.14-to-0.15)
-    -   内置的多语言处理方式改为 _Babel_ 插件，原 _Webpack_ 插件现已弃用 ([#215](https://github.com/cmux/koot/issues/215))
     -   移除 _CSS_ 处理时的 `universal-alias-loader` 逻辑
         -   新版 _Webpack_ 已默认支持 `css-loader` 使用 `resolve.alias` 配置，该 _Loader_ 不再需要
     -   更新依赖包 **major** 版本号
@@ -78,16 +116,12 @@
         -   `webpack` -> _^5.51.1_ ([#215](https://github.com/cmux/koot/issues/215))
         -   `webpack-bundle-analyzer` -> _^4.4.2_
         -   `webpack-dev-middleware` -> _^5.0.0_
-        -   `webpack-dev-server` -> _^4.0.0_ ([官方升级指南](https://github.com/webpack/webpack-dev-server/blob/master/migration-v4.md))
+        -   `webpack-dev-server` -> _^4.0.0_ ([#301](https://github.com/cmux/koot/issues/301)) ([官方升级指南](https://github.com/webpack/webpack-dev-server/blob/master/migration-v4.md))
         -   `workbox-webpack-plugin` -> _^6.2.0_
-    -   移除以下依赖包，现在不会默认安装，已无需要
-        -   `@diablohu/hard-source-webpack-plugin`
-        -   `@hot-loader/react-dom`
-        -   `react-hot-loader`
--   添加依赖包
-    -   `@babel/plugin-proposal-nullish-coalescing-operator`
-    -   `@babel/plugin-proposal-optional-chaining`
-    -   `@pmmmwh/react-refresh-webpack-plugin`
+    -   添加依赖包
+        -   `@babel/plugin-proposal-nullish-coalescing-operator`
+        -   `@babel/plugin-proposal-optional-chaining`
+        -   `@pmmmwh/react-refresh-webpack-plugin`
 
 ---
 
@@ -1886,7 +1920,7 @@ _Koot.js_ 0.14 开始原生支持 _Electron_ 项目开发。利用 `koot-cli` �
 **2018-09-14**
 
 -   **ReactApp** (React 同构)
-    -   当多语言（i18n）启用时，在 `<head>` 中自动生成跳转到相应的其他语种的链接的 `pageinfo`ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo``ImportStyle`Reacthttps<link>` 标签
+    -   当多语言（i18n）启用时，在 `<head>` 中自动生成跳转到相应的其他语种的链接的 `pageinfo`ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps<link>` 标签
 -   内部代码
     -   `hl` 修改为全局常量
 
