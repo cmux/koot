@@ -1,10 +1,16 @@
 # 开始使用
 
-### 初始化项目
+### 创建项目
 
 ```bash
-> npx koot-cli
+# NPM
+> npx create-koot-app
+
+# YARN
+> yarn create koot-app
 ```
+
+根据环境选择运行上述命令后，按照向导可完成创建并初始化项目。
 
 ### 运行开发环境
 
