@@ -151,8 +151,6 @@ module.exports = async (kootBuildConfig = {}) => {
                     return {
                         from: tmp,
                         to: arr[3],
-                        // to: '../.locales/'
-                        // to: path.resolve(getDirDevTmp(), 'locales')
                     };
                 })
             )
