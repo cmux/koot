@@ -145,12 +145,19 @@ module.exports = async (kootBuildConfig = {}) => {
                     // 载入语言包，讲结果写入临时文件，复制该临时文件到打包目录
                     const localesObj = require(arr[2]);
                     const tmpFolder = getDirDevTmp(undefined, 'locales');
-                    const tmp = path.resolve(tmpFolder, arr[0] + '.json');
+                    const tmp = path.resolve(tmpFolder, arr[0] + '.js');
                     fs.ensureDirSync(tmpFolder);
-                    fs.writeJSONSync(tmp, localesObj);
+                    fs.writeFileSync(
+                        tmp,
+                        'module.exports = ' + JSON.stringify(localesObj)
+                    );
+
+                    const { dir: toDir, name: toName } = path.parse(arr[3]);
+                    const to = toDir + '/' + toName + '.js';
+
                     return {
                         from: tmp,
-                        to: arr[3],
+                        to,
                     };
                 })
             )
