@@ -33,5 +33,6 @@
     "devDependencies": {
         "koot": "^0.15.0-rc.1",
         "koot-webpack": "^0.15.0-rc.1"
-    }
+    },
+    "gitHead": "4824a3b09425b2ddc8d3adb9638959356ab11b1f"
 }
