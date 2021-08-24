@@ -19,7 +19,7 @@ const {
 } = require('koot/defaults/before-build');
 const getCwd = require('koot/utils/get-cwd');
 const getDirDistPublic = require('koot/libs/get-dir-dist-public');
-// const getDirDevTmp = require('koot/libs/get-dir-dev-tmp');
+const getDirDevTmp = require('koot/libs/get-dir-dev-tmp');
 const getModuleVersion = require('koot/utils/get-module-version');
 
 const createTargetDefaultConfig = require('./create-target-default');
@@ -142,8 +142,14 @@ module.exports = async (kootBuildConfig = {}) => {
         result.plugins.push(
             newPluginCopyWebpack(
                 i18n.locales.map((arr) => {
+                    // 载入语言包，讲结果写入临时文件，复制该临时文件到打包目录
+                    const localesObj = require(arr[2]);
+                    const tmpFolder = getDirDevTmp(undefined, 'locales');
+                    const tmp = path.resolve(tmpFolder, arr[0] + '.json');
+                    fs.ensureDirSync(tmpFolder);
+                    fs.writeJSONSync(tmp, localesObj);
                     return {
-                        from: arr[2],
+                        from: tmp,
                         to: arr[3],
                         // to: '../.locales/'
                         // to: path.resolve(getDirDevTmp(), 'locales')
