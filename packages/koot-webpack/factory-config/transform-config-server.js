@@ -142,21 +142,26 @@ module.exports = async (kootBuildConfig = {}) => {
         result.plugins.push(
             newPluginCopyWebpack(
                 i18n.locales.map((arr) => {
-                    // 载入语言包，讲结果写入临时文件，复制该临时文件到打包目录
-                    const localesObj = require(arr[2]);
-                    const tmpFolder = getDirDevTmp(undefined, 'locales');
-                    const tmp = path.resolve(tmpFolder, arr[0] + '.js');
-                    fs.ensureDirSync(tmpFolder);
-                    fs.writeFileSync(
-                        tmp,
-                        'module.exports = ' + JSON.stringify(localesObj)
-                    );
+                    let from = arr[2];
+                    let to = arr[3];
+                    if (path.parse(arr[2]).ext === '.json') {
+                    } else {
+                        // 载入语言包，讲结果写入临时文件，复制该临时文件到打包目录
+                        const localesObj = require(arr[2]);
+                        const tmpFolder = getDirDevTmp(undefined, 'locales');
+                        from = path.resolve(tmpFolder, arr[0] + '.js');
+                        fs.ensureDirSync(tmpFolder);
+                        fs.writeFileSync(
+                            from,
+                            'module.exports = ' + JSON.stringify(localesObj)
+                        );
 
-                    const { dir: toDir, name: toName } = path.parse(arr[3]);
-                    const to = toDir + '/' + toName + '.js';
+                        const { dir: toDir, name: toName } = path.parse(arr[3]);
+                        to = toDir + '/' + toName + '.js';
+                    }
 
                     return {
-                        from: tmp,
+                        from,
                         to,
                     };
                 })
