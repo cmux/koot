@@ -15,18 +15,17 @@
 ### 运行开发环境
 
 ```bash
-> cd [项目名] && npm run dev
+> cd [项目名]
+> npm run dev
 ```
 
 ---
 
-### 初始化开发版本
+### 打包
 
 ```bash
-> npx koot-cli -- next
+> npm run build
 ```
-
-使用该命令会初始化开发中的 _Koot.js_ 对应版本的模板项目
 
 ---
 
