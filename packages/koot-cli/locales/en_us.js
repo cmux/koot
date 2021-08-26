@@ -131,4 +131,9 @@ module.exports = {
         'Koot 0.9 introduces brand new file structure for client bundles of SSR project.',
     'upgrade_0.9.0_warning_2':
         'But for compatibility reason, when upgrading by using CLI tool, this new feature is disabled. If you are interested in this new feature, you can enable it manually. See doc for details -> [https://koot.js.org/#/config?id=bundleversionskeep]',
+
+    'upgrade_0.15.0_warning_1':
+        'This major update includes several BREAKING CHANGES. The CLI tool cannot upgrade local app/project automatically.',
+    'upgrade_0.15.0_warning_2':
+        'Please read [Migration Guide] for manual upgrading -> [https://koot.js.org/#/migration/0.14-to-0.15]',
 };
