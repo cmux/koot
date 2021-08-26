@@ -1,8 +1,8 @@
-const chalk = require('chalk');
+// const chalk = require('chalk');
 const inquirer = require('inquirer');
 
 const spinner = require('../../lib/spinner');
-const _ = require('../../lib/translate');
+// const _ = require('../../lib/translate');
 const updateVersionInPackagejson = require('./update-version-in-packagejson');
 
 module.exports = async (cwd = process.cwd(), prevVersion = '0.13.0') => {
@@ -30,13 +30,7 @@ module.exports = async (cwd = process.cwd(), prevVersion = '0.13.0') => {
     spinner(msgUpgrading).finish();
 
     return {
-        warn:
-            chalk.yellowBright('koot 0.14.0') +
-            chalk.reset(' ') +
-            '\n' +
-            _('upgrade_0.14.0_warning_1') +
-            '\n' +
-            _('upgrade_0.14.0_warning_2'),
+        warn: '',
         files: [...new Set(filesChanged)],
     };
 };
