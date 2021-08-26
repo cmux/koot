@@ -59,8 +59,7 @@ class GenerateChunkmap {
                     compilation.hooks.processAssets.tapAsync(
                         {
                             name: 'GenerateChunkmap',
-                            stage:
-                                Compilation.PROCESS_ASSETS_STAGE_OPTIMIZE_SIZE,
+                            stage: Compilation.PROCESS_ASSETS_STAGE_OPTIMIZE_SIZE,
                         },
                         (compilationAssets, callback) => {
                             compilationEmitAsset(

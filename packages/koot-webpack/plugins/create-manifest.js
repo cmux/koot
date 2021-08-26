@@ -12,6 +12,7 @@ const compilationEmitAsset = require('../libs/compilation-emit-asset');
 const { compilationKeyHtmlMetaTags } = require('koot/defaults/before-build');
 const { publicPathPrefix } = require('koot/defaults/webpack-dev-server');
 const sleep = require('koot/utils/sleep');
+const getPublicPath = require('koot/utils/get-public-dir');
 
 /**
  * Webpack 插件 - 自动生成 manifest.json
@@ -94,9 +95,8 @@ class KootCreateManifestPlugin {
 
                         await fs.ensureDir(cacheFolder);
                         if (fs.existsSync(fileCached)) {
-                            compilation[
-                                compilationKeyHtmlMetaTags
-                            ] = await fs.readFile(fileCached, 'utf-8');
+                            compilation[compilationKeyHtmlMetaTags] =
+                                await fs.readFile(fileCached, 'utf-8');
                             for (const filename of fs.readdirSync(
                                 cacheFolder
                             )) {
@@ -121,12 +121,12 @@ class KootCreateManifestPlugin {
                                         path: `${
                                             process.env.WEBPACK_BUILD_TYPE ===
                                             'spa'
-                                                ? ''
+                                                ? getPublicPath()
                                                 : process.env
                                                       .WEBPACK_BUILD_ENV ===
                                                   'dev'
                                                 ? `/${publicPathPrefix}/dist/`
-                                                : '/'
+                                                : getPublicPath()
                                         }${subfolder}`,
                                         lang: localeId || null,
                                     },

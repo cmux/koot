@@ -17,6 +17,7 @@ const {
 } = require('../../defaults/defines-service-worker');
 const readClientFile = require('../../utils/read-client-file');
 const getClientFilePath = require('../../utils/get-client-file-path');
+const getClientURI = require('../../utils/get-client-uri');
 const getSSRStateString = require('../../libs/get-ssr-state-string');
 const getSwScopeFromEnv = require('../../libs/get-sw-scope-from-env');
 const {
@@ -27,6 +28,8 @@ const {
 
 let isSPAi18nEnabled = false;
 const SPAi18nNeedWaiting = false;
+
+// ============================================================================
 
 /**
  * 注入: JavaScript 代码
@@ -68,6 +71,7 @@ module.exports = ({
     );
     // SPAi18nNeedWaiting = Boolean(isSPAi18nEnabled /* && isDev*/);
 
+    // 添加 `script` 标签 - RUN-FIRST (第一优先级运行)
     if (isDev || typeof injectCache[scriptsRunFirst] === 'undefined') {
         const filename = `${chunkNameClientRunFirst}.js`;
         const name = '*run-first';
@@ -162,7 +166,7 @@ module.exports = ({
                 `window.addEventListener('load', function() {` +
                 // + `navigator.serviceWorker.register("${injectCache[uriServiceWorker]}?koot=${process.env.KOOT_VERSION}",`
                 `navigator.serviceWorker.register("${
-                    injectCache[uriServiceWorker] ||
+                    getClientURI(injectCache[uriServiceWorker]) ??
                     JSON.parse(process.env.KOOT_PWA_PATHNAME)
                 }?koot=0.12"` +
                 (scope
@@ -186,6 +190,9 @@ module.exports = ({
     }
 
     if (isSPAi18nEnabled) {
+        for (const [key, value] of Object.entries(localeFileMap)) {
+            localeFileMap[key] = getClientURI(value);
+        }
         return (
             `<script type="text/javascript" ${scriptTagEntryAttributeName}="*run-first-spa-locales">` +
             `window.${SPALOCALEFILEMAP} = ${JSON.stringify(localeFileMap)};` +
@@ -247,6 +254,12 @@ module.exports = ({
 const combineFilePaths = (name, ...args) => {
     let pathnames = getClientFilePath(...args);
     if (!Array.isArray(pathnames)) pathnames = [pathnames];
+
+    // console.log({
+    //     name,
+    //     pathnames,
+    //     ...args
+    // })
 
     if (SPAi18nNeedWaiting && name !== '*run-first') {
         return pathnames
