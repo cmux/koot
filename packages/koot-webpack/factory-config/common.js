@@ -336,7 +336,6 @@ const filterExternalsModules = (kootConfig = {}) => {
     // externals['@babel/polyfill'] = '@babel/polyfill'
 
     // console.log({ externals });
-
     return externals;
 };
 
