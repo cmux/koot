@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const webpack = require('webpack');
+const requireResolve = require('resolve');
 // const ExtractTextPlugin = require("extract-text-webpack-plugin")
 
 const createModuleRules = require('./module/rules');
@@ -13,6 +14,8 @@ const {
     styleTagModuleAttributeName,
 } = require('koot/defaults/before-build');
 const getPathnameProjectConfigFile = require('koot/utils/get-pathname-project-config-file');
+// const resolveDir = require('koot/utils/resolve-dir')
+const getCwd = require('koot/utils/get-cwd');
 // const readBaseConfig = require('koot/utils/read-base-config')
 const isServerBundlingAllModules = require('../libs/is-server-bundling-all-modules');
 
@@ -272,9 +275,11 @@ const needBabelHandleList = ['koot'];
 const filterExternalsModules = (kootConfig = {}) => {
     if (isServerBundlingAllModules(kootConfig)) return [];
 
+    const moduleDirectory = path.resolve(process.cwd(), 'node_modules');
+
     const externals = []
         .concat(fs.readdirSync(path.resolve(__dirname, '../../../')))
-        .concat(fs.readdirSync(path.resolve(process.cwd(), 'node_modules')))
+        .concat(fs.readdirSync(moduleDirectory))
         .concat(['react-dom/server'])
         .filter(
             (x) =>
@@ -294,9 +299,36 @@ const filterExternalsModules = (kootConfig = {}) => {
         // .filter(x => !/^koot-/.test(x))
         // .filter(x => !/^@/.test(x))
         // .filter(x => !/^workbox($|-)/.test(x))
-        .reduce((ext, mod) => {
-            ext[mod] = ['commonjs', mod].join(' '); // eslint-disable-line no-param-reassign
-            // ext[mod] = mod + '' // eslint-disable-line no-param-reassign
+        .reduce(async (ext, thisModule) => {
+            let type;
+            try {
+                type = require(`${thisModule}/package.json`).type;
+            } catch (e) {
+                try {
+                    const file = path.resolve(
+                        requireResolve.sync(thisModule, { basedir: getCwd() }),
+                        'package.json'
+                    );
+                    if (fs.existsSync(file))
+                        type = JSON.parse(fs.readFileSync(file)).type;
+                } catch (e) {
+                    try {
+                        const file = path.resolve(
+                            moduleDirectory,
+                            thisModule,
+                            'package.json'
+                        );
+                        if (fs.existsSync(file))
+                            type = JSON.parse(fs.readFileSync(file)).type;
+                    } catch (e) {}
+                }
+            }
+            // console.log(thisModule, type)
+            ext[thisModule] = [
+                type === 'module' ? 'module' : 'commonjs',
+                thisModule,
+            ].join(' '); // eslint-disable-line no-param-reassign
+            // ext[thisModule] = thisModule + '' // eslint-disable-line no-param-reassign
             return ext;
         }, {});
 
