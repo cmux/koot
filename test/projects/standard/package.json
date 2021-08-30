@@ -85,12 +85,12 @@
     "private": true,
     "sideEffects": false,
     "koot": {
-        "version": "0.15.0-rc.5"
+        "version": "0.15.0-rc.9"
     },
     "devDependencies": {
         "@types/inquirer": "^7.3.3",
         "@types/lodash": "^4.14.172",
-        "@types/node": "^16.7.1",
+        "@types/node": "^16.7.6",
         "@types/react": "^17.0.19",
         "@types/react-dom": "^17.0.9",
         "@types/react-redux": "^7.1.18",
@@ -125,7 +125,7 @@
         "koa-proxies": "^0.12.1",
         "koa-router": "^10.1.1",
         "koa-static": "^5.0.0",
-        "koot-cli-kit": "^0.0.2",
+        "koot-cli-kit": "^0.0.3",
         "lodash": "^4.17.21",
         "md5": "^2.3.0",
         "npm-run-script": "^0.0.4",
@@ -148,7 +148,7 @@
         "sp-koa-views": "^1.0.1",
         "sync-request": "^6.1.0",
         "terminate": "^2.2.2",
-        "typescript": "^4.3.5",
+        "typescript": "^4.4.2",
         "xmlify": "^1.1.0",
         "@babel/core": "^7.15.0",
         "@babel/helper-module-imports": "^7.14.5",

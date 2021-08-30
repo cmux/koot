@@ -32,7 +32,9 @@ module.exports = (kootBuildConfig = {}, options = {}) => {
         options.__spaTemplateInject = isSPATemplateInject;
 
         options = Object.assign(
-            {},
+            {
+                compact: stageServer ? false : undefined,
+            },
             getBabelLoaderDefaults(
                 md5(
                     [
