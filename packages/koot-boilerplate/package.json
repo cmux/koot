@@ -28,14 +28,14 @@
         "up": "yarn upgrade-interactive --latest"
     },
     "dependencies": {
-        "axios": "^0.21.1",
+        "axios": "^0.21.3",
         "bind-event": "^1.1.2",
         "classnames": "^2.3.1",
         "koot": "^0.15.0-rc.9"
     },
     "devDependencies": {
         "@types/classnames": "^2.3.0",
-        "autoprefixer": "^10.3.3",
+        "autoprefixer": "^10.3.4",
         "babel-eslint": "^10.1.0",
         "cssnano": "^5.0.8",
         "eslint": "^7.32.0",
