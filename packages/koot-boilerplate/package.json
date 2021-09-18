@@ -28,7 +28,7 @@
         "up": "yarn upgrade-interactive --latest"
     },
     "dependencies": {
-        "axios": "^0.21.3",
+        "axios": "^0.21.4",
         "bind-event": "^1.1.2",
         "classnames": "^2.3.1",
         "koot": "^0.15.0-rc.10"
@@ -43,7 +43,7 @@
         "husky": "^7.0.2",
         "lint-staged": "^11.1.2",
         "normalize.css": "^8.0.1",
-        "prettier": "^2.3.2",
+        "prettier": "^2.4.1",
         "prettier-eslint": "^13.0.0",
         "redux-logger": "^3.0.6",
         "svg-url-loader": "^7.1.1"
