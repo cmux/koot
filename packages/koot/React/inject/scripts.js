@@ -1,4 +1,4 @@
-const path = require('path');
+// const path = require('path');
 
 const {
     chunkNameClientRunFirst,
@@ -28,6 +28,19 @@ const {
 
 let isSPAi18nEnabled = false;
 const SPAi18nNeedWaiting = false;
+
+/** 已注入的 js 文件 */
+let injected = [];
+
+/** 过滤入口，得到 js 文件列表 */
+function filterEntrypoint(list) {
+    return (
+        list
+            .filter((file) => /\.(js|jsx|mjs|ejs)$/.test(file))
+            // 将第一次请求时产生的热更新过滤掉
+            .filter((file) => !/\.hot-update\.js$/.test(file))
+    );
+}
 
 // ============================================================================
 
@@ -108,8 +121,7 @@ module.exports = ({
 
         // 入口: critical
         if (needInjectCritical && Array.isArray(entrypoints.critical)) {
-            r += entrypoints.critical
-                .filter((file) => path.extname(file) === '.js')
+            r += filterEntrypoint(entrypoints.critical)
                 .map((file) => {
                     if (isDev) {
                         // return `<script type="text/javascript" src="${getClientFilePath(true, file)}"></script>`;
@@ -125,10 +137,7 @@ module.exports = ({
         // console.log('entrypoints', entrypoints)
         defaultEntrypoints.forEach((key) => {
             if (Array.isArray(entrypoints[key])) {
-                r += entrypoints[key]
-                    .filter((file) => /\.(js|jsx|mjs|ejs)$/.test(file))
-                    // 将第一次请求时产生的热更新过滤掉
-                    .filter((file) => !/\.hot-update\.js$/.test(file))
+                r += filterEntrypoint(entrypoints[key])
                     .map((file) => {
                         // const isDevHot = /\.hot-update\.js$/.test(file)
                         // console.log(key, file, isDevHot)
@@ -188,6 +197,8 @@ module.exports = ({
 
         injectCache[scriptsInBody] = r;
     }
+
+    injected = [];
 
     if (isSPAi18nEnabled) {
         for (const [key, value] of Object.entries(localeFileMap)) {
@@ -278,10 +289,11 @@ const combineFilePaths = (name, ...args) => {
     //     pathnames
     // })
     return pathnames
-        .map(
-            (pathname) =>
-                `<script type="text/javascript" src="${pathname}" defer ${scriptTagEntryAttributeName}="${name}"></script>`
-        )
+        .filter((pathname) => !injected.includes(pathname))
+        .map((pathname) => {
+            injected.push(pathname);
+            return `<script type="text/javascript" src="${pathname}" defer ${scriptTagEntryAttributeName}="${name}"></script>`;
+        })
         .join('');
 };
 

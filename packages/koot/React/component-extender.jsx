@@ -402,14 +402,10 @@ export default (options = {}) =>
                 if (typeof props.kootForwardedRef !== 'undefined') {
                     props.forwardedRef = props.kootForwardedRef;
                     delete props.kootForwardedRef;
+                    props.ref = props.kootForwardedRef ?? props.forwardedRef;
                 }
 
-                return (
-                    <WrappedComponent
-                        ref={props.kootForwardedRef ?? props.forwardedRef}
-                        {...props}
-                    />
-                );
+                return <WrappedComponent {...props} />;
             }
         }
 
