@@ -93,7 +93,7 @@
         -   `filesize`
 -   **koot-electron**
     -   更新依赖包 **major** 版本号
-        -   `electron` -> _^14.0.1_
+        -   `electron` -> _^15.0.0_
 -   **koot-webpack**
 
     -   移除 _CSS_ 处理时的 `universal-alias-loader` 逻辑
@@ -101,14 +101,14 @@
     -   更新依赖包 **major** 版本号
         -   `compression-webpack-plugin` -> _^9.0.0_
         -   `copy-webpack-plugin` -> _^9.0.1_
-        -   `css-loader` -> _^6.2.0_
+        -   `css-loader` -> _^6.3.0_
         -   `less` -> _^4.1.1_
         -   `less-loader` -> _^10.0.1_
         -   `mini-css-extract-plugin` -> _^2.3.0_
-        -   `postcss` -> _^8.3.6_ ([#285](https://github.com/cmux/koot/issues/285))
+        -   `postcss` -> _^8.3.7_ ([#285](https://github.com/cmux/koot/issues/285))
         -   `postcss-loader` -> _^6.1.1_
         -   `sass-loader` -> _^12.1.0_
-        -   `style-loader` -> _^3.2.1_
+        -   `style-loader` -> _^3.3.0_
         -   `thread-loader` -> _^3.0.4_
         -   `webpack` -> _^5.53.0_ ([#215](https://github.com/cmux/koot/issues/215))
         -   `webpack-bundle-analyzer` -> _^4.4.2_
@@ -1917,7 +1917,7 @@ _Koot.js_ 0.14 开始原生支持 _Electron_ 项目开发。利用 `koot-cli` �
 **2018-09-14**
 
 -   **ReactApp** (React 同构)
-    -   当多语言（i18n）启用时，在 `<head>` 中自动生成跳转到相应的其他语种的链接的 `pageinfo`ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps<link>` 标签
+    -   当多语言（i18n）启用时，在 `<head>` 中自动生成跳转到相应的其他语种的链接的 `pageinfo`ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps<link>` 标签
 -   内部代码
     -   `hl` 修改为全局常量
 

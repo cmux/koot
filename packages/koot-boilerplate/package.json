@@ -35,7 +35,7 @@
     },
     "devDependencies": {
         "@types/classnames": "^2.3.0",
-        "autoprefixer": "^10.3.4",
+        "autoprefixer": "^10.3.5",
         "babel-eslint": "^10.1.0",
         "cssnano": "^5.0.8",
         "eslint": "^7.32.0",
