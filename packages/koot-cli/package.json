@@ -48,14 +48,14 @@
         "node": ">=12.20.0"
     },
     "dependencies": {
-        "axios": "^0.21.4",
+        "axios": "^0.22.0",
         "chalk": "^4.1.2",
         "download-git-repo": "^3.0.2",
         "fs-extra": "^10.0.0",
         "gitignore-globs": "^0.1.1",
-        "glob": "^7.1.7",
+        "glob": "^7.2.0",
         "glob-promise": "^4.2.0",
-        "inquirer": "^8.1.5",
+        "inquirer": "^8.2.0",
         "inquirer-select-directory": "^1.2.0",
         "is-url": "^1.2.4",
         "isbinaryfile": "^4.0.8",

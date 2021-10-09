@@ -109,8 +109,13 @@ module.exports = {
             //     changeOrigin: true,
             //     pathRewrite: { '^/proxy-1': '' }
             // },
+            // '/proxy-1': {
+            //     target: 'https://www.cmcm.com',
+            //     changeOrigin: true,
+            //     pathRewrite: { '^/proxy-1': '' },
+            // },
             '/proxy-1': {
-                target: 'https://www.cmcm.com',
+                target: 'https://www.baidu.com',
                 changeOrigin: true,
                 pathRewrite: { '^/proxy-1': '' },
             },

@@ -208,8 +208,8 @@ const doTest = async (port, dist, settings = {}) => {
             if (!elRelative) return {};
             return {
                 base: window.getComputedStyle(el).backgroundImage,
-                baseRelative: window.getComputedStyle(elRelative)
-                    .backgroundImage,
+                baseRelative:
+                    window.getComputedStyle(elRelative).backgroundImage,
             };
         });
         expect(checkBackgroundResult(base)).toBe(true);
@@ -233,8 +233,8 @@ const doTest = async (port, dist, settings = {}) => {
                 if (!elNative) return {};
                 return {
                     value: window.getComputedStyle(el).backgroundImage,
-                    valueNative: window.getComputedStyle(elNative)
-                        .backgroundImage,
+                    valueNative:
+                        window.getComputedStyle(elNative).backgroundImage,
                 };
             });
             expect(checkBackgroundResult(value)).toBe(true);
@@ -461,7 +461,10 @@ const doTest = async (port, dist, settings = {}) => {
     if (isDev) {
         const context = await browser.createIncognitoBrowserContext();
         const page = await context.newPage();
-        await page.goto(origin + '/proxy-1/policies?hl=en', {
+        // await page.goto(origin + '/proxy-1/policies?hl=en', {
+        //     waitUntil: 'networkidle2',
+        // });
+        await page.goto(origin + '/proxy-1/more/', {
             waitUntil: 'networkidle2',
         });
         const title = await page.evaluate(() => document.title);
@@ -469,9 +472,10 @@ const doTest = async (port, dist, settings = {}) => {
         await page.close();
         await context.close();
 
-        expect(title.includes('Policies') || title.includes('隐私政策')).toBe(
-            true
-        );
+        // expect(title.includes('Policies') || title.includes('隐私政策')).toBe(
+        //     true
+        // );
+        expect(title).toBe('百度产品大全');
     }
 
     _log('store 文件只会引用一次');
