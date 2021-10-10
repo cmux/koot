@@ -236,3 +236,24 @@ export default HomePage;
 Koot.js 自定义的对象，其中包含以下属性/元素：
 
 _TODO:_
+
+---
+
+### 其他相关
+
+##### reactLegacyRef
+
+-   类型: `boolean`
+-   默认值: `false`
+
+仅对旧版本升级时有意义。如果发现更新后 _React_ 的 `ref` 结果有变化，可以尝试打开该选项。
+
+```javascript
+module.exports = {
+    // 不启用 (默认值)
+    reactLegacyRef: false,
+
+    // 使用旧版 ref 特征
+    reactLegacyRef: true,
+};
+```

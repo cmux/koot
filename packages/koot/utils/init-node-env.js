@@ -130,6 +130,8 @@ module.exports = () => {
 
         // 打包开始时间
         // [KOOT_BUILD_START_TIME]: ''
+
+        KOOT_REACT_LEGACY_REF: JSON.stringify(false),
     };
     for (const key in defaults) {
         if (typeof process.env[key] === 'undefined') {

@@ -161,6 +161,7 @@ const plugins = async (
         'WEBPACK_DEV_SERVER_PORT',
         // "WEBPACK_SERVER_PUBLIC_PATH",
         KOOT_CLIENT_PUBLIC_PATH,
+        'KOOT_REACT_LEGACY_REF',
     ];
     if (
         remainingKootBuildConfig.sessionStore === true ||
@@ -287,9 +288,7 @@ const filterExternalsModules = (kootConfig = {}) => {
                 !/^sp-/.test(x) &&
                 !/^koot-/.test(x) &&
                 !/^@/.test(x) &&
-                !/^workbox($|-)/.test(
-                    x
-                ) /** &&
+                !/^workbox($|-)/.test(x) /** &&
                     require('../constants/ignored-dist-modules').every(
                         regex => !regex.test(x)
                     ) */
