@@ -24,6 +24,7 @@ import {
 import clientUpdatePageInfo from './client-update-page-info';
 import { RESET_CERTAIN_STATE } from './redux';
 import isRenderSafe from './is-render-safe';
+import isFunctionalComponent from './is-functional-component';
 
 import RootContext from './root-context';
 
@@ -406,9 +407,11 @@ export default (options = {}) =>
                     props.forwardedRef = props[propsNameForwardRef];
                 }
                 if (
-                    process.env.KOOT_REACT_LEGACY_REF ||
-                    !props.forwardedRef ||
-                    !Object.keys(props.forwardedRef).includes('current')
+                    !isFunctionalComponent(WrappedComponent) &&
+                    !props.ref &&
+                    (process.env.KOOT_REACT_LEGACY_REF ||
+                        !props.forwardedRef ||
+                        !Object.keys(props.forwardedRef).includes('current'))
                 ) {
                     props.ref =
                         props[propsNameForwardRef] ??
@@ -462,6 +465,8 @@ export default (options = {}) =>
             _connect[3].forwardRef = true;
             KootComponent = connect(..._connect)(KootComponent);
         }
+
+        // if (isFunctionalComponent(KootComponent)) return KootComponent;
 
         // return KootComponent;
         return forwardRef((props, ref) => {
