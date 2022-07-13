@@ -53,7 +53,7 @@
         "download-git-repo": "^3.0.2",
         "fs-extra": "^10.1.0",
         "gitignore-globs": "^0.1.1",
-        "glob": "^8.0.3",
+        "glob": "^7.2.3",
         "glob-promise": "^4.2.2",
         "inquirer": "^8.2.4",
         "inquirer-select-directory": "^1.2.0",

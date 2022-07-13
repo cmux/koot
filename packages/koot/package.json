@@ -67,7 +67,7 @@
         "favicons": "^6.2.2",
         "filesize": "^9.0.11",
         "fs-extra": "^10.1.0",
-        "glob": "^8.0.3",
+        "glob": "^7.2.3",
         "glob-promise": "^4.2.2",
         "hoist-non-react-statics": "^3.3.2",
         "inquirer": "^8.2.4",

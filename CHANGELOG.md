@@ -39,6 +39,7 @@
 -   移除以下依赖包，现在不会默认安装。如有使用需要，请在项目中自行安装
     -   `@diablohu/hard-source-webpack-plugin`
     -   `@hot-loader/react-dom`
+    -   `cache-loader`
     -   `get-image-colors`
     -   `isomorphic-fetch`
     -   `react-hot-loader`
@@ -79,7 +80,6 @@
         -   `commander` -> _^9.3.0_
         -   `filesize` -> _^9.0.11_
         -   `fs-extra` -> _^10.1.0_
-        -   `glob` -> _^8.0.3_
         -   `glob-promise` -> _^4.2.2_
         -   `execa` -> _^5.1.1_
         -   `filesize` -> _^8.0.3_

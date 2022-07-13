@@ -35,4 +35,5 @@
 
 -   **建议**
     -   [发布 & 上线](/deploy)
+    -   [接入: Qiankun](/qiankun)
     -   [升级/迁移指南](/migration)

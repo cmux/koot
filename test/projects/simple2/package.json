@@ -151,7 +151,6 @@
         "@pmmmwh/react-refresh-webpack-plugin": "^0.5.1",
         "@types/webpack": "^5.28.0",
         "babel-loader": "^8.2.2",
-        "cache-loader": "^4.1.0",
         "compression-webpack-plugin": "^9.0.0",
         "copy-webpack-plugin": "^9.0.1",
         "css-loader": "^6.3.0",
