@@ -53,8 +53,7 @@
     -   详情请参见文档 [生命周期](https://koot.js.org/#/life-cycle?id=打包)
 -   **新配置项** `afterBuild` - 生命周期方法: 打包刚刚完成时 ([#288](https://github.com/cmux/koot/issues/288))
     -   详情请参见文档 [生命周期](https://koot.js.org/#/life-cycle?id=打包)
--   **新配置项** `reactLegacyRef` - 如果发现更新后 _React_ 的 `ref` 结果有变化，可以尝试打开该选项
-        -   详情请参见文档 [React](https://koot.js.org/#/react?id=reactLegacyRef)
+-   **新配置项** `reactLegacyRef` - 如果发现更新后 _React_ 的 `ref` 结果有变化，可以尝试打开该选项 - 详情请参见文档 [React](https://koot.js.org/#/react?id=reactLegacyRef)
 -   在进行打包、启动开发环境之前，现在会进行 _Node.js_ 版本检查，如果不通过，会终止流程 ([#274](https://github.com/cmux/koot/issues/274))
 -   _React_ 组件的热更新现在改用官方的 _Fast Refresh_ 机制，理论上热更新效率会有提升，原则上对已有项目不会造成负面影响。相关信息请查阅 [React 官方讨论帖](https://github.com/facebook/react/issues/16604)
 -   SSR 项目
@@ -76,20 +75,23 @@
 
 -   **koot**
     -   更新依赖包 **major** 版本号
-        -   `commander` -> _^8.2.0_
-        -   `filesize` -> _^7.0.0_
-        -   `fs-extra` -> _^10.0.0_
-        -   `glob-promise` -> _^4.0.1_
+        -   `commander` -> _^9.3.0_
+        -   `filesize` -> _^9.0.11_
+        -   `fs-extra` -> _^10.1.0_
+        -   `glob` -> _^8.0.3_
+        -   `glob-promise` -> _^4.2.2_
         -   `execa` -> _^5.1.1_
         -   `filesize` -> _^8.0.3_
         -   `js-cookie` -> _^3.0.0_
         -   `koa-convert` -> _^2.0.0_
         -   `koa-helmet` -> _^6.1.0_
-        -   `koa-router` -> _^10.1.1_
-        -   `pm2` -> _^5.1.2_
+        -   `koa-router` -> _^11.0.1_
+        -   `pm2` -> _^5.2.0_
         -   `react` -> _^17.0.2_
         -   `react-dom` -> _^17.0.2_
-        -   `typescript` -> _^4.4.3_
+        -   `react-redux` -> _^8.0.2_
+        -   `sharp` -> _^0.30.7_
+        -   `typescript` -> _^4.7.4_
     -   添加依赖包
         -   `cli-table`
         -   `filesize`
@@ -1919,7 +1921,7 @@ _Koot.js_ 0.14 开始原生支持 _Electron_ 项目开发。利用 `koot-cli` �
 **2018-09-14**
 
 -   **ReactApp** (React 同构)
-    -   当多语言（i18n）启用时，在 `<head>` 中自动生成跳转到相应的其他语种的链接的 `pageinfo`ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo``ImportStyle`Reacthttps`pageinfo``ImportStyle`Reacthttps`pageinfo``ImportStyle`Reacthttps`pageinfo``ImportStyle`Reacthttps`pageinfo``ImportStyle`Reacthttps<link>` 标签
+    -   当多语言（i18n）启用时，在 `<head>` 中自动生成跳转到相应的其他语种的链接的 `pageinfo`ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo`` ImportStyle`Reacthttps`pageinfo ``ImportStyle`Reacthttps`pageinfo``ImportStyle`Reacthttps<link>` 标签
 -   内部代码
     -   `hl` 修改为全局常量
 

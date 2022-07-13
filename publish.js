@@ -59,7 +59,7 @@ const prePublish = async () => {
         console.log(' ');
     };
     try {
-        const git = require('simple-git/promise')(__dirname);
+        const git = require('simple-git')(__dirname);
         const { modified = [] } = await git.status();
         if (modified.length) {
             await git.add('./*');
