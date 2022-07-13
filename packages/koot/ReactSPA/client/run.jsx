@@ -41,7 +41,7 @@ const checkSPAI18n = () =>
             typeof window[SSRSTATE].locales === 'undefined'
     );
 
-const run = ({ router, client }) =>
+const run = ({ router, client, container }) =>
     new Promise((resolve) => {
         // [SPA/多语言] 检查语言包是否准备完毕，如果仍在准备，轮询
         if (checkSPAI18n()) {
@@ -201,11 +201,16 @@ const run = ({ router, client }) =>
                             locales={window[SSRSTATE].locales}
                             {...ext}
                         />,
-                        document.getElementById('root')
+                        container ?? document.getElementById('root')
                     );
 
                     return true;
                 });
         });
-
 export default run;
+
+export const unmount = ({ container }) => {
+    ReactDOM.unmountComponentAtNode(
+        container ?? document.getElementById('root')
+    );
+};

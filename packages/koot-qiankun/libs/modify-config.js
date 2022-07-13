@@ -1,28 +1,6 @@
 /* eslint-disable no-console */
 
-const fs = require('fs-extra');
 const path = require('path');
-const os = require('os');
-const webpack = require('webpack');
-const sanitize = require('sanitize-filename');
-const resolve = require('resolve');
-const inquirer = require('inquirer');
-const merge = require('lodash/merge');
-const sharp = require('sharp');
-const spinner = require('koot-cli-kit/spinner');
-const spawn = require('koot-cli-kit/spawn');
-
-const {
-    keyConfigWebpackSPATemplateInject,
-    keyConfigBuildDll,
-    keyConfigIcons,
-    CLIENT_ROOT_PATH,
-} = require('koot/defaults/before-build');
-const getDirDevTmp = require('koot/libs/get-dir-dev-tmp');
-const getLogMsg = require('koot/libs/get-log-msg');
-const isFromStartCommand = require('koot/libs/is-from-start-command');
-const getCwd = require('koot/utils/get-cwd');
-const newWebpackConfig = require('koot-webpack/libs/new-client-webpack-config');
 
 const __ = require('./translate');
 
@@ -63,33 +41,65 @@ const modifyWebpackConfig = async (webpackConfig, appConfig) => {
     // 生成 Qiankun 配置对象
     //
     // ========================================================================
-    webpackConfig
-        .filter((config) => !config[keyConfigWebpackSPATemplateInject])
-        .forEach((config) => {
-            config.target = 'electron-renderer';
-        });
+    const config = {
+        ...(appConfig.qiankun || {}),
+        ...defaultQiankunConfig,
+    };
+    if (!config.name) throw new Error(__('NO `qiankun.name` GIVEN!'));
 
     // ========================================================================
     //
     // 修改 output 类型
     //
     // ========================================================================
+    if (webpackConfig.output.libraryTarget !== 'umd') {
+        webpackConfig.output.library = `${config.name}_[name]`;
+        webpackConfig.output.libraryTarget = 'umd';
+    }
+
+    // ========================================================================
+    //
+    // 预处理入口
+    //
+    // ========================================================================
+    if (Array.isArray(webpackConfig.entry)) {
+        const entry = {
+            client: webpackConfig.entry,
+        };
+        webpackConfig.entry = entry;
+    } else if (typeof webpackConfig.entry === 'string') {
+        const entry = {
+            client: [webpackConfig.entry],
+        };
+        webpackConfig.entry = entry;
+    }
+    for (const key in webpackConfig.entry) {
+        if (!Array.isArray(webpackConfig.entry[key]))
+            webpackConfig.entry[key] = [webpackConfig.entry[key]];
+    }
 
     // ========================================================================
     //
     // 添加新入口: qiankun-entry
     //
     // ========================================================================
+    webpackConfig.entry['qiankun-entry'] = path.resolve(
+        __dirname,
+        './entry.js'
+    );
 
     // ========================================================================
     //
     // 向所有入口注入 public-path.js
     //
     // ========================================================================
-
-    // const lastConfig = webpackConfig
-    //     .filter((config) => !config[keyConfigWebpackSPATemplateInject])
-    //     .slice(-1)[0];
+    if (typeof webpackConfig.entry === 'object') {
+        for (const key in webpackConfig.entry) {
+            webpackConfig.entry[key].unshift(
+                path.resolve(__dirname, './pablic-path.js')
+            );
+        }
+    }
 
     // console.log('after modify', { webpackConfig, appConfig });
 
