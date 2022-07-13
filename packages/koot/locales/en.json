@@ -4,7 +4,8 @@
     "appType": {
         "ReactApp": "React Isomorphic",
         "ReactSPA": "React SPA",
-        "ReactElectronSPA": "React SPA (Electron)"
+        "ReactElectronSPA": "React SPA (Electron)",
+        "ReactQiankunSPA": "React SPA (Qiankun MicroApp)"
     },
     "safeguard": {
         "INVALID_CONFIG": "Invalid config: ${key}",

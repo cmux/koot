@@ -91,6 +91,7 @@ module.exports = ({
         if (isDev) {
             injectCache[scriptsRunFirst] = combineFilePaths(
                 name,
+                false,
                 filename,
                 localeId
             );
@@ -107,6 +108,7 @@ module.exports = ({
             ) {
                 injectCache[scriptsRunFirst] = combineFilePaths(
                     name,
+                    false,
                     filename,
                     localeId
                 );
@@ -125,7 +127,7 @@ module.exports = ({
                 .map((file) => {
                     if (isDev) {
                         // return `<script type="text/javascript" src="${getClientFilePath(true, file)}"></script>`;
-                        return combineFilePaths('critical', true, file);
+                        return combineFilePaths('critical', false, true, file);
                     }
                     return scriptTagsFromContent('critical', true, file);
                 })
@@ -138,7 +140,7 @@ module.exports = ({
         defaultEntrypoints.forEach((key) => {
             if (Array.isArray(entrypoints[key])) {
                 r += filterEntrypoint(entrypoints[key])
-                    .map((file) => {
+                    .map((file, index, arr) => {
                         // const isDevHot = /\.hot-update\.js$/.test(file)
                         // console.log(key, file, isDevHot)
                         // if (isDev)
@@ -147,7 +149,12 @@ module.exports = ({
                         //     true,
                         //     file
                         // )}" defer></script>`;
-                        return combineFilePaths(key, true, file);
+                        return combineFilePaths(
+                            key,
+                            index === arr.length - 1,
+                            true,
+                            file
+                        );
                     })
                     .join('');
             }
@@ -262,7 +269,7 @@ module.exports = ({
  * @param {...any} args `utils/get-client-file-path` 对应的参数
  * @returns {String} 整合的 HTML 结果
  */
-const combineFilePaths = (name, ...args) => {
+const combineFilePaths = (name, isLast = false, ...args) => {
     let pathnames = getClientFilePath(...args);
     if (!Array.isArray(pathnames)) pathnames = [pathnames];
 
@@ -290,9 +297,12 @@ const combineFilePaths = (name, ...args) => {
     // })
     return pathnames
         .filter((pathname) => !injected.includes(pathname))
-        .map((pathname) => {
+        .map((pathname, index, arr) => {
+            // console.log(index, arr.length)
             injected.push(pathname);
-            return `<script type="text/javascript" src="${pathname}" defer ${scriptTagEntryAttributeName}="${name}"></script>`;
+            return `<script type="text/javascript" src="${pathname}" defer ${scriptTagEntryAttributeName}="${name}"${
+                name === 'client' && isLast ? ' entry' : ''
+            }></script>`;
         })
         .join('');
 };

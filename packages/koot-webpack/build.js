@@ -632,7 +632,8 @@ module.exports = async (kootConfig = {}) => {
                 before: (app) => {
                     if (
                         appType === 'ReactSPA' ||
-                        appType === 'ReactElectronSPA'
+                        appType === 'ReactElectronSPA' ||
+                        appType === 'ReactQiankunSPA'
                     ) {
                         require('koot/ReactSPA/dev-server/extend')(app);
                     }

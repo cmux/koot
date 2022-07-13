@@ -409,9 +409,8 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                                     `setLocales(locales);`,
                                 'utf-8'
                             );
-                            result.entry[
-                                getSpaLocaleFileId(localeId)
-                            ] = pathname;
+                            result.entry[getSpaLocaleFileId(localeId)] =
+                                pathname;
                         }
                     }
                     result.plugins.push(

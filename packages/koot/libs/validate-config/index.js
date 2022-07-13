@@ -177,7 +177,8 @@ const validateConfig = async (projectDir, options = {}) => {
             md5(tmpConfigPortionServer)
         )
     );
-    process.env.KOOT_PROJECT_CONFIG_PORTION_SERVER_PATHNAME = pathTmpConfigPortionServer;
+    process.env.KOOT_PROJECT_CONFIG_PORTION_SERVER_PATHNAME =
+        pathTmpConfigPortionServer;
     await fs.writeFile(
         pathTmpConfigPortionServer,
         tmpConfigPortionServer,
@@ -192,7 +193,8 @@ const validateConfig = async (projectDir, options = {}) => {
             md5(tmpConfigPortionClient)
         )
     );
-    process.env.KOOT_PROJECT_CONFIG_PORTION_CLIENT_PATHNAME = pathTmpConfigPortionClient;
+    process.env.KOOT_PROJECT_CONFIG_PORTION_CLIENT_PATHNAME =
+        pathTmpConfigPortionClient;
     await fs.writeFile(
         pathTmpConfigPortionClient,
         tmpConfigPortionClient,
@@ -207,7 +209,8 @@ const validateConfig = async (projectDir, options = {}) => {
             md5(tmpConfigPortionOtherClient)
         )
     );
-    process.env.KOOT_PROJECT_CONFIG_PORTION_OTHER_CLIENT_PATHNAME = pathTmpConfigPortionOtherClient;
+    process.env.KOOT_PROJECT_CONFIG_PORTION_OTHER_CLIENT_PATHNAME =
+        pathTmpConfigPortionOtherClient;
     await fs.writeFile(
         pathTmpConfigPortionOtherClient,
         tmpConfigPortionOtherClient,
@@ -219,7 +222,8 @@ const validateConfig = async (projectDir, options = {}) => {
         [keyFileProjectConfigTempFull]: pathTmpConfig,
         [keyFileProjectConfigTempPortionServer]: pathTmpConfigPortionServer,
         [keyFileProjectConfigTempPortionClient]: pathTmpConfigPortionClient,
-        [keyFileProjectConfigTempPortionOtherClient]: pathTmpConfigPortionOtherClient,
+        [keyFileProjectConfigTempPortionOtherClient]:
+            pathTmpConfigPortionOtherClient,
     };
 };
 
@@ -328,6 +332,13 @@ const finalValidate = async (config = {}) => {
             if (isSPA) {
                 process.env.KOOT_PROJECT_TYPE = 'ReactElectronSPA';
                 process.env.KOOT_BUILD_TARGET = 'electron';
+            }
+            break;
+        }
+        case 'qiankun': {
+            if (isSPA) {
+                process.env.KOOT_PROJECT_TYPE = 'ReactQiankunSPA';
+                process.env.KOOT_BUILD_TARGET = 'qiankun';
             }
             break;
         }

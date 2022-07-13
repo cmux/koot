@@ -64,7 +64,7 @@ module.exports = async (kootConfig = {}) => {
     const appType = await getAppType();
     const appConfig = Object.assign({}, defaults, kootConfig, {
         appType,
-        appTypeUse: appType === 'ReactElectronSPA' ? 'ReactSPA' : appType,
+        appTypeUse: ['ReactElectronSPA', 'ReactQiankunSPA'].includes(appType) ? 'ReactSPA' : appType,
         distClientAssetsDirName,
         [keyConfigClientAssetsPublicPath]: clientAssetsPublicPath,
     });
@@ -178,6 +178,12 @@ module.exports = async (kootConfig = {}) => {
     if (STAGE === 'client' && TYPE === 'spa' && TARGET === 'electron') {
         await resolveRequire(
             'koot-electron',
+            'libs/modify-config.js'
+        )(appConfig);
+    }
+    if (STAGE === 'client' && TYPE === 'spa' && TARGET === 'qiankun') {
+        await resolveRequire(
+            'koot-qiankun',
             'libs/modify-config.js'
         )(appConfig);
     }

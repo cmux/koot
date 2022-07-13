@@ -125,6 +125,7 @@ module.exports = () => {
          * - _空_ - 默认
          * - serverless - Serverless App (SSR)
          * - electron - Electron App (SPA)
+         * - qiankun - Qiankun MicroApp (SPA)
          */
         KOOT_BUILD_TARGET: '',
 

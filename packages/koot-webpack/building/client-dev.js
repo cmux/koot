@@ -176,7 +176,11 @@ async function buildClientDev({
             : [...watchFiles],
 
         onBeforeSetupMiddleware: (devServer) => {
-            if (appType === 'ReactSPA' || appType === 'ReactElectronSPA') {
+            if (
+                appType === 'ReactSPA' ||
+                appType === 'ReactElectronSPA' ||
+                appType === 'ReactQiankunSPA'
+            ) {
                 require('koot/ReactSPA/dev-server/extend')(devServer.app);
             }
             if (typeof before === 'function') return before(devServer.app);

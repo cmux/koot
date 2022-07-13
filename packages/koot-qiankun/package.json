@@ -1,0 +1,30 @@
+{
+    "name": "koot-qiankun",
+    "version": "0.15.0-rc.15",
+    "description": "Creates Qiankun MicroApp configuration for Koot.js app.",
+    "sideEffects": false,
+    "scripts": {},
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/cmux/koot"
+    },
+    "keywords": [
+        "webpack",
+        "koot"
+    ],
+    "license": "Apache-2.0",
+    "author": {
+        "name": "diablohu",
+        "email": "diablohudream@gmail.com",
+        "url": "http://diablohu.com"
+    },
+    "bugs": {
+        "url": "https://github.com/cmux/koot/issues"
+    },
+    "homepage": "https://github.com/cmux/koot",
+    "dependencies": {},
+    "devDependencies": {
+        "koot": "^0.15.0-rc.15"
+    },
+    "gitHead": "942040b1f3934f9d3357df69a62aef27a800b70f"
+}

@@ -11,6 +11,9 @@ module.exports = (app) => {
     getDevRoutes().forEach(({ file, route }) => {
         app.get(`${route}`, function (req, res) {
             res.type('application/javascript');
+            res.set({
+                'Access-Control-Allow-Origin': '*',
+            });
             res.send(fs.readFileSync(file));
         });
     });
@@ -21,6 +24,9 @@ module.exports = (app) => {
     if (fileDll && fs.existsSync(fileDll))
         app.get(`${dll}`, function (req, res) {
             res.type('application/javascript');
+            res.set({
+                'Access-Control-Allow-Origin': '*',
+            });
             res.send(fs.readFileSync(fileDll));
         });
 };

@@ -4,7 +4,8 @@
     "appType": {
         "ReactApp": "React 同构",
         "ReactSPA": "React SPA",
-        "ReactElectronSPA": "React SPA (Electron)"
+        "ReactElectronSPA": "React SPA (Electron)",
+        "ReactQiankunSPA": "React SPA (Qiankun 微前端子项目)"
     },
     "safeguard": {
         "INVALID_CONFIG": "无效的配置: ${key}",

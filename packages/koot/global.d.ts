@@ -225,7 +225,11 @@ declare namespace NodeJS {
          *     - serverless 属于 ReactApp
          * - ReactSPA - React SPA
          */
-        KOOT_PROJECT_TYPE: 'ReactApp' | 'ReactSPA' | 'ReactElectronSPA';
+        KOOT_PROJECT_TYPE:
+            | 'ReactApp'
+            | 'ReactSPA'
+            | 'ReactElectronSPA'
+            | 'ReactQiankunSPA';
         /** EJS 模板内容 */
         KOOT_HTML_TEMPLATE: string;
         /**
@@ -263,7 +267,7 @@ declare namespace NodeJS {
          * - serverless - Serverless App (SSR)
          * - electron - Electron App (SPA)
          */
-        KOOT_BUILD_TARGET: '' | 'serverless' | 'electron';
+        KOOT_BUILD_TARGET: '' | 'serverless' | 'electron' | 'qiankun';
         /**
          * 多语言项目种，URL 采用何种方式区分语种、切换语种
          * - **query** (默认)
