@@ -1,5 +1,6 @@
 // const path = require('path');
 
+const { entrypointName } = require('koot-qiankun/libs/constants');
 const {
     chunkNameClientRunFirst,
     scriptTagEntryAttributeName,
@@ -75,6 +76,8 @@ module.exports = ({
     );
     // const isProd = !isDev;
     const isSPA = Boolean(process.env.WEBPACK_BUILD_TYPE === 'spa');
+    const isQiankun =
+        isSPA && Boolean(process.env.KOOT_BUILD_TARGET === 'qiankun');
     /** @type {boolean} 启用多语言的 SPA */
     isSPAi18nEnabled = Boolean(
         isSPA &&
@@ -91,7 +94,7 @@ module.exports = ({
         if (isDev) {
             injectCache[scriptsRunFirst] = combineFilePaths(
                 name,
-                false,
+                '',
                 filename,
                 localeId
             );
@@ -108,7 +111,7 @@ module.exports = ({
             ) {
                 injectCache[scriptsRunFirst] = combineFilePaths(
                     name,
-                    false,
+                    '',
                     filename,
                     localeId
                 );
@@ -127,7 +130,7 @@ module.exports = ({
                 .map((file) => {
                     if (isDev) {
                         // return `<script type="text/javascript" src="${getClientFilePath(true, file)}"></script>`;
-                        return combineFilePaths('critical', false, true, file);
+                        return combineFilePaths('critical', '', true, file);
                     }
                     return scriptTagsFromContent('critical', true, file);
                 })
@@ -149,16 +152,21 @@ module.exports = ({
                         //     true,
                         //     file
                         // )}" defer></script>`;
-                        return combineFilePaths(
-                            key,
-                            index === arr.length - 1,
-                            true,
-                            file
-                        );
+                        return combineFilePaths(key, '', true, file);
                     })
                     .join('');
             }
         });
+        if (isQiankun && Object.keys(entrypoints).includes(entrypointName)) {
+            r += combineFilePaths(
+                entrypointName,
+                ' entry',
+                true,
+                entrypoints[entrypointName][
+                    entrypoints[entrypointName].length - 1
+                ]
+            );
+        }
 
         // 如果设置了 PWA 自动注册 Service-Worker，在此注册
         const pwaAuto =
@@ -269,7 +277,7 @@ module.exports = ({
  * @param {...any} args `utils/get-client-file-path` 对应的参数
  * @returns {String} 整合的 HTML 结果
  */
-const combineFilePaths = (name, isLast = false, ...args) => {
+const combineFilePaths = (name, addHtml, ...args) => {
     let pathnames = getClientFilePath(...args);
     if (!Array.isArray(pathnames)) pathnames = [pathnames];
 
@@ -300,9 +308,7 @@ const combineFilePaths = (name, isLast = false, ...args) => {
         .map((pathname, index, arr) => {
             // console.log(index, arr.length)
             injected.push(pathname);
-            return `<script type="text/javascript" src="${pathname}" defer ${scriptTagEntryAttributeName}="${name}"${
-                name === 'client' && isLast ? ' entry' : ''
-            }></script>`;
+            return `<script type="text/javascript" src="${pathname}" defer ${scriptTagEntryAttributeName}="${name}"${addHtml}></script>`;
         })
         .join('');
 };

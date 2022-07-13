@@ -45,7 +45,7 @@ const {
 let kootSSRContext;
 let koaCtx;
 
-if (__DEV__) {
+if (__DEV__ && __SERVER__) {
     global[SSRContext] = {};
 }
 

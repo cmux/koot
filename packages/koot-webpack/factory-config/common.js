@@ -162,6 +162,7 @@ const plugins = async (
         // "WEBPACK_SERVER_PUBLIC_PATH",
         KOOT_CLIENT_PUBLIC_PATH,
         'KOOT_REACT_LEGACY_REF',
+        'KOOT_HISTORY_BASENAME',
     ];
     if (
         remainingKootBuildConfig.sessionStore === true ||

@@ -14,7 +14,6 @@ window[CLIENT_MOUNT] = (args = {}) =>
     });
 window[CLIENT_UNMOUNT] = (args = {}) => kootUnmount(args);
 
-export default kootMount({
-    router,
-    client,
-});
+export default (process.env.KOOT_BUILD_TARGET === 'qiankun'
+    ? () => {}
+    : window[CLIENT_MOUNT])();

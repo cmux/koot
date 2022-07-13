@@ -11,6 +11,7 @@
 
 /**
  * 将样式表写入到 head 标签内
+ * - 如果添加受阻/报错，会添加到 <body> 中
  * @param {Object} styleMap
  */
 export const checkAndWriteIntoHead = (styleMap = {}) => {
@@ -27,7 +28,13 @@ export const checkAndWriteIntoHead = (styleMap = {}) => {
                 styleTag.innerHTML = style.css;
                 // styleTag.setAttribute('id', wrapper);
                 styleTag.setAttribute(__STYLE_TAG_MODULE_ATTR_NAME__, wrapper);
-                document.getElementsByTagName('head')[0].appendChild(styleTag);
+                try {
+                    document
+                        .getElementsByTagName('head')[0]
+                        .appendChild(styleTag);
+                } catch (e) {
+                    document.body.appendChild(styleTag);
+                }
             }
         } else {
             // 移除样式

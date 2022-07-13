@@ -16,74 +16,79 @@ import { REDUXSTATE } from '../defaults/defines-window';
  * @param {Function} createHistory
  * @returns {Object} History
  */
-const kootUseBasename = (createHistory) => (options = {}) => {
-    const history = createHistory(options);
-    const { basename } = options;
+const kootUseBasename =
+    (createHistory) =>
+    (options = {}) => {
+        const history = createHistory(options);
+        const { basename } = options;
 
-    const addBasename = (location) => {
-        if (!location) return location;
+        const addBasename = (location) => {
+            if (!location) return location;
 
-        if (basename && location.basename == null) {
-            if (
-                location.pathname
-                    .toLowerCase()
-                    .indexOf(basename.toLowerCase()) === 0
-            ) {
-                location.pathname = location.pathname.substring(
-                    basename.length
-                );
-                location.basename = basename;
+            if (basename && location.basename == null) {
+                if (
+                    location.pathname
+                        .toLowerCase()
+                        .indexOf(basename.toLowerCase()) === 0
+                ) {
+                    location.pathname = location.pathname.substring(
+                        basename.length
+                    );
+                    location.basename = basename;
 
-                if (location.pathname === '') location.pathname = '/';
-            } else {
-                location.basename = '';
+                    if (location.pathname === '') location.pathname = '/';
+                } else {
+                    location.basename = '';
+                }
             }
-        }
 
-        return location;
-    };
+            return location;
+        };
 
-    const prependBasename = (location) => {
-        if (!basename) return location;
+        const prependBasename = (location) => {
+            if (!basename) return location;
 
-        const object =
-            typeof location === 'string' ? parsePath(location) : location;
-        const pname = object.pathname;
-        const normalizedBasename =
-            basename.slice(-1) === '/' ? basename : `${basename}/`;
-        const normalizedPathname =
-            pname.charAt(0) === '/' ? pname.slice(1) : pname;
-        const pathname = normalizedBasename + normalizedPathname;
+            const object =
+                typeof location === 'string' ? parsePath(location) : location;
+            const pname = object.pathname;
+            const normalizedBasename =
+                basename.slice(-1) === '/' ? basename : `${basename}/`;
+            const normalizedPathname =
+                pname.charAt(0) === '/' ? pname.slice(1) : pname;
+            const pathname = normalizedBasename + normalizedPathname;
+
+            return {
+                ...object,
+                pathname,
+            };
+        };
+
+        // Override all write methods with basename-aware versions.
+        const push = (location) => history.push(prependBasename(location));
+
+        const replace = (location) =>
+            history.replace(prependBasename(location));
+
+        const createPath = (location) =>
+            history.createPath(prependBasename(location));
+
+        const createHref = (location) =>
+            history.createHref(prependBasename(location));
+
+        const createLocation = (location, ...args) =>
+            addBasename(
+                history.createLocation(prependBasename(location), ...args)
+            );
 
         return {
-            ...object,
-            pathname,
+            ...history,
+            push,
+            replace,
+            createPath,
+            createHref,
+            createLocation,
         };
     };
-
-    // Override all write methods with basename-aware versions.
-    const push = (location) => history.push(prependBasename(location));
-
-    const replace = (location) => history.replace(prependBasename(location));
-
-    const createPath = (location) =>
-        history.createPath(prependBasename(location));
-
-    const createHref = (location) =>
-        history.createHref(prependBasename(location));
-
-    const createLocation = (location, ...args) =>
-        addBasename(history.createLocation(prependBasename(location), ...args));
-
-    return {
-        ...history,
-        push,
-        replace,
-        createPath,
-        createHref,
-        createLocation,
-    };
-};
 
 let historyClient;
 
@@ -98,6 +103,13 @@ const history = (() => {
                 initialState.localeId
             ) {
                 historyConfig.basename = `/${initialState.localeId}`;
+                historyClient = kootUseBasename(createHistory)(historyConfig);
+            } else if (!!process.env.KOOT_HISTORY_BASENAME) {
+                const basename = process.env.KOOT_HISTORY_BASENAME.replace(
+                    /^\//,
+                    ''
+                ).replace(/\/$/, '');
+                historyConfig.basename = `/${basename}`;
                 historyClient = kootUseBasename(createHistory)(historyConfig);
             } else {
                 // historyClient = require("__KOOT_CLIENT_REQUIRE_HISTORY__")

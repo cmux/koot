@@ -192,6 +192,15 @@ const run = ({ router, client, container }) =>
                     const { history, routes, ...ext } = routerConfig;
                     // console.log(routes)
 
+                    // console.log(1111, 'before render', {
+                    //     container,
+                    //     store: Store,
+                    //     history,
+                    //     routes,
+                    //     localeId: window[LOCALEID],
+                    //     locales: window[SSRSTATE].locales,
+                    //     ...ext
+                    // })
                     ReactDOM.render(
                         <Root
                             store={Store}
@@ -203,6 +212,7 @@ const run = ({ router, client, container }) =>
                         />,
                         container ?? document.getElementById('root')
                     );
+                    // console.log(1111, 'after render', container)
 
                     return true;
                 });

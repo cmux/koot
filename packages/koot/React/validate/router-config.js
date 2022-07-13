@@ -33,6 +33,17 @@ const validateRouterConfig = (kootConfigRouter) =>
         handleIndexRoute(routes);
         i18nValidateRoutes(routes);
 
+        if (
+            process.env.KOOT_HISTORY_BASENAME &&
+            (routes.path === '/' || !routes.path)
+        )
+            routes.path =
+                '/' +
+                process.env.KOOT_HISTORY_BASENAME.replace(/^\//, '').replace(
+                    /\/$/,
+                    ''
+                );
+
         return routes;
     });
 

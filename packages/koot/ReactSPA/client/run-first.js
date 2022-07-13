@@ -48,7 +48,11 @@ import getLang from '../../i18n/spa/get-lang';
             console.error(e);
             throw new Error(`Locale file (${window[LOCALEID]}) load fail!`);
         };
-        js.src = window[SPALOCALEFILEMAP][window[LOCALEID]];
+        js.src = [
+            (__webpack_public_path__ || '') +
+                (/\/$/.test(__webpack_public_path__) ? '' : '/'),
+            window[SPALOCALEFILEMAP][window[LOCALEID]].replace(/^\//, ''),
+        ].join('');
 
         // console.warn(window[LOCALEID], js.src, js);
 

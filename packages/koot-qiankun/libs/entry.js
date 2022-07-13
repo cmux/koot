@@ -29,11 +29,9 @@ export async function mount(props) {
  * usually in this case we uninstall the application instance of the subapplication.
  */
 export async function unmount(props) {
-    window?.[CLIENT_UNMOUNT]?.(
-        props.container
-            ? props.container.querySelector('#root')
-            : document.getElementById('root')
-    );
+    window?.[CLIENT_UNMOUNT]?.({
+        container: props.container,
+    });
 }
 
 /**

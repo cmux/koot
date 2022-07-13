@@ -175,7 +175,7 @@ async function buildClientDev({
             ? { ...optionWatchFiles }
             : [...watchFiles],
 
-        onBeforeSetupMiddleware: (devServer) => {
+        setupMiddlewares: (devServer) => {
             if (
                 appType === 'ReactSPA' ||
                 appType === 'ReactElectronSPA' ||
