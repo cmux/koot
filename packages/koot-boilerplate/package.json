@@ -28,22 +28,22 @@
         "up": "yarn upgrade-interactive --latest"
     },
     "dependencies": {
-        "axios": "^0.22.0",
+        "axios": "^0.27.2",
         "bind-event": "^1.1.2",
         "classnames": "^2.3.1",
         "koot": "^0.15.0-rc.15"
     },
     "devDependencies": {
         "@types/classnames": "^2.3.0",
-        "autoprefixer": "^10.3.7",
+        "autoprefixer": "^10.4.7",
         "babel-eslint": "^10.1.0",
-        "cssnano": "^5.0.8",
+        "cssnano": "^5.1.12",
         "eslint": "^7.32.0",
         "eslint-config-koot": "^3.1.1",
-        "husky": "^7.0.2",
+        "husky": "^8.0.1",
         "lint-staged": "^11.2.1",
         "normalize.css": "^8.0.1",
-        "prettier": "^2.4.1",
+        "prettier": "^2.7.1",
         "prettier-eslint": "^13.0.0",
         "redux-logger": "^3.0.6",
         "svg-url-loader": "^7.1.1"

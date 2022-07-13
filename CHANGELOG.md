@@ -5,7 +5,7 @@
 **⚠ 重大改动 ⚠**
 
 -   此次更新包含诸多重大改动，对于已有项目的升级，请参阅[升级指南](https://koot.js.org/#/migration/0.14-to-0.15)
--   _Node.js_ 最低版本要求提升到 `12.20.0`
+-   _Node.js_ 最低版本要求提升到 `14.15.0`
 -   从 `koot` 直接引用 `store` `history` `localeId` 的方式已被完全弃用，请改用 `getStore()` `getHistory()` `getLocaleId()`
 
     -   _0.14_:
@@ -33,8 +33,8 @@
 -   重大依赖库版本更新。_Koot.js_ 内部已存在部分兼容性处理，原则上对已有项目不会造成影响，如遇到相关问题可点击对应的问题链接进行反馈
     -   `react` -> _^17.0.2_ ([新版本官方介绍](https://reactjs.org/blog/2020/10/20/react-v17.html))
     -   `react-dom` -> _^17.0.2_
-    -   `postcss` -> _^8.3.6_ ([#285](https://github.com/cmux/koot/issues/285))
-    -   `webpack` -> _^5.53.0_ ([#215](https://github.com/cmux/koot/issues/215))
+    -   `postcss` -> _^8.4.14_ ([#285](https://github.com/cmux/koot/issues/285))
+    -   `webpack` -> _^5.73.0_ ([#215](https://github.com/cmux/koot/issues/215))
     -   `webpack-dev-server` -> _^4.2.1_ ([#301](https://github.com/cmux/koot/issues/301)) ([官方升级指南](https://github.com/webpack/webpack-dev-server/blob/master/migration-v4.md))
 -   移除以下依赖包，现在不会默认安装。如有使用需要，请在项目中自行安装
     -   `@diablohu/hard-source-webpack-plugin`
@@ -46,6 +46,7 @@
 
 **新特性**
 
+-   现已支持 _Qiankun_ 微前端子项目开发。请参见文档 [Qiankun](https://koot.js.org/#/qiankun)。
 -   现已支持全新的 _JSX_ 转译引擎 ([#282](https://github.com/cmux/koot/issues/282))
     -   该功能对从 0.15 之前版本升级而来的项目默认关闭，如需开启请参阅 [React 官方文档](https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html)
     -   使用 `create-koot-app` (`koot-cli`) 创建的新项目会使用该新特性
@@ -97,28 +98,30 @@
         -   `filesize`
 -   **koot-electron**
     -   更新依赖包 **major** 版本号
-        -   `electron` -> _^15.1.2_
+        -   `electron` -> _^19.0.8_
+        -   `electron-builder` -> _^23.1.0_
 -   **koot-webpack**
 
     -   移除 _CSS_ 处理时的 `universal-alias-loader` 逻辑
         -   新版 _Webpack_ 已默认支持 `css-loader` 使用 `resolve.alias` 配置，该 _Loader_ 不再需要
     -   更新依赖包 **major** 版本号
-        -   `compression-webpack-plugin` -> _^9.0.0_
-        -   `copy-webpack-plugin` -> _^9.0.1_
-        -   `css-loader` -> _^6.3.0_
-        -   `less` -> _^4.1.2_
-        -   `less-loader` -> _^10.0.1_
-        -   `mini-css-extract-plugin` -> _^2.4.2_
-        -   `postcss` -> _^8.3.9_ ([#285](https://github.com/cmux/koot/issues/285))
-        -   `postcss-loader` -> _^6.1.1_
-        -   `sass-loader` -> _^12.1.0_
-        -   `style-loader` -> _^3.3.0_
+        -   `compression-webpack-plugin` -> _^10.0.0_
+        -   `copy-webpack-plugin` -> _^11.0.0_
+        -   `css-loader` -> _^6.7.1_
+        -   `less` -> _^4.1.3_
+        -   `less-loader` -> _^11.0.0_
+        -   `mini-css-extract-plugin` -> _^2.6.1_
+        -   `postcss` -> _^8.4.14_ ([#285](https://github.com/cmux/koot/issues/285))
+        -   `postcss-loader` -> _^7.0.1_
+        -   `sass-loader` -> _^13.0.2_
+        -   `schema-utils` -> _^4.0.0_
+        -   `style-loader` -> _^3.3.1_
         -   `thread-loader` -> _^3.0.4_
-        -   `webpack` -> _^5.58.1_ ([#215](https://github.com/cmux/koot/issues/215))
-        -   `webpack-bundle-analyzer` -> _^4.4.2_
-        -   `webpack-dev-middleware` -> _^5.2.1_
-        -   `webpack-dev-server` -> _^4.3.1_ ([#301](https://github.com/cmux/koot/issues/301)) ([官方升级指南](https://github.com/webpack/webpack-dev-server/blob/master/migration-v4.md))
-        -   `workbox-webpack-plugin` -> _^6.3.0_
+        -   `webpack` -> _^5.73.0_ ([#215](https://github.com/cmux/koot/issues/215))
+        -   `webpack-bundle-analyzer` -> _^4.5.0_
+        -   `webpack-dev-middleware` -> _^5.3.3_
+        -   `webpack-dev-server` -> _^4.9.3_ ([#301](https://github.com/cmux/koot/issues/301)) ([官方升级指南](https://github.com/webpack/webpack-dev-server/blob/master/migration-v4.md))
+        -   `workbox-webpack-plugin` -> _^6.5.3_
     -   添加依赖包
         -   `@babel/plugin-proposal-nullish-coalescing-operator`
         -   `@babel/plugin-proposal-optional-chaining`

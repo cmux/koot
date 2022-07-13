@@ -27,8 +27,8 @@
         "node": ">= 8.9.0"
     },
     "dependencies": {
-        "electron": "^15.1.2",
-        "electron-builder": "^22.11.7"
+        "electron": "^19.0.8",
+        "electron-builder": "^23.1.0"
     },
     "devDependencies": {
         "koot": "^0.15.0-rc.15",
