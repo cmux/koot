@@ -19,6 +19,7 @@ const defaultChecked = [
     'koot',
     'koot-cli',
     'koot-electron',
+    'koot-qiankun',
     'koot-webpack',
 ];
 
