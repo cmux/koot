@@ -8,7 +8,8 @@
         border-top: @main-gutter-top solid transparent;
         border-bottom: @main-gutter-bottom solid transparent;
 
-        a {
+        a,
+        .link-style {
             display: inline-block;
             color: @color-nav-background;
             text-decoration: none;
@@ -25,6 +26,9 @@
             &:active {
                 color: hsl(0, 0%, 65%);
             }
+        }
+        button.link-style {
+            cursor: pointer;
         }
     }
 

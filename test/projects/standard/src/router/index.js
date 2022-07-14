@@ -27,10 +27,10 @@ export default {
             import(
                 /* webpackChunkName: "PageHome" */
                 '@views/home'
-            ).then(module => {
+            ).then((module) => {
                 if (routeCheck(nextState)) cb(null, module.default);
             });
-        }
+        },
     },
 
     childRoutes: (() => {
@@ -43,15 +43,15 @@ export default {
                     import(
                         /* webpackChunkName: "Page Static" */
                         '@views/static'
-                    ).then(module => {
+                    ).then((module) => {
                         if (routeCheck(nextState)) cb(null, module.default);
                     });
                 },
                 childRoutes: [
                     {
-                        path: ':noComponentGiven'
-                    }
-                ]
+                        path: ':noComponentGiven',
+                    },
+                ],
             },
             {
                 path: 'delayed',
@@ -60,10 +60,10 @@ export default {
                     import(
                         /* webpackChunkName: "Page%Delayed" */
                         '@views/delayed'
-                    ).then(module => {
+                    ).then((module) => {
                         if (routeCheck(nextState)) cb(null, module.default);
                     });
-                }
+                },
             },
             {
                 path: 'ts',
@@ -72,10 +72,10 @@ export default {
                     import(
                         /* webpackChunkName: "Page?TS" */
                         '@views/ts'
-                    ).then(module => {
+                    ).then((module) => {
                         if (routeCheck(nextState)) cb(null, module.default);
                     });
-                }
+                },
             },
             {
                 path: 'test-pageinfo-deep',
@@ -84,10 +84,10 @@ export default {
                     import(
                         /* webpackChunkName: "Page\TestPageinfoDeep" */
                         '@views/test-pageinfo-deep'
-                    ).then(module => {
+                    ).then((module) => {
                         if (routeCheck(nextState)) cb(null, module.default);
                     });
-                }
+                },
             },
             {
                 path: 'test-server-cache',
@@ -96,15 +96,15 @@ export default {
                     import(
                         /* webpackChunkName: "Page/TestServerCache" */
                         '@views/test-server-cache'
-                    ).then(module => {
+                    ).then((module) => {
                         if (routeCheck(nextState)) cb(null, module.default);
                     });
-                }
+                },
             },
             {
                 path: 'test-modify-state',
                 name: 'Test: test-modify-state',
-                component: PageTestModifyState
+                component: PageTestModifyState,
             },
             {
                 path: 'test-server-ctx-redirect',
@@ -112,11 +112,11 @@ export default {
                     import(
                         /* webpackChunkName: "Page*TestServerCache" */
                         '@views/test-server-ctx-redirect'
-                    ).then(module => {
+                    ).then((module) => {
                         if (routeCheck(nextState)) cb(null, module.default);
                     });
-                }
-            }
+                },
+            },
         ];
         if (!__SPA__) {
             children.push({
@@ -127,12 +127,12 @@ export default {
                     import(
                         /* webpackChunkName: "Page>Extend" */
                         '@views/extend'
-                    ).then(module => {
+                    ).then((module) => {
                         if (routeCheck(nextState)) cb(null, module.default);
                     });
-                }
+                },
             });
         }
         return children;
-    })()
+    })(),
 };

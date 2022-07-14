@@ -1,7 +1,40 @@
 const fs = require('fs-extra');
 const path = require('path');
+const { createConfigItem } = require('@babel/core/lib/config/item');
+const semver = require('semver');
+
+// const { KOOT_REACT_RUNTIME } = require('koot/defaults/envs');
 const getCwd = require('koot/utils/get-cwd');
-const transformFixDefaultExport = require('./transform-fix-default-export');
+// const transformFixDefaultExport = require('./transform-fix-default-export');
+
+const { version: reactVersion } = require('react/package.json');
+
+const getKootFile = require('../../libs/get-koot-file');
+
+// ============================================================================
+
+/**
+ * 修改 Preset 对象的选项
+ * - 因为 Babel 不允许直接修改 Preset 的值，实际为根据传入的 Preset 生成一个全新的对象并返回
+ * @param {ConfigItem} preset
+ * @param {Object} appendOptions
+ * @param {Object} defaultOptions
+ */
+const modifyPresetOptions = (preset, appendOptions = {}, defaultOptions = {}) =>
+    createConfigItem(
+        [
+            preset.file.request,
+            {
+                ...defaultOptions,
+                ...(preset.options || {}),
+                ...appendOptions,
+            },
+        ],
+        {
+            dirname: preset.dirname,
+            type: 'preset',
+        }
+    );
 
 /**
  * 检查 Plugin 对象的请求文件的名字
@@ -25,6 +58,24 @@ const testPluginName = (pluginObject, regExp) => {
     );
 };
 
+/** 检查是否存在某个特定的 preset */
+const hasPreset = (presets, regex) =>
+    presets.some((preset) => regex.test(preset.file.request));
+
+// const reactHotLoaderClientBlacklist = [
+//     'koot/React/component-extender.jsx',
+//     'koot/ReactApp/client/index.jsx',
+//     'koot/ReactApp/server/ssr.jsx',
+//     'koot/ReactSPA/client/run.jsx',
+// ];
+
+// ============================================================================
+
+/** _Koot.js_ 所在路径 */
+const kootPathname = path.dirname(getKootFile('package.json'));
+
+// ============================================================================
+
 module.exports = require('babel-loader').custom((babel) => {
     // function myPlugin() {
     //     return {
@@ -42,6 +93,7 @@ module.exports = require('babel-loader').custom((babel) => {
             __server,
             __routes,
             __spaTemplateInject,
+            __i18n,
             ...loader
         }) {
             Object.assign(customOptions, {
@@ -51,6 +103,7 @@ module.exports = require('babel-loader').custom((babel) => {
                 __server,
                 __routes,
                 __spaTemplateInject,
+                __i18n,
             });
             // Pull out any custom options that the loader might have.
             return {
@@ -68,20 +121,43 @@ module.exports = require('babel-loader').custom((babel) => {
 
             const {
                 __createDll,
-                __react,
-                __typescript = false,
+                // __typescript,
+                // __react,
                 __server = false,
                 __spaTemplateInject = false,
                 __routes,
+                __i18n,
             } = customOptions;
             const { presets, plugins, ...options } = cfg.options;
+            const { filename } = options;
             const isServer =
                 __server || process.env.WEBPACK_BUILD_STAGE === 'server';
+            const isKootModule = !/^\.\./.test(
+                path.relative(kootPathname, filename)
+            );
+            let isReactClassic = false;
             // console.log({ options });
+
+            // make sure some settings correct ================================
+            const __react =
+                customOptions.__react || /\.(jsx|tsx)$/.test(filename);
+            const __typescript =
+                customOptions.__typescript || /\.(ts|tsx)$/.test(filename);
 
             // presets ========================================================
             const newPresets = [...presets];
-            if (__typescript) {
+            if (__react && !hasPreset(newPresets, /@babel\/preset-react/)) {
+                newPresets.unshift([
+                    require('@babel/preset-react').default,
+                    {
+                        runtime: 'automatic',
+                    },
+                ]);
+            }
+            if (
+                __typescript &&
+                !hasPreset(newPresets, /@babel\/preset-typescript/)
+            ) {
                 newPresets.unshift([
                     require('@babel/preset-typescript').default,
                     __react
@@ -91,34 +167,93 @@ module.exports = require('babel-loader').custom((babel) => {
                           }
                         : {},
                 ]);
-                // console.log(newPresets);
             }
             newPresets.forEach((preset, index) => {
-                if (
-                    typeof preset.file === 'object' &&
-                    /^@babel\/preset-env$/.test(preset.file.request)
-                ) {
-                    const thisPreset = newPresets[index];
-                    if (typeof thisPreset.options !== 'object')
-                        thisPreset.options = {};
-                    thisPreset.options.modules = false;
-                    thisPreset.options.exclude = [
-                        // '@babel/plugin-transform-regenerator',
-                        // '@babel/plugin-transform-async-to-generator'
-                    ];
-                    if (isServer || __spaTemplateInject) {
-                        thisPreset.options.targets = {
-                            node: true,
+                if (!typeof preset.file === 'object') return;
+                try {
+                    if (/^@babel\/preset-env$/.test(preset.file.request)) {
+                        const options = {
+                            modules: false,
+                            exclude: [
+                                ...((preset.options || {}).exclude || []),
+                            ],
                         };
-                        thisPreset.options.ignoreBrowserslistConfig = true;
-                        thisPreset.options.exclude.push(
-                            '@babel/plugin-transform-regenerator'
-                        );
-                        thisPreset.options.exclude.push(
-                            '@babel/plugin-transform-async-to-generator'
+                        if (isServer || __spaTemplateInject) {
+                            options.targets = {
+                                node: true,
+                            };
+                            options.ignoreBrowserslistConfig = true;
+                            options.exclude.push(
+                                '@babel/plugin-transform-regenerator'
+                            );
+                            options.exclude.push(
+                                '@babel/plugin-transform-async-to-generator'
+                            );
+                        }
+                        newPresets[index] = modifyPresetOptions(
+                            preset,
+                            options
                         );
                     }
-                    // console.log(__spaTemplateInject, thisPreset);
+
+                    /**
+                     * 对于 Koot 内部的 JSX/TSX 文件，根据 React 版本检查 @babel/preset-react 配置，做出相应修改
+                     * - 如果 >= 18 && runtime === 'classic' -> SET KOOT_REACT_RUNTIME = 'classic'
+                     * - 如果 ^17.0.0 && runtime !== 'automatic' -> SET KOOT_REACT_RUNTIME = 'classic'
+                     */
+                    if (
+                        // __react &&
+                        isKootModule &&
+                        /\.(jsx|tsx)$/.test(filename) &&
+                        /^@babel\/preset-react$/.test(preset.file.request)
+                    ) {
+                        //     newPresets[index] = modifyPresetOptions(preset, {
+                        //         runtime: 'automatic',
+                        // });
+                        const reactRuntime = preset.options
+                            ? preset.options.runtime
+                            : undefined;
+                        isReactClassic =
+                            (semver.satisfies(reactVersion, '^17.0.0') &&
+                                reactRuntime !== 'automatic') ||
+                            (semver.satisfies(reactVersion, '>=18') &&
+                                reactRuntime === 'classic');
+                        // console.log({
+                        //     filename,
+                        //     reactRuntime,
+                        //     reactVersion,
+                        //     satisfied17: semver.satisfies(
+                        //         reactVersion,
+                        //         '^17.0.0'
+                        //     ),
+                        //     satisfied18: semver.satisfies(reactVersion, '>=18'),
+                        //     isReactClassic,
+                        // });
+                        // console.log('\n\n ', {
+                        //     filename,
+                        //     kootPathname,
+                        //     relativePath: path.relative(kootPathname, filename),
+                        //     isKootModule: !/^\.\./.test(
+                        //         path.relative(kootPathname, filename)
+                        //     ),
+                        // });
+                        // if (semver.satisfies(reactVersion, '^17.0.0')) {
+                        //     process.env.KOOT_REACT_RUNTIME =
+                        //         reactRuntime === 'automatic'
+                        //             ? 'automatic'
+                        //             : 'classic';
+                        // } else if (semver.satisfies(reactVersion, '>=18')) {
+                        //     process.env.KOOT_REACT_RUNTIME =
+                        //         reactRuntime !== 'classic'
+                        //             ? 'automatic'
+                        //             : 'classic';
+                        // } else {
+                        //     process.env.KOOT_REACT_RUNTIME = 'classic';
+                        // }
+                        // console.log(process.env.KOOT_REACT_RUNTIME);
+                    }
+                } catch (e) {
+                    return;
                 }
             });
 
@@ -132,6 +267,8 @@ module.exports = require('babel-loader').custom((babel) => {
                     return false;
                 if (testPluginName(plugin, /^react-hot-loader(\/|\\)babel$/))
                     return false;
+                if (testPluginName(plugin, /^react-refresh(\/|\\)babel$/))
+                    return false;
                 if (testPluginName(plugin, 'transform-regenerator'))
                     return false;
 
@@ -143,12 +280,20 @@ module.exports = require('babel-loader').custom((babel) => {
             if (
                 !__createDll &&
                 __react &&
-                process.env.WEBPACK_BUILD_ENV === 'dev'
+                !isKootModule &&
+                process.env.WEBPACK_BUILD_ENV === 'dev' &&
+                !isServer
             ) {
-                // newPlugins.push(require('extract-hoc/babel'));
-                newPlugins.push(require('react-hot-loader/babel'));
+                newPlugins.push([
+                    require.resolve('react-refresh/babel'),
+                    {
+                        skipEnvCheck: Boolean(
+                            process.env.KOOT_TEST_MODE &&
+                                JSON.parse(process.env.KOOT_TEST_MODE)
+                        ),
+                    },
+                ]);
             }
-
             if (!__createDll && !isServer) {
                 let pathname = path.resolve(getCwd(), __routes);
                 if (fs.lstatSync(pathname).isDirectory()) pathname += '/index';
@@ -174,6 +319,26 @@ module.exports = require('babel-loader').custom((babel) => {
                 ]);
                 // console.log(newPlugins);
             }
+            if (
+                !__createDll &&
+                typeof __i18n === 'object' &&
+                __i18n.functionName
+            ) {
+                newPlugins.push([
+                    path.resolve(__dirname, './plugins/i18n.js'),
+                    __i18n,
+                ]);
+            }
+            if (isReactClassic) {
+                // console.log({ filename, isReactClassic });
+                newPlugins.push([
+                    path.resolve(
+                        __dirname,
+                        './plugins/react-classic-import.js'
+                    ),
+                    __i18n,
+                ]);
+            }
 
             const thisOptions = {
                 ...options,
@@ -186,14 +351,24 @@ module.exports = require('babel-loader').custom((babel) => {
         },
 
         result(result) {
-            if (
-                !customOptions.__createDll &&
-                customOptions.__react &&
-                process.env.WEBPACK_BUILD_ENV === 'dev' &&
-                process.env.WEBPACK_BUILD_STAGE === 'client'
-            ) {
-                result.code = transformFixDefaultExport(result.code);
-            }
+            // const {
+            // __createDll,
+            // __react,
+            // __typescript = false,
+            // __server = false,
+            // __spaTemplateInject = false,
+            // __routes,
+            // __i18n,
+            // } = customOptions;
+
+            // if (
+            //     !__createDll &&
+            //     __react &&
+            //     process.env.WEBPACK_BUILD_ENV === 'dev' &&
+            //     process.env.WEBPACK_BUILD_STAGE === 'client'
+            // ) {
+            //     result.code = transformFixDefaultExport(result.code);
+            // }
 
             // if (!customOptions.__createDll) {
             //     const { code, ...remainings } = result;

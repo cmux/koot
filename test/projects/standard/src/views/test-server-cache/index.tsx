@@ -1,12 +1,12 @@
-import React from 'react';
+import { FC } from 'react';
 import { getCache } from 'koot';
 
 const serverCacheStrings = {
     g: '__',
-    l: '++'
+    l: '++',
 };
 
-const View: React.FC = () => {
+const View: FC = () => {
     if (__CLIENT__) return null;
 
     const globalCache = getCache();
@@ -14,7 +14,7 @@ const View: React.FC = () => {
 
     const serverCache = {
         g: globalCache.__ || '',
-        l: localeCache.__ || ''
+        l: localeCache.__ || '',
     };
 
     if (!globalCache.__) globalCache.__ = serverCacheStrings.g;

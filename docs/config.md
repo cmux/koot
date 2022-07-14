@@ -283,6 +283,25 @@ module.exports = {
 
 ---
 
+## 其他 React 相关
+
+### reactLegacyRef
+
+-   类型: `boolean`
+-   默认值: `false`
+
+仅对旧版本升级时有意义。如果发现更新后 _React_ 的 `ref` 结果有变化，可以尝试打开该选项。
+
+```javascript
+module.exports = {
+    // 不启用 (默认值)
+    reactLegacyRef: false,
+
+    // 使用旧版 ref 特征
+    reactLegacyRef: true,
+};
+```
+
 ## 客户端设置 & 生命周期
 
 ### icon
@@ -544,24 +563,26 @@ module.exports = {
      *           每条结果最多保存时间, 单位: 毫秒 (ms)
      * @property {number} [maxCount=50]
      *           根据 URL 保留的结果条目数
-     * @property {(url)=>string|boolean} [get]
+     * @property {(url,ctx)=>string|boolean} [get]
      *           自定义缓存检查与吐出方法。存在时, maxAge 和 maxCount 设置将被忽略
      *           参数 url - 请求的完整的 URL
+     *           参数 ctx - 本次请求的 KOA Context
      *           返回 false 时，表示该 URL 没有缓存结果
-     * @property {(url,html)=>void} [set]
+     * @property {(url,html,ctx)=>void} [set]
      *           自定义缓存存储方法。存在时, maxAge 和 maxCount 设置将被忽略
      *           参数 url - 请求的完整的 URL
      *           参数 html - 服务器渲染结果
+     *           参数 ctx - 本次请求的 KOA Context
      */
     renderCache: {
         maxAge: 5000,
         maxCount: 50,
-        get: (url) => {
+        get: (url, ctx) => {
             // 自实现的缓存结果获取逻辑
             // return false
             return '完整渲染结果';
         },
-        set: (url, html) => {
+        set: (url, html, ctx) => {
             // 自实现的缓存结果存储逻辑
         },
     },
@@ -989,6 +1010,8 @@ module.exports = {
 
 Webpack 打包执行之前执行的方法。
 
+**注**: 该生命周期针对**每个**打包流程，如客户端和服务器端打包时均会触发。若只需要打包流程前执行一次的生命周期，请参照 `beforeBuild`
+
 ```javascript
 module.exports = {
     // 默认值
@@ -1017,6 +1040,8 @@ module.exports = {
 
 Webpack 打包执行之后执行的方法。
 
+**注**: 该生命周期针对**每个**打包流程，如客户端和服务器端打包时均会触发。若只需要打包流程后执行一次的生命周期，请参照 `afterBuild`
+
 ```javascript
 module.exports = {
     // 默认值
@@ -1030,6 +1055,56 @@ module.exports = {
     webpackAfter: async (kootConfigWithExtra) => ({
         // `kootConfigWithExtra` 中的额外信息详见上文 `webpackBefore` 的说明
     }),
+};
+```
+
+### beforeBuild
+
+-   类型: `Function`
+-   默认值: _无_
+-   **仅针对**: Webpack 打包过程
+
+在打包流程即将开始之前，执行的方法。
+
+```javascript
+module.exports = {
+    // 默认值
+    beforeBuild: undefined,
+
+    /**
+     * @async
+     * @param {Object} appConfig 经过兼容处理后的完整的配置对象
+     * @void
+     */
+    beforeBuild: async (appConfig) => {
+        // 案例：动态压缩图片资源
+    },
+};
+```
+
+### afterBuild
+
+-   类型: `Function`
+-   默认值: _无_
+-   **仅针对**: Webpack 打包过程
+
+在打包流程结束之后立刻执行的方法。
+
+**注**: 开发环境热更新时不会触发。
+
+```javascript
+module.exports = {
+    // 默认值
+    afterBuild: undefined,
+
+    /**
+     * @async
+     * @param {Object} appConfig 经过兼容处理后的完整的配置对象
+     * @void
+     */
+    afterBuild: async (appConfig) => {
+        // 案例：自动发布到线上服务器
+    },
 };
 ```
 

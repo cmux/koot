@@ -3,6 +3,7 @@ const getSSRStateString = require('../../../../libs/get-ssr-state-string');
 const {
     ssrContext: SSRContext,
 } = require('../../../../defaults/defines-server');
+const { REDUXSTATE } = require('../../../../defaults/defines-window');
 
 /** @type {String} 同步数据到 store 的静态方法名 */
 const LIFECYCLE_DATA_TO_STORE = 'onServerRenderStoreExtend';
@@ -146,7 +147,7 @@ const executeComponentLifecycle = async ({ store, renderProps, ctx }) => {
     const result = {
         title: process.env.KOOT_PROJECT_NAME || '',
         metaHtml: '',
-        reduxHtml: `window.__REDUX_STATE__ = ${getSSRStateString(
+        reduxHtml: `window.${REDUXSTATE} = ${getSSRStateString(
             store.getState()
         )};`,
     };
@@ -159,7 +160,12 @@ const executeComponentLifecycle = async ({ store, renderProps, ctx }) => {
                 ctx,
             });
 
-            const hasTitle = !!thisTitle;
+            // console.log({
+            //     thisTitle,
+            //     type: typeof thisTitle,
+            //     result: process.env.KOOT_PROJECT_NAME,
+            // });
+            const hasTitle = typeof thisTitle !== 'undefined';
             const hasMeta = Array.isArray(thisMetas) && thisMetas.length;
 
             if (hasTitle) result.title = thisTitle;

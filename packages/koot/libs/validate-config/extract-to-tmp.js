@@ -1,5 +1,5 @@
 const path = require('path');
-const { typesSPA } = require('../../defaults/before-build');
+// const { typesSPA } = require('../../defaults/before-build');
 const validatePathname = require('../../libs/validate-pathname');
 
 /**
@@ -40,31 +40,31 @@ module.exports = async (projectDir, config) => {
                     client.onHistoryUpdate = config.onHistoryUpdate;
                 return client;
             })(),
-            devServer: config.devServer
+            devServer: config.devServer,
         };
 
         if (!obj.devServer) delete obj.devServer;
 
         // SPA
-        if (typesSPA.includes(config.type)) {
-            // if (config.templateInject) obj.inject = config.templateInject
-        } else {
-            obj.server = (() => {
-                const server = {};
-                const extract = (keyInConfig, keyInServer) => {
-                    if (typeof config[keyInConfig] !== 'undefined')
-                        server[keyInServer] = config[keyInConfig];
-                };
-                extract('koaStatic', 'koaStatic');
-                extract('renderCache', 'renderCache');
-                extract('proxyRequestOrigin', 'proxyRequestOrigin');
-                extract('templateInject', 'inject');
-                extract('serverBefore', 'before');
-                extract('serverAfter', 'after');
-                extract('serverOnRender', 'onRender');
-                return server;
-            })();
-        }
+        // if (typesSPA.includes(config.type)) {
+        // if (config.templateInject) obj.inject = config.templateInject
+        // } else {
+        obj.server = (() => {
+            const server = {};
+            const extract = (keyInConfig, keyInServer) => {
+                if (typeof config[keyInConfig] !== 'undefined')
+                    server[keyInServer] = config[keyInConfig];
+            };
+            extract('koaStatic', 'koaStatic');
+            extract('renderCache', 'renderCache');
+            extract('proxyRequestOrigin', 'proxyRequestOrigin');
+            extract('templateInject', 'inject');
+            extract('serverBefore', 'before');
+            extract('serverAfter', 'after');
+            extract('serverOnRender', 'onRender');
+            return server;
+        })();
+        // }
 
         // 将所有 Pathname 字符串转为 require()
         const optionsNeedImport = [
@@ -84,9 +84,9 @@ module.exports = async (projectDir, config) => {
             'server.onRender.beforePreRender',
             'server.onRender.beforeDataToStore',
             'server.onRender.afterDataToStore',
-            'inject'
+            'inject',
         ];
-        optionsNeedImport.forEach(key => {
+        optionsNeedImport.forEach((key) => {
             try {
                 // eslint-disable-next-line no-eval
                 if (eval(`typeof obj.${key} === 'string' && obj.${key}`)) {
@@ -115,7 +115,7 @@ module.exports = async (projectDir, config) => {
 
     /** @type {Object} 引用配置 (部分) 的配置对象 */
     const tmpConfigPortionServer = {};
-    propertiesPortion.forEach(key => {
+    propertiesPortion.forEach((key) => {
         if (typeof tmpConfig[key] === 'object')
             tmpConfigPortionServer[key] = { ...tmpConfig[key] };
         else if (tmpConfig[key]) tmpConfigPortionServer[key] = tmpConfig[key];
@@ -139,9 +139,9 @@ module.exports = async (projectDir, config) => {
      * @param {Object} config
      * @returns {String}
      */
-    const transform = config => {
+    const transform = (config) => {
         return Object.keys(config)
-            .map(key => {
+            .map((key) => {
                 if (key === 'server')
                     return `export const ${key} = __SERVER__ ? ${JSON.stringify(
                         config[key]
@@ -164,6 +164,6 @@ module.exports = async (projectDir, config) => {
             transform(tmpConfigPortionClient),
         tmpConfigPortionOtherClient:
             '// 核心代码中引用的配置文件 (部分其他)\n\n' +
-            transform(tmpConfigPortionOtherClient)
+            transform(tmpConfigPortionOtherClient),
     };
 };

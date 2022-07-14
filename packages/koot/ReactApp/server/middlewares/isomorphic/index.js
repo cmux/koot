@@ -151,7 +151,9 @@ const middlewareIsomorphic = (options = {}) => {
             const thisRenderCache = renderCacheMap
                 ? renderCacheMap.get(LocaleId)
                 : undefined;
-            const cached = thisRenderCache ? thisRenderCache.get(url) : false;
+            const cached = thisRenderCache
+                ? thisRenderCache.get(url, ctx)
+                : false;
             if (!__DEV__ && cached !== false) {
                 ctx.body = cached;
                 renderComplete();
@@ -255,7 +257,7 @@ const middlewareIsomorphic = (options = {}) => {
 
             if (result.body) {
                 // HTML 结果暂存入缓存
-                if (thisRenderCache) thisRenderCache.set(url, result.body);
+                if (thisRenderCache) thisRenderCache.set(url, result.body, ctx);
                 ctx.body = result.body;
                 renderComplete();
                 return;

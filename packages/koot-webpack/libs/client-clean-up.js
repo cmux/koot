@@ -148,7 +148,6 @@ const clean = async (config = {}) => {
     if (!check(config)) return;
 
     const { dist } = config;
-    // console.log({ dist, bundleVersionsKeep });
 
     /** outputs.json 文件 */
     const fileOutputs = getOutputsFile(dist);
@@ -172,7 +171,7 @@ const clean = async (config = {}) => {
         );
         finalList = listFiles.filter((file) => !latestFiles.includes(file));
     }
-    // console.log({ listIds, finalList });
+    // console.log({ dist, listIds, finalList });
 
     listIds.forEach((id) => delete outputs[id]);
     for (const file of finalList) {

@@ -1,16 +1,24 @@
-const path = require('path');
+// const path = require('path');
 
 const {
     chunkNameClientRunFirst,
     scriptTagEntryAttributeName,
     thresholdScriptRunFirst,
+    entrypointQiankun,
 } = require('../../defaults/before-build');
 const defaultEntrypoints = require('../../defaults/entrypoints');
+const {
+    LOCALEID,
+    REDUXSTATE,
+    SSRSTATE,
+    SPALOCALEFILEMAP,
+} = require('../../defaults/defines-window');
 const {
     scopeNeedTransformPathname,
 } = require('../../defaults/defines-service-worker');
 const readClientFile = require('../../utils/read-client-file');
 const getClientFilePath = require('../../utils/get-client-file-path');
+const getClientURI = require('../../utils/get-client-uri');
 const getSSRStateString = require('../../libs/get-ssr-state-string');
 const getSwScopeFromEnv = require('../../libs/get-sw-scope-from-env');
 const {
@@ -21,6 +29,21 @@ const {
 
 let isSPAi18nEnabled = false;
 const SPAi18nNeedWaiting = false;
+
+/** 已注入的 js 文件 */
+let injected = [];
+
+/** 过滤入口，得到 js 文件列表 */
+function filterEntrypoint(list) {
+    return (
+        list
+            .filter((file) => /\.(js|jsx|mjs|ejs)$/.test(file))
+            // 将第一次请求时产生的热更新过滤掉
+            .filter((file) => !/\.hot-update\.js$/.test(file))
+    );
+}
+
+// ============================================================================
 
 /**
  * 注入: JavaScript 代码
@@ -53,6 +76,8 @@ module.exports = ({
     );
     // const isProd = !isDev;
     const isSPA = Boolean(process.env.WEBPACK_BUILD_TYPE === 'spa');
+    const isQiankun =
+        isSPA && Boolean(process.env.KOOT_BUILD_TARGET === 'qiankun');
     /** @type {boolean} 启用多语言的 SPA */
     isSPAi18nEnabled = Boolean(
         isSPA &&
@@ -62,12 +87,14 @@ module.exports = ({
     );
     // SPAi18nNeedWaiting = Boolean(isSPAi18nEnabled /* && isDev*/);
 
+    // 添加 `script` 标签 - RUN-FIRST (第一优先级运行)
     if (isDev || typeof injectCache[scriptsRunFirst] === 'undefined') {
         const filename = `${chunkNameClientRunFirst}.js`;
         const name = '*run-first';
         if (isDev) {
             injectCache[scriptsRunFirst] = combineFilePaths(
                 name,
+                '',
                 filename,
                 localeId
             );
@@ -84,6 +111,7 @@ module.exports = ({
             ) {
                 injectCache[scriptsRunFirst] = combineFilePaths(
                     name,
+                    '',
                     filename,
                     localeId
                 );
@@ -98,12 +126,11 @@ module.exports = ({
 
         // 入口: critical
         if (needInjectCritical && Array.isArray(entrypoints.critical)) {
-            r += entrypoints.critical
-                .filter((file) => path.extname(file) === '.js')
+            r += filterEntrypoint(entrypoints.critical)
                 .map((file) => {
                     if (isDev) {
                         // return `<script type="text/javascript" src="${getClientFilePath(true, file)}"></script>`;
-                        return combineFilePaths('critical', true, file);
+                        return combineFilePaths('critical', '', true, file);
                     }
                     return scriptTagsFromContent('critical', true, file);
                 })
@@ -115,21 +142,31 @@ module.exports = ({
         // console.log('entrypoints', entrypoints)
         defaultEntrypoints.forEach((key) => {
             if (Array.isArray(entrypoints[key])) {
-                r += entrypoints[key]
-                    .filter((file) => /\.(js|jsx|mjs|ejs)$/.test(file))
-                    .map((file) => {
-                        // console.log(file)
+                r += filterEntrypoint(entrypoints[key])
+                    .map((file, index, arr) => {
+                        // const isDevHot = /\.hot-update\.js$/.test(file)
+                        // console.log(key, file, isDevHot)
                         // if (isDev)
                         // return `<script type="text/javascript" src="${getClientFilePath(true, file)}" defer></script>`
                         // return `<script type="text/javascript" src="${getClientFilePath(
                         //     true,
                         //     file
                         // )}" defer></script>`;
-                        return combineFilePaths(key, true, file);
+                        return combineFilePaths(key, '', true, file);
                     })
                     .join('');
             }
         });
+        if (isQiankun && Object.keys(entrypoints).includes(entrypointQiankun)) {
+            r += combineFilePaths(
+                entrypointQiankun,
+                ' entry',
+                true,
+                entrypoints[entrypointQiankun][
+                    entrypoints[entrypointQiankun].length - 1
+                ]
+            );
+        }
 
         // 如果设置了 PWA 自动注册 Service-Worker，在此注册
         const pwaAuto =
@@ -153,7 +190,7 @@ module.exports = ({
                 `window.addEventListener('load', function() {` +
                 // + `navigator.serviceWorker.register("${injectCache[uriServiceWorker]}?koot=${process.env.KOOT_VERSION}",`
                 `navigator.serviceWorker.register("${
-                    injectCache[uriServiceWorker] ||
+                    getClientURI(injectCache[uriServiceWorker]) ??
                     JSON.parse(process.env.KOOT_PWA_PATHNAME)
                 }?koot=0.12"` +
                 (scope
@@ -176,19 +213,22 @@ module.exports = ({
         injectCache[scriptsInBody] = r;
     }
 
+    injected = [];
+
     if (isSPAi18nEnabled) {
+        for (const [key, value] of Object.entries(localeFileMap)) {
+            localeFileMap[key] = getClientURI(value);
+        }
         return (
             `<script type="text/javascript" ${scriptTagEntryAttributeName}="*run-first-spa-locales">` +
-            `window.__KOOT_SPA_LOCALE_FILE_MAP__ = ${JSON.stringify(
-                localeFileMap
-            )};` +
+            `window.${SPALOCALEFILEMAP} = ${JSON.stringify(localeFileMap)};` +
             (SPAi18nNeedWaiting
                 ? `window.__KOOT_SCRIPTS__ = {` +
                   `addAfterLocale: function(name, src) {` +
                   `if (` +
-                  `window.__KOOT_LOCALEID__ && ` +
-                  `typeof window.__KOOT_SSR_STATE__ === 'object' && ` +
-                  `typeof window.__KOOT_SSR_STATE__.locales === 'object'` +
+                  `window.${LOCALEID} && ` +
+                  `typeof window.${SSRSTATE} === 'object' && ` +
+                  `typeof window.${SSRSTATE}.locales === 'object'` +
                   `) {` +
                   `var fjs = document.getElementsByTagName('script')[0];` +
                   `var js = document.createElement('script');` +
@@ -204,7 +244,7 @@ module.exports = ({
                   `fjs.parentNode.insertBefore(js, fjs);` +
                   `return;` +
                   `}` +
-                  `console.warn(name, src, window.__KOOT_LOCALEID__);` +
+                  `console.warn(name, src, window.${LOCALEID});` +
                   `return setTimeout(() => {` +
                   `window.__KOOT_SCRIPTS__.addAfterLocale(name, src);` +
                   `}, 10);` +
@@ -220,9 +260,9 @@ module.exports = ({
 
     return (
         `<script type="text/javascript">` +
-        (reduxHtml ? reduxHtml : `window.__REDUX_STATE__ = {};`) +
-        `window.__KOOT_LOCALEID__ = "${SSRState.localeId || ''}";` +
-        `window.__KOOT_SSR_STATE__ = ${getSSRStateString(SSRState)};` +
+        (reduxHtml ? reduxHtml : `window.${REDUXSTATE} = {};`) +
+        `window.${LOCALEID} = "${SSRState.localeId || ''}";` +
+        `window.${SSRSTATE} = ${getSSRStateString(SSRState)};` +
         `</script>` +
         // getClientRunFirstJS(localeId, compilation) +
         injectCache[scriptsRunFirst] +
@@ -237,9 +277,15 @@ module.exports = ({
  * @param {...any} args `utils/get-client-file-path` 对应的参数
  * @returns {String} 整合的 HTML 结果
  */
-const combineFilePaths = (name, ...args) => {
+const combineFilePaths = (name, addHtml, ...args) => {
     let pathnames = getClientFilePath(...args);
     if (!Array.isArray(pathnames)) pathnames = [pathnames];
+
+    // console.log({
+    //     name,
+    //     pathnames,
+    //     ...args
+    // })
 
     if (SPAi18nNeedWaiting && name !== '*run-first') {
         return pathnames
@@ -252,11 +298,18 @@ const combineFilePaths = (name, ...args) => {
             .join('');
     }
 
+    // console.log({
+    //     name,
+    //     args: [...args],
+    //     pathnames
+    // })
     return pathnames
-        .map(
-            (pathname) =>
-                `<script type="text/javascript" src="${pathname}" defer ${scriptTagEntryAttributeName}="${name}"></script>`
-        )
+        .filter((pathname) => !injected.includes(pathname))
+        .map((pathname, index, arr) => {
+            // console.log(index, arr.length)
+            injected.push(pathname);
+            return `<script type="text/javascript" src="${pathname}" defer ${scriptTagEntryAttributeName}="${name}"${addHtml}></script>`;
+        })
         .join('');
 };
 

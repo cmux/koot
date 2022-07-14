@@ -6,8 +6,11 @@ const ignoredStatus = [302, 304];
  * @param {Array} arrFailedResponse
  */
 module.exports = (page, arrFailedResponse) => {
-    page.on('response', res => {
+    page.on('response', (res) => {
         if (ignoredStatus.includes(res.status())) return;
-        if (!res.ok()) arrFailedResponse.push(res);
+        if (!res.ok()) {
+            res.ref = page;
+            arrFailedResponse.push(res);
+        }
     });
 };

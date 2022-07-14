@@ -1,5 +1,5 @@
-const { keyConfigBuildDll } = require('koot/defaults/before-build')
-const build = require('./build')
+const { keyConfigBuildDll } = require('koot/defaults/before-build');
+const build = require('./build');
 
 /**
  * Webpack 打包: DLL
@@ -9,6 +9,6 @@ const build = require('./build')
  * @returns {void}
  */
 module.exports = async (kootBuildConfig = {}) => {
-    kootBuildConfig[keyConfigBuildDll] = true
-    return await build(kootBuildConfig)
-}
+    kootBuildConfig[keyConfigBuildDll] = true;
+    return await build(kootBuildConfig);
+};

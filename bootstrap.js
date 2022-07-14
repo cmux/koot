@@ -4,7 +4,19 @@ const fs = require('fs');
 const path = require('path');
 
 // const ignore = "koot-@(cli|boilerplate|boilerplate-*)"
-const ignore = 'koot-@(cli|boilerplate-legacy)';
+const individualPackages = ['create-koot-app', 'koot-cli'];
+const ignore =
+    '@(' +
+    [
+        ...[
+            'boilerplate',
+            'boilerplate-legacy',
+            'boilerplate-system',
+            'boilerplate-web',
+        ].map((name) => `koot-${name}`),
+        ...individualPackages,
+    ].join('|') +
+    ')';
 
 const runCmd = async (msg, cmd, options = {}) => {
     if (!cmd || typeof cmd === 'object') return await runCmd(cmd, cmd, options);
@@ -16,17 +28,27 @@ const runCmd = async (msg, cmd, options = {}) => {
 
     // spawn
     const chunks = cmd.split(' ');
-    await new Promise(resolve => {
+    await new Promise((resolve) => {
         const child = require('child_process').spawn(chunks.shift(), chunks, {
             stdio: 'inherit',
             shell: true,
-            ...options
+            ...options,
         });
         child.on('close', () => {
             resolve();
         });
     });
 };
+
+async function prepareIndividualPackage(pName) {
+    const cwd = path.resolve(__dirname, './packages', pName);
+
+    if (!fs.existsSync(cwd)) return;
+
+    await runCmd(`Install deps for ${pName}`, `npm install --no-package-lock`, {
+        cwd,
+    });
+}
 
 const run = async () => {
     // 检查 `lerna` 是否安装到本地依赖
@@ -42,19 +64,15 @@ const run = async () => {
     }
     await runCmd(
         `Install deps for root directory`,
-        'npm install --no-package-lock'
+        'npm install --no-package-lock --force'
     );
     await runCmd(
         `Run: lerna bootstrap`,
         `lerna bootstrap --hoist --ignore "${ignore}"`
     );
-    await runCmd(
-        `Install deps for koot-cli`,
-        `npm install --no-package-lock"`,
-        {
-            cwd: path.resolve(__dirname, './packages/koot-cli')
-        }
-    );
+    for (const pName of individualPackages) {
+        await prepareIndividualPackage(pName);
+    }
     await runCmd(`Install deps for test projects`, `node test/pre-test.js"`);
 
     //
@@ -64,4 +82,4 @@ const run = async () => {
     console.log('');
 };
 
-run().catch(err => console.error(err));
+run().catch((err) => console.error(err));

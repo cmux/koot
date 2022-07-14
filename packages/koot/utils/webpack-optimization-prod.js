@@ -1,4 +1,7 @@
+const getModuleVersion = require('./get-module-version');
 const { chunkNameClientRunFirst } = require('../defaults/before-build');
+
+const keyName = parseInt(getModuleVersion('webpack')) < 5 ? 'name' : 'idHint';
 
 /**
  * 生成 Webpack `optimization` 配置，用于拆分代码
@@ -11,7 +14,7 @@ module.exports = (options = {}) => {
     const { extraLibs = [] } = options;
     const cacheGroups = {
         libs: {
-            name: 'libs',
+            [keyName]: 'libs',
             priority: 100,
             minChunks: 1,
             reuseExistingChunk: true,
@@ -42,7 +45,7 @@ module.exports = (options = {}) => {
             ),
         },
         libsAntd: {
-            name: 'libs-ant-design-related',
+            [keyName]: 'libs-ant-design-related',
             priority: 90,
             minChunks: 1,
             reuseExistingChunk: true,
@@ -75,7 +78,7 @@ module.exports = (options = {}) => {
             ),
         },
         libsOthers: {
-            name: 'libs-others',
+            [keyName]: 'libs-others',
             priority: 10,
             minChunks: 2,
             reuseExistingChunk: true,
@@ -91,7 +94,9 @@ module.exports = (options = {}) => {
 
     return {
         minimize: true,
-        noEmitOnErrors: true,
+
+        // noEmitOnErrors: true, // Webpack 4
+        emitOnErrors: true, // Webpack 5
 
         splitChunks: {
             // chunks: 'all',

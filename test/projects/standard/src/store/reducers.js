@@ -5,5 +5,5 @@ import testModifyState from './test-modify-state/reducer';
 export default {
     infos,
     kootTest,
-    testModifyState
+    testModifyState,
 };

@@ -13,6 +13,7 @@ const {
 const {
     buildManifestFilename,
 } = require('../../packages/koot/defaults/before-build');
+const sleep = require('../../packages/koot/utils/sleep');
 
 // ============================================================================
 
@@ -156,9 +157,10 @@ const requestHidden404 = async (origin, browser) => {
     const context = await browser.createIncognitoBrowserContext();
     const page = await context.newPage();
     const res = await page.goto(`${origin}/.hidden-picture.jpg`, {
-        waitUntil: 'networkidle0',
+        waitUntil: 'load',
     });
 
+    await page.close();
     await context.close();
     if (needToClose) await browser.close();
 
@@ -196,6 +198,7 @@ const criticalAssetsShouldBeGzip = async (origin, dist, browser) => {
     const headers = res.headers();
     const text = await res.text();
 
+    await page.close();
     await context.close();
     if (needToClose) await browser.close();
 
@@ -244,8 +247,9 @@ const clientLifecycles = async (origin, browser) => {
         }
     });
     await page.goto(origin, {
-        waitUntil: 'networkidle0',
+        waitUntil: 'networkidle2',
     });
+    await page.close();
     await context.close();
     if (needToClose) await browser.close();
 
@@ -283,6 +287,7 @@ const i18n = async ({
     const defaults = require('../../packages/koot/defaults/i18n');
     const defaultWaitUtil =
         isDev || isSPA ? 'networkidle2' : 'domcontentloaded';
+    const defaultWaitUtil2 = isDev || isSPA ? 'networkidle2' : 'load';
 
     // 处理配置
     let useRouter = false;
@@ -349,7 +354,7 @@ const i18n = async ({
     const context = await browser.createIncognitoBrowserContext();
     const page = await context.newPage();
 
-    // 多语言渲染 #1
+    // console.log('多语言渲染 #1');
     {
         /**
          * 测试目标语种
@@ -383,7 +388,11 @@ const i18n = async ({
             const pageTitle = await page.evaluate(
                 () => document.querySelector('title').innerText
             );
-            expect(new RegExp(`^${infos.title}`).test(pageTitle)).toBe(true);
+            const testTitle = new RegExp(`^${infos.title}`).test(pageTitle);
+            if (!testTitle) {
+                console.warn('title not match', infos.title, pageTitle);
+            }
+            expect(testTitle).toBe(true);
 
             // 测试页面简介正确
             const pageDescription = await page.evaluate(
@@ -451,7 +460,7 @@ const i18n = async ({
         }
     }
 
-    // 多语言渲染 #2
+    // console.log('多语言渲染 #2');
     {
         const toLocaleId = 'zh';
         const gotoUrl = getUrl(origin, '/', toLocaleId);
@@ -467,7 +476,7 @@ const i18n = async ({
         const page = await context.newPage();
 
         const res = await page.goto(gotoUrl, {
-            waitUntil: 'networkidle0',
+            waitUntil: 'networkidle2',
         });
 
         const HTML = await res.text();
@@ -500,13 +509,19 @@ const i18n = async ({
                 /__KOOT_TEST_LOCALE_TRANSLATE_FUNCTION_ONLY_RESULT__\|\|[^(]+?\(['"]\/test-img-zh\.png['"]/.test(
                     content
                 )
+            ).toBe(false);
+            expect(
+                /__KOOT_TEST_LOCALE_TRANSLATE_FUNCTION_ONLY_RESULT__\|\|\/test-img-zh\.png\|\|__/.test(
+                    content
+                )
             ).toBe(true);
         }
 
+        await page.close();
         await context.close();
     }
 
-    // 到其他语种的链接
+    // console.log('到其他语种的链接');
     {
         const testLinksToOtherLang = async (
             toLocaleId = '',
@@ -549,7 +564,7 @@ const i18n = async ({
                 await page.goto(
                     /:\/\//.test(href) ? href : `${origin}/${href}`,
                     {
-                        waitUntil: 'networkidle0',
+                        waitUntil: defaultWaitUtil2,
                     }
                 );
                 const localeId = await page.evaluate(() =>
@@ -575,8 +590,62 @@ const i18n = async ({
         await testLinksToOtherLang('zh-tw', '?test=a');
     }
 
+    await page.close();
     await context.close();
     if (needToClose) await browser.close();
+};
+
+/**
+ * puppeteer 测试
+ *
+ * pageinfo 提供了 metas 但没有提供 title，此时页面标题应不会变化
+ * @async
+ * @param {Object} options
+ * @param {boolean} [options.isSPA=false]
+ * @param {Object} [options.browser]
+ * @returns {Promise<void>}
+ */
+const pageinfoOnlyMetas = async ({ origin, browser, isSPA = false }) => {
+    const route = (isSPA ? '#' : '') + `/no-title-only-metas-test`;
+    const titleExpectToBe = 'Koot Boilerplate';
+    const context = await browser.createIncognitoBrowserContext();
+
+    // 从首页点击链接跳转
+    {
+        const page = await context.newPage();
+        await page.goto(origin, {
+            waitUntil: 'networkidle2',
+        });
+        await page.evaluate((route) => {
+            document.querySelector(`a[href~="${route}"]`).click();
+        }, route);
+        await sleep(1000);
+        const titleCSR = await page.evaluate(() => document.title);
+        expect(titleCSR).toBe(titleExpectToBe);
+        await page.close();
+    }
+
+    // 直接访问
+    {
+        const page = await context.newPage();
+        const res = await page.goto(origin + route, {
+            waitUntil: 'networkidle2',
+        });
+
+        const titleCSR = await page.evaluate(() => document.title);
+        expect(titleCSR).toBe(titleExpectToBe);
+
+        if (!isSPA) {
+            const HTML = await res.text();
+            const $ = cheerio.load(HTML);
+            const titleSSR = $('head title').text();
+            expect(titleSSR).toBe(titleCSR);
+        }
+
+        await page.close();
+    }
+
+    await context.close();
 };
 
 module.exports = {
@@ -587,4 +656,5 @@ module.exports = {
     criticalAssetsShouldBeGzip,
     clientLifecycles,
     i18n,
+    pageinfoOnlyMetas,
 };

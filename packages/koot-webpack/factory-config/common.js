@@ -1,17 +1,21 @@
 const fs = require('fs');
 const path = require('path');
 const webpack = require('webpack');
+const requireResolve = require('resolve');
 // const ExtractTextPlugin = require("extract-text-webpack-plugin")
 
 const createModuleRules = require('./module/rules');
 const KootResetCssLoaderPlugin = require('../plugins/reset-css-loader');
 const defaultDefines = require('koot/defaults/defines');
+const { KOOT_CLIENT_PUBLIC_PATH } = require('koot/defaults/envs');
 const {
     keyConfigBuildDll,
     styleTagGlobalAttributeName,
     styleTagModuleAttributeName,
 } = require('koot/defaults/before-build');
 const getPathnameProjectConfigFile = require('koot/utils/get-pathname-project-config-file');
+// const resolveDir = require('koot/utils/resolve-dir')
+const getCwd = require('koot/utils/get-cwd');
 // const readBaseConfig = require('koot/utils/read-base-config')
 const isServerBundlingAllModules = require('../libs/is-server-bundling-all-modules');
 
@@ -42,11 +46,7 @@ const factory = async (
     //     }
     // }
 
-    if (stage === 'client' && env === 'dev') {
-        aliases['react-dom'] = '@hot-loader/react-dom';
-    }
-
-    return {
+    const def = {
         module: {
             rules: createModuleRules(
                 {
@@ -71,6 +71,8 @@ const factory = async (
             options
         ),
     };
+
+    return def;
 };
 
 // 执行顺序, 先 -> 后
@@ -158,6 +160,9 @@ const plugins = async (
         'WEBPACK_CHUNKMAP',
         'WEBPACK_DEV_SERVER_PORT',
         // "WEBPACK_SERVER_PUBLIC_PATH",
+        KOOT_CLIENT_PUBLIC_PATH,
+        'KOOT_REACT_LEGACY_REF',
+        'KOOT_HISTORY_BASENAME',
     ];
     if (
         remainingKootBuildConfig.sessionStore === true ||
@@ -198,7 +203,7 @@ const plugins = async (
             (() => {
                 if (/^React/.test(process.env.KOOT_PROJECT_TYPE))
                     return require('../libs/get-koot-file')(
-                        'React/component-extender.js'
+                        'React/component-extender.jsx'
                     );
             })(),
         ],
@@ -272,9 +277,11 @@ const needBabelHandleList = ['koot'];
 const filterExternalsModules = (kootConfig = {}) => {
     if (isServerBundlingAllModules(kootConfig)) return [];
 
+    const moduleDirectory = path.resolve(process.cwd(), 'node_modules');
+
     const externals = []
         .concat(fs.readdirSync(path.resolve(__dirname, '../../../')))
-        .concat(fs.readdirSync(path.resolve(process.cwd(), 'node_modules')))
+        .concat(fs.readdirSync(moduleDirectory))
         .concat(['react-dom/server'])
         .filter(
             (x) =>
@@ -282,9 +289,7 @@ const filterExternalsModules = (kootConfig = {}) => {
                 !/^sp-/.test(x) &&
                 !/^koot-/.test(x) &&
                 !/^@/.test(x) &&
-                !/^workbox($|-)/.test(
-                    x
-                ) /** &&
+                !/^workbox($|-)/.test(x) /** &&
                     require('../constants/ignored-dist-modules').every(
                         regex => !regex.test(x)
                     ) */
@@ -294,9 +299,36 @@ const filterExternalsModules = (kootConfig = {}) => {
         // .filter(x => !/^koot-/.test(x))
         // .filter(x => !/^@/.test(x))
         // .filter(x => !/^workbox($|-)/.test(x))
-        .reduce((ext, mod) => {
-            ext[mod] = ['commonjs', mod].join(' '); // eslint-disable-line no-param-reassign
-            // ext[mod] = mod + '' // eslint-disable-line no-param-reassign
+        .reduce(async (ext, thisModule) => {
+            let type;
+            try {
+                type = require(`${thisModule}/package.json`).type;
+            } catch (e) {
+                try {
+                    const file = path.resolve(
+                        requireResolve.sync(thisModule, { basedir: getCwd() }),
+                        'package.json'
+                    );
+                    if (fs.existsSync(file))
+                        type = JSON.parse(fs.readFileSync(file)).type;
+                } catch (e) {
+                    try {
+                        const file = path.resolve(
+                            moduleDirectory,
+                            thisModule,
+                            'package.json'
+                        );
+                        if (fs.existsSync(file))
+                            type = JSON.parse(fs.readFileSync(file)).type;
+                    } catch (e) {}
+                }
+            }
+            // console.log(thisModule, type)
+            ext[thisModule] = [
+                type === 'module' ? 'module' : 'commonjs',
+                thisModule,
+            ].join(' '); // eslint-disable-line no-param-reassign
+            // ext[thisModule] = thisModule + '' // eslint-disable-line no-param-reassign
             return ext;
         }, {});
 
@@ -304,7 +336,6 @@ const filterExternalsModules = (kootConfig = {}) => {
     // externals['@babel/polyfill'] = '@babel/polyfill'
 
     // console.log({ externals });
-
     return externals;
 };
 

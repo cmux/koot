@@ -15,7 +15,7 @@ module.exports = (kootBuildConfig = {}) => {
     const regExpKootModules = /koot-component/;
 
     const {
-        aliases = {},
+        // aliases = {},
         moduleCssFilenameTest = defaultModuleCssFilenameTest,
         internalLoaderOptions = {},
         classNameHashLength = defaultClassNameHashLength,
@@ -34,26 +34,32 @@ module.exports = (kootBuildConfig = {}) => {
         'less-loader': lessLoaderConfig = {},
         'sass-loader': sassLoaderConfig = {},
     } = internalLoaderOptions;
+    // Koot 相关 PostCSS 插件的配置
+    const kootPostCSSOptions = {
+        length: classNameHashLength,
+        mode: 'replace',
+        readable: env === 'dev' ? true : false,
+        prefixToRemove:
+            process.env.WEBPACK_BUILD_TYPE === 'spa' && distClientAssetsDirName
+                ? `${distClientAssetsDirName}/`
+                : undefined,
+    };
     const useSpCssLoader = {
         loader: require.resolve('../../../loaders/css'),
+        options: kootPostCSSOptions,
+    };
+    const usPostcssLoader = {
+        loader: require.resolve('postcss-loader'),
         options: {
-            // length: env === 'dev' ? 32 : 4,
-            length: classNameHashLength,
-            mode: 'replace',
-            readable: env === 'dev' ? true : false,
-            prefixToRemove:
-                process.env.WEBPACK_BUILD_TYPE === 'spa' &&
-                distClientAssetsDirName
-                    ? `${distClientAssetsDirName}/`
-                    : undefined,
+            postcssOptions: { kootPostCSSOptions },
         },
     };
-    const useUniversalAliasLoader = {
-        loader: 'universal-alias-loader',
-        options: {
-            alias: aliases,
-        },
-    };
+    // const useUniversalAliasLoader = {
+    //     loader: 'universal-alias-loader',
+    //     options: {
+    //         alias: aliases,
+    //     },
+    // };
     const useLessLoader = (() => {
         const options = {
             lessOptions: {
@@ -66,10 +72,11 @@ module.exports = (kootBuildConfig = {}) => {
         // https://github.com/webpack-contrib/less-loader/issues/350
         const {
             lessOptions,
-            prependData,
-            appendData,
+            prependData = '',
+            appendData = '',
+            additionaldata,
             sourceMap,
-            implementation,
+            // implementation = {},
             ...rest
         } = options;
         for (const [key, value] of Object.entries(rest))
@@ -79,10 +86,9 @@ module.exports = (kootBuildConfig = {}) => {
             loader: 'less-loader',
             options: {
                 lessOptions,
-                prependData,
-                appendData,
+                additionalData: additionaldata || `${prependData}${appendData}`,
                 sourceMap,
-                implementation,
+                // implementation,
             },
         };
     })();
@@ -104,10 +110,12 @@ module.exports = (kootBuildConfig = {}) => {
 
     const validateCssRule = ({ test, tests, type, ...rule }) => {
         let use = [
-            'postcss-loader',
+            usPostcssLoader,
             // >> LESS / SASS loader inset here <<
-            useUniversalAliasLoader,
+            // useUniversalAliasLoader,
         ];
+        // const loaderOffset = -1
+        const loaderOffset = 0;
 
         switch (type) {
             case 'component': {
@@ -127,14 +135,22 @@ module.exports = (kootBuildConfig = {}) => {
             Object.keys(tests).forEach((key) => {
                 const useThis = [...use];
                 if (key === 'less') {
-                    useThis.splice(useThis.length - 1, 0, useLessLoader);
+                    useThis.splice(
+                        useThis.length + loaderOffset,
+                        0,
+                        useLessLoader
+                    );
                     rulesLESS.push({
                         test: tests[key],
                         use: useThis,
                         ...rule,
                     });
                 } else if (key === 'sass') {
-                    useThis.splice(useThis.length - 1, 0, useSassLoader);
+                    useThis.splice(
+                        useThis.length + loaderOffset,
+                        0,
+                        useSassLoader
+                    );
                     rulesSASS.push({
                         test: tests[key],
                         use: useThis,
@@ -151,14 +167,14 @@ module.exports = (kootBuildConfig = {}) => {
         } else if (test instanceof RegExp) {
             const str = test.toString();
             if (/\.less/.test(str)) {
-                use.splice(use.length - 1, 0, useLessLoader);
+                use.splice(use.length + loaderOffset, 0, useLessLoader);
                 rulesLESS.push({
                     test: test,
                     use,
                     ...rule,
                 });
             } else if (/\.(scss|sass)/.test(str)) {
-                use.splice(use.length - 1, 0, useSassLoader);
+                use.splice(use.length + loaderOffset, 0, useSassLoader);
                 rulesSASS.push({
                     test: test,
                     use,
@@ -173,14 +189,14 @@ module.exports = (kootBuildConfig = {}) => {
             }
         } else if (test) {
             if (/\.less$/.test(test)) {
-                use.splice(use.length - 1, 0, useLessLoader);
+                use.splice(use.length + loaderOffset, 0, useLessLoader);
                 rulesLESS.push({
                     test: test,
                     use,
                     ...rule,
                 });
             } else if (/\.(scss|sass)$/.test(test)) {
-                use.splice(use.length - 1, 0, useSassLoader);
+                use.splice(use.length + loaderOffset, 0, useSassLoader);
                 rulesSASS.push({
                     test: test,
                     use,
@@ -196,12 +212,12 @@ module.exports = (kootBuildConfig = {}) => {
         } else {
             {
                 const useThis = [...use];
-                useThis.splice(useThis.length - 1, 0, useLessLoader);
+                useThis.splice(useThis.length + loaderOffset, 0, useLessLoader);
                 rulesLESS.push({ use: useThis, ...rule });
             }
             {
                 const useThis = [...use];
-                useThis.splice(useThis.length - 1, 0, useSassLoader);
+                useThis.splice(useThis.length + loaderOffset, 0, useSassLoader);
                 rulesSASS.push({ use: useThis, ...rule });
             }
             rulesCSS.push({ use, ...rule });
@@ -284,7 +300,7 @@ module.exports = (kootBuildConfig = {}) => {
     const useLastNormalLoaders = [
         useLastLoaderForNormal,
         'css-loader',
-        'postcss-loader',
+        usPostcssLoader,
     ].filter((item) => !!item);
     rules.push({
         test: /\.css$/,

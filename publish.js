@@ -14,7 +14,13 @@ const spinner = require('./packages/koot/utils/spinner');
 
 // ============================================================================
 
-const defaultChecked = ['koot', 'koot-cli', 'koot-electron', 'koot-webpack'];
+const defaultChecked = [
+    'create-koot-app',
+    'koot',
+    'koot-cli',
+    'koot-electron',
+    'koot-webpack',
+];
 
 // ============================================================================
 
@@ -53,7 +59,7 @@ const prePublish = async () => {
         console.log(' ');
     };
     try {
-        const git = require('simple-git/promise')(__dirname);
+        const git = require('simple-git')(__dirname);
         const { modified = [] } = await git.status();
         if (modified.length) {
             await git.add('./*');
@@ -63,7 +69,7 @@ const prePublish = async () => {
     } catch (e) {
         if (
             e.message === 'No staged files match any of provided globs.' ||
-            /No staged files found.$/.test(e.message)
+            /No staged files found./.test(e.message)
         )
             complete();
         else console.error(e);

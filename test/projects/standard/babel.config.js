@@ -1,4 +1,4 @@
-module.exports = function(api) {
+module.exports = function (api) {
     // api.cache(true);
     api.cache(false);
 
@@ -7,11 +7,16 @@ module.exports = function(api) {
             [
                 '@babel/preset-env',
                 {
-                    modules: false
-                }
+                    modules: false,
+                },
             ],
-            '@babel/preset-react',
-            '@babel/preset-flow'
+            [
+                '@babel/preset-react',
+                {
+                    runtime: 'automatic',
+                },
+            ],
+            '@babel/preset-flow',
         ],
         compact: 'auto',
         plugins: [
@@ -26,7 +31,7 @@ module.exports = function(api) {
             // '@babel/plugin-syntax-dynamic-import',
 
             // other
-            'react-hot-loader/babel'
-        ]
+            // 'react-hot-loader/babel',
+        ],
     };
 };

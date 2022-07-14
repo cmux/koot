@@ -46,3 +46,4 @@ test/cases/config/samples/**/
 logs
 dist
 /packages/koot-webpack/libs/.tmp
+.husky

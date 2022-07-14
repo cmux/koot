@@ -7,14 +7,13 @@
         "bootstrap": "node bootstrap.js",
         "publish": "node ./publish.js",
         "test": "node ./test/index.js",
-        "reset": "npm i fs-extra --no-save && node ./reset.js && node bootstrap.js",
+        "reset": "npm i fs-extra --no-save --legacy-peer-deps && node ./reset.js && node bootstrap.js",
         "lerna:changed": "lerna changed",
         "eslint:koot": "eslint \"packages/koot/!(node_modules|logs|dist|dist*|test)/**/*.+(js|jsx)\"",
-        "check-types": "tsc --noEmit"
+        "check-types": "tsc --noEmit",
+        "prepare": "husky install",
+        "commit": "node ./node_modules/cz-customizable/standalone.js"
     },
-    "workspaces": [
-        "packages/*"
-    ],
     "repository": {
         "type": "git",
         "url": "https://github.com/cmux/koot"
@@ -39,37 +38,40 @@
     },
     "homepage": "https://github.com/cmux/koot",
     "engines": {
-        "node": ">=10.13.0"
+        "node": ">=14.0.0"
     },
     "license": "Apache-2.0",
     "dependencies": {
-        "docsify-cli": "^4.4.1"
+        "docsify-cli": "^4.4.4"
     },
     "devDependencies": {
-        "camelcase": "^6.0.0",
-        "chalk": "^4.1.0",
-        "cheerio": "^1.0.0-rc.3",
+        "@commitlint/cli": "^17.0.3",
+        "@commitlint/config-conventional": "^17.0.3",
+        "camelcase": "^6.2.0",
+        "chalk": "^4.1.2",
+        "cheerio": "^1.0.0-rc.12",
         "crlf": "^1.1.1",
-        "eslint": "^7.6.0",
-        "eslint-config-koot": "^1.7.1",
-        "fs-extra": "^9.0.1",
-        "husky": "^4.2.5",
-        "inquirer": "^7.3.3",
+        "cz-customizable": "^6.9.0",
+        "eslint": "^7.32.0",
+        "eslint-config-koot": "^3.1.1",
+        "fs-extra": "^10.1.0",
+        "husky": "^8.0.1",
+        "inquirer": "^8.2.4",
         "is-valid-path": "^0.1.1",
-        "jest": "^26.3.0",
-        "jsdom": "^16.4.0",
-        "latest-version": "^5.1.0",
-        "lerna": "^3.22.1",
+        "jest": "^28.1.2",
+        "jsdom": "^20.0.0",
+        "lerna": "^5.1.8",
         "lerna-wizard": "^1.1.1",
-        "lint-staged": "^10.2.11",
-        "prettier": "^2.0.5",
-        "prettier-eslint": "^11.0.0",
-        "puppeteer": "^5.2.1",
-        "simple-git": "^2.17.0",
-        "symlink-dir": "^4.1.0"
+        "lint-staged": "^13.0.3",
+        "prettier": "^2.7.1",
+        "prettier-eslint": "^13.0.0",
+        "puppeteer": "^15.3.2",
+        "simple-git": "^3.10.0",
+        "symlink-dir": "^5.0.1"
     },
     "husky": {
         "hooks": {
+            "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
             "pre-commit": "lint-staged"
         }
     },

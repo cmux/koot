@@ -1,15 +1,14 @@
 // const getDirDevCache = require('koot/libs/get-dir-dev-cache')
 
-const findCacheDir = require('find-cache-dir');
+// const findCacheDir = require('find-cache-dir');
+const md5 = require('md5');
 
-const getBabelLoaderDefaults = ({ createDll = false }) => ({
-    cacheDirectory: findCacheDir({ name: 'koot-webpack', thunk: true })(
-        `babel/${process.env.WEBPACK_BUILD_TYPE}` +
-            `.${process.env.WEBPACK_BUILD_ENV}` +
-            `.${process.env.WEBPACK_BUILD_STAGE}` +
-            (createDll ? '.dll' : '')
-    ),
-    cacheCompression: false
+const getBabelLoaderDefaults = (name) => ({
+    // cacheDirectory: findCacheDir({ name: 'babel-loader', thunk: true })(
+    //     ['koot', name].join('-')
+    // ),
+    cacheDirectory: false,
+    cacheCompression: false,
 });
 
 /**
@@ -23,7 +22,7 @@ module.exports = (kootBuildConfig = {}, options = {}) => {
     const stageServer = stage === 'server';
 
     const { createDll = false, routes } = kootBuildConfig;
-    const { isSPATemplateInject = false } = options;
+    const { isSPATemplateInject = false, i18n } = options;
 
     //
 
@@ -33,9 +32,23 @@ module.exports = (kootBuildConfig = {}, options = {}) => {
         options.__spaTemplateInject = isSPATemplateInject;
 
         options = Object.assign(
-            {},
-            getBabelLoaderDefaults({ createDll }),
-            options
+            {
+                compact: stageServer ? false : undefined,
+            },
+            getBabelLoaderDefaults(
+                md5(
+                    [
+                        process.env.WEBPACK_BUILD_TYPE,
+                        process.env.WEBPACK_BUILD_ENV,
+                        process.env.WEBPACK_BUILD_STAGE,
+                        createDll ? '.dll' : '',
+                    ].join()
+                )
+            ),
+            options,
+            {
+                __i18n: i18n,
+            }
         );
 
         if (process.env.WEBPACK_BUILD_ENV === 'dev') {
@@ -53,14 +66,13 @@ module.exports = (kootBuildConfig = {}, options = {}) => {
         }
 
         if (stageServer) {
-            // options.cacheIdentifier = 'koot-webpack-server-bundling';
             options.babelrc = false;
             // options.cacheCompression = false;
         }
 
         return {
             loader: require.resolve('../../../loaders/babel'),
-            options
+            options,
         };
     };
 
@@ -107,26 +119,19 @@ module.exports = (kootBuildConfig = {}, options = {}) => {
             // can be used to create different pools with elsewise identical options
             name: 'koot-webpack-workers-pool',
 
-            ...options
-        }
+            ...options,
+        },
     });
 
     const ruleUseLoaders = (options = {}) => {
         const use = [ruleUseBabelLoader(options)];
-
-        if (!createDll && env === 'dev' && stage === 'client') {
-            use.push({
-                loader: require.resolve('../../../loaders/react-hot'),
-                options
-            });
-        }
 
         if (!createDll && env === 'prod' && stage === 'client') return use;
 
         return [
             ruleUseThreadLoader(),
             // useCacheLoader(),
-            ...use
+            ...use,
         ];
     };
 
@@ -140,13 +145,13 @@ module.exports = (kootBuildConfig = {}, options = {}) => {
                     {
                         include: /node_modules/,
                         use: ruleUseLoaders({
-                            sourceMaps: false
-                        })
+                            sourceMaps: false,
+                        }),
                     },
                     {
-                        use: ruleUseLoaders()
-                    }
-                ]
+                        use: ruleUseLoaders(),
+                    },
+                ],
             },
             {
                 test: /\.ts$/,
@@ -155,41 +160,34 @@ module.exports = (kootBuildConfig = {}, options = {}) => {
                         include: /node_modules/,
                         use: ruleUseLoaders({
                             sourceMaps: false,
-                            __typescript: true
-                        })
+                            __typescript: true,
+                        }),
                     },
                     {
                         use: ruleUseLoaders({
-                            __typescript: true
-                        })
-                    }
-                ]
+                            __typescript: true,
+                        }),
+                    },
+                ],
             },
             {
                 test: /\.jsx$/,
                 use: [
                     ...ruleUseLoaders({
                         // sourceMaps: 'both',
-                        __react: true
-                    })
-                    // require.resolve('../../../loaders/react-hot')
-                ]
+                        __react: true,
+                    }),
+                ],
             },
             {
                 test: /\.tsx$/,
                 use: [
                     ...ruleUseLoaders({
                         __react: true,
-                        __typescript: true
-                    })
-                    // {
-                    //     loader: require.resolve('../../../loaders/react-hot'),
-                    //     options: {
-                    //         __typescript: true
-                    //     }
-                    // }
-                ]
-            }
+                        __typescript: true,
+                    }),
+                ],
+            },
         ];
     }
 
@@ -199,8 +197,8 @@ module.exports = (kootBuildConfig = {}, options = {}) => {
                 test: /\.(js|mjs|cjs|jsx)$/,
                 use: [
                     ...ruleUseLoaders({}),
-                    require.resolve('../../../loaders/koot-dev-ssr.js')
-                ]
+                    require.resolve('../../../loaders/koot-dev-ssr.js'),
+                ],
             },
             // {
             //     test: /\.(jsx)$/,
@@ -215,11 +213,11 @@ module.exports = (kootBuildConfig = {}, options = {}) => {
                 test: /\.(ts|tsx)$/,
                 use: [
                     ...ruleUseLoaders({
-                        __typescript: true
+                        __typescript: true,
                     }),
-                    require.resolve('../../../loaders/koot-dev-ssr.js')
-                ]
-            }
+                    require.resolve('../../../loaders/koot-dev-ssr.js'),
+                ],
+            },
             // {
             //     test: /\.(tsx)$/,
             //     use: [
@@ -236,26 +234,26 @@ module.exports = (kootBuildConfig = {}, options = {}) => {
     return [
         {
             test: /\.(js|mjs|cjs)$/,
-            use: ruleUseLoaders({})
+            use: ruleUseLoaders({}),
         },
         {
             test: /\.jsx$/,
             use: ruleUseLoaders({
-                __react: true
-            })
+                __react: true,
+            }),
         },
         {
             test: /\.ts$/,
             use: ruleUseLoaders({
-                __typescript: true
-            })
+                __typescript: true,
+            }),
         },
         {
             test: /\.tsx$/,
             use: ruleUseLoaders({
                 __react: true,
-                __typescript: true
-            })
-        }
+                __typescript: true,
+            }),
+        },
     ];
 };

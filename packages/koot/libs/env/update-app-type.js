@@ -26,6 +26,13 @@ module.exports = (projectType = '') => {
             break;
         }
 
+        case 'reactqiankunspa': {
+            process.env.WEBPACK_BUILD_TYPE = 'spa';
+            process.env.KOOT_PROJECT_TYPE = 'ReactQiankunSPA';
+            process.env.KOOT_BUILD_TARGET = 'qiankun';
+            break;
+        }
+
         default: {
         }
         // return process.env.KOOT_PROJECT_TYPE

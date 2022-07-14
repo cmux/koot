@@ -1,7 +1,7 @@
-import React from 'react';
+import { FC } from 'react';
 import { getCtx } from 'koot';
 
-const View: React.FC = () => {
+const View: FC = () => {
     if (__CLIENT__) return null;
 
     if (__SERVER__) {

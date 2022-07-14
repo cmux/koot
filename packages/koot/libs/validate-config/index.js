@@ -1,6 +1,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 const md5 = require('md5');
+const merge = require('lodash/merge');
 
 const validateConfigDist = require('../validate-config-dist');
 const getCwd = require('../../utils/get-cwd');
@@ -16,6 +17,7 @@ const {
     propertiesToExtract: _propertiesToExtract,
     dirConfigTemp: _dirConfigTemp,
     WEBPACK_OUTPUT_PATH,
+    keyConfigOriginalFull,
 } = require('../../defaults/before-build');
 const { KOOT_DEV_START_TIME } = require('../../defaults/envs');
 const {
@@ -51,8 +53,14 @@ const __ = require('../../utils/translate');
  * @param {String} [options.tmpDir] 存放临时文件的目录
  * @returns {Object} 打包配置对象
  */
-const validateConfig = async (projectDir = getCwd(), options = {}) => {
+const validateConfig = async (projectDir, options = {}) => {
     const { configFilename = 'koot.config.js', tmpDir } = options;
+
+    if (projectDir) {
+        process.env.KOOT_CWD = projectDir;
+    } else {
+        projectDir = getCwd();
+    }
 
     /** @type {String} 配置文件路径名 */
     const fileConfig =
@@ -93,6 +101,9 @@ const validateConfig = async (projectDir = getCwd(), options = {}) => {
     const dirConfigTemp = tmpDir || path.resolve(projectDir, _dirConfigTemp);
     // 确保该临时目录存在
     await fs.ensureDir(dirConfigTemp);
+
+    // 处理前的配置
+    kootConfig[keyConfigOriginalFull] = merge({}, kootConfig);
 
     // 兼容性处理 (将老版本的配置转换为最新配置)
     await require('./transform-compatible/template-inject')(kootConfig);
@@ -166,7 +177,8 @@ const validateConfig = async (projectDir = getCwd(), options = {}) => {
             md5(tmpConfigPortionServer)
         )
     );
-    process.env.KOOT_PROJECT_CONFIG_PORTION_SERVER_PATHNAME = pathTmpConfigPortionServer;
+    process.env.KOOT_PROJECT_CONFIG_PORTION_SERVER_PATHNAME =
+        pathTmpConfigPortionServer;
     await fs.writeFile(
         pathTmpConfigPortionServer,
         tmpConfigPortionServer,
@@ -181,7 +193,8 @@ const validateConfig = async (projectDir = getCwd(), options = {}) => {
             md5(tmpConfigPortionClient)
         )
     );
-    process.env.KOOT_PROJECT_CONFIG_PORTION_CLIENT_PATHNAME = pathTmpConfigPortionClient;
+    process.env.KOOT_PROJECT_CONFIG_PORTION_CLIENT_PATHNAME =
+        pathTmpConfigPortionClient;
     await fs.writeFile(
         pathTmpConfigPortionClient,
         tmpConfigPortionClient,
@@ -196,7 +209,8 @@ const validateConfig = async (projectDir = getCwd(), options = {}) => {
             md5(tmpConfigPortionOtherClient)
         )
     );
-    process.env.KOOT_PROJECT_CONFIG_PORTION_OTHER_CLIENT_PATHNAME = pathTmpConfigPortionOtherClient;
+    process.env.KOOT_PROJECT_CONFIG_PORTION_OTHER_CLIENT_PATHNAME =
+        pathTmpConfigPortionOtherClient;
     await fs.writeFile(
         pathTmpConfigPortionOtherClient,
         tmpConfigPortionOtherClient,
@@ -208,12 +222,17 @@ const validateConfig = async (projectDir = getCwd(), options = {}) => {
         [keyFileProjectConfigTempFull]: pathTmpConfig,
         [keyFileProjectConfigTempPortionServer]: pathTmpConfigPortionServer,
         [keyFileProjectConfigTempPortionClient]: pathTmpConfigPortionClient,
-        [keyFileProjectConfigTempPortionOtherClient]: pathTmpConfigPortionOtherClient,
+        [keyFileProjectConfigTempPortionOtherClient]:
+            pathTmpConfigPortionOtherClient,
     };
 };
 
 // 调整构建配置对象
 const finalValidate = async (config = {}) => {
+    const isSPA =
+        /spa$/.test(config.type || '') ||
+        process.env.WEBPACK_BUILD_TYPE === 'spa';
+
     // 改变配置项: dest -> dist
     if (typeof config.dest !== 'undefined') {
         config.dist = config.dest;
@@ -267,8 +286,13 @@ const finalValidate = async (config = {}) => {
         config.target = 'electron';
     }
 
+    // historyType 默认值
+    if (!config.historyType) {
+        config.historyType = isSPA ? 'hash' : 'browser';
+    }
+
     // SPA 相关默认值
-    if (/spa$/.test(config.type || '')) {
+    if (isSPA) {
         process.env.WEBPACK_BUILD_TYPE = 'spa';
     }
 
@@ -276,12 +300,6 @@ const finalValidate = async (config = {}) => {
     if (config.serverless === true) {
         config.target = 'serverless';
         delete config.serverless;
-    }
-
-    // historyType 默认值
-    if (!config.historyType) {
-        config.historyType =
-            process.env.WEBPACK_BUILD_TYPE === 'spa' ? 'hash' : 'browser';
     }
 
     // Service Worker scope 默认值
@@ -311,9 +329,16 @@ const finalValidate = async (config = {}) => {
             break;
         }
         case 'electron': {
-            if (process.env.WEBPACK_BUILD_TYPE === 'spa') {
+            if (isSPA) {
                 process.env.KOOT_PROJECT_TYPE = 'ReactElectronSPA';
                 process.env.KOOT_BUILD_TARGET = 'electron';
+            }
+            break;
+        }
+        case 'qiankun': {
+            if (isSPA) {
+                process.env.KOOT_PROJECT_TYPE = 'ReactQiankunSPA';
+                process.env.KOOT_BUILD_TARGET = 'qiankun';
             }
             break;
         }

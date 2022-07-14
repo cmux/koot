@@ -144,6 +144,8 @@ describe('测试: 生成 Webpack 配置', () => {
                     delete process.env.KOOT_BUILD_CONFIG_PATHNAME;
 
                     if (fileProjectConfig) await fs.remove(fileProjectConfig);
+
+                    // console.log(`${name} [${stage} | ${env}] 配置可用`);
                 });
             }
         }

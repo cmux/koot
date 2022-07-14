@@ -20,6 +20,7 @@ module.exports = {
         __STYLE_TAG_GLOBAL_ATTR_NAME__: 'readonly',
         __STYLE_TAG_MODULE_ATTR_NAME__: 'readonly',
         __KOOT_SPA_TEMPLATE_INJECT__: 'readonly',
+        __webpack_public_path__: 'readonly',
     },
     rules: {
         // 'no-console': 0

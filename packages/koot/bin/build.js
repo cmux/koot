@@ -8,12 +8,12 @@ const chalk = require('chalk');
 
 const willValidateConfig = require('./lifecycle/will-validate-config');
 const willBuild = require('./lifecycle/will-build');
+const didBuild = require('./lifecycle/did-build');
 
 const {
     // keyConfigQuiet,
     filenameBuilding,
 } = require('../defaults/before-build');
-const { KOOT_BUILD_START_TIME } = require('../defaults/envs');
 
 const __ = require('../utils/translate');
 const sleep = require('../utils/sleep');
@@ -62,7 +62,7 @@ const run = async () => {
         kootDev = false,
         kootTest = false,
         kootDevelopment = false,
-    } = program;
+    } = program.opts();
 
     initNodeEnv();
     // console.log(program)
@@ -84,7 +84,6 @@ const run = async () => {
 
     process.env.KOOT_TEST_MODE = JSON.stringify(kootTest);
     process.env.KOOT_DEVELOPMENT_MODE = JSON.stringify(kootDevelopment);
-    process.env[KOOT_BUILD_START_TIME] = Date.now() + '';
 
     const stage = (() => {
         if (_stage) return _stage;
@@ -115,6 +114,19 @@ const run = async () => {
         await willBuild(kootConfig);
     }
 
+    /** 流程结束 */
+    async function finish() {
+        await after(kootConfig);
+        // if (!fromCommandStart)
+
+        // 打包流程完成
+        if (!fromOtherCommand) {
+            await didBuild(kootConfig);
+        }
+
+        console.log(' ');
+    }
+
     // Building process =======================================================
 
     // 如果提供了 stage，仅针对该 stage 执行打包
@@ -123,11 +135,9 @@ const run = async () => {
         // if (stage === 'server' && !hasServer) {
         //     console.log(chalk.redBright('× '))
         // }
+        // console.log(kootConfig);
         result = await kootWebpackBuild(kootConfig);
-        await after(kootConfig);
-        // if (!fromCommandStart)
-        console.log(' ');
-        return;
+        return await finish();
     }
 
     // 如过没有提供 stage，自动相继打包 client 和 server
@@ -151,11 +161,7 @@ const run = async () => {
             })
     );
 
-    await after(kootConfig);
-    // if (!fromCommandStart)
-    console.log(' ');
-
-    // 结束
+    return await finish();
 };
 
 const after = async (config = {}) => {

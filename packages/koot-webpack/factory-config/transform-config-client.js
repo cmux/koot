@@ -5,7 +5,9 @@ const DefaultWebpackConfig = require('webpack-config').default;
 
 const CompressionPlugin = require('compression-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const KootI18nPlugin = require('../plugins/i18n');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+
+// const KootI18nPlugin = require('../plugins/i18n');
 const DevModePlugin = require('../plugins/dev-mode');
 const SpaTemplatePlugin = require('../plugins/spa-template');
 const GenerateChunkmapPlugin = require('../plugins/generate-chunkmap');
@@ -15,6 +17,8 @@ const CreateManifestPlugin = require('../plugins/create-manifest');
 const newPluginWorkbox = require('../libs/new-plugin-workbox');
 const newPluginCopyWebpack = require('../libs/new-plugin-copy');
 
+const ensureConfigName = require('../libs/ensure-webpack-config/name');
+
 const {
     keyConfigBuildDll,
     keyConfigOutputPathShouldBe,
@@ -23,8 +27,11 @@ const {
     chunkNameClientRunFirst,
     keyConfigClientServiceWorkerPathname,
     keyConfigIcons,
+    defaultAssetModuleFilename,
     // pathnameSockjs
 } = require('koot/defaults/before-build');
+const { KOOT_CLIENT_PUBLIC_PATH } = require('koot/defaults/envs');
+const { LOCALEID, SSRSTATE } = require('koot/defaults/defines-window');
 const { hmrOptions } = require('koot/defaults/webpack-dev-server');
 
 // const {
@@ -128,6 +135,22 @@ module.exports = async (kootConfigForThisBuild = {}) => {
         /** @type {String} 打包结果目录 */
         const outputPath = getDirDistPublic(dist);
 
+        /** i18n 配置对象，提供给 babel 插件使用 */
+        const i18nConfig = {
+            stage: STAGE,
+            functionName: i18n ? i18n.expr : undefined,
+            localeId: i18n
+                ? isSeperateLocale
+                    ? localeId
+                    : undefined
+                : undefined,
+            localeFile: i18n
+                ? isSeperateLocale
+                    ? localeFile
+                    : undefined
+                : undefined,
+        };
+
         /** @type {Object} 默认配置 */
         const configTargetDefault = await createTargetDefaultConfig({
             pathRun: getCwd(),
@@ -159,6 +182,7 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                     {
                         isSPATemplateInject,
                         localeId,
+                        i18n: i18nConfig,
                     }
                 )
             );
@@ -173,19 +197,19 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                 concatenateModules: false,
                 minimize: false,
             };
-            try {
-                if (parseInt(getModuleVersion('webpack')) < 5) {
-                    optimization.occurrenceOrder = false;
-                }
-            } catch (e) {
-                optimization.occurrenceOrder = false;
-            }
+            ensureConfigName(result, 'spa-template-inject');
             Object.assign(result, {
-                target: 'async-node',
+                mode: 'development',
+                target: 'node',
                 entry: validatePathname(templateInject, getCwd()),
                 output: {
                     filename: getFilenameSPATemplateInject(localeId),
                     path: getDirTemp(),
+                    // library: {
+                    //     type: 'commonjs',
+                    //     name: 'commonJS',
+                    // },
+                    libraryTarget: 'commonjs',
                 },
                 optimization,
                 [keyConfigWebpackSPATemplateInject]: true,
@@ -195,21 +219,25 @@ module.exports = async (kootConfigForThisBuild = {}) => {
             if (localeId)
                 result.plugins.push(
                     new webpack.DefinePlugin({
-                        __KOOT_LOCALEID__: JSON.stringify(localeId),
+                        [LOCALEID]: JSON.stringify(localeId),
                     })
                 );
             delete result.optimization.minimizer;
         } else {
+            ensureConfigName(result, 'client');
+
             // 处理 output
             result.output = {
                 path: outputPath,
                 publicPath: __clientAssetsPublicPath,
-                filename:
-                    configTargetDefaultOutput.filename ||
-                    `entry.[chunkhash].js`,
-                chunkFilename:
-                    configTargetDefaultOutput.chunkFilename ||
-                    `chunk.[chunkhash].js`,
+                ...[
+                    ['filename', `entry.[chunkhash].js`],
+                    ['chunkFilename', `chunk.[chunkhash].js`],
+                    ['assetModuleFilename', defaultAssetModuleFilename],
+                ].reduce((output, [key, def]) => {
+                    output[key] = configTargetDefaultOutput[key] || def;
+                    return output;
+                }, {}),
                 ...(result.output || {}),
             };
             if (result.output.publicPath)
@@ -223,10 +251,15 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                 result.output.filename = `entry-[id]-[name].js`;
                 result.output.chunkFilename = `chunk-[id]-[name].js`;
             } else if (typeof filenamePrefix === 'string') {
-                result.output.filename =
-                    filenamePrefix + result.output.filename;
-                result.output.chunkFilename =
-                    filenamePrefix + result.output.chunkFilename;
+                ['filename', 'chunkFilename', 'assetModuleFilename'].forEach(
+                    (key) => {
+                        result.output[key] =
+                            filenamePrefix + result.output[key];
+                    }
+                );
+            }
+            if (isPublicPathProvided) {
+                process.env[KOOT_CLIENT_PUBLIC_PATH] = result.output.publicPath;
             }
 
             // 处理 entry
@@ -242,19 +275,7 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                     for (const key in result.entry) {
                         if (!Array.isArray(result.entry[key]))
                             result.entry[key] = [result.entry[key]];
-                        // result.entry[key].unshift('react-hot-loader/patch');
-                        // result.entry[key].unshift(
-                        //     'webpack/hot/only-dev-server'
-                        // );
-                        // result.entry[key].unshift(
-                        //     `webpack-dev-server/client?http://localhost:${getWDSport()}/${pathnameSockjs}/`
-                        // );
                     }
-                    // result.entry.client = [
-                    //     'react-hot-loader/patch',
-                    //     ...result.entry.client
-                    // ];
-                    // result.entry[entryClientHMR] = `webpack-dev-server/client?http://localhost:${getWDSport()}/${pathnameSockjs}/`
                 }
                 // const fileRunFirst = path.resolve(
                 //     __dirname,
@@ -282,26 +303,16 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                     removeEmptyChunks: false,
                     splitChunks: false,
                 });
+                if (!createDll) {
+                    Object.assign(result.optimization, {
+                        runtimeChunk: 'single',
+                    });
+                }
             }
 
             // 添加默认插件
             // i18n 插件
-            result.plugins.unshift(
-                new KootI18nPlugin({
-                    stage: STAGE,
-                    functionName: i18n ? i18n.expr : undefined,
-                    localeId: i18n
-                        ? isSeperateLocale
-                            ? localeId
-                            : undefined
-                        : undefined,
-                    localeFile: i18n
-                        ? isSeperateLocale
-                            ? localeFile
-                            : undefined
-                        : undefined,
-                })
-            );
+            // result.plugins.unshift(new KootI18nPlugin(i18nConfig));
 
             // 开发环境辅助插件与其他能力
             if (ENV === 'dev') {
@@ -322,18 +333,10 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                 } catch (e) {
                     result.plugins.push(new webpack.NamedModulesPlugin());
                 }
-                result.plugins.push(
-                    new webpack.HotModuleReplacementPlugin(
-                        Object.assign({}, hmrOptions, webpackHmr)
-                    )
-                );
                 // if (!createDll) {
                 //     if (typeof result.resolve !== 'object') result.resolve = {};
                 //     if (typeof result.resolve.alias !== 'object')
                 //         result.resolve.alias = {};
-                //     if (!result.resolve.alias['react-dom'])
-                //         result.resolve.alias['react-dom'] =
-                //             '@hot-loader/react-dom';
                 // }
             }
 
@@ -399,16 +402,15 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                                     '\\\\'
                                 )}'\n` +
                                     `import { setLocales } from 'koot/i18n/locales'\n` +
-                                    `window.__KOOT_SSR_STATE__ = {
+                                    `window.${SSRSTATE} = {
                                     localeId: '${localeId}',
                                     locales
                                 };` +
                                     `setLocales(locales);`,
                                 'utf-8'
                             );
-                            result.entry[
-                                getSpaLocaleFileId(localeId)
-                            ] = pathname;
+                            result.entry[getSpaLocaleFileId(localeId)] =
+                                pathname;
                         }
                     }
                     result.plugins.push(
@@ -428,17 +430,6 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                                     keyConfigClientServiceWorkerPathname
                                 ],
                             appTypeUse,
-                        })
-                    );
-                } else {
-                    result.plugins.push(
-                        await new GenerateChunkmapPlugin({
-                            localeId: isSeperateLocale ? localeId : undefined,
-                            outputPath,
-                            serviceWorkerPathname:
-                                kootConfigForThisBuild[
-                                    keyConfigClientServiceWorkerPathname
-                                ],
                         })
                     );
                 }
@@ -464,11 +455,48 @@ module.exports = async (kootConfigForThisBuild = {}) => {
                         )
                     );
                 }
+
+                // 开发环境专用
+                if (ENV === 'dev') {
+                    const thisHMROptions = Object.assign(
+                        {},
+                        hmrOptions,
+                        webpackHmr
+                    );
+                    if (Object.keys(thisHMROptions).length)
+                        result.plugins.push(
+                            new webpack.HotModuleReplacementPlugin(
+                                thisHMROptions
+                            )
+                        );
+                    result.plugins.push(new ReactRefreshWebpackPlugin());
+                }
+
+                // 生产环境专用
+                if (ENV === 'prod' && exportGzip) {
+                    result.plugins.push(
+                        new CompressionPlugin(/*{ cache: true }*/)
+                    );
+                }
+
+                result.plugins.push(
+                    await new GenerateChunkmapPlugin({
+                        localeId: isSeperateLocale ? localeId : undefined,
+                        outputPath,
+                        serviceWorkerPathname:
+                            kootConfigForThisBuild[
+                                keyConfigClientServiceWorkerPathname
+                            ],
+                    })
+                );
             }
 
-            // 生产环境专用
-            if (ENV === 'prod' && exportGzip) {
-                result.plugins.push(new CompressionPlugin({ cache: true }));
+            // 强制将 client 入口移动至最后
+            // https://github.com/webpack/webpack-dev-server/issues/2792
+            if (result.entry.client) {
+                const clientEntry = result.entry.client;
+                delete result.entry.client;
+                result.entry.client = clientEntry;
             }
         }
 

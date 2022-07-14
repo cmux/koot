@@ -2,7 +2,7 @@ const webpack = require('webpack');
 const common = require('../common');
 
 const factoryConfig = async ({
-    pathRun
+    pathRun,
     // CLIENT_DEV_PORT,
 }) => {
     // let { RUN_PATH, CLIENT_DEV_PORT, APP_KEY } = opt
@@ -12,23 +12,23 @@ const factoryConfig = async ({
         devtool: 'source-map',
         target: 'async-node',
         node: {
-            __dirname: true
+            __dirname: true,
         },
-        watch: false,
+        // watch: false,
         output: {
             filename: '[name].js',
             chunkFilename: 'chunk.[chunkhash].js',
-            path: `${pathRun}/${common.outputPath}/.server`
+            path: `${pathRun}/${common.outputPath}/.server`,
             // publicPath: `/[need_set_in_app:__webpack_public_path__]/`,
             // publicPath: `/`,
         },
         plugins: [
             new webpack.DefinePlugin({
-                __SPA__: true
-            })
+                __SPA__: true,
+            }),
         ],
-        externals: common.filterExternalsModules()
+        externals: common.filterExternalsModules(),
     };
 };
 
-module.exports = async opt => await factoryConfig(opt);
+module.exports = async (opt) => await factoryConfig(opt);

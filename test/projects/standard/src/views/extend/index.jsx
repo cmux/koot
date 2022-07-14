@@ -1,4 +1,4 @@
-import React from 'react';
+import { Component } from 'react';
 import { extend } from 'koot';
 
 import {
@@ -52,7 +52,7 @@ const check = (props) => {
 
     name: 'PageExtend',
 })
-class PageExtend extends React.Component {
+class PageExtend extends Component {
     reset = false;
 
     componentDidMount() {

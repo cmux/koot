@@ -1,4 +1,4 @@
-import React from 'react';
+import { StrictMode } from 'react';
 import { extend } from 'koot';
 import classNames from 'classnames';
 
@@ -11,7 +11,7 @@ import styles from './app.module.less';
 const App = extend({
     styles,
 })(({ className, children, location, ...props }) => (
-    <React.StrictMode>
+    <StrictMode>
         <div
             className={classNames([
                 className,
@@ -24,7 +24,7 @@ const App = extend({
             <Nav location={location} {...props} />
             <Main children={children} />
         </div>
-    </React.StrictMode>
+    </StrictMode>
 ));
 export default App;
 

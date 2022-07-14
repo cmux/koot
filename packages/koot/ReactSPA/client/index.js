@@ -1,11 +1,19 @@
 import {
     router,
-    client
+    client,
 } from '__KOOT_PROJECT_CONFIG_PORTION_OTHER_CLIENT_PATHNAME__';
 // } from '../../../../koot'
-import kootClient from './run';
+import { CLIENT_MOUNT, CLIENT_UNMOUNT } from '../../defaults/defines-window';
+import kootMount, { unmount as kootUnmount } from './run';
 
-export default kootClient({
-    router,
-    client
-});
+window[CLIENT_MOUNT] = (args = {}) =>
+    kootMount({
+        router,
+        client,
+        ...args,
+    });
+window[CLIENT_UNMOUNT] = (args = {}) => kootUnmount(args);
+
+export default (process.env.KOOT_BUILD_TARGET === 'qiankun'
+    ? () => {}
+    : window[CLIENT_MOUNT])();

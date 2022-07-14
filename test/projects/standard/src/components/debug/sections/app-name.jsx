@@ -1,4 +1,3 @@
-import React from 'react';
 import { extend } from 'koot';
 
 import { fetchAppName } from '@store/koot-test/actions';
@@ -6,13 +5,13 @@ import { fetchAppName } from '@store/koot-test/actions';
 import Section from '../section';
 
 const DebugSectionAppName = extend({
-    connect: state => ({
+    connect: (state) => ({
         appName:
             typeof state.kootTest === 'object' &&
             typeof state.kootTest.app === 'object'
                 ? state.kootTest.app.name
-                : undefined
-    })
+                : undefined,
+    }),
 })(({ appName, dispatch }) => (
     <Section name="app-name">
         {appName ? (

@@ -41,12 +41,12 @@ const run = async () => {
                 value: jestScript.reactBase,
             },
             {
-                name: 'React - Only SSR',
-                value: jestScript.reactIsomorphic,
-            },
-            {
                 name: 'React - Only SPA',
                 value: jestScript.reactSPA,
+            },
+            {
+                name: 'React - Only SSR',
+                value: jestScript.reactIsomorphic,
             },
             new inquirer.Separator(),
             {
@@ -76,10 +76,19 @@ const run = async () => {
                 name: 'Functions: koot/i18n',
                 value: './test/cases/i18n',
             },
+            {
+                name: 'Functions: factory webpack config',
+                value: './test/cases/config/factory-webpack-config',
+            },
             new inquirer.Separator(),
             {
                 name: 'Suite: Build Cache',
                 value: './test/cases/build-cache',
+            },
+            new inquirer.Separator(),
+            {
+                name: 'Babel Plugins',
+                value: './test/cases/babel-plugins',
             },
             new inquirer.Separator(),
         ],
@@ -90,14 +99,14 @@ const run = async () => {
 
     const script = (() => {
         const jestReactAll = [
-            `jest ${jestScript.reactBase}`,
-            `jest ${jestScript.reactSPA}`,
-            `jest ${jestScript.reactIsomorphic}`,
+            `jest ${jestScript.reactBase} --detectOpenHandles`,
+            `jest ${jestScript.reactSPA} --detectOpenHandles`,
+            `jest ${jestScript.reactIsomorphic} --detectOpenHandles`,
         ];
 
         const jestAll = [
-            `jest "test/((?!need-in-order).)*\\.test\\.[jt]sx?$"`,
-            `jest ${jestScript.cli.all}`,
+            `jest "test/((?!need-in-order).)*\\.test\\.[jt]sx?$" --detectOpenHandles`,
+            `jest ${jestScript.cli.all} --detectOpenHandles`,
             ...jestReactAll,
         ];
 
@@ -108,7 +117,7 @@ const run = async () => {
 
         if (value === 'REACT') return [...jestReactAll].join(' && ');
 
-        return `jest ${value}`;
+        return `jest ${value} --detectOpenHandles`;
     })();
 
     await runScript(script);

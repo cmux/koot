@@ -47,7 +47,7 @@ module.exports = {
     redux: {
         combineReducers: './src/store/reducers',
         // store: './src/store/create',
-        syncCookie: false
+        syncCookie: false,
     },
 
     /**
@@ -64,7 +64,7 @@ module.exports = {
         before: './src/services/lifecycle/before',
         after: './src/services/lifecycle/after',
         onRouterUpdate: './src/services/lifecycle/on-router-update',
-        onHistoryUpdate: './src/services/lifecycle/on-history-update'
+        onHistoryUpdate: './src/services/lifecycle/on-history-update',
     },
 
     /**
@@ -91,10 +91,10 @@ module.exports = {
             index: 'index.html',
             defer: false,
             gzip: true,
-            extensions: false
+            extensions: false,
         },
         renderCache: {
-            maxAge: 10 * 1000
+            maxAge: 10 * 1000,
         },
         proxyRequestOrigin: {
             // protocol: 'koot',
@@ -108,8 +108,9 @@ module.exports = {
             beforePreRender: './server/lifecycle/on-render-before-pre-render',
             beforeDataToStore:
                 './server/lifecycle/on-render-before-data-to-store',
-            afterDataToStore: './server/lifecycle/on-render-after-data-to-store'
-        }
+            afterDataToStore:
+                './server/lifecycle/on-render-after-data-to-store',
+        },
     },
 
     /**
@@ -146,7 +147,7 @@ module.exports = {
             return;
         },
         defines: {
-            __QA__: JSON.stringify(false)
+            __QA__: JSON.stringify(false),
         },
         dll: [
             'react',
@@ -155,17 +156,24 @@ module.exports = {
             'redux-thunk',
             'react-redux',
             'react-router',
-            'react-router-redux'
+            'react-router-redux',
             // 'koot',
         ],
         internalLoadersOptions: {
             'less-loader': {
-                modifyVars: {
-                    'base-font-size': '40px'
+                lessOptions: {
+                    math: 'always',
                 },
-                aaa: 'bbb'
-            }
-        }
+                modifyVars: {
+                    'base-font-size': '40px',
+                },
+                aaa: 'bbb',
+            },
+            'ts-loader': {
+                context: __dirname,
+                configFile: path.resolve(__dirname, './tsconfog.json'),
+            },
+        },
     },
 
     /**
@@ -189,7 +197,8 @@ module.exports = {
         '@server': path.resolve('./server'),
         '~base.less': path.resolve('./src/constants/less/base.less'),
         '~Assets': path.resolve('./src/assets'),
-        '~/': path.resolve('./src')
+        '~/': path.resolve('./src'),
+        react: path.resolve(__dirname, '../../../node_modules/react'),
     },
 
     /**
@@ -203,15 +212,15 @@ module.exports = {
     css: {
         fileBasename: {
             normal: /\.g/,
-            component: /^((?!\.g\.).)*/
-        }
+            component: /^((?!\.g\.).)*/,
+        },
     },
 
     /** @type {(Number|Object|String)} 服务器运行端口 */
     // port: 3080,
     port: {
-        dev: 8083,
-        prod: 8081
+        dev: 8983,
+        prod: 8881,
     },
 
     /** @type {(Boolean|Array[]|Object)} 多语言配置 */
@@ -227,8 +236,8 @@ module.exports = {
         locales: [
             ['zh', './src/locales/zh.json'],
             ['zh-tw', './src/locales/zh-tw.json'],
-            ['en', './src/locales/en.json']
-        ]
+            ['en', './src/locales/en.json'],
+        ],
     },
 
     /**
@@ -252,7 +261,7 @@ module.exports = {
         // template: path.resolve('./src/sw-template.js'),
         // initialCache: '/**/*',
         // initialCacheAppend: [// real urls],
-        initialCacheIgonre: ['/dev-*']
+        initialCacheIgonre: ['/dev-*'],
     },
 
     /**
@@ -269,7 +278,7 @@ module.exports = {
         // historyApiFallback: false,
         // proxy: {
         //     '/root': {
-        //         target: 'http://localhost:8083/',
+        //         target: 'http://localhost:8983/',
         //         pathRewrite: { '^/root': '' }
         //     }
         // }
@@ -279,5 +288,5 @@ module.exports = {
      * @type {String}
      * 静态资源文件存放路径，打包时会自动复制该目录下的所有文件到打包目录下，方便直接使用
      */
-    staticAssets: path.resolve(__dirname, './public')
+    staticAssets: path.resolve(__dirname, './public'),
 };

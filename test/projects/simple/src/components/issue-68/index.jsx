@@ -1,4 +1,4 @@
-import React from 'react';
+import { Fragment } from 'react';
 import { extend } from 'koot';
 
 import styles from './styles.component.less';
@@ -6,10 +6,10 @@ import styles from './styles.component.less';
 // https://github.com/cmux/koot/issues/68
 
 const Issue68 = extend({
-    styles
+    styles,
 })(({ className }) => {
     return (
-        <React.Fragment>
+        <Fragment>
             <div className={className} data-issue="68">
                 <h4>Issue 68</h4>
                 <div className="component" koot-test-styles="font-size: 20px">
@@ -41,7 +41,7 @@ const Issue68 = extend({
             >
                 .component[data-a=".component"]
             </div>
-        </React.Fragment>
+        </Fragment>
     );
 });
 

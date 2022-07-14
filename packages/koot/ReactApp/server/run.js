@@ -13,6 +13,7 @@ import getPathnameDevServerStart from '../../utils/get-pathname-dev-server-start
 import createKoaApp from '../../libs/create-koa-app';
 import errorMsg from '../../libs/error-msg';
 import log from '../../libs/log';
+import getFlagFile from '../../libs/get-flag-file';
 // import getDist from '../../utils/get-dist-path';
 // import sleep from '../../utils/sleep';
 
@@ -28,7 +29,7 @@ import middlewareStatic from './middlewares/static';
 
 // require('@babel/register')
 // require('@babel/polyfill')
-require('isomorphic-fetch');
+// require('isomorphic-fetch');
 const fs = require('fs-extra');
 // const path = require('path');
 // const chalk = require('chalk');
@@ -140,6 +141,11 @@ const startKootIsomorphicServer = async () => {
                     port: process.env.SERVER_PORT_DEV_MAIN,
                     portServer: process.env.SERVER_PORT,
                 });
+                // 移除 flag 文件：打包中
+                {
+                    const file = getFlagFile.devBuildingServer();
+                    if (fs.existsSync(file)) fs.unlinkSync(file);
+                }
                 console.log(' ');
                 return resolve();
             });

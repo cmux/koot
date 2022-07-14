@@ -1,8 +1,8 @@
-import React from 'react';
+import { Component, ComponentClass, ReactNode } from 'react';
 import { extend, ExtendedProps } from 'koot';
 
-const SSR: React.ComponentClass = extend({
-    styles: require('./index.module.less')
+const SSR: ComponentClass = extend({
+    styles: require('./index.module.less'),
 })(({ className }) => (
     <div className={className} id="koot-test-controled-ssr">
         Alternative content
@@ -12,10 +12,10 @@ const SSR: React.ComponentClass = extend({
 //
 
 @extend({
-    ssr: <SSR />
+    ssr: <SSR />,
 })
-class ControledSSR extends React.Component<ExtendedProps> {
-    render(): React.ReactNode {
+class ControledSSR extends Component<ExtendedProps> {
+    render(): ReactNode {
         return <div id="koot-test-controled-ssr">Controled SSR</div>;
     }
 }

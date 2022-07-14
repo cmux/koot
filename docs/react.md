@@ -92,7 +92,7 @@ _Object_ `styles` 组件 CSS
         -   参数
             -   _Object_ `state` 当前 Redux state
             -   _Object_ `renderProps` 同构对象
-        -   返回值：_Object_
+        -   需返回：_Object_
             -   _string_ `title` 新的页面标题
             -   _Array_ `metas` 新的页面 meta 标签信息
 -   如果没有提供 `title`，会默认采用项目配置中的 `name` 值，如果该值也未提供，则会默认使用 `package.json` 的 `name` 属性
@@ -107,13 +107,16 @@ _Object_ `styles` 组件 CSS
                 -   _Object_ `state` 当前 Redux state
                 -   _Object_ `renderProps` 同构对象
                 -   _Function_ `dispatch` Redux dispatch 方法
-            -   返回值：_Promise_
+            -   需返回：_Promise_
+            -   该方法会在 `componentDidMount` 生命周期运行，如有 `componentDidUpdate` 周期需要，请自行在组件中编写逻辑
         -   _Function_ `data.check` 检查数据是否已准备就绪
             <br>`check(state, props)`
             -   参数
                 -   _Object_ `state` 当前 Redux state
                 -   _Object_ `renderProps` 同构对象
-            -   返回值：_Boolean_
+            -   需返回：_Boolean_
+                -   返回 `true` 表示数据已准备就绪，`fetch` 函数不会执行
+                -   反之，返回 `false` 表示数据还未就绪，`fetch` 函数会在 `componentDidMount` 生命周期运行
     -   _Function_ `data`
         <br>为 _Function_ 时，同 `data.fetch`
         <br>使用该方法时，需要自行编写检查数据的代码，推荐写在 redux action 中
@@ -171,6 +174,7 @@ import styles from './styles.less';
             return dispatch(fetchUser());
         },
         check: (state, renderProps) => {
+            // 当满足以下条件时，表示数据已就绪，`fetch` 方法不运行
             return (
                 typeof renderProps.user === 'object' &&
                 typeof renderProps.user.id !== 'undefined'
@@ -219,8 +223,37 @@ export default HomePage;
     -   非 React 组件文件请勿以 `.jsx` `.tsx` 作为文件扩展名
 -   仅影响文件中输出 (`export`) 的组件，没有输出的组件不会有热更新
 
+**有关 `memo()`**
+
+出于某些限制，目前 _Koot.js_ 仍在使用 `react-hot-loader`，其作者已经表示不再维护，目前已知对 `memo()` 组件的热更新支持不佳。
+
+为了缓解这一问题，在开发环境中，所有的 `memo()` 函数都会被**自动地**替换为组件本身，从而使热更新可用，但这样一来和生产环境地结果就有了一定的偏差，在开发时请注意。
+
+⚠️ 在未来会更新为全新的 _Fast Refresh_ 机制，从而杜绝这一现象
+
 ### 同构对象
 
 Koot.js 自定义的对象，其中包含以下属性/元素：
 
 _TODO:_
+
+---
+
+### 其他相关
+
+##### reactLegacyRef
+
+-   类型: `boolean`
+-   默认值: `false`
+
+仅对旧版本升级时有意义。如果发现更新后 _React_ 的 `ref` 结果有变化，可以尝试打开该选项。
+
+```javascript
+module.exports = {
+    // 不启用 (默认值)
+    reactLegacyRef: false,
+
+    // 使用旧版 ref 特征
+    reactLegacyRef: true,
+};
+```

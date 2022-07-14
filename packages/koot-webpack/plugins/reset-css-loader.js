@@ -5,12 +5,12 @@ const resetCssLoader = require('../loaders/css/reset');
  */
 class ResetCssLoaderPlugin {
     apply(compiler) {
-        compiler.hooks.done.tapAsync.bind(
+        compiler.hooks.done.tap.bind(
             compiler.hooks.done,
             'ResetCssLoaderPlugin'
-        )((compilation, callback) => {
+        )((compilation) => {
             if (process.env.WEBPACK_BUILD_ENV === 'prod') resetCssLoader();
-            callback();
+            // callback();
         });
     }
 }

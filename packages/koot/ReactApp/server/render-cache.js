@@ -2,6 +2,7 @@
  * @callback cacheGet
  * 缓存检查与吐出方法
  * @param {String} url
+ * @param {Object} ctx KOA Context
  * @return {Boolean|String} 对该 URL 不使用缓存时返回 false，使用时返回缓存结果 String
  */
 
@@ -9,7 +10,8 @@
  * @callback cacheSet
  * 缓存存储方法
  * @param {String} url
- * @param {String} html
+ * @param {String} html SSR 渲染结果 HTML
+ * @param {Object} ctx KOA Context
  */
 
 const defaults = require('../../defaults/render-cache');
@@ -29,7 +31,7 @@ class KootReactRenderCache {
         if (options === true) options = {};
         const {
             maxAge = defaults.maxAge,
-            maxCount = defaults.maxCount
+            maxCount = defaults.maxCount,
         } = options;
 
         this.list = new Map();
@@ -48,10 +50,12 @@ class KootReactRenderCache {
     /**
      * 缓存检查与吐出方法
      * @param {String} url
+     * @param {Object} ctx KOA Context
      * @return {Boolean|String} 对该 URL 不使用缓存时返回 false，使用时返回缓存结果 String
      */
-    get(url) {
-        if (typeof this.customGet === 'function') return this.customGet(url);
+    get(url, ctx) {
+        if (typeof this.customGet === 'function')
+            return this.customGet(url, ctx);
 
         // 没有该条结果，直接返回 false
         if (!this.list.has(url)) return false;
@@ -75,10 +79,11 @@ class KootReactRenderCache {
      * 缓存存储方法
      * @param {String} url
      * @param {String} html
+     * @param {Object} ctx KOA Context
      */
-    set(url, html) {
+    set(url, html, ctx) {
         if (typeof this.customSet === 'function')
-            return this.customSet(url, html);
+            return this.customSet(url, html, ctx);
 
         // 如果当前已缓存的 URL 数量不少于设定的最大数量
         // 移除已缓存列表里的第一条结果
@@ -94,7 +99,7 @@ class KootReactRenderCache {
         this.cachedUrls.push(url);
         this.list.set(url, {
             html,
-            time: Date.now()
+            time: Date.now(),
         });
     }
 

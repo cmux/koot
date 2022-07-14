@@ -1,30 +1,34 @@
 const fs = require('fs-extra');
 const path = require('path');
-const webpack = require('webpack');
+// const webpack = require('webpack');
 const DefaultWebpackConfig = require('webpack-config').default;
 // const ExtraWatchWebpackPlugin = require('extra-watch-webpack-plugin').default
 
-const KootI18nPlugin = require('../plugins/i18n');
+// const KootI18nPlugin = require('../plugins/i18n');
 const DevModePlugin = require('../plugins/dev-mode');
 const ModifyServerBundlePlugin = require('../plugins/modify-server-bundle');
 
 const newPluginCopyWebpack = require('../libs/new-plugin-copy');
+const ensureConfigName = require('../libs/ensure-webpack-config/name');
 
 const {
     keyConfigBuildDll,
     // keyConfigClientAssetsPublicPath,
     keyConfigWebpackSPAServer,
+    defaultAssetModuleFilename,
 } = require('koot/defaults/before-build');
+const getCwd = require('koot/utils/get-cwd');
+const getDirDistPublic = require('koot/libs/get-dir-dist-public');
+const getDirDevTmp = require('koot/libs/get-dir-dev-tmp');
+const getModuleVersion = require('koot/utils/get-module-version');
 
 const createTargetDefaultConfig = require('./create-target-default');
 const transformConfigExtendDefault = require('./transform-config-extend-default');
 const transformConfigLast = require('./transform-config-last');
 const transformOutputPublicpath = require('./transform-output-publicpath');
+const LimitChunkCountPlugin = require('../plugins/limit-chunk-count');
 
-const getCwd = require('koot/utils/get-cwd');
-const getDirDistPublic = require('koot/libs/get-dir-dist-public');
-// const getDirDevTmp = require('koot/libs/get-dir-dev-tmp');
-const getModuleVersion = require('koot/utils/get-module-version');
+const webpackConfigServerDefaults = require('./_defaults/server');
 
 /**
  * Webpack 配置处理 - 服务器端配置
@@ -43,6 +47,7 @@ module.exports = async (kootBuildConfig = {}) => {
         template,
         target,
         [keyConfigBuildDll]: createDll = false,
+        distClientAssetsDirName,
     } = kootBuildConfig;
 
     const serverless = target === 'serverless';
@@ -62,6 +67,17 @@ module.exports = async (kootBuildConfig = {}) => {
             (serverless || process.env.KOOT_BUILD_TARGET === 'serverless')
     );
 
+    const i18nConfig = {
+        stage: STAGE,
+        functionName: i18n ? i18n.expr : undefined,
+    };
+
+    /** 基于存放目录名的文件名前缀 */
+    const filenamePrefix =
+        process.env.WEBPACK_BUILD_ENV === 'prod' && distClientAssetsDirName
+            ? `${distClientAssetsDirName}/`
+            : '';
+
     const configTargetDefault = await createTargetDefaultConfig(
         {
             pathRun: getCwd(),
@@ -74,7 +90,8 @@ module.exports = async (kootBuildConfig = {}) => {
     /** @type {Object} 当前环境的 webpack 配置对象 */
     const result = new DefaultWebpackConfig()
         .merge(configTargetDefault)
-        .merge(config);
+        .merge(config)
+        .defaults(webpackConfigServerDefaults);
 
     const isPublicPathProvided = Boolean(
         process.env.WEBPACK_BUILD_ENV === 'prod' &&
@@ -83,15 +100,19 @@ module.exports = async (kootBuildConfig = {}) => {
             typeof config.output.publicPath === 'string'
     );
 
-    await transformConfigExtendDefault(result, kootBuildConfig);
+    await transformConfigExtendDefault(result, kootBuildConfig, {
+        i18n: i18nConfig,
+    });
 
     Object.assign(result.output, configTargetDefault.output);
+    ensureConfigName(result, 'server');
 
     // output =================================================================
     result.output = {
         publicPath: '/',
         filename: `[name].js`,
         chunkFilename: `chunk.[chunkhash].js`,
+        assetModuleFilename: `${filenamePrefix}${defaultAssetModuleFilename}`,
         ...(result.output || {}),
     };
     if (result.output.publicPath)
@@ -109,12 +130,9 @@ module.exports = async (kootBuildConfig = {}) => {
     // ========================================================================
 
     result.plugins = [
-        new webpack.optimize.LimitChunkCountPlugin({
+        // new KootI18nPlugin(i18nConfig),
+        new LimitChunkCountPlugin({
             maxChunks: 1,
-        }),
-        new KootI18nPlugin({
-            stage: STAGE,
-            functionName: i18n ? i18n.expr : undefined,
         }),
         new ModifyServerBundlePlugin({ isServerless }),
         ...result.plugins,
@@ -124,11 +142,27 @@ module.exports = async (kootBuildConfig = {}) => {
         result.plugins.push(
             newPluginCopyWebpack(
                 i18n.locales.map((arr) => {
+                    let from = arr[2];
+                    let to = arr[3];
+                    if (path.parse(arr[2]).ext === '.json') {
+                    } else {
+                        // 载入语言包，讲结果写入临时文件，复制该临时文件到打包目录
+                        const localesObj = require(arr[2]);
+                        const tmpFolder = getDirDevTmp(undefined, 'locales');
+                        from = path.resolve(tmpFolder, arr[0] + '.js');
+                        fs.ensureDirSync(tmpFolder);
+                        fs.writeFileSync(
+                            from,
+                            'module.exports = ' + JSON.stringify(localesObj)
+                        );
+
+                        const { dir: toDir, name: toName } = path.parse(arr[3]);
+                        to = toDir + '/' + toName + '.js';
+                    }
+
                     return {
-                        from: arr[2],
-                        to: arr[3],
-                        // to: '../.locales/'
-                        // to: path.resolve(getDirDevTmp(), 'locales')
+                        from,
+                        to,
                     };
                 })
             )
@@ -136,12 +170,13 @@ module.exports = async (kootBuildConfig = {}) => {
     }
 
     if (ENV === 'dev') {
+        result.watch = true;
         result.watchOptions = {
             ignored: [
                 // /node_modules/,
                 // 'node_modules',
                 dist,
-                path.resolve(dist, '**/*'),
+                // path.resolve(dist, '**/*'),
             ],
         };
     }
@@ -162,7 +197,7 @@ module.exports = async (kootBuildConfig = {}) => {
     if (isSPAProd) {
     } else {
         const fileSSR = require('../libs/get-koot-file')(
-            `${appTypeUse}/server/ssr.js`
+            `${appTypeUse}/server/ssr.jsx`
         );
         if (ENV !== 'dev' && fs.existsSync(fileSSR)) {
             otherEntries.ssr = [fileSSR];
@@ -205,10 +240,11 @@ module.exports = async (kootBuildConfig = {}) => {
     } else {
         if (typeof result.stats !== 'object') result.stats = {};
         Object.assign(result.stats, {
+            preset: 'minimal',
             // copied from `'minimal'`
             all: false,
             modules: true,
-            maxModules: 0,
+            // maxModules: 0,
             errors: true,
             warnings: true,
             // our additional options

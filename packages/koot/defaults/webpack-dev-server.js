@@ -4,9 +4,10 @@ module.exports = {
 
     serviceWorkerFilename: '__KOOT_DEV_SERVICE_WORKER__.js',
 
-    hmrOptions: {
-        // multiStep: true,
-        // fullBuildTimeout: process.env.WEBPACK_BUILD_TYPE === 'spa' ? 500 : undefined,
-        // requestTimeout: process.env.WEBPACK_BUILD_TYPE === 'spa' ? undefined : 1000
-    }
+    // hmrOptions: {
+    //     multiStep: true,
+    //     fullBuildTimeout: process.env.WEBPACK_BUILD_TYPE === 'spa' ? 500 : undefined,
+    //     requestTimeout: process.env.WEBPACK_BUILD_TYPE === 'spa' ? undefined : 1000
+    // }
+    hmrOptions: undefined,
 };

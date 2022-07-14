@@ -16,7 +16,7 @@
     "files.trimTrailingWhitespace": true,
     "files.insertFinalNewline": true,
     "javascript.format.insertSpaceBeforeFunctionParenthesis": true,
-    "javascript.implicitProjectConfig.experimentalDecorators": true,
+    "js/ts.implicitProjectConfig.experimentalDecorators": true,
     "javascript.validate.enable": false,
     "typescript.validate.enable": true,
     "[json]": {
@@ -33,5 +33,8 @@
     },
     "[typescriptreact]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
-    }
+    },
+    "css.validate": false,
+    "less.validate": false,
+    "scss.validate": false
 }

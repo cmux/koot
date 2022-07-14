@@ -2,7 +2,7 @@ const {
     chunkNameExtractCss,
     chunkNameExtractCssForImport,
     styleTagGlobalAttributeName,
-    thresholdStylesExtracted
+    thresholdStylesExtracted,
 } = require('../../defaults/before-build');
 const readClientFile = require('../../utils/read-client-file');
 const getClientFilePath = require('../../utils/get-client-file-path');
@@ -25,21 +25,10 @@ module.exports = ({
     // filemap,
     stylesHtml,
     localeId,
-    compilation
+    compilation,
 }) => {
     if (typeof injectCache[styles] === 'undefined') {
         injectCache[styles] = getExtracted(localeId, compilation);
-
-        if (process.env.WEBPACK_BUILD_ENV === 'dev') {
-            injectCache[styles] +=
-                `<style id="__koot-react-hot-loader-error-overlay">` +
-                `.react-hot-loader-error-overlay div {` +
-                `    z-index: 99999;` +
-                `    font-size: 14px;` +
-                `    line-height: 1.5em;` +
-                `}` +
-                `</style>`;
-        }
     }
 
     // if (needInjectCritical && typeof filemap['critical.css'] === 'string') {
@@ -108,7 +97,7 @@ const combineFilePaths = (...args) => {
     if (!Array.isArray(pathnames)) pathnames = [pathnames];
     return pathnames
         .map(
-            pathname =>
+            (pathname) =>
                 `<link id="__koot-extracted-styles" media="all" rel="stylesheet" href="${pathname}" ${styleTagGlobalAttributeName} />`
         )
         .join('');

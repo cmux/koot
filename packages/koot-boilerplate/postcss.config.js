@@ -1,7 +1,7 @@
 module.exports = {
-    plugins: [
-        require('autoprefixer'),
-        require('cssnano')({
+    plugins: {
+        autoprefixer: {},
+        cssnano: {
             preset: [
                 'default',
                 {
@@ -13,6 +13,6 @@ module.exports = {
                     zindex: false,
                 },
             ],
-        }),
-    ],
+        },
+    },
 };

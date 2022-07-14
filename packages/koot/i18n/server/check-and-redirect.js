@@ -22,6 +22,17 @@ const checkRouterRedirect = (ctx) => {
 
             // console.log('lang', lang)
             // console.log('pathname', pathname)
+            // console.log(' \n', {
+            //     'ctx.url': ctx.url,
+            //     'ctx.origin': ctx.origin,
+            //     'ctx.originalUrl': ctx.originalUrl,
+            //     'ctx.originTrue': ctx.originTrue,
+            //     'ctx.href': ctx.href,
+            //     'ctx.hrefTrue': ctx.hrefTrue,
+            //     'ctx.protocol': ctx.protocol,
+            //     'ctx.path': ctx.path,
+            //     pathname,
+            // });
 
             pathname.unshift(localeId);
             pathname = '/' + pathname.join('/');
@@ -37,6 +48,10 @@ const checkRouterRedirect = (ctx) => {
                 newpath = newpath.replace(/^https:\/\//, 'http://');
 
             ctx.hrefTrue = newpath;
+
+            // console.log('redirect to: ', {
+            //     newpath,
+            // });
 
             // console.log('newpath', newpath)
             setCookie(localeId, ctx);

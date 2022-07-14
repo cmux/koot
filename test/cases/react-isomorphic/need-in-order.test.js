@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 /**
  * React SSR 完全测试
  *
@@ -73,6 +75,7 @@ const waitForPort = require('../../libs/get-port-from-child-process');
 const checkForChunkmap = require('../../libs/check-for-chunkmap');
 const getLocaleIdFromPage = require('../../libs/puppeteer/get-locale-id-from-page');
 const getSSRStateFromPage = require('../../libs/puppeteer/get-ssr-state-from-page');
+const filterStderr = require('../../libs/filter-stderr');
 const filterState = require('../../../packages/koot/libs/filter-state');
 const testHtmlRenderedByKoot = require('../../general-tests/html/rendered-by-koot');
 const testFilesFromChunkmap = require('../../general-tests/bundle/check-files-from-chunkmap');
@@ -103,7 +106,7 @@ const projectsToUse = projects.filter(
 const commandTestBuild = 'koot-buildtest';
 /** @type {Boolean} 是否进行完整测试。如果为否，仅测试一次打包结果 */
 const fullTest = true;
-const headless = true;
+const headless = false;
 
 // Jest configuration =========================================================
 
@@ -262,6 +265,7 @@ const beforeTest = async (cwd) => {
     // 重置
     await exec(`pm2 kill`);
     await removeTempProjectConfig(cwd);
+    // await fs.remove(path.resolve(cwd, 'node_modules/.cache'));
 };
 
 /**
@@ -305,7 +309,16 @@ const emptyDist = async (dir) => {
 const testCodeSplitting = async (dist) => {
     const check = (chunkmap) => {
         const { '.files': files } = chunkmap;
-        const { 'client.js': client, 'PageHome.js': home } = files;
+        const { 'client.js': client } = files;
+        let { 'PageHome.js': home } = files;
+
+        if (!home) {
+            Object.keys(files)
+                .filter((filename) => /^PageHome_[0-9]+\.js$/.test(filename))
+                .forEach((filename) => {
+                    if (!home) home = files[filename];
+                });
+        }
 
         expect(
             fs
@@ -402,6 +415,10 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         return `${origin}${pathname}${paramStr}`;
     };
 
+    const _log = (...args) => {
+        if (false) console.log(...args);
+    };
+
     const page = await context.newPage();
     const failedResponse = [];
     require('../../libs/puppeteer/page-event-response-failed-response')(
@@ -417,7 +434,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
 
     const defaultWaitUtil = isDev ? 'networkidle2' : 'domcontentloaded';
 
-    // 测试: 页面基本结构
+    _log('页面基本结构');
     {
         const res = await page
             .goto(origin, {
@@ -470,7 +487,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
             // await page.click('a[href$="/static"]');
             await Promise.all([
                 page
-                    .waitFor(`#main > [data-koot-test-page="static"]`, {
+                    .waitForSelector(`#main > [data-koot-test-page="static"]`, {
                         timeout: 5000,
                     })
                     .catch((e) => {
@@ -500,7 +517,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         }
     }
 
-    // 测试: 并发请求 state 是否正确
+    _log('并发请求 state 是否正确');
     if (!isDev) {
         await breath();
 
@@ -529,7 +546,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         ]);
     }
 
-    // 测试: 访问没有指定组件的路由
+    _log('访问没有指定组件的路由');
     {
         await breath();
 
@@ -551,7 +568,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         const urlNoGiven = `${origin}/static/${name}`;
         const res = await page
             .goto(urlNoGiven, {
-                waitUntil: 'networkidle0',
+                waitUntil: 'load',
             })
             .catch();
 
@@ -567,28 +584,28 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         expect(featureString).toBe(name);
     }
 
-    // 测试: 利用 staticCopyFrom 配置复制的文件可访问
+    _log('利用 staticCopyFrom 配置复制的文件可访问');
     {
         await breath();
 
         const testUrl = `${origin}/__test.txt`;
         const testContent = 'TEST';
         const res = await page.goto(testUrl, {
-            waitUntil: 'networkidle0',
+            waitUntil: 'load',
         });
         const result = await res.text();
         expect(res.ok()).toBe(true);
         expect(result).toBe(testContent);
     }
 
-    // 测试：sessionStore
+    _log('测试：sessionStore');
     {
         await breath();
 
         const context = await browser.createIncognitoBrowserContext();
         const page = await context.newPage();
         await page.goto(origin, {
-            waitUntil: 'networkidle0',
+            waitUntil: 'load',
         });
 
         const { sessionStore = defaultKootConfig.sessionStore } = kootConfig;
@@ -596,15 +613,24 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
             // 点击 GET DATA
             const selectorBtn =
                 '#koot-debug [data-section="app-name"] [data-button="get-data"]';
-            await Promise.all([
-                page.click(selectorBtn),
-                page.waitForSelector(selectorBtn, {
-                    hidden: true,
-                }),
-                // page.waitForResponse(response =>
-                //     /\/app-name$/.test(response.url())
-                // )
-            ]);
+            await page.waitForSelector(selectorBtn);
+            // await page.click(selectorBtn);
+            await page.evaluate(
+                (selector) => document.querySelector(selector).click(),
+                selectorBtn
+            );
+            await page.evaluate(
+                (selector) =>
+                    new Promise((resolve) => {
+                        const polling = setInterval(() => {
+                            if (!document.querySelector(selector)) {
+                                clearInterval(polling);
+                                resolve();
+                            }
+                        }, 100);
+                    }),
+                selectorBtn
+            );
 
             const before = await page.evaluate(() => {
                 return {
@@ -615,7 +641,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
             before.stateBefore = filterState(before.stateBefore);
             before.ssrState = filterState(before.ssrState);
 
-            await page.reload({ waitUntil: 'networkidle0' });
+            await page.reload({ waitUntil: 'load' });
 
             const after = {
                 ...(await page.evaluate((sessionStoreKey) => {
@@ -712,7 +738,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         await context.close();
     }
 
-    // 测试：使用 TypeScript 编写的组件
+    _log('使用 TypeScript 编写的组件');
     {
         await breath();
 
@@ -724,7 +750,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         expect(el).not.toBe(null);
     }
 
-    // 测试：extend 高阶组件的 SSR 控制
+    _log('extend 高阶组件的 SSR 控制');
     {
         await breath();
 
@@ -732,7 +758,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         const page = await context.newPage();
 
         const res = await page.goto(origin, {
-            waitUntil: 'networkidle0',
+            waitUntil: 'load',
         });
 
         const HTML = await res.text();
@@ -757,7 +783,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         await context.close();
     }
 
-    // 测试：页面信息应来自深部组件，而非外部父级
+    _log('页面信息应来自深部组件，而非外部父级');
     {
         await breath();
 
@@ -768,7 +794,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
             const context = await browser.createIncognitoBrowserContext();
             const page = await context.newPage();
             const res = await page.goto(origin + '/ts', {
-                waitUntil: 'networkidle0',
+                waitUntil: 'load',
             });
             const HTML = await res.text();
             const $ = cheerio.load(HTML);
@@ -799,11 +825,15 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
             const context = await browser.createIncognitoBrowserContext();
             const page = await context.newPage();
             await page.goto(origin, {
-                waitUntil: 'networkidle0',
+                waitUntil: 'load',
             });
             await Promise.all([
-                page.waitFor(`[data-koot-test-page="page-ts"]`),
-                page.click('a[href$="/ts"]'),
+                page.waitForSelector(`[data-koot-test-page="page-ts"]`),
+                // page.click('a[href$="/ts"]'),
+                page.evaluate(
+                    (selector) => document.querySelector(selector).click(),
+                    'a[href$="/ts"]'
+                ),
             ]);
 
             const titleCSR = await page.evaluate(() => document.title);
@@ -825,7 +855,8 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
             const context = await browser.createIncognitoBrowserContext();
             const page = await context.newPage();
             const res = await page.goto(origin + '/test-pageinfo-deep', {
-                waitUntil: 'networkidle0',
+                waitUntil: 'load',
+                timeout: 10000,
             });
             const HTML = await res.text();
             const $ = cheerio.load(HTML);
@@ -845,17 +876,33 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
             const context = await browser.createIncognitoBrowserContext();
             const page = await context.newPage();
             await page.goto(origin, {
-                waitUntil: 'networkidle0',
+                waitUntil: 'load',
             });
-            await Promise.all([
-                page.waitFor(`[data-koot-test-page="page-test-pageinfo-deep"]`),
-                // page.click('a[href$="/test-pageinfo-deep"]'),
-                page.evaluate(() => {
-                    document
-                        .querySelector('a[href$="/test-pageinfo-deep"]')
-                        .click();
-                }),
-            ]);
+            await page.waitForSelector('a[href$="/test-pageinfo-deep"]');
+            await page.evaluate(() => {
+                document
+                    .querySelector('a[href$="/test-pageinfo-deep"]')
+                    .click();
+            });
+            // console.log(1);
+            await page.waitForSelector(
+                `[data-koot-test-page="page-test-pageinfo-deep"]`,
+                {
+                    timeout: 5000,
+                }
+            );
+            // console.log(2);
+            // await Promise.all([
+            //     page.waitForSelector(
+            //         `[data-koot-test-page="page-test-pageinfo-deep"]`
+            //     ),
+            //     // page.click('a[href$="/test-pageinfo-deep"]'),
+            //     page.evaluate(() => {
+            //         document
+            //             .querySelector('a[href$="/test-pageinfo-deep"]')
+            //             .click();
+            //     }),
+            // ]);
 
             const titleCSR = await page.evaluate(() => document.title);
 
@@ -866,7 +913,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         }
     }
 
-    // 测试: Store enhancer
+    _log('Store enhancer');
     if (typeof selectorForStoreEnhancer === 'string') {
         await breath();
 
@@ -890,7 +937,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         expect(value1).toBe(value2);
     }
 
-    // 测试: 服务器端公共缓存空间
+    _log('服务器端公共缓存空间');
     {
         await breath();
 
@@ -926,7 +973,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         expect(values.zh2).toBe(expectG + expectL);
     }
 
-    // 测试: 非匹配的组件，其相 store 关函数不应运行
+    _log('非匹配的组件，其 store 相关函数不应运行');
     {
         await breath();
 
@@ -946,10 +993,11 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         await test(origin + `/test-modify-state`, true);
         await test(origin, false);
 
+        await page.close();
         await context.close();
     }
 
-    // 测试: cookiesToStore
+    _log('cookiesToStore');
     if (typeof cookiesToStore !== 'undefined') {
         await breath();
 
@@ -1009,7 +1057,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         }
     }
 
-    // 测试: SSR Store 路由信息
+    _log('SSR Store 路由信息');
     {
         const pathname = '/extend';
         const search = '?a=1';
@@ -1024,6 +1072,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
             routing: { locationBeforeTransitions: L },
         } = await getSSRStateFromScriptTag(page);
 
+        await page.close();
         await context.close();
 
         expect(
@@ -1035,17 +1084,18 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         expect(L.search).toBe(search);
     }
 
-    // 测试: 服务器端获取 koa ctx
+    _log('服务器端获取 koa ctx');
     {
         const context = await browser.createIncognitoBrowserContext();
         const page = await context.newPage();
         const gotoUrl = getHref('test-server-ctx-redirect', 'zh');
 
         await page.goto(gotoUrl, {
-            waitUntil: 'networkidle0',
+            waitUntil: 'load',
         });
         const result = await page.evaluate(() => window.location.href);
 
+        await page.close();
         await context.close();
 
         if (i18nUseRouter || i18nUseSubdomain) {
@@ -1077,7 +1127,7 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
 
     // TODO: 在设置了 sw 时有 sw 注册且没有报错
 
-    // 其他公用测试
+    _log('多语言/i18n');
     await testI18n({
         browser,
         origin,
@@ -1087,9 +1137,15 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
         cwd: dir,
         dist,
     });
+    _log('script 标签注入');
     await puppeteerTestInjectScripts(page);
+    _log('隐藏的 404 请求');
     await testRequestHidden404(origin, browser);
-    if (!isDev) await testAssetsGzip(origin, dist, browser);
+    if (!isDev) {
+        _log('静态资源 Gzip');
+        await testAssetsGzip(origin, dist, browser);
+    }
+    _log('客户端生命周期');
     await testClientLifecycles(origin, browser);
 
     // 测试: 没有失败的请求
@@ -1120,6 +1176,8 @@ describe('测试: React 同构项目', () => {
     for (const project of projectsToUse) {
         const { name, dir } = project;
         describe(`项目: ${name}`, () => {
+            fs.removeSync(path.resolve(dir, 'node_modules/.cache'));
+
             test(`[prod] 使用 koot-build 命令进行打包`, async () => {
                 await beforeTest(dir);
                 await emptyDist(path.resolve(dir, 'dist'));
@@ -1146,7 +1204,7 @@ describe('测试: React 同构项目', () => {
 
                 expect(typeof stderr).toBe('string');
                 expect(
-                    stderr
+                    filterStderr(stderr)
                         .replace(
                             /\(node:([0-9]+?)\) Warning: No such label 'URL' for console.timeEnd\(\)/g,
                             ''
@@ -1213,6 +1271,7 @@ describe('测试: React 同构项目', () => {
                     '[prod] 使用 koot-start (--no-build) 命令启动服务器并访问'
                 );
             });
+            // return;
             if (fullTest) {
                 test(`[prod] 使用 koot-start (--no-build) 命令启动服务器并访问 (自定义端口号)`, async () => {
                     await beforeTest(dir);
@@ -1282,8 +1341,10 @@ describe('测试: React 同构项目', () => {
 
                     await waitForPort(child);
                     // const port = await getPortFromConfig(dir)
-                    const port = require(path.resolve(dir, 'koot.config.js'))
-                        .port;
+                    const port = require(path.resolve(
+                        dir,
+                        'koot.config.js'
+                    )).port;
                     child.stderr.on('data', (err) => {
                         errors.push(err);
                     });

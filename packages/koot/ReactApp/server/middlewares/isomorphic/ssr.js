@@ -28,6 +28,7 @@ const context = {
     clearTimeout,
     clearInterval,
     clearImmediate,
+
     // String,
     // Number,
     Buffer,
@@ -52,6 +53,11 @@ const context = {
     // WeakSet,
     // Promise,
     // Symbol,
+    URL,
+
+    // eslint-disable-next-line no-eval
+    __filename: eval('__filename'),
+
     // eslint-disable-next-line no-eval
     __dirname: eval('__dirname'),
 };

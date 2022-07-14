@@ -4,7 +4,7 @@
  *
  * Here's a hacky fix
  */
-module.exports = function(source) {
+module.exports = function (source) {
     const expExportDefault = `export default _default`;
     source = source.replace(
         /(var _default = .+?;\n*)(;\n\n\(function \(\) \{\n[ ]*var reactHotLoader = )/gm,

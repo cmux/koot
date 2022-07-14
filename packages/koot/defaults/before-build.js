@@ -45,10 +45,12 @@ module.exports = {
     keyConfigOutputPathShouldBe: '__OUTPUT_PATH_SHOULD_BE__',
     keyConfigWebpackSPATemplateInject:
         '__KOOT_WEBPACK_CONFIG_FOR_SPA_TEMPLATE_INJECT__',
+    keyConfigWebpackLocaleId: '__KOOT_WEBPACK_CONFIG_LOCALE_ID__',
     keyConfigWebpackSPAServer: '__SPA_SERVER__',
     keyConfigClientAssetsPublicPath: '__CLIENT_ASSETS_PUBLIC_PATH__',
     keyConfigClientServiceWorkerPathname: '__CLIENT_SERVICE_WORKER_PATHNAME__',
     keyConfigIcons: '__APP_ICONS__',
+    keyConfigOriginalFull: '__ORIGINAL__',
     WEBPACK_OUTPUT_PATH: '__WEBPACK_OUTPUT_PATH',
     CLIENT_ROOT_PATH: '__CLIENT_ROOT_PATH',
     WEBPACK_MODIFIED_PUBLIC_PATH: '__WEBPACK_MODIFIED_PUBLIC_PATH',
@@ -59,6 +61,8 @@ module.exports = {
     chunkNameExtractCss: '__KOOT__EXTRACT__CSS__',
     chunkNameExtractCssForImport: '__KOOT__EXTRACT__CSS__NO__PUBLIC__PATH__',
     chunkNameClientRunFirst: '__KOOT__CLIENT__RUN__FIRST__',
+    /** Asset Module 默认文件名 */
+    defaultAssetModuleFilename: 'asset.[hash][ext][query]',
 
     // [开发环境] 临时文件名
     filenameWebpackDevServerPortTemp: '.dev_webpack-dev-server_port',
@@ -98,4 +102,11 @@ module.exports = {
 
     /** Webpack compilation 对象中的定制属性 - 额外 Meta 标签的 HTML 代码 */
     compilationKeyHtmlMetaTags: '.htmlMetaTags__',
+
+    /** 针对 SPA 打包时模板 injection 操作需要的 Webpack compilation 对象对应的全局变量名 */
+    GLOBAL_VAR_BUILD_COMPILATION_FOR_SPA_INJECTION:
+        '__KOOT_GLOBAL_VAR_BUILD_COMPILATION_FOR_SPA_INJECTION__',
+
+    /** Qiankun 打包 Entrypoint */
+    entrypointQiankun: 'koot-qiankun-entry',
 };

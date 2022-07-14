@@ -20,7 +20,7 @@ let inited = false;
 
 /** @type {Pageinfo} */
 const infoToChange = {
-    title: '',
+    title: undefined,
     metas: [],
 };
 let changeTimeout = undefined;
@@ -71,7 +71,7 @@ export default (title, metas = []) => {
 
     changeTimeout = setTimeout(() => {
         doUpdate();
-        infoToChange.title = '';
+        infoToChange.title = undefined;
         infoToChange.metas = [];
         changeTimeout = undefined;
     });
@@ -83,7 +83,7 @@ const doUpdate = () => {
     const { title, metas } = infoToChange;
 
     // 替换页面标题
-    document.title = title;
+    if (typeof title !== 'undefined') document.title = title;
 
     // 替换 metas
     const head = document.getElementsByTagName('head')[0];

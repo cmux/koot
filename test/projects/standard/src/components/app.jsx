@@ -1,10 +1,10 @@
-import React from 'react';
+import { Component, StrictMode } from 'react';
 import { Link } from 'react-router';
 import {
     getStore,
     // getCache,
     // getLocaleId,
-    history,
+    getHistory,
     // localeId,
     extend,
 } from 'koot';
@@ -36,11 +36,11 @@ let stateShowed = false;
     styles,
     name: 'App',
 })
-class App extends React.Component {
+class App extends Component {
     componentDidMount() {
         if (__DEV__) {
             console.log('redux store', getStore());
-            console.log('history', history);
+            console.log('history', getHistory);
         }
         if (__CLIENT__)
             console.log(
@@ -73,9 +73,10 @@ class App extends React.Component {
 
         const serverStartTime = getStore().__kootTestServerStartTime;
         const pathnameTestImg = __('test_img');
+        // console.log('App.jsx', this.props);
 
         return (
-            <React.StrictMode>
+            <StrictMode>
                 <div id="app" className={this.props.className}>
                     <Nav />
                     <Main children={this.props.children} />
@@ -108,7 +109,7 @@ class App extends React.Component {
                         </span>
                     )}
                 </div>
-            </React.StrictMode>
+            </StrictMode>
         );
     }
 }

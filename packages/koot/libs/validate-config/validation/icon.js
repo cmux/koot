@@ -6,6 +6,7 @@ const md5 = require('md5');
 const { keyConfigIcons } = require('../../../defaults/before-build');
 const getTmp = require('../../../libs/get-dir-dev-tmp');
 const getCwd = require('../../../utils/get-cwd');
+const rgbToHex = require('../../../utils/rgb-to-hex');
 
 // ============================================================================
 
@@ -23,6 +24,7 @@ module.exports = async (appConfig, outputDir) => {
         // 'x180': '',
         // 'x192': '',
         // 'x512': '',
+        // dominantColor: '',
     };
     const cwd = getCwd();
     const folder = outputDir || getTmp(undefined, 'icons');
@@ -40,43 +42,54 @@ module.exports = async (appConfig, outputDir) => {
     await fs.ensureDir(folder);
     await fs.emptyDir(folder);
 
-    if (typeof icon === 'string') {
-        const file = path.isAbsolute(icon) ? icon : path.resolve(cwd, icon);
-        if (!fs.existsSync(file)) return appConfig;
-        // await Promise.all([
-        //     await resizeAndSave(file, 180),
-        //     await resizeAndSave(file, 192),
-        //     await resizeAndSave(file, 512),
-        // ]);
+    try {
+        if (typeof icon === 'string') {
+            const file = path.isAbsolute(icon) ? icon : path.resolve(cwd, icon);
+            if (!fs.existsSync(file)) return appConfig;
 
-        // 添加源文件
-        {
-            const filename = md5(await fs.readFile(file)) + path.extname(file);
-            const target = path.resolve(folder, filename);
-            await fs.copy(file, target);
-            icons.original = target;
-        }
+            // console.log('1', sharp)
 
-        // 添加方形
-        try {
             const image = await sharp(await fs.readFile(file));
             const { width, height } = await image.metadata();
-            const buffer = await image
-                .resize(Math.min(width, height), Math.min(width, height))
-                .toBuffer();
-            const filename = md5(buffer) + path.extname(file);
-            const target = path.resolve(folder, filename);
-            await fs.writeFile(target, buffer);
-            icons.square = target;
-        } catch (e) {
+            const { dominant } = await image.stats();
+
+            // await Promise.all([
+            //     await resizeAndSave(file, 180),
+            //     await resizeAndSave(file, 192),
+            //     await resizeAndSave(file, 512),
+            // ]);
+
+            icons.dominantColor = rgbToHex(dominant.r, dominant.g, dominant.b);
+
+            // 添加源文件
+            {
+                const filename =
+                    md5(await fs.readFile(file)) + path.extname(file);
+                const target = path.resolve(folder, filename);
+                await fs.copy(file, target);
+                icons.original = target;
+            }
+
+            // 添加方形
+            {
+                const buffer = await image
+                    .resize(Math.min(width, height), Math.min(width, height))
+                    .toBuffer();
+                const filename = md5(buffer) + path.extname(file);
+                const target = path.resolve(folder, filename);
+                await fs.writeFile(target, buffer);
+                icons.square = target;
+            }
+        } else if (typeof icon === 'object') {
+        } else {
             return appConfig;
         }
-    } else if (typeof icon === 'object') {
-    } else {
+
+        appConfig[keyConfigIcons] = icons;
+
+        return appConfig;
+    } catch (err) {
+        console.warn(err.message);
         return appConfig;
     }
-
-    appConfig[keyConfigIcons] = icons;
-
-    return appConfig;
 };

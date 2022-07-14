@@ -19,7 +19,7 @@ module.exports = async (kootBuildConfig = {}, options = {}) => {
 
             spa: false,
 
-            ...kootBuildConfig
+            ...kootBuildConfig,
         },
         options
     );

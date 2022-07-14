@@ -1,4 +1,3 @@
-import React from 'react';
 import { extend } from 'koot';
 
 import styles from './index.module.less';

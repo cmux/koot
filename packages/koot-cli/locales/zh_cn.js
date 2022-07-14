@@ -1,6 +1,6 @@
 module.exports = {
     welcomeCM: '小豹你好~',
-    welcome: '欢迎使用 Koot CLI :)',
+    welcome: '欢迎使用 Koot.js :)',
 
     please_wait: '请稍候……',
     aborted: '已终止。',
@@ -12,7 +12,8 @@ module.exports = {
     invalid_input: '格式错误',
     dir_exist: '目录已存在',
 
-    about_to_create_new_project: '创建全新 Koot.js 项目...',
+    about_to_create_new_project: '准备创建全新的 Koot.js 项目',
+    create_new_project_using_next_boilerplate: '使用模板: NEXT',
     welcome_exist_select: '请选择命令:',
     welcome_exist_select_dev: '进入开发环境',
     welcome_exist_select_analyze: '分析打包结果',
@@ -129,4 +130,9 @@ module.exports = {
         'Koot 0.9 中针对 SSR 项目引入了全新的客户端打包结果文件结构。',
     'upgrade_0.9.0_warning_2':
         '为了兼容性起见，使用 cli 工具升级的项目，客户端打包结果文件结构不会变化。如果你对该新功能有兴趣，可手动开启，详情青参见文档 -> [https://koot.js.org/#/config?id=bundleversionskeep]',
+
+    'upgrade_0.15.0_warning_1':
+        '此次更新包含诸多重大改动，本 CLI 工具无法进行完备的自动升级。',
+    'upgrade_0.15.0_warning_2':
+        '请参阅 [升级指南] 进行手动升级 -> [https://koot.js.org/#/migration/0.14-to-0.15]',
 };

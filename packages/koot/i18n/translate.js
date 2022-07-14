@@ -1,5 +1,6 @@
 import get from 'lodash/get';
 
+import { SSRSTATE } from '../defaults/defines-window';
 import { get as getSSRContext, resetLocaleId } from '../libs/ssr/context';
 import locales, { setLocales, getLocalesObject } from './locales';
 
@@ -48,7 +49,7 @@ const doCorrect = () => {
     if (__CLIENT__ && !__SPA__ && __DEV__) {
         l = getLocalesObject();
         return;
-    };
+    }
     if (__CLIENT__ && !__SPA__) return;
     if (isSPACorrected && __SPA__) return;
     if (
@@ -56,12 +57,12 @@ const doCorrect = () => {
         !isSPACorrected &&
         __SPA__ &&
         typeof window !== 'undefined' &&
-        window.__KOOT_SSR_STATE__ &&
-        typeof window.__KOOT_SSR_STATE__.locales === 'object' &&
-        Object.keys(window.__KOOT_SSR_STATE__.locales).length &&
+        window[SSRSTATE] &&
+        typeof window[SSRSTATE].locales === 'object' &&
+        Object.keys(window[SSRSTATE].locales).length &&
         (!l || !Object.keys(l).length)
     ) {
-        l = window.__KOOT_SSR_STATE__.locales;
+        l = window[SSRSTATE].locales;
         isSPACorrected = true;
         return;
     }

@@ -1,6 +1,6 @@
 const webpack = require('webpack');
 const {
-    keyConfigWebpackSPATemplateInject
+    keyConfigWebpackSPATemplateInject,
 } = require('koot/defaults/before-build');
 
 /**
@@ -18,8 +18,11 @@ const webpackBuildClient = async (config = {}) => {
     return new Promise((resolve, reject) => {
         try {
             compiler.run((...args) => {
-                if (typeof compiler.close === 'function') compiler.close();
-                resolve(...args);
+                if (typeof compiler.close === 'function')
+                    compiler.close(() => {
+                        resolve(...args);
+                    });
+                else resolve(...args);
             });
         } catch (err) {
             reject(err);

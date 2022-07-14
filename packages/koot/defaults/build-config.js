@@ -17,4 +17,5 @@ module.exports = {
     port: undefined,
     defines: {},
     webpackDll: [],
+    reactLegacyRef: false,
 };

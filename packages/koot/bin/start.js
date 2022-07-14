@@ -13,6 +13,7 @@ const chalk = require('chalk');
 
 const willValidateConfig = require('./lifecycle/will-validate-config');
 const willBuild = require('./lifecycle/will-build');
+const didBuild = require('./lifecycle/did-build');
 
 const { filenameBuildFail } = require('../defaults/before-build');
 const sleep = require('../utils/sleep');
@@ -46,7 +47,14 @@ program
 const run = async () => {
     // console.log('================')
 
-    const { build, dest, config, type, port, kootTest = false } = program;
+    const {
+        build,
+        dest,
+        config,
+        type,
+        port,
+        kootTest = false,
+    } = program.opts();
 
     if (!kootTest)
         // 清空 log
@@ -60,6 +68,7 @@ const run = async () => {
 
     process.env.KOOT_TEST_MODE = JSON.stringify(kootTest);
     process.env.KOOT_COMMAND_START = JSON.stringify(true);
+    process.env.WEBPACK_BUILD_ENV = 'prod';
 
     await willValidateConfig(program);
 
@@ -76,8 +85,6 @@ const run = async () => {
         // emptyTempConfigDir()
     };
 
-    await willBuild(kootConfig);
-
     // ========================================================================
 
     const { start: extraStart } =
@@ -89,6 +96,8 @@ const run = async () => {
 
     // 打包
     if (build) {
+        await willBuild(kootConfig);
+
         // const building = spinner(chalk.yellowBright('[koot/build] ') + __('build.building'))
         const fileBuildFail = path.resolve(dist, filenameBuildFail);
 
@@ -171,6 +180,9 @@ const run = async () => {
         }
         // building.succeed()
         await sleep(100);
+
+        // 打包流程完成
+        await didBuild(kootConfig);
     }
 
     await afterBuild();

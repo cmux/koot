@@ -8,6 +8,7 @@ const program = require('commander');
 
 const willValidateConfig = require('./lifecycle/will-validate-config');
 const willBuild = require('./lifecycle/will-build');
+const didBuild = require('./lifecycle/did-build');
 
 // const __ = require('../utils/translate')
 const validateConfig = require('../libs/validate-config');
@@ -33,7 +34,7 @@ const run = async () => {
     // 清空 log
     process.stdout.write('\x1B[2J\x1B[0f');
 
-    const { client, server, stage: _stage, config, type } = program;
+    const { client, server, stage: _stage, config, type } = program.opts();
 
     initNodeEnv();
     // console.log(program)
@@ -51,6 +52,7 @@ const run = async () => {
 
     process.env.WEBPACK_BUILD_STAGE = stage || 'client';
     process.env.WEBPACK_BUILD_ENV = 'prod';
+    process.env.WEBPACK_ANALYZE = JSON.stringify(true);
 
     await willValidateConfig(program);
 
@@ -70,6 +72,7 @@ const run = async () => {
 
         dist: dirAnalyzeBuild,
         bundleVersionsKeep: false,
+        analyze: true,
     };
 
     await willBuild(kootConfig);
@@ -84,6 +87,9 @@ const run = async () => {
 
     // 清理结果目录
     await fs.remove(dirAnalyzeBuild);
+
+    // 打包流程完成
+    await didBuild(kootConfig);
 
     console.log(' ');
 };

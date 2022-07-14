@@ -3,20 +3,26 @@ import {
     createStore as reduxCreateStore,
     combineReducers as reduxCombineReducers,
     applyMiddleware as reduxApplyMiddleware,
-    compose as reduxCompose
+    compose as reduxCompose,
 } from 'redux';
 import { routerReducer, routerMiddleware } from 'react-router-redux';
 import thunk from 'redux-thunk';
+
+import { REDUXSTATE } from '../defaults/defines-window';
+
 import {
     reducer as realtimeLocationReducer,
-    REALTIME_LOCATION_REDUCER_NAME
+    REALTIME_LOCATION_REDUCER_NAME,
 } from './realtime-location';
 import { SERVER_REDUCER_NAME, serverReducer } from '../ReactApp/server/redux';
+
 import {
-    reducerLocaleId as i18nReducerLocaleId
+    reducerLocaleId as i18nReducerLocaleId,
     // reducerLocales as i18nReducerLocales,
 } from '../i18n/redux';
 import isI18nEnabled from '../i18n/is-enabled';
+// import filterState from '../libs/filter-state';
+
 // import history from "__KOOT_CLIENT_REQUIRE_HISTORY__"
 import history from './history';
 import { load as loadSessionStore } from './client-session-store';
@@ -28,16 +34,16 @@ import { load as loadSessionStore } from './client-session-store';
 // }
 
 /******************************************************************************
- * ┌─┐┌─┐┌┐┌┌─┐┌┬┐┌─┐┌┐┌┌┬┐┌─┐
- * │  │ ││││└─┐ │ ├─┤│││ │ └─┐
+ *   ┌─┐┌─┐┌┐┌┌─┐┌┬┐┌─┐┌┐┌┌┬┐┌─┐
+ *  │  │ ││││└─┐ │ ├─┤│││ │ └─┐
  * └─┘└─┘┘└┘└─┘ ┴ ┴ ┴┘└┘ ┴ └─┘
  *****************************************************************************/
 
 export const RESET_CERTAIN_STATE = '@@KOOT@@RESET_CERTAIN_STATE';
 
 /******************************************************************************
- * ┌─┐┌─┐┌─┐┌─┐┌┐┌┌┬┐┬┌─┐┬  ┌─┐
- * ├┤ └─┐└─┐├┤ │││ │ │├─┤│  └─┐
+ *   ┌─┐┌─┐┌─┐┌─┐┌┐┌┌┬┐┬┌─┐┬  ┌─┐
+ *  ├┤ └─┐└─┐├┤ │││ │ │├─┤│  └─┐
  * └─┘└─┘└─┘└─┘┘└┘ ┴ ┴┴ ┴┴─┘└─┘
  *****************************************************************************/
 
@@ -47,10 +53,11 @@ export const RESET_CERTAIN_STATE = '@@KOOT@@RESET_CERTAIN_STATE';
 export const reducers = {
     // 路由状态扩展
     routing: routerReducer,
+    // history: __CLIENT__ ? () => history : () => '123',
     // 目的：新页面请求处理完成后再改变URL
     [REALTIME_LOCATION_REDUCER_NAME]: realtimeLocationReducer,
     // 对应服务器生成的store
-    [SERVER_REDUCER_NAME]: serverReducer
+    [SERVER_REDUCER_NAME]: serverReducer,
 };
 if (isI18nEnabled()) {
     reducers.localeId = i18nReducerLocaleId;
@@ -61,7 +68,7 @@ if (isI18nEnabled()) {
  * @type {Object}
  */
 export const initialState = (() => {
-    if (__CLIENT__) return merge(window.__REDUX_STATE__, loadSessionStore());
+    if (__CLIENT__) return merge(window[REDUXSTATE], loadSessionStore());
     if (__SERVER__) return {};
 })();
 
@@ -129,7 +136,7 @@ export const createStore = (
                 const { appState, kootState } = sliceStateForReducers(state);
                 return {
                     ...appReducer(appState, action),
-                    ...kootReducer(kootState, action)
+                    ...kootReducer(kootState, action),
                 };
             };
         } else if (
@@ -138,12 +145,12 @@ export const createStore = (
         ) {
             return reduxCombineReducers({
                 ...appReducer,
-                ...reducers
+                ...reducers,
             });
         }
 
         return reduxCombineReducers({
-            ...reducers
+            ...reducers,
         });
     })();
 
@@ -162,8 +169,8 @@ export const createStore = (
 };
 
 /******************************************************************************
- * ┬ ┬┌─┐┬  ┌─┐┌─┐┬─┐┌─┐
- * ├─┤├┤ │  ├─┘├┤ ├┬┘└─┐
+ *   ┬ ┬┌─┐┬  ┌─┐┌─┐┬─┐┌─┐
+ *  ├─┤├┤ │  ├─┘├┤ ├┬┘└─┐
  * ┴ ┴└─┘┴─┘┴  └─┘┴└─└─┘
  *****************************************************************************/
 
@@ -172,11 +179,11 @@ export const createStore = (
  * @param {Object} state
  * @returns {Object} { appState, kootState }
  */
-const sliceStateForReducers = state => {
+const sliceStateForReducers = (state) => {
     const appState = {};
     const kootState = {};
     const keysForKootReducer = Object.keys(reducers);
-    Object.keys(state).forEach(key => {
+    Object.keys(state).forEach((key) => {
         if (keysForKootReducer.includes(key)) {
             kootState[key] = state[key];
         } else {
@@ -185,6 +192,6 @@ const sliceStateForReducers = state => {
     });
     return {
         appState,
-        kootState
+        kootState,
     };
 };

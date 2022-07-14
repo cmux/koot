@@ -8,7 +8,7 @@ import errorMsg from '../../../libs/error-msg';
  * @param {String} template Koot 配置项: `template`
  * @returns {String}
  */
-const validateTemplate = template => {
+const validateTemplate = (template) => {
     if (__DEV__) {
         return require('../../../libs/validate-template')(template);
     }
@@ -24,14 +24,6 @@ const validateTemplate = template => {
             )
         );
 
-    // if (template.substr(0, 2) === './') {
-    //     // template = require(`raw-loader?` + path.resolve(
-    //     //     getCwd(), template
-    //     // ))
-    //     template = fs.readFileSync(path.resolve(
-    //         getCwd(), template
-    //     ), 'utf-8')
-    // }
     // process.env.KOOT_HTML_TEMPLATE = template
 
     return template;

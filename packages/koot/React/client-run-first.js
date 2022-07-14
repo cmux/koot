@@ -1,22 +1,26 @@
 import 'regenerator-runtime/runtime';
 import { syncHistoryWithStore } from 'react-router-redux';
 import * as portionConfig from '__KOOT_PROJECT_CONFIG_PORTION_CLIENT_PATHNAME__';
+import { STORE, HISTORY, DEV_NATIVE_CONSOLE } from '../defaults/defines-window';
 import validateReduxConfig from './validate/redux-config';
 import History from './history';
 
-window.__KOOT_STORE__ = ((reduxConfig = {}) => {
+window[STORE] = ((reduxConfig = {}) => {
     if (typeof reduxConfig.factoryStore === 'function')
         return reduxConfig.factoryStore();
     if (typeof reduxConfig.store === 'object') return reduxConfig.store;
     return {};
 })(validateReduxConfig(portionConfig.redux));
 
-window.__KOOT_HISTORY__ = syncHistoryWithStore(History, window.__KOOT_STORE__);
+window[HISTORY] = syncHistoryWithStore(History, window[STORE]);
 
 // console filter
 // https://stackoverflow.com/questions/6659312/is-there-a-way-to-filter-output-in-google-chromes-console
 if (__DEV__) {
     (() => {
+        // eslint-disable-next-line no-console
+        console.info('💕 [DEV] Thanks for using Koot.js');
+
         window.console = window.console || { log: 0 };
 
         const nativeConsole = {
@@ -24,7 +28,7 @@ if (__DEV__) {
             info: window.console.info,
             error: window.console.error,
         };
-        window.__KOOT_DEV_NATIVE_CONSOLE__ = nativeConsole;
+        window[DEV_NATIVE_CONSOLE] = nativeConsole;
 
         const lastLog = {
             WDS: {
@@ -107,7 +111,8 @@ if (__DEV__) {
                         /(Link)(\r|\n|,|\(|$)/.test(args[1]))
                 ) {
                     if (!warningShowed.reactRouterV3) {
-                        console.warn(
+                        // eslint-disable-next-line no-console
+                        console.info(
                             '\n[koot] Koot.js is now using `react-router` v3 which will be upgraded to newer version in future.\n\n'
                         );
                         warningShowed.reactRouterV3 = true;

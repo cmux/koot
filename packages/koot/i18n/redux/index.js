@@ -17,8 +17,9 @@ export const reducerLocaleId = (state = null, action) => {
     switch (action.type) {
         case I18N_INIT:
             return action.localeId;
+        default:
+            return state;
     }
-    return state;
 };
 
 // /**

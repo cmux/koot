@@ -9,7 +9,12 @@ module.exports = function (api) {
                     modules: false,
                 },
             ],
-            '@babel/preset-react',
+            [
+                '@babel/preset-react',
+                {
+                    runtime: 'automatic',
+                },
+            ],
             '@babel/preset-flow',
         ],
         compact: 'auto',
@@ -19,6 +24,8 @@ module.exports = function (api) {
             // proposal
             ['@babel/plugin-proposal-decorators', { legacy: true }],
             '@babel/plugin-proposal-class-properties',
+            '@babel/plugin-proposal-nullish-coalescing-operator',
+            '@babel/plugin-proposal-optional-chaining',
 
             // syntax
         ],

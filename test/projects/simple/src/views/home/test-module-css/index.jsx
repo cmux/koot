@@ -1,4 +1,4 @@
-import React from 'react';
+import { memo } from 'react';
 import { extend } from 'koot';
 
 import Button from 'biz-components/components/button';
@@ -10,7 +10,7 @@ import styles from './index.module.less';
 const ModuleCssTest = extend({
     styles,
 })(
-    React.memo(({ className }) => {
+    memo(({ className }) => {
         return (
             <div className={className}>
                 <Button size="large" appearance="solid" id="__test-module_css">

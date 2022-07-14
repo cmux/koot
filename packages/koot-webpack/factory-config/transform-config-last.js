@@ -1,9 +1,8 @@
 const fs = require('fs-extra');
 const path = require('path');
 const webpack = require('webpack');
+const md5 = require('md5');
 const findCacheDir = require('find-cache-dir');
-// const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
-const HardSourceWebpackPlugin = require('@diablohu/hard-source-webpack-plugin'); // unofficial patch
 
 const {
     keyConfigBuildDll,
@@ -12,16 +11,18 @@ const {
     keyConfigWebpackSPATemplateInject,
     keyConfigWebpackSPAServer,
     WEBPACK_OUTPUT_PATH,
-    buildManifestFilename,
+    // buildManifestFilename,
 } = require('koot/defaults/before-build');
-const {
-    KOOT_BUILD_START_TIME,
-    KOOT_DEV_START_TIME,
-} = require('koot/defaults/envs');
+// const {
+//     KOOT_BUILD_START_TIME,
+//     KOOT_DEV_START_TIME,
+// } = require('koot/defaults/envs');
 const getDirDevDll = require('koot/libs/get-dir-dev-dll');
 
 const transformClientDevDll = require('./transform-config-client-dev-dll');
+const transformModifyForWebpack5 = require('./transform/modify-for-webpack-version/5.0');
 const forWebpackVersion = require('../libs/for-webpack-version');
+const ensureConfigName = require('../libs/ensure-webpack-config/name');
 
 /**
  * Webpack 配置处理 - 最终处理
@@ -77,6 +78,8 @@ const validate = (config, kootConfigForThisBuild, index = 0) => {
         }
     }
 
+    ensureConfigName(config);
+
     // console.log('')
     // console.log('kootConfigForThisBuild', kootConfigForThisBuild)
     validatePlugins(config, kootConfigForThisBuild);
@@ -106,18 +109,7 @@ const validate = (config, kootConfigForThisBuild, index = 0) => {
         // config.node.process = false;
     });
 
-    // 针对 Webpack 5 处理
-    forWebpackVersion('>= 5.0.0', () => {
-        // 确保 `mode` 存在
-        if (typeof config.mode === 'undefined') {
-            config.mode = 'production';
-        }
-        // 移除已删除的选项
-        if (typeof config.node === 'object') {
-            delete config.node.Buffer;
-            delete config.node.process;
-        }
-    });
+    transformModifyForWebpack5(config);
 
     // 修改本次打包的 Koot 完整配置对象
     if (
@@ -130,6 +122,54 @@ const validate = (config, kootConfigForThisBuild, index = 0) => {
     delete config[keyConfigOutputPathShouldBe];
     // delete config[keyConfigWebpackSPATemplateInject];
     delete config[keyConfigWebpackSPAServer];
+
+    // 添加缓存配置
+    {
+        const cacheIdentifier =
+            'koot-' +
+            md5(
+                [
+                    config.name,
+                    config.mode,
+                    JSON.stringify(kootConfigForThisBuild),
+                ].join('~')
+            );
+        if (
+            process.env.WEBPACK_BUILD_ENV !== 'dev' &&
+            process.env.WEBPACK_BUILD_STAGE === 'client' &&
+            !config[keyConfigWebpackSPATemplateInject]
+        ) {
+            if (typeof config.cache === 'undefined') {
+                config.cache = {
+                    type: 'filesystem',
+                    name: cacheIdentifier,
+                };
+            }
+        }
+        // 给 babel loader 添加缓存目录设定
+        function modifyRule(rule) {
+            if (Array.isArray(rule.oneOf)) {
+                for (const _rule of rule.oneOf) modifyRule(_rule);
+                return;
+            }
+            if (!Array.isArray(rule.use)) return;
+            for (const { loader, options } of rule.use) {
+                if (
+                    /koot-webpack\\loaders\\babel\\index\.js$/.test(loader) &&
+                    typeof options === 'object'
+                ) {
+                    options.cacheDirectory = findCacheDir({
+                        name: 'babel-loader',
+                        thunk: true,
+                    })(cacheIdentifier);
+                    // console.log(loader, options);
+                }
+            }
+        }
+        for (const rule of config.module.rules) {
+            modifyRule(rule);
+        }
+    }
 
     return config;
 };
@@ -148,7 +188,11 @@ const validatePlugins = (config, kootConfigForThisBuild = {}) => {
     // 如果没有 plugins 项，创建空 Array
     if (!Array.isArray(config.plugins)) config.plugins = [];
 
-    if (ENV === 'dev' && !kootConfigForThisBuild[keyConfigBuildDll]) {
+    if (
+        ENV === 'dev' &&
+        !config[keyConfigWebpackSPATemplateInject] &&
+        !kootConfigForThisBuild[keyConfigBuildDll]
+    ) {
         // 如果查有 DLL 结果文件，添加 DllReferencePlugin
         // const file = STAGE === 'server'
         //     ? path.resolve(kootConfigForThisBuild.dist, 'server', filenameDllManifest)
@@ -185,87 +229,6 @@ const validatePlugins = (config, kootConfigForThisBuild = {}) => {
     config.plugins = config.plugins.filter(
         (plugin) => typeof plugin !== 'undefined' && plugin !== null
     );
-
-    // 添加缓存插件
-    // const useHardSourceCache = false;
-    if (
-        // useHardSourceCache &&
-        ENV !== 'dev' &&
-        process.env.WEBPACK_BUILD_STAGE === 'client' &&
-        !config[keyConfigWebpackSPATemplateInject]
-    ) {
-        config.plugins.push(
-            new HardSourceWebpackPlugin({
-                cacheDirectory: findCacheDir({
-                    name: 'koot-webpack',
-                    thunk: true,
-                })(
-                    `hard/${process.env.WEBPACK_BUILD_TYPE}` +
-                        `.${process.env.WEBPACK_BUILD_ENV}` +
-                        `.${process.env.WEBPACK_BUILD_STAGE}` +
-                        (kootConfigForThisBuild.createDll ? '.dll' : '') +
-                        `/[confighash]`
-                ),
-                configHash: function (webpackConfig) {
-                    const envs = { ...process.env };
-                    [
-                        KOOT_BUILD_START_TIME,
-                        KOOT_DEV_START_TIME,
-                        'KOOT_HTML_TEMPLATE',
-                        'Path',
-                        'path',
-                        'PATH',
-                    ].forEach((key) => delete envs[key]);
-                    return require('node-object-hash')({ sort: false }).hash(
-                        // ...kootConfigForThisBuild,
-                        // ...JSON.parse(
-                        JSON.stringify(webpackConfig)
-                            // .replace(/koot-[0-9]+/g, 'koot-**TIMESTAMP**')
-                            .replace(
-                                /config([\\/])(.+?)\.[0-9]+\.js/g,
-                                'config$1$2.**TIMESTAMP**.js'
-                            ) + JSON.stringify(envs)
-                        // )
-                    );
-                },
-                info: {
-                    mode: 'none',
-                    level: 'error',
-                },
-            })
-        );
-        const ignores = [
-            {
-                test: /mini-css-extract-plugin[\\/]dist[\\/]loader/,
-            },
-            {
-                test: /file-loader/,
-            },
-            {
-                test: new RegExp(buildManifestFilename.replace(/\./g, '\\.')),
-            },
-            {
-                test: /koot[\\/]ReactSPA[\\/].+/,
-            },
-            {
-                test: /koot-electron/,
-            },
-        ];
-        if (process.env.WEBPACK_BUILD_STAGE === 'server') {
-            // ignores.push({
-            //     test: /koot[\\/].+?[\\/]server[\\/](run|ssr)\.(j|t)s(x|$)/
-            // });
-            ignores.push({
-                test: /koot[\\/]/,
-            });
-            ignores.push({
-                test: /koot-webpack[\\/]/,
-            });
-        }
-        config.plugins.push(
-            new HardSourceWebpackPlugin.ExcludeModulePlugin(ignores)
-        );
-    }
 };
 
 const validateModuleRules = (config, kootConfigForThisBuild = {}) => {
@@ -305,7 +268,6 @@ const validateModuleRules = (config, kootConfigForThisBuild = {}) => {
                 });
             }
             switch (loader) {
-                // TODO: Webpack 5 - 改为使用 Asset Module
                 case 'file-loader':
                 case 'url-loader':
                 case 'svg-url-loader': {
@@ -339,6 +301,17 @@ const validateModuleRules = (config, kootConfigForThisBuild = {}) => {
             return { loader, options };
         };
         const validateRule = (rule) => {
+            // Make sure asset modules do not emit file for Server bundle
+            if (['asset', 'asset/resource'].includes(rule.type)) {
+                if (
+                    // typeof rule.generator?.emit === 'undefined' &&
+                    process.env.WEBPACK_BUILD_STAGE === 'server'
+                ) {
+                    if (typeof rule.generator === 'undefined')
+                        rule.generator = {};
+                    rule.generator.emit = false;
+                }
+            }
             if (typeof rule.loader === 'string') {
                 const { loader, options } = validateLoader(
                     rule.loader,

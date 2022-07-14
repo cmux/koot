@@ -1,0 +1,22 @@
+{
+    "extends": "koot",
+    "env": {
+        "browser": true,
+        "node": true,
+        "commonjs": true,
+        "amd": true,
+        "es6": true,
+        "mocha": true,
+        "jquery": true
+    },
+    "globals": {
+        "__DIST__": false,
+        "__DEV__": false,
+        "__CLIENT__": false,
+        "__SERVER__": false,
+        "__SPA__": false,
+        "__QA__": false,
+        "__REDUX_STATE__": false,
+        "__": false
+    }
+}

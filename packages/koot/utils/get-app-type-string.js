@@ -27,6 +27,13 @@ module.exports = (type) => {
             return 'ReactElectronSPA';
         }
 
+        case 'qiankun':
+        case 'reactqiankunspa':
+        case 'reactqiankun':
+        case 'qiankunspa': {
+            return 'ReactQiankunSPA';
+        }
+
         default: {
         }
         //     return process.env.KOOT_PROJECT_TYPE

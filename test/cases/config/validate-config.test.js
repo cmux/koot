@@ -1,6 +1,9 @@
 const fs = require('fs-extra');
 const path = require('path');
 
+const {
+    keyConfigIcons,
+} = require('../../../packages/koot/defaults/before-build');
 const validateConfig = require('../../../packages/koot/libs/validate-config');
 
 const samplesDir = path.resolve(__dirname, 'samples');
@@ -124,6 +127,43 @@ describe('测试: 验证配置 (生成临时的核心代码引用文件，返回
             expect(kootConfig.moduleCssFilenameTest).toBeInstanceOf(RegExp);
             expect(typeof kootConfig.devPort).toBe('number');
             expect(typeof kootConfig.webpackConfig).toBe('function');
+
+            // 如果设定了图标
+            if (typeof configJson.icon === 'string') {
+                const file = path.resolve(samplesDir, configJson.icon);
+                if (fs.existsSync(file)) {
+                    expect(typeof kootConfig[keyConfigIcons]).toBe('object');
+                    expect(typeof kootConfig[keyConfigIcons].original).toBe(
+                        'string'
+                    );
+                    expect(
+                        fs.existsSync(kootConfig[keyConfigIcons].original)
+                    ).toBe(true);
+                    expect(typeof kootConfig[keyConfigIcons].square).toBe(
+                        'string'
+                    );
+                    expect(
+                        fs.existsSync(kootConfig[keyConfigIcons].square)
+                    ).toBe(true);
+                    expect(
+                        typeof kootConfig[keyConfigIcons].dominantColor
+                    ).toBe('string');
+                    expect(
+                        /^#/.test(kootConfig[keyConfigIcons].dominantColor)
+                    ).toBe(true);
+                    if (
+                        typeof configJson.webApp === 'undefined' ||
+                        configJson.configJson === true
+                    ) {
+                        expect(typeof kootConfig.webApp).toBe('object');
+                        expect(kootConfig.webApp.themeColor).toBe(
+                            kootConfig[keyConfigIcons].dominantColor
+                        );
+                    }
+                } else {
+                    expect(typeof kootConfig[keyConfigIcons]).toBe('undefined');
+                }
+            }
 
             switch (kootConfig.type) {
                 case 'react':

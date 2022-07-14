@@ -1,4 +1,3 @@
-import React from 'react';
 import { extend } from 'koot';
 
 import navItems from '@constants/nav-items';

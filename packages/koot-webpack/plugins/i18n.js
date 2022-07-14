@@ -1,39 +1,59 @@
+/*
+
+Webpack 5 修改了插件编写方式，Koot i18n 实现变得困难。
+为了达成最快的迁移，我选择了改用 Babel 插件的方式。
+该 Webpack 插件目前已废弃，如果日后有更好的实现会考虑复用。
+—— Diablohu (胡昕) 2021/01/20
+
+ */
+
 // const fs = require('fs-extra');
 // const path = require('path');
 // const {
 //     toConstantDependency
 // } = require('webpack/lib/javascript/JavascriptParserHelpers');
 const {
-    addParsedVariableToModule,
-    toConstantDependency
-} = require('webpack/lib/ParserHelpers');
+    // addParsedVariableToModule,
+    toConstantDependency,
+} = require('webpack/lib/javascript/JavascriptParserHelpers');
+const CachedConstDependency = require('webpack/lib/dependencies/CachedConstDependency');
 const ConstDependency = require('webpack/lib/dependencies/ConstDependency');
+const NullDependency = require('webpack/lib/dependencies/NullDependency');
 const NullFactory = require('webpack/lib/NullFactory');
+const InitFragment = require('webpack/lib/InitFragment');
+const makeSerializable = require('webpack/lib/util/makeSerializable');
+const HarmonyImportSpecifierDependency = require('webpack/lib/dependencies/HarmonyImportSpecifierDependency');
 // const getCwd = require('koot/utils/get-cwd');
 const readLocaleFileSync = require('koot/i18n/read-locale-file-sync');
+const { sources } = require('webpack');
 
-// const addParsedVariableToModule = (parser, name, expression) => {
-//     if (!parser.state.current.addVariable) return false;
-//     const deps = [];
-//     parser.parse(expression, {
-//         current: {
-//             addDependency: dep => {
-//                 dep.userRequest = name;
-//                 deps.push(dep);
-//             }
-//         },
-//         module: parser.state.module
-//     });
-//     parser.state.current.addVariable(name, expression, deps);
-//     return true;
-// };
+const I18nFunctionDependency = require('../libs/dependencies/I18nFunctionDependency');
+const getSourceContent = require('../libs/get-source-content');
+
+const I18N_DEPENDENCY_ADDED = 'I18N_DEPENDENCY_ADDED';
+
+const addParsedVariableToModule = (parser, name, expression) => {
+    if (!parser.state.current.addVariable) return false;
+    const deps = [];
+    parser.parse(expression, {
+        current: {
+            addDependency: (dep) => {
+                dep.userRequest = name;
+                deps.push(dep);
+            },
+        },
+        module: parser.state.module,
+    });
+    parser.state.current.addVariable(name, expression, deps);
+    return true;
+};
 
 class I18nPlugin {
     constructor({
         stage = process.env.WEBPACK_BUILD_STAGE,
         functionName = '__',
         localeId,
-        localeFile
+        localeFile,
     }) {
         this.stage = stage;
         this.functionName = functionName;
@@ -72,36 +92,128 @@ class I18nPlugin {
                     ConstDependency,
                     new NullFactory()
                 );
+                // compilation.dependencyTemplates.set(
+                //     ConstDependency,
+                //     new ConstDependency.Template()
+                // );
                 compilation.dependencyTemplates.set(
                     ConstDependency,
                     new ConstDependency.Template()
                 );
+                // compilation.dependencyTemplates.set(
+                //     CachedConstDependency,
+                //     new I18nFunctionDependency.Template(functionName)
+                // );
 
-                const handler = parser => {
+                const handler = (parser) => {
                     // for (let key in parser.hooks) console.log(key)
 
                     parser.hooks.call
                         .for(functionName)
-                        .tap('I18nPlugin', function(node) {
-                            const request = [].concat([
-                                'koot/i18n/translate',
-                                'default'
-                            ]);
-                            // const nameIdentifier = tempFunctionName
-                            let expression = `require(${JSON.stringify(
-                                request[0]
-                            )})`;
-                            if (request.length > 1) {
-                                expression += request
-                                    .slice(1)
-                                    .map(r => `[${JSON.stringify(r)}]`)
-                                    .join('');
+                        .tap('I18nPlugin', function (node) {
+                            // const expression = `import ${functionName} from 'koot/i18n/translate';\n`;
+                            // [
+                            //     'hooks',
+                            //     'sourceType',
+                            //     'scope',
+                            //     'state',
+                            //     'comments',
+                            //     'semicolons',
+                            //     'statementPath',
+                            //     'prevStatement',
+                            //     'currentTagData'
+                            //   ]
+                            // console.log(node);
+                            // console.log(Object.keys(parser.state));
+                            // [
+                            //     'current',
+                            //     'module',
+                            //     'compilation',
+                            //     'options',
+                            //     'lastHarmonyImportOrder'
+                            //   ]
+                            // console.log(Object.keys(parser.state.current));
+                            // [
+                            //     'dependencies',
+                            //     'blocks',
+                            //     'type',
+                            //     'context',
+                            //     'layer',
+                            //     'needId',
+                            //     'debugId',
+                            //     'resolveOptions',
+                            //     'factoryMeta',
+                            //     'useSourceMap',
+                            //     'useSimpleSourceMap',
+                            //     '_warnings',
+                            //     '_errors',
+                            //     'buildMeta',
+                            //     'buildInfo',
+                            //     'presentationalDependencies',
+                            //     'request',
+                            //     'userRequest',
+                            //     'rawRequest',
+                            //     'binary',
+                            //     'parser',
+                            //     'generator',
+                            //     'resource',
+                            //     'matchResource',
+                            //     'loaders',
+                            //     'error',
+                            //     '_source',
+                            //     '_sourceSizes',
+                            //     '_lastSuccessfulBuildMeta',
+                            //     '_forceBuild',
+                            //     '_isEvaluatingSideEffects',
+                            //     '_addedSideEffectsBailout',
+                            //     '_ast'
+                            //   ]
+                            // console.log(
+                            //     typeof parser.state.current.addDependency
+                            // );
+                            // console.log(parser.state.current._source);
+                            // if (!parser.state.current[I18N_DEPENDENCY_ADDED]) {
+                            //     parser.state.current._source = new sources.RawSource(
+                            //         `import ${functionName} from 'koot/i18n/translate';\n` +
+                            //             getSourceContent(
+                            //                 parser.state.current._source
+                            //             ),
+                            //         false
+                            //     );
+                            //     parser.state.current[
+                            //         I18N_DEPENDENCY_ADDED
+                            //     ] = true;
+                            // }
+                            // const request = [].concat([
+                            //     'koot/i18n/translate',
+                            //     'default',
+                            // ]);
+                            // let expression = `require(${JSON.stringify(
+                            //     request[0]
+                            // )})`;
+                            // if (request.length > 1) {
+                            //     expression += request
+                            //         .slice(1)
+                            //         .map((r) => `[${JSON.stringify(r)}]`)
+                            //         .join('');
+                            // }
+
+                            if (!parser.state.current[I18N_DEPENDENCY_ADDED]) {
+                                // parser.state.current._source.insert(
+                                //     0,
+                                //     `import ${functionName} from 'koot/i18n/translate';\n`
+                                // );
+                                parser.state.current[
+                                    I18N_DEPENDENCY_ADDED
+                                ] = true;
                             }
-                            addParsedVariableToModule(
-                                parser,
-                                functionName,
-                                expression
-                            );
+
+                            // addParsedVariableToModule(
+                            //     parser,
+                            //     functionName,
+                            //     expression
+                            // );
+                            // console.log({ expression });
 
                             if (
                                 Array.isArray(node.arguments) &&

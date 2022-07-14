@@ -1,6 +1,6 @@
-import React from 'react';
 import { extend } from 'koot';
 import Button from 'biz-components/components/button';
+import styles from './styles.less';
 
 if (__CLIENT__) console.log('!:!:! KOOT TEST VIEW: WELCOME PAGE !:!:!');
 
@@ -12,7 +12,7 @@ export default extend({
         title: __('title'),
         metas: [{ description: __('title') }, { 'page-name': 'home' }],
     }),
-    styles: require('./styles.less'),
+    styles,
     name: 'PageHome',
 })(({ className, localeId }) => {
     if (__DEV__) console.log(Button);

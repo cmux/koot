@@ -6,9 +6,12 @@
  * 配置文档请查阅: [https://koot.js.org/#/config]
  */
 
+require('koot/typedef');
+
 const fs = require('fs');
 const path = require('path');
 
+/** @type {AppConfig} */
 module.exports = {
     /**************************************************************************
      * 项目基本信息
@@ -72,20 +75,22 @@ module.exports = {
         module: {
             rules: [
                 /**
-                 * Koot.js 会为以下类型的文件自动添加 loader，无需进行配置
-                 * - `js` `mjs` `jsx`
-                 * - `css` `sass` `less`
+                 * Koot.js 会为以下类型的文件自动添加 rule/loader，无需进行配置
+                 * - `js` `mjs` `jsx` `ts` `tsx`
+                 * - `css` `sass` `scss` `less`
                  */
                 {
                     test: /\.(ico|gif|jpg|jpeg|png|webp)$/,
-                    loader: 'url-loader',
-                    options: {
-                        limit: 2 * 1024,
+                    type: 'asset',
+                    parser: {
+                        dataUrlCondition: {
+                            maxSize: 2 * 1024, // 2kb
+                        },
                     },
                 },
                 {
                     test: /\.(ttf|ttc|eot|woff|woff2)$/,
-                    loader: 'file-loader',
+                    type: 'asset/resource',
                 },
                 {
                     test: /\.svg$/,
@@ -99,13 +104,30 @@ module.exports = {
             ],
         },
     }),
+    internalLoaderOptions: {
+        'less-loader': {
+            lessOptions: {
+                /**************************************************************
+                 * Koot.js 在 0.15 之后采用 Less.js v4，其默认的数值计算行为方式有变化。
+                 * 以下设置将其强制改回 Less.js v3 的默认方式。同时这也是我们团队内部更加习惯的方式。
+                 *
+                 * 如果想使用 Less.js v4 的默认方式，只需要将这一行配置移除。
+                 *
+                 * 有关详情，请查阅 Less.js 官方文档: http://lesscss.org/usage/#less-options-math
+                 *************************************************************/
+                math: 'always',
+            },
+        },
+    },
     staticCopyFrom: path.resolve(__dirname, './src/assets/public'),
 
     /**************************************************************************
      * 开发环境 & 开发设置
      *************************************************************************/
     aliases: {
+        '@/': path.resolve('./src/'),
         '@src': path.resolve('./src'),
+        '@actions': path.resolve('./src/actions'),
         '@assets': path.resolve('./src/assets'),
         '@components': path.resolve('./src/components'),
         '@constants': path.resolve('./src/constants'),

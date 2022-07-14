@@ -1,3 +1,5 @@
+/* eslint-disable no-template-curly-in-string */
+
 module.exports = {
     title: 'Koot.js Tech Demo',
     intro: ['React 全栈开发框架', '同样适用于 SPA'],
@@ -57,7 +59,7 @@ module.exports = {
                 {
                     title: '创建 Redux store',
                     content:
-                        'Koot.js 使用 Redux 进行状态树管理，不过 store 对象必须在项目代码中创建。另外，如果项目中需要用到数据同构能力，必须创建 Redux store。',
+                        'Koot.js 使用 Redux 进行状态树管理，本模板中已创建了一个基础的 Store 以供参考。有关更多信息请查阅文档。',
                     doc: '/config?id=store',
                 },
                 {
@@ -69,6 +71,7 @@ module.exports = {
             ],
             bonus: 'Bonus',
             bonusComponentInTS: '使用 TypeScript 开发',
+            bonusUpdateAppType: '更新 Store 中的随机字段 (当前: ${current})',
         },
         ts: {
             title: 'TypeScript',

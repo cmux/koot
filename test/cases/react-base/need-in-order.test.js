@@ -46,6 +46,7 @@ const {
     injectScripts: puppeteerTestInjectScripts,
     requestHidden404: testRequestHidden404,
     criticalAssetsShouldBeGzip: testAssetsGzip,
+    pageinfoOnlyMetas: puppeteerPageinfoOnlyMetas,
 } = require('../puppeteer-test');
 const addCommand = require('../../libs/add-command-to-package-json');
 const terminate = require('../../libs/terminate-process');
@@ -64,14 +65,17 @@ process.env.KOOT_TEST_MODE = JSON.stringify(true);
 
 const projects = require('../../projects/get')();
 
-const projectsToUse = projects.filter(
-    (project) =>
-        // Array.isArray(project.type) && project.type.includes('react-isomorphic')
-        project.name === 'simple'
+const projectsToUse = projects.filter((project) =>
+    // Array.isArray(project.type) && project.type.includes('react-isomorphic')
+    [
+        'simple',
+        'simple2',
+        // 'standard',
+    ].includes(project.name)
 );
 
 const commandTestBuild = 'koot-basetest';
-const headless = true;
+const headless = false;
 
 //
 
@@ -82,6 +86,7 @@ const defaultViewport = {
 };
 
 let browser;
+let context;
 beforeAll(() =>
     puppeteer
         .launch({
@@ -93,7 +98,7 @@ beforeAll(() =>
         })
 );
 afterAll(() => {
-    if (browser && typeof browser.close === 'function') browser.close();
+    if (browser && typeof browser.close === 'function') return browser.close();
     else throw new Error('No Puppeteer instance found');
 });
 
@@ -101,7 +106,11 @@ afterAll(() => {
 
 let lastTime;
 beforeEach(() => (lastTime = Date.now()));
-afterEach(() => {});
+afterEach(async () => {
+    try {
+        await context.close();
+    } catch (e) {}
+});
 
 //
 
@@ -137,10 +146,16 @@ const doTest = async (port, dist, settings = {}) => {
             ...defaultViewport,
             deviceScaleFactor: scale,
         });
-        await page.waitFor(200);
+        await page.waitForTimeout(200);
+    };
+    const _log = (...args) => {
+        if (false) console.log(...args);
     };
 
-    const context = await browser.createIncognitoBrowserContext();
+    context = await browser.createIncognitoBrowserContext();
+
+    // console.log(-4);
+
     const page = await context.newPage();
     // await page.setJavaScriptEnabled(enableJavascript)
     if (!enableJavascript) {
@@ -160,11 +175,15 @@ const doTest = async (port, dist, settings = {}) => {
     const origin = isNaN(port) ? port : `http://127.0.0.1:${port}`;
     // console.log({ origin, port, t: typeof port });
 
+    // console.log(-3);
+
     const res = await page
         .goto(origin, {
-            waitUntil: 'networkidle0',
+            waitUntil: 'load',
         })
         .catch();
+
+    // console.log(-2);
 
     if (!res.ok()) {
         console.warn({
@@ -178,7 +197,7 @@ const doTest = async (port, dist, settings = {}) => {
 
     await testHtmlRenderedByKoot(await res.text());
 
-    // base 图片应该引用打包结果的文件
+    _log('base 图片应该引用打包结果的文件');
     {
         const { base, baseRelative } = await page.evaluate(() => {
             const el = document.querySelector('[data-bg-type="base"]');
@@ -189,15 +208,15 @@ const doTest = async (port, dist, settings = {}) => {
             if (!elRelative) return {};
             return {
                 base: window.getComputedStyle(el).backgroundImage,
-                baseRelative: window.getComputedStyle(elRelative)
-                    .backgroundImage,
+                baseRelative:
+                    window.getComputedStyle(elRelative).backgroundImage,
             };
         });
         expect(checkBackgroundResult(base)).toBe(true);
         expect(checkBackgroundResult(baseRelative)).toBe(true);
     }
 
-    // respoinsive 图片应该引用打包结果的文件
+    _log('respoinsive 图片应该引用打包结果的文件');
     {
         const result = {};
         const resultNative = {};
@@ -214,8 +233,8 @@ const doTest = async (port, dist, settings = {}) => {
                 if (!elNative) return {};
                 return {
                     value: window.getComputedStyle(el).backgroundImage,
-                    valueNative: window.getComputedStyle(elNative)
-                        .backgroundImage,
+                    valueNative:
+                        window.getComputedStyle(elNative).backgroundImage,
                 };
             });
             expect(checkBackgroundResult(value)).toBe(true);
@@ -231,7 +250,7 @@ const doTest = async (port, dist, settings = {}) => {
         // expect(resultNative[1]).not.toBe(resultNative[2]);
     }
 
-    // 测试: react-router v3 兼容相关的属性
+    _log('react-router v3 兼容相关的属性');
     {
         const context = await browser.createIncognitoBrowserContext();
         const page = await context.newPage();
@@ -319,6 +338,8 @@ const doTest = async (port, dist, settings = {}) => {
 
             return results;
         }, testLocation);
+
+        await page.close();
         await context.close();
 
         expect(typeof testResults).toBe('object');
@@ -327,7 +348,7 @@ const doTest = async (port, dist, settings = {}) => {
         expect(testResults.validProps).toBe(true);
     }
 
-    // 测试: 组件内手动 updatePageinfo
+    _log('组件内手动 updatePageinfo');
     {
         const context = await browser.createIncognitoBrowserContext();
         const page = await context.newPage();
@@ -355,13 +376,14 @@ const doTest = async (port, dist, settings = {}) => {
             };
         });
 
+        await page.close();
         await context.close();
 
         expect(title).toBe('TEST ROUTE');
         expect(metaTestRoute).toBe('test-route');
     }
 
-    // 测试: 使用工具函数手动更新 pageinfo
+    _log('使用工具函数手动更新 pageinfo');
     {
         const test = async (changedTitle, changedMetas) => {
             const context = await browser.createIncognitoBrowserContext();
@@ -424,6 +446,7 @@ const doTest = async (port, dist, settings = {}) => {
                 changedMetas
             );
 
+            await page.close();
             await context.close();
 
             return result2;
@@ -434,22 +457,28 @@ const doTest = async (port, dist, settings = {}) => {
         expect(await test(true, true)).toBe(true);
     }
 
-    // 测试: WDS proxy
+    _log('WDS proxy');
     if (isDev) {
         const context = await browser.createIncognitoBrowserContext();
         const page = await context.newPage();
-        await page.goto(origin + '/proxy-1/policies?hl=en', {
+        // await page.goto(origin + '/proxy-1/policies?hl=en', {
+        //     waitUntil: 'networkidle2',
+        // });
+        await page.goto(origin + '/proxy-1/more/', {
             waitUntil: 'networkidle2',
         });
         const title = await page.evaluate(() => document.title);
+
+        await page.close();
         await context.close();
 
-        expect(title.includes('Policies') || title.includes('隐私政策')).toBe(
-            true
-        );
+        // expect(title.includes('Policies') || title.includes('隐私政策')).toBe(
+        //     true
+        // );
+        expect(title).toBe('百度产品大全');
     }
 
-    // 测试: store 文件只会引用一次
+    _log('store 文件只会引用一次');
     {
         const context = await browser.createIncognitoBrowserContext();
         const page = await context.newPage();
@@ -462,12 +491,13 @@ const doTest = async (port, dist, settings = {}) => {
             () => window.__REDUX_STOER_RUN_COUNT__
         );
 
-        // await context.close();
+        await page.close();
+        await context.close();
 
         expect(count).toBe(1);
     }
 
-    // 测试: SASS
+    _log('SASS');
     {
         const context = await browser.createIncognitoBrowserContext();
         const page = await context.newPage();
@@ -488,13 +518,14 @@ const doTest = async (port, dist, settings = {}) => {
             };
         });
 
+        await page.close();
         await context.close();
 
         expect(container).toBe(20);
         expect(nested).toBe(40);
     }
 
-    // 测试: getStyles()
+    _log('getStyles()');
     {
         const context = await browser.createIncognitoBrowserContext();
         const page = await context.newPage();
@@ -516,13 +547,14 @@ const doTest = async (port, dist, settings = {}) => {
             };
         });
 
+        await page.close();
         await context.close();
 
         expect(hasGlobal).toBe(true);
         expect(hasModule).toBe(true);
     }
 
-    // 测试: 客户端使用 async/await
+    _log('客户端使用 async/await');
     {
         const context = await browser.createIncognitoBrowserContext();
         const page = await context.newPage();
@@ -550,12 +582,13 @@ const doTest = async (port, dist, settings = {}) => {
             };
         });
 
+        await page.close();
         await context.close();
 
         expect(valueHasChanged).toBe(true);
     }
 
-    // 测试: 服务器跳转多余 /
+    _log('服务器跳转多余 `/`');
     if (!isDev) {
         const context = await browser.createIncognitoBrowserContext();
         const page = await context.newPage();
@@ -566,17 +599,18 @@ const doTest = async (port, dist, settings = {}) => {
             return document.title;
         });
 
+        await page.close();
         await context.close();
 
         expect(title).toBe('Koot Boilerplate (Simple)');
     }
 
-    // 测试: forward ref
+    _log('forward ref');
     {
         const context = await browser.createIncognitoBrowserContext();
         const page = await context.newPage();
         const res = await page.goto(origin, {
-            waitUntil: 'networkidle0',
+            waitUntil: 'load',
         });
 
         const HTML = await res.text();
@@ -595,12 +629,17 @@ const doTest = async (port, dist, settings = {}) => {
             };
         }, selector);
 
+        await page.close();
+        await context.close();
+
         expect(classNameSSR.includes('success')).toBe(false);
         expect(classNameCSR.includes('success')).toBe(true);
         expect(textSSR).not.toBe(textCSR);
     }
 
-    // 测试: 通过配置 moduleCssFilenameTest，可以让 npm module 有组件 CSS 处理能力
+    _log(
+        '通过配置 moduleCssFilenameTest，可以让 npm module 有组件 CSS 处理能力'
+    );
     {
         const styles = await page.evaluate(() => {
             const el = document.querySelector('#__test-module_css');
@@ -621,60 +660,47 @@ const doTest = async (port, dist, settings = {}) => {
         expect(styles.textAlign).toBe('center');
     }
 
-    // 测试: WebApp 相关 <meta> 标签信息以及文件可用性
+    _log('WebApp 相关 <meta> 标签信息以及文件可用性');
     if (!isDev) {
         const HTML = await res.text();
         await testHtmlWebAppMetaTags(HTML, dist);
     }
 
-    // 测试: 如果 pageinfo 没有提供 title，此时的默认值
+    _log('[配置文件] `beforeBuild` `afterBuild`');
     {
-        const route = `/no-title-only-metas-test`;
-        const titleExpectToBe = 'Koot Boilerplate';
-        const context = await browser.createIncognitoBrowserContext();
+        const testFile = path.resolve(dist, '_test-life-cycle.txt');
+        const content = await fs.readFile(testFile, 'utf-8');
+        const match = /^before mark: (\d+)\n/.exec(content);
 
-        // 从首页点击链接跳转
-        {
-            const page = await context.newPage();
-            await page.goto(origin, {
-                waitUntil: 'networkidle0',
-            });
-            await page.evaluate((route) => {
-                document.querySelector(`a[href$="${route}"]`).click();
-            }, route);
-            await sleep(100);
-            const titleCSR = await page.evaluate(() => document.title);
-            expect(titleCSR).toBe(titleExpectToBe);
-            await page.close();
-        }
+        expect(match.length).toBe(2);
 
-        // 直接访问
-        {
-            const page = await context.newPage();
-            const res = await page.goto(origin + route, {
-                waitUntil: 'networkidle0',
-            });
-            const HTML = await res.text();
-            const $ = cheerio.load(HTML);
-            const titleSSR = $('head title').text();
-            const titleCSR = await page.evaluate(() => document.title);
-            expect(titleSSR).toBe(titleCSR);
-            expect(titleCSR).toBe(titleExpectToBe);
-            await page.close();
-        }
+        const ts = match[1];
+        const regex = new RegExp(`^before mark: ${ts}\\nafter mark: ${ts}\\n$`);
 
-        await context.close();
+        expect(regex.test(content)).toBe(true);
     }
-
+    _log(13);
     await puppeteerTestStyles(page);
+    _log(14);
     await puppeteerTestCustomEnv(page, customEnv);
+    _log(15);
     await puppeteerTestInjectScripts(page);
+    _log(16);
+    await puppeteerPageinfoOnlyMetas({ origin, browser });
+    _log(17);
     await testRequestHidden404(origin, browser);
+    _log(18);
     if (!isDev) await testAssetsGzip(origin, dist, browser);
+    _log(19);
 
     // TODO: 在设置了 sw 时有 sw 注册且没有报错
+    // TODO: 开发环境热更新
 
-    // 测试: 没有失败的请求
+    // 关闭
+    await page.close();
+    await context.close();
+
+    // 检查: 没有失败的请求
     if (failedResponse.length) {
         // eslint-disable-next-line no-console
         console.log(
@@ -682,14 +708,11 @@ const doTest = async (port, dist, settings = {}) => {
             failedResponse.map((res) => ({
                 status: res.status(),
                 url: res.url(),
+                ref: res.ref.url(),
             }))
         );
     }
     expect(failedResponse.length).toBe(0);
-
-    // 结束测试
-    await page.close();
-    await context.close();
 };
 
 /**
@@ -701,6 +724,9 @@ const beforeTest = async (cwd) => {
     // 重置
     await exec(`pm2 kill`);
     await removeTempProjectConfig(cwd);
+    await fs.remove(path.resolve(cwd, 'dist'));
+    await fs.remove(path.resolve(cwd, 'logs'));
+    await fs.remove(path.resolve(cwd, 'node_modules/.cache'));
 };
 
 /**

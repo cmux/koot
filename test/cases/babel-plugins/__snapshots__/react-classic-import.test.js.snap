@@ -1,0 +1,51 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Babel Plugin: react-classic-import hasImport 1`] = `
+"import React from 'react';
+const ttt = 'aaa';
+console.log(ttt);"
+`;
+
+exports[`Babel Plugin: react-classic-import hasImport2 1`] = `
+"import React, { memo } from 'react';
+const ttt = 'aaa';
+console.log(ttt);"
+`;
+
+exports[`Babel Plugin: react-classic-import hasImport3 1`] = `
+"import React from \\"react\\";
+import { memo } from 'react';
+const ttt = 'aaa';
+console.log(ttt);"
+`;
+
+exports[`Babel Plugin: react-classic-import hasRequire 1`] = `
+"const React = require('react');
+
+const ttt = 'aaa';
+console.log(ttt);"
+`;
+
+exports[`Babel Plugin: react-classic-import hasRequire2 1`] = `
+"import React from \\"react\\";
+
+const {
+  memo
+} = require('react');
+
+const ttt = 'aaa';
+console.log(ttt);"
+`;
+
+exports[`Babel Plugin: react-classic-import noImport 1`] = `
+"import React from \\"react\\";
+const ttt = 'aaa';
+console.log(ttt);"
+`;
+
+exports[`Babel Plugin: react-classic-import noImport2 1`] = `
+"import React from \\"react\\";
+let tt;
+const ttt = 'aaa';
+console.log(ttt);"
+`;

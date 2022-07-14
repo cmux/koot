@@ -30,6 +30,11 @@
 // ============================================================================
 
 const {
+    LOCALEID: ClientLocaleId,
+    STORE: ClientStore,
+    HISTORY: ClientHistory,
+} = require('../../defaults/defines-window');
+const {
     ssrContext: SSRContext,
     koaContext: KOAContext,
 } = require('../../defaults/defines-server');
@@ -40,7 +45,7 @@ const {
 let kootSSRContext;
 let koaCtx;
 
-if (__DEV__) {
+if (__DEV__ && __SERVER__) {
     global[SSRContext] = {};
 }
 
@@ -87,7 +92,7 @@ function set(ctx) {
 // ============================================================================
 
 const getLocaleId = () => {
-    if (__CLIENT__) return window.__KOOT_LOCALEID__ || '';
+    if (__CLIENT__) return window[ClientLocaleId] || '';
     if (__SERVER__) {
         if (__DEV__) return global.__KOOT_LOCALEID__;
         return get().LocaleId;
@@ -107,7 +112,7 @@ const resetLocaleId = (newValue) => {
 // ============================================================================
 
 const getStore = () => {
-    if (__CLIENT__) return window.__KOOT_STORE__;
+    if (__CLIENT__) return window[ClientStore];
     if (__SERVER__) {
         if (__DEV__) return global.__KOOT_STORE__;
         return get().Store;
@@ -122,7 +127,7 @@ const resetStore = (newValue) => {
 // ============================================================================
 
 const getHistory = () => {
-    if (__CLIENT__) return window.__KOOT_HISTORY__;
+    if (__CLIENT__) return window[ClientHistory];
     if (__SERVER__) {
         if (__DEV__) return global.__KOOT_HISTORY__;
         return get().History;

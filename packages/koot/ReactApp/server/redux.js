@@ -10,15 +10,15 @@ export const serverReducer = (state = { lang: 'en', origin: '' }, action) => {
     switch (action.type) {
         case CHANGE_LANGUAGE:
             return Object.assign({}, state, {
-                lang: action.data
+                lang: action.data,
             });
         case TELL_CLIENT_URL:
             return Object.assign({}, state, {
-                origin: action.data
+                ...action.payload,
             });
         case SYNC_COOKIE:
             return Object.assign({}, state, {
-                cookie: action.data
+                cookie: action.data,
             });
         default:
             return state;

@@ -1,4 +1,5 @@
 import bindEvent from 'bind-event';
+import { UI_THEME } from '@constants/local-storage';
 
 // 全局 CSS
 // 打包时会被自动抽取并整合到 extract.all.[hash].css
@@ -139,6 +140,17 @@ const doCricital = () => {
             });
         });
     });
+
+    // 暗色模式支持
+    if (
+        localStorage[UI_THEME] === 'dark' ||
+        (!(UI_THEME in localStorage) &&
+            window.matchMedia('(prefers-color-scheme: dark)').matches)
+    ) {
+        document.documentElement.classList.add('theme-dark');
+    } else {
+        document.documentElement.classList.remove('theme-dark');
+    }
 
     window.__IS_CLITICAL_INITED__ = true;
 };

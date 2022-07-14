@@ -1,4 +1,4 @@
-import React from 'react';
+import { memo, Fragment } from 'react';
 import { extend } from 'koot';
 import getPort from 'koot/utils/get-port';
 
@@ -13,15 +13,15 @@ interface ComponentProps {
 // Functional Component =======================================================
 
 const TestGetPort = extend<ComponentProps>({
-    styles
+    styles,
 })(
-    React.memo(
+    memo(
         ({ className, children }): JSX.Element => {
             return (
-                <React.Fragment>
+                <Fragment>
                     <h3>Test: async/await</h3>
                     <div id="__test-get-port">{getPort()}</div>
-                </React.Fragment>
+                </Fragment>
             );
         }
     )

@@ -3,6 +3,9 @@ const fs = require('fs-extra');
 
 const defaultsServiceWorker = require('../defaults/service-worker');
 const defaultI18n = require('../defaults/i18n');
+// const {
+//     KOOT_BUILD_START_TIME, KOOT_CLIENT_PUBLIC_PATH
+// } = require('../defaults/envs')
 
 /**
  * 初始化 node.js 环境变量
@@ -115,17 +118,21 @@ module.exports = () => {
         KOOT_SESSION_STORE: JSON.stringify(false),
 
         KOOT_SSR_PUBLIC_PATH: JSON.stringify('/'),
+        // [KOOT_CLIENT_PUBLIC_PATH]: '',
 
         /** @type {string}
          * 构建目标
          * - _空_ - 默认
          * - serverless - Serverless App (SSR)
          * - electron - Electron App (SPA)
+         * - qiankun - Qiankun MicroApp (SPA)
          */
         KOOT_BUILD_TARGET: '',
 
         // 打包开始时间
-        // KOOT_BUILD_START_TIME: ''
+        // [KOOT_BUILD_START_TIME]: ''
+
+        KOOT_REACT_LEGACY_REF: JSON.stringify(false),
     };
     for (const key in defaults) {
         if (typeof process.env[key] === 'undefined') {

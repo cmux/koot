@@ -1,4 +1,4 @@
-import React from 'react';
+import { PureComponent, createRef } from 'react';
 import { extend } from 'koot';
 
 import Extended from './extended';
@@ -11,8 +11,8 @@ import styles from './index.module.less';
     connect: true,
     styles: styles,
 })
-class TestExtendForwardref extends React.PureComponent {
-    refContainer = React.createRef();
+class TestExtendForwardref extends PureComponent {
+    refContainer = createRef();
 
     addClassToRef() {
         console.warn('__ref__', this.refContainer.current);

@@ -1,0 +1,127 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Babel Plugin: i18n 0 1`] = `"\\"TEST\\";"`;
+
+exports[`Babel Plugin: i18n 1 1`] = `
+"({
+  \\"value1\\": \\"O_VALUE_1\\",
+  \\"value_with_parameter\\": \\"O_VALUE_PARA_\${insert}\\",
+  \\"nest\\": {
+    \\"value1\\": \\"O_NEST_VALUE_1\\"
+  }
+});"
+`;
+
+exports[`Babel Plugin: i18n 2 1`] = `"\\"O_VALUE_1\\";"`;
+
+exports[`Babel Plugin: i18n 3 1`] = `
+"import __ from \\"koot/i18n/translate\\";
+
+__({
+  \\"value1\\": \\"O_VALUE_1\\",
+  \\"value_with_parameter\\": \\"O_VALUE_PARA_\${insert}\\",
+  \\"nest\\": {
+    \\"value1\\": \\"O_NEST_VALUE_1\\"
+  }
+}, \\"value1\\");"
+`;
+
+exports[`Babel Plugin: i18n 4 1`] = `"\\"O_VALUE_PARA_\${insert}\\";"`;
+
+exports[`Babel Plugin: i18n 5 1`] = `
+"import __ from \\"koot/i18n/translate\\";
+
+__({
+  \\"value1\\": \\"O_VALUE_1\\",
+  \\"value_with_parameter\\": \\"O_VALUE_PARA_\${insert}\\",
+  \\"nest\\": {
+    \\"value1\\": \\"O_NEST_VALUE_1\\"
+  }
+}, \\"value_with_parameter\\");"
+`;
+
+exports[`Babel Plugin: i18n 6 1`] = `
+"import __ from \\"koot/i18n/translate\\";
+
+__(\\"O_VALUE_PARA_\${insert}\\", {
+  insert: 'TEST'
+});"
+`;
+
+exports[`Babel Plugin: i18n 7 1`] = `
+"import __ from \\"koot/i18n/translate\\";
+
+__({
+  \\"value1\\": \\"O_VALUE_1\\",
+  \\"value_with_parameter\\": \\"O_VALUE_PARA_\${insert}\\",
+  \\"nest\\": {
+    \\"value1\\": \\"O_NEST_VALUE_1\\"
+  }
+}, \\"value_with_parameter\\", {
+  insert: 'TEST'
+});"
+`;
+
+exports[`Babel Plugin: i18n 8 1`] = `
+"import __ from \\"koot/i18n/translate\\";
+
+__({
+  \\"value1\\": \\"O_VALUE_1\\",
+  \\"value_with_parameter\\": \\"O_VALUE_PARA_\${insert}\\",
+  \\"nest\\": {
+    \\"value1\\": \\"O_NEST_VALUE_1\\"
+  }
+}, \\"value_with_parameter\\", {
+  insert: 'TEST'
+});"
+`;
+
+exports[`Babel Plugin: i18n 9 1`] = `
+"import __ from \\"koot/i18n/translate\\";
+const t = \\"value1\\";
+
+__({
+  \\"value1\\": \\"O_VALUE_1\\",
+  \\"value_with_parameter\\": \\"O_VALUE_PARA_\${insert}\\",
+  \\"nest\\": {
+    \\"value1\\": \\"O_NEST_VALUE_1\\"
+  }
+}, t);"
+`;
+
+exports[`Babel Plugin: i18n 10 1`] = `
+"import __ from \\"koot/i18n/translate\\";
+let t;
+
+__(\\"O_VALUE_PARA_\${insert}\\", {
+  insert: t || undefined
+});"
+`;
+
+exports[`Babel Plugin: i18n 11 1`] = `
+"import __ from \\"koot/i18n/translate\\";
+let t;
+
+__(\\"O_VALUE_PARA_\${insert}\\", {
+  insert: t || 'undefined'
+});"
+`;
+
+exports[`Babel Plugin: i18n 12 1`] = `
+"import __ from \\"koot/i18n/translate\\";
+let t;
+
+__(\\"O_VALUE_PARA_\${insert}\\", {
+  insert: t || undefined
+});
+
+__({
+  \\"value1\\": \\"O_VALUE_1\\",
+  \\"value_with_parameter\\": \\"O_VALUE_PARA_\${insert}\\",
+  \\"nest\\": {
+    \\"value1\\": \\"O_NEST_VALUE_1\\"
+  }
+}, \\"value_with_parameter\\", {
+  insert: 'TEST'
+});"
+`;

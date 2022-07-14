@@ -1,0 +1,42 @@
+{
+    "compilerOptions": {
+        "experimentalDecorators": true,
+        "target": "es5",
+        "lib": ["dom", "dom.iterable", "esnext"],
+        "allowJs": true,
+        "skipLibCheck": true,
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "strict": true,
+        "forceConsistentCasingInFileNames": true,
+        "module": "esnext",
+        "moduleResolution": "node",
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "noEmit": true,
+        "jsx": "preserve",
+        "baseUrl": ".",
+        "paths": {
+            "@src": ["./src"],
+            "@src/*": ["./src/*"],
+            "@assets": ["./src/assets"],
+            "@assets/*": ["./src/assets/*"],
+            "@components": ["./src/components"],
+            "@components/*": ["./src/components/*"],
+            "@constants": ["./src/constants"],
+            "@constants/*": ["./src/constants/*"],
+            "@store": ["./src/store"],
+            "@store/*": ["./src/store/*"],
+            "@views": ["./src/views"],
+            "@views/*": ["./src/views/*"],
+            "@server": ["./src/server"],
+            "@server/*": ["./src/server/*"],
+            "~Assets": ["./src/assets"],
+            "~Assets/*": ["./src/assets/*"],
+            "~/*": ["./src/*"],
+            "@types": ["./types"],
+            "@types/*": ["./types/*"]
+        }
+    },
+    "include": ["src", "types/**/*.ts"]
+}

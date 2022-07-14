@@ -1,5 +1,3 @@
-const getColors = require('get-image-colors');
-
 const defaultsServiceWorker = require('../../../defaults/service-worker');
 const defaultsWebApp = require('../../../defaults/web-app');
 const { keyConfigIcons } = require('../../../defaults/before-build');
@@ -109,11 +107,7 @@ module.exports = async (config) => {
         };
 
         if (!config.webApp.themeColor) {
-            const colors = await getColors(
-                config[keyConfigIcons].square || config[keyConfigIcons].original
-            );
-            // console.log({ colors }, colors[0].hex());
-            config.webApp.themeColor = colors[0].hex();
+            config.webApp.themeColor = config[keyConfigIcons].dominantColor;
         }
     }
 

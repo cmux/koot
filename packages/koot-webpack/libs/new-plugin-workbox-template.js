@@ -39,27 +39,38 @@ const isKootAppDevEnv = self.__koot.env.WEBPACK_BUILD_ENV === 'dev';
 // Commons ====================================================================
 
 const getRoute = (pathname, addScope = false) => {
-    const host = (location.host || location.hostname)
-        .split('.')
-        .reverse()
-        .slice(0, 2)
-        .reverse()
-        .join('.');
+    if (typeof pathname === 'function') return pathname;
 
-    let p = pathname
-        ? `${addScope ? self.__koot.scope : '/'}${
-              pathname.substr(0, 1) === '/' ? pathname.substr(1) : pathname
-          }`
-        : `${addScope ? self.__koot.scope : ''}`;
-    p = p.replace(/\//g, '\\/');
+    return ({ url, request, event }) => {
+        if (request.method.toUpperCase() !== 'GET') return false;
+        if (url.origin !== location.origin) return false;
+        if (pathname instanceof RegExp) return pathname.test(url.pathname);
 
-    const suffix = !p ? '' : /\\\/$/.test(p) ? `(\\/|\\?.*|$)` : `(\\?.*|$)`;
+        let p = pathname
+            ? `${addScope ? self.__koot.scope : '/'}${
+                  pathname.substr(0, 1) === '/' ? pathname.substr(1) : pathname
+              }`
+            : `${addScope ? self.__koot.scope : ''}`;
+        p = p.replace(/\//g, '\\/');
 
-    while (/\\\/$/.test(p)) {
-        p = p.substr(0, p.length - 2);
-    }
+        const suffix = !p
+            ? ''
+            : /\\\/$/.test(p)
+            ? `(\\/|\\?.*|$)`
+            : `(\\?.*|$)`;
 
-    return new RegExp(`^[a-z]+:\\/\\/[^/]*?${host}[:]*[0-9]*${p}${suffix}`);
+        while (/\\\/$/.test(p)) {
+            p = p.substr(0, p.length - 2);
+        }
+
+        // console.log(
+        //     new RegExp(`${p}${suffix}`),
+        //     url.pathname,
+        //     new RegExp(`${p}${suffix}`).test(url.pathname)
+        // );
+
+        return new RegExp(`${p}${suffix}`).test(url.pathname);
+    };
 };
 
 // Workbox Configuration ======================================================
@@ -106,7 +117,7 @@ const cacheStrategy = isKootAppDevEnv ? 'NetworkOnly' : 'CacheFirst';
 
 cacheRoutes.forEach((route) => {
     // console.log({ route, cacheStrategy });
-    registerRoute(route, new workboxStrategies[cacheStrategy](), 'GET');
+    registerRoute(route, new workboxStrategies[cacheStrategy]());
 });
 
 // Others =====================================================================
@@ -116,18 +127,14 @@ cacheRoutes.forEach((route) => {
     'api/',
     //
 ].forEach((route) => {
-    registerRoute(route, new workboxStrategies.NetworkOnly(), 'GET');
+    registerRoute(route, new workboxStrategies.NetworkOnly());
 });
 [
     ...(self.__koot.networkFirst || []).map((p) => getRoute(p)),
     //
 ].forEach((route) => {
-    registerRoute(route, new workboxStrategies.NetworkFirst(), 'GET');
+    registerRoute(route, new workboxStrategies.NetworkFirst());
 });
 
 // Default ====================================================================
-registerRoute(
-    getRoute(undefined, true),
-    new workboxStrategies.NetworkFirst(),
-    'GET'
-);
+registerRoute(getRoute(undefined, true), new workboxStrategies.NetworkFirst());

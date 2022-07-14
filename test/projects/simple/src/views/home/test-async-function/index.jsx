@@ -1,4 +1,4 @@
-import React from 'react';
+import { PureComponent, Fragment } from 'react';
 import { extend } from 'koot';
 
 import styles from './index.module.less';
@@ -6,25 +6,25 @@ import styles from './index.module.less';
 // Functional Component =======================================================
 
 @extend({
-    styles
+    styles,
 })
-class TestAsyncFunction extends React.PureComponent {
+class TestAsyncFunction extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
-            valueAsyncAwait: 0
+            valueAsyncAwait: 0,
         };
         this.testAsyncAwait = this.testAsyncAwait.bind(this);
     }
     async testAsyncAwait() {
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        this.setState(prevState => ({
-            valueAsyncAwait: prevState.valueAsyncAwait + 1
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        this.setState((prevState) => ({
+            valueAsyncAwait: prevState.valueAsyncAwait + 1,
         }));
     }
     render() {
         return (
-            <React.Fragment>
+            <Fragment>
                 <h3>Test: async/await</h3>
                 <div id="__test-async_await">
                     <button
@@ -36,7 +36,7 @@ class TestAsyncFunction extends React.PureComponent {
                     </button>
                     <span data-role="value">{this.state.valueAsyncAwait}</span>
                 </div>
-            </React.Fragment>
+            </Fragment>
         );
     }
 }
