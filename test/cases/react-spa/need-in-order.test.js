@@ -26,6 +26,7 @@ const {
 const { KOOT_CLIENT_PUBLIC_PATH } = require('koot/defaults/envs');
 const terminate = require('../../libs/terminate-process');
 const waitForPort = require('../../libs/get-port-from-child-process');
+const filterStderr = require('../../libs/filter-stderr');
 const testHtmlRenderedByKoot = require('../../general-tests/html/rendered-by-koot');
 const testFilesFromChunkmap = require('../../general-tests/bundle/check-files-from-chunkmap');
 const checkDistRootFiles = require('../../general-tests/check-dist-root-files');
@@ -151,26 +152,7 @@ const testFull = (dir, configFileName, issueNum) => {
 
             expect(typeof stderr).toBe('string');
             expect(
-                stderr
-                    .replace(
-                        /\(node:([0-9]+?)\) Warning: No such label 'URL' for console.timeEnd\(\)/g,
-                        ''
-                    )
-                    .replace(
-                        /\*\* \(sharp:([0-9]+?)\): WARNING \*\*: ([0-9:.]+?): jpegsave_buffer: no property named `subsample_mode'/g,
-                        ''
-                    )
-                    .replace(
-                        /\(node:([0-9]+?)\)(.+?)DeprecationWarning:(.+?)(\r|\n)/g,
-                        ''
-                    )
-                    .replace(
-                        /Update this package\.json to use a subpath pattern like(.+?)(\r|\n)/g,
-                        ''
-                    )
-                    .replace(/\(Use `node --trace-deprecation(.+?)(\r|\n)/g, '')
-                    .replace(/\r/g, '')
-                    .replace(/\n/g, '')
+                filterStderr(stderr).replace(/\r/g, '').replace(/\n/g, '')
             ).toBe('');
 
             await afterTest(dir, '[Production] 使用 koot-build 命令进行打包');

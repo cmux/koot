@@ -75,6 +75,7 @@ const waitForPort = require('../../libs/get-port-from-child-process');
 const checkForChunkmap = require('../../libs/check-for-chunkmap');
 const getLocaleIdFromPage = require('../../libs/puppeteer/get-locale-id-from-page');
 const getSSRStateFromPage = require('../../libs/puppeteer/get-ssr-state-from-page');
+const filterStderr = require('../../libs/filter-stderr');
 const filterState = require('../../../packages/koot/libs/filter-state');
 const testHtmlRenderedByKoot = require('../../general-tests/html/rendered-by-koot');
 const testFilesFromChunkmap = require('../../general-tests/bundle/check-files-from-chunkmap');
@@ -1203,7 +1204,7 @@ describe('测试: React 同构项目', () => {
 
                 expect(typeof stderr).toBe('string');
                 expect(
-                    stderr
+                    filterStderr(stderr)
                         .replace(
                             /\(node:([0-9]+?)\) Warning: No such label 'URL' for console.timeEnd\(\)/g,
                             ''
@@ -1270,6 +1271,7 @@ describe('测试: React 同构项目', () => {
                     '[prod] 使用 koot-start (--no-build) 命令启动服务器并访问'
                 );
             });
+            // return;
             if (fullTest) {
                 test(`[prod] 使用 koot-start (--no-build) 命令启动服务器并访问 (自定义端口号)`, async () => {
                     await beforeTest(dir);
