@@ -1,6 +1,6 @@
 {
     "name": "koot-electron",
-    "version": "0.15.0-rc.15",
+    "version": "0.15.0",
     "description": "Electron kit for Koot.js app.",
     "sideEffects": false,
     "main": "index.js",
@@ -31,8 +31,8 @@
         "electron-builder": "^23.1.0"
     },
     "devDependencies": {
-        "koot": "^0.15.0-rc.15",
-        "koot-webpack": "^0.15.0-rc.15"
+        "koot": "^0.15.0",
+        "koot-webpack": "^0.15.0"
     },
     "gitHead": "4824a3b09425b2ddc8d3adb9638959356ab11b1f"
 }
