@@ -28,9 +28,9 @@ declare module 'kootExtendHOC';
 // ============================================================================
 
 interface ExtendComponent<P, S> {
-    (wrappedComponent: FC<ExtendedProps & P>): ComponentClass<
-        ExtendedProps & P
-    >;
+    (wrappedComponent: FC<ExtendedProps & P>):
+        | ComponentClass<ExtendedProps & P>
+        | JSX.Element<ExtendedProps & P>;
     (wrappedComponent: ComponentClass<any, any>): HOC<ExtendedProps & P, S>;
     // (wrappedComponent: FC<ExtendedProps & P>): ComponentClass<
     //     ExtendedProps & P
