@@ -175,7 +175,7 @@ async function buildClientDev({
             ? { ...optionWatchFiles }
             : [...watchFiles],
 
-        setupMiddlewares: (devServer) => {
+        setupMiddlewares: (middlewares, devServer) => {
             if (
                 appType === 'ReactSPA' ||
                 appType === 'ReactElectronSPA' ||
@@ -184,7 +184,9 @@ async function buildClientDev({
                 require('koot/ReactSPA/dev-server/extend')(devServer.app);
             }
             if (typeof before === 'function') return before(devServer.app);
+            // console.log(devServer);
             devServer.app.use(require('webpack-hot-middleware')(compiler));
+            return middlewares;
         },
 
         ...extendDevServerOptions,

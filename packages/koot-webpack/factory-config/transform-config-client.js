@@ -458,11 +458,17 @@ module.exports = async (kootConfigForThisBuild = {}) => {
 
                 // 开发环境专用
                 if (ENV === 'dev') {
-                    result.plugins.push(
-                        new webpack.HotModuleReplacementPlugin(
-                            Object.assign({}, hmrOptions, webpackHmr)
-                        )
+                    const thisHMROptions = Object.assign(
+                        {},
+                        hmrOptions,
+                        webpackHmr
                     );
+                    if (Object.keys(thisHMROptions).length)
+                        result.plugins.push(
+                            new webpack.HotModuleReplacementPlugin(
+                                thisHMROptions
+                            )
+                        );
                     result.plugins.push(new ReactRefreshWebpackPlugin());
                 }
 

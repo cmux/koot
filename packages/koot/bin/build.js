@@ -135,6 +135,7 @@ const run = async () => {
         // if (stage === 'server' && !hasServer) {
         //     console.log(chalk.redBright('× '))
         // }
+        // console.log(kootConfig);
         result = await kootWebpackBuild(kootConfig);
         return await finish();
     }

@@ -98,7 +98,7 @@ beforeAll(() =>
         })
 );
 afterAll(() => {
-    if (browser && typeof browser.close === 'function') browser.close();
+    if (browser && typeof browser.close === 'function') return browser.close();
     else throw new Error('No Puppeteer instance found');
 });
 

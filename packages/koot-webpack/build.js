@@ -447,8 +447,12 @@ module.exports = async (kootConfig = {}) => {
     const buildingComplete = (persistSpinnerMsg = false) => {
         building = false;
         if (spinnerBuilding) {
+            // console.log(1111, result);
             if (result.hasError()) {
                 spinnerBuilding.fail();
+                for (const error of result.errors) {
+                    console.trace(error);
+                }
             } else if (!persistSpinnerMsg) {
                 spinnerBuilding.stop();
             } else {

@@ -1,10 +1,10 @@
 // const path = require('path');
 
-const { entrypointName } = require('koot-qiankun/libs/constants');
 const {
     chunkNameClientRunFirst,
     scriptTagEntryAttributeName,
     thresholdScriptRunFirst,
+    entrypointQiankun,
 } = require('../../defaults/before-build');
 const defaultEntrypoints = require('../../defaults/entrypoints');
 const {
@@ -157,13 +157,13 @@ module.exports = ({
                     .join('');
             }
         });
-        if (isQiankun && Object.keys(entrypoints).includes(entrypointName)) {
+        if (isQiankun && Object.keys(entrypoints).includes(entrypointQiankun)) {
             r += combineFilePaths(
-                entrypointName,
+                entrypointQiankun,
                 ' entry',
                 true,
-                entrypoints[entrypointName][
-                    entrypoints[entrypointName].length - 1
+                entrypoints[entrypointQiankun][
+                    entrypoints[entrypointQiankun].length - 1
                 ]
             );
         }

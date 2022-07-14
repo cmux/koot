@@ -52,6 +52,7 @@ const confirmTimeout = require('../libs/prompt-timeout');
 const kootWebpackBuildVendorDll = require('koot-webpack/build-vendor-dll');
 
 let exiting = false;
+const removeTemp = true;
 
 program
     .version(require('../package').version, '-v, --version')
@@ -90,7 +91,7 @@ const run = async () => {
     process.env.WEBPACK_BUILD_ENV = 'dev';
 
     // 清除所有临时配置文件
-    await removeTempProjectConfig();
+    if (removeTemp) await removeTempProjectConfig();
     // 清理临时目录
     await willValidateConfig(program);
 
@@ -149,10 +150,10 @@ const run = async () => {
     const cwd = getCwd();
     const dirDevTemp = getDirDevTmp(cwd);
     await fs.ensureDir(dirDevTemp);
-    await fs.emptyDir(dirDevTemp);
+    if (removeTemp) await fs.emptyDir(dirDevTemp);
     const dirCache = getDirDevCache();
     await fs.ensureDir(dirCache);
-    await fs.emptyDir(dirCache);
+    if (removeTemp) await fs.emptyDir(dirCache);
 
     // 验证、读取项目配置信息
     const kootConfig = await validateConfig();
@@ -165,9 +166,12 @@ const run = async () => {
         // port: configPort,
         devPort,
         [keyFileProjectConfigTempFull]: fileProjectConfigTempFull,
-        [keyFileProjectConfigTempPortionServer]: fileProjectConfigTempPortionServer,
-        [keyFileProjectConfigTempPortionClient]: fileProjectConfigTempPortionClient,
-        [keyFileProjectConfigTempPortionOtherClient]: fileProjectConfigTempPortionOtherClient,
+        [keyFileProjectConfigTempPortionServer]:
+            fileProjectConfigTempPortionServer,
+        [keyFileProjectConfigTempPortionClient]:
+            fileProjectConfigTempPortionClient,
+        [keyFileProjectConfigTempPortionOtherClient]:
+            fileProjectConfigTempPortionOtherClient,
     } = kootConfig;
     const [devMemoryAllocationClient, devMemoryAllocationServer] = (() => {
         const { devMemoryAllocation } = kootConfig;
@@ -195,17 +199,21 @@ const run = async () => {
     const waitingSpinner = false;
 
     // 清理遗留的临时文件
-    await removeTempBuild(dist);
+    if (removeTemp) await removeTempBuild(dist);
 
     // 如果有临时项目配置��件，更改环境变量
     if (fileProjectConfigTempFull)
-        process.env.KOOT_PROJECT_CONFIG_FULL_PATHNAME = fileProjectConfigTempFull;
+        process.env.KOOT_PROJECT_CONFIG_FULL_PATHNAME =
+            fileProjectConfigTempFull;
     if (fileProjectConfigTempPortionServer)
-        process.env.KOOT_PROJECT_CONFIG_PORTION_SERVER_PATHNAME = fileProjectConfigTempPortionServer;
+        process.env.KOOT_PROJECT_CONFIG_PORTION_SERVER_PATHNAME =
+            fileProjectConfigTempPortionServer;
     if (fileProjectConfigTempPortionClient)
-        process.env.KOOT_PROJECT_CONFIG_PORTION_CLIENT_PATHNAME = fileProjectConfigTempPortionClient;
+        process.env.KOOT_PROJECT_CONFIG_PORTION_CLIENT_PATHNAME =
+            fileProjectConfigTempPortionClient;
     if (fileProjectConfigTempPortionOtherClient)
-        process.env.KOOT_PROJECT_CONFIG_PORTION_OTHER_CLIENT_PATHNAME = fileProjectConfigTempPortionOtherClient;
+        process.env.KOOT_PROJECT_CONFIG_PORTION_OTHER_CLIENT_PATHNAME =
+            fileProjectConfigTempPortionOtherClient;
 
     // 如果为 SPA，强制设置 STAGE
     if (process.env.WEBPACK_BUILD_TYPE === 'spa') {
@@ -326,13 +334,14 @@ const run = async () => {
         // await sleep(1000);
 
         try {
-            await PromiseAll([
-                removeTempProjectConfig(),
-                removeTempBuild(dist),
-                fs.emptyDir(getDirDevTmp(cwd)),
-                // 清理临时目录
-                fs.remove(getDirTemp()),
-            ]);
+            if (removeTemp)
+                await PromiseAll([
+                    removeTempProjectConfig(),
+                    removeTempBuild(dist),
+                    fs.emptyDir(getDirDevTmp(cwd)),
+                    // 清理临时目录
+                    fs.remove(getDirTemp()),
+                ]);
         } catch (e) {}
 
         removeAllExitListeners();
@@ -674,6 +683,7 @@ const run = async () => {
                 } catch (e) {
                     return false;
                 }
+                // console.log(1111, json);
                 if (
                     typeof json === 'object' &&
                     typeof json['.files'] === 'object' &&
@@ -698,6 +708,7 @@ const run = async () => {
                         env: chalk.green('dev'),
                     })
             );
+            // return complete();
             // console.log(processClient[0].process, processClient[0].pid)
             // console.log(
             //     `  [${}]`
@@ -759,12 +770,13 @@ const run = async () => {
             );
 
             // 移除临时文件
-            await fs.remove(
-                path.resolve(
-                    getDirDevTmp(cwd),
-                    filenameWebpackDevServerPortTemp
-                )
-            );
+            if (removeTemp)
+                await fs.remove(
+                    path.resolve(
+                        getDirDevTmp(cwd),
+                        filenameWebpackDevServerPortTemp
+                    )
+                );
 
             // waitingSpinner.stop()
             // waitingSpinner = undefined

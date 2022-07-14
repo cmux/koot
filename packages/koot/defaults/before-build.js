@@ -106,4 +106,7 @@ module.exports = {
     /** 针对 SPA 打包时模板 injection 操作需要的 Webpack compilation 对象对应的全局变量名 */
     GLOBAL_VAR_BUILD_COMPILATION_FOR_SPA_INJECTION:
         '__KOOT_GLOBAL_VAR_BUILD_COMPILATION_FOR_SPA_INJECTION__',
+
+    /** Qiankun 打包 Entrypoint */
+    entrypointQiankun: 'koot-qiankun-entry',
 };

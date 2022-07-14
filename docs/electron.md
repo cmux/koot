@@ -1,4 +1,4 @@
-# Electron 项目开发
+# 接入: Electron
 
 _Koot.js_ 从 **0.14** 开始原生支持 _Electron_ 项目的开发。
 
@@ -14,8 +14,8 @@ _Electron_ 主文件、打包可执行文件的方式等功能，均可以进行
     - Yarn: `yarn add koot-electron --dev`
     - NPM: `npm install koot-electron --save-dev`
 2. 修改项目配置文件 (默认为 `koot.config.js`) 中的如下配置项，如不存在则在配置对象内追加：
-    - `type` -> `react-spa`
-    - `target` -> `electron`
+    - `type` -> `"react-spa"`
+    - `target` -> `"electron"`
 
 完成以上步骤后，`koot-dev` `koot-build` `koot-start` 命令会自动适配 _Electron_ 开发环境：
 

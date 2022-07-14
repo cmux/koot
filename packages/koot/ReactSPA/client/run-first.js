@@ -48,9 +48,15 @@ import getLang from '../../i18n/spa/get-lang';
             console.error(e);
             throw new Error(`Locale file (${window[LOCALEID]}) load fail!`);
         };
+        // 考虑到项目可能会在运行时修改 __webpack_public_path__
         js.src = [
-            (__webpack_public_path__ || '') +
-                (/\/$/.test(__webpack_public_path__) ? '' : '/'),
+            !!__webpack_public_path__ &&
+            new RegExp(`^${__webpack_public_path__}`).test(
+                window[SPALOCALEFILEMAP][window[LOCALEID]]
+            )
+                ? ''
+                : (__webpack_public_path__ || '') +
+                  (/\/$/.test(__webpack_public_path__) ? '' : '/'),
             window[SPALOCALEFILEMAP][window[LOCALEID]].replace(/^\//, ''),
         ].join('');
 

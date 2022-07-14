@@ -247,7 +247,7 @@ const clientLifecycles = async (origin, browser) => {
         }
     });
     await page.goto(origin, {
-        waitUntil: 'load',
+        waitUntil: 'networkidle2',
     });
     await page.close();
     await context.close();
@@ -614,7 +614,7 @@ const pageinfoOnlyMetas = async ({ origin, browser, isSPA = false }) => {
     {
         const page = await context.newPage();
         await page.goto(origin, {
-            waitUntil: 'load',
+            waitUntil: 'networkidle2',
         });
         await page.evaluate((route) => {
             document.querySelector(`a[href~="${route}"]`).click();
@@ -629,7 +629,7 @@ const pageinfoOnlyMetas = async ({ origin, browser, isSPA = false }) => {
     {
         const page = await context.newPage();
         const res = await page.goto(origin + route, {
-            waitUntil: 'load',
+            waitUntil: 'networkidle2',
         });
 
         const titleCSR = await page.evaluate(() => document.title);

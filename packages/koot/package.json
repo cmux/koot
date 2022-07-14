@@ -103,7 +103,7 @@
         "resolve": "^1.22.1",
         "rimraf": "^3.0.2",
         "sanitize-filename": "1.6.3",
-        "sharp": "^0.30.7",
+        "sharp": "^0.28.3",
         "sp-koa-views": "^1.0.1",
         "sync-request": "^6.1.0",
         "terminate": "^2.5.0",
