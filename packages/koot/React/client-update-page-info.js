@@ -6,6 +6,7 @@
  */
 
 // import isEqual from 'lodash/isEqual';
+import getHeadElement from '../libs/get-head-element';
 
 /**
  * 当前已注入的 meta 标签
@@ -86,7 +87,7 @@ const doUpdate = () => {
     if (typeof title !== 'undefined') document.title = title;
 
     // 替换 metas
-    const head = document.getElementsByTagName('head')[0];
+    const head = getHeadElement();
     getInjectedMetaTags().forEach((el) => head.removeChild(el));
 
     injectedMetaTags.forEach((el) => {
@@ -117,7 +118,7 @@ const doUpdate = () => {
  */
 export const getInjectedMetaTags = () => {
     if (!Array.isArray(injectedMetaTags)) {
-        const head = document.getElementsByTagName('head')[0];
+        const head = getHeadElement();
 
         injectedMetaTags = [];
         // 移除所有在 KOOT_METAS 里的 meta 标签

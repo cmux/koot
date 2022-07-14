@@ -19,12 +19,13 @@ module.exports = (isSSRReading = false) => {
         (typeof __DEV__ !== 'undefined' && __DEV__);
 
     if (process.env.WEBPACK_BUILD_TYPE === 'spa') {
-        publicPath = isDev
-            ? '/'
-            : /^browser/.test(process.env.KOOT_HISTORY_TYPE)
+        // console.log(1111, publicPath, process.env.KOOT_HISTORY_TYPE, process.env[KOOT_CLIENT_PUBLIC_PATH])
+        publicPath = /^browser/.test(process.env.KOOT_HISTORY_TYPE)
             ? typeof process.env[KOOT_CLIENT_PUBLIC_PATH] === 'string'
                 ? process.env[KOOT_CLIENT_PUBLIC_PATH]
                 : '/'
+            : isDev
+            ? '/'
             : '';
         publicPathSSRReading = publicPath;
     } else if (isDev) {
@@ -43,6 +44,7 @@ module.exports = (isSSRReading = false) => {
         publicPathSSRReading = publicPath;
     }
 
+    // console.log(1111, publicPath)
     if (isSSRReading) return publicPathSSRReading;
     return publicPath;
 };

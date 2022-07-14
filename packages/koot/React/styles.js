@@ -1,4 +1,5 @@
 // import { Component, createContext } from 'react'
+import getHeadElement from '../libs/get-head-element';
 
 /**
  * 生成 StyleMapContext
@@ -29,9 +30,7 @@ export const checkAndWriteIntoHead = (styleMap = {}) => {
                 // styleTag.setAttribute('id', wrapper);
                 styleTag.setAttribute(__STYLE_TAG_MODULE_ATTR_NAME__, wrapper);
                 try {
-                    document
-                        .getElementsByTagName('head')[0]
-                        .appendChild(styleTag);
+                    getHeadElement().appendChild(styleTag);
                 } catch (e) {
                     document.body.appendChild(styleTag);
                 }
