@@ -1,6 +1,6 @@
 {
     "name": "koot-webpack",
-    "version": "0.15.0",
+    "version": "0.15.1",
     "description": "Creates Webpack configuration for Koot.js app.",
     "sideEffects": false,
     "scripts": {},
@@ -69,7 +69,7 @@
         "workbox-webpack-plugin": "^6.5.3"
     },
     "devDependencies": {
-        "koot": "^0.15.0"
+        "koot": "^0.15.1"
     },
     "gitHead": "4824a3b09425b2ddc8d3adb9638959356ab11b1f"
 }
