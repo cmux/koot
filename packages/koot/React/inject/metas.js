@@ -2,6 +2,7 @@ const fs = require('fs');
 
 const { dll } = require('../../defaults/dev-request-uri');
 const { compilationKeyHtmlMetaTags } = require('../../defaults/before-build');
+const getPublic = require('../../utils/get-public-dir');
 
 /**
  * 注入: meta 标签 HTML 代码，以及其他的 <head> 标签中的注入
@@ -39,7 +40,10 @@ const getDevExtra = () => {
     // 判断是否存在 dll 文件，如果存在，在此引入
     const { KOOT_DEV_DLL_FILE_CLIENT: fileDllClient } = process.env;
     if (fileDllClient && fs.existsSync(fileDllClient))
-        return `<script type="text/javascript" src="${dll}"></script>`;
+        return `<script type="text/javascript" src="${getPublic()}${dll.replace(
+            /^\//,
+            ''
+        )}" data-koot-entry="client-dev-dll"></script>`;
 
     return '';
 };

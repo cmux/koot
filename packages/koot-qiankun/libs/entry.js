@@ -20,7 +20,7 @@ export async function bootstrap() {
  */
 export async function mount(props) {
     window?.[CLIENT_MOUNT]?.({
-        container: props.container,
+        container: props.container.querySelector('#root'),
     });
 }
 
@@ -30,7 +30,7 @@ export async function mount(props) {
  */
 export async function unmount(props) {
     window?.[CLIENT_UNMOUNT]?.({
-        container: props.container,
+        container: props.container.querySelector('#root'),
     });
 }
 

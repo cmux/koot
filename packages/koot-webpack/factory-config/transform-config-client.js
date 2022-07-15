@@ -99,7 +99,8 @@ module.exports = async (kootConfigForThisBuild = {}) => {
     );
 
     const isPublicPathProvided = Boolean(
-        process.env.WEBPACK_BUILD_ENV === 'prod' &&
+        (process.env.KOOT_BUILD_TARGET === 'qiankun' ||
+            process.env.WEBPACK_BUILD_ENV === 'prod') &&
             typeof config === 'object' &&
             typeof config.output === 'object' &&
             typeof config.output.publicPath === 'string'
