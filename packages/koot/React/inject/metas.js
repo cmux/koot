@@ -40,7 +40,11 @@ const getDevExtra = () => {
     // 判断是否存在 dll 文件，如果存在，在此引入
     const { KOOT_DEV_DLL_FILE_CLIENT: fileDllClient } = process.env;
     if (fileDllClient && fs.existsSync(fileDllClient))
-        return `<script type="text/javascript" src="${getPublic()}${dll.replace(
+        return `<script type="text/javascript" src="${
+            process.env.WEBPACK_BUILD_TYPE === 'spa'
+                ? getPublic().replace(/\/$/, '')
+                : ''
+        }/${dll.replace(
             /^\//,
             ''
         )}" data-koot-entry="client-dev-dll"></script>`;

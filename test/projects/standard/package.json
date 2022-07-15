@@ -44,7 +44,7 @@
         "test:server": "npm run build:server && node dist\\server\\index.js",
         "koot-buildtest-isomorphic-build": "koot-build --env prod --koot-test",
         "koot-buildtest-isomorphic-start-server": "koot-start --no-build --koot-test",
-        "koot-buildtest-isomorphic-start-server-custom-port": "koot-start --no-build --port 8316 --koot-test",
+        "koot-buildtest-isomorphic-start-server-custom-port": "koot-start --no-build --port 40000 --koot-test",
         "koot-buildtest-isomorphic-standard-development": "koot-dev --no-open --koot-test --config koot.config.js",
         "koot-buildtest-isomorphic-i18n_use_router-production": "koot-start --koot-test --config koot.config.i18n-use-router.js",
         "koot-buildtest-isomorphic-i18n_use_router-development": "koot-dev --no-open --koot-test --config koot.config.i18n-use-router.js",
@@ -85,7 +85,7 @@
     "private": true,
     "sideEffects": false,
     "koot": {
-        "version": "0.15.0-rc.15"
+        "version": "0.15.2"
     },
     "devDependencies": {
         "@types/inquirer": "^8.2.1",

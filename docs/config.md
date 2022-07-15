@@ -74,6 +74,9 @@ module.exports = {
 
     // Electron 模式 (仅限 SPA 项目)
     target: 'electron',
+
+    // Qiankun 微前端**子项目**模式 (仅限 SPA 项目)
+    target: 'qiankun',
 };
 ```
 
@@ -393,6 +396,22 @@ Electron 程序以及打包可执行文件的相关配置，具体配置内容�
 module.exports = {
     // 详细配置。配置项及其说明详见 Electron 章节 (链接见上文)
     electron: {
+        [option]: 'value',
+    },
+};
+```
+
+### qiankun
+
+-   类型: `Object`
+-   默认值: _空对象_
+
+Qiankun 微前端**子项目**的相关配置，具体配置内容和方式请查阅 [Qiankun/相关配置项](/qiankun?id=相关配置项)。
+
+```javascript
+module.exports = {
+    // 详细配置。配置项及其说明详见 Qiankun 章节 (链接见上文)
+    qiankun: {
         [option]: 'value',
     },
 };
@@ -823,8 +842,7 @@ module.exports = {
                  */
                 {
                     test: /\.(ico|gif|jpg|jpeg|png|webp)$/,
-                    loader:
-                        'file-loader?context=static&name=assets/[hash:32].[ext]',
+                    loader: 'file-loader?context=static&name=assets/[hash:32].[ext]',
                     exclude: /node_modules/,
                 },
                 {
