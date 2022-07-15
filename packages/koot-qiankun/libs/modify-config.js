@@ -6,9 +6,8 @@ const {
     keyConfigWebpackSPATemplateInject,
     keyConfigBuildDll,
 } = require('koot/defaults/before-build');
-const __ = require('./translate');
+// const __ = require('./translate');
 
-const defaultQiankunConfig = require('./defaults/qiankun-config');
 const { entrypointName } = require('./constants');
 
 // ============================================================================
@@ -18,21 +17,6 @@ const modifyConfig = async (appConfig) => {
 
     if (typeof appConfig !== 'object')
         throw new Error('MISSING_PARAMETER: appConfig');
-
-    // ========================================================================
-    //
-    // 生成 Qiankun 配置对象
-    //
-    // ========================================================================
-    const qiankunConfig = {
-        ...(appConfig.qiankun || {}),
-        ...defaultQiankunConfig,
-    };
-    if (!qiankunConfig.name)
-        throw new Error(__('MISSING_CONFIG: `qiankun.name`'));
-    if (qiankunConfig.basename && !process.env.KOOT_HISTORY_BASENAME) {
-        process.env.KOOT_HISTORY_BASENAME = qiankunConfig.basename;
-    }
 
     // ========================================================================
     //
@@ -47,8 +31,7 @@ const modifyConfig = async (appConfig) => {
     // 修改 Webpack 配置
     appConfig.webpackConfig = await modifyWebpackConfig(
         webpackConfig,
-        appConfig,
-        qiankunConfig
+        appConfig
     );
 
     return appConfig;
@@ -58,13 +41,9 @@ module.exports = modifyConfig;
 
 // ============================================================================
 
-const modifyWebpackConfig = async (webpackConfig, appConfig, qiankunConfig) => {
+const modifyWebpackConfig = async (webpackConfig, appConfig) => {
     if (typeof webpackConfig === 'object' && !Array.isArray(webpackConfig))
-        return await modifyWebpackConfig(
-            [webpackConfig],
-            appConfig,
-            qiankunConfig
-        );
+        return await modifyWebpackConfig([webpackConfig], appConfig);
 
     webpackConfig
         .filter((config) => !config[keyConfigWebpackSPATemplateInject])
@@ -76,9 +55,9 @@ const modifyWebpackConfig = async (webpackConfig, appConfig, qiankunConfig) => {
             // ================================================================
             if (webpackConfig.output.libraryTarget !== 'umd') {
                 if (!appConfig[keyConfigBuildDll])
-                    webpackConfig.output.library = `${qiankunConfig.name}_[name]`;
+                    webpackConfig.output.library = `${appConfig.qiankunConfig.name}_[name]`;
                 webpackConfig.output.libraryTarget = 'umd';
-                webpackConfig.output.chunkLoadingGlobal = `webpackJsonp_${qiankunConfig.name}`;
+                webpackConfig.output.chunkLoadingGlobal = `webpackJsonp_${appConfig.qiankunConfig.name}`;
                 webpackConfig.output.globalObject = 'window';
             }
 
