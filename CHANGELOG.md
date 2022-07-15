@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+## [0.15.3] - 2022-07-15
+
+**koot**
+
+-   修正 _React SSR_ 项目开发环境不可用的问题
+
 ## [0.15.0] - 2022-07-14
 
 **⚠ 重大改动 ⚠**
@@ -35,7 +41,7 @@
     -   `react-dom` -> _^17.0.2_
     -   `postcss` -> _^8.4.14_ ([#285](https://github.com/cmux/koot/issues/285))
     -   `webpack` -> _^5.73.0_ ([#215](https://github.com/cmux/koot/issues/215))
-    -   `webpack-dev-server` -> _^4.2.1_ ([#301](https://github.com/cmux/koot/issues/301)) ([官方升级指南](https://github.com/webpack/webpack-dev-server/blob/master/migration-v4.md))
+    -   `webpack-dev-server` -> _^4.9.3_ ([#301](https://github.com/cmux/koot/issues/301)) ([官方升级指南](https://github.com/webpack/webpack-dev-server/blob/master/migration-v4.md))
 -   移除以下依赖包，现在不会默认安装。如有使用需要，请在项目中自行安装
     -   `@diablohu/hard-source-webpack-plugin`
     -   `@hot-loader/react-dom`

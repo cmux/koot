@@ -1278,7 +1278,7 @@ describe('测试: React 同构项目', () => {
 
                     const dist = path.resolve(dir, 'dist');
                     const configFile = `koot.config.js`;
-                    const port = '8316';
+                    const port = '40000';
                     const commandName = `${commandTestBuild}-isomorphic-start-server-custom-port`;
                     const command = `koot-start --no-build --port ${port} --koot-test`;
                     await addCommand(commandName, command, dir);
