@@ -64,7 +64,9 @@ module.exports = async (kootConfig = {}) => {
     const appType = await getAppType();
     const appConfig = Object.assign({}, defaults, kootConfig, {
         appType,
-        appTypeUse: ['ReactElectronSPA', 'ReactQiankunSPA'].includes(appType) ? 'ReactSPA' : appType,
+        appTypeUse: ['ReactElectronSPA', 'ReactQiankunSPA'].includes(appType)
+            ? 'ReactSPA'
+            : appType,
         distClientAssetsDirName,
         [keyConfigClientAssetsPublicPath]: clientAssetsPublicPath,
     });
@@ -94,6 +96,19 @@ module.exports = async (kootConfig = {}) => {
         appConfig.webpackConfig = await appConfig.webpackConfig();
     if (typeof appConfig.webpackConfig !== 'object')
         appConfig.webpackConfig = {};
+
+    // ========================================================================
+    //
+    // 处理配置 - 在创建 Webpack 配置前，进行特殊处理
+    //
+    // ========================================================================
+
+    if (STAGE === 'client' && TYPE === 'spa' && TARGET === 'qiankun') {
+        await resolveRequire(
+            'koot-qiankun',
+            'libs/before-validate-webpack-config.js'
+        )(appConfig);
+    }
 
     // ========================================================================
     //
