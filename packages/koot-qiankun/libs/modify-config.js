@@ -45,6 +45,8 @@ const modifyWebpackConfig = async (webpackConfig, appConfig) => {
     if (typeof webpackConfig === 'object' && !Array.isArray(webpackConfig))
         return await modifyWebpackConfig([webpackConfig], appConfig);
 
+    const { qiankun: qiankunConfig } = appConfig;
+
     webpackConfig
         .filter((config) => !config[keyConfigWebpackSPATemplateInject])
         .forEach((webpackConfig) => {
@@ -55,9 +57,9 @@ const modifyWebpackConfig = async (webpackConfig, appConfig) => {
             // ================================================================
             if (webpackConfig.output.libraryTarget !== 'umd') {
                 if (!appConfig[keyConfigBuildDll])
-                    webpackConfig.output.library = `${appConfig.qiankunConfig.name}_[name]`;
+                    webpackConfig.output.library = `${qiankunConfig.name}_[name]`;
                 webpackConfig.output.libraryTarget = 'umd';
-                webpackConfig.output.chunkLoadingGlobal = `webpackJsonp_${appConfig.qiankunConfig.name}`;
+                webpackConfig.output.chunkLoadingGlobal = `webpackJsonp_${qiankunConfig.name}`;
                 webpackConfig.output.globalObject = 'window';
             }
 
@@ -84,9 +86,7 @@ const modifyWebpackConfig = async (webpackConfig, appConfig) => {
                 }
 
                 // 添加新入口: qiankun-entry
-                webpackConfig.entry[entrypointName] = [
-                    path.resolve(__dirname, './entry.js'),
-                ];
+                webpackConfig.entry[entrypointName] = [qiankunConfig.entry];
 
                 // 向所有入口注入 public-path.js
                 if (typeof webpackConfig.entry === 'object') {

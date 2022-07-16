@@ -11,7 +11,8 @@ if (!window.__POWERED_BY_QIANKUN__) {
  * such as application-level caches that will not be destroyed during the unmount phase.
  */
 export async function bootstrap() {
-    console.log('react app bootstraped');
+    // eslint-disable-next-line no-console
+    if (__DEV__) console.log('[koot-qiankun] App bootstraped');
 }
 
 /**
@@ -19,8 +20,12 @@ export async function bootstrap() {
  * usually we trigger the application's rendering method here.
  */
 export async function mount(props) {
+    // eslint-disable-next-line no-console
+    if (__DEV__) console.log('[koot-qiankun] Mounting app', props);
+
     window?.[CLIENT_MOUNT]?.({
         container: props.container.querySelector('#root'),
+        qiankun: props,
     });
 }
 
@@ -38,5 +43,6 @@ export async function unmount(props) {
  * Optional lifecycle，just available with loadMicroApp way
  */
 export async function update(props) {
-    console.log('update props', props);
+    // eslint-disable-next-line no-console
+    if (__DEV__) console.log('[koot-qiankun] Update props', props);
 }
