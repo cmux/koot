@@ -38,7 +38,7 @@ class App extends React.Component {
                     : '//sub.app.cmcm.com',
 
                 /** 用以渲染子项目的容器 */
-                container: `#__qiandun_sub_root__`,
+                container: `#__qiankun_sub_root__`,
 
                 /** 在基座项目中访问该路由时，将会渲染子项目 */
                 activeRule: '/_market',
@@ -76,7 +76,7 @@ const App = () => {
                     : '//sub.app.cmcm.com',
 
                 /** 用以渲染子项目的容器 */
-                container: `#__qiandun_sub_root__`,
+                container: `#__qiankun_sub_root__`,
 
                 /** 在基座项目中访问该路由时，将会渲染子项目 */
                 activeRule: '/_market',
@@ -133,10 +133,11 @@ module.exports = {
 
 **`qiankun` 选项**
 
-| 项名          | 值类型   | 默认值      | 解释                                                             |
-| ------------- | -------- | ----------- | ---------------------------------------------------------------- |
-| `name` (必须) | `string` | _undefined_ | 子项目注册用名，需要与基座项目（主项目）中注册的子项目的名字一致 |
-| `basename`    | `string` | _undefined_ | 为该子项目自动添加的路由前缀                                     |
+| 项名          | 值类型   | 默认值                       | 解释                                                             |
+| ------------- | -------- | ---------------------------- | ---------------------------------------------------------------- |
+| `name` (必须) | `string` | _undefined_                  | 子项目注册用名，需要与基座项目（主项目）中注册的子项目的名字一致 |
+| `qiankun`     | `string` | 'koot-qiankun/libs/entry.js' | 子项目的 _Entry_ (入口) 脚本                                     |
+| `basename`    | `string` | _undefined_                  | 为该子项目自动添加的路由前缀                                     |
 
 ---
 
@@ -147,3 +148,13 @@ module.exports = {
 -   子项目
     -   `:root` `html` `body` 上的 CSS 转移到自有容器中
     -   尽量不要操作 `window` 对象
+    -   在 _Koot.js_ 的 `RootContext` 中包含 `rootProps.qiankun` 对象，内容为 _Qiankun_ 在挂在组件时传入的属性
+
+```jsx
+const { useRef } from 'react;
+const Component = () => {
+    const { rootProps: { qiankun } } = useRef(RootContext);
+    qiankun?.setGlobalState({ test: 'newState' });
+    return null;
+}
+```

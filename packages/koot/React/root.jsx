@@ -25,7 +25,8 @@ class Root extends Component {
         console.error("!! Error caught at Koot's Root component !!", err, info);
     }
     render() {
-        const { store, history, routes, locales, ...props } = this.props;
+        const { store, history, routes, locales, rootProps, ...props } =
+            this.props;
         return (
             // <StyleMapContext.Provider value={{}}>
             <RootContext.Provider
@@ -34,6 +35,7 @@ class Root extends Component {
                     history,
                     localeId: props.localeId,
                     locales,
+                    rootProps,
                 })}
             >
                 <Provider store={store}>

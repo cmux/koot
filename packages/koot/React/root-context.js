@@ -7,6 +7,7 @@ const defaultValue = {
     history: undefined,
     localeId: undefined,
     locales: {},
+    rootProps: {},
 };
 if (process.env.WEBPACK_BUILD_STAGE === 'server') {
     defaultValue.ctx = undefined;

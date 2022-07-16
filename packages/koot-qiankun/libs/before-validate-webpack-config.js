@@ -27,7 +27,7 @@ const modifyConfig = async (appConfig) => {
         process.env.KOOT_HISTORY_BASENAME = qiankunConfig.basename;
     }
 
-    appConfig.qiankunConfig = qiankunConfig;
+    appConfig.qiankun = qiankunConfig;
 
     return appConfig;
 };

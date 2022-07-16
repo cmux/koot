@@ -41,7 +41,7 @@ const checkSPAI18n = () =>
             typeof window[SSRSTATE].locales === 'undefined'
     );
 
-const run = ({ router, client, container }) =>
+const run = ({ router, client, container, ...extProps }) =>
     new Promise((resolve) => {
         // [SPA/多语言] 检查语言包是否准备完毕，如果仍在准备，轮询
         if (checkSPAI18n()) {
@@ -208,6 +208,7 @@ const run = ({ router, client, container }) =>
                             routes={routes}
                             localeId={window[LOCALEID]}
                             locales={window[SSRSTATE].locales}
+                            rootProps={extProps}
                             {...ext}
                         />,
                         container ?? document.getElementById('root')
