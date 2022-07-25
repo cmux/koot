@@ -25,5 +25,6 @@
     "devDependencies": {
         "koot": "^0.15.6",
         "koot-webpack": "^0.15.6"
-    }
+    },
+    "gitHead": "e808ca5e9bc250926c4bc74b55de2bce548a315e"
 }
