@@ -25,7 +25,8 @@ const forWebpackVersion = require('../libs/for-webpack-version');
 const ensureConfigName = require('../libs/ensure-webpack-config/name');
 
 /**
- * Webpack 配置处理 - 最终处理
+ * Webpack 配置处理 - 最终处理，在分类型的最终处理之前
+ * - 此处会保留一些标记用字段，会在后续步骤再做处理
  * @async
  * @param {Object|Array} config 本次打包的 Webpack 配置对象
  * @param {Object} kootConfigForThisBuild 完整的 Koot 项目配置（仅针对本次打包）
@@ -121,7 +122,7 @@ const validate = (config, kootConfigForThisBuild, index = 0) => {
     // 移除其他多余字段
     delete config[keyConfigOutputPathShouldBe];
     // delete config[keyConfigWebpackSPATemplateInject];
-    delete config[keyConfigWebpackSPAServer];
+    // delete config[keyConfigWebpackSPAServer];
 
     // 添加缓存配置
     {
@@ -292,6 +293,17 @@ const validateModuleRules = (config, kootConfigForThisBuild = {}) => {
                                 distClientAssetsDirName +
                                 '/asset.[contenthash].[ext]';
                         }
+                    }
+                    break;
+                }
+                case require.resolve('../loaders/babel'): {
+                    if (config.mode === 'development') {
+                        if (typeof options.generatorOpts !== 'object')
+                            options.generatorOpts = {};
+                        if (
+                            typeof options.generatorOpts.compact === 'undefined'
+                        )
+                            options.generatorOpts.compact = false;
                     }
                     break;
                 }

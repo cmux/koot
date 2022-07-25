@@ -4,6 +4,7 @@ const path = require('path');
 
 const {
     keyConfigWebpackSPATemplateInject,
+    keyConfigWebpackSPAServer,
     keyConfigBuildDll,
 } = require('koot/defaults/before-build');
 // const __ = require('./translate');
@@ -49,6 +50,7 @@ const modifyWebpackConfig = async (webpackConfig, appConfig) => {
 
     webpackConfig
         .filter((config) => !config[keyConfigWebpackSPATemplateInject])
+        .filter((config) => !config[keyConfigWebpackSPAServer])
         .forEach((webpackConfig) => {
             // ================================================================
             //

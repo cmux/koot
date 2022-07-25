@@ -30,6 +30,8 @@ module.exports = (kootBuildConfig = {}, options = {}) => {
         options.__server = stageServer;
         options.__routes = routes;
         options.__spaTemplateInject = isSPATemplateInject;
+        if (typeof options.generatorOpts !== 'object')
+            options.generatorOpts = {};
 
         options = Object.assign(
             {
@@ -63,6 +65,7 @@ module.exports = (kootBuildConfig = {}, options = {}) => {
                     options.cacheDirectory = false;
             }
             options.compact = false;
+            options.generatorOpts.compact = false;
         }
 
         if (stageServer) {
