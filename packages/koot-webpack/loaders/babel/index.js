@@ -128,7 +128,7 @@ module.exports = require('babel-loader').custom((babel) => {
                 __routes,
                 __i18n,
             } = customOptions;
-            const { presets, plugins, ...options } = cfg.options;
+            const { presets, plugins, env, ...options } = cfg.options;
             const { filename } = options;
             const isServer =
                 __server || process.env.WEBPACK_BUILD_STAGE === 'server';
@@ -340,8 +340,16 @@ module.exports = require('babel-loader').custom((babel) => {
                 ]);
             }
 
+            const newEnv = env || {};
+            if (typeof newEnv?.development?.compact === 'undefined') {
+                if (typeof newEnv?.development !== 'object')
+                    newEnv.development = {};
+                newEnv.development.compact = false;
+            }
+
             const thisOptions = {
                 ...options,
+                env: newEnv,
                 presets: newPresets,
                 plugins: newPlugins,
             };

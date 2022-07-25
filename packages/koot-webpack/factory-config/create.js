@@ -5,6 +5,7 @@ const BundleAnalyzerPlugin =
 const {
     keyConfigClientAssetsPublicPath,
     keyConfigWebpackSPATemplateInject,
+    keyConfigWebpackSPAServer,
     // WEBPACK_MODIFIED_PUBLIC_PATH
 } = require('koot/defaults/before-build');
 const getAppType = require('koot/utils/get-app-type');
@@ -202,6 +203,7 @@ module.exports = async (kootConfig = {}) => {
             'libs/modify-config.js'
         )(appConfig);
     }
+    await lastValidate(webpackConfig);
 
     // ========================================================================
     //
@@ -211,4 +213,18 @@ module.exports = async (kootConfig = {}) => {
 
     // console.log({ appConfig });
     return appConfig;
+};
+
+// ============================================================================
+
+const lastValidate = async (webpackConfig) => {
+    if (typeof webpackConfig === 'object' && !Array.isArray(webpackConfig))
+        return await lastValidate([webpackConfig]);
+
+    webpackConfig.forEach((webpackConfig) => {
+        delete webpackConfig[keyConfigWebpackSPATemplateInject];
+        delete webpackConfig[keyConfigWebpackSPAServer];
+    });
+
+    // return webpackConfig;
 };

@@ -95,6 +95,7 @@ const run = async () => {
     // 在所有操作执行之前定义环境变量
     process.env.WEBPACK_BUILD_STAGE = stage || 'client';
     process.env.WEBPACK_BUILD_ENV = env;
+    process.env.NODE_ENV = env === 'dev' ? 'development' : 'production';
 
     // 清理临时目录
     await willValidateConfig(program);
