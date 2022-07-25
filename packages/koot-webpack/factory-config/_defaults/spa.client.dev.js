@@ -4,7 +4,7 @@ const factoryConfig = async ({
     // RUN_PATH,
     // CLIENT_DEV_PORT,
     // APP_KEY,
-    localeId
+    localeId,
 }) => ({
     mode: 'development',
     target: 'web',
@@ -19,17 +19,17 @@ const factoryConfig = async ({
             (localeId ? localeId : '') +
             `.chunk.-_-_-_-_-_-[chunkhash]-_-_-_-_-_-.js`,
         // path: '/',
-        publicPath: `/`
+        publicPath: `/`,
     },
     plugins: [
         // 在node执行环境中设置，不起作用，此处不能省略
         new webpack.DefinePlugin({
-            'process.env': {
-                NODE_ENV: JSON.stringify('development')
-            },
-            __SPA__: true
-        })
-    ]
+            // 'process.env': {
+            //     NODE_ENV: JSON.stringify('development')
+            // },
+            __SPA__: true,
+        }),
+    ],
 });
 
-module.exports = async opt => await factoryConfig(opt);
+module.exports = async (opt) => await factoryConfig(opt);

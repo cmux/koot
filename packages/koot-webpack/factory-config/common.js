@@ -131,6 +131,8 @@ const plugins = async (
         // g['process.env'] = {
         //     'NODE_ENV': JSON.stringify('production')
         // }
+    } else {
+        process.env.NODE_ENV = 'development';
     }
 
     // 打入环境变量
