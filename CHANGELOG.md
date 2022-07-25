@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+## [0.15.6] - 2022-07-25
+
+**koot-webpack**
+
+-   针对 _Qiankun_ 子项目优化 _Webpack_ 配置
+
 ## [0.15.5] - 2022-07-16
 
 **koot-qiankun**
