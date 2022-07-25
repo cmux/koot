@@ -1,9 +1,10 @@
 ## [Unreleased]
 
-## [0.15.8] - 2022-07-25
+## [0.15.10] - 2022-07-25
 
 **koot-webpack**
 
+-   针对 `mode === 'development'` 扩展 `babel-loader` 配置: `generatorOps = { compact: false }`
 -   针对 _Qiankun_ 子项目优化 _Webpack_ 配置
 
 ## [0.15.5] - 2022-07-16

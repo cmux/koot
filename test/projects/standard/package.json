@@ -85,7 +85,7 @@
     "private": true,
     "sideEffects": false,
     "koot": {
-        "version": "0.15.5"
+        "version": "0.15.8"
     },
     "devDependencies": {
         "@types/inquirer": "^8.2.1",

@@ -296,6 +296,17 @@ const validateModuleRules = (config, kootConfigForThisBuild = {}) => {
                     }
                     break;
                 }
+                case require.resolve('../loaders/babel'): {
+                    if (config.mode === 'development') {
+                        if (typeof options.generatorOpts !== 'object')
+                            options.generatorOpts = {};
+                        if (
+                            typeof options.generatorOpts.compact === 'undefined'
+                        )
+                            options.generatorOpts.compact = false;
+                    }
+                    break;
+                }
                 default: {
                 }
             }
