@@ -26,6 +26,14 @@ const modifyConfig = async (appConfig) => {
     if (qiankunConfig.basename && !process.env.KOOT_HISTORY_BASENAME) {
         process.env.KOOT_HISTORY_BASENAME = qiankunConfig.basename;
     }
+    if (
+        Array.isArray(qiankunConfig.extraBase) &&
+        !process.env.KOOT_HISTORY_EXTRABASE
+    ) {
+        process.env.KOOT_HISTORY_EXTRABASE = JSON.stringify(
+            qiankunConfig.extraBase
+        );
+    }
 
     appConfig.qiankun = qiankunConfig;
 
