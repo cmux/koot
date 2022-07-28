@@ -60,13 +60,13 @@
         "style-loader": "^3.3.1",
         "thread-loader": "^3.0.4",
         "universal-alias-loader": "^1.2.2",
-        "webpack": "^5.73.0",
+        "webpack": "^5.74.0",
         "webpack-bundle-analyzer": "^4.5.0",
         "webpack-config": "^7.5.0",
         "webpack-dev-middleware": "^5.3.3",
         "webpack-dev-server": "^4.9.3",
         "webpack-hot-middleware": "^2.25.1",
-        "workbox-webpack-plugin": "^6.5.3"
+        "workbox-webpack-plugin": "^6.5.4"
     },
     "devDependencies": {
         "koot": "^0.15.9"
