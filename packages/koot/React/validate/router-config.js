@@ -37,12 +37,10 @@ const validateRouterConfig = (kootConfigRouter) =>
             process.env.KOOT_HISTORY_BASENAME &&
             (routes.path === '/' || !routes.path)
         ) {
-            const newBase =
-                '/' +
-                process.env.KOOT_HISTORY_BASENAME.replace(/^\//, '').replace(
-                    /\/$/,
-                    ''
-                );
+            const newBase = process.env.KOOT_HISTORY_BASENAME.replace(
+                /^\//,
+                ''
+            ).replace(/\/$/, '');
             if (!!process.env.KOOT_HISTORY_EXTRABASE) {
                 const root = {
                     ...routes,
@@ -63,7 +61,7 @@ const validateRouterConfig = (kootConfigRouter) =>
                     ],
                 };
             } else {
-                routes.path = newBase;
+                routes.path = '/' + newBase;
             }
         }
 
