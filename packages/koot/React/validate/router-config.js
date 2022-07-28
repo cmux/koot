@@ -17,7 +17,7 @@ const validateRouterConfig = (kootConfigRouter) =>
                 )
             );
 
-        const { ...routes } = (() => {
+        let { ...routes } = (() => {
             if (Array.isArray(config)) {
                 return {
                     childRoutes: [...config],
@@ -36,13 +36,36 @@ const validateRouterConfig = (kootConfigRouter) =>
         if (
             process.env.KOOT_HISTORY_BASENAME &&
             (routes.path === '/' || !routes.path)
-        )
-            routes.path =
-                '/' +
-                process.env.KOOT_HISTORY_BASENAME.replace(/^\//, '').replace(
-                    /\/$/,
-                    ''
-                );
+        ) {
+            const newBase = process.env.KOOT_HISTORY_BASENAME.replace(
+                /^\//,
+                ''
+            ).replace(/\/$/, '');
+            if (!!process.env.KOOT_HISTORY_EXTRABASE) {
+                const root = {
+                    ...routes,
+                    path: newBase,
+                };
+                routes = {
+                    path: '/',
+                    childRoutes: [
+                        root,
+                        ...JSON.parse(process.env.KOOT_HISTORY_EXTRABASE).map(
+                            (path) => ({
+                                path: path
+                                    .replace(/^\//, '')
+                                    .replace(/\/$/, ''),
+                                childRoutes: [root],
+                            })
+                        ),
+                    ],
+                };
+            } else {
+                routes.path = '/' + newBase;
+            }
+        }
+
+        // console.log(1111, 'routes', routes)
 
         return routes;
     });

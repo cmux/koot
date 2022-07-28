@@ -165,6 +165,7 @@ const plugins = async (
         KOOT_CLIENT_PUBLIC_PATH,
         'KOOT_REACT_LEGACY_REF',
         'KOOT_HISTORY_BASENAME',
+        'KOOT_HISTORY_EXTRABASE',
     ];
     if (
         remainingKootBuildConfig.sessionStore === true ||

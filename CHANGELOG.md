@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+## [0.15.11] - 2022-07-28
+
+**koot-webpack**
+
+-   新配置项 `qiankun.extraBase`: 允许 _Qiankun_ 子项目的路由响应更多前缀名
+
 ## [0.15.9] - 2022-07-25
 
 **koot-webpack**
