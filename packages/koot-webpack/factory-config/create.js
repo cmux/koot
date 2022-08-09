@@ -222,7 +222,8 @@ const lastValidate = async (webpackConfig) => {
         return await lastValidate([webpackConfig]);
 
     webpackConfig.forEach((webpackConfig) => {
-        delete webpackConfig[keyConfigWebpackSPATemplateInject];
+        // 会在执行打包/构建时及时删除，彼时需要判断打包类型
+        // delete webpackConfig[keyConfigWebpackSPATemplateInject];
         delete webpackConfig[keyConfigWebpackSPAServer];
     });
 
