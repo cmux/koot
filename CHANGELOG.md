@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+## [0.15.12] - 2022-08-09
+
+**koot-webpack**
+
+-   修正一处 _SPA_ 项目开发环境中 _Template Inject_ 失效的问题
+
 ## [0.15.11] - 2022-07-28
 
 **koot-webpack**

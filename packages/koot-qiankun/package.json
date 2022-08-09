@@ -1,6 +1,6 @@
 {
     "name": "koot-qiankun",
-    "version": "0.15.11",
+    "version": "0.15.12",
     "description": "Creates Qiankun MicroApp configuration for Koot.js app.",
     "sideEffects": false,
     "scripts": {},
@@ -23,8 +23,8 @@
     },
     "homepage": "https://github.com/cmux/koot",
     "devDependencies": {
-        "koot": "^0.15.11",
-        "koot-webpack": "^0.15.11"
+        "koot": "^0.15.12",
+        "koot-webpack": "^0.15.12"
     },
     "gitHead": "e808ca5e9bc250926c4bc74b55de2bce548a315e"
 }

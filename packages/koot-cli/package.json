@@ -1,6 +1,6 @@
 {
     "name": "koot-cli",
-    "version": "0.15.5",
+    "version": "0.15.12",
     "description": "CLI for creating and upgrading Koot.js app.",
     "main": "index.js",
     "sideEffects": false,
