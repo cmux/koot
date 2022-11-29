@@ -7,7 +7,7 @@ module.exports = {
             'asset/inline': {},
             'asset/resource': {
                 emit: false,
-                filename: 'static/[hash][ext]',
+                // filename: 'static/[hash][ext]',
             },
         },
     },

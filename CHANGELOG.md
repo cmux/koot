@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+## [0.15.13] - 2022-11-29
+
+**koot-webpack**
+
+-   修正一处 _SSR_ 项目中 `Asset Module` 引用地址错误的问题
+
 ## [0.15.12] - 2022-08-09
 
 **koot-webpack**
