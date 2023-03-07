@@ -17,5 +17,6 @@
         "echarts": "^4.2.1",
         "mini-store": "^2.0.0",
         "prop-types": "^15.7.2"
-    }
+    },
+    "gitHead": "5423214f6e7831f7481c061aed1c503949a619a7"
 }

@@ -62,5 +62,6 @@
         "os-locale": "^4.0.0",
         "package-json": "^6.5.0",
         "semver": "^6.3.0"
-    }
+    },
+    "gitHead": "5423214f6e7831f7481c061aed1c503949a619a7"
 }
