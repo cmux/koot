@@ -1,6 +1,6 @@
 {
     "name": "koot-component",
-    "version": "1.0.80",
+    "version": "0.11.16",
     "description": "",
     "main": "index.js",
     "scripts": {
@@ -13,8 +13,8 @@
         "koot": ">=0.7"
     },
     "dependencies": {
-        "echarts": "^4.2.1",
         "classnames": "^2.2.6",
+        "echarts": "^4.2.1",
         "mini-store": "^2.0.0",
         "prop-types": "^15.7.2"
     }

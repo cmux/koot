@@ -1,6 +1,6 @@
 {
     "name": "koot-server-proxy-api",
-    "version": "1.0.0",
+    "version": "0.11.16",
     "description": "koot 框架系列的代理功能。",
     "main": "lib/index.js",
     "scripts": {
