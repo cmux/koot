@@ -144,7 +144,7 @@ const testProduction = (
         const config = require(path.resolve(dir, configFilename));
         const dist = path.resolve(dir, config.dist);
         const commandName = `${commandTestBuild}-${script}-production`;
-        const command = `koot-start --koot-test --config ${configFilename}`;
+        const command = `cross-env NODE_OPTIONS=--openssl-legacy-provider koot-start --koot-test --config ${configFilename}`;
 
         await emptyDist(dist);
         await addCommand(commandName, command, dir);
@@ -200,7 +200,7 @@ const testDevelopment = (
         const config = require(path.resolve(dir, configFilename));
         // const port = '8316'
         const commandName = `${commandTestBuild}-${script}-development`;
-        const command = `koot-dev --no-open --koot-test --config ${configFilename}`;
+        const command = `cross-env NODE_OPTIONS=--openssl-legacy-provider koot-dev --no-open --koot-test --config ${configFilename}`;
         await addCommand(commandName, command, dir);
 
         const child = execSync(`npm run ${commandName}`, {
@@ -1216,7 +1216,7 @@ describe('测试: React 同构项目', () => {
                 );
 
                 const commandName = `${commandTestBuild}-isomorphic-build`;
-                const command = `koot-build --env prod --koot-test`;
+                const command = `cross-env NODE_OPTIONS=--openssl-legacy-provider koot-build --env prod --koot-test`;
                 await addCommand(commandName, command, dir);
 
                 // console.log(commandName)
@@ -1242,7 +1242,7 @@ describe('测试: React 同构项目', () => {
                 const dist = path.resolve(dir, 'dist');
                 const configFile = `koot.config.js`;
                 const commandName = `${commandTestBuild}-isomorphic-start-server`;
-                const command = `koot-start --no-build --koot-test`;
+                const command = `cross-env NODE_OPTIONS=--openssl-legacy-provider koot-start --no-build --koot-test`;
                 await addCommand(commandName, command, dir);
 
                 const child = execSync(
@@ -1298,7 +1298,7 @@ describe('测试: React 同构项目', () => {
                     const configFile = `koot.config.js`;
                     const port = '8316';
                     const commandName = `${commandTestBuild}-isomorphic-start-server-custom-port`;
-                    const command = `koot-start --no-build --port ${port} --koot-test`;
+                    const command = `cross-env NODE_OPTIONS=--openssl-legacy-provider koot-start --no-build --port ${port} --koot-test`;
                     await addCommand(commandName, command, dir);
 
                     const child = execSync(

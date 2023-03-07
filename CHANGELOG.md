@@ -1,4 +1,4 @@
-## [Unreleased]
+## [0.11.16] - 2023-03-07
 
 -   更新依赖包 minor 和 patch 版本号
 
@@ -8,6 +8,7 @@
     -   **新工具函数** `koot/utils/client-get-styles` - 获取当前全局 CSS 和所有组件 CSS。具体用法请参见文档 [全局与工具函数/工具函数/客户端](https://koot.js.org/#/utilities?id=客户端) ([#185](https://github.com/cmux/koot/issues/185))
 -   优化
     -   组件 CSS 的 `<style>` 标签上不再有 `id` 属性，以避免和元素冲突
+    -   确保使用绝对地址的 `before` 配置项可用
 
 ## [0.11.15] - 2019-10-15
 

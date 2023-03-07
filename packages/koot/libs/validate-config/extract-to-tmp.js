@@ -99,7 +99,7 @@ module.exports = async (projectDir, config) => {
                               '\\\\'
                           );
                     const result = path.isAbsolute(pathname)
-                        ? pathname
+                        ? pathname.replace(/\\/g, '\\\\')
                         : '../../../' + pathname.replace(/^\.\//, '');
                     // eslint-disable-next-line no-eval
                     eval(`obj.${key} = \`require('${result}').default\``);

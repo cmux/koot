@@ -408,7 +408,7 @@ const doTest = async (port, dist, settings = {}) => {
     if (isDev) {
         const context = await browser.createIncognitoBrowserContext();
         const page = await context.newPage();
-        await page.goto(origin + '/proxy-1/policies?hl=en', {
+        await page.goto(origin + '/proxy-1/en/policies', {
             waitUntil: 'networkidle2'
         });
         const title = await page.evaluate(() => document.title);
@@ -567,7 +567,7 @@ describe('测试: React 同构项目', () => {
                     bbbbb: 'a1b2c3'
                 };
                 const commandName = `${commandTestBuild}-prod`;
-                const command = `koot-start --koot-test -- bbbbb=${customEnv.bbbbb}`;
+                const command = `cross-env NODE_OPTIONS=--openssl-legacy-provider koot-start --koot-test -- bbbbb=${customEnv.bbbbb}`;
                 await addCommand(commandName, command, dir);
 
                 // console.log(
@@ -638,7 +638,7 @@ describe('测试: React 同构项目', () => {
                     bbbbb: 'a1b2c3'
                 };
                 const commandName = `${commandTestBuild}-isomorphic-dev`;
-                const command = `koot-dev --no-open --koot-test -- bbbbb=${customEnv.bbbbb}`;
+                const command = `cross-env NODE_OPTIONS=--openssl-legacy-provider koot-dev --no-open --koot-test -- bbbbb=${customEnv.bbbbb}`;
                 await addCommand(commandName, command, dir);
 
                 const child = execSync(
@@ -685,7 +685,7 @@ describe('测试: React 同构项目', () => {
                     require(path.resolve(dir, configFile)).dist
                 );
                 const commandName = `${commandTestBuild}-no_bundle_versions_keep`;
-                const command = `koot-build -c --config ${configFile}`;
+                const command = `cross-env NODE_OPTIONS=--openssl-legacy-provider koot-build -c --config ${configFile}`;
                 const errors = [];
 
                 await fs.remove(dist);
@@ -732,7 +732,7 @@ describe('测试: React 同构项目', () => {
                 } = require(path.resolve(dir, configFile));
                 const dist = path.resolve(dir, _dist);
                 const commandName = `${commandTestBuild}-bundle_versions_keep`;
-                const command = `koot-build -c --config ${configFile}`;
+                const command = `cross-env NODE_OPTIONS=--openssl-legacy-provider koot-build -c --config ${configFile}`;
                 const errors = [];
 
                 await fs.remove(dist);

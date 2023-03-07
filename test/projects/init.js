@@ -97,8 +97,8 @@ const initProject = async name => {
     {
         const waiting = spinner(`${titleInTerminal} - 安装中...`);
         const { /*stdout,*/ stderr } = await exec(
-            // 'npm install --no-package-lock',
-            'yarn install --no-lockfile',
+            'npm install --no-package-lock',
+            // 'yarn install --no-lockfile',
             {
                 cwd
             }

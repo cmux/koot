@@ -119,7 +119,7 @@ const testFull = (dir, configFileName) => {
                 configFileName ? configFileName.replace(/\./g, '_') : 'default'
             }`;
             const command =
-                `koot-build --koot-test` +
+                `cross-env NODE_OPTIONS=--openssl-legacy-provider koot-build --koot-test` +
                 (forceChangeType
                     ? ` --type react-spa --dest ${dest}`
                     : ` --config ${fileKootConfig}`);
