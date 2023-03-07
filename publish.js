@@ -115,7 +115,8 @@ const run = async () => {
                 name: 'No tag (none)',
                 value: ''
             },
-            'next'
+            'next',
+            '0.11'
         ],
         default: 0
     });
