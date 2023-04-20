@@ -1,8 +1,6 @@
 {
     "extends": "eslint:recommended",
-    "plugins": [
-        "react"
-    ],
+    "plugins": ["react"],
     "env": {
         "browser": true,
         "node": true,
@@ -12,7 +10,7 @@
         "mocha": true,
         "jquery": true
     },
-    "parser": "babel-eslint",
+    "parser": "@babel/eslint-parser",
     "parserOptions": {
         "ecmaVersion": 2018,
         "sourceType": "module",
@@ -34,9 +32,7 @@
         "__": false
     },
     "settings": {
-        "import/ignore": [
-            "node_modules"
-        ]
+        "import/ignore": ["node_modules"]
     },
     "rules": {
         "no-const-assign": 1,

@@ -36,6 +36,8 @@
  * - routes: 异步函数
  * - 调整了 Webpack 配置的 `output.publicPath`,
  * - serverPackAll: true
+ *
+ * **五号**
  * - i18n.use: 'subdomain'
  *
  * **0.6版**
@@ -358,15 +360,16 @@ const testCodeSplitting = async (dist) => {
  * @param {Object} [settings.i18nUse='router'|'subdomain'] 多语言使用路由模式
  */
 const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
-    const context = await browser.createIncognitoBrowserContext();
-    const origin = isNaN(port) ? port : `http://localhost:${port}`;
     const {
         kootConfig = {},
         i18nUse,
         isDev = false,
         selectorForStoreEnhancer,
         cookiesToStore,
+        domain = 'localhost',
     } = settings;
+    const context = await browser.createIncognitoBrowserContext();
+    const origin = isNaN(port) ? port : `http://${domain}:${port}`;
     const i18nUseRouter = i18nUse === 'router';
     const i18nUseSubdomain = i18nUse === 'subdomain';
 
@@ -506,8 +509,14 @@ const doPuppeteerTest = async (port, dist, dir, settings = {}) => {
             const value = await page.evaluate(
                 () => document.getElementById('inject-ctx-test').innerText
             );
+            // console.log(page.url());
             if (i18nUseRouter) expect(/^\/.+?\//.test(value)).toBe(true);
-            else expect(value).toBe('/');
+            else {
+                // 这里的值是初次 SSR 时的 URL
+                // 上一步触发过链接点击
+                // 如果 JS 报错，上一步时会页面跳转，造成下值变化
+                expect(value).toBe('/');
+            }
         }
 
         // 测试: SSR state 转义与自动反转义
@@ -1408,6 +1417,16 @@ describe('测试: React 同构项目', () => {
                     dir,
                     'koot.config.public-path.js',
                     'isomorphic-public_path',
+                    {
+                        domain: '127.0.0.1',
+                    }
+                );
+
+                testFull(
+                    '五号 / i18n.use="subdomain"',
+                    dir,
+                    'koot.config.i18n-use-subdomain.js',
+                    'isomorphic-i18n_use_subdomain',
                     {
                         i18nUse: 'subdomain',
                     }

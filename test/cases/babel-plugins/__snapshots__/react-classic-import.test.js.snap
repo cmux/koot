@@ -21,18 +21,15 @@ console.log(ttt);"
 
 exports[`Babel Plugin: react-classic-import hasRequire 1`] = `
 "const React = require('react');
-
 const ttt = 'aaa';
 console.log(ttt);"
 `;
 
 exports[`Babel Plugin: react-classic-import hasRequire2 1`] = `
 "import React from \\"react\\";
-
 const {
   memo
 } = require('react');
-
 const ttt = 'aaa';
 console.log(ttt);"
 `;

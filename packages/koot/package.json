@@ -13,7 +13,8 @@
     "scripts": {
         "check-updates": "ncu -x react-router,koa-body,koa-compress,koa-json,koa-onerror,koa-static,koa-compose,koa-helmet,koa-mount",
         "test": "echo \"Run tests from root\" && exit 1",
-        "check-types": "tsc --noEmit"
+        "check-types": "tsc --noEmit",
+        "up": "npx npm-check-updates -i"
     },
     "repository": {
         "type": "git",
@@ -43,25 +44,25 @@
     },
     "homepage": "https://github.com/cmux/koot",
     "engines": {
-        "node": ">=14.15.0"
+        "node": ">=18.0.0"
     },
     "dependencies": {
         "@types/inquirer": "^8.2.1",
-        "@types/lodash": "^4.14.182",
-        "@types/node": "^18.0.3",
+        "@types/lodash": "^4.14.194",
+        "@types/node": "^18.15.11",
         "@types/react": "^17.0.39",
         "@types/react-dom": "^17.0.11",
-        "@types/react-redux": "^7.1.24",
+        "@types/react-redux": "^7.1.25",
         "@types/react-router": "npm:@types/react-router@^3.0.28",
         "chalk": "^4.1.2",
         "classlist-polyfill": "^1.2.0",
-        "cli-spinners": "^2.7.0",
+        "cli-spinners": "^2.8.0",
         "cli-table": "^0.3.11",
         "commander": "^9.4.0",
         "cookie": "^0.5.0",
         "copyfiles": "^2.4.1",
         "debug": "^4.3.4",
-        "ejs": "^3.1.8",
+        "ejs": "^3.1.9",
         "es5-shim": "^4.6.7",
         "execa": "^5.1.1",
         "favicons": "^6.2.2",
@@ -74,14 +75,14 @@
         "is-port-reachable": "^3.0.0",
         "is-url": "^1.2.4",
         "js-cookie": "^3.0.1",
-        "koa": "^2.13.4",
+        "koa": "^2.14.2",
         "koa-better-http-proxy": "^0.2.10",
-        "koa-body": "^4.2.0",
+        "koa-body": "^6.0.1",
         "koa-convert": "^2.0.0",
-        "koa-helmet": "^6.1.0",
+        "koa-helmet": "^7.0.2",
         "koa-mount": "^4.0.0",
-        "koa-proxies": "^0.12.2",
-        "koa-router": "^11.0.1",
+        "koa-proxies": "^0.12.3",
+        "koa-router": "^12.0.0",
         "koa-static": "^5.0.0",
         "koot-cli-kit": "^0.0.3",
         "koot-webpack": "^0.15.13",
@@ -91,27 +92,32 @@
         "open": "^8.4.0",
         "ora": "^5.4.1",
         "os-locale": "^5.0.0",
-        "pm2": "^5.2.0",
-        "portfinder": "^1.0.28",
+        "pm2": "^5.3.0",
+        "portfinder": "^1.0.32",
         "react": "^17.0.2",
         "react-dom": "^17.0.2",
-        "react-redux": "^8.0.2",
+        "react-redux": "^8.0.5",
         "react-router": "npm:@diablohu/react-router-v3@^3.2.7",
         "react-router-redux": "^4.0.8",
-        "redux": "^4.2.0",
-        "redux-thunk": "^2.4.1",
-        "resolve": "^1.22.1",
+        "redux": "^4.2.1",
+        "redux-thunk": "^2.4.2",
+        "resolve": "^1.22.2",
         "rimraf": "^3.0.2",
         "sanitize-filename": "1.6.3",
-        "sharp": "^0.28.3",
+        "sharp": "^0.32.0",
         "sp-koa-views": "^1.0.1",
         "sync-request": "^6.1.0",
-        "terminate": "^2.5.0",
-        "typescript": "^4.7.4",
+        "terminate": "^2.6.1",
+        "typescript": "^5.0.4",
         "xmlify": "^1.1.0"
     },
     "resolutions": {
-        "favicons/sharp": "^0.28.1"
+        "favicons/sharp": "^0.32.0"
+    },
+    "overrides": {
+        "favicons": {
+            "sharp": "^0.32.0"
+        }
     },
     "gitHead": "e808ca5e9bc250926c4bc74b55de2bce548a315e"
 }

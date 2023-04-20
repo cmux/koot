@@ -4,7 +4,9 @@
     "description": "Electron kit for Koot.js app.",
     "sideEffects": false,
     "main": "index.js",
-    "scripts": {},
+    "scripts": {
+        "up": "npx npm-check-updates -i"
+    },
     "repository": {
         "type": "git",
         "url": "https://github.com/cmux/koot"
@@ -27,8 +29,8 @@
         "node": ">= 8.9.0"
     },
     "dependencies": {
-        "electron": "^19.0.8",
-        "electron-builder": "^23.1.0"
+        "electron": "^24.1.2",
+        "electron-builder": "^23.6.0"
     },
     "devDependencies": {
         "koot": "^0.15.13",

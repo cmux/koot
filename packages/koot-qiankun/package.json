@@ -3,7 +3,9 @@
     "version": "0.15.13",
     "description": "Creates Qiankun MicroApp configuration for Koot.js app.",
     "sideEffects": false,
-    "scripts": {},
+    "scripts": {
+        "up": "npx npm-check-updates -i"
+    },
     "repository": {
         "type": "git",
         "url": "https://github.com/cmux/koot"

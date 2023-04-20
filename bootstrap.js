@@ -64,7 +64,7 @@ const run = async () => {
     }
     await runCmd(
         `Install deps for root directory`,
-        'npm install --no-package-lock --force'
+        'npm install --no-package-lock'
     );
     await runCmd(
         `Run: lerna bootstrap`,

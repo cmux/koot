@@ -51,6 +51,7 @@ describe('Babel Plugin: i18n', () => {
                     ],
                 ],
             });
+            // console.log(`index ${index}`, code);
             expect(code).toMatchSnapshot();
         });
     });

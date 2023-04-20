@@ -8,7 +8,8 @@
         "create-koot-app": "./index.js"
     },
     "scripts": {
-        "test": "echo \"Run tests from root\" && exit 1"
+        "test": "echo \"Run tests from root\" && exit 1",
+        "up": "npx npm-check-updates -i"
     },
     "repository": {
         "type": "git",

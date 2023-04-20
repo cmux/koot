@@ -1,5 +1,37 @@
 ## [Unreleased]
 
+**⚠ 重大改动 ⚠**
+
+-   _Node.js_ 最低版本要求提升到 `18.0.0`
+-   代码库移除以下包
+    -   `koot-component`
+    -   `koot-core-i18n`
+    -   `koot-core-react-isomorphic`
+    -   `koot-http-service`
+    -   `koot-redux`
+    -   `koot-redux-router`
+    -   `koot-router`
+    -   `koot-server-proxy-api`
+
+**各子包其他改动**
+
+-   **koot-cli**
+
+    -   更新依赖包 **major** 版本号
+        -   `axios` -> _^1.3.5_
+        -   `fs-extra` -> _^11.1.1_
+
+-   **koot-electron**
+
+    -   更新依赖包 **major** 版本号
+        -   `electron` -> _^24.1.2_
+
+-   **koot-webpack**
+    -   更新依赖包 **major** 版本号
+        -   `babel-loader` -> _^9.1.2_
+        -   `thread-loader` -> _^4.0.0_
+        -   `webpack-dev-middleware` -> _^6.0.2_
+
 ## [0.15.13] - 2022-11-29
 
 **koot-webpack**
