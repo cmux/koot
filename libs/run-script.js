@@ -1,6 +1,5 @@
-const { spawn } = require('child_process');
-
-const logRunScript = require('./log/run-script');
+import { spawn } from 'node:child_process';
+import logRunScript from './log/run-script.js';
 
 /**
  * 运行指定脚本
@@ -19,15 +18,15 @@ const run = async (script, options = {}) => {
     await new Promise((resolve, reject) => {
         const child = spawn(arr.shift(), arr, {
             stdio: 'inherit',
-            shell: true
+            shell: true,
         });
         child.on('close', async () => {
             resolve(child);
         });
-        child.on('error', err => {
+        child.on('error', (err) => {
             reject(err);
         });
     });
 };
 
-module.exports = run;
+export default run;

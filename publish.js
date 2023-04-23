@@ -1,19 +1,22 @@
 /* eslint-disable no-console */
 
-const fs = require('fs-extra');
-const path = require('path');
-const inquirer = require('inquirer');
-const crlf = require('crlf');
-const glob = require('glob-promise');
+import fs from 'fs-extra';
+import path from 'node:path';
+import url from 'node:url';
+import inquirer from 'inquirer';
+import crlf from 'crlf';
+import glob from 'glob-promise';
+import simpleGit from 'simple-git';
 
-const runScript = require('./libs/run-script');
-const logWelcome = require('./libs/log/welcome');
-const logAbort = require('./libs/log/abort');
-const logFinish = require('./libs/log/finish');
-const spinner = require('./packages/koot/utils/spinner');
+import runScript from './libs/run-script.js';
+import logWelcome from './libs/log/welcome.js';
+import logAbort from './libs/log/abort.js';
+import logFinish from './libs/log/finish.js';
+import spinner from './packages/koot/utils/spinner.js';
 
 // ============================================================================
 
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 const defaultChecked = [
     'create-koot-app',
     'koot',
@@ -60,7 +63,7 @@ const prePublish = async () => {
         console.log(' ');
     };
     try {
-        const git = require('simple-git')(__dirname);
+        const git = simpleGit(__dirname);
         const { modified = [] } = await git.status();
         if (modified.length) {
             await git.add('./*');

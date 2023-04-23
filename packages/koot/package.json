@@ -2,7 +2,8 @@
     "name": "koot",
     "version": "0.15.13",
     "description": "Koot.js - React SPA & SSR (isomorphic) app framework created by CMUX",
-    "main": "index.js",
+    "type": "module",
+    "exports": "./index.js",
     "sideEffects": false,
     "bin": {
         "koot-build": "./bin/build.js",

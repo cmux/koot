@@ -7,6 +7,6 @@ module.exports = {
         '/node_modules/',
         '/packages/.+/node_modules/',
         '/test/projects/',
-        '/logs/'
-    ]
+        '/logs/',
+    ],
 };

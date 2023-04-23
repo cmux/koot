@@ -3,4 +3,4 @@
  * @param {Object} options
  * @returns {Object} ora 对象
  */
-module.exports = require('koot-cli-kit/spinner');
+export { default } from 'koot-cli-kit/spinner/index.js';

@@ -1,11 +1,13 @@
-const chalk = require('chalk');
+/* eslint-disable no-console */
+
+import chalk from 'chalk';
 
 /**
  * 输出欢迎信息
  * @void
  * @param {String} [msg]
  */
-const logWelcome = msg => {
+const logWelcome = (msg) => {
     const ascii = `
     ▄█   ▄█▄  ▄██████▄   ▄██████▄      ███
     ███ ▄███▀ ███    ███ ███    ███ ▀█████████▄
@@ -31,4 +33,4 @@ const logWelcome = msg => {
     }
 };
 
-module.exports = logWelcome;
+export default logWelcome;

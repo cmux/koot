@@ -2,6 +2,7 @@
     "name": "koot-packages",
     "description": "All modules and packages for Koot.js",
     "private": true,
+    "type": "module",
     "scripts": {
         "doc": "docsify serve docs",
         "bootstrap": "node bootstrap.js",
@@ -12,7 +13,7 @@
         "eslint:koot": "eslint \"packages/koot/!(node_modules|logs|dist|dist*|test)/**/*.+(js|jsx)\"",
         "check-types": "tsc --noEmit",
         "prepare": "husky install",
-        "commit": "node ./node_modules/cz-customizable/standalone.js",
+        "commit": "npx cz-customizable",
         "up": "npx npm-check-updates -i"
     },
     "repository": {
@@ -53,7 +54,6 @@
         "chalk": "^4.1.2",
         "cheerio": "^1.0.0-rc.12",
         "crlf": "^1.1.1",
-        "cz-customizable": "^6.9.1",
         "eslint": "^8.38.0",
         "eslint-config-koot": "^4.0.0",
         "fs-extra": "^10.1.0",
@@ -97,5 +97,10 @@
         "*.{json,md,css,less,sass,scss}": [
             "prettier --write"
         ]
+    },
+    "config": {
+        "cz-customizable": {
+            "config": ".cz-config.cjs"
+        }
     }
 }
