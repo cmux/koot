@@ -1,7 +1,7 @@
 import path from 'node:path';
 import url from 'node:url';
 import puppeteer from 'puppeteer';
-import glob from 'glob-promise';
+import glob from 'glob';
 
 async function run() {
     // console.log(import.meta);

@@ -2,8 +2,11 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
+import url from 'node:url';
+import { spawn } from 'node:child_process';
 
 // const ignore = "koot-@(cli|boilerplate|boilerplate-*)"
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 const individualPackages = ['create-koot-app', 'koot-cli'];
 const ignore =
     '@(' +
@@ -29,7 +32,7 @@ const runCmd = async (msg, cmd, options = {}) => {
     // spawn
     const chunks = cmd.split(' ');
     await new Promise((resolve) => {
-        const child = require('child_process').spawn(chunks.shift(), chunks, {
+        const child = spawn(chunks.shift(), chunks, {
             stdio: 'inherit',
             shell: true,
             ...options,

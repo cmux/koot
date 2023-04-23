@@ -5,7 +5,7 @@ import path from 'node:path';
 import url from 'node:url';
 import inquirer from 'inquirer';
 import crlf from 'crlf';
-import glob from 'glob-promise';
+import glob from 'glob';
 import simpleGit from 'simple-git';
 
 import runScript from './libs/run-script.js';

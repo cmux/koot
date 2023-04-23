@@ -2,6 +2,9 @@
 
 **⚠ 重大改动 ⚠**
 
+-   所有包改为 _ES Module_ 标准
+    -   所有依赖包升级到最新版本
+    -   若从老版本 _koot.js_ 升级，需要改造项目代码，详见[升级指南](https://koot.js.org/#/migration/0.15-to-0.16)
 -   _Node.js_ 最低版本要求提升到 `18.0.0`
 -   代码库移除以下包
     -   `koot-component`
@@ -12,14 +15,42 @@
     -   `koot-redux-router`
     -   `koot-router`
     -   `koot-server-proxy-api`
+-   移除以下依赖包，现在不会默认安装。如有使用需要，请在项目中自行安装
+    -   `glob-promise`
 
 **各子包其他改动**
+
+-   **koot**
+
+    -   更新依赖包 **major** 版本号
+        -   `chalk` -> _^5.2.0_
+        -   `commander` -> _^10.0.1_
+        -   `execa` -> _^7.1.1_
+        -   `favicons` -> _^7.1.2_
+        -   `filesize` -> _^10.0.7_
+        -   `fs-extra` -> _^11.1.1_
+        -   `glob` -> _^10.2.2_
+        -   `inquirer` -> _^9.1.5_
+        -   `is-port-reachable` -> _^4.0.0_
+        -   `open` -> _^9.1.0_
+        -   `ora` -> _^6.3.0_
+        -   `os-locale` -> _^6.0.2_
+        -   `rimraf` -> _^5.0.0_
 
 -   **koot-cli**
 
     -   更新依赖包 **major** 版本号
-        -   `axios` -> _^1.3.5_
+        -   `axios` -> _^1.3.6_
+        -   `chalk` -> _^5.2.0_
         -   `fs-extra` -> _^11.1.1_
+        -   `glob` -> _^10.2.2_
+        -   `inquirer` -> _^9.1.5_
+        -   `isbinaryfile` -> _^5.0.0_
+        -   `latest-version` -> _^7.0.0_
+        -   `npm-email` -> _^4.0.1_
+        -   `ora` -> _^6.3.0_
+        -   `os-locale` -> _^6.0.2_
+        -   `package-json` -> _^8.1.0_
 
 -   **koot-electron**
 
@@ -29,7 +60,7 @@
 -   **koot-webpack**
     -   更新依赖包 **major** 版本号
         -   `babel-loader` -> _^9.1.2_
-        -   `thread-loader` -> _^4.0.0_
+        -   `thread-loader` -> _^4.0.1_
         -   `webpack-dev-middleware` -> _^6.0.2_
 
 ## [0.15.13] - 2022-11-29

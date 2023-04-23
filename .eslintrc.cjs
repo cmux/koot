@@ -21,8 +21,26 @@ module.exports = {
         __STYLE_TAG_MODULE_ATTR_NAME__: 'readonly',
         __KOOT_SPA_TEMPLATE_INJECT__: 'readonly',
         __webpack_public_path__: 'readonly',
+
+        __dirname: 'off',
+        __filename: 'off',
     },
+    // parserOptions: {
+    //     requireConfigFile: false,
+    //     sourceType: 'module',
+    //     allowImportExportEverywhere: false,
+    //     ecmaFeatures: {
+    //         globalReturn: false,
+    //     },
+    //     babelOptions: {
+    //         babelrc: false,
+    //         configFile: false,
+    //         // your babel options
+    //         presets: ['@babel/preset-env'],
+    //     },
+    // },
     rules: {
         // 'no-console': 0
+        '@typescript-eslint/no-require-imports': 'error',
     },
 };
