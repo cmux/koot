@@ -1,10 +1,10 @@
 /* eslint-disable no-console */
-const inquirer = require('inquirer');
+import inquirer from 'inquirer';
 
-const runScript = require('../libs/run-script');
-const logWelcome = require('../libs/log/welcome');
-const logFinish = require('../libs/log/finish');
-// const terminate = require('./libs/terminate-process');
+import runScript from '../libs/run-script.js';
+import logWelcome from '../libs/log/welcome.js';
+import logFinish from '../libs/log/finish.js';
+// import terminate from './libs/terminate-process.js';
 
 const run = async () => {
     logWelcome('Test');

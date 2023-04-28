@@ -1,18 +1,23 @@
-const Koa = require('koa');
+import url from 'node:url';
+import Koa from 'koa';
+import koaStatic from 'koa-static';
 
 const app = new Koa();
-const koaStatic = require('koa-static');
-const path = require('path');
 
 app.use(
-    koaStatic(path.resolve(__dirname, './projects/standard/dist-spa/'), {
-        maxage: 0,
-        hidden: true,
-        index: 'index.html',
-        defer: false,
-        gzip: true,
-        extensions: false,
-    })
+    koaStatic(
+        url.fileURLToPath(
+            new URL('./projects/standard/dist-spa/', import.meta.url)
+        ),
+        {
+            maxage: 0,
+            hidden: true,
+            index: 'index.html',
+            defer: false,
+            gzip: true,
+            extensions: false,
+        }
+    )
 );
 
 app.listen('8980');

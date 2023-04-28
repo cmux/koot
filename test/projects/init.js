@@ -1,29 +1,40 @@
 /* eslint-disable no-console */
 
-const fs = require('fs-extra');
-const path = require('path');
-const util = require('util');
-const exec = util.promisify(require('child_process').exec);
-const chalk = require('chalk');
-const symlinkDir = require('symlink-dir');
+import path from 'node:path';
+import url from 'node:url';
+import { promisify } from 'node:util';
+import ChildProcess from 'node:child_process';
 
-const spinner = require('../../packages/koot/utils/spinner');
-const getProjects = require('./get');
+import fs from 'fs-extra';
+import chalk from 'chalk';
+import symlinkDir from 'symlink-dir';
+
+import spinner from '../../packages/koot/utils/spinner.js';
+import getProjects from './get.js';
+
+const exec = promisify(ChildProcess.exec);
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 const internalPackages = ['koot', 'koot-webpack', 'koot-electron'];
 const linkPackages = ['sharp'];
+
+// ============================================================================
 
 /**
  * 初始化所有测试项目
  * @async
  */
-module.exports = async () => {
+const initAllTestProjects = async () => {
     console.log(chalk.cyanBright('准备测试项目代码库...'));
 
     for (const { name } of getProjects()) {
         await initProject(name);
     }
 };
+
+export default initAllTestProjects;
+
+// ============================================================================
 
 /**
  * 初始化一个项目

@@ -1,7 +1,7 @@
 import path from 'node:path';
 import url from 'node:url';
 import puppeteer from 'puppeteer';
-import glob from 'glob';
+// import glob from 'glob';
 
 async function run() {
     // console.log(import.meta);
@@ -12,13 +12,13 @@ async function run() {
     console.log(
         url.fileURLToPath(new URL('packages/*/package.json', import.meta.url))
     );
-    console.log(
-        await glob(
-            url.fileURLToPath(
-                new URL('packages/*/package.json', import.meta.url)
-            )
-        )
-    );
+    // console.log(
+    //     await glob(
+    //         url.fileURLToPath(
+    //             new URL('packages/*/package.json', import.meta.url)
+    //         )
+    //     )
+    // );
     // path.resolve(__dirname, 'packages/*/package.json')
     // const browser = await puppeteer.launch({
     //     // headless: false,
