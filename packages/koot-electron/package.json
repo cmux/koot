@@ -19,7 +19,7 @@
     "author": {
         "name": "diablohu",
         "email": "diablohudream@gmail.com",
-        "url": "http://diablohu.com"
+        "url": "https://diablohu.dev"
     },
     "bugs": {
         "url": "https://github.com/cmux/koot/issues"
@@ -29,7 +29,7 @@
         "node": ">= 8.9.0"
     },
     "dependencies": {
-        "electron": "^24.1.2",
+        "electron": "^24.2.0",
         "electron-builder": "^23.6.0"
     },
     "devDependencies": {

@@ -30,7 +30,7 @@
         -   `filesize` -> _^10.0.7_
         -   `fs-extra` -> _^11.1.1_
         -   `glob` -> _^10.2.2_
-        -   `inquirer` -> _^9.1.5_
+        -   `inquirer` -> _^9.2.1_
         -   `is-port-reachable` -> _^4.0.0_
         -   `open` -> _^9.1.0_
         -   `ora` -> _^6.3.0_
@@ -40,11 +40,11 @@
 -   **koot-cli**
 
     -   更新依赖包 **major** 版本号
-        -   `axios` -> _^1.3.6_
+        -   `axios` -> _^1.4.0_
         -   `chalk` -> _^5.2.0_
         -   `fs-extra` -> _^11.1.1_
         -   `glob` -> _^10.2.2_
-        -   `inquirer` -> _^9.1.5_
+        -   `inquirer` -> _^9.2.1_
         -   `isbinaryfile` -> _^5.0.0_
         -   `latest-version` -> _^7.0.0_
         -   `npm-email` -> _^4.0.1_
@@ -55,13 +55,15 @@
 -   **koot-electron**
 
     -   更新依赖包 **major** 版本号
-        -   `electron` -> _^24.1.2_
+        -   `electron` -> _^24.2.0_
 
 -   **koot-webpack**
     -   更新依赖包 **major** 版本号
         -   `babel-loader` -> _^9.1.2_
         -   `thread-loader` -> _^4.0.1_
-        -   `webpack-dev-middleware` -> _^6.0.2_
+        -   `webpack-dev-middleware` -> _^6.1.0_
+
+---
 
 ## [0.15.13] - 2022-11-29
 

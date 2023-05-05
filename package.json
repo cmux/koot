@@ -32,7 +32,7 @@
         {
             "name": "diablohu",
             "email": "diablohudream@gmail.com",
-            "url": "http://diablohu.com"
+            "url": "https://diablohu.dev"
         }
     ],
     "bugs": {
@@ -45,11 +45,11 @@
     "license": "Apache-2.0",
     "dependencies": {
         "docsify-cli": "^4.4.4",
-        "sharp": "^0.32.0"
+        "sharp": "^0.32.1"
     },
     "devDependencies": {
-        "@commitlint/cli": "^17.6.1",
-        "@commitlint/config-conventional": "^17.6.1",
+        "@commitlint/cli": "^17.6.3",
+        "@commitlint/config-conventional": "^17.6.3",
         "camelcase": "^7.0.1",
         "chalk": "^5.2.0",
         "cheerio": "^1.0.0-rc.12",
@@ -58,17 +58,17 @@
         "eslint-config-koot": "^4.0.0",
         "fs-extra": "^11.1.1",
         "husky": "^8.0.3",
-        "inquirer": "^9.1.5",
+        "inquirer": "^9.2.1",
         "is-valid-path": "^0.1.1",
         "jest": "^29.5.0",
-        "jsdom": "^21.1.1",
-        "lerna": "^6.6.1",
+        "jsdom": "^22.0.0",
+        "lerna": "^6.6.2",
         "lerna-wizard": "^1.1.1",
-        "lint-staged": "^13.2.1",
+        "lint-staged": "^13.2.2",
         "prettier": "^2.8.8",
         "prettier-eslint": "^15.0.1",
-        "puppeteer": "19.10.1",
-        "simple-git": "^3.17.0",
+        "puppeteer": "20.1.0",
+        "simple-git": "^3.18.0",
         "symlink-dir": "^5.1.1"
     },
     "overrides": {

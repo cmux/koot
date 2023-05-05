@@ -1,6 +1,7 @@
 #!/usr/bin/env node
+/* eslint-disable no-console */
 
-const createKootApp = require('koot-cli/steps/create');
+import createKootApp from 'koot-cli/steps/create/index.js';
 
 const run = async () => {
     if (typeof createKootApp === 'function') return await createKootApp();
