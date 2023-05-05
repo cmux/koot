@@ -4,9 +4,11 @@
  * @param {*} page
  * @returns {Promise<string>}
  */
-module.exports = async (page) =>
+const getLocaleIdFromPage = async (page) =>
     await page.evaluate(() =>
         document
             .querySelector('meta[name="koot-locale-id"]')
             .getAttribute('content')
     );
+
+export default getLocaleIdFromPage;

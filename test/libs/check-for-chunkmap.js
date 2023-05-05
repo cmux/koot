@@ -1,10 +1,10 @@
-const fs = require('fs-extra');
-const path = require('path');
+import fs from 'fs-extra';
+import path from 'node:path';
 
-const {
+import {
     buildManifestFilename,
     compilationKeyHtmlMetaTags,
-} = require('../../packages/koot/defaults/before-build');
+} from '../../packages/koot/defaults/before-build.js';
 
 const specialKeys = [
     '.public',
@@ -21,7 +21,7 @@ const specialKeys = [
  * @param {String} dist
  * @param {Function} func
  */
-module.exports = async (dist, func) => {
+const checkForChunkmap = async (dist, func) => {
     const file = path.resolve(dist, buildManifestFilename);
     expect(fs.existsSync(file)).toBe(true);
 
@@ -48,3 +48,5 @@ module.exports = async (dist, func) => {
         await func(getMap(chunkmap));
     }
 };
+
+export default checkForChunkmap;

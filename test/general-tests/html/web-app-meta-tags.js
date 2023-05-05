@@ -1,13 +1,13 @@
-const fs = require('fs-extra');
-const path = require('path');
-const cheerio = require('cheerio');
+import path from 'node:path';
+import fs from 'fs-extra';
+import cheerio from 'cheerio';
 
-const getOutput = require('../../libs/get-output-dir-from-manifestmap');
+import getOutput from '../../libs/get-output-dir-from-manifestmap.js';
 
 /**
  * 测试：WebApp 相关 <meta> 标签信息以及文件可用性
  */
-module.exports = async (html, dist) => {
+const webAppMetaTags = async (html, dist) => {
     if (!dist) throw new Error('no "dist"');
     if (!fs.existsSync(dist)) throw new Error('"dist" not exists');
 
@@ -43,3 +43,5 @@ module.exports = async (html, dist) => {
         ).toBe(true);
     }
 };
+
+export default webAppMetaTags;

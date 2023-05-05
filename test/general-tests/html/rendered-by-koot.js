@@ -1,11 +1,13 @@
-const fs = require('fs-extra');
-const path = require('path');
+import fs from 'fs-extra';
+import url from 'node:url';
 
 // 测试：koot.js 版本信息
 // <!-- rendered by using koot.js 0.10.0-alpha.4 -->
-module.exports = async (html) => {
+const renderedByKoot = async (html) => {
     const { version } = await fs.readJson(
-        path.resolve(__dirname, '../../../packages/koot/package.json')
+        url.fileURLToPath(
+            new URL('../../../packages/koot/package.json', import.meta.url)
+        )
     );
     const checkStr = `<!-- rendered by using koot.js ${version} -->`;
     const result = html.includes(checkStr);
@@ -20,3 +22,5 @@ module.exports = async (html) => {
     if (!result) console.warn({ version, checkStr, html });
     expect(result).toBe(true);
 };
+
+export default renderedByKoot;

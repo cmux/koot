@@ -1,9 +1,7 @@
-const fs = require('fs-extra');
-const path = require('path');
+import fs from 'fs-extra';
+import path from 'node:path';
 
-const {
-    buildManifestFilename,
-} = require('../../packages/koot/defaults/before-build');
+import { buildManifestFilename } from '../../packages/koot/defaults/before-build.js';
 
 /**
  * 从 manifestmap 中客户端文件路径
@@ -32,4 +30,4 @@ const getOutputDir = async (dist) => {
     return path.resolve(dist, (map['.out'] || '').replace(/^\//, ''));
 };
 
-module.exports = getOutputDir;
+export default getOutputDir;

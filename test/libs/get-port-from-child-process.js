@@ -31,4 +31,4 @@ const waitForPort = async (child, regex = /port.*\[3[0-9]m([0-9]+)/) =>
         });
     });
 
-module.exports = waitForPort;
+export default waitForPort;

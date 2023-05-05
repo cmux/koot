@@ -1,4 +1,4 @@
-const cheerio = require('cheerio');
+import cheerio from 'cheerio';
 
 /**
  * 获取目标元素的 innerHTML，同时支持 SSR 和 CSR
@@ -11,7 +11,7 @@ const cheerio = require('cheerio');
 const getElementInnerHTML = async (res, page, selector) => {
     const result = {
         ssr: undefined,
-        csr: undefined
+        csr: undefined,
     };
 
     const HTML = await res.text();
@@ -24,10 +24,10 @@ const getElementInnerHTML = async (res, page, selector) => {
 
     const CSR = await page.$(selector);
     if (CSR) {
-        result.csr = await page.$eval(selector, e => e.innerHTML);
+        result.csr = await page.$eval(selector, (e) => e.innerHTML);
     }
 
     return result;
 };
 
-module.exports = getElementInnerHTML;
+export default getElementInnerHTML;

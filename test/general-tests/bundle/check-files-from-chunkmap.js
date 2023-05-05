@@ -1,6 +1,6 @@
-const fs = require('fs-extra');
-const path = require('path');
-const checkForChunkmap = require('../../libs/check-for-chunkmap');
+import fs from 'fs-extra';
+import path from 'node:path';
+import checkForChunkmap from '../../libs/check-for-chunkmap.js';
 
 /**
  * 测试：chunkmap
@@ -10,7 +10,7 @@ const checkForChunkmap = require('../../libs/check-for-chunkmap');
  * @void
  * @param {String} dist
  */
-module.exports = async (dist, isDev = true) => {
+const checkFilesFromChunkmap = async (dist, isDev = true) => {
     const check = async (chunkmap) => {
         const filesToCheck = [];
         const filenames = [];
@@ -63,3 +63,5 @@ module.exports = async (dist, isDev = true) => {
     };
     await checkForChunkmap(dist, check);
 };
+
+export default checkFilesFromChunkmap;

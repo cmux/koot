@@ -1,15 +1,15 @@
-const fs = require('fs-extra');
-const path = require('path');
+import fs from 'fs-extra';
+import path from 'node:path';
 
-const {
+import {
     buildManifestFilename,
-    buildOutputsFilename
-} = require('../../packages/koot/defaults/before-build');
+    buildOutputsFilename,
+} from '../../packages/koot/defaults/before-build.js';
 
 /**
  * 测试: 检查打包结果根目录下的文件
  */
-module.exports = async ({ dist, env, type, serverMode } = {}) => {
+const checkDistRootFiles = async ({ dist, env, type, serverMode } = {}) => {
     if (!dist) throw new Error(`missing parameter: 'dist'`);
     if (!env) throw new Error(`missing parameter: 'env'`);
     if (!type) throw new Error(`missing parameter: 'type'`);
@@ -52,3 +52,5 @@ module.exports = async ({ dist, env, type, serverMode } = {}) => {
         checkFile('Dockerfile', false);
     }
 };
+
+export default checkDistRootFiles;

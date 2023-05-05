@@ -4,5 +4,7 @@
  * @param {*} page
  * @returns {Promise<Object>}
  */
-module.exports = async (page) =>
+const getSsrStateFromPage = async (page) =>
     await page.evaluate(() => window.__REDUX_STATE__);
+
+export default getSsrStateFromPage;

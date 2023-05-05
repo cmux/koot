@@ -1,4 +1,4 @@
-module.exports = (stderr) =>
+const filterStderr = (stderr) =>
     stderr
         .replace(
             /\(node:([0-9]+?)\) Warning: No such label 'URL' for console.timeEnd\(\)/g,
@@ -14,3 +14,5 @@ module.exports = (stderr) =>
             ''
         )
         .replace(/\(Use `node --trace-deprecation(.+?)(\r|\n)/g, '');
+
+export default filterStderr;

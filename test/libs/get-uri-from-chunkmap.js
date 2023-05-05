@@ -1,9 +1,7 @@
-const fs = require('fs-extra');
-const path = require('path');
+import fs from 'fs-extra';
+import path from 'node:path';
 
-const {
-    buildManifestFilename
-} = require('../../packages/koot/defaults/before-build');
+import { buildManifestFilename } from '../../packages/koot/defaults/before-build.js';
 
 /**
  * 从 chunkmap 中获取指定文件的 URI
@@ -37,4 +35,4 @@ const getUriFromChunkmap = async (dist, file) => {
     return '';
 };
 
-module.exports = getUriFromChunkmap;
+export default getUriFromChunkmap;

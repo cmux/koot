@@ -5,7 +5,7 @@ const ignoredStatus = [302, 304];
  * @param {Page} page
  * @param {Array} arrFailedResponse
  */
-module.exports = (page, arrFailedResponse) => {
+const pageEventResponseFailedResponse = (page, arrFailedResponse) => {
     page.on('response', (res) => {
         if (ignoredStatus.includes(res.status())) return;
         if (!res.ok()) {
@@ -14,3 +14,5 @@ module.exports = (page, arrFailedResponse) => {
         }
     });
 };
+
+export default pageEventResponseFailedResponse;

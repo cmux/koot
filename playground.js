@@ -1,3 +1,4 @@
+import fs from 'fs-extra';
 import path from 'node:path';
 import url from 'node:url';
 import puppeteer from 'puppeteer';
@@ -11,6 +12,16 @@ async function run() {
     // console.log(await import(new URL('.cz-config.cjs', import.meta.url)));
     console.log(
         url.fileURLToPath(new URL('packages/*/package.json', import.meta.url))
+    );
+    console.log(
+        await fs.readJson(
+            url.fileURLToPath(
+                new URL(
+                    '../../../@diablohu/metas/package.json',
+                    import.meta.url
+                )
+            )
+        )
     );
     // console.log(
     //     await glob(
