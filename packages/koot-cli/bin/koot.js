@@ -1,20 +1,20 @@
 #!/usr/bin/env node
 
-const fs = require('fs-extra');
-const path = require('path');
-const chalk = require('chalk');
-const inquirer = require('inquirer');
-const semver = require('semver');
+import path from 'node:path';
+import fs from 'fs-extra';
+import chalk from 'chalk';
+import inquirer from 'inquirer';
+import semver from 'semver';
 
-const vars = require('../lib/vars');
-const spinner = require('../lib/spinner');
-const ensureLocales = require('../lib/ensure-locales');
-const _ = require('../lib/translate');
-const { welcome: logWelcome } = require('../lib/log');
+import vars from '../lib/vars.js';
+import spinner from '../lib/spinner.js';
+import ensureLocales from '../lib/ensure-locales.js';
+import _ from '../lib/translate.js';
+import { welcome as logWelcome } from '../lib/log.js';
 
-const stepCheckUpdate = require('../steps/check-update');
-const stepCreate = require('../steps/create');
-const stepUpgrade = require('../steps/upgrade');
+import stepCheckUpdate from '../steps/check-update.js';
+import stepCreate from '../steps/create/index.js';
+import stepUpgrade from '../steps/upgrade/index.js';
 
 const run = async () => {
     await ensureLocales();
@@ -109,10 +109,9 @@ const run = async () => {
                 });
             }
             default: {
-                require(path.resolve(
-                    cwd,
-                    `node_modules/koot/bin/${next.value}`
-                ));
+                return await import(
+                    path.resolve(cwd, `node_modules/koot/bin/${next.value}`)
+                );
                 // console.log(npm)
                 // console.log(npm.bin)
                 // const child = npmRunScript(`koot-${next.value}`, {})

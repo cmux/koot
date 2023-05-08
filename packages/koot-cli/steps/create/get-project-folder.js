@@ -1,17 +1,17 @@
-const fs = require('fs-extra');
-const path = require('path');
-const inquirer = require('inquirer');
-const chalk = require('chalk');
+import path from 'node:path';
+import fs from 'fs-extra';
+import inquirer from 'inquirer';
+import chalk from 'chalk';
 
-const _ = require('../../lib/translate');
-const spinner = require('../../lib/spinner');
+import _ from '../../lib/translate.js';
+import spinner from '../../lib/spinner.js';
 
 /**
  * 获取项目路径
  * @async
  * @param {Object}} project
  */
-module.exports = async (project = {}) => {
+const getProjectFolder = async (project = {}) => {
     const cwd = project.cwd || process.cwd();
 
     /** 目标目录路径 */
@@ -27,10 +27,10 @@ module.exports = async (project = {}) => {
             type: 'list',
             name: 'value',
             message: _('confirm_remove_exist_dir'),
-            choices: ['remove', 'overwrite', 'input'].map(value => ({
+            choices: ['remove', 'overwrite', 'input'].map((value) => ({
                 name: _(`confirm_remove_exist_dir_${value}`),
-                value
-            }))
+                value,
+            })),
         });
 
         switch (overwrite) {
@@ -51,7 +51,7 @@ module.exports = async (project = {}) => {
                     name: 'value',
                     message: _('input_dir'),
                     default: `./${project.name || ''}`,
-                    validate: input => {
+                    validate: (input) => {
                         if (input === 0 || input) {
                             try {
                                 const dest = path.resolve(cwd, input);
@@ -62,7 +62,7 @@ module.exports = async (project = {}) => {
                             return true;
                         }
                         return _('invalid_input');
-                    }
+                    },
                 });
                 dest = path.resolve(cwd, input.value);
                 break;
@@ -78,6 +78,8 @@ module.exports = async (project = {}) => {
     return {
         dest,
         destExists,
-        destRelative
+        destRelative,
     };
 };
+
+export default getProjectFolder;

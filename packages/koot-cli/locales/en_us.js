@@ -1,4 +1,4 @@
-module.exports = {
+const locales_en_us = {
     welcomeCM: 'Hello, fellow cheetah~',
     welcome: 'Thanks for using Koot.js :)',
 
@@ -137,3 +137,5 @@ module.exports = {
     'upgrade_0.15.0_warning_2':
         'Please read [Migration Guide] for manual upgrading -> [https://koot.js.org/#/migration/0.14-to-0.15]',
 };
+
+export default locales_en_us;

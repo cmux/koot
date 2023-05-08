@@ -1,10 +1,12 @@
-const chalk = require('chalk');
+/* eslint-disable no-console */
 
-const ensureLocales = require('./ensure-locales');
-const _ = require('./translate');
-const checkIsCMNetwork = require('./check-is-cm-network');
+import chalk from 'chalk';
 
-exports.welcome = async () => {
+import ensureLocales from './ensure-locales.js';
+import _ from './translate.js';
+import checkIsCMNetwork from './check-is-cm-network.js';
+
+export const welcome = async () => {
     await ensureLocales();
 
     /** 当前是否在 CM 内网 */

@@ -1,4 +1,4 @@
-module.exports = {
+const locales_zh_cn = {
     welcomeCM: '小豹你好~',
     welcome: '欢迎使用 Koot.js :)',
 
@@ -136,3 +136,5 @@ module.exports = {
     'upgrade_0.15.0_warning_2':
         '请参阅 [升级指南] 进行手动升级 -> [https://koot.js.org/#/migration/0.14-to-0.15]',
 };
+
+export default locales_zh_cn;

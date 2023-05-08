@@ -1,5 +1,3 @@
-require('../../types');
-
 /**
  * 步骤: 输入 - 项目名
  */
@@ -9,19 +7,23 @@ require('../../types');
  * @property {boolean} [isCMNetwork=false] 当前是否处于 CM 内网
  */
 
-const path = require('path');
-const inquirer = require('inquirer');
-const npmEmail = require('npm-email');
+import path from 'path';
+import inquirer from 'inquirer';
+import inquirerSelectDirectory from 'inquirer-select-directory';
+import npmEmail from 'npm-email';
+import { EventEmitter } from 'events';
 
-const sanitize = require('../../lib/sanitize-dir-name');
-const _ = require('../../lib/translate');
-const spinner = require('../../lib/spinner');
+import '../../types.js';
 
-const getProjectFolder = require('./get-project-folder');
+import sanitize from '../../lib/sanitize-dir-name.js';
+import _ from '../../lib/translate.js';
+import spinner from '../../lib/spinner.js';
+
+import getProjectFolder from './get-project-folder.js';
 
 // ============================================================================
 
-inquirer.registerPrompt('directory', require('inquirer-select-directory'));
+inquirer.registerPrompt('directory', inquirerSelectDirectory);
 
 /** @type {AppType[]} */
 const appTypes = ['react', 'react-spa'];
@@ -40,7 +42,7 @@ const spaModes = ['web', 'electron'];
  * @param {Options} [options={}]
  * @returns {Promise<AppInfo>}
  */
-module.exports = async (options = {}) => {
+const inquiryProject = async (options = {}) => {
     /** @type {AppInfo} */
     const app = {
         cwd: process.cwd(),
@@ -56,9 +58,8 @@ module.exports = async (options = {}) => {
             app[key] = value;
         }
     };
-    const defaultEventEmitterMaxListeners = require('events').EventEmitter
-        .defaultMaxListeners;
-    require('events').EventEmitter.defaultMaxListeners = 30;
+    const defaultEventEmitterMaxListeners = EventEmitter.defaultMaxListeners;
+    EventEmitter.defaultMaxListeners = 30;
 
     // ========================================================================
 
@@ -279,7 +280,9 @@ module.exports = async (options = {}) => {
     // UI 开发框架
     // app.framework = 'react';
 
-    require('events').EventEmitter.defaultMaxListeners = defaultEventEmitterMaxListeners;
+    EventEmitter.defaultMaxListeners = defaultEventEmitterMaxListeners;
 
     return app;
 };
+
+export default inquiryProject;

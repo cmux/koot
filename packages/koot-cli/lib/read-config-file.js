@@ -1,4 +1,4 @@
-const getConfigFile = require('./get-config-file')
+import getConfigFile from './get-config-file.js';
 
 /**
  * 读取配置文件对象
@@ -6,7 +6,9 @@ const getConfigFile = require('./get-config-file')
  * @param {String} cwd
  * @returns {Object}
  */
-module.exports = async (cwd = process.cwd()) => {
-    const file = await getConfigFile(cwd)
-    return require(file)
-}
+const readConfigFile = async (cwd = process.cwd()) => {
+    const file = await getConfigFile(cwd);
+    return await import(file);
+};
+
+export default readConfigFile;

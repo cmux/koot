@@ -1,4 +1,4 @@
-const axios = require('axios');
+import axios from 'axios';
 
 /**
  * 检测当前是否处于 CM 内网
@@ -26,4 +26,4 @@ const isCM = async () => {
     }
 };
 
-module.exports = isCM;
+export default isCM;

@@ -8,6 +8,7 @@
         "bootstrap": "node bootstrap.js",
         "publish": "node ./publish.js",
         "test": "node ./test/index.js",
+        "test-run:cli": "node ./packages/koot-cli/bin/koot.js",
         "reset": "npm i fs-extra --no-save --legacy-peer-deps && node ./reset.js && node bootstrap.js",
         "lerna:changed": "lerna changed",
         "eslint:koot": "eslint \"packages/koot/!(node_modules|logs|dist|dist*|test)/**/*.+(js|jsx)\"",

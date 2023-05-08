@@ -1,5 +1,3 @@
-require('../../types');
-
 /**
  * @typedef {Object} Download
  * @property {string} [github] GitHub 仓库名
@@ -8,15 +6,17 @@ require('../../types');
  * @property {Download} [next] `next` 摸板，扩展基础对象
  */
 
-const fs = require('fs-extra');
-const path = require('path');
-const os = require('os');
-const downloadGitRepo = require('download-git-repo');
-const chalk = require('chalk');
-const glob = require('glob-promise');
+import path from 'node:path';
+import fs from 'fs-extra';
+import os from 'os';
+import downloadGitRepo from 'download-git-repo';
+import chalk from 'chalk';
+import { glob } from 'glob';
 
-const _ = require('../../lib/translate');
-const spinner = require('../../lib/spinner');
+import '../../types.js';
+
+import _ from '../../lib/translate.js';
+import spinner from '../../lib/spinner.js';
 // const getConfigFile = require('../../lib/get-config-file');
 
 /** @type {Object.<string, Download>} */
@@ -25,9 +25,9 @@ const downloads = {
         github: 'cmux/koot',
         subdir: 'packages/koot-boilerplate',
         next: {
-            branch: 'next'
-        }
-    }
+            branch: 'next',
+        },
+    },
     // serverless: {}
 };
 
@@ -38,7 +38,7 @@ const downloads = {
  * @param {BoilerplateType} type 模板类型
  * @returns {Promise<void>}
  */
-module.exports = async (dest, type) => {
+const downloadBoilerplate = async (dest, type) => {
     const isNext = [...process.argv].includes('next');
     const msg =
         chalk.whiteBright(_('downloading_boilerplate')) +
@@ -63,7 +63,7 @@ module.exports = async (dest, type) => {
                 download.github +
                     (download.branch ? `#${download.branch}` : ''),
                 downloadTo,
-                err => {
+                (err) => {
                     if (err) return reject(err);
                     resolve();
                 }
@@ -94,8 +94,9 @@ module.exports = async (dest, type) => {
     }
 
     // 合并目录
-    const files = await glob(path.resolve(dirBoilerplate, '**/*'), {
-        dot: true
+    const files = await glob('**/*', {
+        cwd: dirBoilerplate,
+        dot: true,
     });
     for (const from of files) {
         const relativePath = path.relative(dirBoilerplate, from);
@@ -110,3 +111,5 @@ module.exports = async (dest, type) => {
     waitingCopying.stop();
     spinner(msgCopying).finish();
 };
+
+export default downloadBoilerplate;

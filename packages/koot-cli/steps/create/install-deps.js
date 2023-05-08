@@ -1,16 +1,16 @@
-require('../../types');
+import chalk from 'chalk';
 
-const chalk = require('chalk');
+import '../../types.js';
 
-const _ = require('../../lib/translate');
-const spinner = require('../../lib/spinner');
-const spawn = require('../../lib/spawn');
+import _ from '../../lib/translate.js';
+import spinner from '../../lib/spinner.js';
+import spawn from '../../lib/spawn.js';
 
 // ============================================================================
 
 const cmd = {
     yarn: 'yarn',
-    npm: 'npm install'
+    npm: 'npm install',
 };
 
 // ============================================================================
@@ -21,16 +21,18 @@ const cmd = {
  * @param {AppInfo} app
  * @returns {Promise<void>}
  */
-module.exports = async app => {
+const installDeps = async (app) => {
     const msgInstalling = chalk.whiteBright(_('installing_dependencies'));
     const waitingDownloading = spinner(msgInstalling + '...');
     const { dest, packageManager } = app;
 
     await spawn(cmd[packageManager], {
         cwd: dest,
-        stdio: 'ignore'
+        stdio: 'ignore',
     });
 
     waitingDownloading.stop();
     spinner(msgInstalling).finish();
 };
+
+export default installDeps;

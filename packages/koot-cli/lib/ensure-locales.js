@@ -1,5 +1,5 @@
-const vars = require('./vars');
-const getLocales = require('./get-locales');
+import vars from './vars.js';
+import getLocales from './get-locales.js';
 
 /**
  * @async
@@ -10,4 +10,4 @@ async function ensureLocales() {
     vars.locales = await getLocales();
 }
 
-module.exports = ensureLocales;
+export default ensureLocales;

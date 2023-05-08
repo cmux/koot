@@ -1,19 +1,20 @@
+import ora from 'ora';
+import spinners from 'cli-spinners';
 
-const ora = require('ora')
-const spinners = require('cli-spinners')
-
-module.exports = (options = {}) => {
+const spinner = (options = {}) => {
     const waiting = ora(
         Object.assign(
             {
                 spinner: spinners.dots,
-                color: 'cyan'
+                color: 'cyan',
             },
-            typeof options === 'string' ? {
-                text: options
-            } : options
+            typeof options === 'string'
+                ? {
+                      text: options,
+                  }
+                : options
         )
-    ).start()
+    ).start();
 
     // waiting.finish = (options = {}) => {
     //     waiting.color = 'green'
@@ -21,7 +22,9 @@ module.exports = (options = {}) => {
     //         symbol: '√'
     //     }, options))
     // }
-    waiting.finish = waiting.succeed
+    waiting.finish = waiting.succeed;
 
-    return waiting
-}
+    return waiting;
+};
+
+export default spinner;

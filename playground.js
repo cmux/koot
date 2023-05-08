@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import path from 'node:path';
 import url from 'node:url';
 import puppeteer from 'puppeteer';
-// import glob from 'glob';
+import { glob } from 'glob';
 
 async function run() {
     // console.log(import.meta);
@@ -10,26 +10,36 @@ async function run() {
     // console.log(new URL('.', import.meta.url));
     // console.log(new URL('.cz-config.cjs', import.meta.url));
     // console.log(await import(new URL('.cz-config.cjs', import.meta.url)));
+    // console.log(
+    //     url.fileURLToPath(new URL('packages/*/package.json', import.meta.url))
+    // );
+    // console.log(
+    //     await fs.readJson(
+    //         url.fileURLToPath(
+    //             new URL(
+    //                 '../../../@diablohu/metas/package.json',
+    //                 import.meta.url
+    //             )
+    //         )
+    //     )
+    // );
+    // console.log(url.fileURLToPath(new URL('**/*.json', import.meta.url)));
+    // console.log(
+    //     await glob('**/*.json', {
+    //         cwd: url.fileURLToPath(new URL('.', import.meta.url)),
+    //         dot: true,
+    //         // ignore: ignores,
+    //     })
+    // );
     console.log(
         url.fileURLToPath(new URL('packages/*/package.json', import.meta.url))
     );
     console.log(
-        await fs.readJson(
-            url.fileURLToPath(
-                new URL(
-                    '../../../@diablohu/metas/package.json',
-                    import.meta.url
-                )
-            )
-        )
+        await glob('packages/*/package.json', {
+            cwd: url.fileURLToPath(new URL('.', import.meta.url)),
+            absolute: true,
+        })
     );
-    // console.log(
-    //     await glob(
-    //         url.fileURLToPath(
-    //             new URL('packages/*/package.json', import.meta.url)
-    //         )
-    //     )
-    // );
     // path.resolve(__dirname, 'packages/*/package.json')
     // const browser = await puppeteer.launch({
     //     // headless: false,

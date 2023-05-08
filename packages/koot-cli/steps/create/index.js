@@ -1,19 +1,21 @@
-const fs = require('fs-extra');
-const path = require('path');
-const chalk = require('chalk');
-const isUrl = require('is-url');
+/* eslint-disable no-console */
 
-const ensureLocales = require('../../lib/ensure-locales');
-const _ = require('../../lib/translate');
-const checkIsCMNetwork = require('../../lib/check-is-cm-network');
-const spinner = require('../../lib/spinner');
-const { welcome: logWelcome } = require('../../lib/log');
+import path from 'node:path';
+import fs from 'fs-extra';
+import chalk from 'chalk';
+import isUrl from 'is-url';
 
-const inquiry = require('./inquiry-project');
-const download = require('./download-boilerplate');
-const install = require('./install-deps');
-const modifyPackageJson = require('./modify-package-json');
-const modifyBoilerplate = require('./modify-boilerplate');
+import ensureLocales from '../../lib/ensure-locales.js';
+import _ from '../../lib/translate.js';
+import checkIsCMNetwork from '../../lib/check-is-cm-network.js';
+import spinner from '../../lib/spinner.js';
+import { welcome as logWelcome } from '../../lib/log.js';
+
+import inquiry from './inquiry-project.js';
+import download from './download-boilerplate.js';
+import install from './install-deps.js';
+import modifyPackageJson from './modify-package-json.js';
+import modifyBoilerplate from './modify-boilerplate.js';
 
 // ============================================================================
 
@@ -32,7 +34,7 @@ const commands = {
  * @param {Object} [options]
  * @param {Boolean} [options.showWelcome=true] 显示欢迎信息
  */
-module.exports = async (options = {}) => {
+const create = async (options = {}) => {
     const waiting = spinner('');
 
     /** 目标目录路径 */
@@ -104,6 +106,7 @@ module.exports = async (options = {}) => {
         throw e;
     }
 };
+export default create;
 
 let nextStep = 1;
 const logNext = (step, command) => {

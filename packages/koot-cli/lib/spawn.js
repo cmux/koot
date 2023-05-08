@@ -1,20 +1,24 @@
-const printTitle = title => {
+/* eslint-disable no-console */
+
+import { spawn } from 'node:child_process';
+
+const printTitle = (title) => {
     console.log('\n');
-    console.log(`\x1b[43m \x1b[0m` + `\x1b[33m ` + title + `\x1b[0m`);
+    console.log([`\x1b[43m \x1b[0m`, `\x1b[33m ` + title + `\x1b[0m`].join(''));
     console.log('');
 };
 
-const spawn = async (cmd, title, options = {}) => {
+const doSpawn = async (cmd, title, options = {}) => {
     if (typeof title === 'object') return await spawn(cmd, undefined, title);
 
     if (options.stdio !== 'ignore') printTitle(title || cmd);
 
     const chunks = cmd.split(' ');
-    await new Promise(resolve => {
-        const child = require('child_process').spawn(chunks.shift(), chunks, {
+    await new Promise((resolve) => {
+        const child = spawn(chunks.shift(), chunks, {
             stdio: 'inherit',
             shell: true,
-            ...options
+            ...options,
         });
         child.on('close', () => {
             resolve();
@@ -22,4 +26,4 @@ const spawn = async (cmd, title, options = {}) => {
     });
 };
 
-module.exports = spawn;
+export default doSpawn;

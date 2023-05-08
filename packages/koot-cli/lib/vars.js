@@ -1,8 +1,10 @@
-module.exports = {
+const vars = {
     corePackageName: 'koot',
     templatePackageName: {
-        react: 'koot-boilerplate'
+        react: 'koot-boilerplate',
     },
     locales: {},
-    lowestSuperProjectVersion: '3.0.7'
-}
+    lowestSuperProjectVersion: '3.0.7',
+};
+
+export default vars;

@@ -1,6 +1,6 @@
-const fs = require('fs-extra');
-const path = require('path');
-const semver = require('semver');
+import path from 'node:path';
+import fs from 'fs-extra';
+import semver from 'semver';
 
 /**
  * 将当前项目使用的 Koot.js 的最初版本信息添加到 package.json 中 (`koot.baseVersion`)
@@ -9,7 +9,7 @@ const semver = require('semver');
  * @param {Object} [packageJson] package.json 内容。如果提供，会直接对该对象进行修改
  * @void
  */
-module.exports = async (dir, packageJson) => {
+const addKootVersion = async (dir, packageJson) => {
     const writeFile = typeof packageJson !== 'object';
     const filePackageJson = path.resolve(dir, 'package.json');
 
@@ -44,7 +44,7 @@ module.exports = async (dir, packageJson) => {
         const {
             dependencies = {},
             devDependencies = {},
-            optionalDependencies = {}
+            optionalDependencies = {},
         } = p;
         kootBaseVersion =
             optionalDependencies.koot ||
@@ -61,8 +61,10 @@ module.exports = async (dir, packageJson) => {
 
     if (writeFile)
         await fs.writeJson(filePackageJson, p, {
-            spaces: 4
+            spaces: 4,
         });
 
     return;
 };
+
+export default addKootVersion;

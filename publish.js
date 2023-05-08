@@ -5,7 +5,7 @@ import path from 'node:path';
 import url from 'node:url';
 import inquirer from 'inquirer';
 import crlf from 'crlf';
-import glob from 'glob';
+import { glob } from 'glob';
 import simpleGit from 'simple-git';
 
 import runScript from './libs/run-script.js';
@@ -32,9 +32,10 @@ const prePublish = async () => {
     const title = 'pre-publish';
     const waiting = spinner(title + '...');
 
-    const packages = await glob(
-        path.resolve(__dirname, 'packages/*/package.json')
-    );
+    const packages = await glob('packages/*/package.json', {
+        cwd: __dirname,
+        absolute: true,
+    });
     const bins = [];
 
     // 汇总所有 bin 文件

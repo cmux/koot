@@ -1,4 +1,6 @@
-const sanitize = require('sanitize-filename');
+import sanitize from 'sanitize-filename';
 
-module.exports = name =>
+const sanitizeDirName = (name) =>
     sanitize(name, { replacement: '-' }).replace(/[ ]+/g, '-');
+
+export default sanitizeDirName;
