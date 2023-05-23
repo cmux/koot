@@ -1,11 +1,11 @@
-require('../../types');
+import fs from 'fs-extra';
+import path from 'path';
+import chalk from 'chalk';
 
-const fs = require('fs-extra');
-const path = require('path');
-const chalk = require('chalk');
+import '../../types.js';
 
-const _ = require('../../lib/translate');
-const spinner = require('../../lib/spinner');
+import _ from '../../lib/translate.js';
+import spinner from '../../lib/spinner.js';
 
 /**
  * 修改摸板文件
@@ -13,7 +13,7 @@ const spinner = require('../../lib/spinner');
  * @param {AppInfo} app
  * @returns {Promise<void>}
  */
-module.exports = async (app) => {
+const modifyBoilerplate = async (app) => {
     const msgModifying = chalk.whiteBright(_('modifying_boilerplate'));
     const waitingDownloading = spinner(msgModifying + '...');
     const { dest } = app;
@@ -29,7 +29,7 @@ module.exports = async (app) => {
             ['type', 'type'],
         ];
         const kootConfigFile = path.resolve(dest, 'koot.config.js');
-        const kootConfig = require(kootConfigFile);
+        const kootConfig = await import(kootConfigFile);
         let content = await fs.readFile(kootConfigFile, 'utf-8');
 
         for (const [optionKey, appProp] of properties) {
@@ -73,3 +73,5 @@ module.exports = async (app) => {
     waitingDownloading.stop();
     spinner(msgModifying).finish();
 };
+
+export default modifyBoilerplate;

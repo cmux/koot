@@ -1,10 +1,11 @@
-const chalk = require('chalk')
-const _ = require('../../lib/translate')
+import chalk from 'chalk';
+import _ from '../../lib/translate.js';
 
-module.exports = (from, to) => (
-    _('upgrading')
-    + ' '
-    + chalk.redBright(from)
-    + ' -> '
-    + chalk.cyanBright(to)
-)
+const msgUpgrading = (from, to) =>
+    _('upgrading') +
+    ' ' +
+    chalk.redBright(from) +
+    ' -> ' +
+    chalk.cyanBright(to);
+
+export default msgUpgrading;

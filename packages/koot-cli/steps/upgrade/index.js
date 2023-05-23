@@ -1,12 +1,14 @@
-const path = require('path');
-const chalk = require('chalk');
-const inquirer = require('inquirer');
+/* eslint-disable no-console */
 
-const vars = require('../../lib/vars');
-const getLocales = require('../../lib/get-locales');
-const spinner = require('../../lib/spinner');
-const _ = require('../../lib/translate');
-const modifyPackageJsonAddKootVersion = require('../../lib/modify-package-json/add-koot-version');
+import path from 'path';
+import chalk from 'chalk';
+import inquirer from 'inquirer';
+
+import vars from '../../lib/vars.js';
+import getLocales from '../../lib/get-locales.js';
+import spinner from '../../lib/spinner.js';
+import _ from '../../lib/translate.js';
+import modifyPackageJsonAddKootVersion from '../../lib/modify-package-json/add-koot-version.js';
 
 /**
  * 升级 Koot.js 项目
@@ -16,13 +18,13 @@ const modifyPackageJsonAddKootVersion = require('../../lib/modify-package-json/a
  * @param {Boolean} [options.needConfirm=false] 仅返回 ASCII 文件
  * @param {Boolean} [options.showWelcome=true] 显示欢迎信息
  */
-module.exports = async (options = {}) => {
+const upgrade = async (options = {}) => {
     vars.locales = await getLocales();
 
     const {
         cwd = process.cwd(),
         needConfirm = false,
-        showWelcome = true
+        showWelcome = true,
     } = options;
 
     if (showWelcome) {
@@ -38,14 +40,14 @@ module.exports = async (options = {}) => {
             choices: [
                 {
                     name: _('ok'),
-                    value: true
+                    value: true,
                 },
                 {
                     name: _('cancel'),
-                    value: false
-                }
+                    value: false,
+                },
             ],
-            default: true
+            default: true,
         });
         if (!confirm.value) {
             console.log('');
@@ -55,11 +57,15 @@ module.exports = async (options = {}) => {
 
     await modifyPackageJsonAddKootVersion(cwd);
 
-    const queue = await require('./determine-upgrade-queue')(cwd).catch(err => {
-        spinner(_(`upgrade_error:${err.message ? err.message : err}`)).fail();
-        console.log('');
-        return;
-    });
+    const queue = await import('./determine-upgrade-queue')
+        .then((mod) => mod(cwd))
+        .catch((err) => {
+            spinner(
+                _(`upgrade_error:${err.message ? err.message : err}`)
+            ).fail();
+            console.log('');
+            return;
+        });
 
     if (!Array.isArray(queue)) {
         return;
@@ -77,36 +83,38 @@ module.exports = async (options = {}) => {
     let filesChanged = [];
     let filesRemoved = [];
 
-    for (let pair of queue) {
+    for (const pair of queue) {
         const r = !Array.isArray(pair)
-            ? await require('./upgrade-to-latest')(cwd, pair)
-            : await require(`./upgrade-from-${pair[0]}-to-${pair[1]}`)(cwd);
+            ? await import('./upgrade-to-latest').then((mod) => mod(cwd, pair))
+            : await import(`./upgrade-from-${pair[0]}-to-${pair[1]}`).then(
+                  (mod) => mod(cwd)
+              );
         if (typeof r === 'object') {
             const { msg, warn, err, files = [], removed = [] } = r;
             msgs = msgs.concat(msg);
             warns = warns.concat(warn);
             errs = errs.concat(err);
-            for (let f of files) {
+            for (const f of files) {
                 if (!filesChanged.includes(f)) filesChanged.push(f);
             }
-            for (let f of removed) {
+            for (const f of removed) {
                 if (!filesRemoved.includes(f)) filesRemoved.push(f);
             }
         }
     }
 
-    msgs = msgs.filter(o => !!o);
-    warns = warns.filter(o => !!o);
-    errs = errs.filter(o => !!o);
-    filesChanged = filesChanged.filter(o => !!o);
-    filesRemoved = filesRemoved.filter(o => !!o);
+    msgs = msgs.filter((o) => !!o);
+    warns = warns.filter((o) => !!o);
+    errs = errs.filter((o) => !!o);
+    filesChanged = filesChanged.filter((o) => !!o);
+    filesRemoved = filesRemoved.filter((o) => !!o);
 
     if (filesRemoved.length) {
         console.log('');
         console.log(_('upgrade_files_removed'));
         filesRemoved
-            .map(pathname => path.relative(cwd, pathname))
-            .forEach(filename => {
+            .map((pathname) => path.relative(cwd, pathname))
+            .forEach((filename) => {
                 spinner(filename).fail();
             });
     }
@@ -115,25 +123,25 @@ module.exports = async (options = {}) => {
         console.log('');
         console.log(_('upgrade_files_changed'));
         filesChanged
-            .map(pathname => path.relative(cwd, pathname))
-            .forEach(filename => {
+            .map((pathname) => path.relative(cwd, pathname))
+            .forEach((filename) => {
                 spinner(filename).finish();
             });
     }
 
     if (errs.length) {
         console.log('');
-        for (let err of errs) spinner(err).fail();
+        for (const err of errs) spinner(err).fail();
     }
 
     if (warns.length) {
         console.log('');
-        for (let warn of warns) spinner(warn).warn();
+        for (const warn of warns) spinner(warn).warn();
     }
 
     if (msgs.length) {
         console.log('');
-        for (let msg of msgs) console.log(msg);
+        for (const msg of msgs) console.log(msg);
     }
 
     console.log('');
@@ -142,3 +150,5 @@ module.exports = async (options = {}) => {
     console.log(`  ` + chalk.gray(`> npm i`));
     console.log('');
 };
+
+export default upgrade;

@@ -1,12 +1,13 @@
-require('../../types');
+import fs from 'fs-extra';
+import path from 'path';
+import chalk from 'chalk';
+import latestVersion from 'latest-version';
 
-const fs = require('fs-extra');
-const path = require('path');
-const chalk = require('chalk');
-const latestVersion = require('latest-version');
+import '../../types.js';
 
-const _ = require('../../lib/translate');
-const spinner = require('../../lib/spinner');
+import _ from '../../lib/translate.js';
+import spinner from '../../lib/spinner.js';
+import addKootVersion from '../../lib/modify-package-json/add-koot-version.js';
 
 /**
  * 修改摸板文件
@@ -14,7 +15,7 @@ const spinner = require('../../lib/spinner');
  * @param {AppInfo} app
  * @returns {Promise<void>}
  */
-module.exports = async (app) => {
+const modifyPackageJson = async (app) => {
     const msgModifying = chalk.whiteBright(_('modifying_boilerplate'));
     const waitingDownloading = spinner(msgModifying + '...');
     const { dest } = app;
@@ -58,10 +59,7 @@ module.exports = async (app) => {
         }
 
         // 确认当前 Koot.js 版本，添加至特定字段
-        require('../../lib/modify-package-json/add-koot-version.js')(
-            dest,
-            packageJson
-        );
+        await addKootVersion(dest, packageJson);
 
         await fs.writeJson(
             packageJsonFile,
@@ -84,3 +82,5 @@ module.exports = async (app) => {
     waitingDownloading.stop();
     spinner(msgModifying).finish();
 };
+
+export default modifyPackageJson;
