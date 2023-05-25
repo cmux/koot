@@ -9,27 +9,15 @@
 import path from 'node:path';
 import fs from 'fs-extra';
 import os from 'os';
-import downloadGitRepo from 'download-git-repo';
 import chalk from 'chalk';
 import { glob } from 'glob';
+import { download } from '@guoyunhe/downloader';
 
 import '../../types/index.js';
 
 import _ from '../../lib/translate.js';
 import spinner from '../../lib/spinner.js';
 // const getConfigFile = require('../../lib/get-config-file');
-
-/** @type {Object.<string, Download>} */
-const downloads = {
-    base: {
-        github: 'cmux/koot',
-        subdir: 'packages/koot-boilerplate',
-        next: {
-            branch: 'next',
-        },
-    },
-    // serverless: {}
-};
 
 /**
  * 下载模板
@@ -45,7 +33,7 @@ const downloadBoilerplate = async (dest, type) => {
         (isNext ? ` (next)` : '');
     const waitingDownloading = spinner(msg + '...');
 
-    const download = downloads[type] || downloads.base;
+    // const download = downloads[type] || downloads.base;
     if (isNext) Object.assign(download, download.next || {});
 
     // ========================================================================
@@ -56,31 +44,16 @@ const downloadBoilerplate = async (dest, type) => {
 
     /** @type {String} 下载临时目录 */
     const downloadTo = path.resolve(os.tmpdir(), `koot-new-${Date.now()}`);
+    const downloadUrl = `https://github.com/cmux/koot/archive/refs/heads/${
+        isNext ? 'next' : 'master'
+    }.zip`;
 
-    console.log(
-        '1.2',
-        download,
-        downloadTo,
-        downloadGitRepo,
-        download.github + (download.branch ? `#${download.branch}` : '')
-    );
     try {
-        await new Promise((resolve, reject) => {
-            downloadGitRepo(
-                download.github +
-                    (download.branch ? `#${download.branch}` : ''),
-                downloadTo,
-                (err) => {
-                    console.log('1.2.1', err);
-                    if (err) return reject(err);
-                    resolve();
-                }
-            );
-        });
-
+        await download(downloadUrl, downloadTo, { extract: true, strip: 1 });
         waitingDownloading.stop();
         spinner(msg).finish();
     } catch (e) {
+        // eslint-disable-next-line no-console
         console.trace(e);
         await fs.remove(downloadTo);
         throw e;
@@ -92,14 +65,12 @@ const downloadBoilerplate = async (dest, type) => {
     //
     // ========================================================================
 
-    console.log('1.3');
     const msgCopying = chalk.whiteBright(_('copying_boilerplate'));
     const waitingCopying = spinner(msgCopying + '...');
     /** @type {String} 模板所在目录 */
     const dirBoilerplate = path.resolve(downloadTo, download.subdir || '.');
 
     const filesToRemove = ['package-lock.json', 'yarn.lock'];
-    console.log('1.4', filesToRemove);
     for (const file of filesToRemove) {
         await fs.remove(path.resolve(dirBoilerplate, file));
     }
