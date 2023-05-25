@@ -110,7 +110,10 @@ const run = async () => {
             }
             default: {
                 return await import(
-                    path.resolve(cwd, `node_modules/koot/bin/${next.value}`)
+                    new URL(
+                        `node_modules/koot/bin/${next.value}.js`,
+                        import.meta.url
+                    )
                 );
                 // console.log(npm)
                 // console.log(npm.bin)

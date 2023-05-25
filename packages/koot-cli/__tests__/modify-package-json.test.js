@@ -1,20 +1,24 @@
 // jest configuration
+
+import fs from 'fs-extra';
+import path from 'node:path';
+import url from 'node:url';
+import latestVersion from 'latest-version';
+import semver from 'semver';
+import { jest } from '@jest/globals';
+
+import modifyDependency from '../lib/modify-package-json/dependency.js';
+import addKootVersionToPackageJson from '../lib/modify-package-json/add-koot-version.js';
+
+jest.useFakeTimers();
 jest.setTimeout(5 * 60 * 1 * 1000); // 5mins
 
-const fs = require('fs-extra');
-const path = require('path');
-const latestVersion = require('latest-version');
-const semver = require('semver');
-
-const modifyDependency = require('../lib/modify-package-json/dependency');
-const addKootVersionToPackageJson = require('../lib/modify-package-json/add-koot-version');
-
-const dirPackage = path.resolve(__dirname, 'samples');
+const dirPackage = url.fileURLToPath(new URL('samples', import.meta.url));
 const filePackage = path.resolve(dirPackage, 'package.json');
 const packageOriginal = fs.readJSONSync(filePackage);
 
 beforeAll(async () => {
-    // await require('./before')();
+    await import('./before.js').then((mod) => mod.default());
 });
 afterEach(() => {
     // 还原文件内容
@@ -24,13 +28,16 @@ afterEach(() => {
 describe('测试: 修改 package.json', () => {
     test(`若未提供 dir，应报错`, async () => {
         let error;
-        await modifyDependency().catch(err => (error = err));
+        await modifyDependency().catch((err) => (error = err));
         expect(error.message).toBe('`dir` not valid');
     });
 
     test(`若在 dir 中未找到 package.json，应报错`, async () => {
         let error;
-        await modifyDependency(__dirname, 'koot').catch(err => (error = err));
+        await modifyDependency(
+            url.fileURLToPath(new URL('.', import.meta.url)),
+            'koot'
+        ).catch((err) => (error = err));
         expect(error.message).toBe(
             '`package.json` not found in target directory'
         );
@@ -45,7 +52,7 @@ describe('测试: 修改 package.json', () => {
 
     test(`若没有提供 moduleName，应报错`, async () => {
         let error;
-        await modifyDependency(dirPackage).catch(err => (error = err));
+        await modifyDependency(dirPackage).catch((err) => (error = err));
         expect(error.message).toBe('`moduleName` not valid');
     });
 
@@ -59,12 +66,12 @@ describe('测试: 修改 package.json', () => {
     test(`添加新的依赖，未提供版本号：依赖不存在，应报错`, async () => {
         const m = 'package_not_exist';
         let error;
-        await modifyDependency(dirPackage, m).catch(err => (error = err));
+        await modifyDependency(dirPackage, m).catch((err) => (error = err));
         // expect(error.message).toBe(`Package \`${m}\` doesn't exist`)
         expect(
             [
                 `Package \`${m}\` could not be found`,
-                `Package \`${m}\` doesn't exist`
+                `Package \`${m}\` doesn't exist`,
             ].includes(error.message)
         ).toBe(true);
     });

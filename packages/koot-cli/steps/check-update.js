@@ -1,25 +1,29 @@
-const fs = require('fs-extra');
-const path = require('path');
-const latestVersion = require('latest-version');
-const semver = require('semver');
-const chalk = require('chalk');
+/* eslint-disable no-console */
 
-const vars = require('../lib/vars');
-const getLocales = require('../lib/get-locales');
-const spinner = require('../lib/spinner');
-const _ = require('../lib/translate');
+import fs from 'fs-extra';
+import url from 'node:url';
+import latestVersion from 'latest-version';
+import semver from 'semver';
+import chalk from 'chalk';
+
+import vars from '../lib/vars.js';
+import getLocales from '../lib/get-locales.js';
+import spinner from '../lib/spinner.js';
+import _ from '../lib/translate.js';
 
 /**
  * 检查 koot-cli 是否需要升级
  * @async
  * @returns {boolean} 是否需要更新
  */
-module.exports = async () => {
+const checkUpdate = async () => {
     const waiting = spinner('');
 
     vars.locales = await getLocales();
 
-    const p = await fs.readJson(path.resolve(__dirname, '../package.json'));
+    const p = await fs.readJson(
+        url.fileURLToPath(new URL('../package.json', import.meta.url))
+    );
     const v = p.version;
     const latest = await latestVersion('koot-cli');
 
@@ -49,3 +53,5 @@ module.exports = async () => {
 
     return needUpdate;
 };
+
+export default checkUpdate;

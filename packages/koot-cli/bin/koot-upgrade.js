@@ -1,11 +1,15 @@
 #!/usr/bin/env node
 
+import stepBefore from '../steps/before.js';
+
 const run = async () => {
-    const { needUpdate } = await require('../steps/before')();
+    const { needUpdate } = await stepBefore();
     if (needUpdate) return;
-    await require('../steps/upgrade')({
-        needConfirm: true
-    });
+    await import('../steps/upgrade/index.js').then((mod) =>
+        mod.default({
+            needConfirm: true,
+        })
+    );
 };
 
 run();

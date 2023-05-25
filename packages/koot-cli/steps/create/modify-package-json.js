@@ -3,7 +3,7 @@ import path from 'path';
 import chalk from 'chalk';
 import latestVersion from 'latest-version';
 
-import '../../types.js';
+import '../../types/index.js';
 
 import _ from '../../lib/translate.js';
 import spinner from '../../lib/spinner.js';

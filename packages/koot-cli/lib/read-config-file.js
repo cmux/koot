@@ -8,7 +8,7 @@ import getConfigFile from './get-config-file.js';
  */
 const readConfigFile = async (cwd = process.cwd()) => {
     const file = await getConfigFile(cwd);
-    return await import(file);
+    return await import(file).then((mod) => mod.default);
 };
 
 export default readConfigFile;

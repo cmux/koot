@@ -120,7 +120,9 @@ const run = async () => {
         return `jest ${value} --detectOpenHandles`;
     })();
 
-    await runScript(script);
+    await runScript(
+        `cross-env NODE_OPTIONS=--experimental-vm-modules ` + script
+    );
 
     logFinish();
 

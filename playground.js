@@ -31,15 +31,19 @@ async function run() {
     //         // ignore: ignores,
     //     })
     // );
-    console.log(
-        url.fileURLToPath(new URL('packages/*/package.json', import.meta.url))
-    );
-    console.log(
-        await glob('packages/*/package.json', {
-            cwd: url.fileURLToPath(new URL('.', import.meta.url)),
-            absolute: true,
-        })
-    );
+    console.log(url.fileURLToPath(new URL('', import.meta.url)));
+    console.log(new URL(url.fileURLToPath(new URL('', import.meta.url))));
+    console.log(url.fileURLToPath(new URL('.', import.meta.url)));
+    console.log(url.fileURLToPath(new URL('../package.json', import.meta.url)));
+    // console.log(
+    //     url.fileURLToPath(new URL('packages/*/package.json', import.meta.url))
+    // );
+    // console.log(
+    //     await glob('packages/*/package.json', {
+    //         cwd: url.fileURLToPath(new URL('.', import.meta.url)),
+    //         absolute: true,
+    //     })
+    // );
     // path.resolve(__dirname, 'packages/*/package.json')
     // const browser = await puppeteer.launch({
     //     // headless: false,

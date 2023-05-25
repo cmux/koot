@@ -1,6 +1,6 @@
 // const { defaults } = require('jest-config')
-
-module.exports = {
+/** @type {import('jest').Config} */
+const config = {
     // verbose: true,
     // setupTestFrameworkScriptFile: './test/jest-setup.js',
     testPathIgnorePatterns: [
@@ -9,4 +9,8 @@ module.exports = {
         '/test/projects/',
         '/logs/',
     ],
+    // transformIgnorePatterns: ['.js$'],
+    // transform: {},
 };
+
+module.exports = config;

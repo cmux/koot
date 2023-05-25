@@ -13,7 +13,7 @@ import downloadGitRepo from 'download-git-repo';
 import chalk from 'chalk';
 import { glob } from 'glob';
 
-import '../../types.js';
+import '../../types/index.js';
 
 import _ from '../../lib/translate.js';
 import spinner from '../../lib/spinner.js';
@@ -57,6 +57,13 @@ const downloadBoilerplate = async (dest, type) => {
     /** @type {String} 下载临时目录 */
     const downloadTo = path.resolve(os.tmpdir(), `koot-new-${Date.now()}`);
 
+    console.log(
+        '1.2',
+        download,
+        downloadTo,
+        downloadGitRepo,
+        download.github + (download.branch ? `#${download.branch}` : '')
+    );
     try {
         await new Promise((resolve, reject) => {
             downloadGitRepo(
@@ -64,6 +71,7 @@ const downloadBoilerplate = async (dest, type) => {
                     (download.branch ? `#${download.branch}` : ''),
                 downloadTo,
                 (err) => {
+                    console.log('1.2.1', err);
                     if (err) return reject(err);
                     resolve();
                 }
@@ -73,6 +81,7 @@ const downloadBoilerplate = async (dest, type) => {
         waitingDownloading.stop();
         spinner(msg).finish();
     } catch (e) {
+        console.trace(e);
         await fs.remove(downloadTo);
         throw e;
     }
@@ -83,12 +92,14 @@ const downloadBoilerplate = async (dest, type) => {
     //
     // ========================================================================
 
+    console.log('1.3');
     const msgCopying = chalk.whiteBright(_('copying_boilerplate'));
     const waitingCopying = spinner(msgCopying + '...');
     /** @type {String} 模板所在目录 */
     const dirBoilerplate = path.resolve(downloadTo, download.subdir || '.');
 
     const filesToRemove = ['package-lock.json', 'yarn.lock'];
+    console.log('1.4', filesToRemove);
     for (const file of filesToRemove) {
         await fs.remove(path.resolve(dirBoilerplate, file));
     }
@@ -99,9 +110,11 @@ const downloadBoilerplate = async (dest, type) => {
         dot: true,
     });
     for (const from of files) {
-        const relativePath = path.relative(dirBoilerplate, from);
-        const to = path.resolve(dest, relativePath);
-        await fs.copy(from, to, { overwrite: true });
+        // const relativePath = path.relative(dirBoilerplate, from);
+        const to = path.resolve(dest, from);
+        await fs.copy(path.resolve(dirBoilerplate, from), to, {
+            overwrite: true,
+        });
     }
 
     // 删除下载的临时文件

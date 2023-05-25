@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 
-import '../../types.js';
+import '../../types/index.js';
 
 import _ from '../../lib/translate.js';
 import spinner from '../../lib/spinner.js';

@@ -1,21 +1,23 @@
-const chalk = require('chalk');
-const inquirer = require('inquirer');
+import chalk from 'chalk';
+import inquirer from 'inquirer';
 
-const spinner = require('../../lib/spinner');
-const _ = require('../../lib/translate');
-const updateVersionInPackagejson = require('./update-version-in-packagejson');
+import spinner from '../../lib/spinner.js';
+import _ from '../../lib/translate.js';
+import updateVersionInPackagejson from './update-version-in-packagejson.js';
+import msgUpgrading from './msg-upgrading';
 
-module.exports = async (cwd = process.cwd(), prevVersion = '0.14.0') => {
-    const msgUpgrading = require('./msg-upgrading')(prevVersion, '0.15.0');
-    let spinnerUpgrading = spinner(msgUpgrading + '...');
+// eslint-disable-next-line import/no-anonymous-default-export
+export default async (cwd = process.cwd(), prevVersion = '0.14.0') => {
+    const waitMsgUpgrading = msgUpgrading(prevVersion, '0.15.0');
+    let spinnerUpgrading = spinner(waitMsgUpgrading + '...');
     const filesChanged = ['package.json'];
 
     await updateVersionInPackagejson(cwd, '0.15.0');
 
     // 询问是否进行 codemod
     spinnerUpgrading.stop();
-    // console.log('  ' + msgUpgrading);
-    // spinner(msgUpgrading).finish();
+    // console.log('  ' + waitMsgUpgrading);
+    // spinner(waitMsgUpgrading).finish();
     const { runCodemod } = inquirer.prompt([
         {
             type: 'confirm',
@@ -25,9 +27,9 @@ module.exports = async (cwd = process.cwd(), prevVersion = '0.14.0') => {
     }
 
     // 结束
-    spinnerUpgrading = spinner(msgUpgrading + '...');
+    spinnerUpgrading = spinner(waitMsgUpgrading + '...');
     spinnerUpgrading.stop();
-    spinner(msgUpgrading).finish();
+    spinner(waitMsgUpgrading).finish();
 
     return {
         warn:

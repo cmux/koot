@@ -1,15 +1,21 @@
 // jest configuration
-jest.setTimeout(5 * 60 * 1 * 1000); // 5mins
+// 5mins
 
-const fs = require('fs-extra');
-const path = require('path');
-const os = require('os');
-const glob = require('glob-promise');
+import { jest } from '@jest/globals';
 
-const downloadBoilerplate = require('../steps/create/download-boilerplate');
+import fs from 'fs-extra';
+import path from 'node:path';
+import url from 'node:url';
+import os from 'node:os';
+import { glob } from 'glob';
+
+import downloadBoilerplate from '../steps/create/download-boilerplate.js';
+
+jest.useFakeTimers();
+jest.setTimeout(1 * 60 * 1000); // 1 mins
 
 beforeAll(async () => {
-    // await require('./before')();
+    await import('./before.js').then((mod) => mod.default());
 });
 
 const dotFilesIgnore = ['.git', '.husky', '.cz-config.js'];
@@ -18,7 +24,9 @@ describe('测试: 下载模板', () => {
     test(`向已存在的目录中新建项目`, async () => {
         let error;
 
-        const dirOriginal = path.resolve(__dirname, '../../koot-boilerplate');
+        const dirOriginal = url.fileURLToPath(
+            new URL('../../koot-boilerplate', import.meta.url)
+        );
         const target = path.resolve(os.tmpdir(), `koot-cli-test-${Date.now()}`);
         const readme = path.resolve(target, 'README.md');
         const readmeContent = `KOOT CLI TEST`;
@@ -26,9 +34,10 @@ describe('测试: 下载模板', () => {
         const junkContent = `KOOT CLI JUNK`;
 
         const dotFiles = (
-            await glob(
-                path.relative(dirOriginal, path.resolve(dirOriginal, '.*'))
-            )
+            await glob('.*', {
+                cwd: dirOriginal,
+                dot: true,
+            })
         )
             .filter((filename) => dotFilesIgnore.every((v) => filename !== v))
             .map((filename) => path.resolve(target, filename));
@@ -38,8 +47,10 @@ describe('测试: 下载模板', () => {
         await fs.writeFile(readme, readmeContent, 'utf-8');
         await fs.writeFile(junk, junkContent, 'utf-8');
 
+        console.log(1);
         await downloadBoilerplate(target, 'base').catch((err) => (error = err));
 
+        console.log(2);
         if (error) {
             await fs.remove(target);
             console.error(error);

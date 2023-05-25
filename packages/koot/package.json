@@ -45,7 +45,7 @@
     },
     "homepage": "https://github.com/cmux/koot",
     "engines": {
-        "node": ">=18.0.0"
+        "node": ">=18.8.0"
     },
     "dependencies": {
         "@types/inquirer": "^9.0.3",

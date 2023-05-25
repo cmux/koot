@@ -58,7 +58,7 @@ const upgrade = async (options = {}) => {
     await modifyPackageJsonAddKootVersion(cwd);
 
     const queue = await import('./determine-upgrade-queue')
-        .then((mod) => mod(cwd))
+        .then((mod) => mod.default(cwd))
         .catch((err) => {
             spinner(
                 _(`upgrade_error:${err.message ? err.message : err}`)
@@ -85,9 +85,11 @@ const upgrade = async (options = {}) => {
 
     for (const pair of queue) {
         const r = !Array.isArray(pair)
-            ? await import('./upgrade-to-latest').then((mod) => mod(cwd, pair))
+            ? await import('./upgrade-to-latest').then((mod) =>
+                  mod.default(cwd, pair)
+              )
             : await import(`./upgrade-from-${pair[0]}-to-${pair[1]}`).then(
-                  (mod) => mod(cwd)
+                  (mod) => mod.default(cwd)
               );
         if (typeof r === 'object') {
             const { msg, warn, err, files = [], removed = [] } = r;

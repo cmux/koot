@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import chalk from 'chalk';
 
-import '../../types.js';
+import '../../types/index.js';
 
 import _ from '../../lib/translate.js';
 import spinner from '../../lib/spinner.js';
@@ -29,7 +29,9 @@ const modifyBoilerplate = async (app) => {
             ['type', 'type'],
         ];
         const kootConfigFile = path.resolve(dest, 'koot.config.js');
-        const kootConfig = await import(kootConfigFile);
+        const kootConfig = await import(kootConfigFile).then(
+            (mod) => mod.default
+        );
         let content = await fs.readFile(kootConfigFile, 'utf-8');
 
         for (const [optionKey, appProp] of properties) {

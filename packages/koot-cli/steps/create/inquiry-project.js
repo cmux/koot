@@ -13,7 +13,7 @@ import inquirerSelectDirectory from 'inquirer-select-directory';
 import npmEmail from 'npm-email';
 import { EventEmitter } from 'events';
 
-import '../../types.js';
+import '../../types/index.js';
 
 import sanitize from '../../lib/sanitize-dir-name.js';
 import _ from '../../lib/translate.js';

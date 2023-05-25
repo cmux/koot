@@ -7,7 +7,7 @@
         "doc": "docsify serve docs",
         "bootstrap": "node bootstrap.js",
         "publish": "node ./publish.js",
-        "test": "node ./test/index.js",
+        "test": "node --experimental-vm-modules ./test/index.js",
         "test-run:cli": "node ./packages/koot-cli/bin/koot.js",
         "reset": "npm i fs-extra --no-save --legacy-peer-deps && node ./reset.js && node bootstrap.js",
         "lerna:changed": "lerna changed",
@@ -41,7 +41,7 @@
     },
     "homepage": "https://github.com/cmux/koot",
     "engines": {
-        "node": ">=18.0.0"
+        "node": ">=18.8.0"
     },
     "license": "Apache-2.0",
     "dependencies": {
@@ -55,6 +55,7 @@
         "chalk": "^5.2.0",
         "cheerio": "^1.0.0-rc.12",
         "crlf": "^1.1.1",
+        "cross-env": "^7.0.3",
         "eslint": "^8.39.0",
         "eslint-config-koot": "^4.0.0",
         "fs-extra": "^11.1.1",

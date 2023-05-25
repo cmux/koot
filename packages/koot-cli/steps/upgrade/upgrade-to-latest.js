@@ -1,40 +1,44 @@
-const fs = require('fs-extra')
-const path = require('path')
-const latestVersion = require('latest-version')
-const semver = require('semver')
+import fs from 'fs-extra';
+import path from 'node:path';
+import latestVersion from 'latest-version';
+import semver from 'semver';
 
-const spinner = require('../../lib/spinner')
-const msgUpgrading = require('./msg-upgrading')
+import spinner from '../../lib/spinner.js';
+import msgUpgrading from './msg-upgrading.js';
 
-module.exports = async (dir = process.cwd(), version) => {
-    const writeFile = true
+// eslint-disable-next-line import/no-anonymous-default-export
+export default async (dir = process.cwd(), version) => {
+    const writeFile = true;
 
     if (!version) {
-        const waitingVersion = spinner('')
-        version = await latestVersion('koot')
-        waitingVersion.stop()
+        const waitingVersion = spinner('');
+        version = await latestVersion('koot');
+        waitingVersion.stop();
     }
 
-    const pathnamePackagejson = path.resolve(dir, 'package.json')
-    const p = await fs.readJson(pathnamePackagejson)
+    const pathnamePackagejson = path.resolve(dir, 'package.json');
+    const p = await fs.readJson(pathnamePackagejson);
 
-    const msg = msgUpgrading(semver.valid(semver.coerce(p.dependencies.koot)), version)
-    const waiting = spinner(msg + '...')
+    const msg = msgUpgrading(
+        semver.valid(semver.coerce(p.dependencies.koot)),
+        version
+    );
+    const waiting = spinner(msg + '...');
 
     // 修改 package.json 的依赖项
     // p.dependencies.koot = '^' + version
-    p.dependencies.koot = version
+    p.dependencies.koot = version;
     if (writeFile)
         await fs.writeJson(pathnamePackagejson, p, {
-            spaces: 4
-        })
+            spaces: 4,
+        });
 
-    waiting.stop()
-    spinner(msg).finish()
+    waiting.stop();
+    spinner(msg).finish();
 
     // console.log(version)
 
     return {
-        files: [pathnamePackagejson]
-    }
-}
+        files: [pathnamePackagejson],
+    };
+};

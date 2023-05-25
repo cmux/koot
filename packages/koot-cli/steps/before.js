@@ -1,11 +1,13 @@
-const fs = require('fs-extra');
-const path = require('path');
-const chalk = require('chalk');
+/* eslint-disable no-console */
 
-const vars = require('../lib/vars');
-const getLocales = require('../lib/get-locales');
-const _ = require('../lib/translate');
-const checkUpdate = require('./check-update');
+import fs from 'fs-extra';
+import url from 'node:url';
+import chalk from 'chalk';
+
+import vars from '../lib/vars.js';
+import getLocales from '../lib/get-locales.js';
+import _ from '../lib/translate.js';
+import checkUpdate from './check-update.js';
 
 /**
  * @typedef {Object} Result
@@ -22,7 +24,7 @@ const before = async () => {
     vars.locales = await getLocales();
 
     const { version } = await fs.readJson(
-        path.resolve(__dirname, '../package.json')
+        url.fileURLToPath(new URL('../package.json', import.meta.url))
     );
 
     console.log(' ');
@@ -33,4 +35,4 @@ const before = async () => {
     return { needUpdate };
 };
 
-module.exports = before;
+export default before;

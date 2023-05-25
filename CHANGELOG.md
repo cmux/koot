@@ -5,7 +5,7 @@
 -   所有包改为 _ES Module_ 标准
     -   所有依赖包升级到最新版本
     -   若从老版本 _koot.js_ 升级，需要改造项目代码，详见[升级指南](https://koot.js.org/#/migration/0.15-to-0.16)
--   _Node.js_ 最低版本要求提升到 `18.0.0`
+-   _Node.js_ 最低版本要求提升到 `18.8.0`
 -   代码库移除以下包
     -   `koot-component`
     -   `koot-core-i18n`
