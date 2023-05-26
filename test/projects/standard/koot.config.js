@@ -7,7 +7,7 @@
  */
 
 import fs from 'fs-extra';
-import path from 'path';
+import path from 'node:path';
 import url from 'node:url';
 
 import { KOOT_BUILD_START_TIME } from 'koot/defaults/envs.js';

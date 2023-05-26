@@ -164,7 +164,6 @@ export default {
     styleTagModuleAttributeName,
     scriptTagEntryAttributeName,
 
-    // 模板中的一些判断阈值
     thresholdStylesExtracted,
     thresholdScriptRunFirst,
 
