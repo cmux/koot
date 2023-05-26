@@ -29,13 +29,13 @@
         -   `favicons` -> _^7.1.2_
         -   `filesize` -> _^10.0.7_
         -   `fs-extra` -> _^11.1.1_
-        -   `glob` -> _^10.2.2_
-        -   `inquirer` -> _^9.2.1_
+        -   `glob` -> _^10.2.6_
+        -   `inquirer` -> _^9.2.6_
         -   `is-port-reachable` -> _^4.0.0_
         -   `open` -> _^9.1.0_
-        -   `ora` -> _^6.3.0_
+        -   `ora` -> _^6.3.1_
         -   `os-locale` -> _^6.0.2_
-        -   `rimraf` -> _^5.0.0_
+        -   `rimraf` -> _^5.0.1_
 
 -   **koot-cli**
 
@@ -43,25 +43,25 @@
         -   `axios` -> _^1.4.0_
         -   `chalk` -> _^5.2.0_
         -   `fs-extra` -> _^11.1.1_
-        -   `glob` -> _^10.2.2_
-        -   `inquirer` -> _^9.2.1_
+        -   `glob` -> _^10.2.6_
+        -   `inquirer` -> _^9.2.6_
         -   `isbinaryfile` -> _^5.0.0_
         -   `latest-version` -> _^7.0.0_
         -   `npm-email` -> _^4.0.1_
-        -   `ora` -> _^6.3.0_
+        -   `ora` -> _^6.3.1_
         -   `os-locale` -> _^6.0.2_
         -   `package-json` -> _^8.1.0_
 
 -   **koot-electron**
 
     -   更新依赖包 **major** 版本号
-        -   `electron` -> _^24.2.0_
+        -   `electron` -> _^24.4.0_
 
 -   **koot-webpack**
     -   更新依赖包 **major** 版本号
         -   `babel-loader` -> _^9.1.2_
         -   `thread-loader` -> _^4.0.1_
-        -   `webpack-dev-middleware` -> _^6.1.0_
+        -   `webpack-dev-middleware` -> _^6.1.1_
 
 ---
 
