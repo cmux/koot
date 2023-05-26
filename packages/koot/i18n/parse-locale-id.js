@@ -1,5 +1,5 @@
-const parseLanguageList = require('./parse-language-list');
-const availableLocaleIds = require('./locale-ids');
+import parseLanguageList from './parse-language-list.js';
+import availableLocaleIds from './locale-ids.js';
 
 /**
  * 根据输入返回项目匹配的语言包ID (localeId)
@@ -20,7 +20,7 @@ const parseLocaleId = (input, localeIds = availableLocaleIds) => {
     if (Array.isArray(input)) {
         let id;
 
-        input.some(thisId => {
+        input.some((thisId) => {
             id = checkItem(thisId, localeIds);
             return id;
         });
@@ -41,7 +41,7 @@ const parseLocaleId = (input, localeIds = availableLocaleIds) => {
     return localeIds[0];
 };
 
-module.exports = parseLocaleId;
+export default parseLocaleId;
 
 // ============================================================================
 
@@ -52,7 +52,7 @@ module.exports = parseLocaleId;
  * @param {string} input
  * @returns {string}
  */
-const normalize = localeId => localeId.toLowerCase().replace(/_/g, '-');
+const normalize = (localeId) => localeId.toLowerCase().replace(/_/g, '-');
 
 /**
  * 获取基础语种

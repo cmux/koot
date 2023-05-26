@@ -1,4 +1,4 @@
-const parseLocaleId = require('../../../packages/koot/i18n/parse-locale-id');
+import parseLocaleId from '../../../packages/koot/i18n/parse-locale-id.js';
 
 describe(`测试: i18n/根据输入的语种或语言列表，匹配项目语言包ID`, () => {
     test(`有完整匹配时，结果正确`, async () => {

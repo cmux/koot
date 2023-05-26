@@ -1,19 +1,20 @@
-const getLocalesConfig = require('./get-locales-config')
+import getLocalesConfig from './get-locales-config.js';
 
-let result
+let result;
 
 /**
  * 获取 i18n 语种列表
  * @returns {Array}
  */
-module.exports = (() => {
+const localeIds = (() => {
     if (!Array.isArray(result)) {
-        result = getLocalesConfig()
-        result = result.map(l => l[0])
+        result = getLocalesConfig();
+        result = result.map((l) => l[0]);
 
-        if (!result.length)
-            result = ['']
+        if (!result.length) result = [''];
     }
 
-    return result
-})()
+    return result;
+})();
+
+export default localeIds;

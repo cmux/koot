@@ -5,5 +5,7 @@
  *
  * @returns {array} 语言列表
  */
-module.exports = langList =>
-    langList.split(',').map(value => value.split(';')[0]);
+const parseLanguageList = (langList) =>
+    langList.split(',').map((value) => value.split(';')[0]);
+
+export default parseLanguageList;

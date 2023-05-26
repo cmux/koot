@@ -1,4 +1,4 @@
-const transformError = require('../../../packages/koot/utils/transform-error');
+import transformError from '../../../packages/koot/utils/transform-error.js';
 
 const doTest = (sbj, msg) => {
     const newError = transformError(sbj);

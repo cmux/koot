@@ -38,4 +38,4 @@ function transformError(error) {
     return error;
 }
 
-module.exports = transformError;
+export default transformError;

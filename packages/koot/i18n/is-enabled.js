@@ -7,4 +7,5 @@ const isI18nEnabled = () => {
         return false;
     return true;
 };
-module.exports = isI18nEnabled;
+
+export default isI18nEnabled;
