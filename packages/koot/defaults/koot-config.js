@@ -1,10 +1,12 @@
-const path = require('path');
-const resolveDir = require('../utils/resolve-dir');
+/* eslint-disable import/no-anonymous-default-export */
+
+import path from 'node:path';
+import resolveDir from '../utils/resolve-dir.js';
 
 /**
  * Koot App (Koot.js 项目) 配置默认值
  */
-module.exports = {
+export default {
     // 项目基本信息
     // name: '',
     type: 'react',

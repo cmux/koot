@@ -1,13 +1,13 @@
-const fs = require('fs-extra');
-const path = require('path');
-const semver = require('semver');
-const merge = require('lodash/merge');
+import fs from 'fs-extra';
+import path from 'node:path';
+import semver from 'semver';
+import merge from 'lodash/merge';
 
-const defaultValues = require('../../defaults/koot-config');
-const {
+import defaultValues from '../../defaults/koot-config.js';
+import {
     keyKootBaseVersion,
     // typesSPA
-} = require('../../defaults/before-build');
+} from '../../defaults/before-build.js';
 
 /**
  * 为空项添加默认值
@@ -16,7 +16,7 @@ const {
  * @param {Object} config
  * @returns {Object}
  */
-module.exports = async (projectDir, config) => {
+const addDefaultValues = async (projectDir, config) => {
     const filePackageJson = path.resolve(projectDir, 'package.json');
     const kootBaseVersion = await (async () => {
         if (!fs.existsSync(filePackageJson)) return;
@@ -55,7 +55,7 @@ module.exports = async (projectDir, config) => {
 
     if (!config.name) {
         if (fs.existsSync(filePackageJson)) {
-            config.name = require(filePackageJson).name;
+            config.name = (await fs.readJson(filePackageJson)).name;
         }
     }
 
@@ -97,3 +97,5 @@ module.exports = async (projectDir, config) => {
         config.bundleVersionsKeep = false;
     }
 };
+
+export default addDefaultValues;

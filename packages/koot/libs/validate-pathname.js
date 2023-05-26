@@ -1,7 +1,7 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'node:fs';
+import path from 'node:path';
 
-const getCwd = require('../utils/get-cwd');
+import getCwd from '../utils/get-cwd.js';
 
 /**
  * 根据输入的字符串返回合法、存在的路径名
@@ -9,7 +9,7 @@ const getCwd = require('../utils/get-cwd');
  * @param {String} [cwd]
  * @returns {String}
  */
-module.exports = (str, cwd = '.') => {
+const validatePathname = (str, cwd = '.') => {
     if (isExist(str)) return str;
 
     {
@@ -34,6 +34,7 @@ module.exports = (str, cwd = '.') => {
 
     return str;
 };
+export default validatePathname;
 
 const isExist = (pathname) => {
     if (fs.existsSync(pathname)) return true;

@@ -1,11 +1,24 @@
-const fs = require('fs-extra');
-const path = require('path');
-const md5 = require('md5');
-const merge = require('lodash/merge');
+import fs from 'fs-extra';
+import path from 'node:path';
+import md5 from 'md5';
+import merge from 'lodash/merge';
 
-const validateConfigDist = require('../validate-config-dist');
-const getCwd = require('../../utils/get-cwd');
-const {
+import transformCompatibleTemplateInject from './transform-compatible/template-inject.js';
+import transformCompatibleRouterRelated from './transform-compatible/router-related.js';
+import transformCompatibleReduxRelated from './transform-compatible/redux-related.js';
+import transformCompatibleI18nRelated from './transform-compatible/i18n-related.js';
+import transformCompatibleStaticCopyFrom from './transform-compatible/static-copy-from.js';
+import transformCompatibleClientRelated from './transform-compatible/client-related.js';
+import transformCompatibleServerRelated from './transform-compatible/server-related.js';
+import transformCompatibleWebpackRelated from './transform-compatible/webpack-related.js';
+import transformCompatibleWebappRelated from './transform-compatible/webapp-related.js';
+import addDefaultValues from './add-default-values.js';
+import extractToTmp from './extract-to-tmp.js';
+
+import validateConfigDist from '../validate-config-dist.js';
+import getDirDevTmp from '../get-dir-dev-tmp.js';
+import getCwd from '../../utils/get-cwd.js';
+import {
     keyFileProjectConfigTempFull,
     keyFileProjectConfigTempPortionServer,
     keyFileProjectConfigTempPortionClient,
@@ -14,18 +27,17 @@ const {
     filenameProjectConfigTempPortionServer,
     filenameProjectConfigTempPortionClient,
     filenameProjectConfigTempPortionOtherClient,
-    propertiesToExtract: _propertiesToExtract,
-    dirConfigTemp: _dirConfigTemp,
+    propertiesToExtract as _propertiesToExtract,
+    dirConfigTemp as _dirConfigTemp,
     WEBPACK_OUTPUT_PATH,
     keyConfigOriginalFull,
-} = require('../../defaults/before-build');
-const { KOOT_DEV_START_TIME } = require('../../defaults/envs');
-const {
-    scopeNeedTransformPathname,
-} = require('../../defaults/defines-service-worker');
-const log = require('../../libs/log');
-const __ = require('../../utils/translate');
-// const isSPA = require('./is-spa');
+} from '../../defaults/before-build.js';
+import { KOOT_DEV_START_TIME } from '../../defaults/envs.js';
+import { scopeNeedTransformPathname } from '../../defaults/defines-service-worker.js';
+import log from '../../libs/log.js';
+import __ from '../../utils/translate.js';
+import getAppConfig from '../../utils/get-app-config.js';
+// import isSPA from './is-spa.js';
 
 /**
  * 根据 koot.config.js 生成 koot.js 和打包配置对象，并将必要信息写入环境变量
@@ -78,7 +90,7 @@ const validateConfig = async (projectDir, options = {}) => {
     }
 
     /** @type {Object} 完整配置 */
-    const kootConfig = { ...require(fileConfig) };
+    const kootConfig = { ...(await getAppConfig(fileConfig)) };
 
     /** @type {Array} 需要抽取到项目配置中的项 */
     const propertiesToExtract = [..._propertiesToExtract];
@@ -106,15 +118,15 @@ const validateConfig = async (projectDir, options = {}) => {
     kootConfig[keyConfigOriginalFull] = merge({}, kootConfig);
 
     // 兼容性处理 (将老版本的配置转换为最新配置)
-    await require('./transform-compatible/template-inject')(kootConfig);
-    await require('./transform-compatible/router-related')(kootConfig);
-    await require('./transform-compatible/redux-related')(kootConfig);
-    await require('./transform-compatible/i18n-related')(kootConfig);
-    await require('./transform-compatible/static-copy-from')(kootConfig);
-    await require('./transform-compatible/client-related')(kootConfig);
-    await require('./transform-compatible/server-related')(kootConfig);
-    await require('./transform-compatible/webpack-related')(kootConfig);
-    await require('./transform-compatible/webapp-related')(kootConfig);
+    await transformCompatibleTemplateInject(kootConfig);
+    await transformCompatibleRouterRelated(kootConfig);
+    await transformCompatibleReduxRelated(kootConfig);
+    await transformCompatibleI18nRelated(kootConfig);
+    await transformCompatibleStaticCopyFrom(kootConfig);
+    await transformCompatibleClientRelated(kootConfig);
+    await transformCompatibleServerRelated(kootConfig);
+    await transformCompatibleWebpackRelated(kootConfig);
+    await transformCompatibleWebappRelated(kootConfig);
 
     // 清理所有第一级的 undefined 项和空对象
     // 清理所有第一级的空对象
@@ -132,7 +144,7 @@ const validateConfig = async (projectDir, options = {}) => {
     });
 
     // 处理默认值
-    await require('./add-default-values')(projectDir, kootConfig);
+    await addDefaultValues(projectDir, kootConfig);
 
     // 如果定制了配置文件路径，直接返回结果
     if (typeof process.env.KOOT_PROJECT_CONFIG_FULL_PATHNAME === 'string') {
@@ -155,7 +167,7 @@ const validateConfig = async (projectDir, options = {}) => {
         tmpConfigPortionServer,
         tmpConfigPortionClient,
         tmpConfigPortionOtherClient,
-    } = await require('./extract-to-tmp')(projectDir, kootConfig);
+    } = await extractToTmp(projectDir, kootConfig);
 
     // 写入项目配置文件 (临时)
     const pathTmpConfig = path.resolve(
@@ -239,7 +251,7 @@ const finalValidate = async (config = {}) => {
         delete config.dest;
     }
     if (process.env.WEBPACK_BUILD_ENV === 'dev') {
-        config.dist = require('../get-dir-dev-tmp')(undefined, 'build');
+        config.dist = getDirDevTmp(undefined, 'build');
     }
     if (typeof config.dist !== 'undefined') {
         validateConfigDist(config.dist);
@@ -363,4 +375,4 @@ const finalValidate = async (config = {}) => {
     return config;
 };
 
-module.exports = validateConfig;
+export default validateConfig;

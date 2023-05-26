@@ -1,8 +1,11 @@
-const path = require('path');
+/* eslint-disable import/no-anonymous-default-export */
 
-const src = path.resolve(__dirname, '../../src');
+import path from 'node:path';
+import url from 'node:url';
 
-module.exports = async () => {
+const src = url.fileURLToPath(new URL('../../src', import.meta.url));
+
+export default async () => {
     // console.log({
     //     'process.env.WEBPACK_BUILD_STAGE': process.env.WEBPACK_BUILD_STAGE
     // });

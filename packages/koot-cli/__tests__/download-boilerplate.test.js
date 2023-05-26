@@ -1,6 +1,3 @@
-// jest configuration
-// 5mins
-
 import { jest } from '@jest/globals';
 
 import fs from 'fs-extra';

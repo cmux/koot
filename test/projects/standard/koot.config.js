@@ -6,15 +6,21 @@
  * 配置文档请查阅: [https://koot.js.org/#/config]
  */
 
-require('koot/typedef');
-const fs = require('fs-extra');
-const path = require('path');
-const { KOOT_BUILD_START_TIME } = require('koot/defaults/envs');
+import fs from 'fs-extra';
+import path from 'path';
+import url from 'node:url';
+
+import { KOOT_BUILD_START_TIME } from 'koot/defaults/envs.js';
+
+import webpackDev from './config/webpack/dev.js';
+import webpackProd from './config/webpack/prod.js';
+
+import('koot/typedef.js');
 
 // console.log(process.env.WEBPACK_BUILD_STAGE);
 
 /** @type {AppConfig} */
-module.exports = {
+const appConfig = {
     /**************************************************************************
      * 项目信息
      *************************************************************************/
@@ -67,14 +73,16 @@ module.exports = {
         '~base.less': path.resolve('./src/constants/less/base.less'),
         '~Assets': path.resolve('./src/assets'),
         '~/': path.resolve('./src'),
-        react: path.resolve(__dirname, '../../../node_modules/react'),
+        react: url.fileURLToPath(
+            new URL('../../../node_modules/react', import.meta.url)
+        ),
     },
     defines: {
         __QA__: JSON.stringify(false),
     },
 
     staticCopyFrom: [
-        path.resolve(__dirname, './public'),
+        url.fileURLToPath(new URL('./public', import.meta.url)),
         // path.resolve(__dirname, './server')
     ],
 
@@ -122,8 +130,8 @@ module.exports = {
 
     webpackConfig: async () => {
         const ENV = process.env.WEBPACK_BUILD_ENV;
-        if (ENV === 'dev') return await require('./config/webpack/dev')();
-        if (ENV === 'prod') return await require('./config/webpack/prod')();
+        if (ENV === 'dev') return await webpackDev();
+        if (ENV === 'prod') return await webpackProd();
         return {};
     },
     webpackBefore: async (/* kootConfig */) => {
@@ -152,8 +160,10 @@ module.exports = {
             aaa: 'bbb',
         },
         'ts-loader': {
-            context: __dirname,
-            configFile: path.resolve(__dirname, './tsconfog.json'),
+            context: url.fileURLToPath(new URL('.', import.meta.url)),
+            configFile: url.fileURLToPath(
+                new URL('./tsconfog.json', import.meta.url)
+            ),
         },
     },
 
@@ -169,6 +179,7 @@ module.exports = {
         quiet: true,
     },
 };
+export default appConfig;
 
 // ============================================================================
 
@@ -180,7 +191,9 @@ module.exports = {
  */
 async function testBeforeAfterBuild(appConfig, type) {
     // const file = path.resolve(appConfig.dist, '_test-life-cycle.txt');
-    const file = path.resolve(__dirname, 'dist/_test-life-cycle.txt');
+    const file = url.fileURLToPath(
+        new URL('./dist/_test-life-cycle.txt', import.meta.url)
+    );
     const timeMark = process.env[KOOT_BUILD_START_TIME];
 
     if (type === 'before') {

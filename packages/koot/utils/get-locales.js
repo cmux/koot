@@ -1,6 +1,7 @@
-const fs = require('fs');
-const path = require('path');
-const osLocale = require('os-locale');
+import fs from 'node:fs';
+import path from 'node:path';
+import url from 'node:url';
+import { osLocaleSync } from 'os-locale';
 
 const readJsonSync = (file) => JSON.parse(fs.readFileSync(file, 'utf-8'));
 
@@ -8,8 +9,9 @@ const readJsonSync = (file) => JSON.parse(fs.readFileSync(file, 'utf-8'));
  * CMD环境：根据本机系统语言，获取语言包内容
  * @returns {Object} 语言包内容
  */
-module.exports = () => {
-    const locale = osLocale.sync();
+const getLocales = () => {
+    const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
+    const locale = osLocaleSync();
     let pathname;
 
     pathname = path.resolve(__dirname, `../locales/${locale}.json`);
@@ -47,3 +49,5 @@ module.exports = () => {
     //     : require(`../locales/en_us`)
     // return l
 };
+
+export default getLocales;

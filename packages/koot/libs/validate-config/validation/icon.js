@@ -1,12 +1,12 @@
-const fs = require('fs-extra');
-const path = require('path');
-const sharp = require('sharp');
-const md5 = require('md5');
+import fs from 'fs-extra';
+import path from 'node:path';
+import sharp from 'sharp';
+import md5 from 'md5';
 
-const { keyConfigIcons } = require('../../../defaults/before-build');
-const getTmp = require('../../../libs/get-dir-dev-tmp');
-const getCwd = require('../../../utils/get-cwd');
-const rgbToHex = require('../../../utils/rgb-to-hex');
+import { keyConfigIcons } from '../../../defaults/before-build.js';
+import getTmp from '../../../libs/get-dir-dev-tmp.js';
+import getCwd from '../../../utils/get-cwd.js';
+import rgbToHex from '../../../utils/rgb-to-hex.js';
 
 // ============================================================================
 
@@ -16,7 +16,7 @@ const rgbToHex = require('../../../utils/rgb-to-hex');
  * @param {Object} appConfig
  * @param {string} [outputDir] 相关资源输出目录，默认为临时目录
  */
-module.exports = async (appConfig, outputDir) => {
+const validateConfigIcon = async (appConfig, outputDir) => {
     const { icon } = appConfig;
     const icons = {
         // original: '',
@@ -93,3 +93,5 @@ module.exports = async (appConfig, outputDir) => {
         return appConfig;
     }
 };
+
+export default validateConfigIcon;

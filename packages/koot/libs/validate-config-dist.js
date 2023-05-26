@@ -1,5 +1,5 @@
-const path = require('path')
-const getCwd = require('../utils/get-cwd')
+import path from 'node:path';
+import getCwd from '../utils/get-cwd.js';
 
 /**
  * 生效配置: dist。以下内容写入环境变量
@@ -7,7 +7,9 @@ const getCwd = require('../utils/get-cwd')
  * @param {String} dist 打包目标路径名
  * @returns 绝对路径名
  */
-module.exports = (dist) => {
-    process.env.KOOT_DIST_DIR = path.resolve(getCwd(), dist)
-    return process.env.KOOT_DIST_DIR
-}
+const validateConfigDist = (dist) => {
+    process.env.KOOT_DIST_DIR = path.resolve(getCwd(), dist);
+    return process.env.KOOT_DIST_DIR;
+};
+
+export default validateConfigDist;

@@ -1,12 +1,18 @@
-const fs = require('fs-extra');
-const path = require('path');
+import fs from 'fs-extra';
+import path from 'node:path';
+import url from 'node:url';
 
-const {
+import {
+    keyFileProjectConfigTempFull,
+    keyFileProjectConfigTempPortionServer,
+    keyFileProjectConfigTempPortionClient,
+    keyFileProjectConfigTempPortionOtherClient,
     keyConfigIcons,
-} = require('../../../packages/koot/defaults/before-build');
-const validateConfig = require('../../../packages/koot/libs/validate-config');
+} from '../../../packages/koot/defaults/before-build.js';
+import validateConfig from '../../../packages/koot/libs/validate-config/index.js';
+import getAppConfig from '../../../packages/koot/utils/get-app-config.js';
 
-const samplesDir = path.resolve(__dirname, 'samples');
+const samplesDir = url.fileURLToPath(new URL('samples', import.meta.url));
 const samples = fs
     .readdirSync(samplesDir)
     .filter((filename) => {
@@ -20,6 +26,12 @@ const samples = fs
         file: path.resolve(samplesDir, filename),
         filename,
     }));
+const envKeys = [
+    'KOOT_PROJECT_CONFIG_FULL_PATHNAME',
+    'KOOT_PROJECT_CONFIG_PORTION_SERVER_PATHNAME',
+    'KOOT_PROJECT_CONFIG_PORTION_CLIENT_PATHNAME',
+    'KOOT_PROJECT_CONFIG_PORTION_OTHER_CLIENT_PATHNAME',
+];
 
 // ============================================================================
 
@@ -68,6 +80,13 @@ const validateSample = async sample => {
 
 // return
 
+afterEach(() => {
+    // 清理过程中生成的环境变量，确保下个循环正确执行
+    for (const key of envKeys) {
+        delete process.env[key];
+    }
+});
+
 describe('测试: 验证配置 (生成临时的核心代码引用文件，返回其他配置对象)', () => {
     for (const {
         name,
@@ -79,7 +98,9 @@ describe('测试: 验证配置 (生成临时的核心代码引用文件，返回
             await fs.ensureDir(resultDir);
             await fs.emptyDir(resultDir);
 
-            const configJson = require(path.resolve(samplesDir, filename));
+            const configJson = await getAppConfig(
+                path.resolve(samplesDir, filename)
+            );
 
             let err;
             let kootConfig;
@@ -92,6 +113,8 @@ describe('测试: 验证配置 (生成临时的核心代码引用文件，返回
                 err = e;
             }
 
+            // console.log(name, kootConfig);
+
             expect(typeof err).toBe('undefined');
 
             expect(typeof kootConfig).toBe('object');
@@ -99,7 +122,8 @@ describe('测试: 验证配置 (生成临时的核心代码引用文件，返回
             if (typeof configJson.name !== 'string') {
                 expect(typeof kootConfig.name).toBe('string');
                 expect(kootConfig.name).toBe(
-                    require(path.resolve(samplesDir, 'package.json')).name
+                    fs.readJsonSync(path.resolve(samplesDir, 'package.json'))
+                        .name
                 );
             }
             expect(typeof kootConfig.template).toBe('string');
@@ -163,6 +187,24 @@ describe('测试: 验证配置 (生成临时的核心代码引用文件，返回
                 } else {
                     expect(typeof kootConfig[keyConfigIcons]).toBe('undefined');
                 }
+            }
+
+            // 检查有关临时配置文件的环境变量是否存在
+            for (const key of envKeys) {
+                expect(typeof process.env[key]).toBe('string');
+                expect(process.env[key]).not.toBe('');
+            }
+
+            // 检查临时配置文件是否存在
+            for (const key of [
+                keyFileProjectConfigTempFull,
+                keyFileProjectConfigTempPortionServer,
+                keyFileProjectConfigTempPortionClient,
+                keyFileProjectConfigTempPortionOtherClient,
+            ]) {
+                expect(typeof kootConfig[key]).toBe('string');
+                expect(kootConfig[key]).not.toBe('');
+                expect(fs.existsSync(kootConfig[key])).toBe(true);
             }
 
             switch (kootConfig.type) {

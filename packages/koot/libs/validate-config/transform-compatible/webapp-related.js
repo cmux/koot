@@ -1,18 +1,21 @@
-const defaultsServiceWorker = require('../../../defaults/service-worker');
-const defaultsWebApp = require('../../../defaults/web-app');
-const { keyConfigIcons } = require('../../../defaults/before-build');
+/* eslint-disable import/no-anonymous-default-export */
+import defaultsServiceWorker from '../../../defaults/service-worker.js';
+import defaultsWebApp from '../../../defaults/web-app.js';
+import { keyConfigIcons } from '../../../defaults/before-build.js';
 
-const validateIcon = require('../validation/icon');
+import validateIcon from '../validation/icon.js';
+
+import('../../../typedef.js');
 
 /**
  * 配置转换 - 兼容性处理 - ServiceWorker 和 PWA 相关
  * - pwa
  * - serviceWorker
  * @async
- * @param {Object} config
+ * @param {AppConfig} config
  * @void
  */
-module.exports = async (config) => {
+export default async (config) => {
     // ========================================================================
     // 旧配置项处理: pwa
     // ========================================================================
@@ -52,9 +55,8 @@ module.exports = async (config) => {
             } else if (!Array.isArray(include)) {
                 config.serviceWorker.include = [include];
             }
-            config.serviceWorker.include = config.serviceWorker.include.concat(
-                initialCacheAppend
-            );
+            config.serviceWorker.include =
+                config.serviceWorker.include.concat(initialCacheAppend);
         }
 
         if (!!initialCacheIgonre) {
@@ -63,9 +65,8 @@ module.exports = async (config) => {
             } else if (!Array.isArray(exclude)) {
                 config.serviceWorker.exclude = [exclude];
             }
-            config.serviceWorker.exclude = config.serviceWorker.exclude.concat(
-                initialCacheIgonre
-            );
+            config.serviceWorker.exclude =
+                config.serviceWorker.exclude.concat(initialCacheIgonre);
         }
 
         delete config.serviceWorker.pathname;

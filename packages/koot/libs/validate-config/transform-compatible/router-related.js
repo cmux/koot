@@ -1,12 +1,14 @@
+/* eslint-disable import/no-anonymous-default-export */
+import('../../../typedef.js');
 /**
  * 配置转换 - 兼容性处理 - Router 相关选项
  * - routes
  * - historyType
  * @async
- * @param {Object} config
+ * @param {AppConfig} config
  * @void
  */
-module.exports = async (config) => {
+export default async (config) => {
     if (typeof config.routes !== 'undefined') {
         delete config.router;
     } else if (typeof config.router !== 'undefined') {

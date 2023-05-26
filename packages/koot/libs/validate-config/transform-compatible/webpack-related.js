@@ -1,3 +1,6 @@
+/* eslint-disable import/no-anonymous-default-export */
+import('../../../typedef.js');
+
 /**
  * 配置转换 - 兼容性处理 - Webpack 相关选项
  * - aliases
@@ -12,10 +15,10 @@
  * - distClientAssetsDirName
  * - serverPackAll
  * @async
- * @param {Object} config
+ * @param {AppConfig} config
  * @void
  */
-module.exports = async (config) => {
+export default async (config) => {
     if (typeof config.moduleCssFilenameTest !== 'undefined') {
         delete config.css;
     } else if (

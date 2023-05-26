@@ -1,6 +1,6 @@
-const path = require('path');
-// const { typesSPA } = require('../../defaults/before-build');
-const validatePathname = require('../../libs/validate-pathname');
+import path from 'node:path';
+// import { typesSPA } from '../../defaults/before-build.js';
+import validatePathname from '../../libs/validate-pathname.js';
 
 /**
  * 从配置中抽取代码中引用的配置文件 (这些文件将存放到临时目录中)
@@ -9,7 +9,7 @@ const validatePathname = require('../../libs/validate-pathname');
  * @param {Object} config
  * @returns {Object}
  */
-module.exports = async (projectDir, config) => {
+const extractToTmp = async (projectDir, config) => {
     /** @type {Object} 引用配置的配置对象 */
     const tmpConfig = (() => {
         const obj = {
@@ -167,3 +167,5 @@ module.exports = async (projectDir, config) => {
             transform(tmpConfigPortionOtherClient),
     };
 };
+
+export default extractToTmp;

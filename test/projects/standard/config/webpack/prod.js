@@ -1,7 +1,8 @@
-const factoryConfig = require('./_factory');
+/* eslint-disable import/no-anonymous-default-export */
+import factoryConfig from './_factory.js';
 // const webpackOptimizationProd = require('koot/utils/webpack-optimization-prod');
 
-module.exports = async () => {
+export default async () => {
     const defaults = await factoryConfig();
 
     // 针对生产环境的定制配置

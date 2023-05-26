@@ -1,23 +1,29 @@
-// jest configuration
+import { jest } from '@jest/globals';
 
-jest.setTimeout(10 * 60 * 1000); // 10 min
+import fs from 'fs-extra';
+import path from 'node:path';
+import url from 'node:url';
 
-//
-
-const fs = require('fs-extra');
-const path = require('path');
-
-const validateConfig = require('../../../packages/koot/libs/validate-config');
-const defaultConfig = require('../../../packages/koot/defaults/koot-config');
-const {
+import validateConfig from '../../../packages/koot/libs/validate-config/index.js';
+import defaultConfig from '../../../packages/koot/defaults/koot-config.js';
+import {
     keyFileProjectConfigTempFull,
     keyFileProjectConfigTempPortionServer,
     keyFileProjectConfigTempPortionClient,
-} = require('../../../packages/koot/defaults/before-build');
-const getDirDevTemp = require('../../../packages/koot/libs/get-dir-dev-tmp');
+} from '../../../packages/koot/defaults/before-build.js';
+import getDirDevTemp from '../../../packages/koot/libs/get-dir-dev-tmp.js';
+
+jest.useFakeTimers();
+jest.setTimeout(10 * 60 * 1000); // 10 min
+
+// ============================================================================
 
 const filesToClear = [];
-const tempDir = path.resolve(__dirname, '../../../logs/test-temp');
+const tempDir = url.fileURLToPath(
+    new URL('../../../logs/test-temp', import.meta.url)
+);
+
+// ============================================================================
 
 fs.removeSync(tempDir);
 
@@ -79,7 +85,9 @@ describe(`测试: libs/validate-config`, () => {
 
     test(`默认环境 (生产环境)`, async () => {
         const buildConfig = await validateConfig(
-            path.resolve(__dirname, '../../projects/standard')
+            url.fileURLToPath(
+                new URL('../../projects/standard', import.meta.url)
+            )
         );
 
         for (const key of fileKeysToCheck) {
@@ -99,7 +107,9 @@ describe(`测试: libs/validate-config`, () => {
         };
         process.env.WEBPACK_BUILD_ENV = 'dev';
 
-        const cwd = path.resolve(__dirname, '../../projects/standard');
+        const cwd = url.fileURLToPath(
+            new URL('../../projects/standard', import.meta.url)
+        );
         const buildConfig = await validateConfig(cwd);
 
         for (const key of fileKeysToCheck) {

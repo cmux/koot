@@ -1,4 +1,7 @@
 /* eslint-disable no-console */
+
+import getLogMsg from './get-log-msg.js';
+
 /**
  * 命令行 Log
  * @variation 1
@@ -15,6 +18,8 @@
  * @param {String} [type=""] 操作类型
  * @param {String} content 内容
  */
-module.exports = (...args) => {
-    console.log(require('./get-log-msg')(...args));
+const log = (...args) => {
+    console.log(getLogMsg(...args));
 };
+
+export default log;

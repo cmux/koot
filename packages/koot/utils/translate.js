@@ -1,4 +1,4 @@
-const getLocales = require('./get-locales');
+import getLocales from './get-locales.js';
 
 let l;
 
@@ -6,7 +6,7 @@ let l;
  * CMD环境：翻译指定字段
  * @param {*} args
  */
-module.exports = (...args) => {
+const translate = (...args) => {
     if (typeof l === 'undefined') l = getLocales();
 
     let key = '';
@@ -74,3 +74,5 @@ module.exports = (...args) => {
         );
     else return str;
 };
+
+export default translate;

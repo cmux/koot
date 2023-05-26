@@ -1,6 +1,8 @@
-const factoryConfig = require('./_factory');
+/* eslint-disable import/no-anonymous-default-export */
 
-module.exports = async () => {
+import factoryConfig from './_factory.js';
+
+export default async () => {
     const defaults = await factoryConfig();
 
     // 针对开发环境的定制配置

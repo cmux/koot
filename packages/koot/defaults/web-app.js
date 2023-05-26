@@ -1,4 +1,6 @@
-module.exports = {
+/* eslint-disable import/no-anonymous-default-export */
+
+export default {
     name: null, // WebApp 名，如果不提供，会采用 name 属性
     shortName: null, // 短名，通常用于桌面图标的名字
     description: null, // WebApp 描述文字

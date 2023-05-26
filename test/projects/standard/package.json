@@ -2,6 +2,7 @@
     "name": "koot-test-standard",
     "version": "0.3.0",
     "description": "Koot.js 模板项目",
+    "type": "module",
     "author": {
         "name": "Diablohu",
         "email": "diablohudream@gmail.com",

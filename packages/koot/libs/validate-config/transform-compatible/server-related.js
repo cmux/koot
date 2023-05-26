@@ -1,3 +1,6 @@
+/* eslint-disable import/no-anonymous-default-export */
+import('../../../typedef.js');
+
 /**
  * 配置转换 - 兼容性处理 - 服务器端相关选项
  * - port
@@ -8,27 +11,28 @@
  * - serverAfter
  * - serverOnRender
  * @async
- * @param {Object} config
+ * @param {AppConfig} config
  * @void
  */
-module.exports = async (config) => {
-
+export default async (config) => {
     if (typeof config.port === 'string' || typeof config.port === 'number') {
-        if (!config.devPort)
-            config.devPort = config.port
+        if (!config.devPort) config.devPort = config.port;
     } else if (typeof config.port === 'object') {
-        config.devPort = config.port.dev
-        config.port = config.port.prod
+        config.devPort = config.port.dev;
+        config.port = config.port.prod;
     }
 
     const transform = (key, keyInServer) => {
-        if (typeof config[key] !== 'undefined' && typeof config.server === 'object') {
-            delete config.server[keyInServer]
+        if (
+            typeof config[key] !== 'undefined' &&
+            typeof config.server === 'object'
+        ) {
+            delete config.server[keyInServer];
         } else if (typeof config.server === 'object') {
-            config[key] = config.server[keyInServer]
-            delete config.server[keyInServer]
+            config[key] = config.server[keyInServer];
+            delete config.server[keyInServer];
         }
-    }
+    };
 
     const keys = [
         ['renderCache', 'renderCache'],
@@ -37,8 +41,7 @@ module.exports = async (config) => {
         ['serverBefore', 'before'],
         ['serverAfter', 'after'],
         ['serverOnRender', 'onRender'],
-    ]
+    ];
 
-    keys.forEach(([key, keyInServer]) => transform(key, keyInServer))
-
-}
+    keys.forEach(([key, keyInServer]) => transform(key, keyInServer));
+};

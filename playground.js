@@ -31,10 +31,18 @@ async function run() {
     //         // ignore: ignores,
     //     })
     // );
+
+    // __filename
     console.log(url.fileURLToPath(new URL('', import.meta.url)));
-    console.log(new URL(url.fileURLToPath(new URL('', import.meta.url))));
+    // __dirname
     console.log(url.fileURLToPath(new URL('.', import.meta.url)));
+
+    console.log(new URL(url.fileURLToPath(new URL('', import.meta.url))));
     console.log(url.fileURLToPath(new URL('../package.json', import.meta.url)));
+    console.log(
+        url.fileURLToPath(new URL('../../../logs/test-temp', import.meta.url))
+    );
+    console.log(url.pathToFileURL(path.resolve('./a/b/c.js')));
     // console.log(
     //     url.fileURLToPath(new URL('packages/*/package.json', import.meta.url))
     // );
