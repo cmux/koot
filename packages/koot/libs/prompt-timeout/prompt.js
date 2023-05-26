@@ -1,4 +1,4 @@
-const inquirer = require('inquirer');
+import inquirer from 'inquirer';
 
 let prompt;
 
@@ -14,11 +14,11 @@ process.on('message', async (message = {}) => {
                       name: 'value',
                       type: 'confirm',
                       default: true,
-                      ...promptOptions
+                      ...promptOptions,
                   }
         );
 
-        prompt.then(result => {
+        prompt.then((result) => {
             if (process.send) {
                 process.send({ result: result.value });
             }

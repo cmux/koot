@@ -1,8 +1,8 @@
-const path = require('path');
-const fs = require('fs-extra');
+import url from 'node:url';
+import fs from 'fs-extra';
 
-const defaultsServiceWorker = require('../defaults/service-worker');
-const defaultI18n = require('../defaults/i18n');
+import defaultsServiceWorker from '../defaults/service-worker.js';
+import defaultI18n from '../defaults/i18n.js';
 // const {
 //     KOOT_BUILD_START_TIME, KOOT_CLIENT_PUBLIC_PATH
 // } = require('../defaults/envs')
@@ -10,7 +10,7 @@ const defaultI18n = require('../defaults/i18n');
 /**
  * 初始化 node.js 环境变量
  */
-module.exports = () => {
+const initNodeEnv = () => {
     const defaults = {
         // Webpack 打包项目模式
         // isomorphic 同构 | spa 单页面应用 | static 静态站点
@@ -46,7 +46,9 @@ module.exports = () => {
 
         // Koot 版本号
         KOOT_VERSION: encodeURI(
-            fs.readJSONSync(path.resolve(__dirname, '../package.json')).version
+            fs.readJSONSync(
+                url.fileURLToPath(new URL('../package.json', import.meta.url))
+            ).version
         ),
 
         // Koot 项目启动目录路径。默认为 process.cwd()
@@ -140,3 +142,5 @@ module.exports = () => {
         }
     }
 };
+
+export default initNodeEnv;

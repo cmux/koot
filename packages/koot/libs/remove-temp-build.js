@@ -1,24 +1,25 @@
-const fs = require('fs-extra')
-const path = require('path')
+import fs from 'fs-extra';
+import path from 'node:path';
 
-const {
+import {
     // filenameDll, filenameDllManifest,
     filenameWebpackDevServerPortTemp,
-    filenameBuilding, filenameBuildFail,
-} = require('../defaults/before-build')
+    filenameBuilding,
+    filenameBuildFail,
+} from '../defaults/before-build.js';
 
-const getDirDevTmp = require('../libs/get-dir-dev-tmp')
-// const getDirDevDll = require('../libs/get-dir-dev-dll')
+import getDirDevTmp from '../libs/get-dir-dev-tmp.js';
+// import getDirDevDll from '../libs/get-dir-dev-dll.js'
 
-const getChunkmapPath = require('../utils/get-chunkmap-path')
+import getChunkmapPath from '../utils/get-chunkmap-path.js';
 
 /**
  * 清理打包过程中生成的临时文件
  * @async
- * @param {String} dist 
+ * @param {String} dist
  */
-module.exports = async (dist = process.env.KOOT_DIST_DIR) => {
-    if (!dist) return
+const removeTempBuild = async (dist = process.env.KOOT_DIST_DIR) => {
+    if (!dist) return;
 
     const files = [
         getChunkmapPath(dist),
@@ -28,11 +29,11 @@ module.exports = async (dist = process.env.KOOT_DIST_DIR) => {
         path.resolve(getDirDevTmp(), filenameWebpackDevServerPortTemp),
         path.resolve(dist, filenameBuilding),
         path.resolve(dist, filenameBuildFail),
-    ]
+    ];
 
-    for (let file of files) {
-        if (fs.existsSync(file))
-            await fs.remove(file)
+    for (const file of files) {
+        if (fs.existsSync(file)) await fs.remove(file);
     }
+};
 
-}
+export default removeTempBuild;

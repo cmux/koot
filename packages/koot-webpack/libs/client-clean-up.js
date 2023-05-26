@@ -77,7 +77,7 @@ const determine = async (config = {}) => {
     ];
     if (process.env.WEBPACK_BUILD_TYPE === 'spa') {
         if (process.env.KOOT_BUILD_TARGET === 'electron') {
-            resolveRequire('koot-electron', 'libs/modify-client-clean-up')
+            await resolveRequire('koot-electron', 'libs/modify-client-clean-up')
                 .getIgnores(clientRoot)
                 .forEach((glob) => ignore.push(glob));
         } else {

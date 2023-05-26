@@ -1,36 +1,42 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
 
-const fs = require('fs-extra');
-const path = require('path');
-const program = require('commander');
-const chalk = require('chalk');
+import fs from 'fs-extra';
+import path from 'node:path';
+import url from 'node:url';
+import program from 'commander';
+import chalk from 'chalk';
 
-const willValidateConfig = require('./lifecycle/will-validate-config');
-const willBuild = require('./lifecycle/will-build');
-const didBuild = require('./lifecycle/did-build');
+import kootWebpackBuild from 'koot-webpack/build.js';
 
-const {
+import willValidateConfig from './lifecycle/will-validate-config.js';
+import willBuild from './lifecycle/will-build.js';
+import didBuild from './lifecycle/did-build.js';
+
+import {
     // keyConfigQuiet,
     filenameBuilding,
-} = require('../defaults/before-build');
+} from '../defaults/before-build';
 
-const __ = require('../utils/translate');
-const sleep = require('../utils/sleep');
-const setEnvFromCommand = require('../utils/set-env-from-command');
-const getAppType = require('../utils/get-app-type');
-const validateConfig = require('../libs/validate-config');
-const validateConfigDist = require('../libs/validate-config-dist');
-const isFromStartCommand = require('../libs/is-from-start-command');
-const spinner = require('../utils/spinner');
-const initNodeEnv = require('../utils/init-node-env');
-// const emptyTempConfigDir = require('../libs/empty-temp-config-dir')
-const getDirTemp = require('../libs/get-dir-tmp');
-
-const kootWebpackBuild = require('koot-webpack/build');
+import __ from '../utils/translate.js';
+import sleep from '../utils/sleep.js';
+import setEnvFromCommand from '../utils/set-env-from-command.js';
+import getAppType from '../utils/get-app-type.js';
+import validateConfig from '../libs/validate-config/index.js';
+import validateConfigDist from '../libs/validate-config-dist.js';
+import isFromStartCommand from '../libs/is-from-start-command.js';
+import spinner from '../utils/spinner.js';
+import initNodeEnv from '../utils/init-node-env.js';
+// import emptyTempConfigDir from '../libs/empty-temp-config-dir.js';
+import getDirTemp from '../libs/get-dir-tmp.js';
 
 program
-    .version(require('../package').version, '-v, --version')
+    .version(
+        fs.readJsonSync(
+            url.fileURLToPath(new URL('../package.json', import.meta.url))
+        ).version,
+        '-v, --version'
+    )
     .usage('[options]')
     .option('-c, --client', 'Set STAGE to CLIENT')
     .option('-s, --server', 'Set STAGE to SERVER')

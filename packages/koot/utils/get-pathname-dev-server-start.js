@@ -1,4 +1,8 @@
-const path = require('path')
-const getDirDevTmp = require('../libs/get-dir-dev-tmp')
+import path from 'node:path';
 
-module.exports = (cwd) => path.resolve(getDirDevTmp(cwd), '.server-start')
+import getDirDevTmp from '../libs/get-dir-dev-tmp.js';
+
+const getPathnameDevServerStart = (cwd) =>
+    path.resolve(getDirDevTmp(cwd), '.server-start');
+
+export default getPathnameDevServerStart;

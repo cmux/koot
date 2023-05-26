@@ -1,16 +1,17 @@
 /* eslint-disable no-console */
 
-const path = require('path');
-const chalk = require('chalk');
-const getAppTypeString = require('./get-app-type-string');
-const __ = require('./translate');
-const envUpdateAppType = require('../libs/env/update-app-type');
+import path from 'path';
+import chalk from 'chalk';
+
+import getAppTypeString from './get-app-type-string.js';
+import __ from './translate.js';
+import envUpdateAppType from '../libs/env/update-app-type.js';
 
 /**
  * 从命令确定环境变量
  * @param {Object} Settings
  */
-module.exports = ({ config, type, port }, quiet = false) => {
+const setEnvFromCommand = ({ config, type, port }, quiet = false) => {
     let modified = false;
     const log = (key, value) => {
         if (quiet) return;
@@ -56,3 +57,5 @@ module.exports = ({ config, type, port }, quiet = false) => {
         port,
     };
 };
+
+export default setEnvFromCommand;

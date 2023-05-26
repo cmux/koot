@@ -3,4 +3,4 @@
  * @param {string} [dist] 打包结果目录，默认为项目指定的路径
  * @returns {string}
  */
-module.exports = require('./get-build-manifest-path');
+export { default } from './get-build-manifest-path.js';

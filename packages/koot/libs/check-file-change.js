@@ -1,7 +1,7 @@
-const fs = require('fs-extra');
-const sleep = require('../utils/sleep');
+import fs from 'fs-extra';
+import sleep from '../utils/sleep.js';
 
-const defaultPlaceholder = require('../defaults/content-waiting');
+import defaultPlaceholder from '../defaults/content-waiting.js';
 
 /**
  * 检查文件内容是否已更新（条件：和 placeholder 字符不同）
@@ -12,7 +12,7 @@ const defaultPlaceholder = require('../defaults/content-waiting');
  *                          - 如果是函数，返回 true 表示可以继续，返回 false 表示需要等待
  * @returns {Promise<string>}
  */
-module.exports = async (file, check = defaultPlaceholder) =>
+const checkFileChange = async (file, check = defaultPlaceholder) =>
     await new Promise((resolve) => {
         const waiting = () =>
             setTimeout(async () => {
@@ -30,3 +30,5 @@ module.exports = async (file, check = defaultPlaceholder) =>
             }, 500);
         waiting();
     });
+
+export default checkFileChange;

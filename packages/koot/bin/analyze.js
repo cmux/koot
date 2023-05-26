@@ -1,26 +1,33 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
 
-const fs = require('fs-extra');
-const path = require('path');
-const program = require('commander');
-// const chalk = require('chalk')
+import fs from 'fs-extra';
+import path from 'node:path';
+import url from 'node:url';
+import program from 'commander';
+// import chalk from 'chalk'
 
-const willValidateConfig = require('./lifecycle/will-validate-config');
-const willBuild = require('./lifecycle/will-build');
-const didBuild = require('./lifecycle/did-build');
+import kootWebpackBuild from 'koot-webpack/build.js';
 
-// const __ = require('../utils/translate')
-const validateConfig = require('../libs/validate-config');
-// const readBuildConfigFile = require('../utils/read-build-config-file')
-const setEnvFromCommand = require('../utils/set-env-from-command');
-const initNodeEnv = require('../utils/init-node-env');
-const getDirTemp = require('../libs/get-dir-tmp');
+import willValidateConfig from './lifecycle/will-validate-config.js';
+import willBuild from './lifecycle/will-build.js';
+import didBuild from './lifecycle/did-build.js';
 
-const kootWebpackBuild = require('koot-webpack/build');
+// import __ from '../utils/translate.js'
+import validateConfig from '../libs/validate-config/index.js';
+// import readBuildConfigFile from '../utils/read-build-config-file.js'
+import setEnvFromCommand from '../utils/set-env-from-command.js';
+import initNodeEnv from '../utils/init-node-env.js';
+import getDirTemp from '../libs/get-dir-tmp.js';
+import getDirDevTmp from '../libs/get-dir-dev-tmp.js';
 
 program
-    .version(require('../package').version, '-v, --version')
+    .version(
+        fs.readJsonSync(
+            url.fileURLToPath(new URL('../package.json', import.meta.url))
+        ).version,
+        '-v, --version'
+    )
     .usage('[options]')
     .option('-c, --client', 'Set STAGE to CLIENT')
     .option('-s, --server', 'Set STAGE to SERVER')
@@ -57,10 +64,7 @@ const run = async () => {
     await willValidateConfig(program);
 
     // 处理目录
-    const dirAnalyzeBuild = require('../libs/get-dir-dev-tmp')(
-        undefined,
-        'analyze'
-    );
+    const dirAnalyzeBuild = getDirDevTmp(undefined, 'analyze');
     await fs.ensureDir(dirAnalyzeBuild);
     await fs.emptyDir(dirAnalyzeBuild);
     await fs.ensureDir(path.resolve(dirAnalyzeBuild, 'public'));

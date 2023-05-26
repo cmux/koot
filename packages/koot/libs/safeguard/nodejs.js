@@ -1,13 +1,14 @@
+/* eslint-disable import/no-anonymous-default-export */
 /* eslint-disable no-console */
 
-require('../../typedef');
+import fs from 'fs-extra';
+import url from 'node:url';
+import semver from 'semver';
 
-const semver = require('semver');
+import logError from './libs/log-error.js';
+import __ from '../../utils/translate.js';
 
-const logError = require('./libs/log-error');
-const __ = require('../../utils/translate');
-
-const kootPackage = require('../../package.json');
+import '../../typedef.js';
 
 /**
  * Safeguard: Node.js
@@ -16,8 +17,10 @@ const kootPackage = require('../../package.json');
  * @param {AppConfig} appConfig
  * @void
  */
-module.exports = async (appConfig = {}) => {
-    const { engines: { node: nodeRequired } = {} } = kootPackage;
+export default async (appConfig = {}) => {
+    const { engines: { node: nodeRequired } = {} } = fs.readJsonSync(
+        url.fileURLToPath(new URL('../../package.json', import.meta.url))
+    );
     const nodeLocal = semver.valid(semver.coerce(process.version));
     if (!semver.satisfies(nodeLocal, nodeRequired)) {
         logError(

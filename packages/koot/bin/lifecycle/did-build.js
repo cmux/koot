@@ -1,4 +1,6 @@
-require('../../typedef');
+/* eslint-disable import/no-anonymous-default-export */
+
+import '../../typedef.js';
 
 /**
  * 针对所有命令：在所有打包流程结束之后，此时会执行
@@ -7,7 +9,7 @@ require('../../typedef');
  * @param {AppConfig} appConfig
  * @void
  */
-module.exports = async (appConfig) => {
+export default async (appConfig) => {
     if (typeof appConfig.afterBuild === 'function')
         await appConfig.afterBuild(appConfig);
 };

@@ -1,36 +1,35 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
 
-const fs = require('fs-extra');
-const path = require('path');
-// const util = require('util')
-// const exec = util.promisify(require('child_process').exec)
-const { spawn } = require('child_process');
+import fs from 'fs-extra';
+import path from 'node:path';
+import url from 'node:url';
+import { spawn } from 'node:child_process';
+import program from 'commander';
+import npmRunScript from 'npm-run-script';
+import chalk from 'chalk';
 
-const program = require('commander');
-const npmRunScript = require('npm-run-script');
-const chalk = require('chalk');
+import willValidateConfig from './lifecycle/will-validate-config.js';
+import willBuild from './lifecycle/will-build.js';
+import didBuild from './lifecycle/did-build.js';
 
-const willValidateConfig = require('./lifecycle/will-validate-config');
-const willBuild = require('./lifecycle/will-build');
-const didBuild = require('./lifecycle/did-build');
-
-const { filenameBuildFail } = require('../defaults/before-build');
-const sleep = require('../utils/sleep');
-// const readBuildConfigFile = require('../utils/read-build-config-file')
-const spinner = require('../utils/spinner');
-const setEnvFromCommand = require('../utils/set-env-from-command');
-const getAppType = require('../utils/get-app-type');
-const validateConfig = require('../libs/validate-config');
-const validateConfigDist = require('../libs/validate-config-dist');
-// const __ = require('../utils/translate')
-// const getCwd = require('../utils/get-cwd')
-// const emptyTempConfigDir = require('../libs/empty-temp-config-dir')
-const getDirTemp = require('../libs/get-dir-tmp');
-const resolveRequire = require('../utils/resolve-require');
+import { filenameBuildFail } from '../defaults/before-build.js';
+import sleep from '../utils/sleep.js';
+import spinner from '../utils/spinner.js';
+import setEnvFromCommand from '../utils/set-env-from-command.js';
+import getAppType from '../utils/get-app-type.js';
+import validateConfig from '../libs/validate-config/index.js';
+import validateConfigDist from '../libs/validate-config-dist.js';
+import getDirTemp from '../libs/get-dir-tmp.js';
+import resolveRequire from '../utils/resolve-require.js';
 
 program
-    .version(require('../package').version, '-v, --version')
+    .version(
+        fs.readJsonSync(
+            url.fileURLToPath(new URL('../package.json', import.meta.url))
+        ).version,
+        '-v, --version'
+    )
     .usage('[options]')
     .option('--no-build', "Don't build")
     // .option('--pm2', 'Start with pm2')
@@ -89,7 +88,7 @@ const run = async () => {
 
     const { start: extraStart } =
         process.env.KOOT_PROJECT_TYPE === 'ReactElectronSPA'
-            ? resolveRequire('koot-electron', 'libs/command-start.js')
+            ? await resolveRequire('koot-electron', 'libs/command-start.js')
             : {};
 
     // ========================================================================

@@ -1,18 +1,18 @@
-const fs = require('fs-extra')
-const path = require('path')
+import fs from 'fs-extra';
+import path from 'node:path';
 
-const { dirConfigTemp: _dirConfigTemp } = require('../defaults/before-build')
-const getCwd = require('../utils/get-cwd')
+import { dirConfigTemp as _dirConfigTemp } from '../defaults/before-build.js';
+import getCwd from '../utils/get-cwd.js';
 
 /**
  * 清空临时配置文件目录
- * @param {String} cwd 
+ * @param {String} cwd
  */
 const run = (cwd = getCwd()) => {
-    const dirConfigTemp = path.resolve(cwd, _dirConfigTemp)
+    const dirConfigTemp = path.resolve(cwd, _dirConfigTemp);
     if (fs.existsSync(dirConfigTemp)) {
-        fs.emptyDirSync(dirConfigTemp)
+        fs.emptyDirSync(dirConfigTemp);
     }
-}
+};
 
-module.exports = run
+export default run;

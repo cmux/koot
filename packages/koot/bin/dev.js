@@ -1,19 +1,22 @@
 #!/usr/bin/env node
 
-const fs = require('fs-extra');
-const path = require('path');
-const program = require('commander');
-const pm2 = require('pm2');
-const chalk = require('chalk');
-const npmRunScript = require('npm-run-script');
-const opn = require('open');
+import fs from 'fs-extra';
+import path from 'node:path';
+import url from 'node:url';
+import program from 'commander';
+import pm2 from 'pm2';
+import chalk from 'chalk';
+import npmRunScript from 'npm-run-script';
+import opn from 'open';
 
-const willValidateConfig = require('./lifecycle/will-validate-config');
-const willBuild = require('./lifecycle/will-build');
-const didBuild = require('./lifecycle/did-build');
+import kootWebpackBuildVendorDll from 'koot-webpack/build-vendor-dll.js';
 
-const contentWaiting = require('../defaults/content-waiting');
-const {
+import willValidateConfig from './lifecycle/will-validate-config.js';
+import willBuild from './lifecycle/will-build.js';
+import didBuild from './lifecycle/did-build.js';
+
+import contentWaiting from '../defaults/content-waiting.js';
+import {
     keyFileProjectConfigTempFull,
     keyFileProjectConfigTempPortionServer,
     keyFileProjectConfigTempPortionClient,
@@ -22,40 +25,43 @@ const {
     filenameBuilding,
     // filenameBuildFail,
     // filenameDll, filenameDllManifest,
-} = require('../defaults/before-build');
-const { KOOT_DEV_START_TIME } = require('../defaults/envs');
+} from '../defaults/before-build.js';
+import { KOOT_DEV_START_TIME } from '../defaults/envs.js';
 
-const checkFileUpdate = require('../libs/check-file-change');
-const removeTempBuild = require('../libs/remove-temp-build');
-const removeTempProjectConfig = require('../libs/remove-temp-project-config');
-const validateConfig = require('../libs/validate-config');
-const validateConfigDist = require('../libs/validate-config-dist');
-const getDirDevTmp = require('../libs/get-dir-dev-tmp');
-const getDirDevCache = require('../libs/get-dir-dev-cache');
-const getDirTemp = require('../libs/get-dir-tmp');
+import checkFileUpdate from '../libs/check-file-change.js';
+import removeTempBuild from '../libs/remove-temp-build.js';
+import removeTempProjectConfig from '../libs/remove-temp-project-config.js';
+import validateConfig from '../libs/validate-config/index.js';
+import validateConfigDist from '../libs/validate-config-dist.js';
+import getDirDevTmp from '../libs/get-dir-dev-tmp.js';
+import getDirDevCache from '../libs/get-dir-dev-cache.js';
+import getDirTemp from '../libs/get-dir-tmp.js';
 
-const __ = require('../utils/translate');
-const sleep = require('../utils/sleep');
-const spinner = require('../utils/spinner');
-// const readBuildConfigFile = require('../utils/read-build-config-file')
-const getAppType = require('../utils/get-app-type');
-const setEnvFromCommand = require('../utils/set-env-from-command');
-const getChunkmapPath = require('../utils/get-chunkmap-path');
-const initNodeEnv = require('../utils/init-node-env');
-const getCwd = require('../utils/get-cwd');
-const getPathnameDevServerStart = require('../utils/get-pathname-dev-server-start');
-const getLogMsg = require('../libs/get-log-msg');
-const log = require('../libs/log');
-const confirmTimeout = require('../libs/prompt-timeout');
-// const terminate = require('../utils/terminate');
-
-const kootWebpackBuildVendorDll = require('koot-webpack/build-vendor-dll');
+import __ from '../utils/translate.js';
+import sleep from '../utils/sleep.js';
+import spinner from '../utils/spinner.js';
+// import readBuildConfigFile from '../utils/read-build-config-file.js';
+import getAppType from '../utils/get-app-type.js';
+import setEnvFromCommand from '../utils/set-env-from-command.js';
+import getChunkmapPath from '../utils/get-chunkmap-path.js';
+import initNodeEnv from '../utils/init-node-env.js';
+import getCwd from '../utils/get-cwd.js';
+import getPathnameDevServerStart from '../utils/get-pathname-dev-server-start.js';
+import getLogMsg from '../libs/get-log-msg.js';
+import log from '../libs/log.js';
+import confirmTimeout from '../libs/prompt-timeout/index.js';
+// import terminate from '../utils/terminate.js';
 
 let exiting = false;
 const removeTemp = true;
 
 program
-    .version(require('../package').version, '-v, --version')
+    .version(
+        fs.readJsonSync(
+            url.fileURLToPath(new URL('../package.json', import.meta.url))
+        ).version,
+        '-v, --version'
+    )
     .usage('[options]')
     .option('-c, --client', 'Set STAGE to CLIENT')
     .option('-s, --server', 'Set STAGE to SERVER')
@@ -540,7 +546,9 @@ const run = async () => {
 
             const config = {
                 name: `${stage}-${name}`,
-                script: path.resolve(__dirname, './build.js'),
+                script: url.fileURLToPath(
+                    new URL('./build.js', import.meta.url)
+                ),
                 args: `--stage ${stage} ${buildCmdArgs}`,
                 cwd: cwd,
                 output: pathLogOut,
@@ -588,9 +596,11 @@ const run = async () => {
                     break;
                 }
                 case 'main': {
-                    const mainScript = path.resolve(
-                        __dirname,
-                        '../ReactApp/server/index-dev.js'
+                    const mainScript = url.fileURLToPath(
+                        new URL(
+                            '../ReactApp/server/index-dev.js',
+                            import.meta.url
+                        )
                     );
                     Object.assign(config, {
                         script: mainScript,

@@ -1,7 +1,9 @@
-require('../../typedef');
+/* eslint-disable import/no-anonymous-default-export */
 
-const { KOOT_BUILD_START_TIME } = require('../../defaults/envs');
-const safeguard = require('../../libs/safeguard');
+import '../../typedef.js';
+
+import { KOOT_BUILD_START_TIME } from '../../defaults/envs.js';
+import safeguard from '../../libs/safeguard/index.js';
 
 /**
  * 针对所有命令：在正式开始打包之前，此时会执行
@@ -13,7 +15,7 @@ const safeguard = require('../../libs/safeguard');
  * @param {AppConfig} appConfig
  * @void
  */
-module.exports = async (appConfig) => {
+export default async (appConfig) => {
     if (!process.env[KOOT_BUILD_START_TIME])
         process.env[KOOT_BUILD_START_TIME] = Date.now() + '';
 

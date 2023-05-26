@@ -1,12 +1,13 @@
+/* eslint-disable import/no-anonymous-default-export */
 /* eslint-disable no-console */
 
-require('../../typedef');
+import logError from './libs/log-error.js';
+import __ from '../../utils/translate.js';
+import getAppType from '../../utils/get-app-type.js';
+import getAppTypeString from '../../utils/get-app-type-string.js';
+import envUpdateAppType from '../env/update-app-type.js';
 
-const logError = require('./libs/log-error');
-const __ = require('../../utils/translate');
-const getAppType = require('../../utils/get-app-type');
-const getAppTypeString = require('../../utils/get-app-type-string');
-const envUpdateAppType = require('../env/update-app-type');
+import '../../typedef.js';
 
 /**
  * Safeguard: App Type
@@ -16,7 +17,7 @@ const envUpdateAppType = require('../env/update-app-type');
  * @param {AppConfig} appConfig
  * @void
  */
-module.exports = async (appConfig = {}) => {
+export default async (appConfig = {}) => {
     const appType = await getAppType();
     if (!appType) envUpdateAppType(getAppTypeString(appConfig.type));
     if (!(await getAppType())) {

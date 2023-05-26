@@ -1,6 +1,7 @@
-const fs = require('fs');
-const path = require('path');
-const getCwd = require('./get-cwd');
+import fs from 'node:fs';
+import path from 'node:path';
+
+import getCwd from './get-cwd.js';
 
 let p;
 
@@ -8,7 +9,7 @@ let p;
  * 获取打包结果路径
  * @returns {String} 打包结果路径 (硬盘绝对路径)
  */
-module.exports = () => {
+const getDistPath = () => {
     // console.log('global.KOOT_DIST_DIR', global.KOOT_DIST_DIR)
     if (typeof p !== 'string') {
         p =
@@ -29,3 +30,5 @@ module.exports = () => {
     }
     return p;
 };
+
+export default getDistPath;

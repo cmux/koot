@@ -1,17 +1,21 @@
-const path = require('path');
-const fork = require('child_process').fork;
+import url from 'node:url';
+import { fork } from 'node:child_process';
 
-const terminate = require('../../utils/terminate');
+import terminate from '../../utils/terminate.js';
 
-module.exports = async (promptOptions, timeout = 1000) => {
+const promptTimeout = async (promptOptions, timeout = 1000) => {
     if (typeof promptOptions !== 'object')
         throw new Error(`Missing parameter: 'promptOptions'`);
 
-    return new Promise(resolve => {
-        const child = fork(path.resolve(__dirname, './prompt.js'), [], {
-            silent: false
-            // stdio: ['pipe', 'pipe', 'pipe', 'ipc']
-        });
+    return new Promise((resolve) => {
+        const child = fork(
+            url.fileURLToPath(new URL('./prompt.js', import.meta.url)),
+            [],
+            {
+                silent: false,
+                // stdio: ['pipe', 'pipe', 'pipe', 'ipc']
+            }
+        );
         child.on('message', (message = {}) => {
             if (typeof message.result !== 'undefined') {
                 if (to) clearTimeout(to);
@@ -31,7 +35,7 @@ module.exports = async (promptOptions, timeout = 1000) => {
                         : promptOptions.choices[0]
                     : undefined;
             child.send({
-                done: defaultValue
+                done: defaultValue,
             });
             resolve(defaultValue);
         }, timeout);
@@ -39,8 +43,10 @@ module.exports = async (promptOptions, timeout = 1000) => {
         child.send({
             question: {
                 ...promptOptions,
-                timeout
-            }
+                timeout,
+            },
         });
     });
 };
+
+export default promptTimeout;

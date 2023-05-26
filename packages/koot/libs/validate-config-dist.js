@@ -1,4 +1,5 @@
 import path from 'node:path';
+
 import getCwd from '../utils/get-cwd.js';
 
 /**

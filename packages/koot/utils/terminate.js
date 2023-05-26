@@ -1,8 +1,11 @@
-const doTerminate = require('terminate')
+/* eslint-disable import/no-anonymous-default-export */
 
-module.exports = async (pid) => new Promise((resolve, reject) => {
-    doTerminate(pid, err => {
-        if (err) return reject(err)
-        resolve()
-    })
-})
+import doTerminate from 'terminate';
+
+export default async (pid) =>
+    new Promise((resolve, reject) => {
+        doTerminate(pid, (err) => {
+            if (err) return reject(err);
+            resolve();
+        });
+    });

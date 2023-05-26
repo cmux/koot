@@ -5,11 +5,11 @@
  * Safeguard mechanism for koot commands
  */
 
-require('../../typedef');
+import '../../typedef.js';
 
-const safeNodejs = require('./nodejs');
-const safeAppType = require('./app-type');
-const safeElectron = require('./electron');
+import safeNodejs from './nodejs.js';
+import safeAppType from './app-type.js';
+import safeElectron from './electron.js';
 
 // ============================================================================
 
@@ -25,4 +25,4 @@ const safeguard = async (appConfig = {}) => {
     await safeElectron(appConfig);
 };
 
-module.exports = safeguard;
+export default safeguard;

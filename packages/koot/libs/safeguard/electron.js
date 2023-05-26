@@ -1,12 +1,13 @@
+/* eslint-disable import/no-anonymous-default-export */
 /* eslint-disable no-console */
 
-require('../../typedef');
+import resolve from 'resolve';
 
-const resolve = require('resolve');
+import logError from './libs/log-error.js';
+import __ from '../../utils/translate.js';
+import getCwd from '../../utils/get-cwd.js';
 
-const logError = require('./libs/log-error');
-const __ = require('../../utils/translate');
-const getCwd = require('../../utils/get-cwd');
+import '../../typedef.js';
 
 /**
  * Safeguard: Electron
@@ -15,7 +16,7 @@ const getCwd = require('../../utils/get-cwd');
  * @param {AppConfig} appConfig
  * @void
  */
-module.exports = async (appConfig = {}) => {
+export default async (appConfig = {}) => {
     const isElectronApp =
         appConfig.target === 'electron' ||
         process.env.KOOT_BUILD_TARGET === 'electron';

@@ -1,6 +1,8 @@
-const fs = require('fs-extra');
+/* eslint-disable import/no-anonymous-default-export */
 
-const getDirTemp = require('../../libs/get-dir-tmp');
+import fs from 'fs-extra';
+
+import getDirTemp from '../../libs/get-dir-tmp.js';
 
 /**
  * 针对所有命令：在读取、处理项目配置之前
@@ -9,7 +11,7 @@ const getDirTemp = require('../../libs/get-dir-tmp');
  * @param {Boolean} [options.kootDev=false]
  * @void
  */
-module.exports = async (options = {}) => {
+export default async (options = {}) => {
     const { kootDev = false, args = [] } = options;
     const customArgs = {};
 
