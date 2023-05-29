@@ -1,16 +1,16 @@
-import { LOCATION_UPDATE } from './actionType.js'
+/* eslint-disable import/no-anonymous-default-export */
 
-const initialState = {}
+import { LOCATION_UPDATE } from './actionType.js';
 
-export default function(state = initialState, action) {
+const initialState = {};
 
+export default function (state = initialState, action) {
     switch (action.type) {
-
         case LOCATION_UPDATE:
-            return action.location
-
+            return action.location;
+        default: {
+        }
     }
 
     return state;
-
 }

@@ -1,7 +1,9 @@
+/* eslint-disable import/no-anonymous-default-export */
+
 /**
  * 默认值 - 开发环境客户端 Webpack DLL 列表
  */
-module.exports = [
+export default [
     // Koot
     'koot',
 

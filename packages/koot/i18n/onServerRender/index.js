@@ -1,9 +1,9 @@
 import {
     actionInit,
     // actionLocales
-} from '../redux';
+} from '../redux/index.js';
 
-export default (store, localeId) => {
+const onServerRender = (store, localeId) => {
     // console.log(1)
 
     if (typeof store !== 'object' && typeof store.getState !== 'function')
@@ -15,3 +15,5 @@ export default (store, localeId) => {
 
     // console.log(2)
 };
+
+export default onServerRender;

@@ -3,7 +3,7 @@
 // import parseLocaleId from '../parse-locale-id';
 
 // import locales from '../locales'
-import { I18N_INIT /*, I18N_SET_LOCALES*/ } from '../action-types';
+import { I18N_INIT /*, I18N_SET_LOCALES*/ } from '../action-types.js';
 
 /**
  * Redux reducer: 初始化 localeId
@@ -66,6 +66,7 @@ export const actionInit = (localeId) => {
 //  *
 //  * @returns {Object}
 //  */
+export const actionLocales = () => {};
 // export const actionLocales = (state) => {
 //     return {
 //         type: I18N_SET_LOCALES,

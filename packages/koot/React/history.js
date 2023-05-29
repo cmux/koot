@@ -1,8 +1,8 @@
 // import history from "__KOOT_CLIENT_REQUIRE_HISTORY__"
 import createHistory from '__KOOT_CLIENT_REQUIRE_CREATE_HISTORY__';
 import { parsePath } from 'history/lib/PathUtils';
-import isI18nEnabled from '../i18n/is-enabled';
-import { REDUXSTATE } from '../defaults/defines-window';
+import isI18nEnabled from '../i18n/is-enabled.js';
+import { REDUXSTATE } from '../defaults/defines-window.js';
 
 /**
  * History Enhancer: use basename

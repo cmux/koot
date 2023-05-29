@@ -12,10 +12,10 @@ const itemsBlacklist = ['localeId', 'realtimeLocation', 'routing', 'server'];
  * @param {Object} state
  * @returns {Object}
  */
-const filter = oldState =>
+const filter = (oldState) =>
     itemsBlacklist.reduce((state, item) => {
         const { [item]: _, ...rest } = state;
         return rest;
     }, oldState);
 
-module.exports = filter;
+export default filter;

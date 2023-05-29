@@ -1,9 +1,9 @@
 import get from 'lodash/get';
 import set from 'lodash/set';
 
-import { getStore } from '../';
-import { sessionStoreKey } from '../defaults/defines';
-import filterState from '../libs/filter-state';
+import { getStore } from '../index.js';
+import { sessionStoreKey } from '../defaults/defines.js';
+import filterState from '../libs/filter-state.js';
 
 const configSessionStore = JSON.parse(process.env.KOOT_SESSION_STORE);
 

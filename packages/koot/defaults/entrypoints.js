@@ -1,9 +1,9 @@
+/* eslint-disable import/no-anonymous-default-export */
+
 /**
  * 默认的入口
- * 
+ *
  * @module koot/defaults/entrypoints
  */
 
-module.exports = [
-    'client',
-]
+export default ['client'];

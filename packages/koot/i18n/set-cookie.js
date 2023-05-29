@@ -1,27 +1,30 @@
+import jsCookie from 'js-cookie';
+
 /**
  * 设置 cookie
  * @param {String} localeId
  * @param {Object} ctx Koa context
  */
-module.exports = (localeId, ctx) => {
-
-    const maxDate = 365
-    const options = {}
-    if (typeof process.env.KOOT_I18N_COOKIE_DOMAIN === 'string' &&
-        process.env.KOOT_I18N_COOKIE_DOMAIN) {
-        options.domain = process.env.KOOT_I18N_COOKIE_DOMAIN
+const setCookie = (localeId, ctx) => {
+    const maxDate = 365;
+    const options = {};
+    if (
+        typeof process.env.KOOT_I18N_COOKIE_DOMAIN === 'string' &&
+        process.env.KOOT_I18N_COOKIE_DOMAIN
+    ) {
+        options.domain = process.env.KOOT_I18N_COOKIE_DOMAIN;
     }
 
     if (__CLIENT__) {
-        if (localeId && typeof document !== 'undefined' && typeof document.cookie !== 'undefined') {
-            require('js-cookie').set(
-                process.env.KOOT_I18N_COOKIE_KEY,
-                localeId,
-                {
-                    expires: maxDate,
-                    ...options
-                }
-            )
+        if (
+            localeId &&
+            typeof document !== 'undefined' &&
+            typeof document.cookie !== 'undefined'
+        ) {
+            jsCookie.set(process.env.KOOT_I18N_COOKIE_KEY, localeId, {
+                expires: maxDate,
+                ...options,
+            });
         }
     }
 
@@ -37,4 +40,6 @@ module.exports = (localeId, ctx) => {
         //     ...options
         // })
     }
-}
+};
+
+export default setCookie;

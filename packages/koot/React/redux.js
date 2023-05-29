@@ -8,24 +8,27 @@ import {
 import { routerReducer, routerMiddleware } from 'react-router-redux';
 import thunk from 'redux-thunk';
 
-import { REDUXSTATE } from '../defaults/defines-window';
+import { REDUXSTATE } from '../defaults/defines-window.js';
 
 import {
     reducer as realtimeLocationReducer,
     REALTIME_LOCATION_REDUCER_NAME,
-} from './realtime-location';
-import { SERVER_REDUCER_NAME, serverReducer } from '../ReactApp/server/redux';
+} from './realtime-location/index.js';
+import {
+    SERVER_REDUCER_NAME,
+    serverReducer,
+} from '../ReactApp/server/redux.js';
 
 import {
     reducerLocaleId as i18nReducerLocaleId,
     // reducerLocales as i18nReducerLocales,
-} from '../i18n/redux';
-import isI18nEnabled from '../i18n/is-enabled';
+} from '../i18n/redux/index.js';
+import isI18nEnabled from '../i18n/is-enabled.js';
 // import filterState from '../libs/filter-state';
 
 // import history from "__KOOT_CLIENT_REQUIRE_HISTORY__"
-import history from './history';
-import { load as loadSessionStore } from './client-session-store';
+import history from './history.js';
+import { load as loadSessionStore } from './client-session-store.js';
 // const getHistory = () => {
 //     if (__SPA__) {
 //         return require('react-router/lib/hashHistory')

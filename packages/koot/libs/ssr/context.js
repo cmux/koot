@@ -1,3 +1,5 @@
+/* eslint-disable import/no-anonymous-default-export */
+
 /* global
     __KOOT_SSR__:false
     __KOOT_CTX__:false
@@ -29,15 +31,15 @@
 
 // ============================================================================
 
-const {
-    LOCALEID: ClientLocaleId,
-    STORE: ClientStore,
-    HISTORY: ClientHistory,
-} = require('../../defaults/defines-window');
-const {
-    ssrContext: SSRContext,
-    koaContext: KOAContext,
-} = require('../../defaults/defines-server');
+import {
+    LOCALEID as ClientLocaleId,
+    STORE as ClientStore,
+    HISTORY as ClientHistory,
+} from '../../defaults/defines-window.js';
+import {
+    ssrContext as SSRContext,
+    koaContext as KOAContext,
+} from '../../defaults/defines-server.js';
 
 // ============================================================================
 
@@ -55,7 +57,7 @@ if (__DEV__ && __SERVER__) {
  * 获取 SSR context 对象
  * @returns {KootSSRContext}
  */
-function get() {
+export function get() {
     if (__CLIENT__) return {};
     if (__DEV__) return global[SSRContext];
     if (typeof kootSSRContext === 'object') return kootSSRContext;
@@ -66,7 +68,7 @@ function get() {
 /**
  * 获取 Koa ctx 对象
  */
-function getKoaCtx() {
+export function getKoaCtx() {
     if (__CLIENT__) return {};
     if (__DEV__) return global[KOAContext];
     if (typeof koaCtx === 'object') return koaCtx;
@@ -78,7 +80,7 @@ function getKoaCtx() {
  * 设置当前 Koa ctx 和 Koot SSR context 对象
  * @param {*} ctx
  */
-function set(ctx) {
+export function set(ctx) {
     if (__CLIENT__) return;
     // console.log('set', ctx, 'locales', ctx[SSRContext].locales);
     if (__DEV__) return global.__KOOT_SSR_SET__(ctx);
@@ -91,15 +93,15 @@ function set(ctx) {
 
 // ============================================================================
 
-const getLocaleId = () => {
+export const getLocaleId = () => {
     if (__CLIENT__) return window[ClientLocaleId] || '';
     if (__SERVER__) {
         if (__DEV__) return global.__KOOT_LOCALEID__;
         return get().LocaleId;
     }
 };
-let localeId = (() => getLocaleId())();
-const resetLocaleId = (newValue) => {
+export let localeId = (() => getLocaleId())();
+export const resetLocaleId = (newValue) => {
     if (__SERVER__ && newValue === false) {
         localeId = undefined;
         delete get().LocaleId;
@@ -111,37 +113,37 @@ const resetLocaleId = (newValue) => {
 
 // ============================================================================
 
-const getStore = () => {
+export const getStore = () => {
     if (__CLIENT__) return window[ClientStore];
     if (__SERVER__) {
         if (__DEV__) return global.__KOOT_STORE__;
         return get().Store;
     }
 };
-let store = (() => getStore())();
-const resetStore = (newValue) => {
+export let store = (() => getStore())();
+export const resetStore = (newValue) => {
     if (newValue) get().Store = newValue;
     store = newValue || getStore();
 };
 
 // ============================================================================
 
-const getHistory = () => {
+export const getHistory = () => {
     if (__CLIENT__) return window[ClientHistory];
     if (__SERVER__) {
         if (__DEV__) return global.__KOOT_HISTORY__;
         return get().History;
     }
 };
-let history = (() => getHistory())();
-const resetHistory = (newValue) => {
+export let history = (() => getHistory())();
+export const resetHistory = (newValue) => {
     if (newValue) get().History = newValue;
     history = newValue || getHistory();
 };
 
 // ============================================================================
 
-function reset() {
+export function reset() {
     resetLocaleId(false);
     // purgeObj(kootSSRContext);
     kootSSRContext = undefined;
@@ -164,7 +166,7 @@ function reset() {
 
 // ============================================================================
 
-module.exports = {
+export default {
     set,
     get,
     getKoaCtx,

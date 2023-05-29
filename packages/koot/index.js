@@ -1,9 +1,9 @@
 import {
     ssrContext as SSRContext,
     koaContext as KOAContext,
-} from './defaults/defines-server';
-import { CACHE } from './defaults/defines-window';
-import isRenderSafe from './React/is-render-safe';
+} from './defaults/defines-server.js';
+import { CACHE } from './defaults/defines-window.js';
+import isRenderSafe from './React/is-render-safe.js';
 import {
     get as getSSRContext,
     getKoaCtx,
@@ -11,7 +11,7 @@ import {
     resetLocaleId,
     resetStore,
     resetHistory,
-} from './libs/ssr/context';
+} from './libs/ssr/context.js';
 
 // ============================================================================
 
@@ -19,7 +19,7 @@ import {
  * 手动创建 Redux Store 时需要的相关对象
  * @type {Object}
  */
-import * as _reduxForCreateStore from './React/redux';
+import * as _reduxForCreateStore from './React/redux.js';
 
 const { createStore, ...reduxForCreateStore } = _reduxForCreateStore;
 export { createStore, reduxForCreateStore };

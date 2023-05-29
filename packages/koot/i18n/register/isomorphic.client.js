@@ -1,7 +1,9 @@
-import { store, localeId as LocaleId } from '../../';
-import { REDUXSTATE, SSRSTATE } from '../../defaults/defines-window';
-import { I18N_INIT } from '../action-types';
-import setCookie from '../set-cookie';
+/* eslint-disable import/no-anonymous-default-export */
+
+import { store, localeId as LocaleId } from '../../index.js';
+import { REDUXSTATE, SSRSTATE } from '../../defaults/defines-window.js';
+import { I18N_INIT } from '../action-types.js';
+import setCookie from '../set-cookie.js';
 
 /**
  * 初始化
