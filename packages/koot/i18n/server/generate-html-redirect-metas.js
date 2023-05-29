@@ -1,7 +1,7 @@
-import availableLocaleIds from '../locale-ids';
-import isI18nEnabled from '../../i18n/is-enabled';
+import availableLocaleIds from '../locale-ids.js';
+import isI18nEnabled from '../../i18n/is-enabled.js';
 
-import gen from '../generate-html-redirect-metas';
+import gen from '../generate-html-redirect-metas.js';
 
 /**
  * 生成用以声明该页面其他语种 URL 的 meta 标签的 HTML 代码

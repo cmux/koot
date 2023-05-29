@@ -1,9 +1,9 @@
 // import cookie from 'cookie'
-import { changeLocaleQueryKey } from '../../defaults/defines';
-import availableLocaleIds from '../locale-ids';
-import parseLocaleId from '../parse-locale-id';
-import setCookie from '../set-cookie';
-import isI18nEnabled from '../is-enabled';
+import { changeLocaleQueryKey } from '../../defaults/defines.js';
+import availableLocaleIds from '../locale-ids.js';
+import parseLocaleId from '../parse-locale-id.js';
+import setCookie from '../set-cookie.js';
+import isI18nEnabled from '../is-enabled.js';
 
 /**
  * 根据 KOA Context 获取语种ID

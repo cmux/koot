@@ -1,8 +1,8 @@
 import Cookies from 'js-cookie';
-import { changeLocaleQueryKey } from '../../defaults/defines';
-import availableLocaleIds from '../locale-ids';
-import setCookie from '../set-cookie';
-import isI18nEnabled from '../is-enabled';
+import { changeLocaleQueryKey } from '../../defaults/defines.js';
+import availableLocaleIds from '../locale-ids.js';
+import setCookie from '../set-cookie.js';
+import isI18nEnabled from '../is-enabled.js';
 
 /**
  * 根据当前环境获取语种ID
@@ -25,7 +25,7 @@ const getLangSPA = () => {
             .slice(1)
             .join('?')
             .split('&')
-            .forEach(s => {
+            .forEach((s) => {
                 const [key, value] = s.split('=');
                 query[key] = value;
             });
@@ -62,7 +62,7 @@ export default getLangSPA;
  * 服务器环境: 设置 cookie
  * @param {*} localeId
  */
-const setLocale = localeId => {
+const setLocale = (localeId) => {
     setCookie(localeId);
     return localeId;
 };

@@ -1,5 +1,5 @@
-const { SSRSTATE } = require('../defaults/defines-window');
-const { get: getSSRContext } = require('../libs/ssr/context');
+import { SSRSTATE } from '../defaults/defines-window.js';
+import { get as getSSRContext } from '../libs/ssr/context.js';
 
 const __devLocales = {};
 

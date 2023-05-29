@@ -1,11 +1,11 @@
 /* eslint-disable no-eval */
 // const fs = require('fs-extra');
-const fs = require('fs');
-const path = require('path');
+import fs from 'node:fs';
+import path from 'node:path';
 
-const getCwd = require('../utils/get-cwd');
+import getCwd from '../utils/get-cwd.js';
 
-module.exports = (pathname) => {
+const readLocaleFileSync = (pathname) => {
     // if (process.env.WEBPACK_BUILD_STAGE === 'client') return {};
 
     const file = path.isAbsolute(pathname)
@@ -22,3 +22,5 @@ module.exports = (pathname) => {
           JSON.parse(fs.readFileSync(file, 'utf-8'))
         : eval(`require("${file.replace(/\\/g, '\\\\')}")`);
 };
+
+export default readLocaleFileSync;

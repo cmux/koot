@@ -1,8 +1,8 @@
 import get from 'lodash/get';
 
-import { SSRSTATE } from '../defaults/defines-window';
-import { get as getSSRContext, resetLocaleId } from '../libs/ssr/context';
-import locales, { setLocales, getLocalesObject } from './locales';
+import { SSRSTATE } from '../defaults/defines-window.js';
+import { get as getSSRContext, resetLocaleId } from '../libs/ssr/context.js';
+import locales, { setLocales, getLocalesObject } from './locales.js';
 
 export let l = undefined;
 const resetL = () => {

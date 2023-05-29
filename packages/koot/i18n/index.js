@@ -1,5 +1,5 @@
-import { getLocaleId } from '../libs/ssr/context';
-import locales from './locales';
+import { getLocaleId } from '../libs/ssr/context.js';
+import locales from './locales.js';
 
 /**
  * 检查目标语言包ID的语言包内容是否已初始化

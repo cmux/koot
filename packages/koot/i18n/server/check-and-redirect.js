@@ -1,7 +1,7 @@
-import availableLocaleIds from '../locale-ids';
-import getLangFromCtx from './get-lang-from-ctx';
-import setCookie from '../set-cookie';
-import isI18nEnabled from '../is-enabled';
+import availableLocaleIds from '../locale-ids.js';
+import getLangFromCtx from './get-lang-from-ctx.js';
+import setCookie from '../set-cookie.js';
+import isI18nEnabled from '../is-enabled.js';
 
 /**
  * 在同构中间件流程的匹配 react 路由之前，检查是否需要跳转

@@ -1,4 +1,4 @@
-import isI18nEnabled from './is-enabled';
+import isI18nEnabled from './is-enabled.js';
 
 /**
  * 根据当前项目配置，对路由对象进行改造

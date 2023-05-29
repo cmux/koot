@@ -1,5 +1,5 @@
-const { use: defaultUse } = require('../defaults/i18n');
-const { changeLocaleQueryKey } = require('../defaults/defines');
+import { use as defaultUse } from '../defaults/i18n.js';
+import { changeLocaleQueryKey } from '../defaults/defines.js';
 
 /**
  * 生成用以声明该页面其他语种 URL 的 meta 标签的 HTML 代码
@@ -85,4 +85,4 @@ const generateHtmlRedirectMetas = ({
     return html;
 };
 
-module.exports = generateHtmlRedirectMetas;
+export default generateHtmlRedirectMetas;
