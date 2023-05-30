@@ -1,4 +1,4 @@
-const path = require('path');
+import path from 'node:path';
 
 /*
   'id',               'ids',
@@ -18,7 +18,7 @@ const path = require('path');
  * @param {String} [dirRelative]
  * @returns {Object} 文件对应表 (Filemap)
  */
-module.exports = (compilation, dirRelative) => {
+const generateFilemapFromCompilation = (compilation, dirRelative) => {
     if (typeof compilation !== 'object') return undefined;
 
     const filemap = {};
@@ -52,3 +52,5 @@ module.exports = (compilation, dirRelative) => {
 
     return filemap;
 };
+
+export default generateFilemapFromCompilation;

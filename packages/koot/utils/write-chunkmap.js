@@ -1,13 +1,13 @@
-const fs = require('fs-extra');
-const path = require('path');
+import fs from 'fs-extra';
+import path from 'node:path';
 
-const { KOOT_BUILD_START_TIME } = require('../defaults/envs');
-const generateFilemap = require('./generate-filemap-from-compilation');
-const getChunkmapPath = require('./get-chunkmap-path');
-const getOutputsPath = require('./get-outputs-path');
-const getDistPath = require('./get-dist-path');
+import { KOOT_BUILD_START_TIME } from '../defaults/envs.js';
+import generateFilemap from './generate-filemap-from-compilation.js';
+import getChunkmapPath from './get-chunkmap-path.js';
+import getOutputsPath from './get-outputs-path.js';
+import getDistPath from './get-dist-path.js';
 
-const { compilationKeyHtmlMetaTags } = require('../defaults/before-build');
+import { compilationKeyHtmlMetaTags } from '../defaults/before-build.js';
 
 // const times = n => f => {
 //     const iter = i => {
@@ -41,7 +41,7 @@ const isNotSourcemap = (filename) => !/\.(js|css)\.map$/i.test(filename);
  * @param {string} [serviceWorkerPathname]
  * @returns {Object} 打包文件对应表 (chunkmap)
  */
-module.exports = async (
+const writeChunkmap = async (
     compilation,
     localeId,
     pathPublic,
@@ -213,9 +213,8 @@ module.exports = async (
                 fs.writeJsonSync(fileOutputs, {});
             }
 
-            const {
-                [process.env[KOOT_BUILD_START_TIME]]: list = [],
-            } = existResult;
+            const { [process.env[KOOT_BUILD_START_TIME]]: list = [] } =
+                existResult;
 
             // console.log(assets);
 
@@ -241,3 +240,5 @@ module.exports = async (
 
     return json;
 };
+
+export default writeChunkmap;

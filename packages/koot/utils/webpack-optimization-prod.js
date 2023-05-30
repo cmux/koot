@@ -1,5 +1,5 @@
-const getModuleVersion = require('./get-module-version');
-const { chunkNameClientRunFirst } = require('../defaults/before-build');
+import getModuleVersion from './get-module-version.js';
+import { chunkNameClientRunFirst } from '../defaults/before-build.js';
 
 const keyName = parseInt(getModuleVersion('webpack')) < 5 ? 'name' : 'idHint';
 
@@ -10,7 +10,7 @@ const keyName = parseInt(getModuleVersion('webpack')) < 5 ? 'name' : 'idHint';
  * @param {string[]} [options.extraLibs] 追加库名到 libs 包中
  * @returns {Object} Webpack `optimization` 配置
  */
-module.exports = (options = {}) => {
+const webpackOptimizationProd = (options = {}) => {
     const { extraLibs = [] } = options;
     const cacheGroups = {
         libs: {
@@ -111,3 +111,5 @@ module.exports = (options = {}) => {
         },
     };
 };
+
+export default webpackOptimizationProd;

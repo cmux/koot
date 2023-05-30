@@ -1,7 +1,11 @@
+import { createRequire } from 'module';
+
+const require = createRequire(import.meta.url);
+
 /**
  * 获取指定 NPM 包的版本号
  */
-module.exports = moduleName => {
+const getModuleVersion = (moduleName) => {
     try {
         const p = require(`${moduleName}/package.json`);
         if (typeof p === 'object' && p.version) return p.version;
@@ -10,3 +14,5 @@ module.exports = moduleName => {
         return '';
     }
 };
+
+export default getModuleVersion;
