@@ -1,6 +1,8 @@
-const path = require('path');
-const getDirDev = require('./get-dir-dev-tmp');
+import path from 'node:path';
+import getDirDev from './get-dir-dev-tmp.js';
 
-module.exports = {
+const getFlagFile = {
     devBuildingServer: () => path.resolve(getDirDev(), '.building-server'),
 };
+
+export default getFlagFile;

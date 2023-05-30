@@ -1,7 +1,7 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'node:fs';
+import path from 'node:path';
 
-const getCwd = require('../utils/get-cwd');
+import getCwd from '../utils/get-cwd.js';
 
 // const { version } = require('../package.json')
 
@@ -53,7 +53,7 @@ const validateTemplate = (optionTemplate) => {
                     })();
                     template = template.replace(
                         new RegExp(
-                            `<${type == 'append' ? '/' : ''}${tagName}.*?>`
+                            `<${type === 'append' ? '/' : ''}${tagName}.*?>`
                         ),
                         (match) => {
                             if (type === 'prepend') return `${match}\n${str}`;
@@ -73,4 +73,4 @@ const validateTemplate = (optionTemplate) => {
     );
 };
 
-module.exports = validateTemplate;
+export default validateTemplate;

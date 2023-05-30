@@ -1,6 +1,7 @@
-const fs = require('fs-extra');
-const path = require('path');
-const getCwd = require('../utils/get-cwd');
+import fs from 'fs-extra';
+import path from 'node:path';
+
+import getCwd from '../utils/get-cwd.js';
 
 /**
  * 更新项目的 `package.json` 中的 `koot` 对象属性
@@ -18,8 +19,8 @@ const updateKootInPackageJson = async (data = {}) => {
     Object.assign(p.koot, data);
 
     await fs.writeJson(file, p, {
-        spaces: 4
+        spaces: 4,
     });
 };
 
-module.exports = updateKootInPackageJson;
+export default updateKootInPackageJson;

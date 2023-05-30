@@ -3,7 +3,7 @@
  * @param {String} projectType
  * @returns {String} projectType
  */
-module.exports = (projectType = '') => {
+const updateAppType = (projectType = '') => {
     switch (projectType.toLowerCase()) {
         case 'reactapp': {
             // if ((await readBuildConfigFile()).server)
@@ -40,3 +40,5 @@ module.exports = (projectType = '') => {
 
     return projectType;
 };
+
+export default updateAppType;

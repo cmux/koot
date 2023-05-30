@@ -1,7 +1,7 @@
-const Koa = require('koa');
-const helmet = require('koa-helmet');
+import Koa from 'koa';
+import helmet from 'koa-helmet';
 
-const removeSlashes = require('./koa-middlewares/remove-slashes');
+import removeSlashes from './koa-middlewares/remove-slashes.js';
 
 /**
  * 创建 Koa App
@@ -19,4 +19,4 @@ const create = () => {
     return app;
 };
 
-module.exports = create;
+export default create;

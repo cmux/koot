@@ -1,5 +1,6 @@
 /* eslint-disable import/no-anonymous-default-export */
-import('../../../typedef.js');
+import '../../../typedef.js';
+
 /**
  * 配置转换 - 兼容性处理 - Router 相关选项
  * - routes

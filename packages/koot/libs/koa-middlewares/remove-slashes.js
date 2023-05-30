@@ -10,4 +10,4 @@ const removeSlashesMiddleware = async (ctx, next) => {
     await next();
 };
 
-module.exports = removeSlashesMiddleware;
+export default removeSlashesMiddleware;

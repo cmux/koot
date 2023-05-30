@@ -7,4 +7,4 @@ const getSSRStateString = (state = {}) =>
     `JSON.parse(` +
     `decodeURIComponent("${encodeURIComponent(JSON.stringify(state))}"))`;
 
-module.exports = getSSRStateString;
+export default getSSRStateString;

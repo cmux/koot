@@ -1,12 +1,13 @@
-const { filenameSPATemplateInjectJS } = require('../defaults/before-build')
+import { filenameSPATemplateInjectJS } from '../defaults/before-build.js';
 
 /**
  * 获取文件名: SPA 模板注入 JS
  * @param {String} [localeId]
  * @returns {String}
  */
-module.exports = localeId => {
+const getFilenameSpaTemplateInject = (localeId) => {
     if (localeId)
-        return filenameSPATemplateInjectJS.replace(/LOCALEID/, localeId)
-    return filenameSPATemplateInjectJS.replace(/\.LOCALEID/, '')
-}
+        return filenameSPATemplateInjectJS.replace(/LOCALEID/, localeId);
+    return filenameSPATemplateInjectJS.replace(/\.LOCALEID/, '');
+};
+export default getFilenameSpaTemplateInject;

@@ -16,7 +16,7 @@ import didBuild from './lifecycle/did-build.js';
 import {
     // keyConfigQuiet,
     filenameBuilding,
-} from '../defaults/before-build';
+} from '../defaults/before-build.js';
 
 import __ from '../utils/translate.js';
 import sleep from '../utils/sleep.js';

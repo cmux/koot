@@ -1,15 +1,13 @@
 /* eslint-disable no-restricted-globals */
 
-const {
-    scopeNeedTransformPathname,
-} = require('../defaults/defines-service-worker');
+import { scopeNeedTransformPathname } from '../defaults/defines-service-worker.js';
 
 /**
  * 基于环境变量，获取 service worker 的 scope
  * @param {string} [scope]
  * @returns {string} scope 路径名，前后都有 `/`
  */
-module.exports = (valueScope) => {
+const getSwScopeFromEnv = (valueScope) => {
     let scope = valueScope;
     if (!scope)
         try {
@@ -35,3 +33,5 @@ module.exports = (valueScope) => {
 
     return scope;
 };
+
+export default getSwScopeFromEnv;

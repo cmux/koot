@@ -1,10 +1,12 @@
 /* eslint-disable no-console */
 
-const log = require('../../log');
+import log from '../../log.js';
 
-module.exports = (msg) => {
+const logError = (msg) => {
     console.log(' ');
     log('error', msg);
     console.log(' ');
     console.log(' ');
 };
+
+export default logError;

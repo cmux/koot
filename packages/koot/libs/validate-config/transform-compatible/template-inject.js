@@ -1,7 +1,7 @@
 /* eslint-disable import/no-anonymous-default-export */
 import { typesSPA } from '../../../defaults/before-build.js';
 
-import('../../../typedef.js');
+import '../../../typedef.js';
 
 /**
  * 配置转换 - 兼容性处理 - templateInject

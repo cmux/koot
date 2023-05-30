@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
-import sleep from '../utils/sleep.js';
 
+import sleep from '../utils/sleep.js';
 import defaultPlaceholder from '../defaults/content-waiting.js';
 
 /**

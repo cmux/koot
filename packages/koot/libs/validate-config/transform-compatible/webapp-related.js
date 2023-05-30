@@ -5,7 +5,7 @@ import { keyConfigIcons } from '../../../defaults/before-build.js';
 
 import validateIcon from '../validation/icon.js';
 
-import('../../../typedef.js');
+import '../../../typedef.js';
 
 /**
  * 配置转换 - 兼容性处理 - ServiceWorker 和 PWA 相关

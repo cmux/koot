@@ -1,6 +1,6 @@
-const path = require('path');
+import path from 'path';
 
-const getDirDistPublicFoldername = require('./get-dir-dist-public-foldername');
+import getDirDistPublicFoldername from './get-dir-dist-public-foldername.js';
 
 /**
  * 获取打包结果基础目录
@@ -8,7 +8,7 @@ const getDirDistPublicFoldername = require('./get-dir-dist-public-foldername');
  * @param {String} dist 打包结果目录
  * @returns {String}
  */
-module.exports = dist => {
+const getDirDistPublic = (dist) => {
     if (!result) {
         result = path.resolve(dist, getDirDistPublicFoldername());
     }
@@ -17,3 +17,5 @@ module.exports = dist => {
 };
 
 let result;
+
+export default getDirDistPublic;

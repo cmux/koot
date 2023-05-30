@@ -1,5 +1,5 @@
-const path = require('path');
-const getCwd = require('./get-cwd');
+import path from 'path';
+import getCwd from './get-cwd.js';
 
 /**
  * 获取项目临时配置文件路径
@@ -8,7 +8,7 @@ const getCwd = require('./get-cwd');
  * @param {Boolean} portion 是否获取部分配置
  * @returns {String}
  */
-module.exports = (portion = false) => {
+const getPathnameProjectConfigFile = (portion = false) => {
     if (portion === 'client') {
         return typeof process.env
             .KOOT_PROJECT_CONFIG_PORTION_CLIENT_PATHNAME === 'string'
@@ -31,3 +31,5 @@ module.exports = (portion = false) => {
         ? process.env.KOOT_PROJECT_CONFIG_FULL_PATHNAME
         : path.resolve(getCwd(), 'koot.js');
 };
+
+export default getPathnameProjectConfigFile;

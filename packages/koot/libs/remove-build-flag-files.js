@@ -1,10 +1,10 @@
-const fs = require('fs-extra');
-const path = require('path');
+import fs from 'fs-extra';
+import path from 'node:path';
 
-const {
+import {
     filenameBuilding,
     filenameBuildFail,
-} = require('../defaults/before-build');
+} from '../defaults/before-build.js';
 
 /**
  * 清理打包标记文件
@@ -12,7 +12,7 @@ const {
  * @param {String} dist 打包结果目录
  * @param {Boolean} [removeFailFlagFile=false] 是否清理错误标记文件
  */
-module.exports = async (
+const removeBuildFlagFiles = async (
     dist = process.env.KOOT_DIST_DIR,
     removeFailFlagFile = false
 ) => {
@@ -25,3 +25,5 @@ module.exports = async (
         if (fs.existsSync(file)) await fs.remove(file);
     }
 };
+
+export default removeBuildFlagFiles;

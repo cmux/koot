@@ -1,10 +1,11 @@
-const fs = require('fs-extra');
-const isPortReachable = require('is-port-reachable');
-const inquirer = require('inquirer');
+/* eslint-disable no-console */
+import fs from 'fs-extra';
+import isPortReachable from 'is-port-reachable';
+import inquirer from 'inquirer';
 // const osLocale = require('os-locale')
 
-const getPathnameDevServerStart = require('../utils/get-pathname-dev-server-start');
-const getFreePort = require('./get-free-port');
+import getPathnameDevServerStart from '../utils/get-pathname-dev-server-start.js';
+import getFreePort from './get-free-port.js';
 
 /**
  * @async
@@ -64,12 +65,12 @@ const doValidatePort = async () => {
                 name: 'port',
                 message:
                     'Please input a new port number (leave empty for cancel)',
-                validate: input => {
+                validate: (input) => {
                     if (!input) return true;
                     if (isNaN(input)) return 'Must be a number or null';
                     return true;
-                }
-            }
+                },
+            },
         ]);
         if (!askForPort.port) {
             isPortTaken = false;
@@ -91,7 +92,7 @@ const doValidatePort = async () => {
  * @param {Number|String} port
  * @returns {Number|Boolean} 如果端口可用，返回该端口；如果不可用，返回 false
  */
-const isPortFree = async port => {
+const isPortFree = async (port) => {
     const isPortOpen = !(await isPortReachable(port));
     if (isPortOpen) return port;
     return false;
@@ -101,7 +102,7 @@ const isPortFree = async port => {
  * log: 目标端口被占用
  * @param {Number|String} port
  */
-const logPortTaken = port => {
+const logPortTaken = (port) => {
     console.log(
         `\x1b[31m×\x1b[0m ` +
             `\x1b[93m[koot/server]\x1b[0m port \x1b[32m${port}\x1b[0m has been taken.`
@@ -144,5 +145,4 @@ const validatePort = async () => {
     return port;
 };
 
-// export default validatePort;
-module.exports = validatePort;
+export default validatePort;
