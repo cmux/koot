@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+## [0.15.14] - 2023-12-29
+
+**koot-electron**
+
+-   Electron 主文件 `main.js` 可以热更新了
+
 ## [0.15.13] - 2022-11-29
 
 **koot-webpack**
