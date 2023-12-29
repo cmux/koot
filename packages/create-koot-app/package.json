@@ -1,6 +1,6 @@
 {
     "name": "create-koot-app",
-    "version": "0.15.12",
+    "version": "0.15.14",
     "description": "Create Koot.js apps.",
     "main": "index.js",
     "sideEffects": false,
@@ -44,7 +44,7 @@
         "node": ">=12.20.0"
     },
     "dependencies": {
-        "koot-cli": "^0.15.12"
+        "koot-cli": "^0.15.14"
     },
     "files": [
         "/index.js"
