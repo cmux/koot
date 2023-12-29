@@ -24,11 +24,11 @@
     },
     "homepage": "https://github.com/cmux/koot",
     "engines": {
-        "node": ">= 8.9.0"
+        "node": ">= 18.0.0"
     },
     "dependencies": {
-        "electron": "^19.0.8",
-        "electron-builder": "^23.1.0"
+        "electron": "^28.1.0",
+        "electron-builder": "^24.9.1"
     },
     "devDependencies": {
         "koot": "^0.15.12",

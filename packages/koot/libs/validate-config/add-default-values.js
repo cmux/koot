@@ -43,7 +43,7 @@ module.exports = async (projectDir, config) => {
             !Array.isArray(config[key]) &&
             !Array.isArray(defaultValues[key])
         ) {
-            config[key] = merge({}, config[key], defaultValues[key]);
+            config[key] = merge({}, defaultValues[key], config[key]);
         }
     });
 
