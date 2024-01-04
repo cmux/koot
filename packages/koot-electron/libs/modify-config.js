@@ -46,7 +46,7 @@ const modifyWebpackConfig = async (webpackConfig, appConfig) => {
     webpackConfig
         .filter((config) => !config[keyConfigWebpackSPATemplateInject])
         .forEach((config) => {
-            config.target = 'electron-renderer';
+            // config.target = 'electron-renderer';
         });
 
     // ========================================================================

@@ -103,6 +103,7 @@ const buildElectronMain = async (appConfig) =>
                         ? 'development'
                         : 'production',
                 name: 'koot-electron-main',
+                target: 'electron-main',
                 entry: {
                     main,
                 },
