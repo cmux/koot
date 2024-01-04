@@ -10,4 +10,8 @@ require('../../typedef');
 module.exports = async (appConfig) => {
     if (typeof appConfig.afterBuild === 'function')
         await appConfig.afterBuild(appConfig);
+
+    if (appConfig.target === 'electron') {
+        await require('koot-electron/libs/after-build')(appConfig);
+    }
 };
