@@ -1,5 +1,12 @@
 ## [Unreleased]
 
+## [0.15.16] - 2024-01-04
+
+**koot-electron**
+
+-   不再将 SPA 的打包目标设定为 `electron-renderer`
+    -   _Electron_ 最新版中，默认设置下，_Renderer_ 进程无法直接调用 _Node.js_ 模块和方法，需要通过 `contextBridge` 进行桥接，故不再需要 _Webpack_ 的 `target` 设置
+
 ## [0.15.15] - 2024-01-04
 
 **koot-electron**
