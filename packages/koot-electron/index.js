@@ -1,4 +1,8 @@
+const path = require('node:path');
 const { app, BrowserWindow, screen } = require('electron');
+
+const { CLIENT_ROOT_PATH } = require('koot/defaults/before-build');
+const getDirDevTmp = require('koot/libs/get-dir-dev-tmp');
 
 // ============================================================================
 
@@ -9,6 +13,7 @@ const createWindow = (options = {}) => {
         height: Math.floor(height * 0.8),
         webPreferences: {
             nodeIntegration: true,
+            contextIsolation: false,
         },
     };
 
@@ -61,4 +66,15 @@ const initApp = (createWindowOptions = {}) => {
     // code. You can also put them in separate files and require them here.
 };
 
-module.exports = { initApp, createWindow };
+// ============================================================================
+
+const getElectronFilesFolder = (appConfig) =>
+    process.env.WEBPACK_BUILD_ENV === 'dev'
+        ? getDirDevTmp(undefined, 'electron')
+        : path.resolve(
+              appConfig?.[CLIENT_ROOT_PATH] || process.env.KOOT_DIST_DIR
+          );
+
+// ============================================================================
+
+module.exports = { initApp, createWindow, getElectronFilesFolder };
