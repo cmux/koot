@@ -57,18 +57,24 @@ module.exports = afterBuild;
 
 // ============================================================================
 
+/**
+ * @property {String} [main]
+ * @property {String} [packageJson]
+ */
 const files = {};
 let electronMainProcess;
 let electronMainProcessActive = false;
 
 /**
+ * 构建 Electron 主进程 JS 文件
  * - 生产环境: 仅打包
  * - 开发环境: 热更新打包，并自动打开主进程
+ * 构建完成后，会在同目录下生成 `package.json` 文件
  */
 const buildElectronMain = async (appConfig) =>
     new Promise(async (resolve, reject) => {
-        const dest = getElectronFilesFolder();
-        const { electron: electronConfig = {}, dist } = appConfig;
+        const { electron: electronConfig = {} } = appConfig;
+        const outputPath = getElectronFilesFolder(appConfig);
         const {
             main,
             mainOutput,
@@ -82,7 +88,8 @@ const buildElectronMain = async (appConfig) =>
         );
         const waiting = spinner(msg + '...');
 
-        files.main = path.resolve(dest, mainOutput);
+        files.main = path.resolve(outputPath, mainOutput);
+        files.packageJson = path.resolve(outputPath, 'package.json');
 
         const cwd = getCwd();
         const projectPkg = require(path.resolve(cwd, 'package.json'));
@@ -108,7 +115,7 @@ const buildElectronMain = async (appConfig) =>
                     main,
                 },
                 output: {
-                    path: dest,
+                    path: outputPath,
                 },
                 node: {
                     global: true,
@@ -137,12 +144,15 @@ const buildElectronMain = async (appConfig) =>
                     (compilation) => {
                         // 添加 package.json
                         fs.writeJsonSync(
-                            path.resolve(dist, 'package.json'),
+                            files.packageJson,
                             merge({}, defaultDistPackageJson, {
                                 name: sanitize(appConfig.name || '')
                                     .toLowerCase()
                                     .replace(/ /g, '-'),
-                                main: path.relative(dist, files.main),
+                                main: path.relative(
+                                    path.dirname(files.packageJson),
+                                    files.main
+                                ),
                                 description:
                                     projectPkg.description ||
                                     defaultDistPackageJson.description,
@@ -230,9 +240,10 @@ const openElectronMainProcess = async (appConfig) => {
     if (electronMainProcessActive) return;
 
     const { main } = files;
+    const mainDir = path.dirname(main);
     const cwd = getCwd();
 
-    const cmd = `electron ${main}`;
+    const cmd = `electron ${mainDir}`;
     const chunks = cmd.split(' ');
     electronMainProcess = require('child_process').spawn(
         chunks.shift(),
