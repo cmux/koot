@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+## [0.15.17] - 2024-01-15
+
+**koot-electron**
+
+-   确保开发环境中 `package.json` 会正确生成并被使用
+
 ## [0.15.16] - 2024-01-04
 
 **koot-electron**
