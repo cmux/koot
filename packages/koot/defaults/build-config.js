@@ -12,6 +12,7 @@ module.exports = {
     beforeBuild: () => {},
     afterBuild: () => {},
     port: undefined,
+    serverCheckPort: true,
     defines: {},
-    webpackDll: []
+    webpackDll: [],
 };

@@ -52,7 +52,7 @@ const startKootIsomorphicServer = async () => {
     // 决定服务器启动端口
     // 如果端口不可用，取消启动流程
     /** @type {Number} 服务器启动端口 */
-    const port = await validatePort();
+    const port = await validatePort(serverConfig);
     if (!port) throw new Error(errorMsg('VALIDATE_PORT', 'unavailable'));
 
     // 确定 Redux 相关配置

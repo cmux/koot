@@ -10,7 +10,7 @@ const getFreePort = require('./get-free-port');
  * @async
  * @returns {Number|Boolean} 如果最终没有结果，返回 false，否则返回可用的端口数
  */
-const doValidatePort = async () => {
+const doValidatePort = async (serverConfig) => {
     // [开发环境] 如果 flag 文件中写有端口，直接使用该端口
     if (__DEV__) {
         let infos;
@@ -30,6 +30,8 @@ const doValidatePort = async () => {
         typeof __SERVER_PORT__ !== 'undefined'
     )
         process.env.SERVER_PORT = __SERVER_PORT__;
+
+    if (!serverConfig.checkPort) return process.env.SERVER_PORT;
 
     /** @type {Boolean} 环境变量 SERVER_PORT 的端口号是否可用 */
     const isPortInEnvFree = await isPortFree(process.env.SERVER_PORT);
@@ -64,12 +66,12 @@ const doValidatePort = async () => {
                 name: 'port',
                 message:
                     'Please input a new port number (leave empty for cancel)',
-                validate: input => {
+                validate: (input) => {
                     if (!input) return true;
                     if (isNaN(input)) return 'Must be a number or null';
                     return true;
-                }
-            }
+                },
+            },
         ]);
         if (!askForPort.port) {
             isPortTaken = false;
@@ -91,7 +93,7 @@ const doValidatePort = async () => {
  * @param {Number|String} port
  * @returns {Number|Boolean} 如果端口可用，返回该端口；如果不可用，返回 false
  */
-const isPortFree = async port => {
+const isPortFree = async (port) => {
     const isPortOpen = !(await isPortReachable(port));
     if (isPortOpen) return port;
     return false;
@@ -101,7 +103,7 @@ const isPortFree = async port => {
  * log: 目标端口被占用
  * @param {Number|String} port
  */
-const logPortTaken = port => {
+const logPortTaken = (port) => {
     console.log(
         `\x1b[31m×\x1b[0m ` +
             `\x1b[93m[koot/server]\x1b[0m port \x1b[32m${port}\x1b[0m has been taken.`
@@ -132,8 +134,8 @@ const logPortTaken = port => {
  * @async
  * @returns {Number|Boolean} 如果最终没有结果，返回 false，否则返回可用的端口数
  */
-const validatePort = async () => {
-    const port = await doValidatePort();
+const validatePort = async (serverConfig) => {
+    const port = await doValidatePort(serverConfig);
     if (!port) return false;
     if (__DEV__) {
         // 开发环境：在随机端口启用服务器

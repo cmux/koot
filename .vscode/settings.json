@@ -4,7 +4,7 @@
     "editor.tabSize": 4,
     "editor.insertSpaces": true,
     "editor.codeActionsOnSave": {
-        "source.fixAll": true
+        "source.fixAll": "explicit"
     },
     "eslint.codeActionsOnSave.mode": "problems",
     "eslint.validate": [
