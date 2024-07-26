@@ -68,7 +68,7 @@ const run = async () => {
     ];
 
     const dirPackages = path.resolve(__dirname, './packages');
-    const packages = (await fs.readdir(dirPackages)).filter(filename => {
+    const packages = (await fs.readdir(dirPackages)).filter((filename) => {
         const dir = path.resolve(dirPackages, filename);
         const lstat = fs.lstatSync(dir);
         if (!lstat.isDirectory()) return false;
@@ -94,7 +94,7 @@ const run = async () => {
         name: 'selected',
         message: 'Select package(s) to publish\n ',
         choices: packages,
-        default: defaultSelected
+        default: defaultSelected,
     });
     console.log('');
     if (!selected.length) {
@@ -109,15 +109,19 @@ const run = async () => {
         choices: [
             {
                 name: 'Please select a tag',
-                value: false
+                value: false,
             },
+            // {
+            //     name: 'No tag (none)',
+            //     value: ''
+            // },
             {
-                name: 'No tag (none)',
-                value: ''
+                name: '0.13 (Current Branch)',
+                value: '0.13',
             },
-            'next'
+            'next',
         ],
-        default: 0
+        default: 0,
     });
     console.log('');
     if (tag === false) {
@@ -135,4 +139,4 @@ const run = async () => {
     logFinish();
 };
 
-run().catch(async e => console.error(e));
+run().catch(async (e) => console.error(e));
